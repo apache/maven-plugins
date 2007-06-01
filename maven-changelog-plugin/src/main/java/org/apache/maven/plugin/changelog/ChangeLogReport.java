@@ -82,12 +82,14 @@ public class ChangeLogReport
      */
     private static final String FILE_TOKEN = "%FILE%";
 
-    private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
-
     /**
-     * Formatter used for dates.
+     * Used to specify the format to use for the dates in the headings of the
+     * report.
+     *
+     * @parameter expression="${changelog.headingDateFormat}" default-value="yyyy-MM-dd"
+     * @since 2.1
      */
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat( DEFAULT_DATE_PATTERN );
+    private String headingDateFormat = "yyyy-MM-dd";
 
     /**
      * Used to specify whether to build the log using range, tag or date.
@@ -862,6 +864,9 @@ public class ChangeLogReport
     protected void doChangeSetTitle( ChangeLogSet set, ResourceBundle bundle, Sink sink )
     {
         sink.sectionTitle2();
+
+        SimpleDateFormat headingDateFormater = new SimpleDateFormat( headingDateFormat );
+
         if ( set.getStartDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeUnknown" ) );
@@ -869,13 +874,13 @@ public class ChangeLogReport
         else if ( set.getEndDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeSince" ) );
-            sink.text( " " + DATE_FORMAT.format( set.getStartDate() ) );
+            sink.text( " " + headingDateFormater.format( set.getStartDate() ) );
         }
         else
         {
             sink.text( bundle.getString( "report.SetRangeBetween" ) );
-            sink.text( " " + DATE_FORMAT.format( set.getStartDate() ) + " " + bundle.getString( "report.And" ) + " "
-                + DATE_FORMAT.format( set.getEndDate() ) );
+            sink.text( " " + headingDateFormater.format( set.getStartDate() ) + " " + bundle.getString( "report.And" ) + " "
+                + headingDateFormater.format( set.getEndDate() ) );
         }
         sink.sectionTitle2_();
     }
