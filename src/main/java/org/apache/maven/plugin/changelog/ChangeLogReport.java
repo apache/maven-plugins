@@ -127,9 +127,9 @@ public class ChangeLogReport
     private String dateFormat;
 
     /**
-     * Input dir.  Directory where the sources are located.
+     * Input dir. Directory where the files under SCM control are located.
      *
-     * @parameter expression="${project.build.sourceDirectory}"
+     * @parameter expression="${basedir}"
      * @required
      */
     private File basedir;
