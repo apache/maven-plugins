@@ -22,20 +22,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.apache.maven.plugin.resources.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -230,61 +221,38 @@ public class ResourcesMojo
         }
     }
 
-    private void copyFile( File from, File to, boolean filtering )
+    private void copyFile( File from, final File to, boolean filtering )
         throws IOException
     {
-        if ( !filtering )
-        {
-            if ( to.lastModified() < from.lastModified() )
-            {
-                FileUtils.copyFile( from, to );
-            }
+        FileUtils.FilterWrapper[] wrappers = null;
+        if (filtering) {
+            wrappers = new FileUtils.FilterWrapper[]{
+                    // support ${token}
+                    new FileUtils.FilterWrapper() {
+                        public Reader getReader(Reader reader) {
+                            return new InterpolationFilterReader(reader, filterProperties, "${", "}");
+                        }
+                    },
+                    // support @token@
+                    new FileUtils.FilterWrapper() {
+                        public Reader getReader(Reader reader) {
+                            return new InterpolationFilterReader(reader, filterProperties, "@", "@");
+                        }
+                    },
+
+                    new FileUtils.FilterWrapper() {
+                        public Reader getReader(Reader reader) {
+                            boolean isPropertiesFile = false;
+
+                            if (to.isFile() && to.getName().endsWith(".properties")) {
+                                isPropertiesFile = true;
+                            }
+
+                            return new InterpolationFilterReader(reader, new ReflectionProperties(project, isPropertiesFile), "${", "}");
+                        }
+                    }
+            };
         }
-        else
-        {
-            // buffer so it isn't reading a byte at a time!
-            Reader fileReader = null;
-            Writer fileWriter = null;
-            try
-            {
-                if ( encoding == null || encoding.length() < 1 )
-                {
-                    fileReader = new BufferedReader( new FileReader( from ) );
-                    fileWriter = new FileWriter( to );
-                }
-                else
-                {
-                    FileInputStream instream = new FileInputStream( from );
-                    
-                    FileOutputStream outstream = new FileOutputStream( to );
-                    
-                    fileReader = new BufferedReader( new InputStreamReader( instream, encoding ) );
-                    
-                    fileWriter = new OutputStreamWriter( outstream, encoding );
-                }
-                
-                // support ${token}
-                Reader reader = new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
-
-                // support @token@
-                reader = new InterpolationFilterReader( reader, filterProperties, "@", "@" );
-
-                boolean isPropertiesFile = false;
-
-                if ( to.isFile() && to.getName().endsWith( ".properties" ) )
-                {
-                    isPropertiesFile = true;
-                }
-
-                reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, isPropertiesFile ), "${", "}" );
-
-                IOUtil.copy( reader, fileWriter );
-            }
-            finally
-            {
-                IOUtil.close( fileReader );
-                IOUtil.close( fileWriter );
-            }
-        }
+        FileUtils.copyFile(from, to, encoding, wrappers);
     }
 }
