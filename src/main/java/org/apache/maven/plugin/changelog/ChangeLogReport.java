@@ -123,7 +123,7 @@ public class ChangeLogReport
     /**
      * Used to specify the date format of the log entries that are retrieved from your SCM system.
      *
-     * @parameter expression="${changelog.dateFormat}" default-value="yyyy-MM-dd"
+     * @parameter expression="${changelog.dateFormat}" default-value="yyyy-MM-dd HH:mm:ss"
      * @required
      */
     private String dateFormat;
