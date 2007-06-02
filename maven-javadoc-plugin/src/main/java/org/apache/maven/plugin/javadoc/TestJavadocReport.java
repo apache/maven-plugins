@@ -21,6 +21,7 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -204,6 +205,11 @@ public class TestJavadocReport
      */
     protected List getProjectSourceRoots( MavenProject p )
     {
+        if ( "pom".equals( p.getPackaging().toLowerCase() ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         return p.getTestCompileSourceRoots();
     }
 
@@ -212,6 +218,11 @@ public class TestJavadocReport
      */
     protected List getExecutionProjectSourceRoots( MavenProject p )
     {
+        if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         return p.getExecutionProject().getTestCompileSourceRoots();
     }
 
