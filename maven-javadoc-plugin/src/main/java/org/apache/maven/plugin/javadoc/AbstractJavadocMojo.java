@@ -977,6 +977,11 @@ public abstract class AbstractJavadocMojo
      */
     protected List getProjectSourceRoots( MavenProject p )
     {
+        if ( "pom".equals( p.getPackaging().toLowerCase() ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         return p.getCompileSourceRoots();
     }
 
@@ -986,6 +991,11 @@ public abstract class AbstractJavadocMojo
      */
     protected List getExecutionProjectSourceRoots( MavenProject p )
     {
+        if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         return p.getExecutionProject().getCompileSourceRoots();
     }
 
@@ -1449,6 +1459,7 @@ public abstract class AbstractJavadocMojo
     protected List getSourcePaths()
     {
         List sourcePaths;
+
         if ( StringUtils.isEmpty( sourcepath ) )
         {
             sourcePaths = new ArrayList( getProjectSourceRoots( project ) );
