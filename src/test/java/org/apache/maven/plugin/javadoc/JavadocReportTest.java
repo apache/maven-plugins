@@ -717,4 +717,20 @@ public class JavadocReportTest
                                  "target/test/unit/aggregate-resources-test/target/site/apidocs/resources/test/doc-files/maven-feather.png" );
         assertTrue( FileUtils.fileExists( feather.getAbsolutePath() ) );
     }
+
+    /**
+     * Test the javadoc for a POM project.
+     *
+     * @throws Exception
+     */
+    public void testPom()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/pom-test/pom-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        assertFalse( new File( getBasedir(), "target/test/unit/pom-test" ).exists() );
+    }
 }
