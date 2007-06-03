@@ -108,3 +108,14 @@ Usage
   The server will, by default, be started on http://localhost:8080/. See
   {{{http://jetty.mortbay.org/jetty/index.html}http://jetty.mortbay.org/jetty/index.html}} for more information about
   the Jetty server.
+
+* Filtering
+
+  To filter properties into any supported documentation format, add a <<<.vm>>> extension to the filename.
+
+  For example, the module for the Maven website contains a
+  {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
+  file, which uses the expression <<<$\{currentVersion}>>> to filter in a property set in the
+  {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
+
+  This feature is available in version 2.0-beta-6 or later.
