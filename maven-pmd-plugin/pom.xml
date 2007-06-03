@@ -35,7 +35,7 @@ under the License.
     <url>http://jira.codehaus.org/browse/MPMD</url>
   </issueManagement>
   <mailingLists>
-        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+        <!-- duplication from maven-plugins pom - temporary until they inherit properly
     -->
     <mailingList>
       <name>Maven User List</name>
@@ -62,7 +62,7 @@ under the License.
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
     </mailingList>
-        <!-- duplication from maven-parent pom - temporary until they inherit properly 
+        <!-- duplication from maven-parent pom - temporary until they inherit properly
     -->
     <mailingList>
       <name>Maven Announcements List</name>
@@ -105,7 +105,7 @@ under the License.
       <artifactId>pmd</artifactId>
       <version>3.9</version>
       <exclusions>
-          <!-- 3.9 specifies a beta version of jaxen which doesn't have a pom resulting in 
+          <!-- 3.9 specifies a beta version of jaxen which doesn't have a pom resulting in
                 a warning whenever you use it.  Likewise for xom 1.0. -->
           <exclusion>
              <groupId>jaxen</groupId>
@@ -137,7 +137,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.0.4</version>
+      <version>1.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
