@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war.stub;
+package org.apache.maven.plugin.war.overlay;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,23 +19,29 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import java.io.File;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.war.Overlay;
 
-public class IncludeExcludeWarArtifactStub
-    extends WarArtifactStub
+/**
+ * A default overlay implementation based on an {@link Artifact}.
+ *
+ * @author Stephane Nicoll
+ */
+public class DefaultOverlay
+    extends Overlay
 {
-    public IncludeExcludeWarArtifactStub( String id )
-    {
-        super( id );
-    }
 
-    public String getArtifactId()
+    /**
+     * Creates an overlay for the specified artifact.
+     *
+     * @param a the artifact
+     */
+    public DefaultOverlay( Artifact a )
     {
-        return "war-include-exclude";
-    }
-
-    public File getFile()
-    {
-        return new File( basedir, "/target/test-classes/unit/sample_wars/include-exclude.war" );
+        super();
+        setGroupId( a.getGroupId() );
+        setArtifactId( a.getArtifactId() );
+        setClassifier( a.getClassifier() );
+        setArtifact( a );
     }
 }

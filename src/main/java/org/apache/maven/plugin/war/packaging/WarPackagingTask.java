@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war.stub;
+package org.apache.maven.plugin.war.packaging;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,23 +19,26 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import java.io.File;
+import org.apache.maven.plugin.MojoExecutionException;
 
-public class IncludeExcludeWarArtifactStub
-    extends WarArtifactStub
+/**
+ * The base packaging task.
+ *
+ * @author Stephane Nicoll
+ */
+public interface WarPackagingTask
 {
-    public IncludeExcludeWarArtifactStub( String id )
-    {
-        super( id );
-    }
 
-    public String getArtifactId()
-    {
-        return "war-include-exclude";
-    }
+    /**
+     * Performs the packaging for the specified task.
+     * <p/>
+     * The task is responsible to update the packaging context, namely
+     * with the files that have been copied.
+     *
+     * @param context the packaging context
+     * @throws MojoExecutionException if an error occured
+     */
+    void performPackaging(WarPackagingContext context) throws MojoExecutionException;
 
-    public File getFile()
-    {
-        return new File( basedir, "/target/test-classes/unit/sample_wars/include-exclude.war" );
-    }
+
 }

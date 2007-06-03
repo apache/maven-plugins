@@ -209,6 +209,14 @@ public abstract class AbstractWarMojo
     private String dependentWarExcludes;
 
     /**
+     * The overlays to apply.
+     *
+     * @parameter
+     * @since 2.1
+     */
+    private List overlays = new ArrayList();
+
+    /**
      * The maven archive configuration to use.
      *
      * @parameter
@@ -286,6 +294,20 @@ public abstract class AbstractWarMojo
     public void setOutputFileNameMapping( String outputFileNameMapping )
     {
         this.outputFileNameMapping = outputFileNameMapping;
+    }
+
+    public List getOverlays()
+    {
+        return overlays;
+    }
+
+    public void setOverlays( List overlays )
+    {
+        this.overlays = overlays;
+    }
+
+    public void addOverlay(Overlay overlay) {
+        overlays.add(overlay);
     }
 
     /**

@@ -19,23 +19,41 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import java.io.File;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
 
-public class IncludeExcludeWarArtifactStub
+/**
+ * 
+ *  stub for copy constructor
+ *  to preven the copy constructor frow blowing up
+ *
+ */
+public class WarArtifact4CCStub
     extends WarArtifactStub
 {
-    public IncludeExcludeWarArtifactStub( String id )
+    public WarArtifact4CCStub( String basedir )
     {
-        super( id );
+        super( basedir );
     }
 
-    public String getArtifactId()
+    public VersionRange getVersionRange()
     {
-        return "war-include-exclude";
+        return VersionRange.createFromVersion( getVersion() );
     }
 
-    public File getFile()
+    public String getGroupId()
     {
-        return new File( basedir, "/target/test-classes/unit/sample_wars/include-exclude.war" );
+        return "org.maven.plugin.test";
+    }
+
+    public String getClassifier()
+    {
+        return "testclassifier";
+    }
+
+    public ArtifactHandler getArtifactHandler()
+    {
+        return new DefaultArtifactHandler();
     }
 }

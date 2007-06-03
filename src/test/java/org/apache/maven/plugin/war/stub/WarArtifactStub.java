@@ -24,15 +24,16 @@ import java.io.File;
 /**
  * Stub
  */
-public class SimpleWarArtifactStub
+public class WarArtifactStub
     extends AbstractArtifactStub
 {
 
+    private String groupId;
     private String artifactId;
 
     private File file;
 
-    public SimpleWarArtifactStub( String _basedir )
+    public WarArtifactStub( String _basedir )
     {
         super( _basedir );
     }
@@ -59,6 +60,17 @@ public class SimpleWarArtifactStub
         artifactId = _artifactId;
     }
 
+
+    public String getGroupId()
+    {
+        return groupId;
+    }
+
+    public void setGroupId( String groupId )
+    {
+        this.groupId = groupId;
+    }
+
     public File getFile()
     {
         if ( file == null )
@@ -75,4 +87,6 @@ public class SimpleWarArtifactStub
     {
         file = _file;
     }
+
+
 }
