@@ -92,7 +92,7 @@ under the License.
     as well as being able to fail the build based on these metrics.
   </description>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <dependencies>
     <dependency>
