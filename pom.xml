@@ -1,22 +1,3 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -106,8 +87,6 @@ under the License.
     <module>maven-ear-plugin</module>
     <module>maven-eclipse-plugin</module>
     <module>maven-ejb-plugin</module>
-    <module>maven-enforcer-plugin</module>
-    <module>maven-gpg-plugin</module>
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
     <module>maven-install-plugin</module>
@@ -119,14 +98,12 @@ under the License.
     <module>maven-pmd-plugin</module>
     <module>maven-project-info-reports-plugin</module>
     <module>maven-rar-plugin</module>
-    <module>maven-remote-resources-plugin</module>
     <module>maven-repository-plugin</module>
     <module>maven-resources-plugin</module>
     <module>maven-site-plugin</module>
-    <module>maven-source-plugin</module>
-    <module>maven-stage-plugin</module>
-    <module>maven-verifier-plugin</module>
+    <module>maven-source-plugin</module>    
     <module>maven-war-plugin</module>
+    <module>maven-verifier-plugin</module>
   </modules>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
@@ -141,13 +118,6 @@ under the License.
           <version>2.0-beta-4</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-5</version>
-          <configuration>
-            <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/plugins/${artifactId}-${version}</stagingSiteURL>
           </configuration>
         </plugin>
       </plugins>
