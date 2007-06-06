@@ -111,6 +111,13 @@ under the License.
         <role>Korean translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Martin Vysny</name>
+      <email>mvy@whitestein.com</email>
+      <roles>
+        <role>Slovak translator</role>
+      </roles>
+    </contributor>
   </contributors>
   <properties>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
