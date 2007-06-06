@@ -509,7 +509,7 @@ public class EclipseToMavenMojo
             Map attributes = (Map) entry.getValue();
 
             String version = (String) attributes.get( Analyzer.BUNDLE_VERSION.toLowerCase() );
-            boolean optional = "optional".equals( attributes.get( "resolution" ) );
+            boolean optional = "optional".equals( attributes.get( "resolution:" ) );
 
             if ( version == null )
             {

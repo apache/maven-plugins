@@ -59,15 +59,22 @@ public class EclipseToMavenTest
         assertEquals( "org.eclipse", deps[0].getGroupId() );
         assertEquals( "ui", deps[0].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[0].getVersion() );
+        assertFalse( deps[0].isOptional() );
+
         assertEquals( "org.eclipse.ui", deps[1].getGroupId() );
         assertEquals( "console", deps[1].getArtifactId() );
         assertEquals( "[3.1.100,4.0.0)", deps[1].getVersion() );
+        assertTrue( deps[1].isOptional() );
+
         assertEquals( "org.eclipse", deps[2].getGroupId() );
         assertEquals( "help", deps[2].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[2].getVersion() );
+        assertFalse( deps[2].isOptional() );
+
         assertEquals( "org.eclipse.core", deps[3].getGroupId() );
         assertEquals( "expressions", deps[3].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[3].getVersion() );
+        assertFalse( deps[3].isOptional() );
     }
 
     /**
