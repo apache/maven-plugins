@@ -25,8 +25,6 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Common functionality for both exploded and packaged plugins.
  * 
@@ -110,13 +108,6 @@ public abstract class AbstractEclipseOsgiPlugin
         {
             return null;
         }
-
-        int separator = value.indexOf( ";" );
-        if ( separator > 0 )
-        {
-            value = StringUtils.substring( value, 0, separator );
-        }
-        value = StringUtils.trim( value );
 
         /* check the plugin properties for translations */
         if ( value.startsWith( "%" ) )
