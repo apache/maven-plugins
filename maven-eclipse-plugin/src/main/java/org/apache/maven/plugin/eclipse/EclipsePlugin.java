@@ -308,12 +308,33 @@ public class EclipsePlugin
     private EclipseConfigFile[] additionalConfig;
     
     /**
-     * If set to <tt>true</tt>, the version number of the artifact is appended
-     * to the name of the generated Eclipse project.
+     * If set to <code>true</code>, the version number of the artifact is appended
+     * to the name of the generated Eclipse project. See projectNameTemplate for other options.
      * 
      * @parameter expression="${eclipse.addVersionToProjectName}" default-value="false"
      */
     private boolean addVersionToProjectName;
+
+    /**
+     * If set to <code>true</code>, the groupId of the artifact is appended
+     * to the name of the generated Eclipse project. See projectNameTemplate for other options.
+     * 
+     * @parameter expression="${eclipse.addGroupIdToProjectName}" default-value="false"
+     */
+    private boolean addGroupIdToProjectName;
+
+    /**
+     * Allows configuring the name of the eclipse projects. This property wins over
+     * addVersionToProjectName and addGroupIdToProjectName
+     * 
+     * You can use <code>${groupId}</code>, <code>${artifactId}</code> and
+     * <code>${version}</code> variables.
+     * 
+     * eg. <code>${groupId}.${artifactId}-${version}</code>
+     * 
+     * @parameter expression="${eclipse.projectNameTemplate}" default-value="${artifactId}"
+     */
+    private String projectNameTemplate; 
 
     /**
      * Parsed wtp version.
@@ -511,6 +532,32 @@ public class EclipsePlugin
     public void setAddVersionToProjectName( boolean addVersionToProjectName )
     {
         this.addVersionToProjectName = addVersionToProjectName;
+    }
+
+    /**
+     * Getter for <code>addGroupIdToProjectName</code>.
+     */
+    public boolean isAddGroupIdToProjectName()
+    {
+        return addGroupIdToProjectName;
+    }
+    
+    /**
+     * Setter for <code>addGroupIdToProjectName</code>.
+     */
+    public void setAddGroupIdToProjectName( boolean addGroupIdToProjectName )
+    {
+        this.addGroupIdToProjectName = addGroupIdToProjectName;
+    }
+
+    public String getProjectNameTemplate()
+    {
+        return projectNameTemplate;
+    }
+
+    public void setProjectNameTemplate( String projectNameTemplate )
+    {
+        this.projectNameTemplate = projectNameTemplate;
     }
 
     /**
@@ -801,7 +848,31 @@ public class EclipsePlugin
 
         EclipseWriterConfig config = new EclipseWriterConfig();
 
-        config.setEclipseProjectName( IdeUtils.getProjectName( project, isAddVersionToProjectName() ) );
+        String projectName = null;
+        if ( getProjectNameTemplate() != null )
+        {
+            if (isAddVersionToProjectName() || isAddGroupIdToProjectName())
+            {
+                getLog().warn(
+                               "projectNameTemplate definition overrides "
+                                   + "addVersionToProjectName or addGroupIdToProjectName" );
+            }
+            projectName = IdeUtils.getProjectName( projectNameTemplate, project );
+        }
+        else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
+        {
+            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE, project );
+        }
+        else if ( isAddVersionToProjectName() )
+        {
+            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE, project );
+        }
+        else if ( isAddGroupIdToProjectName() )
+        {
+            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE, project );
+        }
+
+        config.setEclipseProjectName( projectName );
 
         Set convertedBuildCommands = new LinkedHashSet();
 
