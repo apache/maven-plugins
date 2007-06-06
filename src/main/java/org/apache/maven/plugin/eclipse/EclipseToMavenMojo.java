@@ -21,17 +21,11 @@ package org.apache.maven.plugin.eclipse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
@@ -50,11 +44,12 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.eclipse.osgiplugin.EclipseOsgiPlugin;
+import org.apache.maven.plugin.eclipse.osgiplugin.ExplodedPlugin;
+import org.apache.maven.plugin.eclipse.osgiplugin.PackagedPlugin;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.context.Context;
@@ -62,6 +57,8 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+
+import aQute.lib.osgi.Analyzer;
 
 /**
  * Add eclipse artifacts from an eclipse installation to the local repo. This mojo automatically analize the eclipse
@@ -191,9 +188,28 @@ public class EclipseToMavenMojo
         for ( int j = 0; j < files.length; j++ )
         {
             processSingleFile( files[j], remoteRepo );
-
         }
+    }
 
+    private EclipseOsgiPlugin getEclipsePlugin( File file )
+        throws MojoExecutionException
+    {
+        if ( file.isDirectory() )
+        {
+            return new ExplodedPlugin( file );
+        }
+        else if ( file.getName().endsWith( ".jar" ) )
+        {
+            try
+            {
+                return new PackagedPlugin( file );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to access jar " + file.getAbsolutePath(), e );
+            }
+        }
+        return null;
     }
 
     /**
@@ -208,112 +224,52 @@ public class EclipseToMavenMojo
 
         getLog().info( "Processing file " + file.getAbsolutePath() );
 
-        Manifest manifest = null;
-        Properties pluginProperties = new Properties();
-        boolean wasUnpacked = false;
+        EclipseOsgiPlugin plugin = getEclipsePlugin( file );
 
-        // package directories in a temp jar
-        if ( file.isDirectory() )
+        if ( plugin == null )
         {
-            try
-            {
-                File manifestFile = new File( file, "META-INF/MANIFEST.MF" );
-                if ( !manifestFile.exists() )
-                {
-                    getLog().warn(
-                                   "Plugin in folder " + file.getAbsolutePath()
-                                       + " does not have a manifest; skipping.." );
-                    return;
-                }
-
-                File tmpJar = File.createTempFile( "mvn-eclipse", null );
-                tmpJar.deleteOnExit();
-
-                JarArchiver jarArchiver = new JarArchiver();
-
-                jarArchiver.setDestFile( tmpJar );
-                jarArchiver.addDirectory( file );
-                jarArchiver.setManifest( manifestFile );
-                jarArchiver.createArchive();
-
-                file = tmpJar;
-                wasUnpacked = true;
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
-            }
-        }
-
-        if ( file.getName().endsWith( ".jar" ) || wasUnpacked )
-        {
-            try
-            {
-                // don't verify, jars created from unzipped plugin could have a bad signature
-                JarFile jar = new JarFile( file, false );
-                manifest = jar.getManifest();
-                pluginProperties = loadPluginProperties( jar );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to read manifest or plugin properties for "
-                    + file.getAbsolutePath() );
-            }
-        }
-        else
-        {
-            getLog().debug( "Ignoring file " + file.getAbsolutePath() );
+            getLog().warn( "Skipping file " + file.getAbsolutePath() );
             return;
         }
 
-        if ( manifest == null )
+        String name, bundleName, version, groupId, artifactId, requireBundle;
+        File jarFile;
+
+        try
         {
-            getLog().warn( "Jar " + file.getAbsolutePath() + " does not have a manifest; skipping.." );
-            return;
-        }
-
-        Attributes manifestEntries = manifest.getMainAttributes();
-
-        String bundleName = manifestEntries.getValue( "Bundle-SymbolicName" );
-
-        int separator = bundleName.indexOf( ";" );
-        if ( separator > 0 )
-        {
-            bundleName = StringUtils.substring( bundleName, 0, separator );
-        }
-        bundleName = StringUtils.trim( bundleName );
-
-        String version = manifestEntries.getValue( "Bundle-Version" );
-
-        if ( bundleName == null || version == null )
-        {
-            getLog().error( "Unable to read bundle name/version from manifest, skipping..." );
-            return;
-        }
-
-        version = osgiVersionToMavenVersion( version );
-
-        String name = manifestEntries.getValue( "Bundle-Name" );
-
-        // if Bundle-Name is %pluginName fetch the full name from plugin.properties
-        if ( name != null && name.startsWith( "%" ) )
-        {
-            String nameFromProperties = pluginProperties.getProperty( name.substring( 1 ) );
-            if ( nameFromProperties != null )
+            if ( !plugin.hasManifest() )
             {
-                name = nameFromProperties;
+                getLog().warn( "Plugin " + plugin + " does not have a manifest; skipping.." );
+                return;
             }
+
+            jarFile = plugin.getJarFile();
+
+            bundleName = plugin.getManifestAttribute( Analyzer.BUNDLE_SYMBOLICNAME );
+            version = plugin.getManifestAttribute( Analyzer.BUNDLE_VERSION );
+
+            if ( bundleName == null || version == null )
+            {
+                getLog().error( "Unable to read bundle name/version from manifest, skipping..." );
+                return;
+            }
+
+            version = osgiVersionToMavenVersion( version );
+
+            name = plugin.getManifestAttribute( Analyzer.BUNDLE_NAME );
+
+            requireBundle = plugin.getManifestAttribute( Analyzer.REQUIRE_BUNDLE );
+
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error processing plugin " + plugin, e );
         }
 
-        String requireBundle = manifestEntries.getValue( "Require-Bundle" );
         Dependency[] deps = parseDependencies( requireBundle );
 
-        String groupId = createGroupId( bundleName );
-        String artifactId = createArtifactId( bundleName );
+        groupId = createGroupId( bundleName );
+        artifactId = createArtifactId( bundleName );
 
         Model model = new Model();
         model.setModelVersion( "4.0.0" );
@@ -322,13 +278,7 @@ public class EclipseToMavenMojo
         model.setName( name );
         model.setVersion( version );
 
-        /* set the pom property to install unpacked if it was unpacked */
-        if ( wasUnpacked )
-        {
-            Properties properties = new Properties();
-            properties.setProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, Boolean.TRUE.toString() );
-            model.setProperties( properties );
-        }
+        model.setProperties( plugin.getPomProperties() );
 
         if ( groupId.startsWith( "org.eclipse" ) )
         {
@@ -386,12 +336,12 @@ public class EclipseToMavenMojo
             if ( remoteRepo != null )
             {
                 deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
-                deployer.deploy( file, artifact, remoteRepo, localRepository );
+                deployer.deploy( jarFile, artifact, remoteRepo, localRepository );
             }
             else
             {
                 installer.install( pomFile, pomArtifact, localRepository );
-                installer.install( file, artifact, localRepository );
+                installer.install( jarFile, artifact, localRepository );
             }
         }
         catch ( ArtifactDeploymentException e )
@@ -636,36 +586,6 @@ public class EclipseToMavenMojo
         matcher.appendTail( newVersionRange );
 
         return newVersionRange.toString();
-    }
-
-    /**
-     * Loads the plugin.properties file from a jar, usually needed in order to resolve the artifact name.
-     * @param file jar file
-     * @return loaded Properties (or an empty properties if no plugin.properties is found)
-     * @throws IOException for exceptions while reading the jar file
-     */
-    private Properties loadPluginProperties( JarFile file )
-        throws IOException
-    {
-        InputStream pluginPropertiesStream = null;
-        try
-        {
-            Properties pluginProperties = new Properties();
-            ZipEntry jarEntry = file.getEntry( "plugin.properties" );
-            if ( jarEntry != null )
-            {
-                pluginPropertiesStream = file.getInputStream( jarEntry );
-                pluginProperties.load( pluginPropertiesStream );
-            }
-            return pluginProperties;
-        }
-        finally
-        {
-            if ( pluginPropertiesStream != null )
-            {
-                pluginPropertiesStream.close();
-            }
-        }
     }
 
 }
