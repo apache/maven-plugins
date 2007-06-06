@@ -164,5 +164,11 @@ under the License.
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>biz.aQute</groupId>
+      <artifactId>bndlib</artifactId>
+      <version>0.0.145</version>
+    </dependency>
   </dependencies>
+
 </project>
