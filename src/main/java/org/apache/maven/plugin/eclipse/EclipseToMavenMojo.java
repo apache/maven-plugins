@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -245,7 +246,11 @@ public class EclipseToMavenMojo
 
             jarFile = plugin.getJarFile();
 
-            bundleName = plugin.getManifestAttribute( Analyzer.BUNDLE_SYMBOLICNAME );
+            Analyzer analyzer = new Analyzer();
+
+            Map bundleSymbolicNameHeader = analyzer.parseHeader( plugin
+                .getManifestAttribute( Analyzer.BUNDLE_SYMBOLICNAME ) );
+            bundleName = (String) bundleSymbolicNameHeader.keySet().iterator().next();
             version = plugin.getManifestAttribute( Analyzer.BUNDLE_VERSION );
 
             if ( bundleName == null || version == null )
@@ -492,43 +497,19 @@ public class EclipseToMavenMojo
 
         List dependencies = new ArrayList();
 
-        // first split
-        String[] splitAtComma = StringUtils.split( requireBundle, "," );
-        ArrayList bundles = new ArrayList();
+        Analyzer analyzer = new Analyzer();
 
-        // not so easy, comma can also be contained in quoted string... find them and concatenate them back
-        for ( int j = 0; j < splitAtComma.length; j++ )
-        {
-            String string = splitAtComma[j];
-            if ( StringUtils.countMatches( string, "\"" ) % 2 != 0 )
-            {
-                j++;
-                bundles.add( string + "," + splitAtComma[j] );
-                continue;
-            }
-            bundles.add( string );
-        }
+        Map requireBundleHeader = analyzer.parseHeader( requireBundle );
 
         // now iterates on bundles and extract dependencies
-        for ( Iterator iter = bundles.iterator(); iter.hasNext(); )
+        for ( Iterator iter = requireBundleHeader.entrySet().iterator(); iter.hasNext(); )
         {
-            String[] bundleTokens = StringUtils.split( (String) iter.next(), ";" );
+            Map.Entry entry = (Map.Entry) iter.next();
+            String bundleName = (String) entry.getKey();
+            Map attributes = (Map) entry.getValue();
 
-            String bundleName = bundleTokens[0];
-            String version = null;
-            boolean optional = false;
-            for ( int k = 1; k < bundleTokens.length; k++ )
-            {
-                String string = bundleTokens[k];
-                if ( string.startsWith( "bundle-version=" ) )
-                {
-                    version = StringUtils.strip( StringUtils.substring( string, string.indexOf( "=" ) + 1 ), "\"" );
-                }
-                else if ( string.equalsIgnoreCase( "resolution:=optional" ) )
-                {
-                    optional = true;
-                }
-            }
+            String version = (String) attributes.get( Analyzer.BUNDLE_VERSION.toLowerCase() );
+            boolean optional = "optional".equals( attributes.get( "resolution" ) );
 
             if ( version == null )
             {
