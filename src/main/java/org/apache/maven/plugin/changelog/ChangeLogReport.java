@@ -1124,8 +1124,6 @@ public class ChangeLogReport
      */
     private void sinkLogFile( Sink sink, String name, String revision )
     {
-        sink.paragraph();
-
         try
         {
             String connection = getConnection();
@@ -1139,7 +1137,7 @@ public class ChangeLogReport
             sink.text( name + " v " + revision );
         }
 
-        sink.paragraph_();
+        sink.lineBreak();
     }
 
     /**
