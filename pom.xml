@@ -171,5 +171,10 @@
 		    <artifactId>maven-dependency-analyzer</artifactId>
 		    <version>1.0-alpha-3-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-dependency-tree</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>
