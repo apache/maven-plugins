@@ -70,6 +70,9 @@ Maven Dependency Plugin
   *{{{analyze-mojo.html}dependency:analyze}} analyzes your project's dependencies and lists dependencies that should be declared, but are not, and dependencies that are declared but unused.
   
   *{{{analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches between resolved dependencies and those listed in your dependencyManagement section.
+
+  *{{{tree-mojo.html}dependency:tree}} prints out the dependency tree for the project.
+  
   []
 
 * Usage
@@ -101,5 +104,6 @@ Maven Dependency Plugin
   * {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}Dependency Mechanism}}
 
   []
+
 
 

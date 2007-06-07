@@ -602,3 +602,19 @@ mvn dependency:analyze-dep-mgt
 [WARNING] Potential problems found in Dependency Management
 +---+
  
+* The <<<dependency:tree>>> Mojo
+
+	This mojo is used to view the dependency hierarchy of the project currently being built.
+	It will output the resolved tree of dependencies that the Maven build process actually uses.
+
+	This mojo can be executed from the command line:
+
++-----+
+mvn dependency:tree
++-----+
+
+	Optionally, the <<<output>>> parameter can be specified to divert the output to a file:
+
++-----+
+mvn dependency:tree -Doutput=/path/to/file
++-----+
