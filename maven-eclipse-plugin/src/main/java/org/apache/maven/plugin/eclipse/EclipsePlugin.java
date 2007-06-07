@@ -870,6 +870,9 @@ public class EclipsePlugin
         else if ( isAddGroupIdToProjectName() )
         {
             IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE, project );
+        } else
+        {
+            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, project );
         }
 
         config.setEclipseProjectName( projectName );
