@@ -68,7 +68,11 @@ public class AbstractDependencyMojoTestCase
                 fail( "Trying to remove directory:" + testDir + "\r\n" + e.toString() );
             }
             assertFalse( testDir.exists() );
+            
+            testDir = null;
         }
+        
+        stubFactory = null;
     }
 
 }
