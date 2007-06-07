@@ -77,6 +77,13 @@ public class TestUnpackDependenciesMojo
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
     }
+    
+    protected void tearDown()
+    {
+        super.tearDown();
+        
+        mojo = null;
+    }
 
     public void assertUnpacked( Artifact artifact )
     {
