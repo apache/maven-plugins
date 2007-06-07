@@ -93,6 +93,13 @@ public class IdeDependency
     private boolean osgiBundle;
 
     /**
+     * Creates an uninitialized instance
+     */
+    public IdeDependency()
+    {
+    }
+
+    /**
      * 
      * @param groupId Group id
      * @param artifactId Artifact id

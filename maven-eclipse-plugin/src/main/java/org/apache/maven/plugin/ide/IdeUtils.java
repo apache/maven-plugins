@@ -377,9 +377,9 @@ public class IdeUtils
     private static String getProjectName( String template, String groupId, String artifactId, String version )
     {
         String s = template;
-        s = s.replaceAll( "${groupId}", groupId );
-        s = s.replaceAll( "${artifactId}", artifactId );
-        s = s.replaceAll( "${version}", version );
+        s = s.replaceAll( "\\$\\{groupId\\}", groupId );
+        s = s.replaceAll( "\\$\\{artifactId\\}", artifactId );
+        s = s.replaceAll( "\\$\\{version\\}", version );
         return s;
     }
 
