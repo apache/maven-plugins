@@ -851,7 +851,7 @@ public class EclipsePlugin
         String projectName = null;
         if ( getProjectNameTemplate() != null )
         {
-            if (isAddVersionToProjectName() || isAddGroupIdToProjectName())
+            if ( isAddVersionToProjectName() || isAddGroupIdToProjectName() )
             {
                 getLog().warn(
                                "projectNameTemplate definition overrides "
@@ -861,18 +861,19 @@ public class EclipsePlugin
         }
         else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
         {
-            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE, project );
+            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE, project );
         }
         else if ( isAddVersionToProjectName() )
         {
-            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE, project );
+            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE, project );
         }
         else if ( isAddGroupIdToProjectName() )
         {
-            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE, project );
-        } else
+            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE, project );
+        }
+        else
         {
-            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, project );
+            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, project );
         }
 
         config.setEclipseProjectName( projectName );
