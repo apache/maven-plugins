@@ -49,11 +49,6 @@
       <artifactId>maven-plugin-descriptor</artifactId>
       <version>2.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-dependency-tree</artifactId>
-      <version>1.0-alpha-2</version>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>
@@ -64,4 +59,5 @@
     </plugins>
   </reporting>
 </project>
+
 
