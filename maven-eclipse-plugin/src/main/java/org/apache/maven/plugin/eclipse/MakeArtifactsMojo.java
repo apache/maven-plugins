@@ -18,8 +18,11 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -62,6 +65,14 @@ public class MakeArtifactsMojo
      */
     private String forcedQualifier;
 
+    /**
+     * Resolve version ranges in generated pom dependencies to versions of the other plugins being
+     * converted
+     * 
+     * @parameter expression="${resolveVersionRanges}" default-value="true"
+     */
+    private boolean resolveVersionRanges = true;
+
     protected String osgiVersionToMavenVersion( String version )
     {
         return osgiVersionToMavenVersion( version, forcedQualifier, stripQualifier );
@@ -99,5 +110,18 @@ public class MakeArtifactsMojo
     protected String createArtifactId( String bundleName )
     {
         return bundleName;
+    }
+
+    protected void resolveVersionRanges( Model model, Map models )
+        throws MojoFailureException
+    {
+        if ( resolveVersionRanges )
+        {
+            super.resolveVersionRanges( model, models );
+        }
+        else
+        {
+            // do nothing
+        }
     }
 }
