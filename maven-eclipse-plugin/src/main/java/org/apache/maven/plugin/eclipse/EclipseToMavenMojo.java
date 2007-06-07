@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -186,12 +187,99 @@ public class EclipseToMavenMojo
             getLog().info( "Will deploy artifacts to remote repository " + deployTo );
         }
 
+        Map plugins = new HashMap();
+        Map models = new HashMap();
+
         for ( int j = 0; j < files.length; j++ )
         {
-            processSingleFile( files[j], remoteRepo );
+            File file = files[j];
+
+            getLog().info( "Processing file " + file.getAbsolutePath() );
+
+            EclipseOsgiPlugin plugin = getEclipsePlugin( file );
+
+            if ( plugin == null )
+            {
+                getLog().warn( "Skipping file " + file.getAbsolutePath() );
+                continue;
+            }
+
+            Model model = createModel( plugin );
+
+            if ( model == null )
+            {
+                continue;
+            }
+
+            if ( plugins.containsKey( getKey( model ) ) )
+            {
+                throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: "
+                    + getKey( model ) );
+            }
+
+            plugins.put( getKey( model ), plugin );
+            models.put( getKey( model ), model );
+        }
+
+        for ( Iterator it = plugins.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
+            Model model = (Model) models.get( key );
+            resolveVersionRanges( model, models );
+            writeArtifact( plugin, model, remoteRepo );
         }
     }
 
+    private String getKey(Model model)
+    {
+        return model.getGroupId() + "." + model.getArtifactId();
+    }
+
+    private String getKey(Dependency dependency)
+    {
+        return dependency.getGroupId() + "." + dependency.getArtifactId();
+    }
+
+    /**
+     * Resolve version ranges in the model provided, overriding version ranges with versions from
+     * the dependency in the provided map of models.
+     * 
+     * TODO doesn't check if the version is in range, it just overwrites it
+     * 
+     * @param model
+     * @param models
+     * @throws MojoFailureException
+     */
+    protected void resolveVersionRanges( Model model, Map models )
+        throws MojoFailureException
+    {
+        for ( Iterator it = model.getDependencies().iterator(); it.hasNext(); )
+        {
+            Dependency dep = (Dependency) it.next();
+            if ( dep.getVersion().contains( "[" ) || dep.getVersion().contains( "(" ) )
+            {
+                String key = getKey( model );
+                Model dependencyModel = (Model) models.get( getKey( dep ) );
+                if ( dependencyModel != null )
+                {
+                    dep.setVersion( dependencyModel.getVersion() );
+                }
+                else
+                {
+                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep
+                        + " in project " + key );
+                }
+            }
+        }
+    }
+
+    /**
+     * Get a {@link EclipseOsgiPlugin} object from a plugin jar/dir found in the target dir.
+     * 
+     * @param file plugin jar or dir
+     * @throws MojoExecutionException if anything bad happens while parsing files
+     */
     private EclipseOsgiPlugin getEclipsePlugin( File file )
         throws MojoExecutionException
     {
@@ -210,41 +298,29 @@ public class EclipseToMavenMojo
                 throw new MojoExecutionException( "Unable to access jar " + file.getAbsolutePath(), e );
             }
         }
+
         return null;
     }
 
     /**
-     * Process a single plugin jar/dir found in the target dir.
-     * @param file plugin jar or dir
-     * @param remoteRepo remote repository (if set)
+     * Create the {@link Model} from a plugin manifest
+     * 
+     * @param plugin Eclipse plugin jar or dir
      * @throws MojoExecutionException if anything bad happens while parsing files
      */
-    private void processSingleFile( File file, ArtifactRepository remoteRepo )
+    private Model createModel( EclipseOsgiPlugin plugin )
         throws MojoExecutionException
     {
 
-        getLog().info( "Processing file " + file.getAbsolutePath() );
-
-        EclipseOsgiPlugin plugin = getEclipsePlugin( file );
-
-        if ( plugin == null )
-        {
-            getLog().warn( "Skipping file " + file.getAbsolutePath() );
-            return;
-        }
-
         String name, bundleName, version, groupId, artifactId, requireBundle;
-        File jarFile;
 
         try
         {
             if ( !plugin.hasManifest() )
             {
                 getLog().warn( "Plugin " + plugin + " does not have a manifest; skipping.." );
-                return;
+                return null;
             }
-
-            jarFile = plugin.getJarFile();
 
             Analyzer analyzer = new Analyzer();
 
@@ -256,7 +332,7 @@ public class EclipseToMavenMojo
             if ( bundleName == null || version == null )
             {
                 getLog().error( "Unable to read bundle name/version from manifest, skipping..." );
-                return;
+                return null;
             }
 
             version = osgiVersionToMavenVersion( version );
@@ -312,11 +388,26 @@ public class EclipseToMavenMojo
 
         }
 
+        return model;
+    }
+    
+    /**
+     * Writes the artifact to the repo
+     * 
+     * @param model
+     * @param remoteRepo remote repository (if set)
+     * @throws MojoExecutionException
+     */
+    private void writeArtifact( EclipseOsgiPlugin plugin, Model model, ArtifactRepository remoteRepo )
+        throws MojoExecutionException
+    {
         FileWriter fw = null;
         ArtifactMetadata metadata = null;
         File pomFile = null;
-        Artifact pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
-        Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
+        Artifact pomArtifact = artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model
+            .getVersion(), null, "pom" );
+        Artifact artifact = artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model
+            .getVersion(), null, "jar" );
         try
         {
             pomFile = File.createTempFile( "pom-", ".xml" );
@@ -338,6 +429,8 @@ public class EclipseToMavenMojo
 
         try
         {
+            File jarFile = plugin.getJarFile();
+
             if ( remoteRepo != null )
             {
                 deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
@@ -356,6 +449,10 @@ public class EclipseToMavenMojo
         catch ( ArtifactInstallationException e )
         {
             throw new MojoExecutionException( "Unable to install artifact to repository.", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error getting the jar file for plugin " + plugin, e );
         }
         finally
         {
