@@ -578,8 +578,10 @@ public class EclipsePlugin
         ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
 
         // ear projects don't contain java sources
-        isJavaProject = Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() )
-            && !Constants.PROJECT_PACKAGING_EAR.equals( packaging );
+        // pde projects are always java projects
+        isJavaProject = pde
+            || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR
+                .equals( packaging ) );
 
         setupExtras();
 
