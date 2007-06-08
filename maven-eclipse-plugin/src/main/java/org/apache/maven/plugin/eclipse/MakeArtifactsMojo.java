@@ -69,9 +69,9 @@ public class MakeArtifactsMojo
      * Resolve version ranges in generated pom dependencies to versions of the other plugins being
      * converted
      * 
-     * @parameter expression="${resolveVersionRanges}" default-value="true"
+     * @parameter expression="${resolveVersionRanges}" default-value="false"
      */
-    private boolean resolveVersionRanges = true;
+    private boolean resolveVersionRanges;
 
     protected String osgiVersionToMavenVersion( String version )
     {
