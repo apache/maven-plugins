@@ -78,8 +78,8 @@ public class TestBuildClasspathMojo
         assertNotNull( file );
         assertTrue( file.length() > 0 );
 
-        assertTrue(file.contains( File.pathSeparator ));
-        assertTrue(file.contains( File.separator ));
+        assertTrue(file.indexOf( File.pathSeparator ) >= 0 );
+        assertTrue(file.indexOf( File.separator ) >= 0 );
         
         String fileSep = "#####";
         String pathSep = "%%%%%";
@@ -92,10 +92,10 @@ public class TestBuildClasspathMojo
         assertNotNull( file );
         assertTrue( file.length() > 0 );
 
-        assertFalse(file.contains( File.pathSeparator ));
-        assertFalse(file.contains( File.separator ));
-        assertTrue(file.contains( fileSep ));
-        assertTrue(file.contains( pathSep ));
+        assertFalse(file.indexOf( File.pathSeparator ) >= 0 );
+        assertFalse(file.indexOf( File.separator ) >= 0 );
+        assertTrue(file.indexOf( fileSep ) >= 0 );
+        assertTrue(file.indexOf( pathSep ) >= 0 );
     }
 
 }
