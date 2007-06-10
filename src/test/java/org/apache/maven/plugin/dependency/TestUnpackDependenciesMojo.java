@@ -737,6 +737,8 @@ public class TestUnpackDependenciesMojo
         mojo.execute();
 
         assertTrue( time != unpackedFile.lastModified() );
+        
+        System.gc();
     }
 
     public void assertUnpacked( Artifact artifact, boolean overWrite )
