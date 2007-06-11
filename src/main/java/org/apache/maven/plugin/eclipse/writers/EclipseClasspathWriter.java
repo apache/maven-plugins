@@ -23,9 +23,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.BuildCommand;
@@ -328,14 +330,20 @@ public class EclipseClasspathWriter
         // ----------------------------------------------------------------------
         // The dependencies
         // ----------------------------------------------------------------------
-
+        Set addedDependencies = new HashSet();
         for ( int j = 0; j < config.getDeps().length; j++ )
         {
             IdeDependency dep = config.getDeps()[j];
 
             if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, dep );
+                String depId = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getVersion();
+                /* avoid duplicates in the classpath for artifacts with different types (like ejbs) */
+                if ( !addedDependencies.contains( depId ) )
+                {
+                    addDependency( writer, dep );
+                    addedDependencies.add( depId );
+                }
             }
         }
 
