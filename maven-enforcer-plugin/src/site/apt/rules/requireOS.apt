@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  Mar 2007
+  June 2007
   ------
 
 Require OS Version
@@ -30,6 +30,8 @@ Require OS Version
 
 
    The following parameters are supported by this rule:
+
+   * message - an optional message to the user if the rule fails.
    
    * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#arch}arch}} - the cpu architecture.
    

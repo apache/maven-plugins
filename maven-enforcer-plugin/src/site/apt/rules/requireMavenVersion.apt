@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  Mar 2007
+  June 2007
   ------
 
 Require Maven Version
@@ -28,6 +28,8 @@ Require Maven Version
    This rule enforces certain Maven versions. The rule uses the {{{versionRanges.html}Enforcer version range syntax}} to define allowed versions.
 
    The following parameters are supported by this rule:
+   
+   * message - an optional message to the user if the rule fails.
    
    * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{versionRanges.html}range}} of allowed Maven versions.
    

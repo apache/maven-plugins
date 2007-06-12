@@ -36,12 +36,14 @@ import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * This rule checks that the OS is allowed by combinations of family, name,
- * version and cpu architecture. The behavior is exactly the same as the Maven
- * Os profile activation so the same values are allowed here.
+ * This rule checks that the OS is allowed by combinations
+ * of family, name, version and cpu architecture. The
+ * behavior is exactly the same as the Maven Os profile
+ * activation so the same values are allowed here.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
+ * @version $Id: RequireOS.java 524303 2007-03-30 22:59:32Z
+ *          brianf $
  */
 public class RequireOS
     implements EnforcerRule
@@ -79,6 +81,12 @@ public class RequireOS
      * Runtime information containing Maven Version.
      */
     public String arch = null;
+
+    /**
+     * Specify an optional message to the user if the rule
+     * fails.
+     */
+    public String message = "";
 
     /**
      * Display detected OS information.
@@ -124,12 +132,14 @@ public class RequireOS
         {
             if ( !isAllowed() )
             {
-                String msg = ( "OS Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
-                    + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION + " is not allowed by"
-                    + ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" )
-                    + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
-
-                throw new EnforcerRuleException( msg );
+                if ( StringUtils.isEmpty( message ) )
+                {
+                    message = ( "OS Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
+                        + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION + " is not allowed by"
+                        + ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" )
+                        + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
+                }
+                throw new EnforcerRuleException( message );
             }
         }
         else
@@ -186,8 +196,9 @@ public class RequireOS
     }
 
     /**
-     * Helper method to determine if the current OS is allowed based on the
-     * injected values for family, name, version and arch.
+     * Helper method to determine if the current OS is
+     * allowed based on the injected values for family,
+     * name, version and arch.
      * 
      * @return true if the version is allowed.
      */
@@ -199,8 +210,8 @@ public class RequireOS
     }
 
     /**
-     * Helper method to check that at least one of family, name, version or arch
-     * is set.
+     * Helper method to check that at least one of family,
+     * name, version or arch is set.
      * 
      * @return true if all parameters are empty.
      */
@@ -212,9 +223,11 @@ public class RequireOS
     }
 
     /**
-     * Creates a Profile object that contains the activation information
+     * Creates a Profile object that contains the activation
+     * information
      * 
-     * @return a properly populated profile to be used for OS validation.
+     * @return a properly populated profile to be used for
+     *         OS validation.
      */
     private Profile createProfile()
     {
@@ -224,7 +237,8 @@ public class RequireOS
     }
 
     /**
-     * Creates an Activation object that contains the ActivationOS information.
+     * Creates an Activation object that contains the
+     * ActivationOS information.
      * 
      * @return a properly populated Activation object.
      */
@@ -237,7 +251,8 @@ public class RequireOS
     }
 
     /**
-     * Creates an ActivationOS object containing family, name, version and arch.
+     * Creates an ActivationOS object containing family,
+     * name, version and arch.
      * 
      * @return a properly populated ActivationOS object.
      */
@@ -254,7 +269,8 @@ public class RequireOS
     }
 
     /**
-     * Helper method to check if the given family is in the following list:
+     * Helper method to check if the given family is in the
+     * following list:
      * <ul>
      * <li>dos</li>
      * <li>mac</li>
@@ -268,11 +284,10 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      * 
-     * Note: '!' is allowed at the beginning of the string and still considered
-     * valid.
+     * Note: '!' is allowed at the beginning of the string
+     * and still considered valid.
      * 
-     * @param theFamily
-     *            the family to check.
+     * @param theFamily the family to check.
      * @return true if one of the valid families.
      */
     public boolean isValidFamily( String theFamily )
@@ -293,8 +308,7 @@ public class RequireOS
     }
 
     /**
-     * @param theArch
-     *            the arch to set
+     * @param theArch the arch to set
      */
     public void setArch( String theArch )
     {
@@ -310,8 +324,7 @@ public class RequireOS
     }
 
     /**
-     * @param theFamily
-     *            the family to set
+     * @param theFamily the family to set
      */
     public void setFamily( String theFamily )
     {
@@ -327,8 +340,7 @@ public class RequireOS
     }
 
     /**
-     * @param theName
-     *            the name to set
+     * @param theName the name to set
      */
     public void setName( String theName )
     {
@@ -344,8 +356,7 @@ public class RequireOS
     }
 
     /**
-     * @param theVersion
-     *            the version to set
+     * @param theVersion the version to set
      */
     public void setVersion( String theVersion )
     {
@@ -361,8 +372,7 @@ public class RequireOS
     }
 
     /**
-     * @param theValidFamilies
-     *            the validFamilies to set
+     * @param theValidFamilies the validFamilies to set
      */
     public void setValidFamilies( Set theValidFamilies )
     {
