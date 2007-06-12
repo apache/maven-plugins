@@ -73,13 +73,6 @@ public class ApplyPatchesMojo extends AbstractPatchMojo
     private File patchSourceDir;
 
     /**
-     * The list of patch files (relative to 'patchSourceDir') which should be applied.
-     *
-     * @parameter
-     */
-    private List patches;
-
-    /**
      * The single patch file to apply. Mutually exclusive with 'patches'.
      *
      * @parameter
@@ -128,6 +121,8 @@ public class ApplyPatchesMojo extends AbstractPatchMojo
         }
 
         Map patchCommandsByFileName = new LinkedHashMap();
+
+        List patches = getPatches();
 
         if ( patchFile != null )
         {
