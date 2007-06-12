@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
@@ -44,6 +45,13 @@ public class EnforcerTestUtils
         MavenSession session = getMavenSession();
         ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
                                                                     new MockProject() );
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
+    }
+    
+    public static EnforcerRuleHelper getHelper(MavenProject project) {
+        MavenSession session = getMavenSession();
+        ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
+        															project );
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
     }
 }
