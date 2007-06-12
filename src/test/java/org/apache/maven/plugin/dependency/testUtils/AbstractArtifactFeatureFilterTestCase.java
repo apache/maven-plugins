@@ -103,7 +103,7 @@ public abstract class AbstractArtifactFeatureFilterTestCase
         AbstractArtifactFeatureFilter filter = (AbstractArtifactFeatureFilter) createObjectViaReflection( filterClass,
                                                                                                           conArgs );
         Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        assertEquals( 1, result.size() );
         return result;
     }
 

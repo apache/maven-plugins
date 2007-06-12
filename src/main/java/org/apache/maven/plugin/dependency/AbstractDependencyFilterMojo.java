@@ -71,7 +71,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma Separated list of Types to exclude. Empty String indicates don't
-     * exclude anything (default). Ignored if includeTypes is used.
+     * exclude anything (default).
      * 
      * @since 2.0
      * @parameter expression="${excludeTypes}" default-value=""
@@ -89,8 +89,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeScope;
 
     /**
-     * Scope to exclude. An Empty string indicates no scopes (default). Ignored
-     * if includeScope is used.
+     * Scope to exclude. An Empty string indicates no scopes (default).
      * 
      * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
@@ -110,7 +109,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma Separated list of Classifiers to exclude. Empty String indicates
-     * don't exclude anything (default). Ignored if includeClassifiers is used.
+     * don't exclude anything (default).
      * 
      * @since 2.0
      * @parameter expression="${excludeClassifiers}" default-value=""
@@ -138,8 +137,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String type;
 
     /**
-     * Comma Seperated list of Artifact names too exclude. Ignored if
-     * includeArtifacts is used.
+     * Comma separated list of Artifact names too exclude.
      * 
      * @since 2.0
      * @optional
@@ -148,7 +146,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeArtifactIds;
 
     /**
-     * Comma Seperated list of Artifact names to include.
+     * Comma separated list of Artifact names to include.
      * 
      * @since 2.0
      * @optional
@@ -157,8 +155,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeArtifactIds;
 
     /**
-     * Comma Seperated list of GroupId Names to exclude. Ignored if
-     * includeGroupsIds is used.
+     * Comma separated list of GroupId Names to exclude.
      * 
      * @since 2.0
      * @optional
@@ -167,7 +164,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeGroupIds;
 
     /**
-     * Comma Seperated list of GroupIds to include.
+     * Comma separated list of GroupIds to include.
      * 
      * @since 2.0
      * @optional
