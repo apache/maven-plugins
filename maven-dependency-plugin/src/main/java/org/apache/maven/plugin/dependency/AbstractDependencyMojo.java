@@ -235,13 +235,6 @@ public abstract class AbstractDependencyMojo
         {
             throw new MojoExecutionException( "Unknown archiver type", e );
         }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-            throw new MojoExecutionException( "Error unpacking file: "
-                + ( this.outputAbsoluteArtifactFilename ? file.getAbsolutePath() : file.getName() ) + " to: "
-                + location + "\r\n" + e.toString(), e );
-        }
         catch ( ArchiverException e )
         {
             e.printStackTrace();
