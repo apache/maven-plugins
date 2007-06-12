@@ -61,7 +61,7 @@ public class TestArtifactFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getArtifactId().equals( "one" ) || artifact.getArtifactId().equals( "two" ) );
+            assertTrue( artifact.getArtifactId().equals( "two" ));
         }
     }
 

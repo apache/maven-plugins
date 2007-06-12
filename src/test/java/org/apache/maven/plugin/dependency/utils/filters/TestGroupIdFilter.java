@@ -95,7 +95,7 @@ public class TestGroupIdFilter
         SilentLog log = new SilentLog();
         // include o* from groupIds one,two should leave one
         Set result = filtering();
-        assertTrue( result.size() == 2 );
+        assertEquals( 1, result.size());
         GroupIdFilter filter = new GroupIdFilter( "o", null );
         result = filter.filter( result, log );
         Iterator iter = result.iterator();
@@ -108,7 +108,7 @@ public class TestGroupIdFilter
 
         // exclude on* from groupIds one,two should leave two
         result = filtering();
-        assertTrue( result.size() == 2 );
+        assertEquals(1, result.size());
         filter = new GroupIdFilter( null, "on" );
         result = filter.filter( result, log );
         iter = result.iterator();
