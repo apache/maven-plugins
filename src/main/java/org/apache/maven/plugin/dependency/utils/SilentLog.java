@@ -181,4 +181,13 @@ public class SilentLog
         // TODO Auto-generated method stub
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see org.codehaus.plexus.logging.Logger#setThreshold(int)
+     */
+    public void setThreshold( int theThreshold )
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }
