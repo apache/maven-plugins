@@ -153,6 +153,8 @@ public class MockProject
     private String defaultGoal;
 
     private Set artifacts;
+    
+    private Properties properties = new Properties();
 
     public MockProject()
     {
@@ -999,7 +1001,12 @@ public class MockProject
 
     public Properties getProperties()
     {
-        return new Properties();
+        return this.properties;
+    }
+    
+    public void setProperty(String key, String value) 
+    {
+    	properties.setProperty(key, value);
     }
 
     public List getFilters()
