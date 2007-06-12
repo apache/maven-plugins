@@ -157,7 +157,9 @@ mvn dependency:copy
    <<<mvn dependency:copy-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and copy them.
 
-   	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. NOTE: If you mix includes and excludes of the same category (ie scope), then only the includes will be used.
+   	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
+   	
+   	NOTE: As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
    See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
@@ -305,7 +307,9 @@ mvn dependency:unpack
    <<<mvn dependency:unpack-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and unpack them.
    
-      	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. NOTE: If you mix includes and excludes of the same category (ie scope), then only the includes will be used.
+      	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
+      	
+      	NOTE: As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
    See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
                                       

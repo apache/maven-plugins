@@ -173,8 +173,8 @@ public class TestCopyDependenciesMojo
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeTypes = "jar";
-        // if include is used, exclude should be ignored.
         mojo.excludeTypes = "jar";
+        //shouldn't get anything.
 
         mojo.execute();
 
@@ -184,10 +184,23 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
+            assertFalse(file.exists() );
+        }
+        
+        mojo.excludeTypes = "";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), file.exists() );
         }
     }
 
+    
     public void testExcludeArtifactId()
         throws Exception
     {
@@ -213,12 +226,24 @@ public class TestCopyDependenciesMojo
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeArtifactIds = "one";
-        // if include is used, exclude should be ignored.
         mojo.excludeArtifactIds = "one";
-
+        //shouldn't get anything
+        
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertFalse( file.exists() );
+        }
+        
+        mojo.excludeArtifactIds = "";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -234,8 +259,8 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeGroupIds = "one";
-        // if include is used, exclude should be ignored.
         mojo.excludeGroupIds = "one";
+        //shouldn't get anything
 
         mojo.execute();
 
@@ -245,8 +270,21 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
+            assertFalse(file.exists() );
+        }
+        
+        mojo.excludeGroupIds = "";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getGroupId().equals( "one" ), file.exists() );
         }
+
     }
 
     public void testExcludeGroupId()
@@ -311,8 +349,8 @@ public class TestCopyDependenciesMojo
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeClassifiers = "one";
-        // if include is used, exclude should be ignored.
         mojo.excludeClassifiers = "one";
+        //shouldn't get anything
 
         mojo.execute();
 
@@ -322,8 +360,21 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
+            assertFalse( file.exists() );
+        }
+        
+        mojo.excludeClassifiers = "";
+        mojo.execute();
+
+         iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
             assertEquals( artifact.getClassifier().equals( "one" ), file.exists() );
         }
+
     }
 
     public void testSubPerType()
