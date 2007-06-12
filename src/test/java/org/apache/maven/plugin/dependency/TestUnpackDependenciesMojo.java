@@ -256,12 +256,23 @@ public class TestUnpackDependenciesMojo
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeTypes = "jar";
-        // if include is used, exclude should be ignored.
         mojo.excludeTypes = "jar";
+        //shouldn't get anything
 
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+
+            assertUnpacked( false, artifact );
+        }
+        
+        mojo.excludeTypes = "";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -442,17 +453,26 @@ public class TestUnpackDependenciesMojo
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeArtifactIds = "one";
-        // if include is used, exclude should be ignored.
         mojo.excludeArtifactIds = "one";
-
+        //shouldn't get anything
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( false, artifact );
+        }
+        mojo.excludeArtifactIds ="";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
             assertUnpacked( artifact.getArtifactId().equals( "one" ), artifact );
         }
+
     }
 
     public void testExcludeArtifactId()
@@ -496,9 +516,9 @@ public class TestUnpackDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeGroupIds = "one";
-        // if include is used, exclude should be ignored.
         mojo.excludeGroupIds = "one";
-
+        //shouldn't get anything
+        
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
@@ -506,8 +526,20 @@ public class TestUnpackDependenciesMojo
         {
             Artifact artifact = (Artifact) iter.next();
             // Testing with artifact id because group id is not in filename
+            assertUnpacked( false, artifact );
+        }
+        
+        mojo.excludeGroupIds = "";
+        mojo.execute();
+
+        iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            // Testing with artifact id because group id is not in filename
             assertUnpacked( artifact.getGroupId().equals( "one" ), artifact );
         }
+        
     }
 
     public void testCDMClassifier()

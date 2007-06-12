@@ -30,11 +30,13 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * This is the common base class of ClassifierFilter and TypeFilter
+ * This is the common base class of ClassifierFilter and
+ * TypeFilter
  * 
- * @author <a href="richardv@mxtelecom.com">Richard van der Hoff</a>
- * @version $Id: AbstractArtifactFeatureFilter.java 522374 2007-03-25 22:58:03Z
- *          brianf $
+ * @author <a href="richardv@mxtelecom.com">Richard van der
+ *         Hoff</a>
+ * @version $Id: AbstractArtifactFeatureFilter.java 522374
+ *          2007-03-25 22:58:03Z brianf $
  */
 public abstract class AbstractArtifactFeatureFilter
     extends AbstractArtifactsFilter
@@ -42,18 +44,27 @@ public abstract class AbstractArtifactFeatureFilter
     /** The list of types or classifiers to include */
     private List includes;
 
-    /** The list of types or classifiers to exclude (ignored if includes != null) */
+    /**
+     * The list of types or classifiers to exclude (ignored
+     * if includes != null)
+     */
     private List excludes;
 
-    /** The configuration string for the include list - comma separated */
+    /**
+     * The configuration string for the include list - comma
+     * separated
+     */
     private String includeString;
 
-    /** The configuration string for the exclude list - comma separated */
+    /**
+     * The configuration string for the exclude list - comma
+     * separated
+     */
     private String excludeString;
 
     /**
-     * The name of the feature we are filtering on - for logging - "Classifiers"
-     * or "Types"
+     * The name of the feature we are filtering on - for
+     * logging - "Classifiers" or "Types"
      */
     private String featureName;
 
@@ -65,11 +76,11 @@ public abstract class AbstractArtifactFeatureFilter
     }
 
     /**
-     * This function determines if filtering needs to be performed. Excludes are
-     * ignored if Includes are used.
+     * This function determines if filtering needs to be
+     * performed. Includes are processed before Excludes.
      * 
-     * @param dependencies
-     *            the set of dependencies to filter.
+     * @param dependencies the set of dependencies to
+     *            filter.
      * 
      * @return a Set of filtered dependencies.
      */
@@ -83,29 +94,27 @@ public abstract class AbstractArtifactFeatureFilter
             log.debug( "Including only " + size + " " + featureName + ( ( size > 1 ) ? "s" : "" ) + ": "
                 + this.includeString );
 
-            results = filterIncludes( artifacts, this.includes );
+            results = filterIncludes( results, this.includes );
         }
-        else
+
+        if ( this.excludes != null && !this.excludes.isEmpty() )
         {
-            if ( this.excludes != null && !this.excludes.isEmpty() )
-            {
-                int size = excludes.size();
-                log.debug( "Excluding " + size + " " + featureName + ( ( size > 1 ) ? "s" : "" ) + ": "
-                    + this.excludeString );
-                results = filterExcludes( artifacts, this.excludes );
-            }
+            int size = excludes.size();
+            log.debug( "Excluding " + size + " " + featureName + ( ( size > 1 ) ? "s" : "" ) + ": "
+                + this.excludeString );
+            results = filterExcludes( results, this.excludes );
         }
+
         return results;
     }
 
     /**
-     * Processes the dependencies list and includes the dependencies that match
-     * a filter in the list.
+     * Processes the dependencies list and includes the
+     * dependencies that match a filter in the list.
      * 
-     * @param depends
-     *            List of dependencies.
-     * @param includes
-     *            List of types or classifiers to include.
+     * @param depends List of dependencies.
+     * @param includes List of types or classifiers to
+     *            include.
      * 
      * @return a set of filtered artifacts.
      */
@@ -122,7 +131,8 @@ public abstract class AbstractArtifactFeatureFilter
             {
                 Artifact artifact = (Artifact) iter.next();
 
-                // if the classifier or type of the artifact matches the feature
+                // if the classifier or type of the artifact
+                // matches the feature
                 // to include, add to the
                 // results
                 if ( compareFeatures( getArtifactFeature( artifact ), include ) )
@@ -135,13 +145,12 @@ public abstract class AbstractArtifactFeatureFilter
     }
 
     /**
-     * Processes the dependencies list and excludes the dependencies that match
-     * a filter in the list.
+     * Processes the dependencies list and excludes the
+     * dependencies that match a filter in the list.
      * 
-     * @param depends
-     *            List of dependencies.
-     * @param excludes
-     *            List of types or classifiers to exclude.
+     * @param depends List of dependencies.
+     * @param excludes List of types or classifiers to
+     *            exclude.
      * 
      * @return a set of filtered artifacts.
      */
@@ -156,7 +165,8 @@ public abstract class AbstractArtifactFeatureFilter
             Artifact artifact = (Artifact) iter.next();
             String artifactFeature = getArtifactFeature( artifact );
 
-            // look through all types or classifiers. If no matches are found
+            // look through all types or classifiers. If no
+            // matches are found
             // then it can be added to the results.
             Iterator excludeIter = theExcludes.iterator();
             while ( excludeIter.hasNext() )
@@ -179,11 +189,11 @@ public abstract class AbstractArtifactFeatureFilter
     }
 
     /**
-     * Should return the type or classifier of the given artifact, so that we
-     * can filter it
+     * Should return the type or classifier of the given
+     * artifact, so that we can filter it
      * 
-     * @param artifact
-     *            artifact to return type or classifier of
+     * @param artifact artifact to return type or classifier
+     *            of
      * @return type or classifier
      */
     protected abstract String getArtifactFeature( Artifact artifact );
@@ -227,10 +237,9 @@ public abstract class AbstractArtifactFeatureFilter
     /**
      * Allows Feature comparison to be customized
      * 
-     * @param lhs
-     *            String artifact's feature
-     * @param rhs
-     *            String feature from exclude or include list
+     * @param lhs String artifact's feature
+     * @param rhs String feature from exclude or include
+     *            list
      * @return boolean true if features match
      */
     protected boolean compareFeatures( String lhs, String rhs )

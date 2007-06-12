@@ -72,13 +72,13 @@ public class TestTypeFilter
     {
         TypeFilter filter = new TypeFilter( "war,jar", "war,zip," );
         Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        assertEquals( 1, result.size() );
 
         Iterator iter = result.iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getType().equals( "war" ) || artifact.getType().equals( "jar" ) );
+            assertTrue( artifact.getType().equals( "jar" ) );
         }
     }
 
