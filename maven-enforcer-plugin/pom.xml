@@ -28,7 +28,7 @@
 	<artifactId>maven-enforcer-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<name>Maven Enforcer Plugin</name>
-	<description>The Loving Iron First of Maven</description>
+	<description>The Loving Iron Fist of Maven</description>
 	<version>1.0-alpha-3-SNAPSHOT</version>
 	<issueManagement>
 		<system>JIRA</system>
