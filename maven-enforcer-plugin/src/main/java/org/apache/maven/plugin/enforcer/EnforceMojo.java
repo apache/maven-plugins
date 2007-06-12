@@ -170,7 +170,7 @@ public class EnforceMojo
                     }
                     if ( fail )
                     {
-                        throw new MojoExecutionException( "Some rules have failed." );
+                        throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
                     }
                 }
             }

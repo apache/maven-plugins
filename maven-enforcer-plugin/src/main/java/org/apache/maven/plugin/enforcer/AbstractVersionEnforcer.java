@@ -54,7 +54,12 @@ public abstract class AbstractVersionEnforcer
      * @required
      */
     public String version = null;
-
+    
+    /**
+     * Specify an optional message to the user if the rule fails.
+     */
+    public String message = "";
+    
     /**
      * Compares the specified version to see if it is allowed by the defined
      * version range.
@@ -100,9 +105,12 @@ public abstract class AbstractVersionEnforcer
                     }
                     else
                     {
-                        String error = msg + " is not in the allowed range " + vr + ".";
+                        if (StringUtils.isEmpty( message ))
+                        {
+                            message = msg + " is not in the allowed range " + vr + ".";    
+                        }
 
-                        throw new EnforcerRuleException( error );
+                        throw new EnforcerRuleException( message );
                     }
                 }
                 catch ( InvalidVersionSpecificationException e )
