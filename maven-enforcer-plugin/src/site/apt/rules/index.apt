@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  Mar 2007
+  June 2007
   ------
 
 Standard Rules
@@ -31,6 +31,8 @@ Standard Rules
 	
 	* {{{requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
 	
-	* {{{requireJavaVersion.html}requireOS}} - enforces the OS / CPU Archictecture.
+	* {{{requireOS.html}requireOS}} - enforces the OS / CPU Archictecture.
+	
+	* {{{requireProperty.html}requireProperty}} - enforces the existence and values of properties.
 	
     You may also create and inject your own custom rules by following the {{{http://maven.apache.org/shared/maven-enforcer-rule-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
