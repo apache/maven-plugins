@@ -197,6 +197,17 @@
           <value>true</value>
         </property>
       </activation>
+      
+      <pluginRepositories>
+        <pluginRepository>
+          <id>apache.snapshots</id>
+          <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </pluginRepository>
+      </pluginRepositories>
+      
       <build>
         <plugins>
           <plugin>
@@ -299,7 +310,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
+      <version>1.0-alpha-9-stable-1</version>
     </dependency>
         <!-- FIXME: upgrade to p-u 1.4 when available, to fix
          workaround in DefaultAssemblyReader for NPE caused
