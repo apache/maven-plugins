@@ -183,7 +183,7 @@ public class MockProject
 
     public Artifact getArtifact()
     {
-        return null;
+        return artifact;
     }
 
     public void setArtifact( Artifact artifact )
