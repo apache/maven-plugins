@@ -28,16 +28,21 @@
 									<version>2.0.8</version>
 									<message>You need 2.0.8!</message>
 								</requireMavenVersion>
-								<!--<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
-									<shouldIfail>false</shouldIfail>
-								</myCustomRule>-->
-								<requireOS><family>!tandem</family></requireOS>
+								<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
+									<shouldIfail>true</shouldIfail>
+								</myCustomRule>
+								<requireOS>
+									<family>!tandem</family>
+								</requireOS>
+								<evaluateBeanshell>
+									<condition>rti.getApplicationVersion().getMajorVersion() == 2;</condition>
+								</evaluateBeanshell>
 							</rules>
 						</configuration>
 						<goals>
 							<goal>enforce-once</goal>
 						</goals>
-				
+
 					</execution>
 				</executions>
 			</plugin>

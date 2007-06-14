@@ -72,7 +72,7 @@ public class RequireProperty implements EnforcerRule
     	Object propValue = null;
     	try 
     	{
-    		propValue = (String)helper.evaluate("${" + property + "}");
+    		propValue = helper.evaluate("${" + property + "}");
     	} 
     	catch (ExpressionEvaluationException eee) 
     	{

@@ -35,4 +35,6 @@ Standard Rules
 	
 	* {{{requireProperty.html}requireProperty}} - enforces the existence and values of properties.
 	
+	* {{{evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
+	
     You may also create and inject your own custom rules by following the {{{http://maven.apache.org/shared/maven-enforcer-rule-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
