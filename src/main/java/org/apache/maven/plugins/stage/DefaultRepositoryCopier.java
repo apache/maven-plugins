@@ -276,8 +276,9 @@ public class DefaultRepositoryCopier
                 if ( f.getName().endsWith( version ) )
                 {
                     String s = f.getAbsolutePath().substring( basedir.getAbsolutePath().length() + 1 );
+                    s = StringUtils.replace( s, "\\", "/" );
 
-                    moveCommands.add( "mv " + s + IN_PROCESS_MARKER + " " + s );                   
+                    moveCommands.add( "mv " + s + IN_PROCESS_MARKER + " " + s );
                 }
 
                 scanDirectory( basedir, f, zos, version, moveCommands );
@@ -287,6 +288,7 @@ public class DefaultRepositoryCopier
                 InputStream is = new FileInputStream( f );
 
                 String s = f.getAbsolutePath().substring( basedir.getAbsolutePath().length() + 1 );                
+                s = StringUtils.replace( s, "\\", "/" );
 
                 // We are marking any version directories with the in-process flag so that
                 // anything being unpacked on the target side will not be recogized by Maven
