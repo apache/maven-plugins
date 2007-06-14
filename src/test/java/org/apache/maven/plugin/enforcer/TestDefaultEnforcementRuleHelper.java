@@ -22,8 +22,6 @@ package org.apache.maven.plugin.enforcer;
 import junit.framework.TestCase;
 
 import org.apache.maven.execution.RuntimeInformation;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -37,7 +35,6 @@ public class TestDefaultEnforcementRuleHelper
     public void testHelper()
         throws ComponentLookupException, ExpressionEvaluationException
     {
-        Log log = new SystemStreamLog();
         DefaultEnforcementRuleHelper helper = (DefaultEnforcementRuleHelper) EnforcerTestUtils.getHelper();
 
         assertNotNull( helper.getLog() );
