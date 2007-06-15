@@ -88,10 +88,6 @@ public class TestUnpackDependenciesMojo
 
     public void assertUnpacked( Artifact artifact )
     {                
-        if (artifact.getType().equals( "rar"))
-        {
-            System.out.println("Found RaR.");
-        }
         assertUnpacked( true, artifact );
     }
 
