@@ -86,13 +86,13 @@ public class TestTypeFilter
     {
         TypeFilter filter = new TypeFilter( null, "war,jar," );
         Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        assertEquals( 3, result.size() );
 
         Iterator iter = result.iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getType().equals( "sources" ) || artifact.getType().equals( "zip" ) );
+            assertTrue( !artifact.getType().equals( "war" ) && !artifact.getType().equals( "jar" ) );
         }
     }
 
@@ -100,6 +100,6 @@ public class TestTypeFilter
     {
         TypeFilter filter = new TypeFilter( null, null );
         Set result = filter.filter( artifacts, log );
-        assertEquals( 4, result.size() );
+        assertEquals( 5, result.size() );
     }
 }
