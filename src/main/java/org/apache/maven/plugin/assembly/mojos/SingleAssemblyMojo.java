@@ -20,9 +20,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor.
- * Do not specify a phase, so make it usable in a reactor environment where forking would create issues.
- * Do not specify it as an aggregator, so it is only for a single project.
- * Both cases aid it in working around issues with the Maven lifecycle that should be addressed in Maven 2.1.
+ * This goal is suitable for binding to the lifecycle if you are not aggregating the content of any modules.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

@@ -19,9 +19,10 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor without
- * launching a parallel lifecycle build. Also, this mojo is not an aggregator, so it can be used
- * multiple times in a single multimodule build.
+ * Assemble an application bundle or distribution from an assembly descriptor into the
+ * target directory structure but do not generate the final archive. 
+ * This goal is suitable for binding to the lifecycle if you are not aggregating the content of any modules.
+ * It is the unarchived counterpart to <code>assembly:single</code>.
  *
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * 
