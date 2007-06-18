@@ -19,7 +19,8 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor.
+ * Assemble an application bundle or distribution from an assembly descriptor. This goal should be used from the command line, and if building a multimodule project it should be used from the root POM.
+ * Consider using <code>assembly:attached</code> or <code>assembly:single</code> for binding assembly generation to the lifecycle.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
