@@ -20,7 +20,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor.
- * Do not specify a phase, so make it usable in a reactor environment where forking would create issues.
+ * This goal is suitable for binding to the lifecycle at the root of a multimodule project when you are aggregating the output from the builds of several modules.
  *
  * @author <a href="mailto:jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$

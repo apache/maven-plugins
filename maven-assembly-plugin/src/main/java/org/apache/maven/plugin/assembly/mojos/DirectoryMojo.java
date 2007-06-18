@@ -19,7 +19,11 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution.
+ * Assemble an application bundle or distribution from an assembly descriptor into the
+ * target directory structure but do not generate the final archive. This goal should be used from
+ * the command line, and if building a multimodule project it should be used from the root POM.
+ * It is the unarchived counterpart to <code>assembly:assembly</code>.
+ * Consider using <code>assembly:directory-inline</code> or <code>assembly:directory-single</code> for binding assembly generation to the lifecycle.
  *
  * @goal directory
  * @execute phase="package"
