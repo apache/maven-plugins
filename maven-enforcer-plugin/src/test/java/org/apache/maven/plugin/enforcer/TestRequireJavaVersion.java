@@ -34,7 +34,8 @@ public class TestRequireJavaVersion
 {
     public void testFixJDKVersion()
     {
-        // test that we only take the first 3 versions for comparision
+        // test that we only take the first 3 versions for
+        // comparision
         assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1.5.0_11" ) );
         assertEquals( "1.5.1", RequireJavaVersion.normalizeJDKVersion( "1.5.1" ) );
         assertEquals( "1.5.2-1", RequireJavaVersion.normalizeJDKVersion( "1.5.2-1.b11" ) );
@@ -49,6 +50,8 @@ public class TestRequireJavaVersion
         assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) );
         assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-b7" ) );
         assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-;7" ) );
+        assertEquals( "1.6.0", RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp" ) );
+        assertEquals( "1.6.0-2", RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) );
     }
 
     public void testRule()
