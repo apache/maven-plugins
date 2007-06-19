@@ -36,7 +36,8 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule checks that the Java version is allowed.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
+ * @version $Id: RequireJavaVersion.java 525005 2007-04-03
+ *          02:46:44Z brianf $
  */
 public class RequireJavaVersion
     extends AbstractVersionEnforcer
@@ -63,11 +64,10 @@ public class RequireJavaVersion
     }
 
     /**
-     * Converts a jdk string from 1.5.0-11b12 to a single 3 digit version like
-     * 1.5.0-11
+     * Converts a jdk string from 1.5.0-11b12 to a single 3
+     * digit version like 1.5.0-11
      * 
-     * @param theJdkVersion
-     *            to be converted.
+     * @param theJdkVersion to be converted.
      * @return the converted string.
      */
     public static String normalizeJDKVersion( String theJdkVersion )
@@ -84,17 +84,19 @@ public class RequireJavaVersion
             String section = (String) iter.next();
             section = section.replaceAll( "[^0-9]", "" );
 
-            buffer.append( Integer.parseInt( section ) );
-
-            if ( i != 2 )
+            if ( StringUtils.isNotEmpty( section ) )
             {
-                buffer.append( '.' );
-            }
-            else
-            {
-                buffer.append( '-' );
-            }
+                buffer.append( Integer.parseInt( section ) );
 
+                if ( i != 2 )
+                {
+                    buffer.append( '.' );
+                }
+                else
+                {
+                    buffer.append( '-' );
+                }
+            }
         }
 
         String version = buffer.toString();
