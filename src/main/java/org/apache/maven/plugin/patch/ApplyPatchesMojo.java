@@ -114,6 +114,13 @@ public class ApplyPatchesMojo extends AbstractPatchMojo
      */
     public void doExecute() throws MojoExecutionException, MojoFailureException
     {
+    	// if the patches is not specified, and patchfile is not specified, then disable execution
+    	if ( ( patches == null || patches.isEmpty() ) && patchFile == null )
+        {
+            getLog().info( "Patching is disabled for this project." );
+            return;
+        }
+    	
         if ( skipApplication )
         {
             getLog().info( "Skipping patchfile application (per configuration)." );

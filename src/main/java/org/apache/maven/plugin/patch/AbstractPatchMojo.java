@@ -41,12 +41,12 @@ public abstract class AbstractPatchMojo extends AbstractMojo
 
     /**
      * The list of patch file names (without directory information), supplying the order in which patches should be
-     * applied.
+     * applied. (relative to 'patchSourceDir')
      *
      * @parameter
      */
-    private List patches;
-
+    protected List patches;
+    
     protected List getPatches()
     {
         return patches;
@@ -59,12 +59,6 @@ public abstract class AbstractPatchMojo extends AbstractMojo
 
     public final void execute() throws MojoExecutionException, MojoFailureException
     {
-        if ( ( patches == null ) || patches.isEmpty() )
-        {
-            getLog().info( "Patching is disabled for this project." );
-            return;
-        }
-
         doExecute();
     }
 

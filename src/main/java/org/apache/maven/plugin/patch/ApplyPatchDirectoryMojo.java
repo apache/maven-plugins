@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.Map.Entry;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -96,6 +99,14 @@ public class ApplyPatchDirectoryMojo
      */
     private File targetDirectory;
 
+    /**
+     * setting natural order processing to true will all patches in a directory to be processed in an natural order
+     * alleviating the need to declare patches directly in the project file.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean naturalOrderProcessing;
+    
     /**
      * When the strictPatching flag is set, this parameter is useful to mark certain contents of the patch-source
      * directory that should be ignored without causing the build to fail.
@@ -167,6 +178,13 @@ public class ApplyPatchDirectoryMojo
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
+    	// if patches is null or empty, and naturalOrderProcessing is not true then disable patching
+    	if ( ( patches == null || patches.isEmpty() ) && !naturalOrderProcessing )
+        {
+            getLog().info( "Patching is disabled for this project." );
+            return;
+        }
+    	
         if ( skipApplication )
         {
             getLog().info( "Skipping patchfile application (per configuration)." );
@@ -180,17 +198,24 @@ public class ApplyPatchDirectoryMojo
             return;
         }
 
-        List foundPatchFiles = new ArrayList( Arrays.asList( patchDirectory.list() ) );
+        try 
+        {
+			List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
+		
+			Map patchesApplied = findPatchesToApply(foundPatchFiles, patchDirectory);
 
-        Map patchesApplied = findPatchesToApply( foundPatchFiles, patchDirectory );
+			checkStrictPatchCompliance(foundPatchFiles);
 
-        checkStrictPatchCompliance( foundPatchFiles );
+			String output = applyPatches(patchesApplied);
 
-        String output = applyPatches( patchesApplied );
+			checkForWatchPhrases(output);
 
-        checkForWatchPhrases( output );
-
-        writeTrackingFile( patchesApplied );
+			writeTrackingFile(patchesApplied);
+		} 
+        catch (IOException ioe) 
+		{
+			throw new MojoExecutionException( "unable to obtain list of patch files", ioe);
+		}
     }
 
     private Map findPatchesToApply( List foundPatchFiles, File patchSourceDir )
@@ -198,8 +223,14 @@ public class ApplyPatchDirectoryMojo
     {
         List patches = getPatches();
 
-        Map patchesApplied = new LinkedHashMap( patches.size() );
+        Map patchesApplied = new LinkedHashMap( );
 
+        if ( naturalOrderProcessing )
+        {
+        	patches = new ArrayList( foundPatchFiles ) ;
+        	Collections.sort( patches );
+        }
+        
         for ( Iterator it = patches.iterator(); it.hasNext(); )
         {
             String patch = (String) it.next();
@@ -209,7 +240,7 @@ public class ApplyPatchDirectoryMojo
             getLog().debug( "Looking for patch: " + patch + " in: " + patchFile );
 
             if ( !patchFile.exists() )
-            {
+            {  	
                 if ( strictPatching )
                 {
                     throw new MojoFailureException(
@@ -233,6 +264,7 @@ public class ApplyPatchDirectoryMojo
                 patchesApplied.put( patch, createPatchCommand( patchFile ) );
             }
         }
+        
 
         return patchesApplied;
     }
