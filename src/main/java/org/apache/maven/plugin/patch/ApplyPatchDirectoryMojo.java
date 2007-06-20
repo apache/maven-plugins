@@ -191,18 +191,13 @@ public class ApplyPatchDirectoryMojo
             return;
         }
 
-        patchTrackingFile.getParentFile().mkdirs();
-        if ( optimizations && patchTrackingFile.exists() )
-        {
-            getLog().info( "Skipping patchfile application (patches already applied in previous build)." );
-            return;
-        }
+        patchTrackingFile.getParentFile().mkdirs();             
 
         try 
         {
 			List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
 		
-			Map patchesApplied = findPatchesToApply(foundPatchFiles, patchDirectory);
+			Map patchesApplied = findPatchesToApply(foundPatchFiles, patchDirectory );
 
 			checkStrictPatchCompliance(foundPatchFiles);
 
@@ -231,37 +226,54 @@ public class ApplyPatchDirectoryMojo
         	Collections.sort( patches );
         }
         
+        String alreadyAppliedPatches = "";
+        
+        try
+        {
+            if ( optimizations && patchTrackingFile.exists() )
+            {
+                alreadyAppliedPatches = FileUtils.fileRead( patchTrackingFile );
+            }
+        }
+        catch (IOException ioe)
+        {
+            throw new MojoFailureException( "unable to read patch tracking file: " + ioe.getMessage() );
+        }
+        
         for ( Iterator it = patches.iterator(); it.hasNext(); )
         {
             String patch = (String) it.next();
+                   
+            if ( alreadyAppliedPatches.indexOf( patch ) == -1 )
+            {
+                File patchFile = new File( patchSourceDir, patch );
 
-            File patchFile = new File( patchSourceDir, patch );
+                getLog().debug( "Looking for patch: " + patch + " in: " + patchFile );
 
-            getLog().debug( "Looking for patch: " + patch + " in: " + patchFile );
-
-            if ( !patchFile.exists() )
-            {  	
-                if ( strictPatching )
+                if ( !patchFile.exists() )
                 {
-                    throw new MojoFailureException(
-                                                    this,
-                                                    "Patch operation cannot proceed.",
-                                                    "Cannot find specified patch: \'"
-                                                                    + patch
-                                                                    + "\' in patch-source directory: \'"
-                                                                    + patchSourceDir
-                                                                    + "\'.\n\nEither fix this error, or relax strictPatching." );
+                    if ( strictPatching )
+                    {
+                        throw new MojoFailureException(
+                                                        this,
+                                                        "Patch operation cannot proceed.",
+                                                        "Cannot find specified patch: \'"
+                                                                        + patch
+                                                                        + "\' in patch-source directory: \'"
+                                                                        + patchSourceDir
+                                                                        + "\'.\n\nEither fix this error, or relax strictPatching." );
+                    }
+                    else
+                    {
+                        getLog().info( "Skipping patch: " + patch + " listed in the patches parameter; it is missing." );
+                    }
                 }
                 else
                 {
-                    getLog().info( "Skipping patch: " + patch + " listed in the patches parameter; it is missing." );
-                }
-            }
-            else
-            {
-                foundPatchFiles.remove( patch );
+                    foundPatchFiles.remove( patch );
 
-                patchesApplied.put( patch, createPatchCommand( patchFile ) );
+                    patchesApplied.put( patch, createPatchCommand( patchFile ) );
+                }
             }
         }
         
@@ -341,11 +353,12 @@ public class ApplyPatchDirectoryMojo
 
             try
             {
+                getLog().info( "Applying patch: " + patchName );
                 int result = CommandLineUtils.executeCommandLine( cli, consumer, consumer );
 
                 if ( result != 0 )
                 {
-                    throw new MojoExecutionException( "Patch command failed (exit value != 0). Please see debug output for more information." );
+                    throw new MojoExecutionException( "Patch command failed (exit value != 0) for " + patchName + ". Please see debug output for more information." );
                 }
             }
             catch ( CommandLineException e )
@@ -364,10 +377,17 @@ public class ApplyPatchDirectoryMojo
         FileWriter writer = null;
         try
         {
-            writer = new FileWriter( patchTrackingFile );
-
+            boolean appending = patchTrackingFile.exists();
+            
+            writer = new FileWriter( patchTrackingFile, appending );
+            
             for ( Iterator it = patchesApplied.keySet().iterator(); it.hasNext(); )
             {
+                if ( appending )
+                {
+                    writer.write( System.getProperty( "line.separator" ) );  
+                }
+                
                 String patch = (String) it.next();
                 writer.write( patch );
 
