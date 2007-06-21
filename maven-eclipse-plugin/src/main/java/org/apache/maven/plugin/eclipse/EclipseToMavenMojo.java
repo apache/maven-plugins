@@ -257,7 +257,7 @@ public class EclipseToMavenMojo
         for ( Iterator it = model.getDependencies().iterator(); it.hasNext(); )
         {
             Dependency dep = (Dependency) it.next();
-            if ( dep.getVersion().contains( "[" ) || dep.getVersion().contains( "(" ) )
+            if ( dep.getVersion().indexOf( "[" ) > -1 || dep.getVersion().indexOf( "(" ) > -1 )
             {
                 String key = getKey( model );
                 Model dependencyModel = (Model) models.get( getKey( dep ) );
