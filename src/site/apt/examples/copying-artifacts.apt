@@ -85,7 +85,7 @@ Copying Specific Artifacts
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy-installed</id>
