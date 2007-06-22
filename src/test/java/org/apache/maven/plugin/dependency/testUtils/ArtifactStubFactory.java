@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency.testUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReflectionUtils;
 
 public class ArtifactStubFactory
 {
@@ -163,7 +165,7 @@ public class ArtifactStubFactory
 
         try
         {
-            DependencyTestUtils.setVariableValueToObject( archiver, "logger", new SilentLog() );
+            setVariableValueToObject( archiver, "logger", new SilentLog() );
         }
         catch ( IllegalAccessException e )
         {
@@ -347,4 +349,23 @@ public class ArtifactStubFactory
         return list;
     }
 
+    /**
+     * convience method to set values to variables in objects that don't have
+     * setters
+     * 
+     * @param object
+     * @param variable
+     * @param value
+     * @throws IllegalAccessException
+     */
+    public static void setVariableValueToObject( Object object, String variable, Object value )
+        throws IllegalAccessException
+    {
+        Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( variable, object.getClass() );
+
+        field.setAccessible( true );
+
+        field.set( object, value );
+    }
+    
 }

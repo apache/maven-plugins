@@ -78,6 +78,7 @@ Usage
                   <artifactId>[ artifactId ]</artifactId>
                   <version>[ version ]</version>
                   <type>[ packaging ]</type>
+				  <classifier> [classifier - optional] </classifier>
                   <overWrite>[ true or false ]</overWrite>
                   <outputDirectory>[ output directory ]</outputDirectory>
                   <destFileName>[ filename ]</destFileName>
@@ -117,6 +118,7 @@ mvn dependency:copy
               <artifactId>[ artifactId ]</artifactId>
               <version>[ version ]</version>
               <type>[ packaging ]</type>
+			  <classifier> [classifier - optional] </classifier>
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
@@ -260,6 +262,7 @@ mvn dependency:unpack
               <artifactId>[ artifactId ]</artifactId>
               <version>[ version ]</version>
               <type>[ packaging ]</type>
+			  <classifier> [classifier - optional] </classifier>
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
