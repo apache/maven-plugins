@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
@@ -107,8 +108,14 @@ public class EclipseWriterConfig
     
     /**
      * Appends the version number to the project name if <tt>true</tt>.
+     * @deprecated use {@link #projectNameTemplate}
      */
     private boolean addVersionToProjectName;
+
+    /**
+     * @see EclipsePlugin#getProjectNameTemplate()
+     */
+    private String projectNameTemplate;
 
     /**
      * Getter for <code>deps</code>.
@@ -157,7 +164,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>eclipseProjectName</code>.
-     * @param eclipseProjectDir the project name used in eclipse.
+     * @param eclipseProjectName the project name used in eclipse.
      */
     public void setEclipseProjectName( String eclipseProjectName )
     {
@@ -364,17 +371,31 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>addVersionToProjectName</code>.
+     * 
+     * @deprecated use {@link #getProjectNameTemplate()}
      */
     public boolean isAddVersionToProjectName()
     {
         return addVersionToProjectName;
     }
-    
+
     /**
      * Setter for <code>addVersionToProjectName</code>.
+     * 
+     * @deprecated use {@link #setProjectNameTemplate(String)}
      */
     public void setAddVersionToProjectName( boolean addVersionToProjectName )
     {
         this.addVersionToProjectName = addVersionToProjectName;
+    }
+
+    public void setProjectNameTemplate( String projectNameTemplate )
+    {
+        this.projectNameTemplate = projectNameTemplate;
+    }
+
+    public String getProjectNameTemplate()
+    {
+        return projectNameTemplate;
     }
 }
