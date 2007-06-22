@@ -249,9 +249,6 @@
               <pomExcludes>
                 <pomExclude>**/child*/pom.xml</pomExclude>
                 <pomExclude>**/module*/pom.xml</pomExclude>
-
-                <!-- TODO: Fix this! It's logged in JIRA for 2.2. -->
-                <pomExclude>mojo-configuration/manifest-with-customEntry/pom.xml</pomExclude>
                 <pomExclude>repository-assembly/pom.xml</pomExclude>
               </pomExcludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
