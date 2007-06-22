@@ -57,13 +57,13 @@ public class IdeUtils
 
     public static final String JAVA_6_0 = "6.0";
 
-    public static final String PROJECT_NAME_DEFAULT_TEMPLATE = "${artifactId}";
+    public static final String PROJECT_NAME_DEFAULT_TEMPLATE = "[artifactId]";
 
-    public static final String PROJECT_NAME_WITH_VERSION_TEMPLATE = "${artifactId}-${version}";
+    public static final String PROJECT_NAME_WITH_VERSION_TEMPLATE = "[artifactId]-[version]";
 
-    public static final String PROJECT_NAME_WITH_GROUP_TEMPLATE = "${groupId}.${artifactId}";
+    public static final String PROJECT_NAME_WITH_GROUP_TEMPLATE = "[groupId].[artifactId]";
 
-    public static final String PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE = "${groupId}.${artifactId}-${version}";
+    public static final String PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE = "[groupId].[artifactId]-[version]";
 
     /**
      * compiler plugin id.
@@ -377,9 +377,9 @@ public class IdeUtils
     private static String getProjectName( String template, String groupId, String artifactId, String version )
     {
         String s = template;
-        s = s.replaceAll( "\\$\\{groupId\\}", groupId );
-        s = s.replaceAll( "\\$\\{artifactId\\}", artifactId );
-        s = s.replaceAll( "\\$\\{version\\}", version );
+        s = s.replaceAll( "\\[groupId\\]", groupId );
+        s = s.replaceAll( "\\[artifactId\\]", artifactId );
+        s = s.replaceAll( "\\[version\\]", version );
         return s;
     }
 
