@@ -327,12 +327,12 @@ public class EclipsePlugin
      * Allows configuring the name of the eclipse projects. This property wins over
      * addVersionToProjectName and addGroupIdToProjectName
      * 
-     * You can use <code>${groupId}</code>, <code>${artifactId}</code> and
-     * <code>${version}</code> variables.
+     * You can use <code>[groupId]</code>, <code>[artifactId]</code> and
+     * <code>[version]</code> variables.
      * 
-     * eg. <code>${groupId}.${artifactId}-${version}</code>
+     * eg. <code>[groupId].[artifactId]-[version]</code>
      * 
-     * @parameter expression="${eclipse.projectNameTemplate}" default-value="${artifactId}"
+     * @parameter expression="${eclipse.projectNameTemplate}" default-value="[artifactId]"
      */
     private String projectNameTemplate; 
 
@@ -1125,7 +1125,8 @@ public class EclipsePlugin
      * Calculate the project name template from the fields {@link #projectNameTemplate},
      * {@link #addVersionToProjectName} and {@link #addGroupIdToProjectName}
      * 
-     * @return
+     * @return the project name template that should be used after considering the plugin
+     *         configuration
      */
     private String calculateProjectNameTemplate()
     {
@@ -1137,7 +1138,7 @@ public class EclipsePlugin
                                "projectNameTemplate definition overrides "
                                    + "addVersionToProjectName or addGroupIdToProjectName" );
             }
-            return projectNameTemplate;
+            return getProjectNameTemplate();
         }
         else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
         {
