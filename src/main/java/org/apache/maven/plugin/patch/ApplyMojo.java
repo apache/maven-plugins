@@ -15,20 +15,7 @@ package org.apache.maven.plugin.patch;
  *
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
@@ -39,17 +26,33 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.shell.BourneShell;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
- * Apply a set of patches to project sources.
+ * Apply one or more patches to project sources.
  *
- * @goal apply-directory
- * @phase generate-sources
+ * @goal apply
+ * @phase process-sources
  */
-public class ApplyPatchDirectoryMojo
-    extends AbstractPatchMojo
+public class ApplyMojo
+    extends AbstractMojo
 {
 
     public static final List PATCH_FAILURE_WATCH_PHRASES;
+
+    public static final List DEFAULT_IGNORED_PATCHES;
+
+    public static final List DEFAULT_IGNORED_PATCH_PATTERNS;
 
     static
     {
@@ -60,7 +63,36 @@ public class ApplyPatchDirectoryMojo
         watches.add( "reject" );
 
         PATCH_FAILURE_WATCH_PHRASES = watches;
+
+        List ignored = new ArrayList();
+
+        ignored.add( ".svn" );
+        ignored.add( "CVS" );
+
+        DEFAULT_IGNORED_PATCHES = ignored;
+
+        List ignoredPatterns = new ArrayList();
+
+        ignoredPatterns.add( ".svn/**" );
+        ignoredPatterns.add( "CVS/**" );
+
+        DEFAULT_IGNORED_PATCH_PATTERNS = ignoredPatterns;
     }
+
+    /**
+     * Whether to exclude default ignored patch items, such as .svn or CVS directories.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean useDefaultIgnores;
+
+    /**
+     * The list of patch file names (without directory information), supplying the order in which patches should be
+     * applied. (relative to 'patchSourceDir')
+     *
+     * @parameter
+     */
+    protected List patches;
 
     /**
      * Whether to skip this mojo's execution.
@@ -102,11 +134,11 @@ public class ApplyPatchDirectoryMojo
     /**
      * setting natural order processing to true will all patches in a directory to be processed in an natural order
      * alleviating the need to declare patches directly in the project file.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean naturalOrderProcessing;
-    
+
     /**
      * When the strictPatching flag is set, this parameter is useful to mark certain contents of the patch-source
      * directory that should be ignored without causing the build to fail.
@@ -163,7 +195,28 @@ public class ApplyPatchDirectoryMojo
      *
      * @parameter
      */
-    private List patchFailureWatchPhrases = PATCH_FAILURE_WATCH_PHRASES;
+    private List failurePhrases = PATCH_FAILURE_WATCH_PHRASES;
+
+    /**
+     * The original file which will be modified by the patch. Mutually exclusive with workDir.
+     *
+     * @parameter
+     */
+    private File originalFile;
+
+    /**
+     * The file which is the original file, plus modifications from the patch. Mutually exclusive with workDir.
+     *
+     * @parameter
+     */
+    private File destFile;
+
+    /**
+     * The single patch file to apply. Mutually exclusive with 'patches'.
+     *
+     * @parameter
+     */
+    private File patchFile;
 
     /**
      * @parameter default-value="src/main/patches"
@@ -175,39 +228,51 @@ public class ApplyPatchDirectoryMojo
      * Apply the patches. Give preference to patchFile over patchSourceDir/patches, and preference to originalFile over
      * workDir.
      */
-    public void doExecute()
+    public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        boolean patchDirEnabled = ( ( patches != null ) && !patches.isEmpty() ) || naturalOrderProcessing;
+        boolean patchFileEnabled = patchFile != null;
+
     	// if patches is null or empty, and naturalOrderProcessing is not true then disable patching
-    	if ( ( patches == null || patches.isEmpty() ) && !naturalOrderProcessing )
+    	if ( !patchFileEnabled && !patchDirEnabled )
         {
             getLog().info( "Patching is disabled for this project." );
             return;
         }
-    	
+
         if ( skipApplication )
         {
             getLog().info( "Skipping patchfile application (per configuration)." );
             return;
         }
 
-        patchTrackingFile.getParentFile().mkdirs();             
+        patchTrackingFile.getParentFile().mkdirs();
 
-        try 
+        Map patchesToApply = null;
+
+        try
         {
-			List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
-		
-			Map patchesApplied = findPatchesToApply(foundPatchFiles, patchDirectory );
+            if ( patchFileEnabled )
+            {
+                patchesToApply = Collections.singletonMap( patchFile.getName(), createPatchCommand( patchFile ) );
+            }
+            else
+            {
+                List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
 
-			checkStrictPatchCompliance(foundPatchFiles);
+                patchesToApply = findPatchesToApply(foundPatchFiles, patchDirectory );
 
-			String output = applyPatches(patchesApplied);
+                checkStrictPatchCompliance(foundPatchFiles);
+            }
+
+			String output = applyPatches(patchesToApply);
 
 			checkForWatchPhrases(output);
 
-			writeTrackingFile(patchesApplied);
-		} 
-        catch (IOException ioe) 
+			writeTrackingFile(patchesToApply);
+		}
+        catch (IOException ioe)
 		{
 			throw new MojoExecutionException( "unable to obtain list of patch files", ioe);
 		}
@@ -216,18 +281,16 @@ public class ApplyPatchDirectoryMojo
     private Map findPatchesToApply( List foundPatchFiles, File patchSourceDir )
         throws MojoFailureException
     {
-        List patches = getPatches();
-
-        Map patchesApplied = new LinkedHashMap( );
+        Map patchesApplied = new LinkedHashMap();
 
         if ( naturalOrderProcessing )
         {
         	patches = new ArrayList( foundPatchFiles ) ;
         	Collections.sort( patches );
         }
-        
+
         String alreadyAppliedPatches = "";
-        
+
         try
         {
             if ( optimizations && patchTrackingFile.exists() )
@@ -239,11 +302,11 @@ public class ApplyPatchDirectoryMojo
         {
             throw new MojoFailureException( "unable to read patch tracking file: " + ioe.getMessage() );
         }
-        
+
         for ( Iterator it = patches.iterator(); it.hasNext(); )
         {
             String patch = (String) it.next();
-                   
+
             if ( alreadyAppliedPatches.indexOf( patch ) == -1 )
             {
                 File patchFile = new File( patchSourceDir, patch );
@@ -276,7 +339,7 @@ public class ApplyPatchDirectoryMojo
                 }
             }
         }
-        
+
 
         return patchesApplied;
     }
@@ -293,7 +356,7 @@ public class ApplyPatchDirectoryMojo
                 ignored.addAll( ignoredPatches );
             }
 
-            if ( useDefaultIgnores() )
+            if ( useDefaultIgnores )
             {
                 ignored.addAll( DEFAULT_IGNORED_PATCHES );
             }
@@ -354,7 +417,7 @@ public class ApplyPatchDirectoryMojo
             try
             {
                 getLog().info( "Applying patch: " + patchName );
-                int result = CommandLineUtils.executeCommandLine( cli, consumer, consumer );
+                int result = executeCommandLine( cli, consumer, consumer );
 
                 if ( result != 0 )
                 {
@@ -371,6 +434,17 @@ public class ApplyPatchDirectoryMojo
         return outputWriter.toString();
     }
 
+    private int executeCommandLine( Commandline cli, StreamConsumer out, StreamConsumer err )
+        throws CommandLineException
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Executing:\n" + cli + "\n" );
+        }
+
+        return CommandLineUtils.executeCommandLine( cli, out, err );
+    }
+
     private void writeTrackingFile( Map patchesApplied )
         throws MojoExecutionException
     {
@@ -378,16 +452,16 @@ public class ApplyPatchDirectoryMojo
         try
         {
             boolean appending = patchTrackingFile.exists();
-            
+
             writer = new FileWriter( patchTrackingFile, appending );
-            
+
             for ( Iterator it = patchesApplied.keySet().iterator(); it.hasNext(); )
             {
                 if ( appending )
                 {
-                    writer.write( System.getProperty( "line.separator" ) );  
+                    writer.write( System.getProperty( "line.separator" ) );
                 }
-                
+
                 String patch = (String) it.next();
                 writer.write( patch );
 
@@ -412,7 +486,7 @@ public class ApplyPatchDirectoryMojo
     private void checkForWatchPhrases( String output )
         throws MojoExecutionException
     {
-        for ( Iterator it = patchFailureWatchPhrases.iterator(); it.hasNext(); )
+        for ( Iterator it = failurePhrases.iterator(); it.hasNext(); )
         {
             String phrase = (String) it.next();
 
@@ -437,6 +511,18 @@ public class ApplyPatchDirectoryMojo
         cli.setExecutable( "patch" );
 
         cli.setWorkingDirectory( targetDirectory.getAbsolutePath() );
+
+        if ( originalFile != null )
+        {
+            cli.createArg().setLine( originalFile.getAbsolutePath() );
+
+            if ( destFile != null )
+            {
+                cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
+            }
+
+            cli.createArg().setLine( patchFile.getAbsolutePath() );
+        }
 
         cli.createArg().setLine( "-p" + strip );
 

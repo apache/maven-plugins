@@ -59,7 +59,7 @@ files/bugfix/patches-applied.txt</patchTrackingFile>
                   </configuration>
                   <phase>process-sources</phase>
                   <goals>
-                     <goal>apply-directory</goal>
+                     <goal>apply</goal>
                   </goals>
                </execution>
                <execution>
@@ -73,7 +73,7 @@ files/enhancement/patches-applied.txt</patchTrackingFile>
                   </configuration>
                   <phase>process-sources</phase>
                   <goals>
-                     <goal>apply-directory</goal>
+                     <goal>apply</goal>
                   </goals>
                </execution>
             </executions>

@@ -50,7 +50,7 @@
             <phase>initialize</phase>
             
             <goals>
-              <goal>apply-directory</goal>
+              <goal>apply</goal>
             </goals>
             
             <configuration>

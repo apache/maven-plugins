@@ -33,7 +33,7 @@ Overview
 
 * Goals Overview
 
-  The patch plugin has two goals, one for applying a single declared patch and another for applying a directory of patches.
+  The patch plugin has a single goal that can apply either a single declared patch or a directory of patches. Application of an entire patch directory can be configured with various patch-inclusion, -exclusion, and -ordering options.
 
 * Usage
 
