@@ -166,6 +166,13 @@ public abstract class AbstractIdeSupportMojo
     protected List reactorProjects;
 
     /**
+     * Skip the operation when true
+     * 
+     * @parameter expression="${eclipse.skip}" default-value="false"
+     */
+    private boolean skip;
+    
+    /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives,
      * a status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the
@@ -404,6 +411,11 @@ public abstract class AbstractIdeSupportMojo
     public final void execute()
         throws MojoExecutionException, MojoFailureException
     {
+    	if ( skip )
+    	{
+    		return;
+    	}
+
         boolean processProject = setup();
         if ( !processProject )
         {
