@@ -850,33 +850,9 @@ public class EclipsePlugin
 
         EclipseWriterConfig config = new EclipseWriterConfig();
 
-        String projectName = null;
-        if ( getProjectNameTemplate() != null )
-        {
-            if ( isAddVersionToProjectName() || isAddGroupIdToProjectName() )
-            {
-                getLog().warn(
-                               "projectNameTemplate definition overrides "
-                                   + "addVersionToProjectName or addGroupIdToProjectName" );
-            }
-            projectName = IdeUtils.getProjectName( projectNameTemplate, project );
-        }
-        else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
-        {
-            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE, project );
-        }
-        else if ( isAddVersionToProjectName() )
-        {
-            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE, project );
-        }
-        else if ( isAddGroupIdToProjectName() )
-        {
-            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE, project );
-        }
-        else
-        {
-            projectName = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, project );
-        }
+        config.setProjectNameTemplate( calculateProjectNameTemplate() );
+
+        String projectName = IdeUtils.getProjectName( config.getProjectNameTemplate(), project );
 
         config.setEclipseProjectName( projectName );
 
@@ -1145,4 +1121,36 @@ public class EclipsePlugin
         }
     }
 
+    /**
+     * Calculate the project name template from the fields {@link #projectNameTemplate},
+     * {@link #addVersionToProjectName} and {@link #addGroupIdToProjectName}
+     * 
+     * @return
+     */
+    private String calculateProjectNameTemplate()
+    {
+        if ( getProjectNameTemplate() != null )
+        {
+            if ( isAddVersionToProjectName() || isAddGroupIdToProjectName() )
+            {
+                getLog().warn(
+                               "projectNameTemplate definition overrides "
+                                   + "addVersionToProjectName or addGroupIdToProjectName" );
+            }
+            return projectNameTemplate;
+        }
+        else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE;
+        }
+        else if ( isAddVersionToProjectName() )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE;
+        }
+        else if ( isAddGroupIdToProjectName() )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE;
+        }
+        return IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE;
+    }
 }
