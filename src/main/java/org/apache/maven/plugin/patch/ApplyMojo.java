@@ -132,6 +132,13 @@ public class ApplyMojo
     private File targetDirectory;
 
     /**
+     * true if the desired behavior is to fail the build on the first failed patch detected
+     *
+     * @parameter default-value="true"
+     */
+    private boolean failFast;
+    
+    /**
      * setting natural order processing to true will all patches in a directory to be processed in an natural order
      * alleviating the need to declare patches directly in the project file.
      *
@@ -408,6 +415,9 @@ public class ApplyMojo
             }
         };
 
+        // used if failFast is false
+        String failedPatches = null;
+        
         for ( Iterator it = patchesApplied.entrySet().iterator(); it.hasNext(); )
         {
             Map.Entry entry = (Entry) it.next();
@@ -421,7 +431,18 @@ public class ApplyMojo
 
                 if ( result != 0 )
                 {
-                    throw new MojoExecutionException( "Patch command failed (exit value != 0) for " + patchName + ". Please see debug output for more information." );
+                    if ( failFast )
+                    {
+                        throw new MojoExecutionException( "Patch command failed (exit value != 0) for " + patchName + ". Please see debug output for more information." );
+                    }
+                    else
+                    {
+                        if ( failedPatches == null )
+                        {
+                            failedPatches = new String();
+                        }
+                        failedPatches = failedPatches + patchName + "\n";
+                    }
                 }
             }
             catch ( CommandLineException e )
@@ -429,6 +450,13 @@ public class ApplyMojo
                 throw new MojoExecutionException( "Failed to apply patch: " + patchName
                                 + ". See debug output for more information.", e );
             }
+        }
+        
+        if ( failedPatches != null )
+        {
+           getLog().info( "Failed applying one or more patches:" );
+           getLog().info( failedPatches );
+           throw new MojoExecutionException( "Patch command failed for one or more patches. Please see console and debug output for more information." );
         }
 
         return outputWriter.toString();
