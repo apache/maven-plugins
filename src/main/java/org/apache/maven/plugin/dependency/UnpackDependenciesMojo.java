@@ -74,7 +74,7 @@ public class UnpackDependenciesMojo
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
             handler.setMarker();
         }
-
+        
         artifacts = dss.getSkippedDependencies();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
