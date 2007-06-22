@@ -1,0 +1,70 @@
+ ------
+ Usage
+ ------
+ John Casey
+ Jesse McConnell
+ ------
+ 22 June 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Introduction
+
+  The maven-patch-plugin attempts to use the gnu patch tool to apply patch files
+  to source code.  It can be configured to apply patch files from any number of 
+  directories with a number of different policies including strict patching where 
+  you must declare all patchs in the plugin configuration to a natural order processing
+  which will apply all patching in a directory following a natural string sorted order.
+
+  This plugin is most commonly used during the process-sources phase of the maven lifecycle.
+
++-----
+  mvn process-sources
++-----
+
++-----
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-patch-plugin</artifactId>
+        <configuration>
+          <patches>
+            <patch>mylittle.patch</patch>
+          </patches>
+        </configuration>
+        <executions>
+          <execution>
+            <id>patch</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++-----

@@ -1,0 +1,84 @@
+ ------
+ Delete Additional Files Not Exposed to Maven
+ ------
+ John Casey
+ Jesse McConnell
+ ------
+ 22 June 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Patch Multiple Files from Multiple Directories
+
+  The <<<maven-patch-plugin>>> can be configured apply sets of patches from multiple directories.
+  In the example below, the plugin is setup to apply all the patches in a bugfix directory with 
+  optimization (will not reapply the same patch) and also from an enhancements directory.  This 
+  scenario might crop up if you don't have commit access to a projects source yet need to apply 
+  bugfix and enhancement patches.  The two different patch source directories are shown purely as 
+  an example of what can be configured.
+
++--------
+<build>
+  [...]
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-patch-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <configuration>
+               <patchTargetDir>${moduleDirectory}</patchTargetDir>
+               <skipApplication>false</skipApplication>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>bugfix-patches</id>
+                  <configuration>
+                     <patchDirectory>src/main/patches/bugfix</patchDirecto
+ry>
+                     <patchTrackingFile>${project.build.directory}/optimization-
+files/bugfix/patches-applied.txt</patchTrackingFile>
+                     <naturalOrderProcessing>true</naturalOrderProcessing>
+                  </configuration>
+                  <phase>process-sources</phase>
+                  <goals>
+                     <goal>apply-directory</goal>
+                  </goals>
+               </execution>
+               <execution>
+                  <id>enhancement-patches</id>
+                  <configuration>
+                     <patchDirectory>src/main/patches/enhancement</patchDirector
+y>
+                     <patchTrackingFile>${project.build.directory}/optimization-
+files/enhancement/patches-applied.txt</patchTrackingFile>
+                     <naturalOrderProcessing>true</naturalOrderProcessing>
+                  </configuration>
+                  <phase>process-sources</phase>
+                  <goals>
+                     <goal>apply-directory</goal>
+                  </goals>
+               </execution>
+            </executions>
+          </plugin>
+    
+  [...]
+</build>
++---------
