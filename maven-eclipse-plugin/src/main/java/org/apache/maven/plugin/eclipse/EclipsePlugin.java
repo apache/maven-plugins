@@ -324,15 +324,15 @@ public class EclipsePlugin
     private boolean addGroupIdToProjectName;
 
     /**
-     * Allows configuring the name of the eclipse projects. This property wins over
+     * Allows configuring the name of the eclipse projects. This property if set wins over
      * addVersionToProjectName and addGroupIdToProjectName
      * 
-     * You can use <code>[groupId]</code>, <code>[artifactId]</code> and
-     * <code>[version]</code> variables.
+     * You can use <code>[groupId]</code>, <code>[artifactId]</code> and <code>[version]</code>
+     * variables.
      * 
      * eg. <code>[groupId].[artifactId]-[version]</code>
      * 
-     * @parameter expression="${eclipse.projectNameTemplate}" default-value="[artifactId]"
+     * @parameter expression="${eclipse.projectNameTemplate}"
      */
     private String projectNameTemplate; 
 
@@ -836,7 +836,7 @@ public class EclipsePlugin
         }
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
-                                           project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
+                                           config.getEclipseProjectName(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
     protected EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )
