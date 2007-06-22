@@ -72,7 +72,7 @@ public class ManifestCreationFinalizer
                 }
                 else
                 {
-                    manifest = mavenArchiver.getManifest( project, archiveConfiguration.getManifest() );
+                    manifest = mavenArchiver.getManifest( project, archiveConfiguration );
                 }
 
                 if ( manifest != null && ( archiver instanceof JarArchiver ) )
