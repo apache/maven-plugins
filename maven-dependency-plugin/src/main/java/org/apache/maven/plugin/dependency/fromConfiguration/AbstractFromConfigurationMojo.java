@@ -93,7 +93,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
-     * artifactId, version, type, location, destFile, markerFile and overwrite.)
+     * artifactId, version, type, classifier, location, destFile, markerFile and overwrite.)
      * See "Usage" and "Javadoc" for details.
      * 
      * @parameter
