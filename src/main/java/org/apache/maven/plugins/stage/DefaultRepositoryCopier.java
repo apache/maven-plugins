@@ -75,7 +75,7 @@ public class DefaultRepositoryCopier
     private WagonManager wagonManager;
 
     /**
-     * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies 
+     * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies
      */
     public void copy( String sourceRepositoryUrl, String targetRepositoryUrl, String version )
         throws WagonException, IOException
@@ -206,7 +206,9 @@ public class DefaultRepositoryCopier
         {
             String s = (String) i.next();
 
-            rw.println( s );
+            // We use an explicit unix '\n' line-ending here instead of using the println() method.
+            // Using println() will cause files and folders to have a '\r' at the end if the plugin is run on Windows.
+            rw.print( s + "\n");
         }
 
         IOUtil.close( rw );
