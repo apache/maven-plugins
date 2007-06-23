@@ -6,10 +6,11 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>lib</outputDirectory>
       <unpack>false</unpack>
+      <outputDirectory>lib</outputDirectory>
       <scope>compile</scope>
-      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectArtifact>true</useProjectArtifact>
+      <useProjectAttachments>true</useProjectAttachments>
     </dependencySet>
   </dependencySets>
 </assembly>
