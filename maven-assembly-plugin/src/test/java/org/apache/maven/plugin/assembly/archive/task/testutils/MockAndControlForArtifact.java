@@ -10,24 +10,41 @@ import java.util.List;
 
 public class MockAndControlForArtifact
 {
-    
+
     public Artifact artifact;
 
     public MockControl artifactCtl;
-    
+
     public ArtifactHandler artifactHandler;
-    
+
     public MockControl artifactHandlerCtl;
 
     private final MockManager mockManager;
 
+    private final String classifier;
+
     public MockAndControlForArtifact( MockManager mockManager )
     {
+        this( mockManager, null );
+    }
+
+    public MockAndControlForArtifact( MockManager mockManager, String classifier )
+    {
         this.mockManager = mockManager;
+        this.classifier = classifier;
+
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
 
         artifact = ( Artifact ) artifactCtl.getMock();
+
+        enableDefaultExpectations();
+    }
+
+    private void enableDefaultExpectations()
+    {
+        artifact.getClassifier();
+        artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
     }
 
     public void expectGetId( String id )
@@ -82,9 +99,9 @@ public class MockAndControlForArtifact
     {
         artifactHandlerCtl = MockControl.createControl( ArtifactHandler.class );
         mockManager.add( artifactHandlerCtl );
-        
+
         artifactHandler = ( ArtifactHandler ) artifactHandlerCtl.getMock();
-        
+
         artifact.getArtifactHandler();
         artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
     }

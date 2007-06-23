@@ -39,20 +39,20 @@ public class DependencySetAssemblyPhaseTest
         ds.setUnpack( false );
         ds.setScope( Artifact.SCOPE_COMPILE );
         ds.setFileMode( Integer.toString( 10, 8 ) );
-        
+
         Assembly assembly = new Assembly();
-        
+
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( false );
         assembly.addDependencySet( ds );
-        
+
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetType( "jar" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        
+
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
 
@@ -62,11 +62,11 @@ public class DependencySetAssemblyPhaseTest
 
         macTask.expectGetProject( project );
         macTask.expectCSGetFinalName( "final-name" );
-        
+
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-        
+
         MavenProject depProject = new MavenProject( new Model() );
-        
+
         macTask.expectBuildFromRepository( depProject );
 
         mockManager.replayAll();
@@ -80,12 +80,12 @@ public class DependencySetAssemblyPhaseTest
         throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
     {
         Assembly assembly = new Assembly();
-        
+
         assembly.setId( "test" );
         assembly.setIncludeBaseDirectory( false );
-        
+
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-        
+
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
         macTask.expectGetProject( null );
@@ -101,13 +101,13 @@ public class DependencySetAssemblyPhaseTest
     {
         MavenProjectBuilder projectBuilder = null;
         DependencyResolver dependencyResolver = null;
-        
+
         if ( macTask != null )
         {
             projectBuilder = macTask.projectBuilder;
             dependencyResolver = macTask.dependencyResolver;
         }
-        
+
         DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( projectBuilder, dependencyResolver, logger );
 
         phase.enableLogging( logger );

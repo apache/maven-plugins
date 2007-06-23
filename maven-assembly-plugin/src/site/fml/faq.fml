@@ -38,4 +38,28 @@
       </answer>
     </faq>
   </part>
+  <part id="Artifact and Directory Formatting">
+    <faq id="dashClassifier">
+      <question>
+        I have a dependencySet that includes some artifacts with classifiers, and others without classifiers. 
+        How can I setup the file mappings to handle both cases appropriately?
+      </question>
+      <answer>
+        <p>
+          The best way to handle a mixed bag of dependencies with and without classifiers is to use the
+          <b>${dashClassifier?}</b> expression, added in version 2.2-beta-2 of the assembly plugin especially
+          for this purpose. This expression will determine whether each artifact has a classifier, and if it
+          does, it will substitute the artifact's classifier - prepended by a dash - in place of the expression.
+        </p>
+        <p>
+          For example, suppose you want to include two artifacts, commons-logging-1.0.4.jar, and 
+          yourserver-1.0-client.jar (where 'client' is the classifier of the second artifact). To do this,
+          simply add the following to your dependencySet:
+        </p>
+        <pre>
+          &lt;outputFileNameMapping&gt;${artifactId}-${version}${dashClassifier?}.${extension}&lt;/outputFileNameMapping&gt;
+        </pre>
+      </answer>
+    </faq>
+  </part>
 </faqs>

@@ -57,11 +57,11 @@ public class AddArtifactTask
 
         if ( unpack )
         {
-            if ( outputLocation.length() > 0 && !outputLocation.endsWith( "/" ) )
+            if ( ( outputLocation.length() > 0 ) && !outputLocation.endsWith( "/" ) )
             {
                 outputLocation += "/";
             }
-            
+
             String[] includesArray = TypeConversionUtils.toStringArray( includes );
             String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
@@ -80,7 +80,19 @@ public class AddArtifactTask
                     archiver.setDefaultDirectoryMode( TypeConversionUtils.modeToInt( directoryMode, logger ) );
                 }
 
-                archiver.addArchivedFileSet( artifact.getFile(), outputLocation, includesArray, excludesArray );
+                File artifactFile = artifact.getFile();
+                if ( artifactFile == null )
+                {
+                    logger.warn( "Skipping artifact: " + artifact.getId() + "; it does not have an associated file or directory." );
+                }
+                else if ( artifactFile.isDirectory() )
+                {
+                    archiver.addDirectory( artifactFile, outputLocation, includesArray, excludesArray );
+                }
+                else
+                {
+                    archiver.addArchivedFileSet( artifactFile, outputLocation, includesArray, excludesArray );
+                }
             }
             catch ( ArchiverException e )
             {
@@ -100,9 +112,9 @@ public class AddArtifactTask
                 if ( fileMode != null )
                 {
                     File artifactFile = artifact.getFile();
-                    
+
                     int mode = TypeConversionUtils.modeToInt( fileMode, logger );
-                    
+
                     archiver.addFile( artifactFile, outputLocation, mode );
                 }
                 else
