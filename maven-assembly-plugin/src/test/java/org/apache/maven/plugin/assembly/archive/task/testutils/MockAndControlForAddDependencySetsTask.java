@@ -35,74 +35,91 @@ public class MockAndControlForAddDependencySetsTask
     public Archiver archiver;
 
     public MockControl archiverCtl;
-    
+
     public AssemblerConfigurationSource configSource;
-    
+
     public MockControl configSourceCtl;
-    
+
     public ArtifactHandler artifactHandler;
-    
+
     public MockControl artifactHandlerCtl;
-    
+
     public DependencyResolver dependencyResolver;
-    
+
     public MockControl dependencyResolverCtl;
-    
+
     public MavenProjectBuilder projectBuilder;
-    
+
     public MockControl projectBuilderCtl;
-    
+
+    private String classifier;
+
     public MockAndControlForAddDependencySetsTask( MockManager mockManager )
+    {
+        this( mockManager, null );
+    }
+
+    public MockAndControlForAddDependencySetsTask( MockManager mockManager, String classifier )
     {
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
 
         artifact = ( Artifact ) artifactCtl.getMock();
-        
+
         artifactHandlerCtl = MockControl.createControl( ArtifactHandler.class );
         mockManager.add( artifactHandlerCtl );
-        
+
         artifactHandler = (ArtifactHandler) artifactHandlerCtl.getMock();
-        
+
         archiverCtl = MockControl.createControl( Archiver.class );
         mockManager.add( archiverCtl );
 
         archiver = (Archiver) archiverCtl.getMock();
-        
+
         configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( configSourceCtl );
-        
+
         configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
-        
+
         dependencyResolverCtl = MockControl.createControl( DependencyResolver.class );
         mockManager.add( dependencyResolverCtl );
-        
+
         dependencyResolver = ( DependencyResolver ) dependencyResolverCtl.getMock();
-        
+
         projectBuilderCtl = MockControl.createControl( MavenProjectBuilder.class );
         mockManager.add( projectBuilderCtl );
-        
+
         projectBuilder = ( MavenProjectBuilder ) projectBuilderCtl.getMock();
+
+        this.classifier = classifier;
+
+        enableDefaultExpectations();
     }
-    
+
+    private void enableDefaultExpectations()
+    {
+        artifact.getClassifier();
+        artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
+    }
+
     public void expectGetArtifactHandler()
     {
         artifact.getArtifactHandler();
         artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectGetClassifier( String classifier )
     {
         artifact.getClassifier();
         artifactCtl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectGetFinalName( String finalName )
     {
         configSource.getFinalName();
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectArtifactGetFile() throws IOException
     {
         expectArtifactGetFile( true );
@@ -116,7 +133,7 @@ public class MockAndControlForAddDependencySetsTask
         }
 
         artifact.getFile();
-        
+
         artifactCtl.setReturnValue( artifactFile, MockControl.ZERO_OR_MORE );
     }
 
@@ -125,12 +142,12 @@ public class MockAndControlForAddDependencySetsTask
         try
         {
             archiver.addArchivedFileSet( artifactFile, outputLocation, includes, excludes );
-            
-            if ( includes != null || excludes != null )
+
+            if ( ( includes != null ) || ( excludes != null ) )
             {
                 archiverCtl.setMatcher( MockControl.ARRAY_MATCHER );
             }
-            
+
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
         catch ( ArchiverException e )
@@ -138,7 +155,7 @@ public class MockAndControlForAddDependencySetsTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
                                             int numberOfChanges )
     {
@@ -175,7 +192,7 @@ public class MockAndControlForAddDependencySetsTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectAddFile( String outputLocation, int fileMode )
     {
         try
@@ -188,7 +205,7 @@ public class MockAndControlForAddDependencySetsTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectAddFile( File file, String outputLocation, int fileMode )
     {
         try
@@ -201,7 +218,7 @@ public class MockAndControlForAddDependencySetsTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectArtifactGetScope( String scope )
     {
         artifact.getScope();
@@ -291,7 +308,7 @@ public class MockAndControlForAddDependencySetsTask
         {
             Assert.fail( "should never happen!" );
         }
-        
+
         dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
         dependencyResolverCtl.setReturnValue( resolvedArtifacts, MockControl.ONE_OR_MORE );
     }

@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -71,14 +72,14 @@ public class AddDependencySetsTask
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        if ( dependencySets == null || dependencySets.isEmpty() )
+        if ( ( dependencySets == null ) || dependencySets.isEmpty() )
         {
             logger.debug( "No dependency sets specified." );
             return;
         }
 
         List deps = project.getDependencies();
-        if ( deps == null || deps.isEmpty() )
+        if ( ( deps == null ) || deps.isEmpty() )
         {
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
@@ -131,7 +132,7 @@ public class AddDependencySetsTask
                 task.setUnpack( dependencySet.isUnpack() );
 
                 UnpackOptions opts = dependencySet.getUnpackOptions();
-                if ( dependencySet.isUnpack() && opts != null )
+                if ( dependencySet.isUnpack() && ( opts != null ) )
                 {
                     task.setIncludes( opts.getIncludes() );
                     task.setExcludes( opts.getExcludes() );
@@ -154,6 +155,11 @@ public class AddDependencySetsTask
         {
             dependencyArtifacts = dependencyResolver
                 .resolveDependencies( project, dependencySet.getScope(), localRepository, additionalRemoteRepositories );
+
+            if ( ( dependencyArtifacts != null ) && !dependencyArtifacts.isEmpty() )
+            {
+                dependencyArtifacts = new LinkedHashSet( dependencyArtifacts );
+            }
         }
         catch ( ArtifactResolutionException e )
         {
@@ -166,6 +172,40 @@ public class AddDependencySetsTask
         catch ( InvalidDependencyVersionException e )
         {
             throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
+        }
+
+        if ( dependencySet.isUseProjectArtifact() )
+        {
+            Artifact projectArtifact = project.getArtifact();
+            if ( ( projectArtifact != null ) && ( projectArtifact.getFile() != null ) )
+            {
+                dependencyArtifacts.add( projectArtifact );
+            }
+            else
+            {
+                logger.warn( "Cannot include project artifact: " + projectArtifact + "; it doesn't have an associated file or directory." );
+            }
+        }
+
+        if ( dependencySet.isUseProjectAttachments() )
+        {
+            List attachments = project.getAttachedArtifacts();
+            if ( attachments != null )
+            {
+                for ( Iterator attachmentIt = attachments.iterator(); attachmentIt.hasNext(); )
+                {
+                    Artifact attachment = (Artifact) attachmentIt.next();
+
+                    if ( attachment.getFile() != null )
+                    {
+                        dependencyArtifacts.add( attachment );
+                    }
+                    else
+                    {
+                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: " + project.getId() + "; it doesn't have an associated file or directory." );
+                    }
+                }
+            }
         }
 
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),

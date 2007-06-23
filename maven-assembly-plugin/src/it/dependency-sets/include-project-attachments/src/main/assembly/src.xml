@@ -1,0 +1,16 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>target</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>

@@ -29,7 +29,7 @@ public final class AssemblyFormatUtils
         String finalName = configSource.getFinalName();
         boolean appendAssemblyId = configSource.isAssemblyIdAppended();
         String classifier = configSource.getClassifier();
-        
+
         String distributionName = finalName;
         if ( appendAssemblyId )
         {
@@ -42,10 +42,10 @@ public final class AssemblyFormatUtils
         {
             distributionName = finalName + "-" + classifier;
         }
-        
+
         return distributionName;
     }
-    
+
     public static String getOutputDirectory( String output, MavenProject project, String finalName )
     {
         String value = output;
@@ -53,32 +53,32 @@ public final class AssemblyFormatUtils
         {
             value = "";
         }
-        
+
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-        
+
         Properties specialExpressionOverrides = new Properties();
-        
+
         if ( finalName != null )
         {
             specialExpressionOverrides.setProperty( "finalName", finalName );
             specialExpressionOverrides.setProperty( "build.finalName", finalName );
         }
-        
+
         interpolator.addValueSource( new PropertiesInterpolationValueSource( specialExpressionOverrides ) );
-        
+
         if ( project != null )
         {
             interpolator.addValueSource( new ObjectBasedValueSource( project ) );
         }
-        
+
         value = interpolator.interpolate( value, "__project" );
-        
-        if ( value.length() > 0 && !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
+
+        if ( ( value.length() > 0 ) && !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
         {
             value += "/";
         }
-        
-        if ( value.length() > 0 && ( value.startsWith( "/" ) || value.startsWith( "\\" ) ) )
+
+        if ( ( value.length() > 0 ) && ( value.startsWith( "/" ) || value.startsWith( "\\" ) ) )
         {
             value = value.substring( 1 );
         }
@@ -88,31 +88,41 @@ public final class AssemblyFormatUtils
 
     /**
      * Evaluates Filename Mapping
-     * 
+     *
      * @param expression
      * @param artifact
      * @return expression
-     * @throws AssemblyFormattingException 
+     * @throws AssemblyFormattingException
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
     public static String evaluateFileNameMapping( String expression, Artifact artifact )
         throws AssemblyFormattingException
     {
         String value = expression;
-        
+
         // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
         artifact.isSnapshot();
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-        
+
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
-        
-        Properties classifierMask = new Properties();
-        classifierMask.setProperty( "classifier", "" );
-        
-        interpolator.addValueSource( new PropertiesInterpolationValueSource( classifierMask ) );
-        
+
+        Properties specialRules = new Properties();
+//      specialRules.setProperty( "classifier", "" );
+
+        String classifier = artifact.getClassifier();
+        if ( classifier != null )
+        {
+            specialRules.setProperty( "dashClassifier?",  "-" + classifier );
+        }
+        else
+        {
+            specialRules.setProperty( "dashClassifier?", "" );
+        }
+
+        interpolator.addValueSource( new PropertiesInterpolationValueSource( specialRules ) );
+
         value = interpolator.interpolate( value, "__artifact" );
 
         return value;

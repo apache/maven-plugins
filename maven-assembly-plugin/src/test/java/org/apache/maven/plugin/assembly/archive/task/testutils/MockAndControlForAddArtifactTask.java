@@ -27,56 +27,67 @@ public class MockAndControlForAddArtifactTask
     public Archiver archiver;
 
     public MockControl archiverCtl;
-    
+
     public AssemblerConfigurationSource configSource;
-    
+
     public MockControl configSourceCtl;
-    
+
     public ArtifactHandler artifactHandler;
-    
+
     public MockControl artifactHandlerCtl;
-    
+
+    private final String classifier;
+
     public MockAndControlForAddArtifactTask( MockManager mockManager )
     {
+        this( mockManager, null );
+    }
+
+    public MockAndControlForAddArtifactTask( MockManager mockManager, String classifier )
+    {
+        this.classifier = classifier;
+
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
 
         artifact = ( Artifact ) artifactCtl.getMock();
-        
+
         artifactHandlerCtl = MockControl.createControl( ArtifactHandler.class );
         mockManager.add( artifactHandlerCtl );
-        
+
         artifactHandler = (ArtifactHandler) artifactHandlerCtl.getMock();
-        
+
         archiverCtl = MockControl.createControl( Archiver.class );
         mockManager.add( archiverCtl );
 
         archiver = (Archiver) archiverCtl.getMock();
-        
+
         configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( configSourceCtl );
-        
+
         configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
+
+        enableDefaultExpectations();
     }
-    
+
+    private void enableDefaultExpectations()
+    {
+        artifact.getClassifier();
+        artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
+    }
+
     public void expectGetArtifactHandler()
     {
         artifact.getArtifactHandler();
         artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
     }
-    
-    public void expectGetClassifier( String classifier )
-    {
-        artifact.getClassifier();
-        artifactCtl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
-    }
-    
+
     public void expectGetFinalName( String finalName )
     {
         configSource.getFinalName();
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectArtifactGetFile() throws IOException
     {
         expectArtifactGetFile( true );
@@ -91,7 +102,7 @@ public class MockAndControlForAddArtifactTask
         }
 
         artifact.getFile();
-        
+
         artifactCtl.setReturnValue( artifactFile, MockControl.ZERO_OR_MORE );
     }
 
@@ -100,12 +111,12 @@ public class MockAndControlForAddArtifactTask
         try
         {
             archiver.addArchivedFileSet( artifactFile, outputLocation, includes, excludes );
-            
-            if ( includes != null || excludes != null )
+
+            if ( ( includes != null ) || ( excludes != null ) )
             {
                 archiverCtl.setMatcher( MockControl.ARRAY_MATCHER );
             }
-            
+
             archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
         catch ( ArchiverException e )
@@ -113,7 +124,7 @@ public class MockAndControlForAddArtifactTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
                                             int numberOfChanges )
     {
@@ -150,7 +161,7 @@ public class MockAndControlForAddArtifactTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectAddFile( String outputLocation, int fileMode )
     {
         try
@@ -163,7 +174,7 @@ public class MockAndControlForAddArtifactTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectAddFile( File file, String outputLocation, int fileMode )
     {
         try
@@ -176,7 +187,7 @@ public class MockAndControlForAddArtifactTask
             Assert.fail( "Should never happen." );
         }
     }
-    
+
     public void expectArtifactGetScope( String scope )
     {
         artifact.getScope();
