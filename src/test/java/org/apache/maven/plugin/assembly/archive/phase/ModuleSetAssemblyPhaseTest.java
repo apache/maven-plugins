@@ -246,7 +246,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        
+
         int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         macTask.expectAddFile( "out/artifact", mode );
@@ -269,7 +269,7 @@ public class ModuleSetAssemblyPhaseTest
         assembly.addModuleSet( ms );
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-        
+
         mm.replayAll();
 
         createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource );
@@ -319,10 +319,9 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test" );
 
         macTask.expectArtifactGetFile( true );
-        macTask.expectGetClassifier( "test" );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
@@ -380,7 +379,7 @@ public class ModuleSetAssemblyPhaseTest
         try
         {
             createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
-            
+
             fail( "Should throw an invalid configuration exception because of module with missing attachment." );
         }
         catch ( InvalidAssemblerConfigurationException e )
@@ -449,6 +448,7 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputFileNameMapping( "artifact" );
 
         DependencySet ds = new DependencySet();
+        ds.setUseProjectArtifact( false );
         ds.setOutputDirectory( binaries.getOutputDirectory() );
         ds.setOutputFileNameMapping( "${artifactId}" );
         ds.setFileMode( "777" );
@@ -506,6 +506,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
+        macTask.expectArtifactGetType( "jar" );
         macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         ModuleBinaries binaries = new ModuleBinaries();

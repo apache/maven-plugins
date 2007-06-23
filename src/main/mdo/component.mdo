@@ -358,10 +358,11 @@
           <name>outputFileNameMapping</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
+          <defaultValue>${artifactId}-${version}${dashClassifier?}.${extension}</defaultValue>
           <description>
             Sets the mapping pattern for all dependencies included in this
-            assembly. Default is ${artifactId}-${version}.${extension}.
+            assembly. Default is ${artifactId}-${version}${dashClassifier?}.${extension}.
+            If the artifact doesn't have a classifier, that part of the pattern will be left off.
           </description>
         </field>
         <field>
@@ -396,6 +397,27 @@
             Sets the dependency scope for this dependencySet.
             Default scope value is "runtime".
           </description>
+        </field>
+        <field>
+          <name>useProjectArtifact</name>
+          <version>1.1.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description><![CDATA[
+          Determines whether the artifact produced during the current project's
+          build should be included in this dependency set. Default value is true,
+          for backward compatibility.
+          ]]></description>
+        </field>
+        <field>
+          <name>useProjectAttachments</name>
+          <version>1.1.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description><![CDATA[
+          Determines whether the attached artifacts produced during the current project's
+          build should be included in this dependency set. Default value is false.
+          ]]></description>
         </field>
         <field>
           <name>useTransitiveFiltering</name>
