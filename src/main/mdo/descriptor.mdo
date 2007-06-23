@@ -525,7 +525,7 @@
           <description><![CDATA[
           Determines whether the artifact produced during the current project's
           build should be included in this dependency set. Default value is true,
-          for backward compatibility.
+          for backward compatibility. (Since 2.2)
           ]]></description>
         </field>
         <field>
@@ -535,7 +535,7 @@
           <defaultValue>false</defaultValue>
           <description><![CDATA[
           Determines whether the attached artifacts produced during the current project's
-          build should be included in this dependency set. Default value is false.
+          build should be included in this dependency set. Default value is false. (Since 2.2)
           ]]></description>
         </field>
         <field>
