@@ -6,9 +6,19 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
-      <outputDirectory>lib</outputDirectory>
+      <outputDirectory>lib/${artifactId}</outputDirectory>
       <unpack>true</unpack>
+      <excludes>
+        <exclude>*:pom</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+      <unpack>true</unpack>
+      <includes>
+        <include>*:pom</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 </assembly>
