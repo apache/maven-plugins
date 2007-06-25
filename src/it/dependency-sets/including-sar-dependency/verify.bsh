@@ -3,9 +3,9 @@ import java.io.*;
 boolean result = true;
 
 // verify that transitive deps of the POM dep were included.
-result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/xmlrpc.jar" ).exists();
-result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-xmlrpc.jar" ).exists();
+result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/xmlrpc" ).exists();
+result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-xmlrpc" ).exists();
 
-result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-appserver-service-xmlrpc.sar/lib/commons-codec-1.3.jar" ).exists();
+result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-appserver-service-xmlrpc/lib/commons-codec-1.3.jar" ).exists();
 
 return result;
