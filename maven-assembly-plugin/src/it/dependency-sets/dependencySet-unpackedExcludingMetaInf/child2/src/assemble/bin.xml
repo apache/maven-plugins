@@ -15,8 +15,7 @@
           <exclude>META-INF/**</exclude>
         </excludes>
       </unpackOptions>
-      <outputDirectory>/</outputDirectory>
-      <outputFileNameMapping>${artifactId}</outputFileNameMapping>
+      <outputDirectory>/${artifactId}</outputDirectory>
       <scope>test</scope>
       <excludes>
         <exclude>junit:junit</exclude>
