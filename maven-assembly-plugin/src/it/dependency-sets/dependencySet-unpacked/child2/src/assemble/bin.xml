@@ -10,8 +10,7 @@
         <include>test:child1</include>
       </includes>
       <unpack>true</unpack>
-      <outputDirectory>/</outputDirectory>
-      <outputFileNameMapping>${artifactId}</outputFileNameMapping>
+      <outputDirectory>/${artifactId}</outputDirectory>
       <scope>test</scope>
       <excludes>
         <exclude>junit:junit</exclude>

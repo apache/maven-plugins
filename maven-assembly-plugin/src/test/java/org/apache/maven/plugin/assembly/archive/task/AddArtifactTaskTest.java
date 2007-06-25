@@ -20,18 +20,17 @@ public class AddArtifactTaskTest
 {
 
     private MockManager mockManager;
-    
+
     private MockAndControlForAddArtifactTask mac;
 
     public void setUp()
         throws IOException
     {
         mockManager = new MockManager();
-        
+
         mac = new MockAndControlForAddArtifactTask( mockManager );
         mac.expectArtifactGetFile();
         mac.expectGetFinalName( "final-name" );
-        mac.expectGetArtifactHandler();
     }
 
     public void testShouldAddArchiveFileWithoutUnpacking()
@@ -41,6 +40,7 @@ public class AddArtifactTaskTest
 
         mac.expectAddFile( outputLocation );
         mac.expectIsSnapshot( false );
+        mac.expectGetArtifactHandler();
         mockManager.replayAll();
 
         AddArtifactTask task = createTask( mac.artifact );
@@ -63,9 +63,9 @@ public class AddArtifactTaskTest
         throws ArchiveCreationException, AssemblyFormattingException
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
-        mac.expectIsSnapshot( false );
+//        mac.expectIsSnapshot( false );
 
-        String outputLocation = "artifact/";
+        String outputLocation = "";
 
         try
         {
@@ -92,11 +92,11 @@ public class AddArtifactTaskTest
     {
         int directoryMode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         int fileMode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-        
-        mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
-        mac.expectIsSnapshot( false );
 
-        String outputLocation = "artifact/";
+        mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
+//        mac.expectIsSnapshot( false );
+
+        String outputLocation = "";
 
         try
         {
@@ -124,9 +124,8 @@ public class AddArtifactTaskTest
         throws ArchiveCreationException, AssemblyFormattingException
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
-        mac.expectIsSnapshot( false );
 
-        String outputLocation = "artifact/";
+        String outputLocation = "";
 
         String[] includes = { "**/*.txt" };
         String[] excludes = { "**/README.txt" };
