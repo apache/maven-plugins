@@ -6,8 +6,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
-      <outputDirectory>lib</outputDirectory>
+      <outputDirectory>lib/${artifactId}</outputDirectory>
       <unpack>true</unpack>
     </dependencySet>
   </dependencySets>

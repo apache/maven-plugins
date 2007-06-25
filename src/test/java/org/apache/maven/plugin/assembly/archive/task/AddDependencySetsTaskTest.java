@@ -81,20 +81,20 @@ public class AddDependencySetsTaskTest
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetType( "jar" );
-        macTask.expectIsSnapshot( false );
-        macTask.expectGetArtifactHandler();
 
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
 
         if ( unpack )
         {
-            macTask.expectAddArchivedFileSet( outputLocation + "/artifact/", null, null );
+            macTask.expectAddArchivedFileSet( outputLocation + "/", null, null );
             macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else
         {
             macTask.expectAddFile( outputLocation + "/artifact", 10 );
+            macTask.expectIsSnapshot( false );
+            macTask.expectGetArtifactHandler();
         }
 
         macTask.expectCSGetFinalName( "final-name" );
