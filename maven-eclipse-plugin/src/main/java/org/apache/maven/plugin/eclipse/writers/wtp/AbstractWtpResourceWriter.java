@@ -74,6 +74,8 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
     protected static final String ELT_PROJECT_MODULES = "project-modules"; //$NON-NLS-1$
 
     protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$
+    
+    protected static final String ARTIFACT_MAVEN_EAR_PLUGIN = "maven-ear-plugin"; //$NON-NLS-1$
 
     /**
      * @param project
