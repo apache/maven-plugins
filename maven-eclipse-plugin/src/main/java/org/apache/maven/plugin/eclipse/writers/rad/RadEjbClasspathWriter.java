@@ -32,7 +32,7 @@ import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
-import org.apache.maven.plugin.eclipse.writers.AbstractWtpResourceWriter;
+import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
