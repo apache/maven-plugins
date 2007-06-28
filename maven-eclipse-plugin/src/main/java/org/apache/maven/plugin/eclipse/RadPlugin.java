@@ -77,9 +77,8 @@ public class RadPlugin
     private static final String COM_IBM_WTP_MIGRATION_MIGRATION_BUILDER = "com.ibm.wtp.migration.MigrationBuilder";
 
     private static final String COM_IBM_WTP_WEB_WEB_NATURE = "com.ibm.wtp.web.WebNature";
-
-    private static final String GENERATED_RESOURCE_DIRNAME = "target" + File.separatorChar + "generated-resources"
-        + File.separatorChar + "rad6";
+    
+    private static final String NO_GENERATED_RESOURCE_DIRNAME = "none";
 
     private static final String ORG_ECLIPSE_JDT_CORE_JAVABUILDER = "org.eclipse.jdt.core.javabuilder";
 
@@ -89,9 +88,19 @@ public class RadPlugin
      * The context root of the webapplication. This parameter is only used when
      * the current project is a war project, else it will be ignored.
      * 
-     * @parameter 
+     * @parameter
      */
     private String warContextRoot;
+    
+    
+    /**
+     * Use this to specify a different generated resources folder than
+     * target/generated-resources/rad6.
+     * Set to "none" to skip this folder generation.
+     * 
+     * @parameter  expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
+     */
+    private String generatedResourceDirName;
 
     /**
      * @return Returns the warContextRoot.
@@ -156,14 +165,15 @@ public class RadPlugin
         }
 
         String packaging = getExecutedProject().getPackaging();
-
+        
         if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
-            && !Constants.PROJECT_PACKAGING_EJB.equals( packaging ) )
+            && !Constants.PROJECT_PACKAGING_EJB.equals( packaging )
+            && !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ))
         {
 
             String generatedResourceDir = this.project.getBasedir().getAbsolutePath() + File.separatorChar
-                + GENERATED_RESOURCE_DIRNAME;
+                + this.generatedResourceDirName;
 
             String metainfDir = generatedResourceDir + File.separatorChar + "META-INF";
 
@@ -171,7 +181,7 @@ public class RadPlugin
 
             final Resource resource = new Resource();
 
-            getLog().debug( "Adding " + GENERATED_RESOURCE_DIRNAME + " to resources" );
+            getLog().debug( "Adding " + this.generatedResourceDirName + " to resources" );
 
             resource.setDirectory( generatedResourceDir );
 
