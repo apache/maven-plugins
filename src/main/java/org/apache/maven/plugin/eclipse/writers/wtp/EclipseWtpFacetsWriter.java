@@ -18,20 +18,19 @@
  */
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.eclipse.writers.EclipseWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
