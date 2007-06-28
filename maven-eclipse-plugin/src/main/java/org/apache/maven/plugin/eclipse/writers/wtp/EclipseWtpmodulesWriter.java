@@ -18,18 +18,17 @@
  */
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.eclipse.writers.EclipseWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Writes eclipse .wtpmodules file.
@@ -79,13 +78,12 @@ public class EclipseWtpmodulesWriter
         {
             String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", //$NON-NLS-1$
-                                                                   "/src/main/webapp" ); //$NON-NLS-1$
+                                                                   config.getProject().getBasedir()+"/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( config
-                    .getEclipseProjectDirectory(), warSourceDirectory ), false ) );
+                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( warSourceDirectory ), false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );

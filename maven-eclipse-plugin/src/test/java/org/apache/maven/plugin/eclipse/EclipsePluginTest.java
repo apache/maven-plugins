@@ -303,4 +303,14 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
         testProject( "project-30" );
     }
 
+    /**
+     * MECLIPSE-109 : .component wb-resource source path incorrect for ear packaging
+     * 
+     * @throws Exception
+     *             any exception thrown during test
+     */
+    public void testProject32() throws Exception
+    {
+        testProject( "project-32" );
+    }
 }
