@@ -491,6 +491,7 @@ public abstract class AbstractIdeSupportMojo
 
                         // if we are here artifactResolutionResult is null, create a project without dependencies but don't fail
                         // (this could be a reactor projects, we don't want to fail everything)
+                        //  Causes MECLIPSE-185. Not sure if it should be handled this way??
                         return new IdeDependency[0];
                     }
 
