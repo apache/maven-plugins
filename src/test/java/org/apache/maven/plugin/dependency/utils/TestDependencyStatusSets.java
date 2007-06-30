@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 public class TestDependencyStatusSets
     extends AbstractDependencyMojoTestCase

@@ -22,20 +22,13 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
-import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 public class TestUnpackDependenciesMojo2
     extends AbstractDependencyMojoTestCase
@@ -91,7 +84,7 @@ public class TestUnpackDependenciesMojo2
         File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerType(), mojo
             .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
                                                                    artifact );
-        File unpacked = new File( destDir, ArtifactStubFactory.getUnpackableFileName( artifact ) );
+        File unpacked = new File( destDir, DependencyArtifactStubFactory.getUnpackableFileName( artifact ) );
         assertTrue( unpacked.exists() );
         return unpacked;
     }

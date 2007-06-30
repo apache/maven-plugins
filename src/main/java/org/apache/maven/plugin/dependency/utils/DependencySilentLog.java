@@ -26,7 +26,7 @@ import org.codehaus.plexus.logging.Logger;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-public class SilentLog
+public class DependencySilentLog
     implements Log, Logger
 {
 

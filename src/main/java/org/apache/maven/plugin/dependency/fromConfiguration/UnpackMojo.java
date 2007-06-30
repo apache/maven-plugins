@@ -25,10 +25,13 @@ import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
