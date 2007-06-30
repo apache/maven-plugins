@@ -34,8 +34,9 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.stubs.DefaultArtifactHandlerStub;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.plugin.testing.stubs.DefaultArtifactHandlerStub;
 
 /**
  * @author brianf

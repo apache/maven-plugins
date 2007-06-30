@@ -37,8 +37,8 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubDefaultFileMarkerHandler;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
