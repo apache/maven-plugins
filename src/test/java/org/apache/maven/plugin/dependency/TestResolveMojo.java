@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.testing.SilentLog;
 import org.apache.maven.project.MavenProject;
 
 public class TestResolveMojo

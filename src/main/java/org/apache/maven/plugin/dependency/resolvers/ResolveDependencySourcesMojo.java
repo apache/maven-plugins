@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  */
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;

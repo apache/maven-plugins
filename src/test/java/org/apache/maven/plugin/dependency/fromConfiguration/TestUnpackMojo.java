@@ -30,12 +30,12 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactCollector;
-import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
+import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
+import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 
 public class TestUnpackMojo
@@ -544,7 +544,7 @@ public class TestUnpackMojo
 
     public File getUnpackedFile( ArtifactItem item )
     {
-        File unpackedFile = new File( item.getOutputDirectory(), ArtifactStubFactory.getUnpackableFileName( item
+        File unpackedFile = new File( item.getOutputDirectory(), DependencyArtifactStubFactory.getUnpackableFileName( item
             .getArtifact() ) );
 
         assertTrue( unpackedFile.exists() );

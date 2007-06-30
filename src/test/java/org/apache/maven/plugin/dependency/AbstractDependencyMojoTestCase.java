@@ -22,7 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
@@ -32,7 +32,7 @@ public class AbstractDependencyMojoTestCase
 
     protected File testDir;
 
-    protected ArtifactStubFactory stubFactory;
+    protected DependencyArtifactStubFactory stubFactory;
 
     public AbstractDependencyMojoTestCase()
     {
@@ -49,7 +49,7 @@ public class AbstractDependencyMojoTestCase
         DependencyTestUtils.removeDirectory( testDir );
         assertFalse( testDir.exists() );
 
-        stubFactory = new ArtifactStubFactory( this.testDir, createFiles );
+        stubFactory = new DependencyArtifactStubFactory( this.testDir, createFiles );
 
     }
 
