@@ -30,7 +30,7 @@ public class TestSilentLog
 
     public void testLog()
     {
-        Log log = new SilentLog();
+        Log log = new DependencySilentLog();
         String text = new String( "Text" );
         Throwable e = new RuntimeException();
         log.debug( text );
@@ -53,7 +53,7 @@ public class TestSilentLog
 
     public void testLogger()
     {
-        Logger log = new SilentLog();
+        Logger log = new DependencySilentLog();
         String text = new String( "Text" );
         Throwable e = new RuntimeException();
 

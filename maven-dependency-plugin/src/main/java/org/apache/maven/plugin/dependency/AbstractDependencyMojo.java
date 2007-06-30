@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -28,7 +27,7 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.dependency.utils.DependencySilentLog;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -153,7 +152,7 @@ public abstract class AbstractDependencyMojo
     {
         if ( silent )
         {
-            log = new SilentLog();
+            log = new DependencySilentLog();
         }
         else
         {

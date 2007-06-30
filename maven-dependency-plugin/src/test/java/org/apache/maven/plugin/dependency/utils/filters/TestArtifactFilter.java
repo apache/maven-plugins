@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.testUtils.AbstractArtifactFeatureFilterTestCase;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 
 /**
  * @author clove TestCases for ArtifactFilter
@@ -43,7 +43,7 @@ public class TestArtifactFilter
     {
         super.setUp();
         filterClass = ArtifactIdFilter.class;
-        ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
+        DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getArtifactArtifacts();
     }
 

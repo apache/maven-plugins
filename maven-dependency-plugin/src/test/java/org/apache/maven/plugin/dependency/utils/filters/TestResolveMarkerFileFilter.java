@@ -31,11 +31,11 @@ import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
@@ -50,7 +50,7 @@ public class TestResolveMarkerFileFilter
 
     File outputFolder;
 
-    ArtifactStubFactory fact;
+    DependencyArtifactStubFactory fact;
 
     protected void setUp()
         throws Exception
@@ -61,7 +61,7 @@ public class TestResolveMarkerFileFilter
         DependencyTestUtils.removeDirectory( outputFolder );
         assertFalse( outputFolder.exists() );
 
-        this.fact = new ArtifactStubFactory( outputFolder, false );
+        this.fact = new DependencyArtifactStubFactory( outputFolder, false );
         artifacts = fact.getReleaseAndSnapshotArtifacts();
     }
 
