@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.testUtils.AbstractArtifactFeatureFilterTestCase;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 
 /**
  * @author brianf Test case for ClassifierFilter
@@ -44,7 +44,7 @@ public class TestClassifierFilter
     {
         super.setUp();
         filterClass = ClassifierFilter.class;
-        ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
+        DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getClassifiedArtifacts();
 
     }

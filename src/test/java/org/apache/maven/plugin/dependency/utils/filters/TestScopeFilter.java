@@ -30,9 +30,9 @@ import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
@@ -50,7 +50,7 @@ public class TestScopeFilter
     {
         super.setUp();
 
-        ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
+        DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getScopedArtifacts();
     }
 

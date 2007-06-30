@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,9 +14,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub;
 import org.apache.maven.project.MavenProject;
 
@@ -46,7 +43,7 @@ public class TestAnalyzeDepMgt
 
     AnalyzeDepMgt mojo;
 
-    ArtifactStubFactory stubFactory;
+    DependencyArtifactStubFactory stubFactory;
 
     Dependency exclusion;
 
@@ -62,7 +59,7 @@ public class TestAnalyzeDepMgt
         mojo = new AnalyzeDepMgt();
         MavenProject project = new DependencyProjectStub();
         
-        stubFactory = new ArtifactStubFactory( new File( "" ), false );
+        stubFactory = new DependencyArtifactStubFactory( new File( "" ), false );
 
         Set allArtifacts = stubFactory.getMixedArtifacts();
         Set directArtifacts = stubFactory.getClassifiedArtifacts();

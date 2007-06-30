@@ -31,9 +31,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.filters.AbstractArtifactFeatureFilter;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * Abstract test case for subclasses of AbstractArtifactFeatureFilter

@@ -31,10 +31,10 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
@@ -59,7 +59,7 @@ public class TestFilterArtifacts
         File outputFolder = outputFolder = new File( "target/filters/" );
         DependencyTestUtils.removeDirectory( outputFolder );
 
-        ArtifactStubFactory fact = new ArtifactStubFactory( outputFolder, false );
+        DependencyArtifactStubFactory fact = new DependencyArtifactStubFactory( outputFolder, false );
         Set artifacts = fact.getReleaseAndSnapshotArtifacts();
         FilterArtifacts fa = new FilterArtifacts();
 

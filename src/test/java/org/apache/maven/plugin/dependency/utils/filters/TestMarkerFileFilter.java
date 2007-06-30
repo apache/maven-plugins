@@ -31,11 +31,11 @@ import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
@@ -50,7 +50,7 @@ public class TestMarkerFileFilter
 
     File outputFolder;
 
-    ArtifactStubFactory fact;
+    DependencyArtifactStubFactory fact;
 
     protected void setUp()
         throws Exception
@@ -61,7 +61,7 @@ public class TestMarkerFileFilter
         DependencyTestUtils.removeDirectory( outputFolder );
         assertFalse( outputFolder.exists() );
 
-        this.fact = new ArtifactStubFactory( outputFolder, false );
+        this.fact = new DependencyArtifactStubFactory( outputFolder, false );
         artifacts = fact.getReleaseAndSnapshotArtifacts();
     }
 
@@ -125,7 +125,7 @@ public class TestMarkerFileFilter
     public void testMarkerTimestamp()
         throws MojoExecutionException, IOException
     {
-        ArtifactStubFactory fileFact = new ArtifactStubFactory( outputFolder, true );
+        DependencyArtifactStubFactory fileFact = new DependencyArtifactStubFactory( outputFolder, true );
         Artifact snap = fileFact.getSnapshotArtifact();
         Artifact release = fileFact.getReleaseArtifact();
         HashSet tempArtifacts = new HashSet();

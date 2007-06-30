@@ -33,9 +33,9 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
@@ -61,7 +61,7 @@ public class TestClassifierTypeTranslator
         artifactFactory = new DefaultArtifactFactory();
         this.setVariableValueToObject( artifactFactory, "artifactHandlerManager", manager );
 
-        ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
+        DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getMixedArtifacts();
     }
 
