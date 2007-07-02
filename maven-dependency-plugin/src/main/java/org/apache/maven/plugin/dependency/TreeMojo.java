@@ -79,7 +79,7 @@ public class TreeMojo extends AbstractMojo
     private MavenProject project;
 
     /**
-     * The artifact respository to use.
+     * The artifact repository to use.
      * 
      * @parameter expression="${localRepository}"
      * @required
