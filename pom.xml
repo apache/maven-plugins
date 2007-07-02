@@ -12,6 +12,13 @@
   <version>1.0-SNAPSHOT</version>
   <name>maven-patch-plugin Maven Mojo</name>
   <url>http://maven.apache.org</url>
+ 
+  <scm>
+     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/trunk/plugins/maven-patch-plugin</connection>
+     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/trunk/plugins/maven-patch-plugin</developerConnection>
+     <url>http://svn.apache.org/repos/asf/maven/sandbox/trunk/plugins/maven-patch-plugin</url>
+  </scm>
+
   <dependencies> 
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
