@@ -25,11 +25,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTree;
 import org.apache.maven.shared.jar.JarAnalyzer;
-import org.apache.maven.shared.jar.JarAnalyzerException;
-import org.apache.maven.shared.jar.JarAnalyzerFactory;
-import org.apache.maven.shared.jar.classes.JarClasses;
+import org.apache.maven.shared.jar.JarData;
+import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,15 +37,17 @@ import java.util.Map;
 
 public class Dependencies
 {
-    private List projectDependencies;
-    private DependencyTree dependencyTree;
-    private JarAnalyzerFactory jarAnalyzerFactory;
+    private final List projectDependencies;
 
-    public Dependencies( MavenProject project, DependencyTree dependencyTree, JarAnalyzerFactory jarAnalyzerFactory )
+    private final DependencyTree dependencyTree;
+
+    private final JarClassesAnalysis classesAnalyzer;
+
+    public Dependencies( MavenProject project, DependencyTree dependencyTree, JarClassesAnalysis classesAnalyzer )
     {
         this.dependencyTree = dependencyTree;
         this.projectDependencies = dependencyTree.getRootNode().getChildren();
-        this.jarAnalyzerFactory = jarAnalyzerFactory;
+        this.classesAnalyzer = classesAnalyzer;
 
         /*
          * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
@@ -60,8 +61,8 @@ public class Dependencies
         }
 
         mapArtifactFiles( dependencyTree.getRootNode(), projectMap );
-    } 
-    
+    }
+
     private void mapArtifactFiles( DependencyNode node, Map projectMap )
     {
         List childs = node.getChildren();
@@ -125,15 +126,20 @@ public class Dependencies
         return dependenciesByScope;
     }
 
-    public JarDependencyDetails getJarDependencyDetails( Artifact artifact )
-        throws JarAnalyzerException
+    public JarData getJarDependencyDetails( Artifact artifact )
+        throws IOException
     {
-        File artifactFile = artifact.getFile();
-        
-        JarAnalyzer jar = jarAnalyzerFactory.getJarAnalyzer( artifactFile ); 
-        
-        JarClasses jarClasses = jar.getClasses();
+        JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
 
-        return new JarDependencyDetails( jarClasses, jar.isSealed(), jar.getEntries() );
+        try
+        {
+            classesAnalyzer.analyze( jarAnalyzer );
+        }
+        finally
+        {
+            jarAnalyzer.closeQuietly();
+        }
+
+        return jarAnalyzer.getJarData();
     }
 }
