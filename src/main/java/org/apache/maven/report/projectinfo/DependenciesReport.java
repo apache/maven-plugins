@@ -31,7 +31,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.dependency.tree.DependencyTree;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.jar.JarAnalyzerFactory;
+import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
 
 import java.util.Locale;
 
@@ -68,7 +68,7 @@ public class DependenciesReport
      * @component
      */
     private WagonManager wagonManager;
-    
+
     /**
      * @component
      */
@@ -77,8 +77,8 @@ public class DependenciesReport
     /**
      * @component
      */
-    private JarAnalyzerFactory jarAnalyzerFactory;
-    
+    private JarClassesAnalysis classesAnalyzer;
+
     /**
      * The current user system settings for use in Maven.
      *
@@ -95,6 +95,7 @@ public class DependenciesReport
 
     /**
      * Display the repository locations of the dependencies. Requires Maven 2.0.5+.
+     *
      * @parameter expression="${dependency.locations.enabled}" default-value="false"
      */
     private boolean dependencyLocationsEnabled;
@@ -126,7 +127,7 @@ public class DependenciesReport
 
         DependencyTree dependencyTree = resolveProject();
 
-        Dependencies dependencies = new Dependencies( project, dependencyTree, jarAnalyzerFactory );
+        Dependencies dependencies = new Dependencies( project, dependencyTree, classesAnalyzer );
 
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
@@ -143,14 +144,14 @@ public class DependenciesReport
     {
         try
         {
-            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory,
-                                                              artifactMetadataSource, collector );
+            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory, artifactMetadataSource,
+                                                              collector );
         }
         catch ( DependencyTreeBuilderException e )
         {
             getLog().error( "Unable to build dependency tree.", e );
             return null;
-        } 
+        }
     }
 
     /**
