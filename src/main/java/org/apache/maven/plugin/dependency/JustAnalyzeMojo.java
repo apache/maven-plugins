@@ -5,7 +5,7 @@ package org.apache.maven.plugin.dependency;
  * already executed test-compile (or a later phase) to get accurate results.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 523899 2007-03-30 01:07:08Z brianf $
+ * @version $Id$
  * @goal just-analyze
  * @requiresDependencyResolution test
  * @execute phase="validate"
