@@ -24,7 +24,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.Commandline.Argument;
 //import org.codehaus.plexus.util.cli.shell.BourneShell;
 
 import java.io.File;
@@ -430,6 +429,8 @@ public class ApplyMojo
                 getLog().info( "Applying patch: " + patchName );
                 int result = executeCommandLine( cli, consumer, consumer );
 
+                getLog().info( "patch command returned: " + result );
+                
                 if ( result != 0 )
                 {
                     if ( failFast )
@@ -579,7 +580,7 @@ public class ApplyMojo
             //cli.createArg().setLine( "-b" );
         }
 
-        cli.createArgument().setLine( " < " + patchFile.getAbsolutePath() );
+        cli.createArgument().setLine( "-i " +  patchFile.getAbsolutePath() );
         //cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
 
         return cli;
