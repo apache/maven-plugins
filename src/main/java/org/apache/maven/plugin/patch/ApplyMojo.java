@@ -24,7 +24,8 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.shell.BourneShell;
+import org.codehaus.plexus.util.cli.Commandline.Argument;
+//import org.codehaus.plexus.util.cli.shell.BourneShell;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -470,6 +471,8 @@ public class ApplyMojo
             getLog().debug( "Executing:\n" + cli + "\n" );
         }
 
+        getLog().info( Commandline.toString( cli.getShellCommandline() ) );
+        
         return CommandLineUtils.executeCommandLine( cli, out, err );
     }
 
@@ -534,7 +537,7 @@ public class ApplyMojo
     private Commandline createPatchCommand( File patchFile )
     {
         Commandline cli = new Commandline();
-        cli.setShell( new BourneShell() );
+        //cli.setShell( new BourneShell() );
 
         cli.setExecutable( "patch" );
 
@@ -542,34 +545,42 @@ public class ApplyMojo
 
         if ( originalFile != null )
         {
-            cli.createArg().setLine( originalFile.getAbsolutePath() );
+            cli.createArgument().setLine( originalFile.getAbsolutePath() );
+            //cli.createArg().setLine( originalFile.getAbsolutePath() );
 
             if ( destFile != null )
             {
-                cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
+                cli.createArgument().setLine( "-o " + destFile.getAbsolutePath() );
+                //cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
             }
 
-            cli.createArg().setLine( patchFile.getAbsolutePath() );
+            cli.createArgument().setValue( patchFile.getAbsolutePath() );
+            //cli.createArg().setLine( patchFile.getAbsolutePath() );
         }
 
-        cli.createArg().setLine( "-p" + strip );
+        cli.createArgument().setLine( "-p" + strip  );
+        //cli.createArg().setLine( "-p" + strip );
 
         if ( ignoreWhitespace )
         {
-            cli.createArg().setLine( "-l" );
+            cli.createArgument().setValue( "-l" );
+            //cli.createArg().setLine( "-l" );
         }
 
         if ( reverse )
         {
-            cli.createArg().setLine( "-R" );
+            cli.createArgument().setValue( "-R" );
+            //cli.createArg().setLine( "-R" );
         }
 
         if ( backups )
         {
-            cli.createArg().setLine( "-b" );
+            cli.createArgument().setValue( "-b" );
+            //cli.createArg().setLine( "-b" );
         }
 
-        cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
+        cli.createArgument().setLine( " < " + patchFile.getAbsolutePath() );
+        //cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
 
         return cli;
     }
