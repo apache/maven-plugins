@@ -190,7 +190,7 @@ public class TreeMojo extends AbstractMojo
 
         try
         {
-            // TODO: fix DependencyTreeBuilder to apply filter
+            // NOTE: artifactFilter will have no effect until MNG-3089 is fixed
             rootNode =
                 dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
                                                            artifactMetadataSource, artifactFilter, artifactCollector );
