@@ -337,6 +337,7 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
         testProject( "project-32" );
     }
     
+    
     /**
      * MECLIPSE-287 : dependencies with and without classifiers
      * MECLIPSE-151 : test jar source attachments
@@ -344,19 +345,12 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
      * @throws Exception
      *             any exception thrown during test
      */
+    /*@TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
+     wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
+     file-comparing step which at the moment just does line by line comparison   
+    project 7 is affected by this as well.
     public void testProject33() throws Exception
     {
-        try
-        {
             testProject( "project-33" );
-        }
-        catch (MojoExecutionException e)
-        {
-            // @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-            // wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-            // file-comparing
-            // step which at the moment just does line by line comparison   
-            //project 7 is affected by this as well.
-        }
-    }
+    }*/
 }
