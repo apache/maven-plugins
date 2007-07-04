@@ -19,67 +19,79 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The packaging context.
  *
  * @author Stephane Nicoll
  */
-public class WarPackagingContext
+public interface WarPackagingContext
 {
+    /**
+     * Returns the maven project.
+     *
+     * @return the project
+     */
+    MavenProject getProject();
 
-    private final Logger logger;
-    private final File overlaysWorkDirectory;
-    private final ArchiverManager archiverManager;
-    private final PathSet protectedFiles;
-    private final File webAppDirectory;
+    /**
+     * Returns the webapp directory. Packaging tasks should use this
+     * directory to generate the webapp.
+     *
+     * @return the webapp directory
+     */
+    File getWebAppDirectory();
 
+    /**
+     * Returns the main webapp source directory.
+     *
+     * @return the webapp source directory
+     */
+    File getWebAppSourceDirectory();
 
-    public WarPackagingContext( Logger logger, File overlaysWorkDirectory, ArchiverManager archiverManager, PathSet protectedFiles,
-                                File webAppDirectory )
-    {
-        this.logger = logger;
-        this.overlaysWorkDirectory = overlaysWorkDirectory;
-        this.archiverManager = archiverManager;
-        this.protectedFiles = protectedFiles;
-        this.webAppDirectory = webAppDirectory;
-    }
+    /**
+     * Returns the webapp source includes.
+     *
+     * @return the webapp source includes
+     */
+    String[] getWebAppSourceIncludes();
+
+    /**
+     * Returns the webapp source excludes.
+     *
+     * @return the webapp source excludes
+     */
+    String[] getWebAppSourceExcludes();
 
     /**
      * Returns the logger to use to output logging event.
      *
      * @return the logger
      */
-    public Logger getLogger()
-    {
-        return logger;
-    }
+    Logger getLogger();
 
     /**
      * Returns the directory to unpack dependent WARs into if needed.
      *
      * @return the overlays work directory
      */
-    public File getOverlaysWorkDirectory()
-    {
-        return overlaysWorkDirectory;
-    }
+    File getOverlaysWorkDirectory();
 
     /**
      * Returns the archiver manager to use.
      *
      * @return the archiver manager
      */
-    public ArchiverManager getArchiverManager()
-    {
-        return archiverManager;
-    }
-
+    ArchiverManager getArchiverManager();
 
     /**
      * Returns the list of files that have already been copied during the
@@ -90,20 +102,34 @@ public class WarPackagingContext
      *
      * @return the list of files that have already been copied
      */
-    public PathSet getProtectedFiles()
-    {
-        return protectedFiles;
-    }
+    PathSet getProtectedFiles();
 
 
     /**
-     * Returns the webapp directory. Packaging tasks should use this
-     * directory to generate the webapp.
+     * Returns the output file name mapping to use, if any. Returns <tt>null</tt>
+     * if no file name mapping is set.
      *
-     * @return the web app directory
+     * @return the output file name mapping or <tt>null</tt>
      */
-    public File getWebAppDirectory()
-    {
-        return webAppDirectory;
-    }
+    String getOutputFileNameMapping();
+
+    /**
+     * Returns the list of filter files to use.
+     *
+     * @return a list of filter files
+     */
+    List getFilters();
+
+    /**
+     * Returns the filter properties to use to filter resources.
+     * <p/>
+     * TODO: this needs to be refactored to use the resource plugin somehow.
+     *
+     * @return a map of filter properties
+     * @throws MojoExecutionException if an error occured while reading a filter file
+     */
+    Map getFilterProperties()
+        throws MojoExecutionException;
+
+
 }

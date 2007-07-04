@@ -27,6 +27,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.war.util.MappingUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -171,10 +172,10 @@ public abstract class AbstractWarMojo
 
     private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
-    private static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
+    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
         "${artifactId}-${version}-${classifier}.${extension}";
 
-    private static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
+    public static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -306,8 +307,9 @@ public abstract class AbstractWarMojo
         this.overlays = overlays;
     }
 
-    public void addOverlay(Overlay overlay) {
-        overlays.add(overlay);
+    public void addOverlay( Overlay overlay )
+    {
+        overlays.add( overlay );
     }
 
     /**
@@ -896,13 +898,13 @@ public abstract class AbstractWarMojo
      * @throws java.io.IOException           if <code>source</code> does not exist, the file in
      *                                       <code>destinationDirectory</code> cannot be written to, or an IO error occurs during copying.
      *                                       <p/>
-     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     *                                       TO DO: Remove this method when Maven moves to plexus-util version 1.4
      */
     private static void copyFileToDirectoryIfModified( File source, File destinationDirectory )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
-        // to plexus-utils 1.2.
+        // to plexus-util 1.2.
         if ( destinationDirectory.exists() && !destinationDirectory.isDirectory() )
         {
             throw new IllegalArgumentException( "Destination is not a directory" );
@@ -938,7 +940,7 @@ public abstract class AbstractWarMojo
      * @param encoding
      * @param wrappers
      * @param filterProperties
-     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IOException TO DO: Remove this method when Maven moves to plexus-util version 1.4
      */
     private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
                                           Map filterProperties )
@@ -996,13 +998,13 @@ public abstract class AbstractWarMojo
      *                                       written to, or an IO error occurs during copying.
      * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
      *                                       <p/>
-     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     *                                       TO DO: Remove this method when Maven moves to plexus-util version 1.4
      */
     private static void copyFileIfModified( File source, File destination )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
-        // to plexus-utils 1.2.
+        // to plexus-util 1.2.
         if ( destination.lastModified() < source.lastModified() )
         {
             FileUtils.copyFile( source.getCanonicalFile(), destination );
@@ -1022,7 +1024,7 @@ public abstract class AbstractWarMojo
      *
      * @param sourceDirectory
      * @param destinationDirectory
-     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IOException TO DO: Remove this method when Maven moves to plexus-util version 1.4
      */
     private static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
         throws IOException
@@ -1070,7 +1072,7 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * TO DO: Remove this interface when Maven moves to plexus-utils version 1.4
+     * TO DO: Remove this interface when Maven moves to plexus-util version 1.4
      */
     private interface FilterWrapper
     {

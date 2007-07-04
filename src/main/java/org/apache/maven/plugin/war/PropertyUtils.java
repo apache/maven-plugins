@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @version $Id$
- * @todo this is duplicated from the resources plugin - migrate to plexus-utils
+ * @todo this is duplicated from the resources plugin - migrate to plexus-util
  */
 public final class PropertyUtils
 {

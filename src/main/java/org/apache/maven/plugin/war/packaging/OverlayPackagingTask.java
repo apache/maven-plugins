@@ -22,7 +22,6 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
-import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +68,7 @@ public class OverlayPackagingTask
                 final File tmpDir = unpackOverlay( context, overlay );
 
                 // Step2: setup
-                final PathSet includes = getIncludes( tmpDir );
+                final PathSet includes = getFilesToIncludes( tmpDir, overlay.getIncludes(), overlay.getExcludes() );
 
                 // Copy
                 copyFiles( context, tmpDir, includes );
@@ -130,22 +129,5 @@ public class OverlayPackagingTask
             result.mkdir();
         }
         return result;
-    }
-
-    /**
-     * Returns the file to copy based on the includes/excludes.
-     *
-     * @param overlayDir the directory containing the overlay
-     * @return the files to copy
-     */
-    protected PathSet getIncludes( File overlayDir )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( overlayDir );
-        scanner.setExcludes( overlay.getIncludes() );
-        scanner.setIncludes( overlay.getExcludes() );
-        scanner.scan();
-        return new PathSet( scanner.getIncludedFiles() );
-
     }
 }
