@@ -337,7 +337,8 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                String depId = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getVersion();
+                String depId = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":"
+						+ dep.getVersion();
                 /* avoid duplicates in the classpath for artifacts with different types (like ejbs) */
                 if ( !addedDependencies.contains( depId ) )
                 {

@@ -587,13 +587,14 @@ public abstract class AbstractIdeSupportMojo
 
                             isOsgiBundle = osgiSymbolicName != null;
 
-                            IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                                   isReactorProject, Artifact.SCOPE_TEST.equals( art
-                                                                       .getScope() ), Artifact.SCOPE_SYSTEM.equals( art
-                                                                       .getScope() ), Artifact.SCOPE_PROVIDED.equals( art
-                                                                       .getScope() ), art.getArtifactHandler()
-                                                                       .isAddedToClasspath(), art.getFile(), art.getType(),
-                                                                   isOsgiBundle, osgiSymbolicName, dependencyDepth );
+                        IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                                               art.getClassifier(),
+                                                               isReactorProject, Artifact.SCOPE_TEST.equals( art
+                                                                   .getScope() ), Artifact.SCOPE_SYSTEM.equals( art
+                                                                   .getScope() ), Artifact.SCOPE_PROVIDED.equals( art
+                                                                   .getScope() ), art.getArtifactHandler()
+                                                                   .isAddedToClasspath(), art.getFile(), art.getType(),
+                                                               isOsgiBundle, osgiSymbolicName, dependencyDepth );
 
                             dependencies.add( dep );
                         }
@@ -832,11 +833,21 @@ public abstract class AbstractIdeSupportMojo
                 continue;
             }
 
-            if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":sources" ) )
+            String classifier = "sources";
+            if("tests".equals(dependency.getClassifier()))
+            {
+                classifier = "test-sources";
+            }
+            if(getLog().isDebugEnabled())
+            {
+                getLog().debug("Searching for sources for "+dependency.getId()+":"+dependency.getClassifier()+" at "+dependency.getId() + ":" + classifier);
+            }
+            
+            if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":" + classifier ) )
             {
                 // source artifact: use the "sources" classifier added by the source plugin
                 Artifact sourceArtifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
-                    .getArtifactId(), dependency.getVersion(), "sources", localRepository, artifactResolver, //$NON-NLS-1$
+                    .getArtifactId(), dependency.getVersion(), classifier, localRepository, artifactResolver, //$NON-NLS-1$
                                                                                   artifactFactory, remoteRepos,
                                                                                   getLog() );
                 if ( sourceArtifact.isResolved() )
@@ -845,7 +856,7 @@ public abstract class AbstractIdeSupportMojo
                 }
                 else
                 {
-                    unavailableSourcesCache.put( dependency.getId() + ":sources", Boolean.TRUE.toString() );
+                    unavailableSourcesCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
                     // @todo also report deps without a source attachment but with a javadoc one?
                     missingSourceDependencies.add( dependency );
                 }

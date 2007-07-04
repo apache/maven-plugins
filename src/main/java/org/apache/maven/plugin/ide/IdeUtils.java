@@ -221,7 +221,7 @@ public class IdeUtils
         String type = classifier;
 
         // the "sources" classifier maps to the "java-source" type
-        if ( "sources".equals( type ) ) //$NON-NLS-1$
+        if ( "sources".equals( type ) || "test-sources".equals( type ) ) //$NON-NLS-1$
         {
             type = "java-source"; //$NON-NLS-1$
         }
