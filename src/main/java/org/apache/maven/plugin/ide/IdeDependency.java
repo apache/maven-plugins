@@ -83,6 +83,11 @@ public class IdeDependency
     private String version;
 
     /**
+     * Artifact classifier
+     */
+    private String classifier;
+    
+    /**
      * Artifact type.
      */
     private String type;
@@ -104,6 +109,7 @@ public class IdeDependency
      * @param groupId Group id
      * @param artifactId Artifact id
      * @param version Artifact version
+     * @param classifier Artifact classifier
      * @param referencedProject Is this dependency available in the reactor?
      * @param testDependency Is this a test dependency?
      * @param systemScoped Is this a system scope dependency?
@@ -115,7 +121,7 @@ public class IdeDependency
      * @param osgiSymbolicName Bundle-SymbolicName from the Manifest (if available)
      * @param dependencyDepth Depth of this dependency in the transitive dependency trail.
      */
-    public IdeDependency( String groupId, String artifactId, String version, boolean referencedProject,
+    public IdeDependency( String groupId, String artifactId, String version, String classifier, boolean referencedProject,
                           boolean testDependency, boolean systemScoped, boolean provided, boolean addedToClasspath,
                           File file, String type, boolean osgiBundle, String osgiSymbolicName, int dependencyDepth )
     {
@@ -123,6 +129,7 @@ public class IdeDependency
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+        this.classifier = classifier;
 
         // flags
         this.referencedProject = referencedProject;
@@ -210,6 +217,24 @@ public class IdeDependency
         this.version = version;
     }
 
+    /**
+     * Getter for <code>classifier</code>.
+     * @return Returns the classifier.
+     */
+    public String getClassifier()
+    {
+        return this.classifier;
+    }
+
+    /**
+     * Setter for <code>groupId</code>.
+     * @param groupId The groupId to set.
+     */
+    public void setClassifier( String classifier )
+    {
+        this.classifier = classifier;
+    }
+    
     /**
      * Getter for <code>referencedProject</code>.
      * @return Returns the referencedProject.
