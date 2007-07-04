@@ -77,7 +77,7 @@ public class TestTreeMojo
 
         mojo.execute();
         
-        DependencyNode rootNode = mojo.getDependencyTree();
+        DependencyNode rootNode = mojo.getDependencyTree().getRootNode();
         assertNodeEquals( "testGroupId:project:jar:1.0:compile", rootNode);
         assertEquals( 2, rootNode.getChildren().size() );
         assertChildNodeEquals( "testGroupId:snapshot:jar:2.0-SNAPSHOT:compile", rootNode, 0 );
