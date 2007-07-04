@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>eclipse</groupId>
-  <artifactId>maven-eclipse-plugin-test-project-MECLIPSE-287</artifactId>
-  <version>MECLIPSE-287</version>
+  <artifactId>maven-eclipse-plugin-test-project-33</artifactId>
+  <version>33</version>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
