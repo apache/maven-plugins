@@ -336,4 +336,24 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     {
         testProject( "project-32" );
     }
+    
+    /**
+     * Checks that the test-sources jar gets the right name.
+     * @throws Exception any exception thrown during test
+     */
+     public void testProject35() throws Exception
+        {
+            testProject( "project-35" );
+        }
+    /**
+     * MECLIPSE-287 : dependencies with and without classifiers
+     * MECLIPSE-151 : test jar source attachments
+     * 
+     * @throws Exception
+     *             any exception thrown during test
+     */
+    public void testProject33() throws Exception
+    {
+        testProject( "project-33" );
+    }
 }
