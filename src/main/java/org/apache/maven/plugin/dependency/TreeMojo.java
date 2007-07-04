@@ -24,37 +24,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
-import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTree;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.StateDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.traversal.BuildingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor.TreeTokens;
 
 /**
  * Displays the dependency tree for this project.
@@ -67,6 +50,18 @@ import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNo
  */
 public class TreeMojo extends AbstractMojo
 {
+    // constants --------------------------------------------------------------
+
+    /**
+     * The indentation string to use when serialising the dependency tree.
+     */
+    private static final String INDENT = "   ";
+
+    /**
+     * The newline string to use when serialising the dependency tree.
+     */
+    private static final String NEWLINE = System.getProperty( "line.separator" );
+
     // fields -----------------------------------------------------------------
 
     /**
@@ -132,52 +127,9 @@ public class TreeMojo extends AbstractMojo
     private File output;
 
     /**
-     * The computed dependency tree root node of the Maven project.
+     * The computed dependency tree of the Maven project.
      */
-    private DependencyNode rootNode;
-
-    /**
-     * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
-     * all scopes.
-     * 
-     * @parameter expression="${scope}"
-     */
-    private String scope;
-
-    /**
-     * Whether to include omitted nodes in the serialized dependency tree.
-     * 
-     * @parameter expression="${verbose}" default-value="false"
-     */
-    private boolean verbose;
-
-    /**
-     * The token set name to use when outputting the dependency tree. Possible values are <code>whitespace</code>,
-     * <code>standard</code> or <code>extended</code>, which use whitespace, standard or extended ASCII sets
-     * respectively.
-     * 
-     * @parameter expression="${tokens}" default-value="standard"
-     */
-    private String tokens;
-
-    /**
-     * A comma-separated list of artifacts to filter the serialized dependency tree by, or <code>null</code> not to
-     * filter the dependency tree. The artifact syntax is defined by <code>StrictPatternIncludesArtifactFilter</code>.
-     * 
-     * @see StrictPatternIncludesArtifactFilter
-     * @parameter expression="${includes}"
-     */
-    private String includes;
-
-    /**
-     * A comma-separated list of artifacts to filter from the serialized dependency tree, or <code>null</code> not to
-     * filter any artifacts from the dependency tree. The artifact syntax is defined by
-     * <code>StrictPatternExcludesArtifactFilter</code>.
-     * 
-     * @see StrictPatternExcludesArtifactFilter
-     * @parameter expression="${excludes}"
-     */
-    private String excludes;
+    private DependencyTree dependencyTree;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -186,16 +138,13 @@ public class TreeMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-        ArtifactFilter artifactFilter = createResolvingArtifactFilter();
-
         try
         {
-            // TODO: fix DependencyTreeBuilder to apply filter
-            rootNode =
+            dependencyTree =
                 dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
-                                                           artifactMetadataSource, artifactFilter, artifactCollector );
+                                                           artifactMetadataSource, artifactCollector );
 
-            String dependencyTreeString = serialiseDependencyTree( rootNode );
+            String dependencyTreeString = serialiseDependencyTree( dependencyTree );
 
             if ( output != null )
             {
@@ -231,146 +180,60 @@ public class TreeMojo extends AbstractMojo
     }
 
     /**
-     * Gets the computed dependency tree root node for the Maven project.
+     * Gets the computed dependency tree for the Maven project.
      * 
-     * @return the dependency tree root node
+     * @return the dependency tree
      */
-    public DependencyNode getDependencyTree()
+    public DependencyTree getDependencyTree()
     {
-        return rootNode;
+        return dependencyTree;
     }
 
     // private methods --------------------------------------------------------
 
     /**
-     * Gets the artifact filter to use when resolving the dependency tree.
-     * 
-     * @return the artifact filter
-     */
-    private ArtifactFilter createResolvingArtifactFilter()
-    {
-        ArtifactFilter filter;
-
-        // filter scope
-        if ( scope != null )
-        {
-            getLog().debug( "+ Resolving dependency tree for scope '" + scope + "'" );
-
-            filter = new ScopeArtifactFilter( scope );
-        }
-        else
-        {
-            filter = null;
-        }
-
-        return filter;
-    }
-
-    /**
      * Serialises the specified dependency tree to a string.
      * 
-     * @param rootNode
-     *            the dependency tree root node to serialise
+     * @param tree
+     *            the dependency tree to serialise
      * @return the serialised dependency tree
      */
-    private String serialiseDependencyTree( DependencyNode rootNode )
+    private String serialiseDependencyTree( DependencyTree tree )
     {
-        StringWriter writer = new StringWriter();
-        TreeTokens treeTokens = toTreeTokens( tokens );
+        StringBuffer buffer = new StringBuffer();
 
-        DependencyNodeVisitor visitor = new SerializingDependencyNodeVisitor( writer, treeTokens );
+        serialiseDependencyNode( tree.getRootNode(), buffer );
 
-        // TODO: remove the need for this when the serializer can calculate last nodes from visitor calls only
-        visitor = new BuildingDependencyNodeVisitor( visitor );
-
-        DependencyNodeFilter filter = createDependencyNodeFilter();
-
-        if ( filter != null )
-        {
-            CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
-            DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, filter );
-            rootNode.accept( firstPassVisitor );
-
-            DependencyNodeFilter secondPassFilter = new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
-            visitor = new FilteringDependencyNodeVisitor( visitor, secondPassFilter );
-        }
-
-        rootNode.accept( visitor );
-
-        return writer.toString();
+        return buffer.toString();
     }
 
     /**
-     * Gets the tree tokens instance for the specified name.
+     * Serialises the specified dependency node and it's children to the specified string buffer.
      * 
-     * @param tokens
-     *            the tree tokens name
-     * @return the <code>TreeTokens</code> instance
+     * @param node
+     *            the dependency node to log
+     * @param buffer
+     *            the string buffer to serialise to
      */
-    private TreeTokens toTreeTokens( String tokens )
+    private void serialiseDependencyNode( DependencyNode node, StringBuffer buffer )
     {
-        TreeTokens treeTokens;
+        // serialise node
 
-        if ( "whitespace".equals( tokens ) )
+        for ( int i = 0; i < node.getDepth(); i++ )
         {
-            getLog().debug( "+ Using whitespace tree tokens" );
-
-            treeTokens = SerializingDependencyNodeVisitor.WHITESPACE_TOKENS;
-        }
-        else if ( "extended".equals( tokens ) )
-        {
-            getLog().debug( "+ Using extended tree tokens" );
-
-            treeTokens = SerializingDependencyNodeVisitor.EXTENDED_TOKENS;
-        }
-        else
-        {
-            treeTokens = SerializingDependencyNodeVisitor.STANDARD_TOKENS;
+            buffer.append( INDENT );
         }
 
-        return treeTokens;
-    }
+        buffer.append( node.getArtifact() ).append( NEWLINE );
 
-    /**
-     * Gets the dependency node filter to use when serializing the dependency tree.
-     * 
-     * @return the dependency node filter, or <code>null</code> if none required
-     */
-    private DependencyNodeFilter createDependencyNodeFilter()
-    {
-        List filters = new ArrayList();
+        // serialise children
 
-        // filter node states
-        if ( !verbose )
+        for ( Iterator iterator = node.getChildren().iterator(); iterator.hasNext(); )
         {
-            getLog().debug( "+ Filtering omitted nodes from dependency tree" );
+            DependencyNode child = (DependencyNode) iterator.next();
 
-            filters.add( StateDependencyNodeFilter.INCLUDED );
+            serialiseDependencyNode( child, buffer );
         }
-
-        // filter includes
-        if ( includes != null )
-        {
-            List patterns = Arrays.asList( includes.split( "," ) );
-
-            getLog().debug( "+ Filtering dependency tree by artifact include patterns: " + patterns );
-
-            ArtifactFilter artifactFilter = new StrictPatternIncludesArtifactFilter( patterns );
-            filters.add( new ArtifactDependencyNodeFilter( artifactFilter ) );
-        }
-
-        // filter excludes
-        if ( excludes != null )
-        {
-            List patterns = Arrays.asList( excludes.split( "," ) );
-
-            getLog().debug( "+ Filtering dependency tree by artifact exclude patterns: " + patterns );
-
-            ArtifactFilter artifactFilter = new StrictPatternExcludesArtifactFilter( patterns );
-            filters.add( new ArtifactDependencyNodeFilter( artifactFilter ) );
-        }
-
-        return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
     /**
