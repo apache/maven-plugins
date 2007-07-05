@@ -27,8 +27,8 @@
 
 Usage
 
- The reports may use either <<<range>>>, <<<date>>>, or <<<tag>>> as the basis
- for generating the reports. Only one can be set. The change sets can be
+ The reports may use either <<<range>>>, <<<date>>>, or <<<tag>>> as the type
+ for generating the reports. Only one type can be set. The change sets can be
  configured by setting the correct parameter for the chosen type. If <<<type>>>
  "date" is chosen, then the parameter <<<dates>>> should contain the start and
  stop dates for the date range. Similar configurations should be made for the
@@ -54,7 +54,7 @@ Usage
 
  Aside from the required plugin configuration parameters needed to generate the
  reports, all reports will refer to the <<<scm>>> elements inside the project
- descriptor for other details regarding the connection to the project's SCM.
+ descriptor for details regarding the connection to the project's SCM.
  Here is an example of the scm element inside the <<<pom.xml>>>:
 
 -------------------
@@ -73,8 +73,9 @@ Usage
  <<<scm>>> elements. It can be found
  {{{http://maven.apache.org/ref/current/maven-model/maven.html#class_scm}here}}.
 
- When you execute <<<mvn site>>>, you will see that the changelog, dev-activity
- and file-activity reports are included in the generated site.
+ When you execute <<<mvn site>>>, you will see that the <<<changelog>>>,
+ <<<dev-activity>>> and <<<file-activity>>> reports are included in the
+ generated site.
 
  Sample Changelog report:
 
