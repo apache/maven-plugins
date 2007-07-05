@@ -463,7 +463,8 @@ public class ChangeLogReport
                 }
                 else
                 {
-                    result = provider.changeLog( repository, new ScmFileSet( basedir ), startTag, endTag );
+                    result = provider.changeLog( repository, new ScmFileSet( basedir ), new ScmRevision( startTag ),
+                                                 new ScmRevision( endTag ) );
 
                     checkResult( result );
 
@@ -516,7 +517,7 @@ public class ChangeLogReport
         }
         catch ( MojoExecutionException e )
         {
-            throw new MavenReportException( "An error is occurred during changelog command : ", e );
+            throw new MavenReportException( "An error has occurred during changelog command : ", e );
         }
     }
 
@@ -867,7 +868,25 @@ public class ChangeLogReport
 
         SimpleDateFormat headingDateFormater = new SimpleDateFormat( headingDateFormat );
 
-        if ( set.getStartDate() == null )
+        if ( "tag".equals( type ) )
+        {
+            if ( set.getStartVersion() == null || set.getStartVersion().getName() == null )
+            {
+                sink.text( bundle.getString( "report.SetTagCreation" ) );
+            }
+            else if ( set.getEndVersion() == null || set.getEndVersion().getName() == null )
+            {
+                sink.text( bundle.getString( "report.SetTagSince" ) );
+                sink.text( " '" + set.getStartVersion() + "'" );
+            }
+            else
+            {
+                sink.text( bundle.getString( "report.SetTagBetween" ) );
+                sink.text( " '" + set.getStartVersion() + "' " + bundle.getString( "report.And" ) + " '"
+                    + set.getEndVersion() + "'" );
+            }
+        }
+        else  if ( set.getStartDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeUnknown" ) );
         }

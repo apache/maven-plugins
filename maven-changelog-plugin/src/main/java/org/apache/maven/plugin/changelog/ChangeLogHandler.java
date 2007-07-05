@@ -21,6 +21,7 @@ package org.apache.maven.plugin.changelog;
 
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -222,6 +223,8 @@ public class ChangeLogHandler
             }
 
             bufSet = new ChangeLogSet( bufEntries, startDate, endDate );
+            bufSet.setStartVersion( new ScmTag( attributes.getValue( "startTag" ) ) );
+            bufSet.setEndVersion( new ScmTag( attributes.getValue( "endTag" ) ) );
         }
     }
 }
