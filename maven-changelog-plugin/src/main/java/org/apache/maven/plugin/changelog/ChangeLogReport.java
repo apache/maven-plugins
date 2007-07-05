@@ -440,6 +440,10 @@ public class ChangeLogReport
             }
             else if ( "tag".equals( type ) )
             {
+                if( repository.getProvider().equals( "svn" ) ) {
+                    throw new MavenReportException( "The type '" + type + "' isn't supported for svn." );
+                }
+
                 Iterator tagsIter = tags.iterator();
 
                 String startTag = (String) tagsIter.next();

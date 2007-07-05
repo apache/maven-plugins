@@ -33,6 +33,8 @@ Using Tag Type
   With the following configuration, reports will be generated that covers SCM
   activities between the <<<alpha-2>>> tag and the <<<alpha-3>>> tag.
 
+  <<Note:>> The "tag" type is not supported if you are using Subversion.  
+
 +-----+
 <project>
   ...
