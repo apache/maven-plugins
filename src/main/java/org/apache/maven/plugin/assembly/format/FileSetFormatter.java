@@ -37,8 +37,9 @@ public class FileSetFormatter
         
         String lineEnding = AssemblyFileUtils.getLineEndingCharacters( lineEndingHint );
 
-        if ( lineEnding != null )
+        if ( lineEnding != null || set.isFiltered() )
         {
+            
             FileSet fileSet = new FileSet();
             fileSet.setLineEnding( lineEnding );
             fileSet.setDirectory( set.getDirectory() );
@@ -65,6 +66,7 @@ public class FileSetFormatter
                 return archiveBaseDir;
             }
             
+            FileFormatter fileFormatter = new FileFormatter( configSource, logger );
             for ( int i = 0; i < files.length; i++ )
             {
                 String file = files[i];
@@ -74,18 +76,8 @@ public class FileSetFormatter
                 targetFile.getParentFile().mkdirs();
 
                 File sourceFile = new File( archiveBaseDir, file );
-                
-                Reader sourceReader = null;
-                try
-                {
-                    sourceReader = new BufferedReader( new FileReader( sourceFile ) );
-                    
-                    AssemblyFileUtils.convertLineEndings( sourceReader, targetFile, lineEnding );
-                }
-                finally
-                {
-                    IOUtil.close( sourceReader );
-                }
+                sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir );
+                AssemblyFileUtils.copyFile(sourceFile,targetFile);
             }
         }
 

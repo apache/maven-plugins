@@ -2,14 +2,19 @@ package org.apache.maven.plugin.assembly.format;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
@@ -202,4 +207,55 @@ public class FileSetFormatterTest
         fileManager.assertFileExistence( result, filename2, false );
     }
 
+    public void testShouldFilterSeveralFiles() throws IOException, AssemblyFormattingException
+    {
+        File basedir = fileManager.createTempDir();
+
+        String filename1 = "one.txt";
+        String filename2 = "two.txt";
+
+        // this file will be filtered with a project expression
+        fileManager.createFile( basedir, filename1, "This is the filtered artifactId: ${project.artifactId}." );
+        // this one fill be filtered with a filter file
+        fileManager.createFile( basedir, filename2, "This is the filtered 'foo' property: ${foo}." );
+        File filterProps = fileManager.createFile( basedir, "filter.properties", "foo=bar" );
+
+        FileSet fs = new FileSet();
+        fs.setFiltered( true );
+        fs.setDirectory( basedir.getCanonicalPath() );
+        fs.addInclude( "**/*.txt" );
+
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
+
+        mockManager.replayAll();
+
+        FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
+        File result = formatter.formatFileSetForAssembly( basedir, fs );
+
+        fileManager.assertFileContents( result, filename1, "This is the filtered artifactId: artifact." );
+        fileManager.assertFileContents( result, filename2, "This is the filtered 'foo' property: bar." );
+
+        mockManager.verifyAll();
+    }
+
+    private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
+    {
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( basedir );
+
+        Model model = new Model();
+        model.setArtifactId( "artifact" );
+        model.setGroupId( "group" );
+        model.setVersion( "version" );
+
+        MavenProject project = new MavenProject( model );
+
+        configSource.getProject();
+        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+
+        // list of filenames that contain filter definitions.
+        configSource.getFilters();
+        configSourceControl.setReturnValue( filterFilenames );
+    }
+    
 }
