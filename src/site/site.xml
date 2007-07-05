@@ -28,6 +28,7 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
+      <item name="Changing the Heading Date Format" href="/examples/changing-heading-date-format.html"/>
       <item name="Modifying SCM Links" href="/examples/modifying-scm-links.html"/>
       <item name="Selecting Reports" href="/examples/selecting-reports.html"/>
       <item name="Using Date Type" href="/examples/configuration-date-type.html"/>
