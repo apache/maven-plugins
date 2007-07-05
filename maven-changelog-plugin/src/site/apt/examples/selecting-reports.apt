@@ -29,12 +29,17 @@
 
 Selecting Reports
 
-  The plugin normally generates 3 reports: changelog, dev-activity and
-  file-activity. It is possible to configure the plugin so that only a few of
-  these reports are generated. This is done using <<<\<reportSets\>>>>.
+  The plugin normally generates 3 reports: <<<changelog>>>, <<<dev-activity>>>
+  and <<<file-activity>>>. By default all three reports are generated. It is
+  possible to configure the plugin so that only a few of these reports are
+  generated. This is done using <<<\<reportSets\>>>>.
 
-  The following configuration will generate only the changelog and file-activity
-  reports.
+  The following configuration will generate only the <<<changelog>>> and
+  <<<file-activity>>> reports.
+
+  <<Note:>> The <<<reportSets>>> element is not part of the <<<configuration>>>
+  element. Instead, the <<<configuration>>> is found inside the
+  <<<reportSet>>> element.
 
 +-----+
 <project>
