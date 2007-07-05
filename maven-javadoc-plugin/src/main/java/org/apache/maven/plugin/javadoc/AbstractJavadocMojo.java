@@ -510,7 +510,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      *
      * @parameter expression="${bottom}"
-     * default-value="Copyright &copy; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
+     * default-value="Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
      */
     private String bottom;
 
