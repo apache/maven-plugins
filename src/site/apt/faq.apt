@@ -42,5 +42,9 @@ Frequently Asked Questions
 * Answers
 
   {1.} This patch wraps the gnu patch tool, which must be in your path
-    in order to function properly.
+    in order to function properly.  You might able to get this plugin working 
+    within cygwin.
+    
+  {2.} If you would like to add windows support to this plugin, please do and 
+    submit modifications through the normal project mechansims.
       
