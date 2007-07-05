@@ -121,7 +121,9 @@ public class AddFileSetsTask
             task.setDirectoryMode( TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger ) );
             task.setFileMode( TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger ) );
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
-            task.setExcludes( fileSet.getExcludes() );
+            List excludes = fileSet.getExcludes();
+            excludes.add( "**/*.filtered" );
+            task.setExcludes( excludes );
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );
 
