@@ -49,9 +49,13 @@ public class FileFormatter
     public File format( File source, boolean filter, String lineEnding )
         throws AssemblyFormattingException
     {
-        File result = source;
+        return format ( source, filter, lineEnding, configSource.getTemporaryRootDirectory() );
+    }
 
-        File tempRoot = configSource.getTemporaryRootDirectory();
+    public File format( File source, boolean filter, String lineEnding, File tempRoot )
+        throws AssemblyFormattingException
+    {
+        File result = source;
         
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
 

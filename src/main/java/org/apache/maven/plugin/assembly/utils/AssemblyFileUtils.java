@@ -1,5 +1,14 @@
 package org.apache.maven.plugin.assembly.utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.nio.channels.FileChannel;
+
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -8,13 +17,6 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.IOUtil;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
 
 public final class AssemblyFileUtils
 {
@@ -133,4 +135,19 @@ public final class AssemblyFileUtils
 
         return value;
     }
+    
+    public static void copyFile( File src, File dst ) throws IOException
+    {
+        FileChannel c1 = new RandomAccessFile( src, "r" ).getChannel();
+        FileChannel c2 = new RandomAccessFile( dst, "rw" ).getChannel();
+
+        long tCount = 0, size = c1.size();
+        while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
+            ;
+
+        c1.close();
+        c2.force( true );
+        c2.close();
+    }   
+    
 }
