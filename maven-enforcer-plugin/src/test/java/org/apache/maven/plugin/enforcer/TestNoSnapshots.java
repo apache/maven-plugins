@@ -32,7 +32,7 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * 
  */
-public class TestBanSnapshots
+public class TestNoSnapshots
     extends TestCase
 {
 
@@ -44,7 +44,7 @@ public class TestBanSnapshots
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        BanSnapshots rule = new BanSnapshots();
+        NoSnapshots rule = new NoSnapshots();
 
         rule.setSearchTransitive( false );
 
@@ -54,7 +54,7 @@ public class TestBanSnapshots
 
         execute( rule, helper, true );
 
-    }
+    } 
 
     /**
      * Simpler wrapper to execute and deal with the expected
@@ -64,11 +64,11 @@ public class TestBanSnapshots
      * @param helper
      * @param shouldFail
      */
-    private void execute( BanSnapshots rule, EnforcerRuleHelper helper, boolean shouldFail )
+    private void execute( NoSnapshots rule, EnforcerRuleHelper helper, boolean shouldFail )
     {
         try
         {
-            rule.message = null;
+            rule.message = "Test Message";
             rule.execute( helper );
             if ( shouldFail )
             {
@@ -81,7 +81,7 @@ public class TestBanSnapshots
             {
                 fail( "No Exception expected:" + e.getLocalizedMessage() );
             }
-            // helper.getLog().debug(e.getMessage());
+            helper.getLog().debug(e.getMessage());
         }
     }
 }

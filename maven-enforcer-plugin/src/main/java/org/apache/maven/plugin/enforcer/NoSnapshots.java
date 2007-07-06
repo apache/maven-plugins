@@ -44,7 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * 
  */
-public class BanSnapshots
+public class NoSnapshots
     extends AbstractBanDependencies
 {
 

@@ -27,6 +27,13 @@ Standard Rules
 
 	The following standard rules ship along with the enforcer plugin:
 	
+	
+	* {{{bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
+
+	* {{{evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
+
+	* {{{noSnapshots.html}noSnapshots}} - enforces that no snapshots are included.
+
 	* {{{requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
 	
 	* {{{requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
@@ -35,6 +42,5 @@ Standard Rules
 	
 	* {{{requireProperty.html}requireProperty}} - enforces the existence and values of properties.
 	
-	* {{{evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
-	
+	[]
     You may also create and inject your own custom rules by following the {{{http://maven.apache.org/shared/maven-enforcer-rule-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
