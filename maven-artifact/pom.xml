@@ -21,57 +21,21 @@ under the License.
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
+  <!--<parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.maven</groupId>
     <version>2.1-SNAPSHOT</version>
-  </parent>
+  </parent>-->
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-artifact</artifactId>
+  <groupId>testtt</groupId>
+  <version>1</version>
   <name>Maven Artifact</name>
   <dependencies>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-provider-api</artifactId>
-    </dependency>  
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-file</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>1.2_Java1.3</version>
-      <scope>test</scope>
-    </dependency>      
+      
   </dependencies>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.modello</groupId>
-        <artifactId>modello-maven-plugin</artifactId>
-        <configuration>
-          <version>1.0.0</version>
-          <model>src/main/mdo/metadata.mdo</model>
-        </configuration>
-      </plugin>    
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/testutils/**</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
+    
+
   </build>
 </project>
