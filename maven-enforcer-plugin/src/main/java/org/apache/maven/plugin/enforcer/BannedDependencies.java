@@ -46,84 +46,29 @@ import org.codehaus.plexus.util.StringUtils;
  * 
  */
 public class BannedDependencies
-    implements EnforcerRule
+    extends AbstractBanDependencies
 {
 
     /**
      * Specify the banned dependencies. This can be a list
      * of artifacts in the format
-     * groupId[:artifactId][:version]
-     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0)
+     * groupId[:artifactId][:version] Any of the sections
+     * can be a wildcard by using '*' (ie group:*:1.0)
      * 
      * @parameter
      * @required
      */
     public ArrayList excludes = null;
 
-    /**
-     * Specify if transitive dependencies should be searched
-     * (default) or only look at direct dependencies
+    /*
+     * (non-Javadoc)
      * 
-     * @parameter
+     * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
      */
-    public boolean searchTransitive = true;
-
-    /**
-     * Specify a friendly message if the rule fails.
-     * 
-     * @parameter
-     */
-    public String message = null;
-
-    /**
-     * Execute the rule.
-     */
-    public void execute( EnforcerRuleHelper helper )
+    protected Set checkDependencies( Set theDependencies )
         throws EnforcerRuleException
     {
-
-        // get the project
-        MavenProject project = null;
-        try
-        {
-            project = (MavenProject) helper.evaluate( "${project}" );
-        }
-        catch ( ExpressionEvaluationException eee )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
-        }
-
-        // get the correct list of dependencies
-        Set dependencies = null;
-        if ( searchTransitive )
-        {
-            dependencies = project.getArtifacts();
-        }
-        else
-        {
-            dependencies = project.getDependencyArtifacts();
-        }
-
-        // look for banned dependencies
-        Set foundExcludes = checkDependencies( dependencies, excludes );
-
-        // if any are found, fail the check but list all of
-        // them
-        if ( !foundExcludes.isEmpty() )
-        {
-            if ( message == null )
-            {
-                StringBuffer buf = new StringBuffer();
-                Iterator iter = foundExcludes.iterator();
-                while ( iter.hasNext() )
-                {
-                    buf.append( "Found Banned Dependency: " + ( (Artifact) iter.next() ).getId() + "\n" );
-                }
-                message = buf.toString();
-            }
-            throw new EnforcerRuleException( message );
-        }
-
+        return checkDependencies( theDependencies, excludes );
     }
 
     /**
@@ -134,7 +79,7 @@ public class BannedDependencies
      * @return
      * @throws EnforcerRuleException
      */
-    protected Set checkDependencies( Set dependencies, List theExcludes )
+    private Set checkDependencies( Set dependencies, List theExcludes )
         throws EnforcerRuleException
     {
         Set foundExcludes = new HashSet();
@@ -145,8 +90,8 @@ public class BannedDependencies
             String exclude = (String) iter.next();
 
             String[] subStrings = exclude.split( ":" );
-            subStrings = StringUtils.stripAll(subStrings);
-            
+            subStrings = StringUtils.stripAll( subStrings );
+
             Iterator DependencyIter = dependencies.iterator();
             while ( DependencyIter.hasNext() )
             {
@@ -227,35 +172,4 @@ public class BannedDependencies
         this.excludes = theExcludes;
     }
 
-    /**
-     * @return the message
-     */
-    public String getMessage()
-    {
-        return this.message;
-    }
-
-    /**
-     * @param theMessage the message to set
-     */
-    public void setMessage( String theMessage )
-    {
-        this.message = theMessage;
-    }
-
-    /**
-     * @return the searchTransitive
-     */
-    public boolean isSearchTransitive()
-    {
-        return this.searchTransitive;
-    }
-
-    /**
-     * @param theSearchTransitive the searchTransitive to set
-     */
-    public void setSearchTransitive( boolean theSearchTransitive )
-    {
-        this.searchTransitive = theSearchTransitive;
-    }
 }
