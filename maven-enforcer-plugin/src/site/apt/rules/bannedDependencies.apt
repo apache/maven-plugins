@@ -1,0 +1,87 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Banned Dependencies
+  ------
+  Brian Fox
+  ------
+  July 2007
+  ------
+
+Banned Dependencies
+
+  This rule checks the dependencies and fails if any of the matching excludes are found.
+
+
+   The following parameters are supported by this rule:
+   
+   * searchTransitive - if transitive dependencies should be checked.
+   
+   * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
+      Examples:
+       
+        *org.apache.maven
+        
+        *org.apache.maven:badArtifact
+        
+        *org.apache.maven:artifact:badVersion
+        
+        *org.apache.maven:*:1.2
+        
+        []
+   * message - an optional message to the user if the rule fails.
+   
+   []
+
+   
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce-once</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                   <excludes>
+                      <exclude>org.apache.maven</exclude>
+                      <exclude>org.apache.maven:badArtifact</exclude>
+                      <exclude>*:badArtifact</exclude>
+                   </excludes>
+                </bannedDependencies>
+             </rules>  
+            <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

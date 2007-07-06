@@ -48,7 +48,6 @@ public abstract class AbstractBanDependencies
     implements EnforcerRule
 {
 
-    
     /**
      * Specify if transitive dependencies should be searched
      * (default) or only look at direct dependencies
@@ -100,16 +99,18 @@ public abstract class AbstractBanDependencies
         // them
         if ( !foundExcludes.isEmpty() )
         {
-            if ( message == null )
+            StringBuffer buf = new StringBuffer();
+            if (message !=null)
             {
-                StringBuffer buf = new StringBuffer();
-                Iterator iter = foundExcludes.iterator();
-                while ( iter.hasNext() )
-                {
-                    buf.append( "Found Banned Dependency: " + ( (Artifact) iter.next() ).getId() + "\n" );
-                }
-                message = buf.toString();
+                buf.append( message +"\n");
             }
+            Iterator iter = foundExcludes.iterator();
+            while ( iter.hasNext() )
+            {
+                buf.append( "Found Banned Dependency: " + ( (Artifact) iter.next() ).getId() + "\n" );
+            }
+            message = buf.toString();
+
             throw new EnforcerRuleException( message );
         }
 
@@ -125,7 +126,7 @@ public abstract class AbstractBanDependencies
      */
     abstract protected Set checkDependencies( Set dependencies )
         throws EnforcerRuleException;
-    
+
     /**
      * @return the message
      */
@@ -151,7 +152,8 @@ public abstract class AbstractBanDependencies
     }
 
     /**
-     * @param theSearchTransitive the searchTransitive to set
+     * @param theSearchTransitive the searchTransitive to
+     *            set
      */
     public void setSearchTransitive( boolean theSearchTransitive )
     {
