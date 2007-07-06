@@ -20,7 +20,6 @@ package org.apache.maven.plugin.enforcer;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
@@ -33,7 +32,7 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * 
  */
-public class TestBannedDependencies
+public class TestBanSnapshots
     extends TestCase
 {
 
@@ -45,82 +44,16 @@ public class TestBannedDependencies
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        BannedDependencies rule = new BannedDependencies();
+        BanSnapshots rule = new BanSnapshots();
 
-        ArrayList excludes = new ArrayList();
         rule.setSearchTransitive( false );
 
-        // test whole name
-        excludes.add( "testGroupId:release:1.0" );
-        rule.setExcludes( excludes );
-
         execute( rule, helper, false );
 
-        // test group:artifact
-        excludes.clear();
-        excludes.add( "testGroupId:release" );
-        execute( rule, helper, false );
-
-        // test group
-        excludes.clear();
-        excludes.add( "testGroupId" );
-        execute( rule, helper, false );
-
-        // now check one that should be found in direct
-        // dependencies
-        excludes.clear();
-        excludes.add( "g:compile:1.0" );
-        execute( rule, helper, true );
         rule.setSearchTransitive( true );
 
-        // whole name
-        excludes.clear();
-        excludes.add( "testGroupId:release:1.0" );
         execute( rule, helper, true );
 
-        // group:artifact
-        excludes.clear();
-        excludes.add( "testGroupId:release" );
-        execute( rule, helper, true );
-
-        // group
-        excludes.clear();
-        excludes.add( "testGroupId" );
-        execute( rule, helper, true );
-
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release" );
-        execute( rule, helper, true );
-
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:*:1.0" );
-        execute( rule, helper, true );
-
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release:*" );
-        execute( rule, helper, true );
-
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release:1.2" );
-        execute( rule, helper, false );
-        
-        //now check multiple excludes
-        excludes.add( "*:release:*");
-        execute( rule, helper, true );
-        
-        //now check space trimming
-        excludes.clear();
-        excludes.add( "  testGroupId  :  release   :   1.0    " );
-        execute( rule, helper, true );
-        
-        //now check weirdness
-        excludes.clear();
-        excludes.add( ":::" ); //null entry, won't match anything
-        execute( rule, helper, false );
     }
 
     /**
@@ -131,7 +64,7 @@ public class TestBannedDependencies
      * @param helper
      * @param shouldFail
      */
-    private void execute( BannedDependencies rule, EnforcerRuleHelper helper, boolean shouldFail )
+    private void execute( BanSnapshots rule, EnforcerRuleHelper helper, boolean shouldFail )
     {
         try
         {
@@ -148,7 +81,7 @@ public class TestBannedDependencies
             {
                 fail( "No Exception expected:" + e.getLocalizedMessage() );
             }
-            //helper.getLog().debug(e.getMessage());
+            // helper.getLog().debug(e.getMessage());
         }
     }
 }
