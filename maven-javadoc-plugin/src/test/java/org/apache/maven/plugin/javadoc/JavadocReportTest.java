@@ -35,6 +35,8 @@ import java.io.IOException;
 public class JavadocReportTest
     extends AbstractMojoTestCase
 {
+    private static final String LINE_SEPARATOR = " ";
+
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -145,6 +147,7 @@ public class JavadocReportTest
      * Convenience method that reads the contents of the specified file object into a string with a
      * <code>space</code> as line separator.
      *
+     * @see #LINE_SEPARATOR
      * @param file the file to be read
      * @return a String object that contains the contents of the file
      * @throws IOException if any
@@ -157,7 +160,7 @@ public class JavadocReportTest
 
         while ( ( strTmp = in.readLine() ) != null )
         {
-            str = str + " " + strTmp;
+            str = str + LINE_SEPARATOR + strTmp;
         }
         in.close();
 
@@ -689,23 +692,22 @@ public class JavadocReportTest
         mojo.execute();
 
         // Test overview
-        String lineSeparator = " ";
         File overviewSummary = new File( getBasedir(),
                                          "target/test/unit/aggregate-resources-test/target/site/apidocs/overview-summary.html" );
         assertTrue( FileUtils.fileExists( overviewSummary.getAbsolutePath() ) );
         String readed = readFile( overviewSummary );
-        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + lineSeparator
+        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
             + "<TD WIDTH=\"20%\"><B><A HREF=\"resources/test/package-summary.html\">resources.test</A></B></TD>"
-            + lineSeparator + "<TD>blabla</TD>" + lineSeparator + "</TR>" ) != -1 );
-        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + lineSeparator
+            + LINE_SEPARATOR + "<TD>blabla</TD>" + LINE_SEPARATOR + "</TR>" ) != -1 );
+        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
             + "<TD WIDTH=\"20%\"><B><A HREF=\"resources/test2/package-summary.html\">resources.test2</A></B></TD>"
-            + lineSeparator + "<TD>&nbsp;</TD>" + lineSeparator + "</TR>" ) != -1 );
-        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + lineSeparator
+            + LINE_SEPARATOR + "<TD>&nbsp;</TD>" + LINE_SEPARATOR + "</TR>" ) != -1 );
+        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
             + "<TD WIDTH=\"20%\"><B><A HREF=\"resources2/test/package-summary.html\">resources2.test</A></B></TD>"
-            + lineSeparator + "<TD>blabla</TD>" + lineSeparator + "</TR>" ) != -1 );
-        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + lineSeparator
+            + LINE_SEPARATOR + "<TD>blabla</TD>" + LINE_SEPARATOR + "</TR>" ) != -1 );
+        assertTrue( readed.indexOf( "<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">" + LINE_SEPARATOR
             + "<TD WIDTH=\"20%\"><B><A HREF=\"resources2/test2/package-summary.html\">resources2.test2</A></B></TD>"
-            + lineSeparator + "<TD>&nbsp;</TD>" + lineSeparator + "</TR>" ) != -1 );
+            + LINE_SEPARATOR + "<TD>&nbsp;</TD>" + LINE_SEPARATOR + "</TR>" ) != -1 );
 
         // Test doc-files
         File app = new File( getBasedir(),
@@ -726,11 +728,32 @@ public class JavadocReportTest
     public void testPom()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/pom-test/pom-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/pom-test/pom-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
         assertFalse( new File( getBasedir(), "target/test/unit/pom-test" ).exists() );
+    }
+
+    /**
+     * Test the javadoc with tag.
+     *
+     * @throws Exception
+     */
+    public void testTag()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/tag-test/tag-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File app = new File( getBasedir(), "target/test/unit/tag-test/target/site/apidocs/tag/test/App.html" );
+        assertTrue( FileUtils.fileExists( app.getAbsolutePath() ) );
+        String readed = readFile( app );
+        assertTrue( readed.indexOf( "<B>To do something:</B>" ) != -1 );
+        assertTrue( readed.indexOf( "<B>Generator Class:</B>" ) != -1 );
+        assertTrue( readed.indexOf( "<B>Version:</B>" ) != -1 );
+        assertTrue( readed.indexOf( "<DT><B>Version:</B></DT>" + LINE_SEPARATOR + "  <DD>1.0</DD>" + LINE_SEPARATOR
+            + "</DL>" ) != -1 );
     }
 }
