@@ -33,6 +33,7 @@ under the License.
     <menu name="Examples">
       <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
+      <item name="Using a Custom Announcement Template" href="examples/using-a-custom-announcement-template.html"/>
     </menu>
   </body>
 </project>
