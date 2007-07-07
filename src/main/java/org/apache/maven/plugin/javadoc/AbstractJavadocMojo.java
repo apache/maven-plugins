@@ -1324,17 +1324,20 @@ public abstract class AbstractJavadocMojo
             {
                 for ( int i = 0; i < tags.length; i++ )
                 {
-                    if ( ( tags[i] == null ) || ( StringUtils.isEmpty( tags[i].getName() ) )
-                        || ( StringUtils.isEmpty( tags[i].getPlacement() ) ) )
+                    if ( StringUtils.isEmpty( tags[i].getName() ) )
                     {
-                        getLog().info( "A tag option is empty. Ignore this option." );
+                        getLog().info( "A tag name is empty. Ignore this option." );
                     }
                     else
                     {
-                        String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
-                        if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
+                        String value = "\"" + tags[i].getName();
+                        if ( StringUtils.isNotEmpty( tags[i].getPlacement() ) )
                         {
-                            value += ":" + quotedArgument( tags[i].getHead() );
+                            value += ":" + tags[i].getPlacement();
+                            if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
+                            {
+                                value += ":" + tags[i].getHead();
+                            }
                         }
                         value += "\"";
                         addArgIfNotEmpty( arguments, "-tag", value, SINCE_JAVADOC_1_4 );
