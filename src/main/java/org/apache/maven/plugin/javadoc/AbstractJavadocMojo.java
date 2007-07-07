@@ -1516,7 +1516,9 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            sourcePaths = Arrays.asList( sourcepath.split( "[;]" ) );
+            sourcePaths = new ArrayList( Arrays.asList( sourcepath.split( "[;]" ) ) );
+            sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
+            sourcePaths = pruneSourceDirs( sourcePaths );
         }
 
         return sourcePaths;
