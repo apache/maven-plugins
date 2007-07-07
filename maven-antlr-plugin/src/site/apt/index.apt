@@ -33,6 +33,9 @@ Maven 2 Antlr Plugin
 
  Refer to {{{dependencies.html}Project Dependencies}} to know the Antlr version used by the Plugin.
 
+ <<Note>>: This plugin is for <<Antlr v2 only>>. An <<Antlr v3 version>> exists in the
+ {{{http://svn.apache.org/repos/asf/maven/sandbox/trunk/plugins/maven-antlr3-plugin}Maven Sandbox}}.
+
 * Goals Overview
 
    The Antlr Plugin has two goals:
