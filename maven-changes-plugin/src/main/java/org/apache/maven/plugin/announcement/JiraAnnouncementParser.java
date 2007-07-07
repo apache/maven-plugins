@@ -167,44 +167,13 @@ public class JiraAnnouncementParser
 
         Release release = new Release();
 
-        String type = "";
 
         for ( int i = 0; i < issues.size(); i++ )
         {
             JiraAnnouncement issue = (JiraAnnouncement) issues.get( i );
 
-            Action action = new Action();
-
-            action.setIssue( issue.getKey() );
-
-            if ( issue.getType().equals( "Bug" ) )
-            {
-                type = "fix";
-            }
-            else if ( issue.getType().equals( "New Feature" ) )
-            {
-                type = "add";
-            }
-            else if ( issue.getType().equals( "Improvement" ) )
-            {
-                type = "update";
-            }
-            action.setType( type );
-
-            action.setDev( issue.getAssignee() );
-
-            //action.setDueTo( issue.getReporter() );
-
-            if ( issue.getComments() != null && !issue.getComments().isEmpty() )
-            {
-                int commentSize = issue.getComments().size();
-
-                action.setAction( issue.getComments().get( commentSize - 1 ).toString() );
-            }
-            else
-            {
-                action.setAction( "" );
-            }
+            Action action = createAction( issue );
+            
             release.addAction( action );
 
             release.setDescription( issue.getSummary() );
@@ -214,5 +183,49 @@ public class JiraAnnouncementParser
             releases.add( release );
         }
         return releases;
+    }
+
+    /**
+     * Create an <code>Action</code> from a JIRA issue.
+     *
+     * @param issue The issue to extract the information from
+     * @return An <code>Action</code>
+     */
+    private Action createAction( JiraAnnouncement issue )
+    {
+        Action action = new Action();
+
+        action.setIssue( issue.getKey() );
+
+        String type = "";
+        if ( issue.getType().equals( "Bug" ) )
+        {
+            type = "fix";
+        }
+        else if ( issue.getType().equals( "New Feature" ) )
+        {
+            type = "add";
+        }
+        else if ( issue.getType().equals( "Improvement" ) )
+        {
+            type = "update";
+        }
+        action.setType( type );
+
+        action.setDev( issue.getAssignee() );
+
+        //action.setDueTo( issue.getReporter() );
+
+        if ( issue.getComments() != null && !issue.getComments().isEmpty() )
+        {
+            int commentSize = issue.getComments().size();
+
+            action.setAction( issue.getComments().get( commentSize - 1 ).toString() );
+        }
+        else
+        {
+            action.setAction( "" );
+        }
+        return action;
     }
 }
