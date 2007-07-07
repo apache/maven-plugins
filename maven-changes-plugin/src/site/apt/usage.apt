@@ -222,6 +222,13 @@ mvn site
 mvn changes:announcement-generate
 -------------------
 
+  If you want to generate the announcement based on JIRA you would execute the
+  following command:
+
+-------------------
+mvn changes:announcement-generate -DgenerateJiraAnnouncement=true
+-------------------
+
   This is how you send an email with the generated announcement:
 
 -------------------
