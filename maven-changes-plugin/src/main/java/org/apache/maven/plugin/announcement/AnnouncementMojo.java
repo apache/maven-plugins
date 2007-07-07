@@ -372,7 +372,7 @@ public class AnnouncementMojo
         {
             release = (Release) releases.get( i );
 
-            if ( release.getVersion().equals( pomVersion ) )
+            if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
             {
                 isFound = true;
                 return release;
