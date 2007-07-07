@@ -213,4 +213,15 @@ under the License.
       </build>
     </profile>
   </profiles>
+
+  <!-- TODO: remove when plexus-utils is released -->
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
 </project>
