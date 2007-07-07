@@ -29,6 +29,11 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public class EclipsePluginTest extends AbstractEclipsePluginTestCase
 {
+    protected void setUp()
+    throws Exception
+    {
+        super.setUp();
+    }
     public void testProject01() throws Exception
     {
         testProject( "project-01" );
