@@ -60,3 +60,5 @@ Maven 2 Changes Plugin
   * {{{examples/alternate-changes-xml-location.html}Alternate Location for the changes.xml File}}
 
   * {{{examples/smtp-authentication.html}SMTP authentication}}
+
+  * {{{examples/using-a-custom-announcement-template.html}Using a Custom Announcement Template}}
