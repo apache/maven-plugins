@@ -65,7 +65,7 @@ public class TestJavadocReport
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/test/javadoc/overview.html"
      */
-    private String overview;
+    private File overview;
 
     /**
      * Specifies the title to be placed in the HTML title tag.
@@ -100,7 +100,7 @@ public class TestJavadocReport
      *
      * @parameter expression="${basedir}/src/test/javadoc"
      */
-    private String javadocDirectory;
+    private File javadocDirectory;
 
     /**
      * The name of the test Javadoc report.
@@ -237,7 +237,7 @@ public class TestJavadocReport
     /**
      * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getJavadocDirectory()
      */
-    protected String getJavadocDirectory()
+    protected File getJavadocDirectory()
     {
         return javadocDirectory;
     }
@@ -253,7 +253,7 @@ public class TestJavadocReport
     /**
      * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getOverview()
      */
-    protected String getOverview()
+    protected File getOverview()
     {
         return overview;
     }

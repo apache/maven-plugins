@@ -154,7 +154,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${basedir}/src/main/javadoc"
      */
-    private String javadocDirectory;
+    private File javadocDirectory;
 
     /**
      * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
@@ -415,7 +415,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
      */
-    private String overview;
+    private File overview;
 
     /**
      * Specifies the access level for classes and members to show in the Javadocs.
@@ -1011,7 +1011,7 @@ public abstract class AbstractJavadocMojo
     /**
      * @return the current javadoc directory
      */
-    protected String getJavadocDirectory()
+    protected File getJavadocDirectory()
     {
         return javadocDirectory;
     }
@@ -1027,7 +1027,7 @@ public abstract class AbstractJavadocMojo
     /**
      * @return the overview documentation file from the user parameter or from the <code>javadocdirectory</code>
      */
-    protected String getOverview()
+    protected File getOverview()
     {
         return overview;
     }
@@ -1208,9 +1208,9 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, old, "-1.1" );
         }
 
-        if ( ( StringUtils.isNotEmpty( getOverview() ) ) && ( new File( getOverview() ).exists() ) )
+        if ( ( getOverview() != null ) && ( getOverview().exists() ) )
         {
-            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( getOverview() ) );
+            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( getOverview().getAbsolutePath() ) );
         }
         arguments.add( getAccessLevel() );
         addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
@@ -1474,10 +1474,10 @@ public abstract class AbstractJavadocMojo
 
             if ( getJavadocDirectory() != null )
             {
-                File javadocDir = new File( getJavadocDirectory() );
+                File javadocDir = getJavadocDirectory();
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    sourcePaths.add( getJavadocDirectory() );
+                    sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
                 }
             }
 
@@ -1502,7 +1502,7 @@ public abstract class AbstractJavadocMojo
                             sourcePaths.addAll( sourceRoots );
                         }
 
-                        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory() );
+                        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                         File javadocDir = new File( subProject.getExecutionProject().getBasedir(), javadocDirRelative );
                         if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
@@ -2385,7 +2385,7 @@ public abstract class AbstractJavadocMojo
 
         if ( getJavadocDirectory() != null )
         {
-            copyJavadocResources( outputDirectory, new File( getJavadocDirectory() ) );
+            copyJavadocResources( outputDirectory, getJavadocDirectory() );
         }
 
         if ( aggregate && project.isExecutionRoot() )
@@ -2396,7 +2396,7 @@ public abstract class AbstractJavadocMojo
 
                 if ( subProject != project )
                 {
-                    String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory() );
+                    String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                     File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                     copyJavadocResources( outputDirectory, javadocDir );
                 }
