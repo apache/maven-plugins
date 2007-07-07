@@ -2260,7 +2260,7 @@ public abstract class AbstractJavadocMojo
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinks.get( i );
                 addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " "
-                    + quotedPathArgument( offlineLink.getLocation().getAbsolutePath() ), true );
+                    + quotedPathArgument( offlineLink.getLocation() ), true );
             }
         }
     }
