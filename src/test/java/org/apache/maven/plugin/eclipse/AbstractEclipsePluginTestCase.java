@@ -65,6 +65,11 @@ public abstract class AbstractEclipsePluginTestCase
     protected static File localRepositoryDirectory = getTestFile( "target/test-classes/m2repo" );
 
     /**
+     * Pom File
+     */
+    protected static File PomFile = new File(getBasedir(),"pom.xml");
+    
+    /**
      * Group-Id for running test builds.
      */
     protected static final String GROUP_ID = "org.apache.maven.plugins";
@@ -131,7 +136,7 @@ public abstract class AbstractEclipsePluginTestCase
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
                 localRepositoryDirectory = pluginTestTool
-                    .preparePluginForUnitTestingWithMavenBuilds( "test", localRepositoryDirectory );
+                    .preparePluginForUnitTestingWithMavenBuilds( PomFile, "test", localRepositoryDirectory );
 
                 System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
                     + "\n" );
