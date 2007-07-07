@@ -410,7 +410,7 @@ public abstract class AbstractAntlrMojo
 
         if ( generatedFileName == null )
         {
-            return null;
+            throw new IOException( "Unable to generate the output file name: is the grammar '" + grammar + "' valide?" );
         }
 
         File genFile = null;
