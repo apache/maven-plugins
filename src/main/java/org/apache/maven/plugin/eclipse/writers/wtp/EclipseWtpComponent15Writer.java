@@ -55,7 +55,7 @@ public class EclipseWtpComponent15Writer
     {
         writer.startElement( ELT_PROPERTY );
         writer.addAttribute( ATTR_NAME, ATTR_CONTEXT_ROOT );
-        writer.addAttribute( ATTR_VALUE, config.getProject().getArtifactId() );
+        writer.addAttribute( ATTR_VALUE, config.getContextName() );
         writer.endElement(); // property
     }
 

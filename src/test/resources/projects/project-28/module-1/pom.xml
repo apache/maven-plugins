@@ -20,6 +20,7 @@
         <version>test</version>
         <configuration>
           <wtpversion>1.5</wtpversion>
+          <wtpContextName>contextName</wtpContextName>
         </configuration>
       </plugin>
     </plugins>    

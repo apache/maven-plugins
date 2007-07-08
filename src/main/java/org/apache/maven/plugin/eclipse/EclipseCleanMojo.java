@@ -89,12 +89,25 @@ public class EclipseCleanMojo
      */
     private File basedir;
 
+    
+    /**
+     * Skip the operation when true.
+     * 
+     * @parameter expression="${eclipse.skip}" default-value="false"
+     */
+    private boolean skip;
+    
+    
     /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
         throws MojoExecutionException
     {
+    	if( skip )
+    	{
+    		return;
+    	}
 
         // since the eclipse plugin doesn't generate configuration for POM projects, it should neither delete it
         if ( "pom".equals( packaging ) ) //$NON-NLS-1$
