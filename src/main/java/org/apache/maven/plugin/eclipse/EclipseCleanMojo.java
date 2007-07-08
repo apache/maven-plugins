@@ -27,7 +27,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
- * 
+ *
  * @goal clean
  */
 public class EclipseCleanMojo
@@ -92,7 +92,7 @@ public class EclipseCleanMojo
     
     /**
      * Skip the operation when true.
-     * 
+     *
      * @parameter expression="${eclipse.skip}" default-value="false"
      */
     private boolean skip;
@@ -108,13 +108,6 @@ public class EclipseCleanMojo
     	{
     		return;
     	}
-
-        // since the eclipse plugin doesn't generate configuration for POM projects, it should neither delete it
-        if ( "pom".equals( packaging ) ) //$NON-NLS-1$
-        {
-            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
-            return;
-        }
 
         delete( new File( basedir, FILE_DOT_PROJECT ) );
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
@@ -142,7 +135,7 @@ public class EclipseCleanMojo
 
     /**
      * Delete a file, handling log messages and exceptions
-     * 
+     *
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
