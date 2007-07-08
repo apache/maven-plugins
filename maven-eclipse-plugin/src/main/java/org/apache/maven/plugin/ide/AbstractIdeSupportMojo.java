@@ -166,7 +166,7 @@ public abstract class AbstractIdeSupportMojo
     protected List reactorProjects;
 
     /**
-     * Skip the operation when true
+     * Skip the operation when true.
      * 
      * @parameter expression="${eclipse.skip}" default-value="false"
      */

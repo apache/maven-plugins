@@ -31,6 +31,7 @@
         <version>test</version>
         <configuration>
           <wtpversion>R7</wtpversion>
+          <wtpContextName>contextName</wtpContextName>
           <projectnatures>
             <projectnature>org.eclipse.jdt.core.javanature</projectnature>
             <projectnature>org.eclipse.wst.common.modulecore.ModuleCoreNature</projectnature>
