@@ -38,6 +38,7 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
+ * @requiresDependencyResolution test
  * @version $Id$
  */
 public class EnforceMojo
