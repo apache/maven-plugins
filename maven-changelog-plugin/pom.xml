@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -144,6 +145,18 @@ under the License.
         <role>Java Developer</role>
       </roles>
       <timezone>-3</timezone>
+    </developer>
+    <developer>
+      <id>dennisl</id>
+      <name>Dennis Lundberg</name>
+      <email>dennisl@apache.org</email>
+      <organization>Apache Software Foundation</organization>
+      <roles>
+        <role>Documentation</role>
+        <role>Java Developer</role>
+        <role>Release Manager</role>
+      </roles>
+      <timezone>+1</timezone>
     </developer>
   </developers>
   <contributors>
