@@ -231,6 +231,8 @@ public class JiraAnnouncementParser
 
         action.setDev( issue.getAssignee() );
 
+        // Set dueTo to the empty String instead of null to make Velocity happy
+        action.setDueTo( "" );
         //action.setDueTo( issue.getReporter() );
 
         action.setAction( issue.getSummary() );
