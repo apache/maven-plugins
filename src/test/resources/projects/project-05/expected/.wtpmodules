@@ -2,7 +2,7 @@
   <wb-module deploy-name="maven-eclipse-plugin-test-project-5">
     <module-type module-type-id="jst.web">
       <version>2.4</version>
-      <property name="context-root" value="maven-eclipse-plugin-test-project-5"/>
+      <property name="context-root" value="contextName"/>
     </module-type>
     <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar">
