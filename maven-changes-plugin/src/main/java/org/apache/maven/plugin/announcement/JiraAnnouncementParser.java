@@ -33,7 +33,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML Parser for <code>JiraAnnouncement</code>s.
+ * XML Parser for <code>JiraAnnouncement</code>s. This works on an XML file
+ * downloaded from JIRA and creates a List of issues that is exposed to the
+ * user of the class. It can also extract a List of releases from such issues.
  *
  * @author aramirez@exist.com
  * @version $Id$
@@ -91,6 +93,8 @@ public class JiraAnnouncementParser
     public void endElement( String namespaceURI, String sName, String qName )
         throws SAXException
     {
+        elementValue = elementValue.trim();
+        
         if ( qName.equals( "item" ) )
         {
             issues.add( issue );
@@ -141,6 +145,8 @@ public class JiraAnnouncementParser
         {
             issue.addComment( elementValue );
         }
+        
+        elementValue = "";
     }
 
     public void characters( char[] buff, int offset, int len )
@@ -148,12 +154,7 @@ public class JiraAnnouncementParser
     {
         String str = new String( buff, offset, len );
 
-        String string = str.trim();
-
-        if ( !string.equals( "" ) )
-        {
-            elementValue = string;
-        }
+        elementValue += str;
     }
 
     public List getIssues()
@@ -216,16 +217,7 @@ public class JiraAnnouncementParser
 
         //action.setDueTo( issue.getReporter() );
 
-        if ( issue.getComments() != null && !issue.getComments().isEmpty() )
-        {
-            int commentSize = issue.getComments().size();
-
-            action.setAction( issue.getComments().get( commentSize - 1 ).toString() );
-        }
-        else
-        {
-            action.setAction( "" );
-        }
+        action.setAction( issue.getSummary() );
         return action;
     }
 }
