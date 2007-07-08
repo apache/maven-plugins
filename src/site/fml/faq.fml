@@ -20,25 +20,9 @@
      </answer>
    </faq>
    <faq id="import-javadoc">
-     <question>Can I make the Eclipse plugin to download and to attach javadocs to my libraries?</question>
+     <question>Can I make the Eclipse plugin download and attach javadocs to my libraries?</question>
      <answer>
-       <p>Quoting what Fabrizio said in the mailing list...</p>
-       <i>
-       <p>"The current revision in svn of the Eclipse plugin (which is expected
-       to be released as soon as an usable wtp 1.0.1 build will be out) has
-       support for javadoc attachments, as an alternative to source jars."</p>
-
-       <p>"When using the downloadSources flag if a source jar is not found the
-       plugin will look for a javadoc jar. This is expecially useful for non
-       open source projects and when used with Eclipse 3.2 (in Eclipse 3.2 M4
-       javadoc view and editor tooltips also work with javadoc archives)."</p>
-
-       <p>"I didn't find useful to have both sources and javadocs attached, since
-       javadocs are automatically extracted by Eclipse: if you think this
-       should be needed please post an enhancement request in Jira with the
-       reasons... "</p>
-       </i>
-       <p>To go the the mailing list thread of this topic, click <a href="http://www.nabble.com/forum/ViewPost.jtp?post=2370602&amp;framed=y">here</a></p>
+      <p>As of version 2.4, there is a new flag, downloadJavadocs that behaves exactly like downloadSources except for javadocs. See more information here: <a href="examples/attach-library-sources.html">Attach Library Sources</a>. </p>
      </answer>
    </faq>
  </part>

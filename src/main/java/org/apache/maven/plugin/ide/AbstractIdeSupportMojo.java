@@ -192,9 +192,9 @@ public abstract class AbstractIdeSupportMojo
      * <code>mvn-eclipse-cache.properties</code> in order
      * to reset this cache.
      * 
-     * @parameter expression="${downloadJavadoc}"
+     * @parameter expression="${downloadJavadocs}"
      */
-    protected boolean downloadJavadoc;
+    protected boolean downloadJavadocs;
 
     /**
      * Plexus logger needed for debugging manual artifact resolution.
@@ -346,23 +346,23 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Getter for <code>downloadJavadoc</code>.
+     * Getter for <code>downloadJavadocs</code>.
      * 
-     * @return Returns the downloadJavadoc.
+     * @return Returns the downloadJavadocs.
      */
-    public boolean getDownloadJavadoc()
+    public boolean getDownloadJavadocs()
     {
-        return this.downloadJavadoc;
+        return this.downloadJavadocs;
     }
 
     /**
-     * Setter for <code>downloadJavadoc</code>.
+     * Setter for <code>downloadJavadocs</code>.
      * 
-     * @param downloadJavadoc The downloadJavadoc to set.
+     * @param downloadJavadocs The downloadJavadocs to set.
      */
-    public void setDownloadJavadoc( boolean downloadJavadoc )
+    public void setDownloadJavadocs( boolean downloadJavadoc )
     {
-        this.downloadJavadoc = downloadJavadoc;
+        this.downloadJavadocs = downloadJavadoc;
     }
     
     /**
@@ -867,7 +867,7 @@ public abstract class AbstractIdeSupportMojo
                                                                        unavailableArtifactsCache );
         missingSourceDependencies.addAll( missingSources );
 
-        final List missingJavadocs = resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadoc(),
+        final List missingJavadocs = resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs(),
                                                                         unavailableArtifactsCache );
         missingJavadocDependencies.addAll( missingJavadocs );
 
@@ -1000,7 +1000,7 @@ public abstract class AbstractIdeSupportMojo
 
         if ( !missingJavadocDependencies.isEmpty() )
         {
-            if ( getDownloadJavadoc() )
+            if ( getDownloadJavadocs() )
             {
                 msg.append( Messages.getString( "javadocnotavailable" ) ); //$NON-NLS-1$
             }

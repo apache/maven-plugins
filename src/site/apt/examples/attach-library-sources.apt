@@ -3,20 +3,20 @@
  ------
  Edwin Punzalan
  ------
- 14 July 2006
+ 7 July 2007
  ------
 
 
-Attach Library Sources
+Attach Library Sources and Javadocs
 
   Artifacts with sources deployed can be attached to Eclipse libraries using
-  <<<downloadSources>>>.  The sources of the libraries <must> exist in the
+  <<<downloadSources>>>. Javadocs may be attached using <<<downloadJavadocs>>> The sources and javadocs of the libraries <must> exist in the
   repository so that the plugin can download it and attach it.
 
   The following example shows how to do this in the command-line:
 
 +-----
-mvn eclipse:eclipse -DdownloadSources=true
+mvn eclipse:eclipse -DdownloadSources=true  -DdownloadJavadocs=true
 +-----
 
   or in your pom.xml:
@@ -33,6 +33,7 @@ mvn eclipse:eclipse -DdownloadSources=true
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
           <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
         </configuration>
       </plugin>
       [...]

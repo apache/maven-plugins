@@ -226,7 +226,7 @@ public class EclipsePlugin
     private List classpathContainers;
 
     /**
-     * Enables/disables the downloading of source attachments. Defaults to false.
+     * Enables/disables the downloading of source attachments. Defaults to false. DEPRECATED - use downloadSources
      *
      * @parameter expression="${eclipse.downloadSources}"
      * @deprecated use downloadSources
