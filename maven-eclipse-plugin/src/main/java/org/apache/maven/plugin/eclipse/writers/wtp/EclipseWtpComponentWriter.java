@@ -194,7 +194,7 @@ public class EclipseWtpComponentWriter
     protected void writeContextRoot( XMLWriter writer )
     {
         writer.startElement( ELT_PROPERTY );
-        writer.addAttribute( ATTR_CONTEXT_ROOT, config.getProject().getArtifactId() );
+        writer.addAttribute( ATTR_CONTEXT_ROOT, config.getContextName() );
         writer.endElement(); // property
     }
 

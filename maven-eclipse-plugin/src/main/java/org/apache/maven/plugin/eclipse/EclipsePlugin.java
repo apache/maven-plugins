@@ -265,6 +265,14 @@ public class EclipsePlugin
      * @parameter expression="${wtpversion}" default-value="none"
      */
     private String wtpversion;
+    
+    /**
+    * JEE context name of the WTP module. ( ex. WEB context name ).
+    *
+    * @parameter expression="${wtpContextName}" default-value="${project.artifactId}"
+    */
+    private String wtpContextName;
+    
 
     /**
      * Is it an PDE project? If yes, the plugin adds the necessary natures and build commands to
@@ -782,7 +790,6 @@ public class EclipsePlugin
         }
         if ( wtpVersionFloat == 1.0f )
         {
-
             new EclipseWtpComponentWriter().init( getLog(), config ).write();
         }
         if ( wtpVersionFloat >= 1.5 )
@@ -890,6 +897,7 @@ public class EclipsePlugin
         config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
+        config.setContextName( this.wtpContextName );
 
         return config;
     }
