@@ -99,11 +99,6 @@ public abstract class AbstractJiraDownloader
         // If the user has defined a filter - use that
         if ( ( this.filter != null ) && ( this.filter.length() > 0 ) )
         {
-            if ( this.filter.charAt( 0 ) == '&' )
-            {
-                return this.filter.substring( 1 );
-            }
-
             return this.filter;
         }
 
@@ -237,8 +232,12 @@ public abstract class AbstractJiraDownloader
                         fullURL += "&fixfor=" + getFixFor();
                     }
 
-                    // @todo We can get a double && here if createFilter starts with an &
-                    fullURL += "&" + createFilter();
+                    String createdFilter = createFilter();
+                    if ( createdFilter.charAt( 0 ) != '&' )
+                    {
+                        fullURL += "&";
+                    }
+                    fullURL += createdFilter;
 
                     fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
 
