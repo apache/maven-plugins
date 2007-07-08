@@ -358,4 +358,12 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     {
             testProject( "project-33" );
     }*/
+    
+    
+    /*TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc
+     * path. This means that the expected .classpath can't match the final result as the result will
+     * have the absolute path to the user's local repo.
+     */
+    
+    
 }
