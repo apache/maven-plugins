@@ -19,18 +19,20 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.maven.plugin.changes.Action;
 import org.apache.maven.plugin.changes.Release;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * XML Parser for <code>JiraAnnouncement</code>s. This works on an XML file
@@ -164,26 +166,40 @@ public class JiraAnnouncementParser
 
     public List getReleases( List issues )
     {
-        List releases = new ArrayList();
+        // A Map of releases keyed by fixVersion
+        Map releasesMap = new HashMap();
 
-        Release release = new Release();
-
-
+        // Loop through all issues looking for fixVersions
         for ( int i = 0; i < issues.size(); i++ )
         {
             JiraAnnouncement issue = (JiraAnnouncement) issues.get( i );
+            // Do NOT create a release for issues that lack a fixVersion
+            if ( issue.getFixVersion() != null )
+            {
+                // Try to get a matching Release from the map
+                Release release = (Release) releasesMap.get( issue.getFixVersion() );
+                if ( release == null )
+                {
+                    // Add a new Release to the Map if it wasn't there
+                    release = new Release();
+                    release.setVersion( issue.getFixVersion() );
+                    releasesMap.put( issue.getFixVersion(), release );
+                }
 
-            Action action = createAction( issue );
-            
-            release.addAction( action );
-
-            release.setDescription( issue.getSummary() );
-
-            release.setVersion( issue.getFixVersion() );
-
-            releases.add( release );
+                // Add this issue as an Action to this release
+                Action action = createAction( issue );
+                release.addAction( action );
+            }
         }
-        return releases;
+
+        // Extract the releases from the Map to a List
+        List releasesList = new ArrayList();
+        for ( Iterator iterator = releasesMap.entrySet().iterator(); iterator.hasNext(); )
+        {
+            Release o = (Release) ( (Map.Entry) iterator.next() ).getValue();
+            releasesList.add( o );
+        }
+        return releasesList;
     }
 
     /**
