@@ -182,6 +182,21 @@ public abstract class AbstractIdeSupportMojo
     protected boolean downloadSources;
 
     /**
+     * Enables/disables the downloading of javadoc
+     * attachments. Defaults to false. When this flag is
+     * <code>true</code> remote repositories are checked
+     * for javadocs: in order to avoid repeated check for
+     * unavailable javadoc archives, a status cache is
+     * mantained into the target dir of the root project.
+     * Run <code>mvn:clean</code> or delete the file
+     * <code>mvn-eclipse-cache.properties</code> in order
+     * to reset this cache.
+     * 
+     * @parameter expression="${downloadJavadocs}"
+     */
+    protected boolean downloadJavadocs;
+
+    /**
      * Plexus logger needed for debugging manual artifact resolution.
      */
     private Logger logger;
@@ -331,7 +346,28 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
+     * Getter for <code>downloadJavadocs</code>.
+     * 
+     * @return Returns the downloadJavadocs.
+     */
+    public boolean getDownloadJavadocs()
+    {
+        return this.downloadJavadocs;
+    }
+
+    /**
+     * Setter for <code>downloadJavadocs</code>.
+     * 
+     * @param downloadJavadocs The downloadJavadocs to set.
+     */
+    public void setDownloadJavadocs( boolean downloadJavadoc )
+    {
+        this.downloadJavadocs = downloadJavadoc;
+    }
+    
+    /**
      * Getter for <code>downloadSources</code>.
+     * 
      * @return Returns the downloadSources.
      */
     public boolean getDownloadSources()
@@ -387,6 +423,12 @@ public abstract class AbstractIdeSupportMojo
     private List missingSourceDependencies = new ArrayList();
 
     /**
+     * Not a plugin parameter. Collect the list of dependencies with a missing javadoc artifact for the final report.
+     */
+     // TODO merge this with the missingSourceDependencies in a classifier based map?
+     private List missingJavadocDependencies = new ArrayList();
+    
+    /**
      * Cached array of resolved dependencies.
      */
     private IdeDependency[] ideDeps;
@@ -425,11 +467,11 @@ public abstract class AbstractIdeSupportMojo
         // resolve artifacts
         IdeDependency[] deps = doDependencyResolution();
 
-        resolveSourceArtifacts( deps );
+        resolveSourceAndJavadocArtifacts( deps );
 
         writeConfiguration( deps );
 
-        reportMissingSources();
+        reportMissingArtifacts();
 
     }
 
@@ -474,10 +516,10 @@ public abstract class AbstractIdeSupportMojo
 
                         listeners.add( new WarningResolutionListener( logger ) );
 
-                        artifactResolutionResult = artifactCollector.collect( getProjectArtifacts(), project.getArtifact(),
-                                                                              managedVersions, localRepo, project
-                                                                                  .getRemoteArtifactRepositories(),
-                                                                              getArtifactMetadataSource(), null, listeners );
+                        artifactResolutionResult = artifactCollector.collect( getProjectArtifacts(), project
+                            .getArtifact(), managedVersions, localRepo, project.getRemoteArtifactRepositories(),
+                                                                              getArtifactMetadataSource(), null,
+                                                                              listeners );
                     }
                     catch ( ArtifactResolutionException e )
                     {
@@ -587,21 +629,20 @@ public abstract class AbstractIdeSupportMojo
 
                             isOsgiBundle = osgiSymbolicName != null;
 
-                        IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                               art.getClassifier(),
-                                                               isReactorProject, Artifact.SCOPE_TEST.equals( art
-                                                                   .getScope() ), Artifact.SCOPE_SYSTEM.equals( art
-                                                                   .getScope() ), Artifact.SCOPE_PROVIDED.equals( art
-                                                                   .getScope() ), art.getArtifactHandler()
-                                                                   .isAddedToClasspath(), art.getFile(), art.getType(),
-                                                               isOsgiBundle, osgiSymbolicName, dependencyDepth );
+                            IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art
+                                .getVersion(), art.getClassifier(), isReactorProject, Artifact.SCOPE_TEST.equals( art
+                                .getScope() ), Artifact.SCOPE_SYSTEM.equals( art.getScope() ), Artifact.SCOPE_PROVIDED
+                                .equals( art.getScope() ), art.getArtifactHandler().isAddedToClasspath(),
+                                                                   art.getFile(), art.getType(), isOsgiBundle,
+                                                                   osgiSymbolicName, dependencyDepth );
 
                             dependencies.add( dep );
                         }
 
                     }
 
-                    //@todo a final report with the list of missingArtifacts?
+                    // @todo a final report with the list of
+                    // missingArtifacts?
 
                 }
 
@@ -617,10 +658,14 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Returns the list of project artifacts. Also artifacts generated from referenced projects will be added, but with
-     * the <code>resolved</code> property set to true.
+     * Returns the list of project artifacts. Also artifacts
+     * generated from referenced projects will be added, but
+     * with the <code>resolved</code> property set to
+     * true.
+     * 
      * @return list of projects artifacts
-     * @throws MojoExecutionException if unable to parse dependency versions
+     * @throws MojoExecutionException if unable to parse
+     *             dependency versions
      */
     private Set getProjectArtifacts()
         throws MojoExecutionException
@@ -780,30 +825,32 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Resolve source artifacts and download them if <code>downloadSources</code> is <code>true</code>. Source and
      * javadocs artifacts will be attached to the <code>IdeDependency</code>
+     * Resolve source and javadoc artifacts. The resolved artifacts will be downloaded based on the
+     * <code>downloadSources</code> and <code>downloadJavadocs</code> attributes. Source and
      * @param deps resolved dependencies
      */
-    private void resolveSourceArtifacts( IdeDependency[] deps )
+    private void resolveSourceAndJavadocArtifacts( IdeDependency[] deps )
     {
 
         File reactorTargetDir = getReactorTargetDir( project );
-        File unavailableSourcesTmpFile = new File( reactorTargetDir, "mvn-eclipse-cache.properties" );
+        File unavailableArtifactsTmpFile = new File( reactorTargetDir, "mvn-eclipse-cache.properties" );
 
-        getLog().info( "Using source status cache: " + unavailableSourcesTmpFile.getAbsolutePath() );
+        getLog().info( "Using source status cache: " + unavailableArtifactsTmpFile.getAbsolutePath() );
 
         // create target dir if missing
-        if ( !unavailableSourcesTmpFile.getParentFile().exists() )
+        if ( !unavailableArtifactsTmpFile.getParentFile().exists() )
         {
-            unavailableSourcesTmpFile.getParentFile().mkdirs();
+            unavailableArtifactsTmpFile.getParentFile().mkdirs();
         }
 
-        Properties unavailableSourcesCache = new Properties();
-        if ( unavailableSourcesTmpFile.exists() )
+        Properties unavailableArtifactsCache = new Properties();
+        if ( unavailableArtifactsTmpFile.exists() )
         {
             InputStream is = null;
             try
             {
-                is = new FileInputStream( unavailableSourcesTmpFile );
-                unavailableSourcesCache.load( is );
+                is = new FileInputStream( unavailableArtifactsTmpFile );
+                unavailableArtifactsCache.load( is );
             }
             catch ( IOException e )
             {
@@ -816,82 +863,19 @@ public abstract class AbstractIdeSupportMojo
 
         }
 
-        ArtifactRepository localRepository = getLocalRepository();
-        ArtifactResolver artifactResolver = getArtifactResolver();
-        ArtifactFactory artifactFactory = getArtifactFactory();
+        final List missingSources = resolveDependenciesWithClassifier( deps, "sources", getDownloadSources(),
+                                                                       unavailableArtifactsCache );
+        missingSourceDependencies.addAll( missingSources );
 
-        // if downloadSources is off, just check local repository for reporting missing jars
-        List remoteRepos = getDownloadSources() ? getRemoteArtifactRepositories() : Collections.EMPTY_LIST;
-
-        for ( int j = 0; j < deps.length; j++ )
-        {
-            IdeDependency dependency = deps[j];
-
-            if ( dependency.isReferencedProject() || dependency.isSystemScoped() )
-            {
-                // source artifact not needed
-                continue;
-            }
-
-            String classifier = "sources";
-            if("tests".equals(dependency.getClassifier()))
-            {
-                classifier = "test-sources";
-            }
-            if(getLog().isDebugEnabled())
-            {
-                getLog().debug("Searching for sources for "+dependency.getId()+":"+dependency.getClassifier()+" at "+dependency.getId() + ":" + classifier);
-            }
-            
-            if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":" + classifier ) )
-            {
-                // source artifact: use the "sources" classifier added by the source plugin
-                Artifact sourceArtifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
-                    .getArtifactId(), dependency.getVersion(), classifier, localRepository, artifactResolver, //$NON-NLS-1$
-                                                                                  artifactFactory, remoteRepos,
-                                                                                  getLog() );
-                if ( sourceArtifact.isResolved() )
-                {
-                    dependency.setSourceAttachment( sourceArtifact.getFile() );
-                }
-                else
-                {
-                    unavailableSourcesCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
-                    // @todo also report deps without a source attachment but with a javadoc one?
-                    missingSourceDependencies.add( dependency );
-                }
-
-            }
-
-            // @todo we should probably not make source/javadocs exclusive
-            if ( dependency.getSourceAttachment() == null )
-            {
-                if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":javadoc" ) )
-                {
-                    // try using a plain javadoc jar if the source jar is not available
-                    Artifact javadocArtifact = IdeUtils
-                        .resolveArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(), dependency
-                            .getVersion(), "javadoc", localRepository, artifactResolver, //$NON-NLS-1$
-                                                        artifactFactory, remoteRepos, getLog() );
-
-                    if ( javadocArtifact.isResolved() )
-                    {
-                        dependency.setJavadocAttachment( javadocArtifact.getFile() );
-                    }
-                    else
-                    {
-                        unavailableSourcesCache.put( dependency.getId() + ":javadoc", Boolean.TRUE.toString() );
-                    }
-                }
-
-            }
-        }
+        final List missingJavadocs = resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs(),
+                                                                        unavailableArtifactsCache );
+        missingJavadocDependencies.addAll( missingJavadocs );
 
         FileOutputStream fos = null;
         try
         {
-            fos = new FileOutputStream( unavailableSourcesTmpFile );
-            unavailableSourcesCache.store( fos, "Temporary index for unavailable sources and javadocs" );
+            fos = new FileOutputStream( unavailableArtifactsTmpFile );
+            unavailableArtifactsCache.store( fos, "Temporary index for unavailable sources and javadocs" );
         }
         catch ( IOException e )
         {
@@ -905,35 +889,133 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Output a message with the list of missing dependencies and info on how turn download on if it was disabled.
+     * Resolve the required artifacts for each of the
+     * dependency. <code>sources</code> or
+     * <code>javadoc</code> artifacts (depending on the
+     * <code>classifier</code>) are attached to the
+     * dependency.
+     * 
+     * @param deps resolved dependencies
+     * @param classifier the classifier we are looking for
+     *            (either <code>sources</code> or
+     *            <code>javadoc</code>)
+     * @param includeRemoteRepositories flag whether we
+     *            should search remote repositories for the
+     *            artifacts or not
+     * @param unavailableArtifactsCache cache of unavailable
+     *            artifacts
+     * @return the list of dependencies for which the
+     *         required artifact was not found
      */
-    private void reportMissingSources()
+    private List resolveDependenciesWithClassifier( IdeDependency[] deps, String inClassifier,
+                                                    boolean includeRemoteRepositories,
+                                                    Properties unavailableArtifactsCache )
     {
-        if ( missingSourceDependencies.isEmpty() )
+        List missingClassifierDependencies = new ArrayList();
+                                                                                        
+        // if downloadSources is off, just check
+        // local repository for reporting missing source jars
+        List remoteRepos = includeRemoteRepositories ? getRemoteArtifactRepositories() : Collections.EMPTY_LIST;
+
+        for ( int j = 0; j < deps.length; j++ )
         {
-            return;
+            IdeDependency dependency = deps[j];
+
+            if ( dependency.isReferencedProject() || dependency.isSystemScoped() )
+            {
+                //artifact not needed
+                continue;
+            }
+            
+            //MECLIPSE-151 - if the dependency is a test, get the correct classifier for it. (ignore for javadocs)
+            String classifier = inClassifier;
+            if("sources".equals( classifier ) && "tests".equals(dependency.getClassifier()))
+            {
+                classifier = "test-sources";
+            }
+            
+            if(getLog().isDebugEnabled())
+            {
+                getLog().debug("Searching for sources for "+dependency.getId()+":"+dependency.getClassifier()+" at "+dependency.getId() + ":" + classifier);
+            }
+      
+            if ( !unavailableArtifactsCache.containsKey( dependency.getId() + ":" + classifier ) )
+            {
+                Artifact artifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
+                    .getArtifactId(), dependency.getVersion(), classifier, localRepository, artifactResolver, //$NON-NLS-1$
+                                                                            artifactFactory, remoteRepos, getLog() );
+                if ( artifact.isResolved() )
+                {
+                    if ( "sources".equals( classifier ) )   
+                    {
+                        dependency.setSourceAttachment( artifact.getFile() );
+                    }
+                    else if ( "javadoc".equals( classifier ) )
+                    {
+                        dependency.setJavadocAttachment( artifact.getFile() );
+                    }
+                    else
+                    {
+                        unavailableArtifactsCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
+                        // add the dependencies to the list
+                        // of those lacking the required
+                        // artifact
+                        missingClassifierDependencies.add( dependency );
+                    }
+                }
+
+            }
         }
 
-        StringBuffer msg = new StringBuffer();
-
-        if ( getDownloadSources() )
-        {
-            msg.append( Messages.getString( "sourcesnotavailable" ) ); //$NON-NLS-1$
-        }
-        else
-        {
-            msg.append( Messages.getString( "sourcesnotdownloaded" ) ); //$NON-NLS-1$
-        }
-
-        for ( Iterator it = missingSourceDependencies.iterator(); it.hasNext(); )
-        {
-            IdeDependency art = (IdeDependency) it.next();
-            msg.append( Messages.getString( "sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
-        }
-        msg.append( "\n" ); //$NON-NLS-1$
-
-        getLog().info( msg ); //$NON-NLS-1$
+        // return the list of dependencies missing the required artifact
+        return missingClassifierDependencies;
 
     }
 
+    /**
+     * Output a message with the list of missing dependencies and info on how turn download on if it was disabled.
+     */
+    private void reportMissingArtifacts()
+    {
+        StringBuffer msg = new StringBuffer();
+
+        if ( !missingSourceDependencies.isEmpty() )
+        {
+            if ( getDownloadSources() )
+            {
+                msg.append( Messages.getString( "sourcesnotavailable" ) ); //$NON-NLS-1$
+            }
+            else
+            {
+                msg.append( Messages.getString( "sourcesnotdownloaded" ) ); //$NON-NLS-1$
+            }
+
+            for ( Iterator it = missingSourceDependencies.iterator(); it.hasNext(); )
+            {
+                IdeDependency art = (IdeDependency) it.next();
+                msg.append( Messages.getString( "sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
+            }
+            msg.append( "\n" ); //$NON-NLS-1$
+        }
+
+        if ( !missingJavadocDependencies.isEmpty() )
+        {
+            if ( getDownloadJavadocs() )
+            {
+                msg.append( Messages.getString( "javadocnotavailable" ) ); //$NON-NLS-1$
+            }
+            else
+            {
+                msg.append( Messages.getString( "javadocnotdownloaded" ) ); //$NON-NLS-1$
+            }
+
+            for ( Iterator it = missingJavadocDependencies.iterator(); it.hasNext(); )
+            {
+                IdeDependency art = (IdeDependency) it.next();
+                msg.append( Messages.getString( "javadocmissingitem", art.getId() ) ); //$NON-NLS-1$
+            }
+            msg.append( "\n" ); //$NON-NLS-1$
+        }
+        getLog().info( msg ); //$NON-NLS-1$
+    }
 }
