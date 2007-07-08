@@ -22,10 +22,12 @@ package org.apache.maven.plugin.announcement;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changes.Action;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.Release;
 import org.apache.maven.project.MavenProject;
@@ -349,7 +351,7 @@ public class AnnouncementMojo
 
     /**
      * Get the latest release by matching the supplied releases
-     * with the version in the pom
+     * with the version from the pom.
      *
      * @param releases list of releases
      * @throws MojoExecutionException
@@ -367,14 +369,25 @@ public class AnnouncementMojo
         {
             pomVersion = pomVersion.substring( 0, pomVersion.length() - SNAPSHOT_SUFFIX.length() );
         }
+        getLog().debug( "Found " + releases.size() + " releases.");
 
         for ( int i = 0; i < releases.size(); i++ )
         {
             release = (Release) releases.get( i );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "The release: " + release.getVersion()
+                    + " has " + release.getAction().size() + " actions.");
+            }
 
             if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
             {
                 isFound = true;
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Found the correct release: " + release.getVersion() );
+                    logRelease( release );
+                }
                 return release;
             }
         }
@@ -385,6 +398,19 @@ public class AnnouncementMojo
                 + "' among the supplied releases." );
         }
         return release;
+    }
+
+    private void logRelease( Release release )
+    {
+        Action action;
+        for ( Iterator iterator = release.getAction().iterator(); iterator.hasNext(); )
+        {
+            action = (Action) iterator.next();
+            getLog().debug( "o " + action.getType() );
+            getLog().debug( "  - " + action.getIssue() );
+            getLog().debug( "  - " + action.getAction() );
+            getLog().debug( "  - " + action.getDueTo() );
+        }
     }
 
     /**
@@ -431,6 +457,10 @@ public class AnnouncementMojo
 
         catch ( Exception e )
         {
+            if ( e.getCause() != null )
+            {
+                getLog().warn( e.getCause() );
+            }
             throw new MojoExecutionException( e.toString(), e.getCause() );
         }
     }
@@ -473,7 +503,7 @@ public class AnnouncementMojo
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to download JIRA Announcement", e );
+            throw new MojoExecutionException( "Failed to extract JIRA issues from the downloaded file", e );
         }
     }
 
