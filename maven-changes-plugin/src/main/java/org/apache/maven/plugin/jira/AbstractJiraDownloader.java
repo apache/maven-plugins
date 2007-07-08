@@ -96,6 +96,7 @@ public abstract class AbstractJiraDownloader
      */
     private String createFilter()
     {
+        // If the user has defined a filter - use that
         if ( ( this.filter != null ) && ( this.filter.length() > 0 ) )
         {
             if ( this.filter.charAt( 0 ) == '&' )
@@ -140,9 +141,9 @@ public abstract class AbstractJiraDownloader
             }
         }
 
+        // get the Resolution Ids
         if ( resolutionIds != null )
         {
-            // get the Resolution Ids
             String[] resos = resolutionIds.split( "," );
 
             for ( int i = 0; i < resos.length; i++ )
@@ -156,7 +157,7 @@ public abstract class AbstractJiraDownloader
             }
         }
 
-        // add all components
+        // add components
         if ( component != null )
         {
             String[] components = component.split( "," );
@@ -236,6 +237,7 @@ public abstract class AbstractJiraDownloader
                         fullURL += "&fixfor=" + getFixFor();
                     }
 
+                    // @todo We can get a double && here if createFilter starts with an &
                     fullURL += "&" + createFilter();
 
                     fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
@@ -281,7 +283,7 @@ public abstract class AbstractJiraDownloader
 
         if ( pos >= 0 )
         {
-            // url
+            // project id
             id = url.substring( url.lastIndexOf( "=" ) + 1 );
         }
 
@@ -481,7 +483,7 @@ public abstract class AbstractJiraDownloader
         {
             GetMethod gm = new GetMethod( link );
 
-            getLog().info( "Downloading " + link );
+            getLog().info( "Downloading from JIRA at: " + link );
 
             gm.setFollowRedirects( true );
 
@@ -526,10 +528,10 @@ public abstract class AbstractJiraDownloader
 
                 pw.close();
 
-                getLog().info( "Downloading successful" );
+                getLog().info( "Downloading from JIRA was successful" );
             }
             else {
-                getLog().warn( "Downloading failed. Received: [" + gm.getStatusCode() + "]" );
+                getLog().warn( "Downloading from JIRA failed. Received: [" + gm.getStatusCode() + "]" );
             }
         }
         catch ( HttpException e )
@@ -540,7 +542,7 @@ public abstract class AbstractJiraDownloader
             }
             else
             {
-                getLog().error( "Error downloading issues from JIRA url :  " + e.getLocalizedMessage() );
+                getLog().error( "Error downloading issues from JIRA url: " + e.getLocalizedMessage() );
 
             }
         }
@@ -548,7 +550,7 @@ public abstract class AbstractJiraDownloader
         {
             if ( getLog().isDebugEnabled() )
             {
-                getLog().error( "Error downloading issues from JIRA :", e );
+                getLog().error( "Error downloading issues from JIRA:", e );
             }
             else
             {

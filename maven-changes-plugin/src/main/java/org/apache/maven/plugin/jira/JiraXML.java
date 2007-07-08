@@ -31,7 +31,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML parser for <code>JiraIssue</code>s.
+ * XML parser for <code>JiraIssue</code>s. This works on an XML file downloaded
+ * from JIRA and creates a List of issues that is exposed to the user of the
+ * class.
  *
  * @version $Id$
  */
