@@ -94,13 +94,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.writeText( JeeUtils.resolveServletVersion(project) );
             writer.endElement();
 
-            // use finalName as context root only if it has been explicitely set
-            String contextRoot = project.getArtifactId();
-            String finalName = project.getBuild().getFinalName();
-            if ( !finalName.equals( project.getArtifactId() + "-" + project.getVersion() ) ) //$NON-NLS-1$
-            {
-                contextRoot = finalName;
-            }
+            String contextRoot = config.getContextName();
 
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$

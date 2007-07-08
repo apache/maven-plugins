@@ -118,6 +118,13 @@ public class EclipseWriterConfig
     private String projectNameTemplate;
 
     /**
+     * @see EclipsePlugin#deployName()
+     */
+    
+    private String contextName;
+    
+    
+    /**
      * Getter for <code>deps</code>.
      * @return Returns the deps.
      */
@@ -398,4 +405,15 @@ public class EclipseWriterConfig
     {
         return projectNameTemplate;
     }
+    
+    public String getContextName()
+    {
+         return this.contextName;
+    }
+    
+    public void setContextName( String deployName )
+    {
+        this.contextName = deployName;
+    }
+    
 }
