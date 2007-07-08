@@ -345,6 +345,16 @@ public class EclipsePlugin
     private String projectNameTemplate; 
 
     /**
+     * When set to true, resource directories which are marked as filtered will
+     * not be added to eclipse's source directories. They will therefore not be
+     * included in the classpath from eclipse's point of view. For example, they
+     * will not be accessible from unit tests when ran from eclipse.
+     * 
+     * @parameter expression="{$eclipse.excludeFilteredResources}" default-value="false"
+     */
+    private boolean excludeFilteredResourcesFromSourceDirs;
+    
+    /**
      * Parsed wtp version.
      */
     private float wtpVersionFloat;
@@ -1073,6 +1083,11 @@ public class EclipsePlugin
 
             String includePattern = null;
             String excludePattern = null;
+
+            if( resource.isFiltering() && excludeFilteredResourcesFromSourceDirs ) {
+                getLog().debug( Messages.getString( "EclipseClasspathWriter.filteredresourcedirexcludedfromsourcedirs", resource.getDirectory() ) ); //$NON-NLS-1$
+            	continue;
+            }
 
             if ( resource.getIncludes().size() != 0 )
             {
