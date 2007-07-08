@@ -40,7 +40,7 @@ public class JiraMojo
     extends AbstractMavenReport
 {
     /**
-     * Output Directory of the report.
+     * Output directory where the report will be placed.
      * 
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
@@ -49,7 +49,7 @@ public class JiraMojo
     private String outputDirectory;
 
     /**
-     * Path of the JIRA XML file to be parsed.
+     * Path to the JIRA XML file, which will be parsed.
      * 
      * @parameter expression="${project.build.directory}/jira-results.xml "
      * @required
@@ -93,42 +93,45 @@ public class JiraMojo
     private int maxEntries;
 
     /**
-     * Defines the filter parameters to restrict the result issues from JIRA.
-     * The filter parameters property must use the same format of url parameters from the JIRA search.
+     * Defines the filter parameters to restrict which issues are retrieved
+     * from JIRA. The filter parameter must use the same format of url
+     * parameters that is used in a JIRA search.
      *
      * @parameter default-value=""
      */
     private String filter;
 
     /**
-     * Sets the status(es) of the project you want to limit your report to.
-     * Valid statuses are: Open, In Progress, Reopened, Resolved and Closed. Multiple values can be separated by commas.
+     * Sets the status(es) that you want to limit your report to include.
+     * Valid statuses are: Open, In Progress, Reopened, Resolved and Closed.
+     * Multiple values can be separated by commas.
      *
      * @parameter default-value=""
      */
     private String statusIds;
 
     /**
-     * Sets the resolution(s) of the project you want to limit your report to.
-     * Valid statuses are: Unresolved, Fixed, Won't Fix, Duplicate, Incomplete, Cannot Reproduce.
-     * Multiple values can be separated by commas.
+     * Sets the resolution(s) that you want to limit your report to include.
+     * Valid statuses are: Unresolved, Fixed, Won't Fix, Duplicate, Incomplete,
+     * Cannot Reproduce. Multiple values can be separated by commas.
      *
      * @parameter default-value=""
      */
     private String resolutionIds;
 
     /**
-     * Sets the priority(s) of the project you want to limit your report to.
-     * Valid statuses are: Blocker, Critical, Major, Minor, Trivial. Multiple values can be separated by commas.
+     * Sets the priority(s) that you want to limit your report to include.
+     * Valid statuses are: Blocker, Critical, Major, Minor, Trivial. Multiple
+     * values can be separated by commas.
      *
      * @parameter default-value=""
      */
     private String priorityIds;
 
     /**
-     * Sets the component(s) of the project you want to limit your report to.
+     * Sets the component(s) that you want to limit your report to include.
      * Multiple components can be separated by commas (such as 10011,10012).
-     * Default-value -  empty, meaning all components.
+     * If this is set to empty - that means all components.
      *
      * @parameter default-value=""
      */
@@ -175,7 +178,7 @@ public class JiraMojo
     {
         JiraDownloader jiraDownloader = new JiraDownloader();
 
-        setJiraDownloaderParameter( jiraDownloader );
+        setJiraDownloaderParameters( jiraDownloader );
 
         JiraReportGenerator report;
 
@@ -237,7 +240,7 @@ public class JiraMojo
         return ResourceBundle.getBundle( "jira-report", locale, this.getClass().getClassLoader() );
     }
 
-    private void setJiraDownloaderParameter( JiraDownloader jira )
+    private void setJiraDownloaderParameters( JiraDownloader jira )
     {
         jira.setLog( getLog() );
 
@@ -272,21 +275,21 @@ public class JiraMojo
     {
         if ( project.getIssueManagement() == null )
         {
-            getLog().error( "No Issue Management set. JIRA Report will not be generated." );
+            getLog().error( "No Issue Management set. No JIRA Report will be generated." );
 
             return false;
         }
         else if ( ( project.getIssueManagement().getUrl() == null )
             || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
         {
-            getLog().error( "No URL set in Issue Management. JIRA Report will not be generated." );
+            getLog().error( "No URL set in Issue Management. No JIRA Report will be generated." );
 
             return false;
         }
         else if ( ( project.getIssueManagement().getSystem() != null )
             && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
         {
-            getLog().error( "JIRA Report only supports JIRA.  JIRA Report will not be generated." );
+            getLog().error( "The JIRA Report only supports JIRA.  No JIRA Report will be generated." );
 
             return false;
         }
