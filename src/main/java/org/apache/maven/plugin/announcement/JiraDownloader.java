@@ -42,12 +42,4 @@ public final class JiraDownloader extends AbstractJiraDownloader
         priorityMap.put( "Minor", "4" );
         priorityMap.put( "Trivial", "5" );
     }
-
-    /**
-     * @todo Only for a temporary use case, hardcoded fix-for version
-     */
-    protected String getFixFor()
-    {
-        return "12730";
-    }
 }
