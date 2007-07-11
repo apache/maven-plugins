@@ -20,6 +20,7 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -755,5 +756,27 @@ public class JavadocReportTest
         assertTrue( readed.indexOf( "<B>Version:</B>" ) != -1 );
         assertTrue( readed.indexOf( "<DT><B>Version:</B></DT>" + LINE_SEPARATOR + "  <DD>1.0</DD>" + LINE_SEPARATOR
             + "</DL>" ) != -1 );
+    }
+
+    /**
+     * Test newline in the header/footer parameter
+     *
+     * @throws Exception
+     */
+    public void testHeaderFooter()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/header-footer-test/header-footer-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Doesnt handle correctly newline for header or footer parameter", false );
+        }
+
+        assertTrue( true );
     }
 }
