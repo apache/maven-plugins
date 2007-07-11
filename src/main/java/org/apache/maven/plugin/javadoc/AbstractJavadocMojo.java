@@ -1249,7 +1249,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( getDoctitle() ), false, false );
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ), false, false );
+            addArgIfNotEmpty( arguments, "-footer", quotedArgument( StringUtils.replace( footer, "\n", "" ) ), false, false );
             if ( groups != null )
             {
                 for ( int i = 0; i < groups.length; i++ )
@@ -1267,7 +1267,7 @@ public abstract class AbstractJavadocMojo
                     }
                 }
             }
-            addArgIfNotEmpty( arguments, "-header", quotedArgument( header ), false, false );
+            addArgIfNotEmpty( arguments, "-header", quotedArgument( StringUtils.replace( header, "\n", "" ) ), false, false );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
             addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
