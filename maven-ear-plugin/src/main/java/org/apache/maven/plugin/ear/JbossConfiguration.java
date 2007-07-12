@@ -33,6 +33,8 @@ class JbossConfiguration
 
     static final String VERSION_4 = "4";
 
+    static final String VERSION_4_2 = "4.2";
+
     static final String VERSION = "version";
 
     static final String SECURITY_DOMAIN = "security-domain";
@@ -43,12 +45,16 @@ class JbossConfiguration
 
     static final String LOADER_REPOSITORY = "loader-repository";
 
+    static final String MODULE_ORDER = "module-order";
+
 
     private final String version;
 
     private boolean jbossThreeDotTwo;
 
     private boolean jbossFour;
+
+    private boolean jbossFourDotTwo;
 
     private final String securityDomain;
 
@@ -58,9 +64,11 @@ class JbossConfiguration
 
     private final String loaderRepository;
 
+    private final String moduleOrder;
+
 
     public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName,
-                               String loaderRepository )
+                               String loaderRepository, String moduleOrder )
         throws EarPluginException
     {
         if ( version == null )
@@ -78,6 +86,10 @@ class JbossConfiguration
             {
                 this.jbossFour = true;
             }
+            else if ( version.equals( JbossConfiguration.VERSION_4_2 ) )
+            {
+                this.jbossFourDotTwo = true;
+            }
             else
             {
                 throw new EarPluginException(
@@ -87,6 +99,7 @@ class JbossConfiguration
             this.unauthenticatedPrincipal = unauthenticatedPrincipal;
             this.jmxName = jmxName;
             this.loaderRepository = loaderRepository;
+            this.moduleOrder = moduleOrder;
         }
     }
 
@@ -118,6 +131,17 @@ class JbossConfiguration
     public boolean isJbossFour()
     {
         return jbossFour;
+    }
+
+
+    /**
+     * Returns true if the targeted JBoss version is 4.2.
+     *
+     * @return if the targeted version is 4.2
+     */
+    public boolean isJbossFourDotTwo()
+    {
+        return jbossFourDotTwo;
     }
 
     /**
@@ -180,4 +204,29 @@ class JbossConfiguration
     {
         return loaderRepository;
     }
+
+    /**
+     * The module-order specifies the order in which the modules specified
+     * in the application.xml file gets loaded. Allowed values are:
+     * <p/>
+     * <module-order>strict</module-order>
+     * The strict value indicates that the deployments of the modules will
+     * be done in the order that would be specified in the application.xml
+     * and jboss-app.xml file.
+     * <p/>
+     * <module-order>implicit</module-order>
+     * The implicit value indicates the deployment would follow the order
+     * which would be specified in the DeploymentSorter.
+     * <p/>
+     * Returns <tt>null</tt> if no module order is set.
+     * <p/>
+     * Only available as from JBoss 4.2.
+     *
+     * @return the module order
+     */
+    public String getModuleOrder()
+    {
+        return moduleOrder;
+    }
+
 }
