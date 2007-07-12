@@ -29,22 +29,32 @@
 
 Frequently Asked Questions
 
+* Contents
+
   [[1]] {{{#1.} What would a patch plugin even be used for?}}
 
-* Answers
-
-  {1.} In certain environments direct source modification is not 
-   allowed so to make alterations to the source you need some patch 
-   application process.  This plugin seeks to address those situations.
-   
   [[2]] {{{#2.} Why won't this work on windows?}}
+  
+  []
+  
+* Questions
 
-* Answers
+** {1.} What would a patch plugin even be used for?
 
-  {1.} This patch wraps the gnu patch tool, which must be in your path
-    in order to function properly.  You might able to get this plugin working 
-    within cygwin.
+** Answer
+
+  In certain environments direct source modification is not 
+  allowed so to make alterations to the source you need some patch 
+  application process.  This plugin seeks to address those situations.
+   
+** {2.} Why won't this work on windows?
+
+** Answer
+
+  This patch wraps the gnu patch tool, which must be in your path
+  in order to function properly.  You might able to get this plugin working 
+  within cygwin.
     
-  {2.} If you would like to add windows support to this plugin, please do and 
-    submit modifications through the normal project mechansims.
+  If you would like to add windows support to this plugin, please do and 
+  submit modifications through the normal project mechansims.
       
