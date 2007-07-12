@@ -116,7 +116,7 @@ mvn package
   The EAR plugin can generate the jboss-app.xml automatically. To do so, the 'jboss'
   element must be configured and takes the following child elements:
 
-   * <<version>>: the targeted JBoss version to use (3.2 or 4 which is the default).
+   * <<version>>: the targeted JBoss version to use, 3.2, 4 or 4.2 (the default is 4).
 
    * <<security-domain>>: the JNDI name of the security manager (JBoss 4 only)
 
@@ -125,6 +125,9 @@ mvn package
    * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the ear to provide ear level scoping of classes deployed in the ear 
    
    * <<jmx-name>>: the object name of the ear mbean.
+
+   * <<module-order>>: specify the order in which the modules specified in the application.xml file gets loaded (JBoss 4.2 only)
+
   
 
   Hibernate archives (HAR) and Service archives (SAR) will be recognized automatically

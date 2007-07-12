@@ -431,4 +431,13 @@ public class EarMojoTest
         doTestProject( "project-040", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 
+    /**
+     * Builds an EAR with a Jboss 4.2 configuration specifying the module order to use.
+     */
+    public void testProject041()
+        throws Exception
+    {
+        doTestProject( "project-041", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
 }
