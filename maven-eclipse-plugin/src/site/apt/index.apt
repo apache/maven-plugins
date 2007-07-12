@@ -26,6 +26,12 @@ Maven Eclipse Plugin
   * {{{eclipse-mojo.html}eclipse:eclipse}} generates the Eclipse configuration
   files.
   
+  * {{{to-maven-mojo.html}eclipse:to-maven}} Add eclipse artifacts from an eclipse installation
+  to the local repo. This mojo automatically analize the eclipse directory, copy plugins jars
+  to the local maven repo, and generates appropriate poms. This is the official central repository
+  builder for Eclipse plugins, so it has the necessary default values. For customized repositories
+  see {{{make-artifacts-mojo.html}eclipse:make-artifacts}}.
+  
   * {{{make-artifacts-mojo.html}eclipse:make-artifacts}} copies all Eclipse plugins from an 
   installation directory to the local repository, generating POMs for each.
   
@@ -33,9 +39,13 @@ Maven Eclipse Plugin
   dependencies of a particular type (usually 'eclipse-plugin') into the specified Eclipse
   installation directory.
 
+  * {{{rad-mojo.html}eclipse:rad}} Generates the Rad-6 configuration files.
+
+  * {{{rad-clean-mojo.html}eclipse:rad-clean}} Deletes the config files used by Rad-6.
+
 * Usage
 
-  Instructions on how to use the Eclipse Plugin can be found {{{usage.html}here}}.
+  {{{usage.html}Instructions on how to use the Eclipse Plugin}}.
 
 * Examples
 
