@@ -43,9 +43,10 @@ final class JbossAppXmlWriter
     public static final String DOCTYPE_4 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n" +
         "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd\"";
 
-    private static final String JBOSS_APP_ELEMENT = "jboss-app";
+    public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n" +
+        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd\"";
 
-    private static final String MODULE_ELEMENT = "module";
+    private static final String JBOSS_APP_ELEMENT = "jboss-app";
 
     JbossAppXmlWriter( String encoding )
     {
@@ -57,19 +58,35 @@ final class JbossAppXmlWriter
     {
         final Writer w = initializeWriter( destinationFile );
 
-        XMLWriter writer = null;
+        XMLWriter writer;
         if ( jbossConfiguration.isJbossThreeDotTwo() )
         {
             writer = initializeXmlWriter( w, DOCTYPE_3_2 );
         }
-        else
+        else if ( jbossConfiguration.isJbossFour() )
         {
             writer = initializeXmlWriter( w, DOCTYPE_4 );
         }
+        else
+        {
+            writer = initializeXmlWriter( w, DOCTYPE_4_2 );
+        }
         writer.startElement( JBOSS_APP_ELEMENT );
 
+        // If JBoss 4.2, write the jboss4.2 specific stuff
+        if ( jbossConfiguration.isJbossFourDotTwo() )
+        {
+            // module-order
+            if ( jbossConfiguration.getModuleOrder() != null )
+            {
+                writer.startElement( JbossConfiguration.MODULE_ORDER );
+                writer.writeText( jbossConfiguration.getModuleOrder() );
+                writer.endElement();
+            }
+        }
+
         // If JBoss 4, write the jboss4 specific stuff
-        if ( jbossConfiguration.isJbossFour() )
+        if ( jbossConfiguration.isJbossFour() || jbossConfiguration.isJbossFourDotTwo() )
         {
             if ( jbossConfiguration.getSecurityDomain() != null )
             {

@@ -160,7 +160,8 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Initializing ear execution context" );
-        EarExecutionContext.getInstance().initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping );
+        EarExecutionContext.getInstance().initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration,
+                                                      fileNameMapping );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
@@ -291,9 +292,9 @@ public abstract class AbstractEarMojo
                     jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
                 final String loaderRepository = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY ).getValue();
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
-
-                jbossConfiguration =
-                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName, loaderRepository );
+                final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
+                jbossConfiguration = new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
+                                                             loaderRepository, moduleOrder );
             }
             catch ( PlexusConfigurationException e )
             {
