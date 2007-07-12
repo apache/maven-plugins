@@ -46,4 +46,7 @@ Overview
   you can take a look into the following examples:
 
   * {{{examples/single.html}How to patch from a single file.}}
+
   * {{{examples/multiple.html}How to patch from a directory of patches.}}
+
+  []
