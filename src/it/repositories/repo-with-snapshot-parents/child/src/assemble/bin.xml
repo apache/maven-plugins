@@ -1,0 +1,16 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <repositories>
+    <repository>
+      <outputDirectory>repo</outputDirectory>
+      <scope>test</scope>
+      <includes>
+        <include>junit:junit</include>
+      </includes>
+    </repository>
+  </repositories>
+</assembly>
