@@ -69,6 +69,9 @@ import aQute.lib.osgi.Analyzer;
  * This is the official central repository builder for Eclipse plugins, so it has the necessary default values.
  * For customized repositories see {@link MakeArtifactsMojo}
  * 
+ * Typical usage:
+ * <code>mvn eclipse:to-maven -DdeployTo=maven.org::default::scpexe://repo1.maven.org/home/maven/repository-staging/to-ibiblio/eclipse -DeclipseDir=.</code>
+ * 
  * @author Fabrizio Giustina
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
  * @version $Id$
