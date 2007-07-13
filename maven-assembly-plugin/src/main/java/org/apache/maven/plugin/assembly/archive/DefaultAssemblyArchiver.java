@@ -120,13 +120,13 @@ public class DefaultAssemblyArchiver
 
     /**
      * Creates the necessary archiver to build the distribution file.
-     * 
+     *
      * @param format
      *            Archive format
-     * @param includeBaseDir 
+     * @param includeBaseDir
      * @param configSource
-     * @param finalName 
-     * @param string 
+     * @param finalName
+     * @param string
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
@@ -147,7 +147,7 @@ public class DefaultAssemblyArchiver
         }
         else
         {
-            archiver = this.archiverManager.getArchiver( format );
+            archiver = archiverManager.getArchiver( format );
         }
 
         configureArchiverFilters( archiver, componentsXmlFilter );
@@ -207,7 +207,7 @@ public class DefaultAssemblyArchiver
     protected Archiver createWarArchiver()
         throws NoSuchArchiverException
     {
-        WarArchiver warArchiver = (WarArchiver) this.archiverManager.getArchiver( "war" );
+        WarArchiver warArchiver = (WarArchiver) archiverManager.getArchiver( "war" );
         warArchiver.setIgnoreWebxml( false ); // See MNG-1274
 
         return warArchiver;
@@ -216,7 +216,7 @@ public class DefaultAssemblyArchiver
     protected Archiver createTarArchiver( String format, String tarLongFileMode )
         throws NoSuchArchiverException, ArchiverException
     {
-        TarArchiver tarArchiver = (TarArchiver) this.archiverManager.getArchiver( "tar" );
+        TarArchiver tarArchiver = (TarArchiver) archiverManager.getArchiver( "tar" );
         int index = format.indexOf( '.' );
         if ( index >= 0 )
         {
