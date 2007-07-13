@@ -230,6 +230,16 @@
             <version>1.0-SNAPSHOT</version>
             <executions>
               <execution>
+                <id>stage-artifact-types</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>stage</goal>
+                </goals>
+                <configuration>
+                  <pomFile>maven-assembly-artifact-types/pom.xml</pomFile>
+                </configuration>
+              </execution>
+              <execution>
                 <id>stage-plugin</id>
                 <phase>pre-integration-test</phase>
                 <goals>
@@ -241,19 +251,6 @@
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/pom.xml</pomInclude>
-              </pomIncludes>
-              <pomExcludes>
-                <pomExclude>**/child*/pom.xml</pomExclude>
-                <pomExclude>**/module*/pom.xml</pomExclude>
-                <pomExclude>repository-assembly/pom.xml</pomExclude>
-              </pomExcludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repository</localRepositoryPath>
-            </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
@@ -261,6 +258,20 @@
                 <goals>
                   <goal>run</goal>
                 </goals>
+                <configuration>
+                  <projectsDirectory>src/it</projectsDirectory>
+                  <pomIncludes>
+                    <pomInclude>**/pom.xml</pomInclude>
+                  </pomIncludes>
+                  <pomExcludes>
+                    <pomExclude>**/child*/pom.xml</pomExclude>
+                    <pomExclude>**/module*/pom.xml</pomExclude>
+                    <pomExclude>**/descriptor/pom.xml</pomExclude>
+                    <pomExclude>**/assembly/pom.xml</pomExclude>
+                  </pomExcludes>
+                  <postBuildHookScript>verify.bsh</postBuildHookScript>
+                  <localRepositoryPath>${basedir}/target/local-repository</localRepositoryPath>
+                </configuration>
               </execution>
            </executions>
           </plugin>
@@ -284,6 +295,11 @@
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>file-management</artifactId>
       <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-shared-io</artifactId>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
