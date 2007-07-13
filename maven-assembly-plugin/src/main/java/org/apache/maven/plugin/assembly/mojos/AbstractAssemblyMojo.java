@@ -218,8 +218,7 @@ public abstract class AbstractAssemblyMojo
     private MavenArchiveConfiguration archive;
 
     /**
-     * @parameter default-value="${project.build.filters}"
-     * @readonly
+     * @parameter
      */
     protected List filters;
 
@@ -412,6 +411,10 @@ public abstract class AbstractAssemblyMojo
 
     public List getFilters()
     {
+        if ( filters == null )
+        {
+            filters = getProject().getBuild().getFilters();
+        }
         return filters;
     }
 
