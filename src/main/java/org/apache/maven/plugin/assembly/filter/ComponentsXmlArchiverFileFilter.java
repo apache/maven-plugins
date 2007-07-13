@@ -33,6 +33,8 @@ import org.codehaus.plexus.archiver.ArchiveFileFilter;
 import org.codehaus.plexus.archiver.ArchiveFilterException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -46,62 +48,43 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class ComponentsXmlArchiverFileFilter
     extends AbstractArchiveFinalizer
-    implements ArchiveFileFilter
+    implements ArchiveFileFilter, FileSelector
 {
     // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
     // some minimal access to the components accumulated for extending classes.
     protected Map components;
-    
+
     private boolean excludeOverride = false;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
-    
+
     public boolean include( InputStream dataStream, String entryName )
         throws ArchiveFilterException
     {
-        if ( excludeOverride )
+        try
         {
-            return true;
+            return isIncluded( dataStream, entryName );
         }
-        
-        String entry = entryName;
-        
-        if ( entry.startsWith( "/" ) )
+        catch ( XmlPullParserException e )
         {
-            entry = entry.substring( 1 );
+            throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
         }
-        
-        if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
+        catch ( IOException e )
         {
-            try
-            {
-                addComponentsXml( new InputStreamReader( dataStream ) );
-            }
-            catch ( XmlPullParserException e )
-            {
-                throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
-            }
-            catch ( IOException e )
-            {
-                throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
-            }
-            
-            return false;
+            throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
         }
-        
-        return true;
     }
-    
+
     protected void addComponentsXml( Reader componentsReader )
         throws XmlPullParserException, IOException
     {
         Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );
-        
+
         if ( newDom != null )
         {
             newDom = newDom.getChild( "components" );
         }
-        
+
         if ( newDom != null )
         {
             Xpp3Dom[] children = newDom.getChildren();
@@ -121,7 +104,7 @@ public class ComponentsXmlArchiverFileFilter
             }
         }
     }
-    
+
 //    public void addComponentsXml( File componentsXml )
 //        throws IOException, XmlPullParserException
 //    {
@@ -129,7 +112,7 @@ public class ComponentsXmlArchiverFileFilter
 //        try
 //        {
 //            fileReader = new FileReader( componentsXml );
-//            
+//
 //            addComponentsXml( fileReader );
 //        }
 //        finally
@@ -165,11 +148,11 @@ public class ComponentsXmlArchiverFileFilter
             {
                 IOUtil.close( fileWriter );
             }
-            
+
             excludeOverride = true;
-            
+
             archiver.addFile( f, COMPONENTS_XML_PATH );
-            
+
             excludeOverride = false;
         }
     }
@@ -189,12 +172,53 @@ public class ComponentsXmlArchiverFileFilter
 
     public List getVirtualFiles()
     {
-        if ( components != null && !components.isEmpty() )
+        if ( ( components != null ) && !components.isEmpty() )
         {
             return Collections.singletonList( COMPONENTS_XML_PATH );
         }
-        
+
         return null;
+    }
+
+    private boolean isIncluded( InputStream dataStream, String entryName )
+        throws XmlPullParserException, IOException
+    {
+        if ( excludeOverride )
+        {
+            return true;
+        }
+
+        String entry = entryName;
+
+        if ( entry.startsWith( "/" ) )
+        {
+            entry = entry.substring( 1 );
+        }
+
+        if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
+        {
+            addComponentsXml( new InputStreamReader( dataStream ) );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isSelected( FileInfo fileInfo )
+        throws IOException
+    {
+        try
+        {
+            return isIncluded( fileInfo.getContents(), fileInfo.getName() );
+        }
+        catch ( XmlPullParserException e )
+        {
+            IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
+            error.initCause( e );
+
+            throw error;
+        }
     }
 
 }
