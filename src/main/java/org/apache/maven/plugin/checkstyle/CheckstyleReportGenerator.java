@@ -168,6 +168,7 @@ public class CheckstyleReportGenerator
         }
 
         sink.paragraph_();
+        sink.section1_();
     }
 
     private void iconSeverity( String level )
