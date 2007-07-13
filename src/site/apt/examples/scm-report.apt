@@ -1,5 +1,5 @@
  ------
- Maven 2 Project Info Report Plugin - SCM Report
+ SCM Report
  ------
  The Maven Team
  ------
@@ -37,32 +37,32 @@ SCM Report
   a separate module, and you want the SCM report to give instructions for
   checking out the project trunk.
 
-  <Note: this feature is available in version 2.1+>
+  <<Note:>> This feature is available in version 2.1+ of this plugin.
 
 +-----------------+
-  <project>
-     [...]
-     <scm>
-        <connection>scm:svn:http://svn.example.org/repo/project/trunk/site</connection>
-        <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk/site</developerConnection>
-        <url>http://svn.example.org/viewvc/project/trunk/site</url>
-     </scm>
-     [...]
-        <reporting>
-           [...]
-            <plugins>
-              <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-project-info-reports-plugin</artifactId>
-                  <configuration>
-                     <webAccessUrl>http://svn.example.org/viewvc/project/trunk</webAccessUrl>
-                     <anonymousConnection>scm:svn:http://svn.example.org/repo/project/trunk</anonymousConnection>
-                     <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk</developerConnection>
-                  </configuration>
-              </plugin>
-            </plugins>
-           [...]
-        <reporting>
-     [...]
-  </project>
+<project>
+  [...]
+  <scm>
+    <connection>scm:svn:http://svn.example.org/repo/project/trunk/site</connection>
+    <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk/site</developerConnection>
+    <url>http://svn.example.org/viewvc/project/trunk/site</url>
+  </scm>
+  [...]
+  <reporting>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <configuration>
+          <webAccessUrl>http://svn.example.org/viewvc/project/trunk</webAccessUrl>
+          <anonymousConnection>scm:svn:http://svn.example.org/repo/project/trunk</anonymousConnection>
+          <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk</developerConnection>
+        </configuration>
+      </plugin>
+    </plugins>
+    [...]
+  <reporting>
+  [...]
+</project>
 +-----------------+
