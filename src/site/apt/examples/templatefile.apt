@@ -50,4 +50,4 @@ Changing the Template File
 +-----+
 
   And execute the site goal from your project. For more information about Velocity, see
-  {{{http://jakarta.apache.org/velocity/}http://jakarta.apache.org/velocity/}}.
+  {{{http://velocity.apache.org/}http://velocity.apache.org/}}.
