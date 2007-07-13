@@ -1,0 +1,68 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>assembly-component</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <classifier>assembly-component</classifier>
+        <packaging>assembly-component</packaging>
+        <extension>xml</extension>
+        <type>assembly-component</type>
+        <addedToClasspath>false</addedToClasspath>
+        <includesDependencies>true</includesDependencies>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>assembly-component</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <lifecycles>
+          <lifecycle>
+            <id>default</id>
+            <!-- START SNIPPET: assembly-component-lifecycle -->
+            <phases>
+              <package>org.apache.maven.plugins:maven-assembly-plugin:attach-component-descriptor</package>
+              <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+              <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+            </phases>
+            <!-- END SNIPPET: assembly-component-lifecycle -->
+          </lifecycle>
+        </lifecycles>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>assembly-descriptor</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <classifier>assembly-descriptor</classifier>
+        <packaging>assembly-descriptor</packaging>
+        <extension>xml</extension>
+        <type>assembly-descriptor</type>
+        <addedToClasspath>false</addedToClasspath>
+        <includesDependencies>true</includesDependencies>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>assembly-descriptor</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <lifecycles>
+          <lifecycle>
+            <id>default</id>
+            <!-- START SNIPPET: assembly-component-lifecycle -->
+            <phases>
+              <package>org.apache.maven.plugins:maven-assembly-plugin:attach-assembly-descriptor</package>
+              <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+              <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+            </phases>
+            <!-- END SNIPPET: assembly-component-lifecycle -->
+          </lifecycle>
+        </lifecycles>
+      </configuration>
+    </component>
+  </components>
+</component-set>
