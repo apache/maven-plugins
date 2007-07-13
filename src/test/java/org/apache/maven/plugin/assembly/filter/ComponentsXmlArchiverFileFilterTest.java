@@ -18,8 +18,10 @@ import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -491,6 +493,18 @@ public class ComponentsXmlArchiverFileFilterTest
 
         public void setDotFileDirectory( File dotFileDirectory )
         {
+        }
+
+        public void addArchivedFileSet( ArchivedFileSet fileSet )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addFileSet( FileSet fileSet )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
         }
     }
 
