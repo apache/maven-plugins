@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.test</groupId>
+	<artifactId>parent</artifactId>
+	<version>1.0</version>
+	<name>Parent</name>
+	
+	
+	<!-- Purpose of this integration test: verify that filters can be defined within the plugin configuration -->
+	<!-- (see MASSEMBLY-226 for further information)-->
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>testing</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assemble/bin.xml</descriptor>
+					</descriptors>
+					<filters>
+						<filter>filter.properties</filter>
+					</filters>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
