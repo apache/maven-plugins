@@ -49,7 +49,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * Local Maven repository where artifacts are cached during the build process.
-     * 
+     *
      * @parameter default-value="${localRepository}"
      * @required
      * @readonly
@@ -62,7 +62,7 @@ public abstract class AbstractAssemblyMojo
      * @readonly
      */
     private List remoteRepositories;
-    
+
     /**
      * Contains the full list of projects in the reactor.
      *
@@ -97,20 +97,20 @@ public abstract class AbstractAssemblyMojo
     private File workDirectory;
 
     /**
-     * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the 
+     * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the
      * assembly-id instead of specifying this here.
-     * 
+     *
      * @parameter expression="${classifier}"
      * @deprecated Please use the Assembly's id for classifier instead
      */
     private String classifier;
-    
+
     /**
      * A list of descriptor files to generate from.
      *
      * @parameter
      */
-    private File[] descriptors;
+    private String[] descriptors;
 
     /**
      * A list of built-in descriptor references to generate from. You can select from <code>bin</code>,
@@ -151,7 +151,7 @@ public abstract class AbstractAssemblyMojo
      * @parameter expression="${descriptor}"
      * @deprecated Please use descriptors instead
      */
-    protected File descriptor;
+    protected String descriptor;
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length.
@@ -210,9 +210,9 @@ public abstract class AbstractAssemblyMojo
     protected boolean appendAssemblyId;
 
     /**
-     * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to 
+     * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
      * specify a Manifest file for the jar, in addition to other options.
-     * 
+     *
      * @parameter
      */
     private MavenArchiveConfiguration archive;
@@ -222,7 +222,7 @@ public abstract class AbstractAssemblyMojo
      * @readonly
      */
     protected List filters;
-    
+
     /**
      * @parameter expression="${attach}" default-value="true"
      */
@@ -274,12 +274,12 @@ public abstract class AbstractAssemblyMojo
                 for ( Iterator formatIterator = assembly.getFormats().iterator(); formatIterator.hasNext(); )
                 {
                     String format = (String) formatIterator.next();
-                    
+
                     File destFile = assemblyArchiver.createArchive( assembly, fullName, format, this );
 
                     MavenProject project = getProject();
                     String classifier = getClassifier();
-                    
+
                     if ( attach && destFile.isFile() )
                     {
                         if ( isAssemblyIdAppended() )
@@ -312,23 +312,23 @@ public abstract class AbstractAssemblyMojo
             }
         }
     }
-    
+
     protected AssemblyArchiver getAssemblyArchiver()
     {
         return assemblyArchiver;
     }
-    
+
     protected AssemblyReader getAssemblyReader()
     {
         return assemblyReader;
     }
-    
+
     public File getBasedir()
     {
         return basedir;
     }
 
-    public File getDescriptor()
+    public String getDescriptor()
     {
         return descriptor;
     }
@@ -348,7 +348,7 @@ public abstract class AbstractAssemblyMojo
         return descriptorSourceDirectory;
     }
 
-    public File[] getDescriptors()
+    public String[] getDescriptors()
     {
         return descriptors;
     }
@@ -466,7 +466,7 @@ public abstract class AbstractAssemblyMojo
         this.classifier = classifier;
     }
 
-    public void setDescriptor( File descriptor )
+    public void setDescriptor( String descriptor )
     {
         this.descriptor = descriptor;
     }
@@ -481,7 +481,7 @@ public abstract class AbstractAssemblyMojo
         this.descriptorRefs = descriptorRefs;
     }
 
-    public void setDescriptors( File[] descriptors )
+    public void setDescriptors( String[] descriptors )
     {
         this.descriptors = descriptors;
     }
@@ -545,10 +545,10 @@ public abstract class AbstractAssemblyMojo
     {
         this.workDirectory = workDirectory;
     }
-    
+
     public List getRemoteRepositories()
     {
         return remoteRepositories;
     }
-    
+
 }

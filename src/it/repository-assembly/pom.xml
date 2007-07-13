@@ -18,7 +18,8 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId><version>testing</version>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>testing</version>
         <configuration>
           <descriptor>src/assemble/bin.xml</descriptor>
           <finalName>assembly</finalName>        

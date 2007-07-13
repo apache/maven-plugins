@@ -11,11 +11,11 @@ import java.util.List;
 public interface AssemblerConfigurationSource
 {
 
-    File getDescriptor();
+    String getDescriptor();
 
     String getDescriptorId();
 
-    File[] getDescriptors();
+    String[] getDescriptors();
 
     String[] getDescriptorReferences();
 
