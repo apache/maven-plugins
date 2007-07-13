@@ -57,5 +57,73 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="How can I debug the SCM command">
+      <question>How can I debug the SCM command?</question>
+      <answer>
+        <p>
+          When you generate the report, you will see output like this on the
+          command line:
+<source>
+[INFO] [changelog:changelog]
+[INFO] Generating changed sets xml to: .../target/changelog.xml
+[INFO] Executing: svn --non-interactive log -v -r "{2007-06-13 22:22:09 +0000}:{2007-07-14 22:22:09 +0000}" http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin
+</source>
+          Copy the SCM command (everything after <code>Executing:</code>) and
+          try to run it by itself on the command line. If it doesn't work on
+          the command line there's probably something wrong with the
+          <code>&lt;scm&gt;</code> element in your <code>pom.xml</code>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="My changelog report is blank, but it shouldn't be">
+      <question>My changelog report is blank, but it shouldn't be</question>
+      <answer>
+        <p>
+          The first thing to check is what data the changelog plugin managed to
+          pull out of your SCM system. In the file
+          <code>target/changelog.xml</code> you will find that data. Have a
+          look and see if the data in the file seems correct. If it is not
+          correct, then you are not getting the data you expected from your SCM
+          system. Please check your changelog plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="Where can I find a working configuration for this plugin">
+      <question>Where can I find a working configuration for this plugin?</question>
+      <answer>
+        <p>
+          The plugin itself is configured to generate a changelog report. This
+          is done using the bare minimum of configuration. Have a look at the
+          <code>&lt;scm&gt;</code> and
+          <code>&lt;reporting&gt;/&lt;plugins&gt;</code> elements in the
+          <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/pom.xml">pom.xml</a>
+          of this plugin. The generated report is found
+          <a href="changelog.html">here</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="I think I've found a bug in this plugin, what do I do">
+      <question>I think I've found a bug in this plugin, what do I do?</question>
+      <answer>
+        <p>
+          Please follow these steps in the order they come.
+        </p>
+        <ol>
+          <li>
+            Read all the FAQs on this page.
+          </li>
+          <li>
+            Ask a question on the user list. Please supply the necessary
+            information so that the people on the list can help you. This
+            includes the <code>&lt;scm&gt;</code> element from your
+            <code>pom.xml</code>, your plugin configuration plus a rich
+            description of what happens and what you expected to happen.
+          </li>
+          <li>
+            Create an issue in <a href="issue-tracking.html">JIRA</a>.
+          </li>
+        </ol>
+      </answer>
+    </faq>
   </part>
 </faqs>
