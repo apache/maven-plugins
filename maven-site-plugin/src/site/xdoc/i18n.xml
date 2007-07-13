@@ -310,13 +310,13 @@ under the License.
                         UTF-8 encoding</b>.
                     </li>
                     <li>
-                        To test the translation, checkout the site plugin, include it in <code>src/main/resources</code>,
+                        To test the translation, checkout the site plugin, include your file in <code>src/main/resources</code>,
                         and run <code>mvn install</code> on the plugin, then <code>mvn site</code> on a project to test
                       it.
                     </li>
                     <li>
-                        When happy with it, create a new issue in <a href="http://jira.codehaus.org/browse/MNG">JIRA</a>
-                        and attach the file there.
+                        When happy with it, create a new issue in <a href="http://jira.codehaus.org/browse/MSITE">JIRA</a>
+                        and attach your file there.
                     </li>
                 </ol>
             </p>
