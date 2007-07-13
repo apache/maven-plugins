@@ -1,5 +1,5 @@
  ------
- Maven 2 Project Info Report Plugin - running selective reports
+ Run Individual Reports
  ------
  Johnny R. Ruiz III
  <jruiz@exist.com>
@@ -28,9 +28,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Run Individual Report
+Run Individual Reports
 
- Each Individual reports can be generated without configuring anything in the <<<pom.xml>>>, check the table in
- {{{../plugin-info.html}Goals}} for the complete goals list.
+ Each individual report can be generated without configuring anything in the
+ <<<pom.xml>>>. Check the table in {{{../plugin-info.html}Goals}} for the
+ complete list of goals.
 
-  <<The generated reports using this method does not contain any navigational links.>>
+ <<Note:>> The reports generated using this method does not contain any
+ navigational links.
