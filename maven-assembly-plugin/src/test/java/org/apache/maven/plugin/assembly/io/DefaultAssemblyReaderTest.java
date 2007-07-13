@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.io;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
@@ -51,6 +52,17 @@ public class DefaultAssemblyReaderTest
         mockManager.add( configSourceControl );
 
         configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
+
+        MockControl localRepoControl = MockControl.createControl( ArtifactRepository.class );
+        ArtifactRepository localRepo = (ArtifactRepository) localRepoControl.getMock();
+
+        mockManager.add( localRepoControl );
+
+        configSource.getLocalRepository();
+        configSourceControl.setReturnValue( localRepo, MockControl.ZERO_OR_MORE );
+
+        configSource.getRemoteRepositories();
+        configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ZERO_OR_MORE );
     }
 
     public void tearDown()
@@ -66,7 +78,7 @@ public class DefaultAssemblyReaderTest
         siteDir.delete();
 
         configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir );
+        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
 
         Assembly assembly = new Assembly();
 
@@ -92,7 +104,7 @@ public class DefaultAssemblyReaderTest
         File siteDir = fileManager.createTempDir();
 
         configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir );
+        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
 
         Assembly assembly = new Assembly();
 
@@ -112,82 +124,82 @@ public class DefaultAssemblyReaderTest
         mockManager.verifyAll();
     }
 
-    public void testReadComponent_ShouldReadComponentFromXml()
-        throws IOException, AssemblyReadException
-    {
-        Component component = new Component();
-
-        FileSet fileSet = new FileSet();
-        fileSet.setDirectory( "/dir" );
-
-        component.addFileSet( fileSet );
-
-        StringWriter sw = new StringWriter();
-
-        ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
-
-        componentWriter.write( sw, component );
-
-        Component result = new DefaultAssemblyReader().readComponent( new StringReader( sw.toString() ) );
-
-        List fileSets = result.getFileSets();
-
-        assertNotNull( fileSets );
-        assertEquals( 1, fileSets.size() );
-
-        FileSet fs = (FileSet) fileSets.get( 0 );
-
-        assertEquals( "/dir", fs.getDirectory() );
-    }
-
-    public void testGetComponentFromFile_ShouldReadComponent()
-        throws IOException, AssemblyReadException
-    {
-        Component component = new Component();
-
-        FileSet fileSet = new FileSet();
-        fileSet.setDirectory( "/dir" );
-
-        component.addFileSet( fileSet );
-
-        File componentFile = fileManager.createTempFile();
-
-        FileWriter writer = null;
-
-        try
-        {
-            writer = new FileWriter( componentFile );
-
-            ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
-
-            componentWriter.write( writer, component );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
-
-        File basedir = componentFile.getParentFile();
-        String filename = componentFile.getName();
-
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
-
-        mockManager.replayAll();
-
-        Component result = new DefaultAssemblyReader().getComponentFromFile( filename, configSource );
-
-        List fileSets = result.getFileSets();
-
-        assertNotNull( fileSets );
-        assertEquals( 1, fileSets.size() );
-
-        FileSet fs = (FileSet) fileSets.get( 0 );
-
-        assertEquals( "/dir", fs.getDirectory() );
-
-        mockManager.verifyAll();
-    }
+//    public void testReadComponent_ShouldReadComponentFromXml()
+//        throws IOException, AssemblyReadException
+//    {
+//        Component component = new Component();
+//
+//        FileSet fileSet = new FileSet();
+//        fileSet.setDirectory( "/dir" );
+//
+//        component.addFileSet( fileSet );
+//
+//        StringWriter sw = new StringWriter();
+//
+//        ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
+//
+//        componentWriter.write( sw, component );
+//
+//        Component result = new DefaultAssemblyReader().readComponent( new StringReader( sw.toString() ) );
+//
+//        List fileSets = result.getFileSets();
+//
+//        assertNotNull( fileSets );
+//        assertEquals( 1, fileSets.size() );
+//
+//        FileSet fs = (FileSet) fileSets.get( 0 );
+//
+//        assertEquals( "/dir", fs.getDirectory() );
+//    }
+//
+//    public void testGetComponentFromFile_ShouldReadComponent()
+//        throws IOException, AssemblyReadException
+//    {
+//        Component component = new Component();
+//
+//        FileSet fileSet = new FileSet();
+//        fileSet.setDirectory( "/dir" );
+//
+//        component.addFileSet( fileSet );
+//
+//        File componentFile = fileManager.createTempFile();
+//
+//        FileWriter writer = null;
+//
+//        try
+//        {
+//            writer = new FileWriter( componentFile );
+//
+//            ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
+//
+//            componentWriter.write( writer, component );
+//        }
+//        finally
+//        {
+//            IOUtil.close( writer );
+//        }
+//
+//        File basedir = componentFile.getParentFile();
+//        String filename = componentFile.getName();
+//
+//        configSource.getBasedir();
+//        configSourceControl.setReturnValue( basedir );
+//
+//        mockManager.replayAll();
+//
+//        Component result = new DefaultAssemblyReader().getComponentFromFile( filename, configSource );
+//
+//        List fileSets = result.getFileSets();
+//
+//        assertNotNull( fileSets );
+//        assertEquals( 1, fileSets.size() );
+//
+//        FileSet fs = (FileSet) fileSets.get( 0 );
+//
+//        assertEquals( "/dir", fs.getDirectory() );
+//
+//        mockManager.verifyAll();
+//    }
 
     public void testMergeComponentWithAssembly_ShouldAddOneFileSetToExistingListOfTwo()
     {
@@ -337,46 +349,46 @@ public class DefaultAssemblyReaderTest
     // testMergeComponentWithAssembly_ShouldMergeOneFileSetToOneOfExistingTwo()
     // {
     // Assembly assembly = new Assembly();
-    //        
+    //
     // FileSet fs = new FileSet();
     // fs.setDirectory( "/dir" );
     // fs.addInclude( "**/test.txt" );
-    //        
+    //
     // assembly.addFileSet( fs );
-    //        
+    //
     // fs = new FileSet();
     // fs.setDirectory( "/other-dir" );
     // assembly.addFileSet( fs );
-    //        
+    //
     // fs = new FileSet();
     // fs.setDirectory( "/dir" );
     // fs.addInclude( "**/components.txt" );
-    //        
+    //
     // Component component = new Component();
-    //        
+    //
     // component.addFileSet( fs );
-    //        
+    //
     // new DefaultAssemblyReader().mergeComponentWithAssembly( component,
     // assembly );
-    //        
+    //
     // List fileSets = assembly.getFileSets();
-    //        
+    //
     // assertNotNull( fileSets );
     // assertEquals( 2, fileSets.size() );
-    //        
+    //
     // FileSet rfs1 = (FileSet) fileSets.get( 0 );
     // assertEquals( "/dir", rfs1.getDirectory() );
-    //        
+    //
     // List includes = rfs1.getIncludes();
-    //        
+    //
     // assertNotNull( includes );
     // assertEquals( 2, includes.size() );
     // assertTrue( includes.contains( "**/test.txt" ) );
     // assertTrue( includes.contains( "**/components.txt" ) );
-    //        
+    //
     // FileSet rfs2 = (FileSet) fileSets.get( 1 );
     // assertEquals( "/other-dir", rfs2.getDirectory() );
-    //        
+    //
     // }
 
     public void testMergeComponentsWithMainAssembly_ShouldAddOneFileSetToAssembly()
@@ -400,6 +412,7 @@ public class DefaultAssemblyReaderTest
             ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
 
             componentWriter.write( writer, component );
+            writer.flush();
         }
         finally
         {
@@ -414,7 +427,7 @@ public class DefaultAssemblyReaderTest
         File basedir = componentFile.getParentFile();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -448,7 +461,7 @@ public class DefaultAssemblyReaderTest
         File basedir = fileManager.createTempDir();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         Model model = new Model();
         model.setGroupId( "group" );
@@ -458,10 +471,10 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -490,12 +503,12 @@ public class DefaultAssemblyReaderTest
         File siteDir = fileManager.createTempDir();
 
         configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir );
+        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
 
         File basedir = fileManager.createTempDir();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         Model model = new Model();
         model.setGroupId( "group" );
@@ -505,10 +518,10 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -541,12 +554,12 @@ public class DefaultAssemblyReaderTest
         File siteDir = fileManager.createTempDir();
 
         configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir );
+        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
 
         File basedir = fileManager.createTempDir();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         Model model = new Model();
         model.setGroupId( "group" );
@@ -556,10 +569,10 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( true );
+        configSourceControl.setReturnValue( true, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -616,7 +629,7 @@ public class DefaultAssemblyReaderTest
         StringReader sr = new StringReader( sw.toString() );
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         Model model = new Model();
         model.setGroupId( "group" );
@@ -626,10 +639,10 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -662,7 +675,7 @@ public class DefaultAssemblyReaderTest
         File basedir = fileManager.createTempDir();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         Model model = new Model();
         model.setGroupId( "group" );
@@ -672,10 +685,10 @@ public class DefaultAssemblyReaderTest
         MavenProject project = new MavenProject( model );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( project );
+        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -702,13 +715,13 @@ public class DefaultAssemblyReaderTest
         File basedir = assemblyFile.getParentFile();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         FileWriter writer = null;
         try
@@ -736,13 +749,13 @@ public class DefaultAssemblyReaderTest
         File basedir = fileManager.createTempDir();
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
@@ -767,8 +780,8 @@ public class DefaultAssemblyReaderTest
         File basedir = fileManager.createTempDir();
 
         List files = writeAssembliesToFile( Collections.singletonList( assembly ), basedir );
-        
-        File assemblyFile = ( File ) files.get( 0 );
+
+        String assemblyFile = ( String ) files.get( 0 );
 
         List assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null, null );
 
@@ -812,7 +825,7 @@ public class DefaultAssemblyReaderTest
 
         List files = writeAssembliesToFile( assemblies, basedir );
 
-        List results = performReadAssemblies( basedir, null, null, (File[]) files.toArray( new File[0] ), null, null );
+        List results = performReadAssemblies( basedir, null, null, (String[]) files.toArray( new String[0] ), null, null );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -857,7 +870,7 @@ public class DefaultAssemblyReaderTest
         List assemblies = new ArrayList();
         assemblies.add( assembly1 );
         assemblies.add( assembly2 );
-        
+
         File basedir = fileManager.createTempDir();
 
         writeAssembliesToFile( assemblies, basedir );
@@ -884,7 +897,7 @@ public class DefaultAssemblyReaderTest
         for ( Iterator it = assemblies.iterator(); it.hasNext(); )
         {
             Assembly assembly = (Assembly) it.next();
-            
+
             File assemblyFile = new File( dir, assembly.getId() + ".xml" );
 
             FileWriter writer = null;
@@ -898,13 +911,13 @@ public class DefaultAssemblyReaderTest
                 IOUtil.close( writer );
             }
 
-            files.add( assemblyFile );
+            files.add( assemblyFile.getAbsolutePath() );
         }
 
         return files;
     }
 
-    private List performReadAssemblies( File basedir, File descriptor, String descriptorRef, File[] descriptors,
+    private List performReadAssemblies( File basedir, String descriptor, String descriptorRef, String[] descriptors,
                                         String[] descriptorRefs, File descriptorDir )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
@@ -924,13 +937,13 @@ public class DefaultAssemblyReaderTest
         configSourceControl.setReturnValue( descriptorDir );
 
         configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ONE_OR_MORE );
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
