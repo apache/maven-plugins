@@ -35,12 +35,18 @@ public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
 {
     private ComponentsXmlArchiverFileFilter filter;
-    
+
     private TestFileManager fileManager = new TestFileManager( "componentsXmlArchiverFileFilter.test", ".zip" );
 
     public void setUp()
     {
         filter = new ComponentsXmlArchiverFileFilter();
+    }
+
+    public void tearDown()
+        throws IOException
+    {
+        fileManager.cleanUp();
     }
 
     public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint()
@@ -213,25 +219,25 @@ public class ComponentsXmlArchiverFileFilterTest
         filter.components.put( "rolehint2", dom2 );
 
         ZipArchiver archiver = new ZipArchiver();
-        
+
         File archiveFile = fileManager.createTempFile();
-        
+
         archiver.setDestFile( archiveFile );
-        
+
         File descriptorFile = fileManager.createTempFile();
-        
+
         archiver.setArchiveFinalizers( Collections.singletonList( filter ) );
-        
+
         archiver.createArchive();
-        
+
         ZipFile zf = new ZipFile( archiveFile );
-        
+
         ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-        
+
         assertNotNull( ze );
-        
+
         FileOutputStream fileStream = new FileOutputStream( descriptorFile );
-        
+
         IOUtil.copy( zf.getInputStream( ze ), fileStream );
         IOUtil.close( fileStream );
 
