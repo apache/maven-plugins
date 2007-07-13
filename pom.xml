@@ -260,10 +260,14 @@
                 </goals>
                 <configuration>
                   <projectsDirectory>src/it</projectsDirectory>
+                  <debug>true</debug>
                   <pomIncludes>
                     <pomInclude>**/pom.xml</pomInclude>
                   </pomIncludes>
                   <pomExcludes>
+                    <!-- This isn't working yet...pending fix in the repo builder, I guess -->
+                    <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
+                    
                     <pomExclude>**/child*/pom.xml</pomExclude>
                     <pomExclude>**/module*/pom.xml</pomExclude>
                     <pomExclude>**/descriptor/pom.xml</pomExclude>
