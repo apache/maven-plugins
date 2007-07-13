@@ -1,7 +1,9 @@
 package org.apache.maven.plugin.assembly.archive.archiver;
 
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +12,15 @@ import java.util.Map;
 public class PrefixingProxyArchiver
     implements Archiver
 {
-    
+
     private Archiver delegate;
     private String rootPrefix;
-    
+
     public PrefixingProxyArchiver( String rootPrefix, Archiver delegate )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
-        
+
         if ( !rootPrefix.endsWith( "/" ) )
         {
             this.rootPrefix += "/";
@@ -154,6 +156,18 @@ public class PrefixingProxyArchiver
     public void setDotFileDirectory( File dotFileDirectory )
     {
         throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
+    }
+
+    public void addArchivedFileSet( ArchivedFileSet fileSet )
+        throws ArchiverException
+    {
+        delegate.addArchivedFileSet( new PrefixedArchivedFileSet( fileSet, rootPrefix ) );
+    }
+
+    public void addFileSet( FileSet fileSet )
+        throws ArchiverException
+    {
+        delegate.addFileSet( fileSet );
     }
 
 }
