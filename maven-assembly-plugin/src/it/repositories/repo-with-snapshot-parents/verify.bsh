@@ -1,0 +1,18 @@
+import java.io.*;
+
+File junitJar = new File( basedir, "child/target/assembly-bin.dir/repo/junit/junit/3.8.1/junit-3.8.1.jar" );
+boolean junitExists = junitJar.exists();
+
+File plexusUtilsJar = new File( basedir, "child/target/assembly-bin.dir/repo/org/codehaus/plexus/plexus-utils/1.4.3-SNAPSHOT/plexus-utils-1.4.3-SNAPSHOT.jar" );
+boolean puJarExists = plexusUtilsJar.exists();
+
+File plexusUtilsPom = new File( basedir, "child/target/assembly-bin.dir/repo/org/codehaus/plexus/plexus-utils/1.4.3-SNAPSHOT/plexus-utils-1.4.3-SNAPSHOT.pom" );
+boolean puPomExists = plexusUtilsPom.exists();
+
+File plexusPom = new File( basedir, "child/target/assembly-bin.dir/repo/org/codehaus/plexus/plexus/1.0.11/plexus-1.0.11.pom" );
+boolean plexusPomExists = plexusPom.exists();
+
+File parentPom = new File( basedir, "child/target/assembly-bin.dir/repo/org/apache/maven/plugin/assembly/test/repo-with-snapshot-parents/1-SNAPSHOT/repo-with-snapshot-parents-1-SNAPSHOT.pom" );
+boolean plexusPomExists = plexusPom.exists();
+
+return junitExists && puJarExists && puPomExists && plexusPomExists && parentPomExists;
