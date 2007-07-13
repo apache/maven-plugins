@@ -28,7 +28,7 @@
 
 Usage
 
- Aside from the reports, you can put additional content (e.g. additional documentation, resources, etc. ) to your site.
+ Aside from the reports, you can put additional content (e.g. additional documentation, resources, etc.) in your site.
  See {{{http://maven.apache.org/guides/mini/guide-site.html}http://maven.apache.org/guides/mini/guide-site.html}}
  for more information on this.
 
@@ -37,12 +37,12 @@ Usage
   To generate the project's site and report distributions, execute
 
 +-----+
-  mvn site
+mvn site
 +-----+
 
 * Deploying a Site
 
-  The {{{deploy-mojo.html}site:deploy}} goal supports scp and file protocols. To deploy the generated site, you need to specify first where
+  The {{{deploy-mojo.html}site:deploy}} goal supports scp and file protocols. To deploy the generated site, you first need to specify where
   the site will be deployed. This can be set in the \<distributionManagement\> section of the pom as shown below.
 
 +-----+
@@ -63,14 +63,14 @@ Usage
   Then execute the {{{deploy-mojo.html}site:deploy}} goal from your project.
 
 +-----+
-  mvn site-deploy
+mvn site-deploy
 +-----+
 
-  Note: A site must be generated first before executing site:deploy.
+  <<Note:>> A site must be generated first before executing site:deploy.
 
 * Staging a Site
 
-  <<This goal is only available in version 2.0 of the Site plugin and above>>
+  <<Note:>> This goal is available in version 2.0-beta-5 or later of the Site plugin.
 
   To review/test the generated Web site before an official deploy, you could stage the site in
   a specific directory. It will use the \<distributionManagement\> elements or the project hierarchy to link the
@@ -79,10 +79,10 @@ Usage
   Just execute the {{{stage-mojo.html}site:stage}} goal from your project with the stagingDirectory parameter as shown below:
 
 +-----+
-  mvn site:stage -DstagingDirectory=C:\fullsite
+mvn site:stage -DstagingDirectory=C:\fullsite
 +-----+
 
-  Note: stagingDirectory could not be dynamic, i.e. stagingDirectory=$\{basedir\}\fullsite
+  <<Note:>> <<<stagingDirectory>>> can not be dynamic, i.e. stagingDirectory=$\{basedir\}\fullsite
 
   To stage a site and to deploy it, just execute the {{{stage-deploy-mojo.html}site:stage-deploy}} goal from your project
   with the required parameters. The <<<site:stage-deploy>>> goal will use the
@@ -93,8 +93,8 @@ Usage
   for more information on this.
 
 +-----+
-  mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
-    -DstagingSiteURL=scp://www.mycompany.com/www/project/
+mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
+  -DstagingSiteURL=scp://www.mycompany.com/www/project/
 +-----+
 
 * Running a Site
@@ -102,7 +102,7 @@ Usage
   The Site plugin can also be used to start up the site in Jetty. To do this, execute
 
 +-----+
-  mvn site:run
+mvn site:run
 +-----+
 
   The server will, by default, be started on http://localhost:8080/. See
@@ -111,11 +111,11 @@ Usage
 
 * Filtering
 
+  <<Note:>> This feature is available in version 2.0-beta-6 or later of the Site plugin.
+
   To filter properties into any supported documentation format, add a <<<.vm>>> extension to the filename.
 
   For example, the module for the Maven website contains a
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
   file, which uses the expression <<<$\{currentVersion}>>> to filter in a property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
-
-  This feature is available in version 2.0-beta-6 or later.
