@@ -1,0 +1,14 @@
+<assembly>
+  <id>filtered-assembly</id>
+  <formats>
+    <format>dir</format>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <files>
+    <file>
+      <source>src/config/file.txt</source>
+      <filtered>true</filtered>
+    </file>
+  </files>
+</assembly>
