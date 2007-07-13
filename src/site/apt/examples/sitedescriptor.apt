@@ -29,13 +29,13 @@
 Configuring the Site Descriptor
 
   You can create your own site descriptor for your project when you want to override the navigation tree for the site.
-  For example, aside from the report distributions you want to put additional content to your site. In order for them
+  For example, aside from the generated reports you want to add additional content to your site. In order for it
   to be accessible in the generated site, you must configure your site descriptor. You create the site descriptor in
   a file called <<<site.xml>>> which should be located in your <<<src/site>>> directory.
 
 * Publish Date
 
-  With the out-of box Velocity template, the "Last Published" position could be configurable.
+  With the out-of-the-box Velocity template, the "Last Published" position is configurable.
   By default, the position is on the left but you could change it.
   To do this, you could add a \<publishDate/> in the site.xml like the following:
 
@@ -47,12 +47,12 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-  The position could be: left, right, navigation-top, navigation-bottom, bottom.
+  The position could be: <<<left>>>, <<<right>>>, <<<navigation-top>>>, <<<navigation-bottom>>>, <<<bottom>>>.
 
 * Powered by logo
 
-  You could add a "Powered by" logo in your site.
-  To do this, you could add a \<poweredBy/> in the site.xml like the following:
+  You can add your own "Powered by" logo to your site.
+  To do this, you add a \<poweredBy/> in your <<<site.xml>>> like this:
 
 +-----+
 <project name="My Site Descriptor">
@@ -60,7 +60,6 @@ Configuring the Site Descriptor
   <poweredBy>
     <logo name="Maven" href="http://maven.apache.org/"
           img="http://maven.apache.org/images/logos/maven-feather.png"/>
-    ...
   </poweredBy>
   ...
 </project>
@@ -68,21 +67,27 @@ Configuring the Site Descriptor
 
 * Inheritance
 
-  Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, it's site
+  Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, its site
   descriptor is also deployed so that it can be inherited.
 
   By default, only the basic settings are inherited. From the body, only the links are inherited, and these accumulate
-  to contain all of the descriptor's links.
+  to contain all of the descriptors' links.
 
-  However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> flag of the site descriptor. This can
+  However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> attribute in the site descriptor. This can
   be either <<<top>>> or <<<bottom>>>, indicating where in the menu it will be placed after inheritance. For example:
 
 +-----+
- ...
-  <menu name="Common Links" inherit="top">
+<project>
+  ...
+  <body>
     ...
-  </menu>
- ...
+    <menu name="Common Links" inherit="top">
+      ...
+    </menu>
+    ...
+  </body>
+  ...
+</project>
 +-----+
 
 * Including Generated Content
@@ -94,34 +99,42 @@ Configuring the Site Descriptor
 
   * <<<parent>>> - a menu with a link to the parent project's site
 
-  * <<<modules>>> - a menu containing the submodules of this project and links to their sites.
+  * <<<modules>>> - a menu containing the submodules of this project and links to their sites
 
   To include a preset menu, use the <<<ref>>> attribute. For example:
 
 +-----+
- ...
-  <menu ref="modules" />
- ...
+<project>
+  ...
+  <body>
+    ...
+    <menu ref="modules" />
+    ...
+  </body>
+  ...
+</project>
 +-----+
 
 * Skinning
 
   Skins can be created to customise the look and feel of a site in a consistent way. For more information on creating a
-  skin, see {{{creatingskins.html}Creating a Skin}}. To reference a skin from your project, you use the <<<skin>>>
+  skin, see {{{creatingskins.html}Creating a Skin}}. To reference a skin in your project, you use the <<<skin>>>
   element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the Classic
   Maven skin, you'd include:
 
 +-----+
- ...
+<project>
+  ...
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-classic-skin</artifactId>
     <version>1.0</version>
   </skin>
- ...
+  ...
+</project>
 +-----+
 
-  Note that the version is optional and, like plugins, if omitted the latest version available will be used.
+  <<Note:>> The version is optional and, like plugins, if omitted the latest version available will be used.
 
   This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
   template to render the site.
@@ -133,8 +146,8 @@ Configuring the Site Descriptor
 
   Expressions can be:
 
-  * $\{project.*\}, for instance <<<$\{project.organization.name\}>>> referenced in <<< <project/><organization/><name/> >>>
+  * $\{project.*\}, for instance <<<$\{project.organization.name\}>>> referenced in <<< <project><organization><name> >>>
 
-  * $\{project.properties\}, for instance <<<$\{myProperty\}>>> referenced in <<< <project/><properties/><myProperty/> >>>
+  * $\{project.properties\}, for instance <<<$\{myProperty\}>>> referenced in <<< <project><properties><myProperty> >>>
 
   * $\{environmentVariable\}, for instance <<<$\{JAVA_HOME\}>>>
