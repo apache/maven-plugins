@@ -11,10 +11,12 @@ public class PrefixedFileSet
 
     private final String rootPrefix;
     private final FileSet fileSet;
+    private final FileSelector[] selectors;
 
-    public PrefixedFileSet( FileSet fileSet, String rootPrefix )
+    public PrefixedFileSet( FileSet fileSet, String rootPrefix, FileSelector[] selectors )
     {
         this.fileSet = fileSet;
+        this.selectors = selectors;
 
         if ( ! rootPrefix.endsWith( "/" ) )
         {
@@ -33,7 +35,22 @@ public class PrefixedFileSet
 
     public FileSelector[] getFileSelectors()
     {
-        return fileSet.getFileSelectors();
+        FileSelector[] sel = fileSet.getFileSelectors();
+        if ( ( sel != null ) && ( selectors != null ) )
+        {
+            FileSelector[] temp = new FileSelector[ sel.length + selectors.length ];
+
+            System.arraycopy( sel, 0, temp, 0, sel.length );
+            System.arraycopy( selectors, 0, temp, sel.length, selectors.length );
+
+            sel = temp;
+        }
+        else if ( ( sel == null ) && ( selectors != null ) )
+        {
+            sel = selectors;
+        }
+
+        return sel;
     }
 
     public String[] getIncludes()

@@ -16,6 +16,17 @@ package org.apache.maven.plugin.assembly.filter;
  * limitations under the License.
  */
 
+import org.codehaus.plexus.archiver.ArchiveFilterException;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.Xpp3DomWriter;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,27 +39,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.archiver.AbstractArchiveFinalizer;
-import org.codehaus.plexus.archiver.ArchiveFileFilter;
-import org.codehaus.plexus.archiver.ArchiveFilterException;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.components.io.fileselectors.FileInfo;
-import org.codehaus.plexus.components.io.fileselectors.FileSelector;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 /**
  * Components XML file filter.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ComponentsXmlArchiverFileFilter
-    extends AbstractArchiveFinalizer
-    implements ArchiveFileFilter, FileSelector
+    implements ContainerDescriptorHandler
 {
     // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
     // some minimal access to the components accumulated for extending classes.
@@ -208,17 +205,29 @@ public class ComponentsXmlArchiverFileFilter
     public boolean isSelected( FileInfo fileInfo )
         throws IOException
     {
-        try
+        if ( fileInfo.isFile() )
         {
-            return isIncluded( fileInfo.getContents(), fileInfo.getName() );
-        }
-        catch ( XmlPullParserException e )
-        {
-            IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
-            error.initCause( e );
+            try
+            {
+                return isIncluded( fileInfo.getContents(), fileInfo.getName() );
+            }
+            catch ( XmlPullParserException e )
+            {
+                IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
+                error.initCause( e );
 
-            throw error;
+                throw error;
+            }
         }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void finalizeArchiveExtraction( UnArchiver unarchiver )
+        throws ArchiverException
+    {
     }
 
 }
