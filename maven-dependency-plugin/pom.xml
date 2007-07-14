@@ -192,4 +192,15 @@
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
+
+  <!-- TODO: remove when plexus-archiver is released -->
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
 </project>
