@@ -1,5 +1,5 @@
  ------
- Customize the Project's Libraries
+ Customize Your Libraries
  ------
  Edwin Punzalan
  ------
@@ -24,7 +24,9 @@
 ~~ under the License.
 
 
-Customize the Project's Libraries
+Customize Your Libraries
+
+* Classes and sources
 
   If you do not want to use the packaged artifacts in your local repository and
   would want to use an alternate url, you can use:
@@ -57,8 +59,43 @@ Customize the Project's Libraries
 </project>
 +-----
 
-  Or to exclude a dependency from appearing on IntelliJ IDEA's list of
-  Libraries, you can do:
+* Javadocs
+
+  Sometimes the Javadocs for an artifact are only available online. You can use
+  these online Javadocs if you like. Just add the following to your plugin
+  configuration:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <libraries>
+            <library>
+              <name>servlet-api</name>
+              <javadocs>http://java.sun.com/javaee/5/docs/api/</javadocs>
+            </library>
+          </libraries>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
+
+* Exclude
+
+  To exclude a dependency from appearing in IntelliJ IDEA's list of
+  libraries, you can do:
 
 +-----
 <project>
