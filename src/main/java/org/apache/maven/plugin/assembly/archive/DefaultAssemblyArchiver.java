@@ -5,27 +5,37 @@ import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.PrefixingProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
+import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.codehaus.plexus.archiver.ArchiveFileFilter;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.FilterEnabled;
-import org.codehaus.plexus.archiver.FinalizerEnabled;
-import org.codehaus.plexus.archiver.filters.JarSecurityFileFilter;
+import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfigurationResourceException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,10 +44,8 @@ import java.util.List;
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
-    implements AssemblyArchiver
+    implements AssemblyArchiver, Contextualizable
 {
-
-    private static final ArchiveFileFilter JAR_SECURITY_FILE_FILTER = new JarSecurityFileFilter();
 
     /**
      * @plexus.requirement
@@ -49,15 +57,18 @@ public class DefaultAssemblyArchiver
      */
     private List assemblyPhases;
 
+    private PlexusContainer container;
+
     public DefaultAssemblyArchiver()
     {
         // needed for plexus
     }
 
     // introduced for testing.
-    public DefaultAssemblyArchiver( ArchiverManager archiverManager, List assemblyPhases )
+    public DefaultAssemblyArchiver( ArchiverManager archiverManager, PlexusContainer container, List assemblyPhases )
     {
         this.archiverManager = archiverManager;
+        this.container = container;
         this.assemblyPhases = assemblyPhases;
     }
 
@@ -68,8 +79,6 @@ public class DefaultAssemblyArchiver
         String filename = fullName + "." + format;
 
         AssemblyFileUtils.verifyTempDirectoryAvailability( configSource.getTemporaryRootDirectory(), getLogger() );
-
-        ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
         File outputDirectory = configSource.getOutputDirectory();
 
@@ -88,8 +97,10 @@ public class DefaultAssemblyArchiver
                                                                   finalName );
             }
 
+            List containerHandlers = createContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers() );
+
             Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource,
-                                                componentsXmlFilter );
+                                                containerHandlers );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
@@ -118,6 +129,74 @@ public class DefaultAssemblyArchiver
         return destFile;
     }
 
+    private List createContainerDescriptorHandlers( List containerDescriptorHandlers )
+        throws InvalidAssemblerConfigurationException
+    {
+        if ( containerDescriptorHandlers == null )
+        {
+            containerDescriptorHandlers = new ArrayList();
+        }
+
+        List handlers = new ArrayList();
+        boolean foundPlexus = false;
+
+        for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
+        {
+            ContainerDescriptorHandlerConfig config = (ContainerDescriptorHandlerConfig) it.next();
+
+            String hint = config.getHandlerName();
+            ContainerDescriptorHandler handler;
+
+            // TODO: There MUST BE a better way that this, but I kept running into
+            // incompatible ClassRealm class definitions...so, I give up.
+            DefaultPlexusContainer handlerContainer = new DefaultPlexusContainer();
+            handlerContainer.setParentPlexusContainer( container );
+
+            Object conf = config.getConfiguration();
+            if ( conf != null )
+            {
+                StringReader reader = new StringReader( String.valueOf( conf ) );
+
+                try
+                {
+                    handlerContainer.setConfigurationResource( reader );
+                    handlerContainer.initialize();
+                }
+                catch ( PlexusConfigurationResourceException e )
+                {
+                    throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
+                }
+                catch ( PlexusContainerException e )
+                {
+                    throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
+                }
+            }
+
+            try
+            {
+                handler = (ContainerDescriptorHandler) handlerContainer.lookup( ContainerDescriptorHandler.class.getName(), hint );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
+            }
+
+            handlers.add( handler );
+
+            if ( "plexus".equals( hint ) )
+            {
+                foundPlexus = true;
+            }
+        }
+
+        if ( !foundPlexus )
+        {
+            handlers.add( new ComponentsXmlArchiverFileFilter() );
+        }
+
+        return handlers;
+    }
+
     /**
      * Creates the necessary archiver to build the distribution file.
      *
@@ -133,7 +212,7 @@ public class DefaultAssemblyArchiver
      */
     protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName,
                                        AssemblerConfigurationSource configSource,
-                                       ComponentsXmlArchiverFileFilter componentsXmlFilter )
+                                       List containerHandlers )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -150,58 +229,29 @@ public class DefaultAssemblyArchiver
             archiver = archiverManager.getArchiver( format );
         }
 
-        configureArchiverFilters( archiver, componentsXmlFilter );
+        List extraSelectors = null;
+        if ( archiver instanceof JarArchiver )
+        {
+            extraSelectors = Collections.singletonList( new JarSecurityFileSelector() );
+        }
 
-        configureArchiverFinalizers( archiver, format, configSource, componentsXmlFilter );
+        List extraFinalizers = null;
+        if ( "jar".equals( format ) )
+        {
+            extraFinalizers = Collections.singletonList( new ManifestCreationFinalizer( configSource.getProject(),
+                                                                                        configSource.getJarArchiveConfiguration() ) );
 
+        }
+
+        String prefix = "";
         if ( includeBaseDir )
         {
-            archiver = new PrefixingProxyArchiver( finalName, archiver );
+            prefix = finalName;
         }
+
+        archiver = new PrefixingProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers );
 
         return archiver;
-    }
-
-    protected void configureArchiverFinalizers( Archiver archiver, String format,
-                                                AssemblerConfigurationSource configSource,
-                                                ComponentsXmlArchiverFileFilter componentsXmlFilter )
-    {
-        if ( archiver instanceof FinalizerEnabled )
-        {
-            List finalizers = new ArrayList();
-
-            finalizers.add( componentsXmlFilter );
-
-            if ( "jar".equals( format ) )
-            {
-                finalizers.add( new ManifestCreationFinalizer( configSource.getProject(), configSource
-                    .getJarArchiveConfiguration() ) );
-            }
-
-            ( (FinalizerEnabled) archiver ).setArchiveFinalizers( finalizers );
-
-        }
-    }
-
-    protected void configureArchiverFilters( Archiver archiver, ComponentsXmlArchiverFileFilter componentsXmlFilter )
-    {
-        /*
-         * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies that will prevent
-         * the uberjar to execute. Please see MASSEMBLY-64 for details.
-         */
-        if ( archiver instanceof FilterEnabled )
-        {
-            List filters = new ArrayList();
-
-            filters.add( componentsXmlFilter );
-
-            if ( archiver instanceof JarArchiver )
-            {
-                filters.add( JAR_SECURITY_FILE_FILTER );
-            }
-
-            ( (FilterEnabled) archiver ).setArchiveFilters( filters );
-        }
     }
 
     protected Archiver createWarArchiver()
@@ -249,6 +299,12 @@ public class DefaultAssemblyArchiver
         tarArchiver.setLongfile( tarFileMode );
 
         return tarArchiver;
+    }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
