@@ -104,7 +104,7 @@ under the License.
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>4.2</version>
+      <version>4.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
@@ -130,7 +130,7 @@ under the License.
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle-optional</artifactId>
-      <version>4.2</version>
+      <version>4.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
