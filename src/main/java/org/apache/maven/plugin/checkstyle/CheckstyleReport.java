@@ -9,7 +9,7 @@ package org.apache.maven.plugin.checkstyle;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -43,16 +43,15 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.resource.loader.URLResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +59,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -1041,12 +1039,12 @@ public class CheckstyleReport
             }
             return configFile.getAbsolutePath();
         }
-        catch (org.codehaus.plexus.resource.loader.ResourceNotFoundException e) 
+        catch ( org.codehaus.plexus.resource.loader.ResourceNotFoundException e )
         {
             throw new MavenReportException( "Unable to find configuration file at location "
                                             + configLocation, e );
         }
-        catch (FileResourceCreationException e) 
+        catch ( FileResourceCreationException e )
         {
             throw new MavenReportException( "Unable to process configuration file location "
                                             + configLocation, e );
