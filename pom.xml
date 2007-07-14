@@ -23,27 +23,31 @@ under the License.
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-plugins</artifactId>
     <version>8</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-javadoc-plugin</artifactId>
+  <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Javadoc Plugin</name>
   <description>
     The Maven Javadoc Plugin is a plugin that uses the javadoc tool for
     generating javadocs for the specified project.
   </description>
-  <version>2.3-SNAPSHOT</version>
+  <inceptionYear>2004</inceptionYear>
+
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MJAVADOC</url>
   </issueManagement>
-  <inceptionYear>2004</inceptionYear>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
+
   <build>
     <plugins>
       <plugin>
@@ -79,6 +83,7 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -131,7 +136,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.3-SNAPSHOT</version>
+      <version>1.4.3</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -146,7 +151,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -190,7 +195,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.0</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
@@ -213,15 +218,4 @@ under the License.
       </build>
     </profile>
   </profiles>
-
-  <!-- TODO: remove when plexus-utils is released -->
-  <repositories>
-    <repository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
 </project>
