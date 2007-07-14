@@ -32,6 +32,8 @@ public class Library
 
     private boolean exclude;
 
+    private String javadocs;
+
     public String getName()
     {
         return name;
@@ -90,6 +92,26 @@ public class Library
     public void setClasses( String classes )
     {
         this.classes = classes;
+    }
+
+    public String getJavadocs()
+    {
+        return javadocs;
+    }
+
+    public void setJavadocs( String javadocs )
+    {
+        this.javadocs = javadocs;
+    }
+
+    public String[] getSplitJavadocs()
+    {
+        if ( javadocs == null )
+        {
+            return new String[0];
+        }
+
+        return javadocs.split( "[,\\s]+" );
     }
 
     public String toString()

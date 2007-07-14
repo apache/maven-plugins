@@ -569,7 +569,20 @@ public class IdeaModuleMojo
                     resolveClassifier( createOrGetElement( lib, "SOURCES" ), a, sourceClassifier );
                 }
 
-                if ( downloadJavadocs )
+                if ( library != null && library.getSplitJavadocs().length > 0 )
+                {
+                    removeOldElements( lib, "JAVADOC" );
+                    Element javadocsElement = createElement( lib, "JAVADOC" );
+                    String[] javadocs = library.getSplitJavadocs();
+                    for ( int k = 0; k < javadocs.length; k++ )
+                    {
+                        String javadoc = javadocs[k];
+                        extractMacro( javadoc );
+                        Element sourceEl = createElement( javadocsElement, "root" );
+                        sourceEl.addAttribute( "url", javadoc );
+                    }
+                }
+                else if ( downloadJavadocs )
                 {
                     resolveClassifier( createOrGetElement( lib, "JAVADOC" ), a, javadocClassifier );
                 }
