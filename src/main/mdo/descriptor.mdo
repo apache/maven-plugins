@@ -98,7 +98,7 @@
               <li><b>"gz"</b> - Creates a GZIP format</li>
               <li><b>"tar"</b> - Creates a TAR format</li>
               <li><b>"tar.gz"</b> - Creates a gzip'd TAR format</li>
-              <li><b>"tar.bz2</b> - Creates a bzip'd TAR format</li>
+              <li><b>"tar.bz2"</b> - Creates a bzip'd TAR format</li>
             </ul>
             ]]>
           </description>
@@ -134,6 +134,20 @@
             Includes a site directory in the final archive. The site directory
             location of a project is determined by the siteDirectory parameter
             of the Assembly Plugin. Default value is false.
+          </description>
+        </field>
+        <field>
+          <name>containerDescriptorHandlers</name>
+          <version>1.1.0</version>
+          <association>
+            <type>ContainerDescriptorHandlerConfig</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Set of components which filter various container descriptors out of
+            the normal archive stream, so they can be aggregated then added.
+            ]]>
           </description>
         </field>
         <field>
@@ -921,6 +935,34 @@
           </description>
           <defaultValue>false</defaultValue>
           <type>boolean</type>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>ContainerDescriptorHandlerConfig</name>
+      <version>1.1.0</version>
+      <description>
+        Configures a filter for files headed into the assembly archive, to enable
+        aggregation of various types of descriptor fragments, such as components.xml,
+        web.xml, etc.
+      </description>
+      <fields>
+        <field>
+          <name>handlerName</name>
+          <version>1.1.0</version>
+          <description>
+            The handler's plexus role-hint, for lookup from the container.
+          </description>
+          <type>String</type>
+          <required>true</required>
+        </field>
+        <field>
+          <name>configuration</name>
+          <version>1.1.0</version>
+          <description>
+            Configuration options for the handler.
+          </description>
+          <type>DOM</type>
         </field>
       </fields>
     </class>
