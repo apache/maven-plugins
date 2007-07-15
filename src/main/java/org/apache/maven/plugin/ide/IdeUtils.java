@@ -299,6 +299,11 @@ public class IdeUtils
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
         throws MojoExecutionException
     {
+        if ( ! fileToAdd.isAbsolute() )
+        {
+            fileToAdd = new File( basedir, fileToAdd.getPath() );
+        }
+        
         String basedirpath;
         String absolutePath;
 
