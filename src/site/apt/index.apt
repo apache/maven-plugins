@@ -18,7 +18,11 @@ Maven Eclipse Plugin
 
   * {{{add-maven-repo-mojo.html}eclipse:add-maven-repo}} is used to add the
   classpath variable MAVEN_REPO to Eclipse which points to your local
-  repository.
+  repository. This goal is deprecated, please use eclipse:configure-workspace instead
+
+  * {{{configure-workspace-mojo.html}eclipse:configure-workspace}} is used to add the
+  classpath variable MAVEN_REPO to Eclipse which points to your local repository and 
+  optional to configure other workspace features.
 
   * {{{clean-mojo.html}eclipse:clean}} is used to delete the files used by the
   Eclipse IDE.
@@ -59,3 +63,6 @@ Maven Eclipse Plugin
   * {{{examples/provide-project-natures-and-build-commands.html}Provide Project Natures and Build Commands}}
 
   * {{{examples/additional-facets.html}Adding additional facets}}
+
+  * {{{examples/load-code-styles.html}Load Code Style file}}
+  
