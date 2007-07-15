@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -249,6 +250,81 @@ public abstract class AbstractEclipsePluginTestCase
 
     }
 
+    /**
+     * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @throws Exception any exception generated during test
+     */
+    protected void testWorkspace( String projectName )
+        throws Exception
+    {
+        testWorkspace( projectName, new Properties(), "configure-workspace" );
+    }    
+    
+    /**
+     * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @throws Exception any exception generated during test
+     */
+    protected void testWorkspace( String projectName, String goal )
+        throws Exception
+    {
+        testWorkspace( projectName, new Properties(), goal );
+    }        
+    /**
+     * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @throws Exception any exception generated during test
+     */
+    protected void testWorkspace( String projectName, Properties properties, String genGoal )
+        throws Exception
+    {
+        File basedir = getOutputDirectory( projectName );
+
+        File pom = new File( basedir, "pom.xml" );
+
+        String pluginSpec = getPluginCLISpecification();
+
+        List goals = new ArrayList();
+
+        goals.add( pluginSpec + genGoal );
+
+        executeMaven( pom, properties, goals );
+
+        MavenProject project = readProject( pom );
+
+        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        File outputDir;
+        File projectOutputDir = basedir;
+
+        if ( outputDirPath == null )
+        {
+            outputDir = basedir;
+        }
+        else
+        {
+            outputDir = new File( basedir, outputDirPath );
+            outputDir.mkdirs();
+            projectOutputDir = new File( outputDir, project.getArtifactId() );
+        }
+
+        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" );
+
+    }
+    
+    protected File getOutputDirectory( String projectName ) 
+    {
+        return getTestFile( "target/test-classes/projects/" + projectName );
+    }
+    
+    protected File getTestWorkspaceWorkDirectory( String projectName )
+    {
+        return new File( this.getOutputDirectory( projectName ), ".metadata" );
+    }
+    
     protected void executeMaven( File pom, Properties properties, List goals )
         throws TestToolsException, ExecutionFailedException
     {
