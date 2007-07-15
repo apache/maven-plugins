@@ -23,6 +23,14 @@
           <wtpContextName>contextName</wtpContextName>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <!-- make sure this plugin can handle explicitly set warSoruceDirectory in reactor mode -->
+          <warSourceDirectory>src/main/webapp</warSourceDirectory>
+        </configuration>
+      </plugin>
     </plugins>    
   </build>
 </project>

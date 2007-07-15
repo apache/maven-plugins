@@ -131,16 +131,16 @@ public class EclipseWtpComponentWriter
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
-            String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+            File warSourceDirectory = new File( IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", //$NON-NLS-1$
-                                                                   config.getProject().getBasedir()+"/src/main/webapp" ); //$NON-NLS-1$
-
+                                                                   config.getProject().getBasedir()+"/src/main/webapp" ) ); //$NON-NLS-1$
+            
             writeContextRoot( writer );
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
-                .toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( warSourceDirectory ), false ) );
+                .toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false ) );
             writer.endElement();
 
             // @todo is this really needed?
