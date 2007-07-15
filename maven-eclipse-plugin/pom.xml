@@ -30,8 +30,7 @@ under the License.
   <artifactId>maven-eclipse-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Eclipse Plugin</name>
-  <version>2.5-555344</version>
-  <description>Eclipse 2.5 SNAPSHOT at rev 555344 with fixes for the unapprove MECLIPSE-127 and MECLIPSE-296</description>
+  <version>2.5-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
@@ -171,23 +170,5 @@ under the License.
       <version>0.0.145</version>
     </dependency>
   </dependencies>
-  
-  <distributionManagement>
-    <site>
-      <id>iplocks.site</id>
-      <name>IPLocks Maven Site</name>
-      <url>file:///\\\\scm.iplocks.com/site</url>
-    </site>
-    <repository>
-      <id>iplocks.releases</id>
-      <name>IPLocks Release Distribution Repository</name>
-      <url>file:///\\\\scm.iplocks.com/maven-repositories/interim</url>
-    </repository>
-    <snapshotRepository>
-      <id>iplocks.snapshots</id>
-      <name>IPlocks Development Snapshot Repository</name>
-      <url>file:///\\\\scm.iplocks.com/maven-repositories/snapshot</url>
-    </snapshotRepository>
-  </distributionManagement>
   
 </project>
