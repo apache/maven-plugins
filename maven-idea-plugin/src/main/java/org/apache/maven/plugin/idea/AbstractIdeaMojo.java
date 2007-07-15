@@ -212,20 +212,49 @@ public abstract class AbstractIdeaMojo
     protected String toRelative( File basedir, String absolutePath )
     {
         String relative;
+        String convertedBasedirAbsolutePath = convertDriveLetter( basedir.getAbsolutePath() );
+        String convertedAbsolutePath = convertDriveLetter( absolutePath );
 
-        if ( absolutePath.startsWith( basedir.getAbsolutePath() )
-            && absolutePath.length() > basedir.getAbsolutePath().length() )
+        if ( convertedAbsolutePath.startsWith( convertedBasedirAbsolutePath )
+            && convertedAbsolutePath.length() > convertedBasedirAbsolutePath.length() )
         {
-            relative = absolutePath.substring( basedir.getAbsolutePath().length() + 1 );
+            relative = convertedAbsolutePath.substring( convertedBasedirAbsolutePath.length() + 1 );
         }
         else
         {
-            relative = absolutePath;
+            relative = convertedAbsolutePath;
         }
 
         relative = StringUtils.replace( relative, "\\", "/" );
 
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "toRelative(" + basedir + ", " + absolutePath + ") => " + relative );
+        }
+
         return relative;
+    }
+
+    /**
+     * Convert the drive letter, if there is one, to upper case. This is done
+     * to avoid case mismatch when running cygwin on Windows.
+     *
+     * @param absolutePath The path to convert
+     * @return The path that came in with its drive letter converted to upper case
+     */
+    private String convertDriveLetter( String absolutePath )
+    {
+        if ( absolutePath != null && absolutePath.length() >= 3 && !absolutePath.startsWith( "/" ) )
+        {
+            // See if the path starts with "?:\", where ? must be a letter
+            if ( Character.isLetter( absolutePath.substring( 0, 1 ).charAt( 0 ) )
+                && absolutePath.substring( 1, 3 ).equals( ":\\" ) )
+            {
+                // In that case we convert the first character to upper case
+                return absolutePath.substring( 0, 1 ).toUpperCase() + absolutePath.substring( 1 );
+            }
+        }
+        return absolutePath;
     }
 
     /**
