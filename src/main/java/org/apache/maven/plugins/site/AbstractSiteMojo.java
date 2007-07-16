@@ -799,7 +799,7 @@ public abstract class AbstractSiteMojo
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLog().warn( "Unable to load parent project from a relative path: " + e.getMessage() );
+                    getLog().info( "Unable to load parent project from a relative path: " + e.getMessage() );
                 }
             }
 
@@ -810,6 +810,7 @@ public abstract class AbstractSiteMojo
                     parentProject = mavenProjectBuilder.buildFromRepository( aProject.getParentArtifact(),
                                                                              aProject.getRemoteArtifactRepositories(),
                                                                              localRepository );
+                    getLog().info( "Parent project loaded from repository." );
                 }
                 catch ( ProjectBuildingException e )
                 {
