@@ -11,10 +11,6 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
@@ -24,16 +20,13 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.collections.ActiveCollectionManager;
+import org.codehaus.plexus.collections.ActiveMap;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.configuration.PlexusConfigurationResourceException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,7 +37,7 @@ import java.util.List;
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
-    implements AssemblyArchiver, Contextualizable
+    implements AssemblyArchiver
 {
 
     /**
@@ -57,7 +50,10 @@ public class DefaultAssemblyArchiver
      */
     private List assemblyPhases;
 
-    private PlexusContainer container;
+    /**
+     * @plexus.requirement
+     */
+    private ActiveCollectionManager collectionManager;
 
     public DefaultAssemblyArchiver()
     {
@@ -65,10 +61,10 @@ public class DefaultAssemblyArchiver
     }
 
     // introduced for testing.
-    public DefaultAssemblyArchiver( ArchiverManager archiverManager, PlexusContainer container, List assemblyPhases )
+    public DefaultAssemblyArchiver( ArchiverManager archiverManager, ActiveCollectionManager collectionManager, List assemblyPhases )
     {
         this.archiverManager = archiverManager;
-        this.container = container;
+        this.collectionManager = collectionManager;
         this.assemblyPhases = assemblyPhases;
     }
 
@@ -140,52 +136,32 @@ public class DefaultAssemblyArchiver
         List handlers = new ArrayList();
         boolean foundPlexus = false;
 
-        for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
+        if ( ( containerDescriptorHandlers != null ) && !containerDescriptorHandlers.isEmpty() )
         {
-            ContainerDescriptorHandlerConfig config = (ContainerDescriptorHandlerConfig) it.next();
+            ActiveMap handlerMap = collectionManager.getActiveMap( ContainerDescriptorHandler.class );
 
-            String hint = config.getHandlerName();
-            ContainerDescriptorHandler handler;
-
-            // TODO: There MUST BE a better way that this, but I kept running into
-            // incompatible ClassRealm class definitions...so, I give up.
-            DefaultPlexusContainer handlerContainer = new DefaultPlexusContainer();
-            handlerContainer.setParentPlexusContainer( container );
-
-            Object conf = config.getConfiguration();
-            if ( conf != null )
+            for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
             {
-                StringReader reader = new StringReader( String.valueOf( conf ) );
+                ContainerDescriptorHandlerConfig config = (ContainerDescriptorHandlerConfig) it.next();
+
+                String hint = config.getHandlerName();
+                ContainerDescriptorHandler handler;
 
                 try
                 {
-                    handlerContainer.setConfigurationResource( reader );
-                    handlerContainer.initialize();
+                    handler = (ContainerDescriptorHandler) handlerMap.checkedGet( hint );
                 }
-                catch ( PlexusConfigurationResourceException e )
+                catch ( ComponentLookupException e )
                 {
                     throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
                 }
-                catch ( PlexusContainerException e )
+
+                handlers.add( handler );
+
+                if ( "plexus".equals( hint ) )
                 {
-                    throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
+                    foundPlexus = true;
                 }
-            }
-
-            try
-            {
-                handler = (ContainerDescriptorHandler) handlerContainer.lookup( ContainerDescriptorHandler.class.getName(), hint );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
-            }
-
-            handlers.add( handler );
-
-            if ( "plexus".equals( hint ) )
-            {
-                foundPlexus = true;
             }
         }
 
@@ -299,12 +275,6 @@ public class DefaultAssemblyArchiver
         tarArchiver.setLongfile( tarFileMode );
 
         return tarArchiver;
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
