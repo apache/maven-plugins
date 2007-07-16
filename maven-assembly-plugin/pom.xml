@@ -265,7 +265,7 @@
                   <!-- 
                   <debug>true</debug>
                   <pomIncludes>
-                    <pomInclude>container-descriptors/custom-containerDescriptorHandler/pom.xml</pomInclude>
+                    <pomInclude>container-descriptors/custom-handler-withFileEntries/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
                    -->
