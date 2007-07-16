@@ -109,6 +109,11 @@ public class EclipseCleanMojo
     		return;
     	}
 
+        if ( Constants.PROJECT_PACKAGING_POM.equals( this.packaging ) )
+        {
+            return;
+        }
+        
         delete( new File( basedir, FILE_DOT_PROJECT ) );
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
