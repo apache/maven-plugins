@@ -16,7 +16,6 @@ package org.apache.maven.plugin.assembly.filter;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.archiver.ArchiveFilterException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -54,23 +53,6 @@ public class ComponentsXmlArchiverFileFilter
     private boolean excludeOverride = false;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
-
-    public boolean include( InputStream dataStream, String entryName )
-        throws ArchiveFilterException
-    {
-        try
-        {
-            return isIncluded( dataStream, entryName );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
-        }
-    }
 
     protected void addComponentsXml( Reader componentsReader )
         throws XmlPullParserException, IOException
@@ -177,51 +159,57 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
-    private boolean isIncluded( InputStream dataStream, String entryName )
-        throws XmlPullParserException, IOException
-    {
-        if ( excludeOverride )
-        {
-            return true;
-        }
-
-        String entry = entryName;
-
-        if ( entry.startsWith( "/" ) )
-        {
-            entry = entry.substring( 1 );
-        }
-
-        if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
-        {
-            addComponentsXml( new InputStreamReader( dataStream ) );
-
-            return false;
-        }
-
-        return true;
-    }
-
     public boolean isSelected( FileInfo fileInfo )
         throws IOException
     {
         if ( fileInfo.isFile() )
         {
-            try
+            if ( excludeOverride )
             {
-                return isIncluded( fileInfo.getContents(), fileInfo.getName() );
+                return true;
             }
-            catch ( XmlPullParserException e )
-            {
-                IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
-                error.initCause( e );
 
-                throw error;
+            String entry = fileInfo.getName();
+
+            if ( entry.startsWith( "/" ) )
+            {
+                entry = entry.substring( 1 );
+            }
+
+            if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
+            {
+                InputStream stream = null;
+                InputStreamReader reader = null;
+
+                try
+                {
+                    stream = fileInfo.getContents();
+                    reader = new InputStreamReader( stream );
+                    addComponentsXml( reader );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    IOException error = new IOException( "Error finalizing component-set for archive. Reason: " + e.getMessage() );
+                    error.initCause( e );
+
+                    throw error;
+                }
+                finally
+                {
+                    IOUtil.close( stream );
+                    IOUtil.close( reader );
+                }
+
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
         else
         {
-            return false;
+            return true;
         }
     }
 

@@ -259,8 +259,6 @@ public class PrefixingProxyArchiver
     {
         if ( acceptFile( inputFile ) )
         {
-            System.out.println( "File: " + inputFile + " was accepted by selectors." );
-
             inPublicApi.set( Boolean.TRUE );
             try
             {
@@ -278,8 +276,6 @@ public class PrefixingProxyArchiver
     {
         if ( acceptFile( inputFile ) )
         {
-            System.out.println( "File: " + inputFile + " was accepted by selectors." );
-
             inPublicApi.set( Boolean.TRUE );
             try
             {
