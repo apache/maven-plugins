@@ -7,7 +7,6 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -18,6 +17,7 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.collections.ActiveCollectionManager;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.ArgumentsMatcher;
@@ -409,7 +409,7 @@ public class DefaultAssemblyArchiverTest
 
     private DefaultAssemblyArchiver createSubject( MockAndControlForAssemblyArchiver macMgr, List phases, Logger logger )
     {
-        DefaultAssemblyArchiver subject = new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.container, phases );
+        DefaultAssemblyArchiver subject = new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.collectionManager, phases );
 
         if ( logger != null )
         {
@@ -429,9 +429,9 @@ public class DefaultAssemblyArchiverTest
 
         Archiver archiver;
 
-        MockControl containerControl;
+        MockControl collectionManagerControl;
 
-        PlexusContainer container;
+        ActiveCollectionManager collectionManager;
 
         private final MockManager mm;
 
@@ -443,10 +443,10 @@ public class DefaultAssemblyArchiverTest
 
             archiverManager = ( ArchiverManager ) control.getMock();
 
-            containerControl = MockControl.createControl( PlexusContainer.class );
-            mm.add( containerControl );
+            collectionManagerControl = MockControl.createControl( ActiveCollectionManager.class );
+            mm.add( collectionManagerControl );
 
-            container = (PlexusContainer) containerControl.getMock();
+            collectionManager = (ActiveCollectionManager) collectionManagerControl.getMock();
         }
 
         void createArchiver( Class archiverClass )
