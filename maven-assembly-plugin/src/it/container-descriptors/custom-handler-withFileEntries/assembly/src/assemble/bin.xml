@@ -1,0 +1,28 @@
+<assembly>
+  <id>bin</id>
+  
+  <formats>
+    <format>dir</format>
+  </formats>
+  
+  <includeBaseDirectory>false</includeBaseDirectory>
+  
+  <files>
+    <file>
+      <source>src/config/a/file.txt</source>
+      <outputDirectory>a</outputDirectory>
+      <destName>file.txt</destName>
+    </file>
+    <file>
+      <source>src/config/b/file.txt</source>
+      <outputDirectory>b</outputDirectory>
+      <destName>file.txt</destName>
+    </file>
+  </files>
+  
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>file.txt</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>

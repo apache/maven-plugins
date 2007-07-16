@@ -1,0 +1,14 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler</role>
+      <role-hint>file.txt</role-hint>
+      <implementation>org.apache.maven.plugin.assembly.filter.SimpleAggregatingDescriptorHandler</implementation>
+      <configuration>
+        <filePattern>.*file.txt</filePattern>
+        <outputPath>file.txt</outputPath>
+        <commentChars>#</commentChars>
+      </configuration>
+    </component>
+  </components>
+</component-set>
