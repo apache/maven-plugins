@@ -31,6 +31,8 @@ public class PrefixingProxyArchiver
 
     private FileSelector[] selectors;
 
+    private ThreadLocal inPublicApi = new ThreadLocal();
+
     public PrefixingProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
                                    List extraSelectors, List extraFinalizers )
     {
@@ -87,105 +89,169 @@ public class PrefixingProxyArchiver
     public void addArchivedFileSet( File archiveFile, String prefix, String[] includes, String[] excludes )
         throws ArchiverException
     {
-        DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
-        fs.setArchive( archiveFile );
-        fs.setIncludes( includes );
-        fs.setExcludes( excludes );
-        fs.setPrefix( rootPrefix + prefix );
-        fs.setFileSelectors( selectors );
+            fs.setArchive( archiveFile );
+            fs.setIncludes( includes );
+            fs.setExcludes( excludes );
+            fs.setPrefix( rootPrefix + prefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addArchivedFileSet( fs );
+            delegate.addArchivedFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addArchivedFileSet( File archiveFile, String prefix )
         throws ArchiverException
     {
-        DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
-        fs.setArchive( archiveFile );
-        fs.setPrefix( rootPrefix + prefix );
-        fs.setFileSelectors( selectors );
+            fs.setArchive( archiveFile );
+            fs.setPrefix( rootPrefix + prefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addArchivedFileSet( fs );
+            delegate.addArchivedFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addArchivedFileSet( File archiveFile, String[] includes, String[] excludes )
         throws ArchiverException
     {
-        DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
-        fs.setArchive( archiveFile );
-        fs.setIncludes( includes );
-        fs.setExcludes( excludes );
-        fs.setPrefix( rootPrefix );
-        fs.setFileSelectors( selectors );
+            fs.setArchive( archiveFile );
+            fs.setIncludes( includes );
+            fs.setExcludes( excludes );
+            fs.setPrefix( rootPrefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addArchivedFileSet( fs );
+            delegate.addArchivedFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addArchivedFileSet( File archiveFile )
         throws ArchiverException
     {
-        DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
 
-        fs.setArchive( archiveFile );
-        fs.setPrefix( rootPrefix );
-        fs.setFileSelectors( selectors );
+            fs.setArchive( archiveFile );
+            fs.setPrefix( rootPrefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addArchivedFileSet( fs );
+            delegate.addArchivedFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addDirectory( File directory, String prefix, String[] includes, String[] excludes )
         throws ArchiverException
     {
-        DefaultFileSet fs = new DefaultFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultFileSet fs = new DefaultFileSet();
 
-        fs.setDirectory( directory );
-        fs.setIncludes( includes );
-        fs.setExcludes( excludes );
-        fs.setPrefix( rootPrefix + prefix );
-        fs.setFileSelectors( selectors );
+            fs.setDirectory( directory );
+            fs.setIncludes( includes );
+            fs.setExcludes( excludes );
+            fs.setPrefix( rootPrefix + prefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addFileSet( fs );
+            delegate.addFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addDirectory( File directory, String prefix )
         throws ArchiverException
     {
-        DefaultFileSet fs = new DefaultFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultFileSet fs = new DefaultFileSet();
 
-        fs.setDirectory( directory );
-        fs.setPrefix( rootPrefix + prefix );
-        fs.setFileSelectors( selectors );
+            fs.setDirectory( directory );
+            fs.setPrefix( rootPrefix + prefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addFileSet( fs );
+            delegate.addFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addDirectory( File directory, String[] includes, String[] excludes )
         throws ArchiverException
     {
-        DefaultFileSet fs = new DefaultFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultFileSet fs = new DefaultFileSet();
 
-        fs.setDirectory( directory );
-        fs.setIncludes( includes );
-        fs.setExcludes( excludes );
-        fs.setPrefix( rootPrefix );
-        fs.setFileSelectors( selectors );
+            fs.setDirectory( directory );
+            fs.setIncludes( includes );
+            fs.setExcludes( excludes );
+            fs.setPrefix( rootPrefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addFileSet( fs );
+            delegate.addFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addDirectory( File directory )
         throws ArchiverException
     {
-        DefaultFileSet fs = new DefaultFileSet();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            DefaultFileSet fs = new DefaultFileSet();
 
-        fs.setDirectory( directory );
-        fs.setPrefix( rootPrefix );
-        fs.setFileSelectors( selectors );
+            fs.setDirectory( directory );
+            fs.setPrefix( rootPrefix );
+            fs.setFileSelectors( selectors );
 
-        delegate.addFileSet( fs );
+            delegate.addFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addFile( File inputFile, String destFileName, int permissions )
@@ -193,7 +259,17 @@ public class PrefixingProxyArchiver
     {
         if ( acceptFile( inputFile ) )
         {
-            delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
+            System.out.println( "File: " + inputFile + " was accepted by selectors." );
+
+            inPublicApi.set( Boolean.TRUE );
+            try
+            {
+                delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
+            }
+            finally
+            {
+                inPublicApi.set( null );
+            }
         }
     }
 
@@ -202,113 +278,255 @@ public class PrefixingProxyArchiver
     {
         if ( acceptFile( inputFile ) )
         {
-            delegate.addFile( inputFile, rootPrefix + destFileName );
+            System.out.println( "File: " + inputFile + " was accepted by selectors." );
+
+            inPublicApi.set( Boolean.TRUE );
+            try
+            {
+                delegate.addFile( inputFile, rootPrefix + destFileName );
+            }
+            finally
+            {
+                inPublicApi.set( null );
+            }
         }
     }
 
     public void createArchive()
         throws ArchiverException, IOException
     {
-        delegate.createArchive();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.createArchive();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public int getDefaultDirectoryMode()
     {
-        return delegate.getDefaultDirectoryMode();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.getDefaultDirectoryMode();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public int getDefaultFileMode()
     {
-        return delegate.getDefaultFileMode();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.getDefaultFileMode();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public File getDestFile()
     {
-        return delegate.getDestFile();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.getDestFile();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public Map getFiles()
     {
-        return delegate.getFiles();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.getFiles();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public boolean getIncludeEmptyDirs()
     {
-        return delegate.getIncludeEmptyDirs();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.getIncludeEmptyDirs();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public boolean isForced()
     {
-        return delegate.isForced();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.isForced();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public boolean isSupportingForced()
     {
-        return delegate.isSupportingForced();
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            return delegate.isSupportingForced();
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setDefaultDirectoryMode( int mode )
     {
-        delegate.setDefaultDirectoryMode( mode );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setDefaultDirectoryMode( mode );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setDefaultFileMode( int mode )
     {
-        delegate.setDefaultFileMode( mode );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setDefaultFileMode( mode );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setDestFile( File destFile )
     {
-        delegate.setDestFile( destFile );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setDestFile( destFile );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setForced( boolean forced )
     {
-        delegate.setForced( forced );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setForced( forced );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setIncludeEmptyDirs( boolean includeEmptyDirs )
     {
-        delegate.setIncludeEmptyDirs( includeEmptyDirs );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setIncludeEmptyDirs( includeEmptyDirs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void setDotFileDirectory( File dotFileDirectory )
     {
-        throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            throw new UnsupportedOperationException(
+                                                     "Undocumented feature of plexus-archiver; this is not yet supported." );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addArchivedFileSet( ArchivedFileSet fileSet )
         throws ArchiverException
     {
-        delegate.addArchivedFileSet( new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors ) );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.addArchivedFileSet( new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors ) );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addFileSet( FileSet fileSet )
         throws ArchiverException
     {
-        delegate.addFileSet( new PrefixedFileSet( fileSet, rootPrefix, selectors ) );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.addFileSet( new PrefixedFileSet( fileSet, rootPrefix, selectors ) );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     private boolean acceptFile( File inputFile )
         throws ArchiverException
     {
-        if ( selectors != null )
+        if ( Boolean.TRUE != inPublicApi.get() )
         {
-            FileInfo fileInfo = new DefaultFileInfo( inputFile );
-
-            for ( int i = 0; i < selectors.length; i++ )
+            if ( selectors != null )
             {
-                try
+                FileInfo fileInfo = new DefaultFileInfo( inputFile );
+
+                for ( int i = 0; i < selectors.length; i++ )
                 {
-                    if ( !selectors[i].isSelected( fileInfo ) )
+                    try
                     {
-                        return false;
+                        if ( !selectors[i].isSelected( fileInfo ) )
+                        {
+                            return false;
+                        }
                     }
-                }
-                catch ( IOException e )
-                {
-                    throw new ArchiverException( "Error processing file: " + inputFile + " using selector: "
-                                                 + selectors[i], e );
+                    catch ( IOException e )
+                    {
+                        throw new ArchiverException( "Error processing file: " + inputFile + " using selector: "
+                                                     + selectors[i], e );
+                    }
                 }
             }
         }
