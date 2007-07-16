@@ -599,7 +599,7 @@ public class IdeaModuleMojo
 
     private Element createOrGetElement( Element lib, String name )
     {
-        Element el = lib.element( "name" );
+        Element el = lib.element( name );
 
         if ( el == null )
         {
