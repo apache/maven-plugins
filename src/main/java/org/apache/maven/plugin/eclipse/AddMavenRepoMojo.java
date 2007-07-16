@@ -24,7 +24,7 @@ import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.eclipse.writers.workspace.WorkspaceConfiguration;
 
 /**
- * Adds the classpath variable MAVEN_REPO to Eclipse.
+ * Adds the classpath variable M2_REPO to Eclipse.
  * 
  * @goal add-maven-repo
  * @requiresProject false
