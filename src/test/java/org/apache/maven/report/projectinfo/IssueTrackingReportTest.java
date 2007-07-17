@@ -71,7 +71,7 @@ public class IssueTrackingReportTest
         WebLink[] weblinks = response.getLinks();
         assertEquals( weblinks.length, 3 );
 
-        assertEquals( weblinks[1].getText(), "Jira" );
+        assertEquals( weblinks[1].getText(), "JIRA" );
 
         assertEquals( weblinks[2].getText(), "http://localhost/jira" );
 
