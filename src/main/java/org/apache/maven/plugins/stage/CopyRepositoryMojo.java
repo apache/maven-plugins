@@ -40,8 +40,8 @@ public class CopyRepositoryMojo
     /** @parameter expression="${target}" */
     private String target;
 
-    /** @parameter expression="${repositoryId}" */
-    private String repositoryId = "target";
+    /** @parameter expression="${repositoryId}" default-value="target" */
+    private String repositoryId;
 
     /**
      * @parameter expression="${version}"
@@ -58,6 +58,7 @@ public class CopyRepositoryMojo
         try
         {
             Repository targetRepository = new Repository( repositoryId, target );
+
             copier.copy( source, targetRepository, version );
         }
         catch ( IOException e )
