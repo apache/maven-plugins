@@ -316,40 +316,67 @@
       </p>
     </section>
 
-    <section name="Instructions for translators">
-      <p>
-        If your language is not currently supported and you want to contribute a translation, follow
-        these steps:
-        <ol>
-          <li>
-            Download one of the text files linked above as the base for your translation. For
-            instance, the English file.
-          </li>
-          <li>
-            Rename the file with the wanted locale. For example, site-plugin_de.properties for a new
-            German translation for the Maven-site-plugin.
-          </li>
-          <li>
-            Translate the file contents using your preferred text editor.
-            <b>Make sure you save the file with UTF-8 encoding</b>
-            .
-          </li>
-          <li>
-            To test the translation, checkout the site plugin, include your file in
-            <code>src/main/resources</code>
-            , and run
-            <code>mvn install</code>
-            on the plugin, then
-            <code>mvn site</code>
-            on a project to test it.
-          </li>
-          <li>
-            When happy with it, create a new issue in
-            <a href="http://jira.codehaus.org/browse/MSITE">JIRA</a>
-            and attach your file there.
-          </li>
-        </ol>
-      </p>
+    <section name="Unsupported languages - Patches welcome!">
+      <section name="Prerequisites">
+        <p>
+          Please refer to
+          <a target="_blank" href="http://java.sun.com/j2se/corejava/intl/index.jsp">
+            Java Internationalization home page</a>.
+        </p>
+        <p>
+          You could find here some useful tools to help you with charset questions:
+          <ul>
+            <li>
+              <b>Tools to know the charset of a file</b>: Unix <i>file</i> command,
+              <a href="http://cpdetector.sourceforge.net/">cpdetector</a>,
+              <a href="http://plugins.intellij.net/plugin/?id=24">Intellij ShowEncodingPlugin</a>...
+            </li>
+            <li>
+              <b>Tools to write a file in a given charset like UTF-8</b>: any editor like Notepad,
+              Eclipse, Intellij...
+            </li>
+            <li>
+              <b>Tools to convert a file from one encoding to another encoding</b>:
+              Unix <i>iconv</i> command.
+            </li>
+          </ul>
+        </p>
+        <p>
+          You could also refer to this Sun FAQ:
+          <a href="http://developers.sun.com/global/technology/standards/reference/faqs/determining-file-encoding.html">
+            How Can I Determine the Encoding of a File?</a>.
+        </p>
+      </section>
+      <section name="Instructions for translators">
+        <p>
+          If your language is not currently supported and you want to contribute a translation,
+          follow these steps:
+          <ol>
+            <li>
+              Download one of the text files linked above as the base for your translation. For
+              instance, the English file.
+            </li>
+            <li>
+              Rename the file with the wanted locale. For example, site-plugin_de.properties for a
+              new German translation for the Maven-site-plugin.
+            </li>
+            <li>
+              Translate the file contents using your preferred text editor.
+              <b>Make sure you save the file with UTF-8 encoding</b>.
+            </li>
+            <li>
+              To test the translation, checkout the site plugin, include your file in
+              <code>src/main/resources</code>, and run <code>mvn install</code>
+              on the plugin, then <code>mvn site</code> on a project to test it.
+            </li>
+            <li>
+              When happy with it, create a new issue in
+              <a href="http://jira.codehaus.org/browse/MSITE">JIRA</a>
+              and attach your file there.
+            </li>
+          </ol>
+        </p>
+      </section>
     </section>
   </body>
 </document>
