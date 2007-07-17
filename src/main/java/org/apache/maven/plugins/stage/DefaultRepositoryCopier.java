@@ -19,6 +19,28 @@ package org.apache.maven.plugins.stage;
  * under the License.
  */
 
+import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
+import org.apache.maven.wagon.ConnectionException;
+import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.apache.maven.wagon.TransferFailedException;
+import org.apache.maven.wagon.UnsupportedProtocolException;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.WagonException;
+import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authorization.AuthorizationException;
+import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
+import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,32 +62,12 @@ import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.metadata.Metadata;
-import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
-import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
-import org.apache.maven.wagon.ConnectionException;
-import org.apache.maven.wagon.ResourceDoesNotExistException;
-import org.apache.maven.wagon.TransferFailedException;
-import org.apache.maven.wagon.UnsupportedProtocolException;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.WagonException;
-import org.apache.maven.wagon.authentication.AuthenticationException;
-import org.apache.maven.wagon.authorization.AuthorizationException;
-import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
-import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 /**
  * @author Jason van Zyl
  * @plexus.component
  */
 public class DefaultRepositoryCopier
-    implements RepositoryCopier
+    implements LogEnabled, RepositoryCopier
 {
     private MetadataXpp3Reader reader = new MetadataXpp3Reader();
 
@@ -74,6 +76,8 @@ public class DefaultRepositoryCopier
     /** @plexus.requirement */
     private WagonManager wagonManager;
 
+    private Logger logger;
+
     /**
      * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies
      */
@@ -81,6 +85,7 @@ public class DefaultRepositoryCopier
         throws WagonException, IOException
     {
         Repository targetRepository = new Repository( "target", targetRepositoryUrl );
+
         copy( sourceRepositoryUrl, targetRepository, version );
     }
 
@@ -92,6 +97,8 @@ public class DefaultRepositoryCopier
         String fileName = groupId + "-" + version + ".zip";
 
         String tempdir = System.getProperty( "java.io.tmpdir" );
+
+        logger.debug( "Writing all output to " + tempdir );
 
         // Create the renameScript script
 
@@ -496,5 +503,10 @@ public class DefaultRepositoryCopier
         {
             throw new RuntimeException( e );
         }
+    }
+
+    public void enableLogging( Logger logger )
+    {
+        this.logger = logger;
     }
 }
