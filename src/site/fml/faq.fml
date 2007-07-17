@@ -86,6 +86,20 @@ under the License.
           correct, then you are not getting the data you expected from your SCM
           system. Please check your changelog plugin configuration.
         </p>
+        <p>
+          If that doesn't help, you can try to run the maven-scm-plugin from
+          the command line. The maven-changelog-plugin uses Maven SCM under the
+          hood and running the maven-scm-plugin is a great way of verifying
+          that the <code>&lt;scm&gt;</code> element in your
+          <code>pom.xml</code> file is correct. Try this on the command line:
+<source>
+mvn scm:changelog
+</source>
+          It should show you the latest changes made in your SCM. It uses the
+          default settings, but you can change these by specifying parameters
+          on the command line. Read more about this in
+          <a href="http://maven.apache.org/scm/plugins/examples/scm-advance-features.html">the scm-plugin documentation</a>.
+        </p>
       </answer>
     </faq>
     <faq id="Where can I find a working configuration for this plugin">
