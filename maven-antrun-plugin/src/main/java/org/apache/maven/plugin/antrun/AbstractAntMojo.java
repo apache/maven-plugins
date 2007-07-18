@@ -48,6 +48,15 @@ public abstract class AbstractAntMojo
     extends AbstractMojo
 {
     /**
+     * @deprecated use {@link AbstractAntMojo#executeTasks(Target,MavenProject,List)}.
+     */
+    protected void executeTasks( Target antTasks, MavenProject mavenProject )
+        throws MojoExecutionException
+    {
+        executeTasks( antTasks, mavenProject, null );
+    }
+
+    /**
      * @param antTasks
      * @param mavenProject
      * @throws MojoExecutionException
