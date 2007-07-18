@@ -90,7 +90,6 @@ under the License.
   </distributionManagement>
   <modules>
     <module>maven-ant-plugin</module>
-    <module>maven-antlr-plugin</module>
     <module>maven-antrun-plugin</module>
     <module>maven-assembly-plugin</module>
     <module>maven-changelog-plugin</module>
