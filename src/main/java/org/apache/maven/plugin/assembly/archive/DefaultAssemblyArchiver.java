@@ -11,6 +11,8 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
@@ -21,9 +23,11 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.collections.ActiveCollectionManager;
-import org.codehaus.plexus.collections.ActiveMap;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +41,7 @@ import java.util.List;
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
-    implements AssemblyArchiver
+    implements AssemblyArchiver, Contextualizable
 {
 
     /**
@@ -50,10 +54,12 @@ public class DefaultAssemblyArchiver
      */
     private List assemblyPhases;
 
-    /**
-     * @plexus.requirement
-     */
-    private ActiveCollectionManager collectionManager;
+//    /**
+//     * @plexus.requirement
+//     */
+//    private ActiveCollectionManager collectionManager;
+
+    private PlexusContainer container;
 
     public DefaultAssemblyArchiver()
     {
@@ -64,7 +70,7 @@ public class DefaultAssemblyArchiver
     public DefaultAssemblyArchiver( ArchiverManager archiverManager, ActiveCollectionManager collectionManager, List assemblyPhases )
     {
         this.archiverManager = archiverManager;
-        this.collectionManager = collectionManager;
+//        this.collectionManager = collectionManager;
         this.assemblyPhases = assemblyPhases;
     }
 
@@ -138,7 +144,7 @@ public class DefaultAssemblyArchiver
 
         if ( ( containerDescriptorHandlers != null ) && !containerDescriptorHandlers.isEmpty() )
         {
-            ActiveMap handlerMap = collectionManager.getActiveMap( ContainerDescriptorHandler.class );
+//            ActiveMap handlerMap = collectionManager.getActiveMap( ContainerDescriptorHandler.class );
 
             for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
             {
@@ -149,12 +155,16 @@ public class DefaultAssemblyArchiver
 
                 try
                 {
-                    handler = (ContainerDescriptorHandler) handlerMap.checkedGet( hint );
+                    handler = (ContainerDescriptorHandler) container.lookup( ContainerDescriptorHandler.class.getName(), hint );
+//                    handler = (ContainerDescriptorHandler) handlerMap.checkedGet( hint );
                 }
                 catch ( ComponentLookupException e )
                 {
+                    getLogger().debug( "Failed to load container descriptor handler: " + hint, e );
                     throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
                 }
+
+                System.out.println( "Loaded container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
 
                 handlers.add( handler );
 
@@ -275,6 +285,12 @@ public class DefaultAssemblyArchiver
         tarArchiver.setLongfile( tarFileMode );
 
         return tarArchiver;
+    }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
