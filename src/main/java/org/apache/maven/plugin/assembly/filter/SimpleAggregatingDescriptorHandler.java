@@ -122,7 +122,6 @@ public class SimpleAggregatingDescriptorHandler
     public boolean isSelected( FileInfo fileInfo )
         throws IOException
     {
-        System.out.println( "\n\nChecking isSelected(..) for file with name: " + fileInfo.getName() + "\nin: " + getClass().getName() + "\n\n" );
         if ( overrideFilterAction )
         {
             System.out.println( "Filtering overridden. Returning true." );
@@ -133,14 +132,12 @@ public class SimpleAggregatingDescriptorHandler
 
         if ( fileInfo.isFile() && name.matches( filePattern ) )
         {
-            System.out.println( "File is filtered. Processing, and returning false to suppress original file's inclusion." );
             readProperties( fileInfo );
             filenames.add( name );
 
             return false;
         }
 
-        System.out.println( "File does not match filter pattern. Return true to allow its inclusion as-is." );
         return true;
     }
 

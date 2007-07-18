@@ -511,9 +511,11 @@ public class PrefixingProxyArchiver
 
                 for ( int i = 0; i < selectors.length; i++ )
                 {
+                    FileSelector selector = selectors[i];
+
                     try
                     {
-                        if ( !selectors[i].isSelected( fileInfo ) )
+                        if ( !selector.isSelected( fileInfo ) )
                         {
                             return false;
                         }
