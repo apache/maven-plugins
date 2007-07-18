@@ -17,6 +17,7 @@ package org.apache.maven.plugin.antrun;
  */
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -51,6 +52,15 @@ public class AntRunMojo
     private MavenProject project;
 
     /**
+     * The plugin dependencies.
+     *
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    private List pluginArtifacts;
+
+    /**
      * The XML for the Ant task. You can add anything you can add
      * between &lt;target&gt; and &lt;/target&gt; in a build.xml.
      *
@@ -82,7 +92,7 @@ public class AntRunMojo
     public void execute()
         throws MojoExecutionException
     {
-        executeTasks( tasks, project );
+        executeTasks( tasks, project, pluginArtifacts );
 
         if ( sourceRoot != null )
         {
