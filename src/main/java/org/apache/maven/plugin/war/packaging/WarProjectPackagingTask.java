@@ -13,6 +13,7 @@ import java.io.IOException;
  * <ul
  * <li>The list of web resources, if any</li>
  * <li>The content of the webapp directory if it exists</li>
+ * <li>The content of the classes directory if it exists</li>
  * <li>The dependencies of the project</li>
  * </ul>
  *
@@ -43,6 +44,8 @@ public class WarProjectPackagingTask
         handleWebResources( context );
 
         handeWebAppSourceDirectory( context );
+
+        handleClassesDirectory( context );
 
         handleArtifacts( context );
     }
@@ -114,12 +117,25 @@ public class WarProjectPackagingTask
      * Handles the webapp artifacts.
      *
      * @param context the packaging context
-     * @throws MojoExecutionException if the artifacts could not be copied
+     * @throws MojoExecutionException if the artifacts could not be packaged
      */
     protected void handleArtifacts( WarPackagingContext context )
         throws MojoExecutionException
     {
         ArtifactsPackagingTask task = new ArtifactsPackagingTask( context.getProject().getArtifacts() );
+        task.performPackaging( context );
+    }
+
+    /**
+     * Handles the webapp classes.
+     *
+     * @param context the packaging context
+     * @throws MojoExecutionException if the classes could not be packaged
+     */
+    protected void handleClassesDirectory( WarPackagingContext context )
+        throws MojoExecutionException
+    {
+        ClassesPackagingTask task = new ClassesPackagingTask();
         task.performPackaging( context );
     }
 
@@ -137,7 +153,7 @@ public class WarProjectPackagingTask
     {
         if ( !context.getWebAppDirectory().exists() )
         {
-            context.getLogger().warn( "Not copyuing webapp webResources[" + resource.getDirectory() +
+            context.getLogger().warn( "Not copying webapp webResources[" + resource.getDirectory() +
                 "]: webapp directory[" + context.getWebAppDirectory().getAbsolutePath() + "] does not exist!" );
         }
 

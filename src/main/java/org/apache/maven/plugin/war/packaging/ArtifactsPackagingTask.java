@@ -19,8 +19,6 @@ public class ArtifactsPackagingTask
     extends AbstractWarPackagingTask
 {
 
-    public static final String LIB_PATH = "WEB-INF/lib";
-
     public static final String TLD_PATH = "WEB-INF/tld";
 
     public static final String SERVICES_PATH = "WEB-INF/services";

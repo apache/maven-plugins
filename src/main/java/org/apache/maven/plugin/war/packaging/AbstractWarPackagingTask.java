@@ -50,6 +50,10 @@ public abstract class AbstractWarPackagingTask
 {
     public static final String[] DEFAULT_INCLUDES = {"**/**"};
 
+    public static final String CLASSES_PATH = "WEB-INF/classes";
+
+    public static final String LIB_PATH = "WEB-INF/lib";
+
     /**
      * Copies the files if possible.
      * <p/>

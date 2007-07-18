@@ -19,9 +19,11 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.logging.Logger;
 
@@ -73,6 +75,21 @@ public interface WarPackagingContext
     String[] getWebAppSourceExcludes();
 
     /**
+     * Returns the directory holding generated classes.
+     *
+     * @return the classes directory
+     */
+    File getClassesDirectory();
+
+    /**
+     * Specify whether the classes resources should be archived in
+     * the <tt>WEB-INF/lib</tt> of the generated web app.
+     *
+     * @return true if the classes should be archived, false otherwise
+     */
+    boolean archiveClasses();
+
+    /**
      * Returns the logger to use to output logging event.
      *
      * @return the logger
@@ -92,6 +109,21 @@ public interface WarPackagingContext
      * @return the archiver manager
      */
     ArchiverManager getArchiverManager();
+
+    /**
+     * The maven archive configuration to use.
+     *
+     * @return the maven archive configuration
+     */
+    MavenArchiveConfiguration getArchive();
+
+    /**
+     * Returns the Jar archiver needed for archiving classes directory into
+     * jar file under WEB-INF/lib.
+     *
+     * @return the jar archiver to user
+     */
+    JarArchiver getJarArchiver();
 
     /**
      * Returns the list of files that have already been copied during the
