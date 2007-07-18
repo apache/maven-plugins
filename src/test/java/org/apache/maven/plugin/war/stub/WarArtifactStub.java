@@ -29,6 +29,7 @@ public class WarArtifactStub
 {
 
     private String groupId;
+
     private String artifactId;
 
     private File file;
@@ -63,7 +64,14 @@ public class WarArtifactStub
 
     public String getGroupId()
     {
-        return groupId;
+        if ( groupId == null )
+        {
+            return "wartests";
+        }
+        else
+        {
+            return groupId;
+        }
     }
 
     public void setGroupId( String groupId )

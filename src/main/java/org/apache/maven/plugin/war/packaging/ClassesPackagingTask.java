@@ -26,7 +26,11 @@ public class ClassesPackagingTask
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
-        final File webappClassesDirectory = new File( context.getWebAppDirectory(), CLASSES_PATH );
+        final File webappClassesDirectory = new File( context.getWebappDirectory(), CLASSES_PATH );
+        if ( !webappClassesDirectory.exists() )
+        {
+            webappClassesDirectory.mkdirs();
+        }
 
         if ( context.getClassesDirectory().exists() && !context.getClassesDirectory().equals( webappClassesDirectory ) )
         {
@@ -39,7 +43,7 @@ public class ClassesPackagingTask
                 final PathSet sources = getFilesToIncludes( context.getClassesDirectory(), null, null );
                 try
                 {
-                    copyFiles( context, webappClassesDirectory, sources );
+                    copyFiles( context, context.getClassesDirectory(), sources, CLASSES_PATH );
                 }
                 catch ( IOException e )
                 {
@@ -55,17 +59,17 @@ public class ClassesPackagingTask
     {
         //TODO use ArtifactFactory and resolve the final name the usual way instead
         final String archiveName = context.getProject().getBuild().getFinalName() + ".jar";
-        final String targetFilename = LIB_PATH + File.separator + archiveName;
+        final String targetFilename = LIB_PATH + archiveName;
 
         // TODO: this is bit hackish here ; check if the specified path is registered
         if ( context.getProtectedFiles().contains( targetFilename ) )
         {
-            context.getLogger().warn(
+            context.getLog().warn(
                 "Could not generate archive classes file[" + targetFilename + "] has already been copied." );
         }
         else
         {
-            final File libDirectory = new File( context.getWebAppDirectory(), LIB_PATH );
+            final File libDirectory = new File( context.getWebappDirectory(), LIB_PATH );
             final File jarFile = new File( libDirectory, archiveName );
 
             try
@@ -73,8 +77,8 @@ public class ClassesPackagingTask
                 final MavenArchiver archiver = new MavenArchiver();
                 archiver.setArchiver( context.getJarArchiver() );
                 archiver.setOutputFile( jarFile );
-                archiver.getArchiver().addDirectory( context.getClassesDirectory(), context.getWebAppSourceIncludes(),
-                                                     context.getWebAppSourceExcludes() );
+                archiver.getArchiver().addDirectory( context.getClassesDirectory(), context.getWebappSourceIncludes(),
+                                                     context.getWebappSourceExcludes() );
                 archiver.createArchive( context.getProject(), context.getArchive() );
             }
             catch ( ArchiverException e )

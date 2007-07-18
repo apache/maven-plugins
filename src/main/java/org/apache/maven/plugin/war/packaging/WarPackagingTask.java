@@ -20,6 +20,7 @@ package org.apache.maven.plugin.war.packaging;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * The base packaging task.
@@ -37,8 +38,10 @@ public interface WarPackagingTask
      *
      * @param context the packaging context
      * @throws MojoExecutionException if an error occured
+     * @throws MojoFailureException   if the project configuration is invalid
      */
-    void performPackaging(WarPackagingContext context) throws MojoExecutionException;
+    void performPackaging( WarPackagingContext context )
+        throws MojoExecutionException, MojoFailureException;
 
 
 }

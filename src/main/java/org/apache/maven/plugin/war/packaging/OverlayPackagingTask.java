@@ -22,6 +22,7 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,13 +57,13 @@ public class OverlayPackagingTask
     {
         if ( overlay.shouldSkip() )
         {
-            context.getLogger().info( "Skipping overlay[" + overlay + "]" );
+            context.getLog().info( "Skipping overlay[" + overlay + "]" );
         }
         else
         {
             try
             {
-                context.getLogger().info( "Processing overlay[" + overlay + "]" );
+                context.getLog().info( "Processing overlay[" + overlay + "]" );
 
                 // Step1: Extract if necessary
                 final File tmpDir = unpackOverlay( context, overlay );
@@ -97,14 +98,15 @@ public class OverlayPackagingTask
         final File tmpDir = getOverlayTempDirectory( context, overlay );
 
         // TODO: not sure it's good, we should reuse the markers of the dependency plugin
-        if ( overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
+        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0 ||
+            overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
         {
-            context.getLogger().info( "Unpacking overlay[" + overlay + "]" );
+            context.getLog().info( "Unpacking overlay[" + overlay + "]" );
             doUnpack( context, overlay.getArtifact().getFile(), tmpDir );
         }
         else
         {
-            context.getLogger().debug( "Overlay[" + overlay + "] was already unpacked" );
+            context.getLog().debug( "Overlay[" + overlay + "] was already unpacked" );
         }
         return tmpDir;
     }
@@ -126,7 +128,7 @@ public class OverlayPackagingTask
         final File result = new File( groupIdDir, overlay.getArtifactId() );
         if ( !result.exists() )
         {
-            result.mkdir();
+            result.mkdirs();
         }
         return result;
     }

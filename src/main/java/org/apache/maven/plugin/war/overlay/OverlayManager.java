@@ -49,8 +49,9 @@ public class OverlayManager
      * manager so a new list is created based on the overlays.
      *
      * @param overlays the overlays
-     * @param project the maven project
-     * @throws InvalidOverlayConfigurationException if the config is invalid
+     * @param project  the maven project
+     * @throws InvalidOverlayConfigurationException
+     *          if the config is invalid
      */
     public OverlayManager( List overlays, MavenProject project )
         throws InvalidOverlayConfigurationException

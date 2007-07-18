@@ -50,12 +50,57 @@ public abstract class AbstractWarPackagingTask
 {
     public static final String[] DEFAULT_INCLUDES = {"**/**"};
 
-    public static final String CLASSES_PATH = "WEB-INF/classes";
+    public static final String WEB_INF_PATH = "WEB-INF";
 
-    public static final String LIB_PATH = "WEB-INF/lib";
+    public static final String META_INF_PATH = "META-INF";
+
+    public static final String CLASSES_PATH = "WEB-INF/classes/";
+
+    public static final String LIB_PATH = "WEB-INF/lib/";
 
     /**
-     * Copies the files if possible.
+     * Copies the files if possible with an optional target prefix.
+     * <p/>
+     * Copy uses a first-win strategy: files that have already been copied by previous
+     * tasks are ignored. This method makes sure to update the list of protected files
+     * which gives the list of files that have already been copied.
+     * <p/>
+     * If the structure of the source directory is not the same as the root of the
+     * webapp, use the <tt>targetPrefix</tt> parameter to specify in which particular
+     * directory the files should be copied. Use <tt>null</tt> to copy the files with
+     * the same structure
+     *
+     * @param context        the context to use
+     * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
+     * @param sourceFilesSet the files to be copied
+     * @param targetPrefix   the prefix to add to the target file name
+     * @throws IOException if an error occured while copying the files
+     */
+    protected void copyFiles( WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
+                              String targetPrefix )
+        throws IOException
+    {
+        for ( Iterator iter = sourceFilesSet.iterator(); iter.hasNext(); )
+        {
+            final String fileToCopyName = (String) iter.next();
+            final File sourceFile = new File( sourceBaseDir, fileToCopyName );
+
+            String destinationFileName;
+            if ( targetPrefix == null )
+            {
+                destinationFileName = fileToCopyName;
+            }
+            else
+            {
+                destinationFileName = targetPrefix + fileToCopyName;
+            }
+
+            copyFile( context, sourceFile, destinationFileName );
+        }
+    }
+
+    /**
+     * Copies the files if possible as is.
      * <p/>
      * Copy uses a first-win strategy: files that have already been copied by previous
      * tasks are ignored. This method makes sure to update the list of protected files
@@ -69,12 +114,7 @@ public abstract class AbstractWarPackagingTask
     protected void copyFiles( WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet )
         throws IOException
     {
-        for ( Iterator iter = sourceFilesSet.iterator(); iter.hasNext(); )
-        {
-            final String fileToCopyName = (String) iter.next();
-            final File sourceFile = new File( sourceBaseDir, fileToCopyName );
-            copyFile( context, sourceFile, fileToCopyName );
-        }
+        copyFiles( context, sourceBaseDir, sourceFilesSet, null );
     }
 
     /**
@@ -94,18 +134,17 @@ public abstract class AbstractWarPackagingTask
     {
         if ( !context.getProtectedFiles().contains( targetFilename ) )
         {
-            File targetFile = new File( context.getWebAppDirectory(), targetFilename );
+            File targetFile = new File( context.getWebappDirectory(), targetFilename );
             copyFile( file, targetFile );
 
             // Add the file to the protected list
             context.getProtectedFiles().add( targetFilename );
-            context.getLogger().debug( " + " + targetFilename + " has been copied." );
+            context.getLog().debug( " + " + targetFilename + " has been copied." );
             return true;
         }
         else
         {
-            context.getLogger().debug(
-                " - " + targetFilename + " wasn't copied because it has already been packaged." );
+            context.getLog().debug( " - " + targetFilename + " wasn't copied because it has already been packaged." );
             return false;
         }
     }
@@ -130,7 +169,7 @@ public abstract class AbstractWarPackagingTask
 
         if ( !context.getProtectedFiles().contains( targetFilename ) )
         {
-            final File targetFile = new File( context.getWebAppDirectory(), targetFilename );
+            final File targetFile = new File( context.getWebappDirectory(), targetFilename );
             // buffer so it isn't reading a byte at a time!
             Reader fileReader = null;
             Writer fileWriter = null;
@@ -158,13 +197,12 @@ public abstract class AbstractWarPackagingTask
             }
             // Add the file to the protected list
             context.getProtectedFiles().add( targetFilename );
-            context.getLogger().debug( " + " + targetFilename + " has been copied." );
+            context.getLog().debug( " + " + targetFilename + " has been copied." );
             return true;
         }
         else
         {
-            context.getLogger().debug(
-                " - " + targetFilename + " wasn't copied because it has already been packaged." );
+            context.getLog().debug( " - " + targetFilename + " wasn't copied because it has already been packaged." );
             return false;
         }
     }
@@ -203,7 +241,7 @@ public abstract class AbstractWarPackagingTask
         }
         catch ( NoSuchArchiverException e )
         {
-            context.getLogger().warn( "Skip unpacking dependency file[" + file.getAbsolutePath() +
+            context.getLog().warn( "Skip unpacking dependency file[" + file.getAbsolutePath() +
                 " with unknown extension[" + archiveExt + "]" );
         }
     }
@@ -227,6 +265,35 @@ public abstract class AbstractWarPackagingTask
         FileUtils.copyFile( source.getCanonicalFile(), destination );
         // preserve timestamp
         destination.setLastModified( source.lastModified() );
+    }
+
+
+    /**
+     * Copy file from source to destination only if source timestamp is later than the destination timestamp.
+     * The directories up to <code>destination</code> will be created if they don't already exist.
+     * <code>destination</code> will be overwritten if it already exists.
+     *
+     * @param source      An existing non-directory <code>File</code> to copy bytes from.
+     * @param destination A non-directory <code>File</code> to write bytes to (possibly
+     *                    overwriting).
+     * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot be
+     *                                       written to, or an IO error occurs during copying.
+     * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
+     *                                       <p/>
+     *                                       TO DO: Remove this method when Maven moves to plexus-util version 1.4
+     *                                       TODO: WARNING this needs to be refactored once the protected list system is up to date
+     */
+    protected void copyFileIfModified( File source, File destination )
+        throws IOException
+    {
+        // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
+        // to plexus-util 1.2.
+        if ( destination.lastModified() < source.lastModified() )
+        {
+            FileUtils.copyFile( source.getCanonicalFile(), destination );
+            // preserve timestamp
+            destination.setLastModified( source.lastModified() );
+        }
     }
 
     /**

@@ -249,10 +249,9 @@ public class WarExplodedMojoTest
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
         mojo.execute();
 
-        // validate operation
+        // validate operation - META-INF is automatically excluded so remove the file from the list
         File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
-        File expectedManifestFile = new File( webAppDirectory, "META-INF/MANIFEST.MF" );
         File expectedWEBXMLFile = new File( webAppDirectory, "WEB-INF/web.xml" );
         File expectedWARFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
 
@@ -260,13 +259,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         // check simple.war in the unit test dir under resources to verify the list of files
         assertTrue( "web xml not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
-        assertTrue( "manifest file not found: " + expectedManifestFile.toString(), expectedManifestFile.exists() );
         assertTrue( "war file not found: " + expectedWARFile.toString(), expectedWARFile.exists() );
 
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
-        expectedManifestFile.delete();
         expectedWEBXMLFile.delete();
         expectedWARFile.delete();
     }
@@ -283,7 +280,7 @@ public class WarExplodedMojoTest
 
         String testId = "testExplodedWarMergeWarLocalFileOverride";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = getWebAppSource( testId);
+        File webAppSource = getWebAppSource( testId );
         File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
         createFile( simpleJSP );
 
@@ -335,7 +332,7 @@ public class WarExplodedMojoTest
         File webAppDirectory = new File( getTestDirectory(), testId );
         FileUtils.deleteDirectory( webAppDirectory );
 
-        File webAppSource = getWebAppSource( testId);
+        File webAppSource = getWebAppSource( testId );
 
         File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
         createDir( workDirectory );
@@ -1074,8 +1071,6 @@ public class WarExplodedMojoTest
     }
 
     /* --------------------- 2.1 Overlay tests ----------------------------------- */
-
-    
 
     /*---------------------------*/
 

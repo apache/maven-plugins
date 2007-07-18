@@ -21,11 +21,11 @@ package org.apache.maven.plugin.war.packaging;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -51,28 +51,28 @@ public interface WarPackagingContext
      *
      * @return the webapp directory
      */
-    File getWebAppDirectory();
+    File getWebappDirectory();
 
     /**
      * Returns the main webapp source directory.
      *
      * @return the webapp source directory
      */
-    File getWebAppSourceDirectory();
+    File getWebappSourceDirectory();
 
     /**
      * Returns the webapp source includes.
      *
      * @return the webapp source includes
      */
-    String[] getWebAppSourceIncludes();
+    String[] getWebappSourceIncludes();
 
     /**
      * Returns the webapp source excludes.
      *
      * @return the webapp source excludes
      */
-    String[] getWebAppSourceExcludes();
+    String[] getWebappSourceExcludes();
 
     /**
      * Returns the directory holding generated classes.
@@ -94,7 +94,7 @@ public interface WarPackagingContext
      *
      * @return the logger
      */
-    Logger getLogger();
+    Log getLog();
 
     /**
      * Returns the directory to unpack dependent WARs into if needed.

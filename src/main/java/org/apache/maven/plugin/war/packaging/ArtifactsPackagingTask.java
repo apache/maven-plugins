@@ -19,9 +19,9 @@ public class ArtifactsPackagingTask
     extends AbstractWarPackagingTask
 {
 
-    public static final String TLD_PATH = "WEB-INF/tld";
+    public static final String TLD_PATH = "WEB-INF/tld/";
 
-    public static final String SERVICES_PATH = "WEB-INF/services";
+    public static final String SERVICES_PATH = "WEB-INF/services/";
 
     private final Set artifacts;
 
@@ -44,13 +44,13 @@ public class ArtifactsPackagingTask
             Artifact artifact = (Artifact) iter.next();
             String targetFileName = getArtifactFinalName( context, artifact );
 
-            context.getLogger().debug( "Processing: " + targetFileName );
+            context.getLog().debug( "Processing: " + targetFileName );
 
             if ( duplicates.contains( targetFileName ) )
             {
-                context.getLogger().debug( "Duplicate found: " + targetFileName );
+                context.getLog().debug( "Duplicate found: " + targetFileName );
                 targetFileName = artifact.getGroupId() + "-" + targetFileName;
-                context.getLogger().debug( "Renamed to: " + targetFileName );
+                context.getLog().debug( "Renamed to: " + targetFileName );
             }
 
             if ( !artifact.isOptional() && filter.include( artifact ) )
@@ -78,7 +78,7 @@ public class ArtifactsPackagingTask
                     }
                     else
                     {
-                        context.getLogger().debug(
+                        context.getLog().debug(
                             "Artifact of type[" + type + "] is not supported, ignoring[" + artifact + "]" );
                     }
                 }

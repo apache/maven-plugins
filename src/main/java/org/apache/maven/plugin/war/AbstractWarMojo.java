@@ -27,7 +27,14 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.war.overlay.OverlayManager;
+import org.apache.maven.plugin.war.packaging.OverlayPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarPackagingContext;
+import org.apache.maven.plugin.war.packaging.WarPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
 import org.apache.maven.plugin.war.util.MappingUtils;
+import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -535,6 +542,69 @@ public abstract class AbstractWarMojo
         }
     }
 
+
+    /**
+     * Builds the webapp for the specified project with the new packaging task
+     * thingy
+     * <p/>
+     * Classes, libraries and tld files are copied to
+     * the <tt>webappDirectory</tt> during this phase.
+     * <p/>
+     * TODO: this is a temporary branch code! rename and clean the mess here when we're done.
+     *
+     * @param project         the maven project
+     * @param webappDirectory the target directory
+     * @throws MojoExecutionException if an error occured while packaging the webapp
+     * @throws MojoFailureException   if an unexpected error occured while packaging the webapp
+     */
+    public void buildWebapp( MavenProject project, File webappDirectory )
+        throws MojoExecutionException, MojoFailureException, IOException
+    {
+
+        final long startTime = System.currentTimeMillis();
+        getLog().info( "Assembling webapp[" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
+
+        final List packagingTasks = getPackagingTasks();
+        final Iterator it = packagingTasks.iterator();
+        while ( it.hasNext() )
+        {
+            WarPackagingTask warPackagingTask = (WarPackagingTask) it.next();
+            warPackagingTask.performPackaging( new DefaultWarPackagingContext( webappDirectory ) );
+        }
+        getLog().info( "Webapp assembled in[" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
+    }
+
+
+    /**
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPackagingTask}
+     * instances to invoke to perform the packaging.
+     *
+     * @return the list of packaging tasks
+     * @throws MojoExecutionException if the packaging tasks could not be built
+     */
+    private List getPackagingTasks()
+        throws MojoExecutionException
+    {
+        final List packagingTasks = new ArrayList();
+        OverlayManager overlayManager = new OverlayManager( overlays, project );
+        final List resolvedOverlays = overlayManager.getOverlays();
+        final Iterator it = resolvedOverlays.iterator();
+        while ( it.hasNext() )
+        {
+            Overlay overlay = (Overlay) it.next();
+            if ( overlay.isCurrentProject() )
+            {
+                packagingTasks.add( new WarProjectPackagingTask( webResources, webXml, containerConfigXML ) );
+            }
+            else
+            {
+                packagingTasks.add( new OverlayPackagingTask( overlay ) );
+            }
+        }
+        return packagingTasks;
+    }
+
+
     /**
      * Builds the webapp for the specified project.
      * <p/>
@@ -545,7 +615,7 @@ public abstract class AbstractWarMojo
      * @param webappDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
-    public void buildWebapp( MavenProject project, File webappDirectory )
+    public void buildWebapp2( MavenProject project, File webappDirectory )
         throws MojoExecutionException, IOException, MojoFailureException
     {
         getLog().info( "Assembling webapp " + project.getArtifactId() + " in " + webappDirectory );
@@ -556,6 +626,7 @@ public abstract class AbstractWarMojo
         File metainfDir = new File( webappDirectory, META_INF );
         metainfDir.mkdirs();
 
+        // DONE
         List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
         if ( webResources != null && webResources.size() > 0 )
         {
@@ -571,8 +642,10 @@ public abstract class AbstractWarMojo
             }
         }
 
+        //DONE
         copyResources( warSourceDirectory, webappDirectory );
 
+        // TODO
         if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
         {
             if ( !webXml.exists() )
@@ -584,6 +657,7 @@ public abstract class AbstractWarMojo
             copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
         }
 
+        //TODO
         if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
         {
             metainfDir = new File( webappDirectory, META_INF );
@@ -599,6 +673,7 @@ public abstract class AbstractWarMojo
 
         File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
 
+        //DONE
         if ( classesDirectory.exists() && !classesDirectory.equals( webappClassesDirectory ) )
         {
             if ( archiveClasses )
@@ -611,6 +686,7 @@ public abstract class AbstractWarMojo
             }
         }
 
+        //DONE
         Set artifacts = project.getArtifacts();
 
         List duplicates = findDuplicates( artifacts );
@@ -1107,4 +1183,103 @@ public abstract class AbstractWarMojo
 
     }
 
+    // War packaging implementation
+
+    private class DefaultWarPackagingContext
+        implements WarPackagingContext
+    {
+
+        private final PathSet pathSet = new PathSet();
+
+        private final File webappDirectory;
+
+
+        public DefaultWarPackagingContext( File webappDirectory )
+        {
+            this.webappDirectory = webappDirectory;
+        }
+
+
+        public MavenProject getProject()
+        {
+            return project;
+        }
+
+        public File getWebappDirectory()
+        {
+            return webappDirectory;
+        }
+
+        public File getClassesDirectory()
+        {
+            return classesDirectory;
+        }
+
+        public Log getLog()
+        {
+            return AbstractWarMojo.this.getLog();
+        }
+
+        public String getOutputFileNameMapping()
+        {
+            return outputFileNameMapping;
+        }
+
+        public File getWebappSourceDirectory()
+        {
+            return warSourceDirectory;
+        }
+
+        public String[] getWebappSourceIncludes()
+        {
+            return getIncludes();
+        }
+
+        public String[] getWebappSourceExcludes()
+        {
+            return getExcludes();
+        }
+
+        public boolean archiveClasses()
+        {
+            return archiveClasses;
+        }
+
+        public File getOverlaysWorkDirectory()
+        {
+            return workDirectory;
+        }
+
+        public ArchiverManager getArchiverManager()
+        {
+            return archiverManager;
+        }
+
+        public MavenArchiveConfiguration getArchive()
+        {
+            return archive;
+        }
+
+        public JarArchiver getJarArchiver()
+        {
+            return jarArchiver;
+        }
+
+        public PathSet getProtectedFiles()
+        {
+            return pathSet;
+        }
+
+        public List getFilters()
+        {
+            return filters;
+        }
+
+        public Map getFilterProperties()
+            throws MojoExecutionException
+        {
+            //TODO refactor this
+            return getBuildFilterProperties();
+        }
+    }
 }

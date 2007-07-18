@@ -44,6 +44,11 @@ public class WarOverlayStub
         return artifactId;
     }
 
+    public String getGroupId()
+    {
+        return "wartests";
+    }
+
     public File getFile()
     {
         return file;

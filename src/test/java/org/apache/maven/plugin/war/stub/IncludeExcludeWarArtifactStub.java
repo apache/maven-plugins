@@ -27,6 +27,7 @@ public class IncludeExcludeWarArtifactStub
     public IncludeExcludeWarArtifactStub( String id )
     {
         super( id );
+        setGroupId( "wartests" );
     }
 
     public String getArtifactId()

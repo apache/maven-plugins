@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.war.overlay;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,11 +27,8 @@ package org.apache.maven.plugin.war.overlay;
  * @author Stephane Nicoll
  */
 public class InvalidOverlayConfigurationException
-    extends Exception
+    extends MojoExecutionException
 {
-    public InvalidOverlayConfigurationException()
-    {
-    }
 
     public InvalidOverlayConfigurationException( String string )
     {
@@ -39,10 +38,5 @@ public class InvalidOverlayConfigurationException
     public InvalidOverlayConfigurationException( String string, Throwable throwable )
     {
         super( string, throwable );
-    }
-
-    public InvalidOverlayConfigurationException( Throwable throwable )
-    {
-        super( throwable );
     }
 }
