@@ -48,20 +48,11 @@ public abstract class AbstractAntMojo
     extends AbstractMojo
 {
     /**
-     * The plugin dependencies.
-     *
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     * @readonly
-     */
-    private List artifacts;
-
-    /**
      * @param antTasks
      * @param mavenProject
      * @throws MojoExecutionException
      */
-    protected void executeTasks( Target antTasks, MavenProject mavenProject )
+    protected void executeTasks( Target antTasks, MavenProject mavenProject, List pluginArtifacts )
         throws MojoExecutionException
     {
         if ( antTasks == null )
@@ -105,7 +96,7 @@ public abstract class AbstractAntMojo
             antProject.addReference( "maven.test.classpath", p );
 
             /* set maven.plugin.classpath with plugin dependencies */
-            antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( artifacts, antProject ) );
+            antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
 
             if ( getLog().isInfoEnabled() )
             {
