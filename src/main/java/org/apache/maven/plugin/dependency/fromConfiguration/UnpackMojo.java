@@ -28,10 +28,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
-import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
+import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
@@ -53,6 +54,22 @@ public final class UnpackMojo
      * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers"
      */
     private File markersDirectory;
+    
+    /**
+     * A comma separated list of file patterns to include when unpacking the
+     * artifact.
+     * 
+     * @parameter expression="${mdep.unpack.includes}"
+     */
+    private String includes;
+
+    /**
+     * A comma separated list of file patterns to exclude when unpacking the
+     * artifact.
+     * 
+     * @parameter expression="${mdep.unpack.excludes}"
+     */
+    private String excludes;
 
     /**
      * Main entry into mojo. This method gets the ArtifactItems and iterates
@@ -100,18 +117,30 @@ public final class UnpackMojo
     private void unpackArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
     {
-        Artifact artifact = artifactItem.getArtifact();
+        MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
 
-        MarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
-
-        unpack( artifact.getFile(), artifactItem.getOutputDirectory() );
+        //Allow the artifactItem includes/excludes to override the global includes/excludes
+        String includes = getIncludes();
+        String excludes = getExcludes();
+        
+        if ( StringUtils.isNotEmpty(artifactItem.getIncludes()) )
+        {
+        	includes = artifactItem.getIncludes();
+        }
+        
+        if ( StringUtils.isNotEmpty(artifactItem.getExcludes()) )
+        {
+        	excludes = artifactItem.getExcludes();
+        }
+        
+        unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), includes, excludes );
         handler.setMarker();
 
     }
 
     ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        MarkerHandler handler = new DefaultFileMarkerHandler( item.getArtifact(), this.markersDirectory );
+        MarkerHandler handler = new UnpackFileMarkerHandler( item, this.markersDirectory );
 
         return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(),
                                      this.isOverWriteIfNewer(), handler );
@@ -132,5 +161,42 @@ public final class UnpackMojo
     public void setMarkersDirectory( File theMarkersDirectory )
     {
         this.markersDirectory = theMarkersDirectory;
+    }
+    
+   
+    /**
+     * @return Returns a comma separated list of excluded items
+     */
+    public String getExcludes ()
+    {
+        return this.excludes;
+    }
+    
+    /**
+     * @param excludes 
+     * 			A comma seperated list of items to exclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setExcludes ( String excludes )
+    {
+        this.excludes = excludes;
+    }
+    
+    /**
+     * @return Returns a comma seperated list of included items
+     */
+    public String getIncludes()
+    {
+    	return this.includes;
+    }
+
+    /**
+     * @param includes
+     * 			A comma seperated list of items to inmclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setIncludes ( String includes )
+    {
+        this.includes = includes;
     }
 }

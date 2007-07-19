@@ -147,22 +147,6 @@ public abstract class AbstractDependencyMojo
      */
     protected boolean outputAbsoluteArtifactFilename;
 
-    /**
-     * A set of file patterns to include when unpacking the
-     * artifact.
-     * 
-     * @parameter expression="${mdep.unpack.includes}"
-     */
-    private String includes;
-
-    /**
-     * A set of file patterns to exclude when unpacking the
-     * artifact.
-     * 
-     * @parameter expression="${mdep.unpack.excludes}"
-     */
-    private String excludes;
-
     private Log log;
 
     /**
@@ -216,6 +200,12 @@ public abstract class AbstractDependencyMojo
             throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
         }
     }
+    
+    protected void unpack ( File file, File location )
+    	throws MojoExecutionException
+	{
+    	unpack( file, location, null, null);
+	}
 
     /**
      * Unpacks the archive file.
@@ -223,8 +213,12 @@ public abstract class AbstractDependencyMojo
      * @param file File to be unpacked.
      * @param location Location where to put the unpacked
      *            files.
+     * @param includes Comma separated list of file patterns to include
+     * 			  i.e.  **\/*.xml, **\/*.properties
+	 * @param excludes Comma separated list of file patterns to exclude
+     * 			  i.e.  **\/*.xml, **\/*.properties
      */
-    protected void unpack ( File file, File location )
+    protected void unpack ( File file, File location, String includes, String excludes )
         throws MojoExecutionException
     {
 
@@ -254,7 +248,7 @@ public abstract class AbstractDependencyMojo
 
                 if ( StringUtils.isNotEmpty( includes ) )
                 {
-                    selectors[0].setIncludes( this.includes.split( "," ) );
+                    selectors[0].setIncludes( includes.split( "," ) );
                 }
 
                 unArchiver.setFileSelectors( selectors );
@@ -410,21 +404,5 @@ public abstract class AbstractDependencyMojo
     public void setArtifactMetadataSource ( ArtifactMetadataSource theArtifactMetadataSource )
     {
         this.artifactMetadataSource = theArtifactMetadataSource;
-    }
-
-    /**
-     * @param excludes The items to exclude
-     */
-    public void setExcludes ( String excludes )
-    {
-        this.excludes = excludes;
-    }
-
-    /**
-     * @param includes The items to include
-     */
-    public void setIncludes ( String includes )
-    {
-        this.includes = includes;
     }
 }

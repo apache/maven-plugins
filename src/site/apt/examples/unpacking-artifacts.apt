@@ -58,6 +58,12 @@ Unpacking Specific Artifacts
                    <destFileName>optional-new-name.jar</destFileName>
                  </artifactItem>
                </artifactItems>
+               <includes>
+	             <include>**/*.class</include>
+	           </includes>
+	           <excludes>
+	             <exclude>**/*.properties</exclude>
+	           </excludes>
                <outputDirectory>${project.build.directory}/wars</outputDirectory>
                <overWriteReleases>false</overWriteReleases>
                <overWriteSnapshots>true</overWriteSnapshots>
@@ -113,6 +119,7 @@ mvn dependency:unpack
   [...]
 </project>
 +---+	
+
 
 
 
