@@ -84,6 +84,11 @@ public class ChangeLogReport
     private static final String FILE_TOKEN = "%FILE%";
 
     /**
+     * The number of days to use as a range, when this is not specified.
+     */
+    private static final int DEFAULT_RANGE = 30;
+
+    /**
      * Used to specify the format to use for the dates in the headings of the
      * report.
      *
@@ -465,7 +470,8 @@ public class ChangeLogReport
             }
             else if ( "tag".equals( type ) )
             {
-                if( repository.getProvider().equals( "svn" ) ) {
+                if ( repository.getProvider().equals( "svn" ) )
+                {
                     throw new MavenReportException( "The type '" + type + "' isn't supported for svn." );
                 }
 
@@ -751,7 +757,7 @@ public class ChangeLogReport
         {
             if ( range == -1 )
             {
-                range = 30;
+                range = DEFAULT_RANGE;
             }
         }
         else if ( "date".equals( type ) )
@@ -759,7 +765,8 @@ public class ChangeLogReport
             if ( dates == null )
             {
                 throw new MavenReportException(
-                    "The dates parameter is required when type=\"date\". The value should be the absolute date for the start of the log." );
+                    "The dates parameter is required when type=\"date\"."
+                    + " The value should be the absolute date for the start of the log." );
             }
         }
         else if ( "tag".equals( type ) )
@@ -927,7 +934,8 @@ public class ChangeLogReport
         else
         {
             sink.text( bundle.getString( "report.SetRangeBetween" ) );
-            sink.text( " " + headingDateFormater.format( set.getStartDate() ) + " " + bundle.getString( "report.And" ) + " "
+            sink.text( " " + headingDateFormater.format( set.getStartDate() )
+                + " " + bundle.getString( "report.And" ) + " "
                 + headingDateFormater.format( set.getEndDate() ) );
         }
         sink.sectionTitle2_();
@@ -1302,10 +1310,13 @@ public class ChangeLogReport
 
         String head;
         String tail;
-        if (pos < 0) {
+        if ( pos < 0 )
+        {
             head = "";
             tail = name;
-        } else {
+        }
+        else
+        {
             head = name.substring( 0, pos ) + "/";
             tail = name.substring( pos + 1 );
         }
