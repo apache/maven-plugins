@@ -65,6 +65,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
@@ -292,6 +293,13 @@ public class ChangeLogReport
     private String connection;
 
     /**
+     * The system properties to use (needed by the perforce scm provider).
+     *
+     * @parameter
+     */
+    private Properties systemProperties;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
@@ -306,6 +314,23 @@ public class ChangeLogReport
         }
 
         verifySCMTypeParams();
+
+        if ( systemProperties != null )
+        {
+            // Add all system properties configured by the user
+            Iterator iter = systemProperties.keySet().iterator();
+
+            while ( iter.hasNext() )
+            {
+                String key = (String) iter.next();
+
+                String value = systemProperties.getProperty( key );
+
+                System.setProperty( key, value );
+
+                getLog().debug( "Setting system property: " + key + "=" + value );
+            }
+        }
 
         doGenerateReport( getChangedSets(), getBundle( locale ), getSink() );
     }
