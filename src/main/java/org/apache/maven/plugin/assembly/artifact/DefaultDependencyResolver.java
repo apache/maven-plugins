@@ -9,6 +9,12 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
@@ -19,14 +25,16 @@ import org.codehaus.plexus.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.artifact.DependencyResolver" role-hint="default"
- * 
+ *
  * @author jdcasey
  */
 public class DefaultDependencyResolver
@@ -82,11 +90,18 @@ public class DefaultDependencyResolver
         Set dependencyArtifacts =
             MavenMetadataSource.createArtifacts( factory, project.getDependencies(), null, filter, project );
 
-        ArtifactResolutionResult result =
-            resolver.resolveTransitively( dependencyArtifacts, artifact, localRepository, repos, metadataSource, filter );
-        
+        ArtifactResolutionResult result;
+        try
+        {
+            result = resolver.resolveTransitively( dependencyArtifacts, artifact, getManagedVersionMap( project ), localRepository, repos, metadataSource, filter );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new InvalidDependencyVersionException( e.getMessage(), e );
+        }
+
         getLogger().debug( "While resolving dependencies of " + project.getId() + ":" );
-        
+
         FilterUtils.reportFilteringStatistics( Collections.singleton( filter ), getLogger() );
 
         return result.getArtifacts();
@@ -95,23 +110,23 @@ public class DefaultDependencyResolver
     private List aggregateRemoteArtifactRepositories( List remoteRepositories, MavenProject project )
     {
         List repoLists = new ArrayList();
-        
+
         repoLists.add( remoteRepositories );
         repoLists.add( project.getRemoteArtifactRepositories() );
-        
+
         List remoteRepos = new ArrayList();
         Set encounteredUrls = new HashSet();
 
         for ( Iterator listIterator = repoLists.iterator(); listIterator.hasNext(); )
         {
             List repositoryList = ( List ) listIterator.next();
-            
-            if ( repositoryList != null && !repositoryList.isEmpty() )
+
+            if ( ( repositoryList != null ) && !repositoryList.isEmpty() )
             {
                 for ( Iterator it = repositoryList.iterator(); it.hasNext(); )
                 {
                     ArtifactRepository repo = ( ArtifactRepository ) it.next();
-                    
+
                     if ( !encounteredUrls.contains( repo.getUrl() ) )
                     {
                         remoteRepos.add( repo );
@@ -124,4 +139,65 @@ public class DefaultDependencyResolver
         return remoteRepos;
     }
 
+    // TODO: Remove this, once we can depend on Maven 2.0.7 or later...in which
+    // MavenProject.getManagedVersionMap() exists. This is from MNG-1577.
+    private Map getManagedVersionMap( MavenProject project )
+        throws InvalidVersionSpecificationException
+    {
+        DependencyManagement dependencyManagement = project.getModel().getDependencyManagement();
+
+        Map map = null;
+        List deps;
+        if ( ( dependencyManagement != null ) && ( ( deps = dependencyManagement.getDependencies() ) != null )
+             && ( deps.size() > 0 ) )
+        {
+            map = new HashMap();
+
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().debug( "Adding managed dependencies for " + project.getId() );
+            }
+
+            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
+            {
+                Dependency d = (Dependency) i.next();
+
+                VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
+                Artifact artifact = factory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
+                                                                              versionRange, d.getType(),
+                                                                              d.getClassifier(), d.getScope(),
+                                                                              d.isOptional() );
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug( "  " + artifact );
+                }
+
+                // If the dependencyManagement section listed exclusions,
+                // add them to the managed artifacts here so that transitive
+                // dependencies will be excluded if necessary.
+                if ( ( null != d.getExclusions() ) && !d.getExclusions().isEmpty() )
+                {
+                    List exclusions = new ArrayList();
+                    Iterator exclItr = d.getExclusions().iterator();
+                    while ( exclItr.hasNext() )
+                    {
+                        Exclusion e = (Exclusion) exclItr.next();
+                        exclusions.add( e.getGroupId() + ":" + e.getArtifactId() );
+                    }
+                    ExcludesArtifactFilter eaf = new ExcludesArtifactFilter( exclusions );
+                    artifact.setDependencyFilter( eaf );
+                }
+                else
+                {
+                    artifact.setDependencyFilter( null );
+                }
+                map.put( d.getManagementKey(), artifact );
+            }
+        }
+        else if ( map == null )
+        {
+            map = Collections.EMPTY_MAP;
+        }
+        return map;
+    }
 }
