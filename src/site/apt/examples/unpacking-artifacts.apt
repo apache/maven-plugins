@@ -107,8 +107,8 @@ mvn dependency:unpack
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
-              <includes>[ comma seperated list of file filters ]</includes>
-              <excludes>[ comma seperated list of file filters ]</excludes>
+              <includes>[ comma separated list of file filters ]</includes>
+              <excludes>[ comma separated list of file filters ]</excludes>
             </artifactItem>
           </artifactItems>
           <!-- other configurations here -->
