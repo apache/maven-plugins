@@ -22,7 +22,7 @@ import org.codehaus.plexus.util.IOUtil;
 public class ManifestCreationFinalizer
     extends AbstractArchiveFinalizer
 {
-    
+
     private final MavenProject project;
     private final MavenArchiveConfiguration archiveConfiguration;
 
@@ -75,7 +75,7 @@ public class ManifestCreationFinalizer
                     manifest = mavenArchiver.getManifest( project, archiveConfiguration );
                 }
 
-                if ( manifest != null && ( archiver instanceof JarArchiver ) )
+                if ( ( manifest != null ) && ( archiver instanceof JarArchiver ) )
                 {
                     JarArchiver jarArchiver = (JarArchiver) archiver;
                     jarArchiver.addConfiguredManifest( manifest );
@@ -94,20 +94,23 @@ public class ManifestCreationFinalizer
 
     public List getVirtualFiles()
     {
-        try
+        if ( archiveConfiguration != null )
         {
-            if ( mavenArchiver.getManifest( project, archiveConfiguration.getManifest() ) != null )
+            try
             {
-                return Collections.singletonList( "META-INF/MANIFEST.MF" );
+                if ( mavenArchiver.getManifest( project, archiveConfiguration.getManifest() ) != null )
+                {
+                    return Collections.singletonList( "META-INF/MANIFEST.MF" );
+                }
+            }
+            catch ( ManifestException e )
+            {
+            }
+            catch ( DependencyResolutionRequiredException e )
+            {
             }
         }
-        catch ( ManifestException e )
-        {
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-        }
-        
+
         return null;
     }
 
