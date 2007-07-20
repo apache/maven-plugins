@@ -104,16 +104,12 @@ public class ArtifactItem
     /**
      * A comma separated list of file patterns to include when unpacking the
      * artifact.
-     * 
-     * @parameter expression="${mdep.artifact.item.unpack.includes}"
      */
     private String includes;
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the
      * artifact.
-     * 
-     * @parameter expression="${mdep.artifact.item.unpack.excludes}"
      */
     private String excludes;
 

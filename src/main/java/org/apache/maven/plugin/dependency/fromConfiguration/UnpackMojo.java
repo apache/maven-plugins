@@ -57,15 +57,15 @@ public final class UnpackMojo
     
     /**
      * A comma separated list of file patterns to include when unpacking the
-     * artifact.
-     * 
+     * artifact.  i.e.  **\/*.xml,**\/*.properties
+     *  
      * @parameter expression="${mdep.unpack.includes}"
      */
     private String includes;
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.
+     * artifact.  i.e.  **\/*.xml,**\/*.properties
      * 
      * @parameter expression="${mdep.unpack.excludes}"
      */
@@ -118,22 +118,8 @@ public final class UnpackMojo
         throws MojoExecutionException
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
-
-        //Allow the artifactItem includes/excludes to override the global includes/excludes
-        String includes = getIncludes();
-        String excludes = getExcludes();
         
-        if ( StringUtils.isNotEmpty(artifactItem.getIncludes()) )
-        {
-        	includes = artifactItem.getIncludes();
-        }
-        
-        if ( StringUtils.isNotEmpty(artifactItem.getExcludes()) )
-        {
-        	excludes = artifactItem.getExcludes();
-        }
-        
-        unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), includes, excludes );
+        unpack( artifactItem.getArtifact().getFile(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(), artifactItem.getExcludes() );
         handler.setMarker();
 
     }
@@ -144,6 +130,26 @@ public final class UnpackMojo
 
         return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(),
                                      this.isOverWriteIfNewer(), handler );
+    }
+    
+    protected ArrayList getProcessedArtifactItems(boolean removeVersion)
+    	throws MojoExecutionException 
+    {
+    	ArrayList items = super.getProcessedArtifactItems( removeVersion );
+    	Iterator iter = items.iterator();
+        while ( iter.hasNext() )
+        {
+            ArtifactItem artifactItem = (ArtifactItem) iter.next();
+            if ( StringUtils.isEmpty(artifactItem.getIncludes()) )
+            {
+                artifactItem.setIncludes( getIncludes() );
+            }
+            if ( StringUtils.isEmpty(artifactItem.getExcludes()) )
+            {
+                artifactItem.setExcludes( getExcludes() );
+            }
+        }
+    	return items;
     }
 
     /**
@@ -174,7 +180,7 @@ public final class UnpackMojo
     
     /**
      * @param excludes 
-     * 			A comma seperated list of items to exclude 
+     * 			A comma separated list of items to exclude 
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setExcludes ( String excludes )
@@ -183,7 +189,7 @@ public final class UnpackMojo
     }
     
     /**
-     * @return Returns a comma seperated list of included items
+     * @return Returns a comma separated list of included items
      */
     public String getIncludes()
     {
@@ -192,7 +198,7 @@ public final class UnpackMojo
 
     /**
      * @param includes
-     * 			A comma seperated list of items to inmclude 
+     * 			A comma separated list of items to include 
      * 			i.e.  **\/*.xml, **\/*.properties
      */
     public void setIncludes ( String includes )

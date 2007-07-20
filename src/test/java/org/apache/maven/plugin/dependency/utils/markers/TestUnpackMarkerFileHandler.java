@@ -5,48 +5,52 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
+import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubUnpackFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.SilentLog;
 
 public class TestUnpackMarkerFileHandler
-	extends TestCase
+	extends AbstractMojoTestCase
 {
 	List artifactItems = new ArrayList();
 
     Log log = new SilentLog();
 
     File outputFolder;
+    
+    protected File testDir;
+    
+    protected DependencyArtifactStubFactory stubFactory;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
+        
+        testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar
+                + "unpack-markers" + File.separatorChar );
+        DependencyTestUtils.removeDirectory( testDir );
+        assertFalse( testDir.exists() );
 
-        ArtifactHandler ah = new DefaultArtifactHandler();
-        VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        Artifact artifact = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", "", ah, false );
-        ArtifactItem artifactItem = new ArtifactItem( artifact );
-        artifactItems.add( artifactItem );
-        artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
+        stubFactory = new DependencyArtifactStubFactory( this.testDir, false );
+        Artifact artifact = stubFactory.createArtifact( "test", "test", "1" );
+        ArtifactItem artifactItem = stubFactory.getArtifactItem( artifact );
+        artifactItems.add( stubFactory.getArtifactItem( stubFactory.createArtifact( "test", "test", "1" ) ) );
+        artifact = stubFactory.createArtifact("test2", "test2", "2");
         artifactItem = new ArtifactItem( artifact );
         artifactItem.setIncludes( "**/*.xml" );
         artifactItems.add( artifactItem );
-        artifact = new DefaultArtifact( "test", "3", vr, Artifact.SCOPE_TEST, "sources", "", ah, false );
+        artifact = stubFactory.createArtifact("test3", "test3", "3");
         artifactItem = new ArtifactItem( artifact );
         artifactItem.setExcludes( "**/*.class" );
         artifactItems.add( artifactItem );
-        artifact = new DefaultArtifact( "test", "4", vr, Artifact.SCOPE_RUNTIME, "zip", "", ah, false );
+        artifact = stubFactory.createArtifact("test4", "test4", "4");
         artifactItem = new ArtifactItem( artifact );
         artifactItem.setIncludes( "**/*.xml" );
         artifactItem.setExcludes( "**/*.class" );
@@ -256,4 +260,5 @@ public class TestUnpackMarkerFileHandler
 	    assertFalse( handle.exists() );
 	}
 }
+
 

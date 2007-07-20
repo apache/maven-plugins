@@ -56,15 +56,13 @@ Unpacking Specific Artifacts
                    <overWrite>false</overWrite>
                    <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
                    <destFileName>optional-new-name.jar</destFileName>
+                   <includes>**/*.class,**/*.xml</includes>
+                   <excludes>**/*test.class</excludes>
                  </artifactItem>
                </artifactItems>
-               <includes>
-	             <include>**/*.class</include>
-	           </includes>
-	           <excludes>
-	             <exclude>**/*.properties</exclude>
-	           </excludes>
-               <outputDirectory>${project.build.directory}/wars</outputDirectory>
+               <includes>**/*.java</includes>
+               <excludes>**/*.properties</excludes>
+	           <outputDirectory>${project.build.directory}/wars</outputDirectory>
                <overWriteReleases>false</overWriteReleases>
                <overWriteSnapshots>true</overWriteSnapshots>
              </configuration>
@@ -109,6 +107,8 @@ mvn dependency:unpack
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
+              <includes>[ comma seperated list of file filters ]</includes>
+              <excludes>[ comma seperated list of file filters ]</excludes>
             </artifactItem>
           </artifactItems>
           <!-- other configurations here -->
@@ -119,6 +119,7 @@ mvn dependency:unpack
   [...]
 </project>
 +---+	
+
 
 
 

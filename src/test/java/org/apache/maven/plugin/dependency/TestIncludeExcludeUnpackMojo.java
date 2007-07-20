@@ -234,9 +234,11 @@ public class TestIncludeExcludeUnpackMojo
     	ArrayList list = new ArrayList();
     	Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
         ArtifactItem item = stubFactory.getArtifactItem( artifact );
+        item.setOverWrite("false");
         item.setIncludes("**/test2" + UNPACKED_FILE_SUFFIX);        
         list.add( item );
         item = stubFactory.getArtifactItem( artifact );
+        item.setOverWrite("false");
         item.setIncludes("**/test3" + UNPACKED_FILE_SUFFIX);        
         list.add( item );
         mojo.setArtifactItems( list ); 
@@ -246,5 +248,41 @@ public class TestIncludeExcludeUnpackMojo
     	assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
     	assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
     	assertMarkerFiles( mojo.getArtifactItems(), true );
+	}
+    
+    public void testIncludeArtifactItemMultipleExecutions()
+    	throws Exception
+	{
+    	ArrayList list = new ArrayList();
+    	Artifact artifact = stubFactory.createArtifact( "test", "test", "1.0", Artifact.SCOPE_COMPILE, "jar", null );
+        ArtifactItem item = stubFactory.getArtifactItem( artifact );
+        item.setOverWrite("false");
+        item.setIncludes("**/test2" + UNPACKED_FILE_SUFFIX);        
+        list.add( item );
+        item = stubFactory.getArtifactItem( artifact );
+        item.setOverWrite("false");
+        item.setIncludes("**/test3" + UNPACKED_FILE_SUFFIX);        
+        list.add( item );
+        mojo.setArtifactItems( list ); 
+    	mojo.execute();
+    	assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
+    	assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
+    	assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
+    	assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
+    	assertMarkerFiles( mojo.getArtifactItems(), true );
+    	    	
+    	//Now run again and make sure the extracted files haven't gotten overwritten
+    	File destFile2 = new File( mojo.getOutputDirectory().getAbsolutePath() , UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
+    	File destFile3 = new File( mojo.getOutputDirectory().getAbsolutePath() , UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
+    	long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+        destFile2.setLastModified( time );
+        destFile3.setLastModified( time );
+        assertEquals( time, destFile2.lastModified() );
+        assertEquals( time, destFile3.lastModified() );
+        Thread.sleep( 100 );
+    	mojo.execute();
+    	assertEquals( time, destFile2.lastModified() );
+        assertEquals( time, destFile3.lastModified() );
 	}
 }
