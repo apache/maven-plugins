@@ -45,7 +45,22 @@ import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
+	/**
+     * A comma separated list of file patterns to include when unpacking the
+     * artifact.  i.e.  **\/*.xml,**\/*.properties
+     * 
+     * @parameter expression="${mdep.unpack.includes}"
+     */
+    private String includes;
 
+    /**
+     * A comma separated list of file patterns to exclude when unpacking the
+     * artifact.  i.e.  **\/*.xml,**\/*.properties
+     * 
+     * @parameter expression="${mdep.unpack.excludes}"
+     */
+    private String excludes;
+    
     /**
      * Main entry into mojo. This method gets the dependencies and iterates
      * through each one passing it to DependencyUtil.unpackFile().
@@ -70,7 +85,7 @@ public class UnpackDependenciesMojo
             destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType, useSubDirectoryPerArtifact,
                                                                   useRepositoryLayout, stripVersion, outputDirectory,
                                                                   artifact );
-            unpack( artifact.getFile(), destDir );
+            unpack( artifact.getFile(), destDir, getIncludes(), getExcludes() );
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
             handler.setMarker();
         }
@@ -87,5 +102,41 @@ public class UnpackDependenciesMojo
     {
         return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
                                      new DefaultFileMarkerHandler( this.markersDirectory ) );
+    }
+    
+    /**
+     * @return Returns a comma separated list of excluded items
+     */
+    public String getExcludes ()
+    {
+        return this.excludes;
+    }
+    
+    /**
+     * @param excludes 
+     * 			A comma separated list of items to exclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setExcludes ( String excludes )
+    {
+        this.excludes = excludes;
+    }
+    
+    /**
+     * @return Returns a comma seperated list of included items
+     */
+    public String getIncludes()
+    {
+    	return this.includes;
+    }
+
+    /**
+     * @param includes
+     * 			A comma seperated list of items to inmclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setIncludes ( String includes )
+    {
+        this.includes = includes;
     }
 }
