@@ -32,7 +32,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
@@ -119,7 +119,7 @@ public class TestUnpackMojo
 
     public void assertMarkerFile( boolean val, ArtifactItem item )
     {
-        DefaultFileMarkerHandler handle = new DefaultFileMarkerHandler( item.getArtifact(), mojo.getMarkersDirectory() );
+        UnpackFileMarkerHandler handle = new UnpackFileMarkerHandler( item, mojo.getMarkersDirectory() );
         try
         {
             assertEquals( val, handle.isMarkerSet() );

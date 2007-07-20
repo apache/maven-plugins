@@ -100,6 +100,18 @@ public class ArtifactItem
      * Artifact Item
      */
     private Artifact artifact;
+    
+    /**
+     * A comma separated list of file patterns to include when unpacking the
+     * artifact.
+     */
+    private String includes;
+
+    /**
+     * A comma separated list of file patterns to exclude when unpacking the
+     * artifact.
+     */
+    private String excludes;
 
     public ArtifactItem()
     {
@@ -309,5 +321,41 @@ public class ArtifactItem
     public void setArtifact( Artifact artifact )
     {
         this.artifact = artifact;
+    }
+    
+    /**
+     * @return Returns a comma separated list of excluded items
+     */
+    public String getExcludes ()
+    {
+        return this.excludes;
+    }
+    
+    /**
+     * @param excludes 
+     * 			A comma seperated list of items to exclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setExcludes ( String excludes )
+    {
+        this.excludes = excludes;
+    }
+    
+    /**
+     * @return Returns a comma seperated list of included items
+     */
+    public String getIncludes()
+    {
+    	return this.includes;
+    }
+
+    /**
+     * @param includes
+     * 			A comma seperated list of items to inmclude 
+     * 			i.e.  **\/*.xml, **\/*.properties
+     */
+    public void setIncludes ( String includes )
+    {
+        this.includes = includes;
     }
 }
