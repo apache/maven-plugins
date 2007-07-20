@@ -5,7 +5,6 @@
       <role-hint>assembly-component</role-hint>
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
       <configuration>
-        <classifier>assembly-component</classifier>
         <packaging>assembly-component</packaging>
         <extension>xml</extension>
         <type>assembly-component</type>
@@ -37,7 +36,6 @@
       <role-hint>assembly-descriptor</role-hint>
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
       <configuration>
-        <classifier>assembly-descriptor</classifier>
         <packaging>assembly-descriptor</packaging>
         <extension>xml</extension>
         <type>assembly-descriptor</type>
@@ -53,13 +51,13 @@
         <lifecycles>
           <lifecycle>
             <id>default</id>
-            <!-- START SNIPPET: assembly-component-lifecycle -->
+            <!-- START SNIPPET: assembly-descriptor-lifecycle -->
             <phases>
               <package>org.apache.maven.plugins:maven-assembly-plugin:attach-assembly-descriptor</package>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
             </phases>
-            <!-- END SNIPPET: assembly-component-lifecycle -->
+            <!-- END SNIPPET: assembly-descriptor-lifecycle -->
           </lifecycle>
         </lifecycles>
       </configuration>
