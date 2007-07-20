@@ -77,6 +77,29 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.0-alpha-3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<id>ensure-no-container-api</id>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<exclude>org.codehaus.plexus:plexus-component-api</exclude>
+									</excludes>
+									<message>The new containers are not supported. You probably added a dependency that is missing the exclusions.</message>
+								</bannedDependencies>
+							</rules>  
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.0</version>
@@ -145,17 +168,17 @@
 			<artifactId>plexus-archiver</artifactId>
 			<version>1.0-alpha-9-SNAPSHOT</version>
 			<exclusions>
-              <exclusion>
-                 <groupId>org.codehaus.plexus</groupId>
-                 <artifactId>plexus-container-default</artifactId>
-              </exclusion>
-              <exclusion>
-                 <groupId>org.codehaus.plexus</groupId>
-                 <artifactId>plexus-component-api</artifactId>
-              </exclusion>			  
-            </exclusions>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-container-default</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-component-api</artifactId>
+				</exclusion>			  
+			</exclusions>
 		</dependency>
-<!--		<dependency>
+		<!--		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-component-api</artifactId>
 			<version>1.0-alpha-9</version>
@@ -182,25 +205,40 @@
 			<version>1.0-alpha-9-stable-1</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.maven.shared</groupId>
-		    <artifactId>maven-dependency-analyzer</artifactId>
-		    <version>1.0-alpha-3-SNAPSHOT</version>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-dependency-analyzer</artifactId>
+			<version>1.0-alpha-3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-dependency-tree</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-io</artifactId>
+			<version>1.0-alpha-1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-container-default</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-component-api</artifactId>
+				</exclusion>			  
+			</exclusions>
+		</dependency>
 	</dependencies>
 
-  <!-- TODO: remove when plexus-archiver is released -->
-  <repositories>
-    <repository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
+	<!-- TODO: remove when plexus-archiver is released -->
+	<repositories>
+		<repository>
+			<id>codehaus.snapshots</id>
+			<url>http://snapshots.repository.codehaus.org/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+	</repositories>
 </project>

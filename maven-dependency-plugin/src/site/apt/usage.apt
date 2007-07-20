@@ -204,6 +204,9 @@ mvn dependency:copy
    specified location. Multiple artifacts can be defined in a single execution.
    A default outputDirectory is specified but can be overriden for each
    ArtifactItem by setting the optional outputDirectory field. 
+   
+   A single artifact can be unpacked multiple times if different include/exclude parameters
+   are defined for each artifactItem
 
    See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
@@ -266,6 +269,8 @@ mvn dependency:unpack
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
+              <includes>[ comma seperated list of file filters ]</includes>
+              <excludes>[ comma seperated list of file filters ]</excludes>
             </artifactItem>
           </artifactItems>
           <!-- other configurations here -->
@@ -309,6 +314,8 @@ mvn dependency:unpack
    resolve artifacts with the classifer and type. For example:
    <<<mvn dependency:unpack-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and unpack them.
+   
+   Filters can be applied to include or exclude certain file or filesets as necessary
    
       	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
       	
