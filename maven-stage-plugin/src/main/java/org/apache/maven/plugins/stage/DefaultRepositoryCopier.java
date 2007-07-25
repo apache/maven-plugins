@@ -31,6 +31,7 @@ import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
 import org.apache.maven.wagon.repository.Repository;
@@ -92,6 +93,12 @@ public class DefaultRepositoryCopier
     public void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
         throws WagonException, IOException
     {
+        copy( sourceRepositoryUrl, targetRepository, version, null );
+    }
+
+    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
+        throws WagonException, IOException
+    {
         String groupId = "staging-plugin";
 
         String fileName = groupId + "-" + version + ".zip";
@@ -151,7 +158,10 @@ public class DefaultRepositoryCopier
         // TODO BUG for some reason it gets the wagon without authentication info
         Wagon targetWagon = wagonManager.getWagon( targetRepository );
 
-        targetWagon.connect( targetRepository );
+        // @todo Work around the bug above
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+        authenticationInfo.setUserName( username );
+        targetWagon.connect( targetRepository, authenticationInfo );
 
         PrintWriter rw = new PrintWriter( new FileWriter( renameScript ) );
 
