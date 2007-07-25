@@ -19,10 +19,10 @@ package org.apache.maven.plugins.stage;
  * under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.repository.Repository;
+
+import java.io.IOException;
 
 /**
  * @author Jason van Zyl
@@ -46,5 +46,8 @@ public interface RepositoryCopier
         throws WagonException, IOException;
 
     public void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
+        throws WagonException, IOException;
+
+    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
         throws WagonException, IOException;
 }
