@@ -19,12 +19,13 @@ package org.apache.maven.plugins.stage;
  * under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.util.StringUtils;
+
+import java.io.IOException;
 
 /**
  * @author Jason van Zyl
@@ -44,6 +45,15 @@ public class CopyRepositoryMojo
     private String repositoryId;
 
     /**
+     * The plugin doesn't currently read username/password from settings.xml.
+     * If your local username is different than your Apache username, you can
+     * specify your Apache username with this parameter.
+     *
+     * @parameter expression="${stage.username}"
+     */
+    private String username;
+
+    /**
      * @parameter expression="${version}"
      * @required
      */
@@ -58,8 +68,15 @@ public class CopyRepositoryMojo
         try
         {
             Repository targetRepository = new Repository( repositoryId, target );
-
-            copier.copy( source, targetRepository, version );
+            getLog().debug( "username: " + username );
+            if ( StringUtils.isEmpty( username ) )
+            {
+                copier.copy( source, targetRepository, version );
+            }
+            else
+            {
+                copier.copy( source, targetRepository, version, username );
+            }
         }
         catch ( IOException e )
         {
