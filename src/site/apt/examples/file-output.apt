@@ -28,7 +28,7 @@ Sending the output to a file
 
 * Configuring your pom.xml
 
-  You can use the following configuration in your pom.xml to run the DOCCK
+  You can use the following configuration in your <<<pom.xml>>> to run the DOCCK
   Plugin everytime the project is built and send its output to a file.
 
 +---+
