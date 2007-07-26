@@ -29,12 +29,12 @@ Usage
 
   This document is intended to provide instructions for using the
   maven-docck-plugin. In order for this discussion to be useful, it's
-  critical to cover two topics: Configuring your project's pom.xml to run
+  critical to cover two topics: Configuring your project's <<<pom.xml>>> to run
   the plugin during every build and using the plugin from the command-line.
 
 * Configuring the plugin in pom.xml
 
-   You can use the following configuration in your pom.xml to run the DOCCK
+   You can use the following configuration in your <<<pom.xml>>> to run the DOCCK
    Plugin everytime the project is built.
 
 +---+
@@ -66,7 +66,7 @@ Usage
   The DOCCK Plugin is easily executed from the command line since it can run
   without any parameter configuration.
 
-  To run DOCCK Plugin on a project, use:
+  To run the DOCCK Plugin on a project, use:
 
 +---+
 mvn docck:check
@@ -74,7 +74,7 @@ mvn docck:check
 
 * Sample Output
 
-** Successful run with no documentation errors
+** Run with no documentation errors
 
 +---+
 [INFO] Scanning for projects...
@@ -100,7 +100,7 @@ mvn docck:check
 [INFO] ------------------------------------------------------------------------
 +---+
 
-** Successful run with documentation errors
+** Run with documentation errors
 
 +---+
 [INFO] Scanning for projects...
@@ -116,21 +116,17 @@ mvn docck:check
 [INFO] Extractor for language: java found 1 mojo descriptors.
 [INFO] Applying extractor for language: bsh
 [INFO] Extractor for language: bsh found 0 mojo descriptors.
-[INFO]
-The following documentation problems were found:
+[ERROR] The following documentation problems were found:
 
 o Maven Documentation Checker Plugin (3 errors)
-        - Missing site index.(html|xml|apt).
-        - Missing examples.
-        - Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
+  [ERROR] There is no 'index' file in your site directory (in apt|html|xml format).
+  [ERROR] There are no example files in your site directory (in apt|html|xml format). They should either be called 'example*.(apt|html|xml)' or they should be located in the 'examples' directory.
+  [ERROR] Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
 
 [INFO] ------------------------------------------------------------------------
 [ERROR] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] : documentation check
-Documentation errors were found.
-
-Please see the console output above for more information.
+[INFO] Documentation problems were found. Please see the console output above for more information.
 [INFO] ------------------------------------------------------------------------
 [INFO] For more information, run Maven with the -e switch
 [INFO] ------------------------------------------------------------------------
