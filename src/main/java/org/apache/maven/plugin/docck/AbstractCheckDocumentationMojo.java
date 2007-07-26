@@ -128,7 +128,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( output != null )
         {
-            getLog().info( "Writing documentation survey results to: " + output );
+            getLog().info( "Writing documentation check results to: " + output );
         }
 
         Map reporters = new LinkedHashMap();
@@ -170,7 +170,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         try
         {
-            writeMessages( messages );
+            writeMessages( messages, hasErrors );
         }
         catch ( IOException e )
         {
@@ -189,7 +189,7 @@ public abstract class AbstractCheckDocumentationMojo
                 logLocation = "Please see \'" + output + "\' for more information.";
             }
 
-            throw new MojoFailureException( "documentation check", "Documentation errors were found.", logLocation );
+            throw new MojoFailureException( "Documentation problems were found. " + logLocation );
         }
     }
 
@@ -272,7 +272,14 @@ public abstract class AbstractCheckDocumentationMojo
 
     protected abstract boolean approveProjectPackaging( String packaging );
 
-    private void writeMessages( String messages )
+    /**
+     * Writes the text in messages either to a file or to the console.
+     *
+     * @param messages The message text
+     * @param hasErrors If there were any documentation errors
+     * @throws IOException
+     */
+    private void writeMessages( String messages, boolean hasErrors )
         throws IOException
     {
         if ( output != null )
@@ -292,7 +299,14 @@ public abstract class AbstractCheckDocumentationMojo
         }
         else
         {
-            getLog().info( messages );
+            if ( hasErrors )
+            {
+                getLog().error( messages );
+            }
+            else
+            {
+                getLog().info( messages );
+            }
         }
     }
 
@@ -352,7 +366,7 @@ public abstract class AbstractCheckDocumentationMojo
             Prerequisites prereq = project.getPrerequisites();
             if ( StringUtils.isEmpty( prereq.getMaven() ) )
             {
-                reporter.error( "pom.xml is missing the <maven> tag in <prerequisites>." );
+                reporter.error( "pom.xml is missing the <prerequisites>/<maven> tag." );
             }
         }
 
@@ -363,7 +377,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( project.getMailingLists().size() == 0 )
         {
-            reporter.warn( "pom.xml has no <mailingList> specified." );
+            reporter.warn( "pom.xml has no <mailingLists>/<mailingList> specified." );
         }
 
         if ( project.getScm() == null )
@@ -393,7 +407,7 @@ public abstract class AbstractCheckDocumentationMojo
             Organization org = project.getOrganization();
             if ( StringUtils.isEmpty( org.getName() ) )
             {
-                reporter.error( "pom.xml is missing the <name> tag in <organization>." );
+                reporter.error( "pom.xml is missing the <organization>/<name> tag." );
             }
             else if ( org.getUrl() != null )
             {
@@ -418,14 +432,14 @@ public abstract class AbstractCheckDocumentationMojo
 
                 if ( StringUtils.isEmpty( license.getName() ) )
                 {
-                    reporter.error( "pom.xml is missing the <name> tag in <license>." );
+                    reporter.error( "pom.xml is missing the <licenses>/<license>/<name> tag." );
                 }
                 else
                 {
                     String url = license.getUrl();
                     if ( StringUtils.isEmpty( url ) )
                     {
-                        reporter.error( "pom.xml is missing the <url> tag for the license " + license.getName() + "." );
+                        reporter.error( "pom.xml is missing the <licenses>/<license>/<url> tag for the license \'" + license.getName() + "\'." );
                     }
                     else
                     {
