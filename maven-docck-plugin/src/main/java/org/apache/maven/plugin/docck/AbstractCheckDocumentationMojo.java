@@ -165,7 +165,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( !hasErrors )
         {
-            messages += "\nNo documentation errors were found.";
+            messages += "No documentation errors were found.";
         }
 
         try
@@ -214,11 +214,11 @@ public abstract class AbstractCheckDocumentationMojo
             {
                 httpClient.getHostConfiguration().setProxy( proxyHost, proxyPort );
 
-                getLog().info( "Using proxy[" + proxyHost + "] at port [" + proxyPort + "]." );
+                getLog().info( "Using proxy [" + proxyHost + "] at port [" + proxyPort + "]." );
 
                 if ( StringUtils.isNotEmpty( proxyUsername ) )
                 {
-                    getLog().info( "Using proxy user[" + proxyUsername + "]." );
+                    getLog().info( "Using proxy user [" + proxyUsername + "]." );
 
                     Credentials creds = new UsernamePasswordCredentials( proxyUsername, proxyPassword );
 
@@ -244,24 +244,27 @@ public abstract class AbstractCheckDocumentationMojo
             if ( !reporter.getMessages().isEmpty() )
             {
                 buffer.append( "\no " ).append( project.getName() );
-                buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
-                    .append( " errors," );
-                buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
-                    .append( " warnings)" );
+                buffer.append( " (" );
+                final int numberOfErrors = reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size();
+                buffer.append( numberOfErrors ).append( " error" ).append( numberOfErrors == 1 ? "" : "s" );
+                buffer.append( ", " );
+                final int numberOfWarnings = reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size();
+                buffer.append( numberOfWarnings ).append( " warning" ).append( numberOfWarnings == 1 ? "" : "s" );
+                buffer.append( ")" );
+                buffer.append( "\n" );
+
                 for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
                 {
                     String error = (String) errorIterator.next();
 
-                    buffer.append( "\n\t" ).append( error );
+                    buffer.append( "  " ).append( error ).append( "\n" );
                 }
-
-                buffer.append( "\n" );
             }
         }
 
         if ( buffer.length() > 0 )
         {
-            messages = "\nThe following documentation problems were found:\n" + buffer.toString();
+            messages = "The following documentation problems were found:\n" + buffer.toString();
         }
 
         return messages;
@@ -405,7 +408,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( licenses == null || licenses.isEmpty() )
         {
-            reporter.error( "pom.xml has no <license> specified." );
+            reporter.error( "pom.xml has no <licenses>/<license> specified." );
         }
         else
         {
@@ -422,11 +425,11 @@ public abstract class AbstractCheckDocumentationMojo
                     String url = license.getUrl();
                     if ( StringUtils.isEmpty( url ) )
                     {
-                        reporter.error( "pom.xml is missing the <url> tag for license " + license.getName() + "." );
+                        reporter.error( "pom.xml is missing the <url> tag for the license " + license.getName() + "." );
                     }
                     else
                     {
-                        checkURL( url, "license " + license.getName(), reporter );
+                        checkURL( url, "license \'" + license.getName() + "\'", reporter );
                     }
                 }
             }
@@ -502,8 +505,8 @@ public abstract class AbstractCheckDocumentationMojo
         }
         catch ( MalformedURLException e )
         {
-            reporter.warn( description + " appears to have an invalid URL: \'" + url + "\'.\nError: " + e.getMessage()
-                + "\n\nTrying to access it as a file instead." );
+            reporter.warn( "The " + description + " appears to have an invalid URL \'" + url + "\'."
+                + " Message: \'" + e.getMessage() + "\'. Trying to access it as a file instead." );
 
             checkFile( url, description, reporter );
         }
@@ -514,7 +517,7 @@ public abstract class AbstractCheckDocumentationMojo
         File licenseFile = new File( url );
         if ( !licenseFile.exists() )
         {
-            reporter.error( description + " file: \'" + licenseFile.getPath() + " does not exist." );
+            reporter.error( "The " + description + " in file \'" + licenseFile.getPath() + "\' does not exist." );
         }
     }
 
