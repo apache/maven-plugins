@@ -192,7 +192,7 @@ public class CheckPluginDocumentationMojo
         {
             reporter.error( "There are no example files in your site directory (in apt|html|xml format)."
                 + " They should either be called \'example*.(apt|html|xml)\'"
-                + " or they should be located in the \'examples\' directory" );
+                + " or they should be located in the \'examples\' directory." );
         }
 
         if ( !findFiles( projectSiteDirectory, "faq" ) )
