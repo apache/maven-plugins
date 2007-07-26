@@ -174,37 +174,35 @@ public class CheckPluginDocumentationMojo
             }
         }
 
-        /* disabled bec site:site generates a duplicate file error
-        // check for index.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "index" ) )
+        // check for index.(apt|html|xml)
+        if ( !findFiles( projectSiteDirectory, "index" ) )
         {
-            errors.add( "There is no index file in your site directory (in html|xml|apt format)." );
+            reporter.error( "There is no \'index\' file in your site directory (in apt|html|xml format)." );
         }
-        */
 
-        // check for usage.(xml|apt|html)
+        // check for usage.(apt|html|xml)
         if ( !findFiles( projectSiteDirectory, "usage" ) )
         {
-            reporter.error( "There is no usage file in your site directory (in html|xml|apt format)." );
+            reporter.error( "There is no \'usage\' file in your site directory (in apt|html|xml format)." );
         }
 
-        // check for **/examples/**.(xml|apt|html)
+        // check for **/examples/**.(apt|html|xml) or **/example*.(apt|html|xml) 
         if ( !findFiles( projectSiteDirectory, "**/examples/*" ) &&
              !findFiles( projectSiteDirectory, "**/example*" ) )
         {
-            reporter.error( "There are no example files in your site directory (in html|xml|apt format)."
-                + " They should either be called \"example*.(html|xml|apt)\""
-                + " or they should be located in the \"examples\" directory" );
+            reporter.error( "There are no example files in your site directory (in apt|html|xml format)."
+                + " They should either be called \'example*.(apt|html|xml)\'"
+                + " or they should be located in the \'examples\' directory" );
         }
 
         if ( !findFiles( projectSiteDirectory, "faq" ) )
         {
-            reporter.error( "There is no faq file in your site directory (in fml|html|xml|apt format)." );
+            reporter.error( "There is no \'faq\' file in your site directory (in apt|fml|html|xml format)." );
         }
     }
 
     /**
-     * Checks the project configured plugins if the required report plugins are present
+     * Checks the project configured plugins if the required report plugins are present.
      *
      * @param project  MavenProject to check
      * @param reporter listener
@@ -236,7 +234,7 @@ public class CheckPluginDocumentationMojo
     }
 
     /**
-     * Returns a List of Strings of required report plugins
+     * Returns a List of Strings of required report plugins.
      *
      * @return List of report plugin artifactIds
      */
