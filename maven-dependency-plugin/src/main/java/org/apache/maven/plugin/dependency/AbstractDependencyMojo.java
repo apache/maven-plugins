@@ -200,12 +200,12 @@ public abstract class AbstractDependencyMojo
             throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
         }
     }
-    
+
     protected void unpack ( File file, File location )
-    	throws MojoExecutionException
-	{
-    	unpack( file, location, null, null);
-	}
+        throws MojoExecutionException
+    {
+        unpack( file, location, null, null );
+    }
 
     /**
      * Unpacks the archive file.
@@ -213,17 +213,22 @@ public abstract class AbstractDependencyMojo
      * @param file File to be unpacked.
      * @param location Location where to put the unpacked
      *            files.
-     * @param includes Comma separated list of file patterns to include
-     * 			  i.e.  **\/*.xml, **\/*.properties
-	 * @param excludes Comma separated list of file patterns to exclude
-     * 			  i.e.  **\/*.xml, **\/*.properties
+     * @param includes Comma separated list of file patterns
+     *            to include i.e. **\/*.xml,
+     *            **\/*.properties
+     * @param excludes Comma separated list of file patterns
+     *            to exclude i.e. **\/*.xml,
+     *            **\/*.properties
      */
     protected void unpack ( File file, File location, String includes, String excludes )
         throws MojoExecutionException
     {
-
         try
         {
+            getLog().info(
+                            "Unpacking " + file.getPath() + "to\n " + location.getPath()
+                                + "\nwith Includes " + includes + " and excludes:" + excludes );
+
             location.mkdirs();
 
             UnArchiver unArchiver;
