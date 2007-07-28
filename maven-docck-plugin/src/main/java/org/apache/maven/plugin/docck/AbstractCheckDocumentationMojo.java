@@ -63,6 +63,8 @@ import java.util.Map;
 public abstract class AbstractCheckDocumentationMojo
     extends AbstractMojo
 {
+    private static final int HTTP_STATUS_200 = 200;
+
     /**
      * @parameter default-value="${reactorProjects}"
      * @readonly
@@ -439,7 +441,8 @@ public abstract class AbstractCheckDocumentationMojo
                     String url = license.getUrl();
                     if ( StringUtils.isEmpty( url ) )
                     {
-                        reporter.error( "pom.xml is missing the <licenses>/<license>/<url> tag for the license \'" + license.getName() + "\'." );
+                        reporter.error( "pom.xml is missing the <licenses>/<license>/<url> tag for the license \'"
+                            + license.getName() + "\'." );
                     }
                     else
                     {
@@ -487,7 +490,7 @@ public abstract class AbstractCheckDocumentationMojo
                     try
                     {
                         getLog().debug( "Verifying http url: " + url );
-                        if ( httpClient.executeMethod( headMethod ) != 200 )
+                        if ( httpClient.executeMethod( headMethod ) != HTTP_STATUS_200 )
                         {
                             reporter.error( "Cannot reach " + description + " with URL: \'" + url + "\'." );
                         }
