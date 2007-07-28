@@ -108,10 +108,11 @@ public class CheckPluginDocumentationMojo
                             {
                                 String paramDescription = param.getDescription();
 
-                                if ( paramDescription == null || paramDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
+                                if ( paramDescription == null
+                                    || paramDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
                                 {
-                                    reporter.error( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal() +
-                                        "\' is missing a description." );
+                                    reporter.error( "Parameter: \'" + param.getName() + "\' in mojo: \'"
+                                        + mojo.getGoal() + "\' is missing a description." );
                                 }
                             }
                         }
@@ -169,8 +170,8 @@ public class CheckPluginDocumentationMojo
             }
             catch ( IOException e )
             {
-                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath() +
-                    "\'.\nError: " + e.getMessage() );
+                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath()
+                    + "\'.\nError: " + e.getMessage() );
             }
         }
 
@@ -187,8 +188,8 @@ public class CheckPluginDocumentationMojo
         }
 
         // check for **/examples/**.(apt|html|xml) or **/example*.(apt|html|xml) 
-        if ( !findFiles( projectSiteDirectory, "**/examples/*" ) &&
-             !findFiles( projectSiteDirectory, "**/example*" ) )
+        if ( !findFiles( projectSiteDirectory, "**/examples/*" )
+             && !findFiles( projectSiteDirectory, "**/example*" ) )
         {
             reporter.error( "There are no example files in your site directory (in apt|html|xml format)."
                 + " They should either be called \'example*.(apt|html|xml)\'"
