@@ -49,7 +49,7 @@ public class DocumentationReporter
     {
         List list = new ArrayList();
 
-        for( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
         {
             DocumentationReport report = (DocumentationReport) iter.next();
 
@@ -66,7 +66,7 @@ public class DocumentationReporter
     {
         List list = new ArrayList();
 
-        for( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
         {
             DocumentationReport report = (DocumentationReport) iter.next();
 
@@ -78,7 +78,7 @@ public class DocumentationReporter
 
     public boolean hasErrors()
     {
-        for( Iterator iter = reports.iterator(); iter.hasNext(); )
+        for ( Iterator iter = reports.iterator(); iter.hasNext(); )
         {
             DocumentationReport report = (DocumentationReport) iter.next();
 
