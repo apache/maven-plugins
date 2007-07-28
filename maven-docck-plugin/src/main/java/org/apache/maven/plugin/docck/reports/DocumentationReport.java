@@ -24,9 +24,9 @@ package org.apache.maven.plugin.docck.reports;
  */
 public interface DocumentationReport
 {
-    static final int TYPE_INFO = 1;
-    static final int TYPE_WARN = 2;
-    static final int TYPE_ERROR = 3;
+    int TYPE_INFO = 1;
+    int TYPE_WARN = 2;
+    int TYPE_ERROR = 3;
 
     String getMessage();
 
