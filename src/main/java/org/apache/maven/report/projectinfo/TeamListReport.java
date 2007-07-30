@@ -148,7 +148,7 @@ public class TeamListReport
             javascript.append( "\n" );
             javascript.append( "function init(){\n" );
 
-            // Intoduction
+            // Introduction
             paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description1" ) );
             paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description2" ) );
 
@@ -169,7 +169,7 @@ public class TeamListReport
 
                 // By default we think that all headers not required
                 Map headersMap = new HashMap();
-                // set true for headers that required
+                // set true for headers that are required
                 checkRequiredHeaders( headersMap, developers );
                 String[] requiredHeaders = getRequiredDevHeaderArray( headersMap );
 
