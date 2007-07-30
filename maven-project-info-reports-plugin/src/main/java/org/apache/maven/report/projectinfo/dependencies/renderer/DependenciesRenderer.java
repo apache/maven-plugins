@@ -372,7 +372,10 @@ public class DependenciesRenderer
 
                         try
                         {
-                            highestjdk = Math.max( highestjdk, Double.parseDouble( jarDetails.getJdkRevision() ) );
+                            if ( jarDetails.getJdkRevision() != null )
+                            {
+                                highestjdk = Math.max( highestjdk, Double.parseDouble( jarDetails.getJdkRevision() ) );
+                            }
                         }
                         catch ( NumberFormatException e )
                         {
