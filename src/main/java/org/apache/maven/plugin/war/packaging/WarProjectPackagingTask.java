@@ -3,6 +3,7 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
@@ -31,6 +32,8 @@ public class WarProjectPackagingTask
 
     private final File containerConfigXML;
 
+    private final String id;
+
 
     public WarProjectPackagingTask( Resource[] webResources, File webXml, File containerConfigXml )
     {
@@ -44,6 +47,7 @@ public class WarProjectPackagingTask
         }
         this.webXml = webXml;
         this.containerConfigXML = containerConfigXml;
+        this.id = Overlay.currentProjectInstance().getId();
     }
 
     public void performPackaging( WarPackagingContext context )
@@ -123,7 +127,7 @@ public class WarProjectPackagingTask
 
             try
             {
-                copyFiles( context, context.getWebappSourceDirectory(), sources );
+                copyFiles( id, context, context.getWebappSourceDirectory(), sources );
             }
             catch ( IOException e )
             {
@@ -185,14 +189,14 @@ public class WarProjectPackagingTask
                 //rename to web.xml
                 //TODO refactor this
                 copyFileIfModified( webXml, new File( webinfDir, "web.xml" ) );
-                context.getProtectedFiles().add( WEB_INF_PATH + "/web.xml" );
+                context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
             }
 
             if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
             {
                 String xmlFileName = containerConfigXML.getName();
                 copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
-                context.getProtectedFiles().add( META_INF_PATH + "/" + xmlFileName );
+                context.getWebappStructure().getFullStructure().add( META_INF_PATH + "/" + xmlFileName );
             }
         }
         catch ( IOException e )
@@ -232,11 +236,11 @@ public class WarProjectPackagingTask
             }
             if ( resource.isFiltering() )
             {
-                copyFilteredFile( context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
+                copyFilteredFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
             }
             else
             {
-                copyFile( context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
+                copyFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
             }
         }
     }

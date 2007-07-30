@@ -72,7 +72,7 @@ public class OverlayPackagingTask
                 final PathSet includes = getFilesToIncludes( tmpDir, overlay.getIncludes(), overlay.getExcludes() );
 
                 // Copy
-                copyFiles( context, tmpDir, includes );
+                copyFiles( overlay.getId(), context, tmpDir, includes );
             }
             catch ( IOException e )
             {

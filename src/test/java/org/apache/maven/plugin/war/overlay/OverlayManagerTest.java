@@ -43,7 +43,7 @@ public class OverlayManagerTest
         final List overlays = new ArrayList();
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project );
+            OverlayManager manager = new OverlayManager( overlays, project, "**/**", "META-INF/**" );
             assertNotNull( manager.getOverlays() );
             assertEquals( 1, manager.getOverlays().size() );
             assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
@@ -67,7 +67,7 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project );
+            OverlayManager manager = new OverlayManager( overlays, project, "**/**", "META-INF/**" );
             assertNotNull( manager.getOverlays() );
             assertEquals( 2, manager.getOverlays().size() );
             assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
@@ -93,7 +93,7 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project );
+            OverlayManager manager = new OverlayManager( overlays, project, "**/**", "META-INF/**" );
             assertNotNull( manager.getOverlays() );
             assertEquals( 2, manager.getOverlays().size() );
             assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
@@ -119,7 +119,7 @@ public class OverlayManagerTest
 
         try
         {
-            new OverlayManager( overlays, project );
+            new OverlayManager( overlays, project, "**/**", "META-INF/**" );
             fail( "Should have failed to validate an unknown overlay" );
         }
         catch ( InvalidOverlayConfigurationException e )
@@ -144,7 +144,7 @@ public class OverlayManagerTest
 
         try
         {
-            OverlayManager manager = new OverlayManager( overlays, project );
+            OverlayManager manager = new OverlayManager( overlays, project, "**/**", "META-INF/**" );
             assertNotNull( manager.getOverlays() );
             assertEquals( 3, manager.getOverlays().size() );
             assertEquals( overlays.get( 0 ), manager.getOverlays().get( 0 ) );

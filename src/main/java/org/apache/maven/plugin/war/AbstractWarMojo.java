@@ -34,7 +34,7 @@ import org.apache.maven.plugin.war.packaging.WarPackagingContext;
 import org.apache.maven.plugin.war.packaging.WarPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
 import org.apache.maven.plugin.war.util.MappingUtils;
-import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -166,6 +166,15 @@ public abstract class AbstractWarMojo
     private String outputFileNameMapping;
 
     /**
+     * The file containing the webapp structure cache.
+     *
+     * @paramenter expression="${project.build.directory}/.webapp-cache.xml"
+     * @required
+     * @since 2.1
+     */
+    private File webappStructure;
+
+    /**
      * To look up Archiver/UnArchiver implementations
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
@@ -206,7 +215,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    private String dependentWarIncludes = "**";
+    private String dependentWarIncludes = "**/**";
 
     /**
      * The comma separated list of tokens to exclude when doing
@@ -214,7 +223,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    private String dependentWarExcludes;
+    private String dependentWarExcludes = "META-INF/**";
 
     /**
      * The overlays to apply.
@@ -561,17 +570,28 @@ public abstract class AbstractWarMojo
         throws MojoExecutionException, MojoFailureException, IOException
     {
 
+        WebappStructure cache = new WebappStructure();
+        if ( webappStructure != null && webappStructure.exists() )
+        {
+            // TODO: LOAD the webapp structure thingy using xstream
+        }
+
         final long startTime = System.currentTimeMillis();
         getLog().info( "Assembling webapp[" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
 
-        final List packagingTasks = getPackagingTasks();
+        final OverlayManager overlayManager =
+            new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes );
+        final List packagingTasks = getPackagingTasks( overlayManager );
+        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager );
         final Iterator it = packagingTasks.iterator();
         while ( it.hasNext() )
         {
             WarPackagingTask warPackagingTask = (WarPackagingTask) it.next();
-            warPackagingTask.performPackaging( new DefaultWarPackagingContext( webappDirectory ) );
+            warPackagingTask.performPackaging( context );
         }
         getLog().info( "Webapp assembled in[" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
+
+        //TODO save the cache
     }
 
 
@@ -579,14 +599,14 @@ public abstract class AbstractWarMojo
      * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPackagingTask}
      * instances to invoke to perform the packaging.
      *
+     * @param overlayManager the overlay manager
      * @return the list of packaging tasks
      * @throws MojoExecutionException if the packaging tasks could not be built
      */
-    private List getPackagingTasks()
+    private List getPackagingTasks( OverlayManager overlayManager )
         throws MojoExecutionException
     {
         final List packagingTasks = new ArrayList();
-        OverlayManager overlayManager = new OverlayManager( overlays, project );
         final List resolvedOverlays = overlayManager.getOverlays();
         final Iterator it = resolvedOverlays.iterator();
         while ( it.hasNext() )
@@ -1189,14 +1209,31 @@ public abstract class AbstractWarMojo
         implements WarPackagingContext
     {
 
-        private final PathSet pathSet = new PathSet();
+
+        private final WebappStructure webappStructure;
 
         private final File webappDirectory;
 
+        private final OverlayManager overlayManager;
 
-        public DefaultWarPackagingContext( File webappDirectory )
+
+        public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
+                                           final OverlayManager overlayManager )
         {
             this.webappDirectory = webappDirectory;
+            this.webappStructure = webappStructure;
+            this.overlayManager = overlayManager;
+
+            // This is kinda stupid but if we loop over the current overlays and we request the path structure
+            // it will register it. This will avoid wrong warning messages in a later phase
+            final Iterator it = overlayManager.getOverlayIds().iterator();
+            while ( it.hasNext() )
+            {
+                String overlayId = (String) it.next();
+                webappStructure.getStructure( overlayId );
+            }
+
+
         }
 
 
@@ -1265,11 +1302,6 @@ public abstract class AbstractWarMojo
             return jarArchiver;
         }
 
-        public PathSet getProtectedFiles()
-        {
-            return pathSet;
-        }
-
         public List getFilters()
         {
             return filters;
@@ -1280,6 +1312,16 @@ public abstract class AbstractWarMojo
         {
             //TODO refactor this
             return getBuildFilterProperties();
+        }
+
+        public WebappStructure getWebappStructure()
+        {
+            return webappStructure;
+        }
+
+        public List getOwnerIds()
+        {
+            return overlayManager.getOverlayIds();
         }
     }
 }

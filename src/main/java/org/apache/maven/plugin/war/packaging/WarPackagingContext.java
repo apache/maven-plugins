@@ -22,7 +22,7 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -126,18 +126,6 @@ public interface WarPackagingContext
     JarArchiver getJarArchiver();
 
     /**
-     * Returns the list of files that have already been copied during the
-     * packaging tasks.
-     * <p/>
-     * Tasks are responsible to update this file to make sure that the
-     * overwriting strategy is applied properly.
-     *
-     * @return the list of files that have already been copied
-     */
-    PathSet getProtectedFiles();
-
-
-    /**
      * Returns the output file name mapping to use, if any. Returns <tt>null</tt>
      * if no file name mapping is set.
      *
@@ -163,5 +151,21 @@ public interface WarPackagingContext
     Map getFilterProperties()
         throws MojoExecutionException;
 
+    /**
+     * Returns the {@link WebappStructure}.
+     *
+     * @return the webapp structure
+     */
+    WebappStructure getWebappStructure();
+
+    /**
+     * Returns the list of registered overlays for this session. This list might
+     * differ from the one returned by the cache; in this case, it means that the
+     * project's configuration has changed. The plugin will handle thos cases nicely
+     * but it would be better in general to invoke the clean goal.
+     *
+     * @return the list of registered overlays, including the current project
+     */
+    List getOwnerIds();
 
 }

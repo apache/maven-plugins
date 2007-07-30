@@ -3,6 +3,7 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -43,7 +44,8 @@ public class ClassesPackagingTask
                 final PathSet sources = getFilesToIncludes( context.getClassesDirectory(), null, null );
                 try
                 {
-                    copyFiles( context, context.getClassesDirectory(), sources, CLASSES_PATH );
+                    copyFiles( Overlay.currentProjectInstance().getId(), context, context.getClassesDirectory(),
+                               sources, CLASSES_PATH );
                 }
                 catch ( IOException e )
                 {
@@ -61,14 +63,9 @@ public class ClassesPackagingTask
         final String archiveName = context.getProject().getBuild().getFinalName() + ".jar";
         final String targetFilename = LIB_PATH + archiveName;
 
-        // TODO: this is bit hackish here ; check if the specified path is registered
-        if ( context.getProtectedFiles().contains( targetFilename ) )
+        if ( context.getWebappStructure().registerFile( Overlay.currentProjectInstance().getId(), targetFilename ) )
         {
-            context.getLog().warn(
-                "Could not generate archive classes file[" + targetFilename + "] has already been copied." );
-        }
-        else
-        {
+
             final File libDirectory = new File( context.getWebappDirectory(), LIB_PATH );
             final File jarFile = new File( libDirectory, archiveName );
 
@@ -97,6 +94,11 @@ public class ClassesPackagingTask
             {
                 throw new MojoExecutionException( "Could not create classes archive", e );
             }
+        }
+        else
+        {
+            context.getLog().warn(
+                "Could not generate archive classes file[" + targetFilename + "] has already been copied." );
         }
     }
 }

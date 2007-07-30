@@ -3,6 +3,7 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.war.Overlay;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,10 +26,13 @@ public class ArtifactsPackagingTask
 
     private final Set artifacts;
 
+    private final String id;
+
 
     public ArtifactsPackagingTask( Set artifacts )
     {
         this.artifacts = artifacts;
+        this.id = Overlay.currentProjectInstance().getId();
     }
 
 
@@ -60,21 +64,21 @@ public class ArtifactsPackagingTask
                     String type = artifact.getType();
                     if ( "tld".equals( type ) )
                     {
-                        copyFile( context, artifact.getFile(), TLD_PATH + targetFileName );
+                        copyFile( id, context, artifact.getFile(), TLD_PATH + targetFileName );
                     }
                     else if ( "aar".equals( type ) )
                     {
-                        copyFile( context, artifact.getFile(), SERVICES_PATH + targetFileName );
+                        copyFile( id, context, artifact.getFile(), SERVICES_PATH + targetFileName );
                     }
                     else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
                         "test-jar".equals( type ) )
                     {
-                        copyFile( context, artifact.getFile(), LIB_PATH + targetFileName );
+                        copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
                     }
                     else if ( "par".equals( type ) )
                     {
                         targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
-                        copyFile( context, artifact.getFile(), LIB_PATH + targetFileName );
+                        copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
                     }
                     else
                     {

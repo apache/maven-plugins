@@ -48,12 +48,14 @@ public class OverlayManager
      * Note that the list is potentially updated by the
      * manager so a new list is created based on the overlays.
      *
-     * @param overlays the overlays
-     * @param project  the maven project
+     * @param overlays        the overlays
+     * @param project         the maven project
+     * @param defaultIncludes the default includes to use
+     * @param defaultExcludes the default excludes to use
      * @throws InvalidOverlayConfigurationException
      *          if the config is invalid
      */
-    public OverlayManager( List overlays, MavenProject project )
+    public OverlayManager( List overlays, MavenProject project, String defaultIncludes, String defaultExcludes )
         throws InvalidOverlayConfigurationException
     {
         this.overlays = new ArrayList();
@@ -66,7 +68,7 @@ public class OverlayManager
         this.warArtifacts = getWarOverlaysAsArtifacts();
 
         // Initialize
-        initialize();
+        initialize( defaultIncludes, defaultExcludes );
 
     }
 
@@ -91,12 +93,32 @@ public class OverlayManager
     }
 
     /**
+     * Returns the id of the resolved overlays.
+     *
+     * @return the overlay ids
+     */
+    public List getOverlayIds()
+    {
+        final Iterator it = overlays.iterator();
+        final List result = new ArrayList();
+        while ( it.hasNext() )
+        {
+            Overlay overlay = (Overlay) it.next();
+            result.add( overlay.getId() );
+        }
+        return result;
+
+    }
+
+    /**
      * Intializes the manager and validates the overlays configuration.
      *
-     * @throws org.apache.maven.plugin.war.overlay.InvalidOverlayConfigurationException
+     * @param defaultIncludes the default includes to use
+     * @param defaultExcludes the default excludes to use
+     * @throws InvalidOverlayConfigurationException
      *          if the configuration is invalid
      */
-    void initialize()
+    void initialize( String defaultIncludes, String defaultExcludes )
         throws InvalidOverlayConfigurationException
     {
 
@@ -111,6 +133,14 @@ public class OverlayManager
             {
                 throw new InvalidOverlayConfigurationException( "overlay could not be null." );
             }
+            // default includes/excludes - only if the overlay uses the default settings
+            if ( Overlay.DEFAULT_INCLUDES.equals( overlay.getIncludes() ) &&
+                Overlay.DEFAULT_EXCLUDES.equals( overlay.getExcludes() ) )
+            {
+                overlay.setIncludes( defaultIncludes );
+                overlay.setExcludes( defaultExcludes );
+            }
+
             final Artifact artifact = getAssociatedArtifact( overlay );
             if ( artifact != null )
             {
@@ -128,7 +158,7 @@ public class OverlayManager
             {
                 // Add a default overlay for the given artifact which will be applied after
                 // the ones that have been configured
-                overlays.add( new DefaultOverlay( artifact ) );
+                overlays.add( new DefaultOverlay( artifact, defaultIncludes, defaultExcludes ) );
             }
         }
 
@@ -144,21 +174,6 @@ public class OverlayManager
         }
         overlays.add( 0, Overlay.currentProjectInstance() );
     }
-
-
-    void initializeOverlay( final Overlay overlay )
-        throws InvalidOverlayConfigurationException
-    {
-        if ( overlay == null )
-        {
-            throw new InvalidOverlayConfigurationException( "overlay could not be null." );
-        }
-        final Artifact artifact = getAssociatedArtifact( overlay );
-        overlay.setArtifact( artifact );
-
-
-    }
-
 
     /**
      * Returns the Artifact associated to the specified overlay.
@@ -180,6 +195,7 @@ public class OverlayManager
             return null;
         }
 
+        // TODO this might not always return the artifacts in the right order. Hence some tests might fail
         final Iterator it = warArtifacts.iterator();
         while ( it.hasNext() )
         {

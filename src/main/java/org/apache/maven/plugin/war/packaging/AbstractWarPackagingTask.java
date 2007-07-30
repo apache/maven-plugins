@@ -70,13 +70,14 @@ public abstract class AbstractWarPackagingTask
      * directory the files should be copied. Use <tt>null</tt> to copy the files with
      * the same structure
      *
+     * @param sourceId       the source id
      * @param context        the context to use
      * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
      * @param targetPrefix   the prefix to add to the target file name
      * @throws IOException if an error occured while copying the files
      */
-    protected void copyFiles( WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
+    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
                               String targetPrefix )
         throws IOException
     {
@@ -95,7 +96,7 @@ public abstract class AbstractWarPackagingTask
                 destinationFileName = targetPrefix + fileToCopyName;
             }
 
-            copyFile( context, sourceFile, destinationFileName );
+            copyFile( sourceId, context, sourceFile, destinationFileName );
         }
     }
 
@@ -106,15 +107,16 @@ public abstract class AbstractWarPackagingTask
      * tasks are ignored. This method makes sure to update the list of protected files
      * which gives the list of files that have already been copied.
      *
+     * @param sourceId       the source id
      * @param context        the context to use
      * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
      * @throws IOException if an error occured while copying the files
      */
-    protected void copyFiles( WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet )
+    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet )
         throws IOException
     {
-        copyFiles( context, sourceBaseDir, sourceFilesSet, null );
+        copyFiles( sourceId, context, sourceBaseDir, sourceFilesSet, null );
     }
 
     /**
@@ -123,30 +125,48 @@ public abstract class AbstractWarPackagingTask
      * The <tt>targetFileName</tt> is the relative path according to the root of
      * the generated web application.
      *
+     * @param sourceId       the source id
      * @param context        the context to use
      * @param file           the file to copy
      * @param targetFilename the relative path according to the root of the webapp
      * @return true if the file has been copied, false otherwise
      * @throws IOException if an error occured while copying
      */
-    protected boolean copyFile( WarPackagingContext context, File file, String targetFilename )
+    protected boolean copyFile( String sourceId, WarPackagingContext context, File file, String targetFilename )
         throws IOException
     {
-        if ( !context.getProtectedFiles().contains( targetFilename ) )
-        {
-            File targetFile = new File( context.getWebappDirectory(), targetFilename );
-            copyFile( file, targetFile );
 
-            // Add the file to the protected list
-            context.getProtectedFiles().add( targetFilename );
-            context.getLog().debug( " + " + targetFilename + " has been copied." );
-            return true;
+        File targetFile = new File( context.getWebappDirectory(), targetFilename );
+        // Check if the file already belongs to *this* source. If so only copy if it has changed. If it does not
+        // belong to this source, check if the source is still registered in the project. If so, skip the file,
+        // if not overwrite the file and issue a warning
+        if ( context.getWebappStructure().isRegistered( targetFilename ) )
+        {
+            final String owner = context.getWebappStructure().getOwner( targetFilename );
+            if ( sourceId.equals( owner ) )
+            {
+                return copyFile( context, file, targetFile, targetFilename, true );
+            }
+            else if ( context.getOwnerIds().contains( owner ) )
+            {
+                context.getLog().info(
+                    " - " + targetFilename + " wasn't copied because it has already been packaged." );
+                return false;
+            }
+            else
+            {
+                context.getLog().warn( "Overlay with id[" + owner +
+                    "] does not exist anymore in the current project. " +
+                    "It is recommended to invoke clean if the dependencies of the project changed." );
+                return copyFile( context, file, targetFile, targetFilename, false );
+            }
         }
         else
         {
-            context.getLog().debug( " - " + targetFilename + " wasn't copied because it has already been packaged." );
-            return false;
+            context.getWebappStructure().registerFile( sourceId, targetFilename );
+            return copyFile( context, file, targetFile, targetFilename, false );
         }
+
     }
 
     /**
@@ -156,6 +176,7 @@ public abstract class AbstractWarPackagingTask
      * The <tt>targetFileName</tt> is the relative path according to the root of
      * the generated web application.
      *
+     * @param sourceId       the source id
      * @param context        the context to use
      * @param file           the file to copy
      * @param targetFilename the relative path according to the root of the webapp
@@ -163,11 +184,11 @@ public abstract class AbstractWarPackagingTask
      * @throws IOException            if an error occured while copying
      * @throws MojoExecutionException if an error occured while retrieving the filter properties
      */
-    protected boolean copyFilteredFile( WarPackagingContext context, File file, String targetFilename )
+    protected boolean copyFilteredFile( String sourceId, WarPackagingContext context, File file, String targetFilename )
         throws IOException, MojoExecutionException
     {
 
-        if ( !context.getProtectedFiles().contains( targetFilename ) )
+        if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
             // buffer so it isn't reading a byte at a time!
@@ -196,7 +217,6 @@ public abstract class AbstractWarPackagingTask
                 IOUtil.close( fileWriter );
             }
             // Add the file to the protected list
-            context.getProtectedFiles().add( targetFilename );
             context.getLog().debug( " + " + targetFilename + " has been copied." );
             return true;
         }
@@ -248,23 +268,37 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Copy file from source to destination. The directories up to <code>destination</code>
-     * will be created if they don't already exist. <code>destination</code> will be
-     * overwritten if it already exists.
+     * will be created if they don't already exist. if the <code>onlyIfModified</code> flag
+     * is <tt>false</tt>, <code>destination</code> will be overwritten if it already exists. If the
+     * flag is <tt>true</tt> destination will be overwritten if it's not up to date.
      * <p/>
-     * TODO: Remove this method when Maven moves to plexus-util version 1.4
      *
-     * @param source      an existing non-directory <code>File</code> to copy bytes from
-     * @param destination a non-directory <code>File</code> to write bytes to (possibly overwriting).
-     * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot
-     *                                       be written to, or an IO error occurs during copying
-     * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
+     * @param context        the packaging context
+     * @param source         an existing non-directory <code>File</code> to copy bytes from
+     * @param destination    a non-directory <code>File</code> to write bytes to (possibly overwriting).
+     * @param targetFilename the relative path of the file from the webapp root directory
+     * @param onlyIfModified if true, copy the file only if the source has changed, always copy otherwise
+     * @return true if the file has been copied/updated, false otherwise
+     * @throws IOException if <code>source</code> does not exist, <code>destination</code> cannot
+     *                     be written to, or an IO error occurs during copying
      */
-    private void copyFile( File source, File destination )
+    private boolean copyFile( WarPackagingContext context, File source, File destination, String targetFilename,
+                              boolean onlyIfModified )
         throws IOException
     {
-        FileUtils.copyFile( source.getCanonicalFile(), destination );
-        // preserve timestamp
-        destination.setLastModified( source.lastModified() );
+        if ( onlyIfModified && destination.lastModified() >= source.lastModified() )
+        {
+            context.getLog().info( " * " + targetFilename + " is up to date." );
+            return false;
+        }
+        else
+        {
+            FileUtils.copyFile( source.getCanonicalFile(), destination );
+            // preserve timestamp
+            destination.setLastModified( source.lastModified() );
+            context.getLog().info( " + " + targetFilename + " has been copied." );
+            return true;
+        }
     }
 
 
@@ -275,7 +309,6 @@ public abstract class AbstractWarPackagingTask
      *
      * @param source      An existing non-directory <code>File</code> to copy bytes from.
      * @param destination A non-directory <code>File</code> to write bytes to (possibly
-     *                    overwriting).
      * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot be
      *                                       written to, or an IO error occurs during copying.
      * @throws java.io.FileNotFoundException if <code>destination</code> is a directory

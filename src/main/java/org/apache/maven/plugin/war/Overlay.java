@@ -22,6 +22,7 @@ package org.apache.maven.plugin.war;
 import org.apache.maven.artifact.Artifact;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +43,7 @@ public class Overlay
 {
 
     public static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
+
     public static final String[] DEFAULT_EXCLUDES = new String[]{"META-INF/**"};
 
     private static Overlay currentProjectInstance;
@@ -233,7 +235,7 @@ public class Overlay
 
         Overlay overlay = (Overlay) o;
 
-        if ( excludes != null ? !excludes.equals( overlay.excludes ) : overlay.excludes != null )
+        if ( excludes != null ? !Arrays.equals( excludes, overlay.excludes ) : overlay.excludes != null )
         {
             return false;
         }
@@ -241,7 +243,7 @@ public class Overlay
         {
             return false;
         }
-        if ( includes != null ? !includes.equals( overlay.includes ) : overlay.includes != null )
+        if ( includes != null ? !Arrays.equals( includes, overlay.includes ) : overlay.includes != null )
         {
             return false;
         }
@@ -263,7 +265,7 @@ public class Overlay
         final List result = new ArrayList();
         if ( s == null )
         {
-            return (String[]) result.toArray(new String[result.size()]);
+            return (String[]) result.toArray( new String[result.size()] );
         }
         else
         {
@@ -273,7 +275,7 @@ public class Overlay
                 String token = tokens[i];
                 result.add( token.trim() );
             }
-            return (String[]) result.toArray(new String[result.size()]);
+            return (String[]) result.toArray( new String[result.size()] );
         }
     }
 }
