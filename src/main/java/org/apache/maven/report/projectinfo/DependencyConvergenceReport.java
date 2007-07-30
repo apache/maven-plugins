@@ -224,7 +224,7 @@ public class DependencyConvergenceReport
 
     private void generateVersionDetails( Sink sink, Map artifactMap, String version )
     {
-        sink.numberedList( 1 ); // parameter value is apparently irrelevant here.
+        sink.numberedList( 1 ); // Use lower alpha numbering
         List depList = (List) artifactMap.get( version );
         Collections.sort( depList, new ProjectComparator() );
         Iterator it = depList.iterator();
@@ -246,6 +246,25 @@ public class DependencyConvergenceReport
         sink.numberedList_();
     }
 
+    /**
+     * Produce a Map of relationships between dependencies (its version) and
+     * reactor projects.
+     * 
+     * This is the structure of the Map:
+     * <pre>
+     * +--------------------+----------------------------------+
+     * | key                | value                            |
+     * +--------------------+----------------------------------+
+     * | version of a       | A List of ReverseDependencyLinks |
+     * | dependency         | which each look like this:       |
+     * |                    | +------------+-----------------+ |
+     * |                    | | dependency | reactor project | |
+     * |                    | +------------+-----------------+ |
+     * +--------------------+----------------------------------+
+     * </pre>
+     *
+     * @return A Map of sorted unique artifacts
+     */
     private Map getSortedUniqueArtifactMap( List depList )
     {
         Map uniqueArtifactMap = new TreeMap();
@@ -451,12 +470,52 @@ public class DependencyConvergenceReport
         while ( it.hasNext() )
         {
             String version = (String) it.next();
-            if ( version.endsWith( "-SNAPSHOT" ) )
+            boolean isReactorProject = false;
+
+            Iterator iterator = ( (List) artifactMap.get( version ) ).iterator();
+            // It if enough to check just the first dependency here, because
+            // the dependency is the same in all the RDLs in the List. It's the
+            // reactorProjects that are different.
+            if ( iterator.hasNext() )
+            {
+                ReverseDependencyLink rdl = (ReverseDependencyLink) iterator.next();
+                if( isReactorProject(rdl.getDependency()) )
+                {
+                    isReactorProject = true;
+                }
+            }
+
+            if ( version.endsWith( "-SNAPSHOT" ) && !isReactorProject )
             {
                 count++;
             }
         }
         return count;
+    }
+
+    /**
+     * Check to see if the specified dependency is among the reactor projects.
+     *
+     * @param dependency The dependency to check
+     * @return true if and only if the dependency is a reactor project
+     */
+    private boolean isReactorProject( Dependency dependency )
+    {
+        Iterator iterator = reactorProjects.iterator();
+        while ( iterator.hasNext() )
+        {
+            MavenProject project = (MavenProject) iterator.next();
+            if ( project.getGroupId().equals( dependency.getGroupId() )
+                && project.getArtifactId().equals( dependency.getArtifactId() ) )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( dependency + " is a reactor project" );
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     private void iconSuccess( Sink sink )
@@ -479,6 +538,25 @@ public class DependencyConvergenceReport
         sink.figure_();
     }
 
+    /**
+     * Produce a Map of relationships between dependencies
+     * (its groupId:artifactId) and reactor projects.
+     *
+     * This is the structure of the Map:
+     * <pre>
+     * +--------------------+----------------------------------+
+     * | key                | value                            |
+     * +--------------------+----------------------------------+
+     * | groupId:artifactId | A List of ReverseDependencyLinks |
+     * | of a dependency    | which each look like this:       |
+     * |                    | +------------+-----------------+ |
+     * |                    | | dependency | reactor project | |
+     * |                    | +------------+-----------------+ |
+     * +--------------------+----------------------------------+
+     * </pre>
+     *
+     * @return A Map of relationships between dependencies and reactor projects
+     */
     public Map getDependencyMap()
     {
         Iterator it = reactorProjects.iterator();
