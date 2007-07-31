@@ -82,4 +82,16 @@
       <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
     </mailingList>
   </mailingLists>
+  
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <id>apache.snapshots</id>
+      <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
+    </snapshotRepository>
+    <repository>
+      <id>apache</id>
+      <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+    </repository>
+  </distributionManagement>
 </project>
