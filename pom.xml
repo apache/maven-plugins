@@ -103,6 +103,12 @@
               <descriptors>
                 <descriptor>${project.build.directory}/generated-resources/plexus/META-INF/plexus/components.xml</descriptor>
                 <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
+                
+                <!--  This is a separate artifact also, but we need access to 
+                      the ArtifactHandlers from the assembly plugin to enable 
+                      attachment of these artifacts without requiring weird 
+                      configurations. -->
+                <descriptor>maven-assembly-artifact-types/src/main/resources/META-INF/plexus/components.xml</descriptor>
               </descriptors>
             </configuration>
             <phase>generate-resources</phase>
