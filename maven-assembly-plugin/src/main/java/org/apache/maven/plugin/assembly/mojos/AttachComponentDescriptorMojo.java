@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.assembly.mojos;
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -23,20 +24,16 @@ public class AttachComponentDescriptorMojo
     private File componentDescriptor;
 
     /**
-     * If set, component descriptor will be attached to the main project
-     * artifact using this classifier, rather than becoming the artifact's
-     * backing file.
-     *
-     * @parameter
-     */
-    private String attachmentClassifier;
-
-    /**
      * @parameter default-value="${project}"
      * @required
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * @component role-hint="assembly-component"
+     */
+    private ArtifactHandler handler;
 
     /**
      * @component
@@ -46,14 +43,9 @@ public class AttachComponentDescriptorMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( attachmentClassifier != null )
-        {
-            projectHelper.attachArtifact( project, componentDescriptor, attachmentClassifier );
-        }
-        else
-        {
-            project.getArtifact().setFile( componentDescriptor );
-        }
+        File pomFile = project.getFile();
+        project.getArtifact().setFile( pomFile );
+        projectHelper.attachArtifact( project, componentDescriptor, handler.getClassifier() );
     }
 
 }
