@@ -6,6 +6,7 @@
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
       <configuration>
         <packaging>assembly-component</packaging>
+        <classifier>assembly-component</classifier>
         <extension>xml</extension>
         <type>assembly-component</type>
         <addedToClasspath>false</addedToClasspath>
@@ -37,6 +38,7 @@
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
       <configuration>
         <packaging>assembly-descriptor</packaging>
+        <classifier>assembly-descriptor</classifier>
         <extension>xml</extension>
         <type>assembly-descriptor</type>
         <addedToClasspath>false</addedToClasspath>
