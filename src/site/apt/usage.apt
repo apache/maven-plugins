@@ -126,6 +126,23 @@ due-to-email         | Optional     |  Email of the person to be credited for th
 mvn site
 -------------------
 
+** Linking to Your Issue Management System
+
+  If you use the <<<issue>>> attribute in your <<<changes.xml>>> file and have
+  the <<<\<issueManagement\>>>> element configured in your <<<pom.xml>>>, the
+  report will contain links to the issues in your issue management system. The
+  default configuration produces links to JIRA, but that can be
+  {{{changes-report-mojo.html}configured}}.
+
+  <<Note:>> If you have
+  another issue tracker, make sure that your <<<\<issueManagement\>/\<url\>>>> is
+  correct. In particular, make sure that it has a trailing slash if it needs one.
+  The plugin can't add this for you, because it needs to handle different issue
+  management systems. If your issue management system is at
+  <<<http://www.company.com/bugzilla/>>>
+  the links will not work if you enter <<<http://www.company.com/bugzilla>>>
+  in your <<<pom.xml>>>.
+
 
 *How to Generate the JIRA Report
 
