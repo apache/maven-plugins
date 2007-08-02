@@ -75,8 +75,8 @@ public class ChangesMojo
     /**
      * Template string that is used to discover the URL to use to display an issue report.
      * There are 2 template tokens you can use. %URL%: this is computed by getting the
-     * &lt;issueManagement&gt;&lt;url&gt; value from the POM, and removing the context path. %ISSUE% :
-     * this is the issue number.
+     * &lt;issueManagement&gt;/&lt;url&gt; value from the POM, and removing the last '/'
+     * and everything that comes after it. %ISSUE% : this is the issue number.
      * <p>
      * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called
      * <code>link_template</code>.
