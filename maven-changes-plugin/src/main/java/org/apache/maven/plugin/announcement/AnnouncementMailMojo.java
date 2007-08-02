@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.model.Developer;
@@ -101,6 +102,15 @@ public class AnnouncementMailMojo
     private String subject;
 
     /**
+     * The id of the developer sending the announcement mail. This should match
+     * the id of one of the developers in the pom. If a matching developer is
+     * not found, then the first developer in the pom will be used.
+     *
+     * @parameter expression="${changes.fromDeveloperId}"
+     */
+    private String fromDeveloperId;
+
+    /**
      * Recipient email address.
      *
      * @parameter 
@@ -109,10 +119,11 @@ public class AnnouncementMailMojo
     private List toAddresses;
 
     /**
-     * Sender.
+     * Possible senders.
      *
      * @parameter expression="${project.developers}"
      * @required
+     * @readonly
      */
     private List from;
 
@@ -160,6 +171,11 @@ public class AnnouncementMailMojo
         }
         mailer.initialize();
 
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
+        }
+
         if ( isTextFileExisting( template ) )
         {
             getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
@@ -189,7 +205,7 @@ public class AnnouncementMailMojo
     }
 
     /**
-     * Send the email 
+     * Send the email.
      *
      * @throws MojoExecutionException
      */
@@ -202,7 +218,26 @@ public class AnnouncementMailMojo
         {
             int i = 0;
 
-            String[] from = getFirstDevInfo( getFrom() );
+            Developer sendingDeveloper;
+            if ( getFromDeveloperId() != null )
+            {
+                sendingDeveloper = getDeveloperById( getFromDeveloperId(), getFrom() );
+            }
+            else
+            {
+                sendingDeveloper = getFirstDeveloper( getFrom() );
+            }
+
+            String fromName = sendingDeveloper.getName();
+            String fromAddress = sendingDeveloper.getEmail();
+
+            getLog().info( "Using this sender for email announcement: " + fromAddress + " < " + fromName + " > " );
+
+            if ( fromAddress == null || fromAddress.equals( "" ) )
+            {
+                throw new MojoExecutionException( "Email address in <developers> section is required." );
+            }
+
 
             while ( i < getToAddresses().size() )
             {
@@ -210,8 +245,8 @@ public class AnnouncementMailMojo
 
                 getLog().info( "Sending mail... " + email );
 
-                mailer
-                    .send( getSubject(), IOUtil.toString( readAnnouncement( template ) ), email, "", from[0], from[1] );
+                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ),
+                             email, "", fromAddress, fromName );
 
                 getLog().info( "Sent..." );
 
@@ -242,7 +277,8 @@ public class AnnouncementMailMojo
     }
 
     /**
-     * Read the announcement generated file
+     * Read the announcement generated file.
+     * 
      * @param  fileName         Accepts filename to be read.
      * @return  fileReader      Return the FileReader.
      */
@@ -265,43 +301,47 @@ public class AnnouncementMailMojo
     }
 
     /**
-     * Retrieve the 1st name and email address found in the developers list
-     * @param fromNames         Accepts List of developers.
-     * @return fromAddress      Returns the 1st email address found in the list.
+     * Retrieve the first name and email address found in the developers list.
+     *
+     * @param developers A List of developers
+     * @return The first developer in the list
      */
-    public String[] getFirstDevInfo( List fromNames )
+    protected Developer getFirstDeveloper( List developers )
         throws MojoExecutionException
     {
-        String fromAddress = "";
-
-        String fromName = "";
-
-        String[] info = new String[2];
-
-        if ( fromNames.size() > 0 )
+        if ( developers.size() > 0 )
         {
-            Developer developer = (Developer) fromNames.get( 0 );
-
-            fromAddress = developer.getEmail();
-
-            fromName = developer.getName();
-
-            info[0] = fromAddress;
-
-            info[1] = fromName;
-
-            getLog().info( "email retrieved. " + fromAddress + " < " + fromName + " > " );
-
-            if ( fromAddress == null || fromAddress.equals( "" ) )
-            {
-                throw new MojoExecutionException( "Email address in <developers> section is required." );
-            }
+            return (Developer) developers.get( 0 );
         }
         else
         {
-            throw new MojoExecutionException( "Email address in <developers> section is required." );
+            throw new MojoExecutionException( "Email address is required in the <developers> section in your pom." );
         }
-        return info;
+    }
+
+    /**
+     * Retrieve the developer with the given id.
+     *
+     * @param developers A List of developers
+     * @return The developer in the list with the specified id
+     */
+    protected Developer getDeveloperById( String id, List developers )
+        throws MojoExecutionException
+    {
+        Iterator it = developers.iterator();
+        while ( it.hasNext() )
+        {
+            Developer developer = (Developer) it.next();
+
+            if ( id.equals( developer.getId() ) )
+            {
+                return developer;
+            }
+
+        }
+
+        throw new MojoExecutionException( "Missing developer with id '"  + id
+            + "' in the <developers> section in your pom." );
     }
 
     //================================
@@ -366,5 +406,15 @@ public class AnnouncementMailMojo
     public void setToAddresses( List toAddresses )
     {
         this.toAddresses = toAddresses;
+    }
+
+    public String getFromDeveloperId()
+    {
+        return fromDeveloperId;
+    }
+
+    public void setFromDeveloperId( String fromDeveloperId )
+    {
+        this.fromDeveloperId = fromDeveloperId;
     }
 }
