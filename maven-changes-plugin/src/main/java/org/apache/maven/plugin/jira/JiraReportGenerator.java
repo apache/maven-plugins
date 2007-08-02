@@ -47,7 +47,7 @@ public class JiraReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
-        sink.text( "An error occured that made it impossible to generate this report." );
+        sink.text( bundle.getString( "report.jira.error" ) );
 
         sinkEndReport( sink );
     }
