@@ -946,7 +946,7 @@ public abstract class AbstractIdeSupportMojo
                                                                             artifactFactory, remoteRepos, getLog() );
                 if ( artifact.isResolved() )
                 {
-                    if ( "sources".equals( classifier ) )   
+                    if ( "sources".equals( classifier ) )
                     {
                         dependency.setSourceAttachment( artifact.getFile() );
                     }
@@ -954,20 +954,20 @@ public abstract class AbstractIdeSupportMojo
                     {
                         dependency.setJavadocAttachment( artifact.getFile() );
                     }
-                    else
-                    {
-                        unavailableArtifactsCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
-                        // add the dependencies to the list
-                        // of those lacking the required
-                        // artifact
-                        missingClassifierDependencies.add( dependency );
-                    }
                 }
-
+                else
+                {
+                    unavailableArtifactsCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
+                    // add the dependencies to the list
+                    // of those lacking the required
+                    // artifact
+                    missingClassifierDependencies.add( dependency );
+                }
             }
         }
 
-        // return the list of dependencies missing the required artifact
+        // return the list of dependencies missing the
+        // required artifact
         return missingClassifierDependencies;
 
     }
