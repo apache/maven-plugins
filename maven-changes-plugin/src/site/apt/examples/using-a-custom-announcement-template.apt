@@ -37,7 +37,10 @@ Using a Custom Announcement Template
 
  First you must configure the plugin and tell it where your template is. In
  this example we want to use the template
- <<<${basedir}/src/main/resources/our-announcements/my-announcement.vm>>>
+ <<<${basedir}/src/main/resources/our-announcements/my-announcement.vm>>>.
+
+ <<Note:>> The <<<templateDirectory>>> must be a subdirectory of
+ <<<${basedir}/src/main/resources/>>>.
 
 +-----------------+
 <project>
