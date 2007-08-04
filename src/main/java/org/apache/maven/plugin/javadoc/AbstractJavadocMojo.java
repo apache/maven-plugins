@@ -1514,8 +1514,6 @@ public abstract class AbstractJavadocMojo
                     }
                 }
             }
-
-            sourcePaths = pruneSourceDirs( sourcePaths );
         }
         else
         {
@@ -1524,9 +1522,9 @@ public abstract class AbstractJavadocMojo
             {
                 sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
             }
-            sourcePaths = pruneSourceDirs( sourcePaths );
         }
 
+        sourcePaths = pruneSourceDirs( sourcePaths );
         return sourcePaths;
     }
 
