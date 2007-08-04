@@ -1502,11 +1502,14 @@ public abstract class AbstractJavadocMojo
                             sourcePaths.addAll( sourceRoots );
                         }
 
-                        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
-                        File javadocDir = new File( subProject.getExecutionProject().getBasedir(), javadocDirRelative );
-                        if ( javadocDir.exists() && javadocDir.isDirectory() )
+                        if ( subProject.getExecutionProject() != null )
                         {
-                            sourcePaths.add( javadocDir.getAbsolutePath() );
+                            String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
+                            File javadocDir = new File( subProject.getExecutionProject().getBasedir(), javadocDirRelative );
+                            if ( javadocDir.exists() && javadocDir.isDirectory() )
+                            {
+                                sourcePaths.add( javadocDir.getAbsolutePath() );
+                            }
                         }
                     }
                 }
