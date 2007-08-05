@@ -8,7 +8,7 @@
         The archive parameter is a class that resides outside of this plugin,
         in the Maven Archiver component to be exact. The best we can do at this
         time is to provide you with a link to the documentation for the
-        <a href="http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">MavenArchiveConfiguration class</a>.
+        <a href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">MavenArchiveConfiguration class</a>.
        </p>
      </answer>
    </faq>
