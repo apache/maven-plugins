@@ -21,7 +21,7 @@ Manifest customization
   Configuration can be done using the <<<archive>>> element. Below you will
   find some of the configuration options that are available. For more info see
   the
-  {{{http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}MavenArchiveConfiguration Javadocs}}.
+  {{{http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}MavenArchiveConfiguration Javadocs}}.
 
 +-----------------+
 <project>
