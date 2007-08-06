@@ -76,7 +76,7 @@ public class DefaultAssemblyReader
         strategies.add( new RelativeFileLocatorStrategy( configSource.getBasedir() ) );
 
         strategies.add( new ArtifactLocatorStrategy( factory, resolver, configSource.getLocalRepository(),
-                                                     configSource.getRemoteRepositories(), "assembly-descriptor" ) );
+                                                     configSource.getRemoteRepositories(), "xml", "assembly-descriptor" ) );
 
         strategies.add( prefixedClasspathStrategy );
         strategies.add( classpathStrategy );
