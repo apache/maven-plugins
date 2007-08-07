@@ -187,15 +187,15 @@ public class WarProjectPackagingTask
                 }
 
                 //rename to web.xml
-                //TODO refactor this
-                copyFileIfModified( webXml, new File( webinfDir, "web.xml" ) );
+                copyFile( context, webXml, new File( webinfDir, "web.xml" ), "WEB-INF/web.xml", true );
                 context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
             }
 
             if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
             {
                 String xmlFileName = containerConfigXML.getName();
-                copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
+                copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ), "META-INF/" + xmlFileName,
+                          true );
                 context.getWebappStructure().getFullStructure().add( META_INF_PATH + "/" + xmlFileName );
             }
         }

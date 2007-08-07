@@ -290,8 +290,8 @@ public abstract class AbstractWarPackagingTask
      * @throws IOException if <code>source</code> does not exist, <code>destination</code> cannot
      *                     be written to, or an IO error occurs during copying
      */
-    private boolean copyFile( WarPackagingContext context, File source, File destination, String targetFilename,
-                              boolean onlyIfModified )
+    protected boolean copyFile( WarPackagingContext context, File source, File destination, String targetFilename,
+                                boolean onlyIfModified )
         throws IOException
     {
         if ( onlyIfModified && destination.lastModified() >= source.lastModified() )
