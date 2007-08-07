@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.AbstractWarMojo;
 import org.apache.maven.plugin.war.util.MappingUtils;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.plugin.war.util.WebappStructure;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -129,44 +130,51 @@ public abstract class AbstractWarPackagingTask
      * @param context        the context to use
      * @param file           the file to copy
      * @param targetFilename the relative path according to the root of the webapp
-     * @return true if the file has been copied, false otherwise
      * @throws IOException if an error occured while copying
      */
-    protected boolean copyFile( String sourceId, WarPackagingContext context, File file, String targetFilename )
+    protected void copyFile( String sourceId, final WarPackagingContext context, final File file,
+                             String targetFilename )
         throws IOException
     {
-
-        File targetFile = new File( context.getWebappDirectory(), targetFilename );
-        // Check if the file already belongs to *this* source. If so only copy if it has changed. If it does not
-        // belong to this source, check if the source is still registered in the project. If so, skip the file,
-        // if not overwrite the file and issue a warning
-        if ( context.getWebappStructure().isRegistered( targetFilename ) )
+        final File targetFile = new File( context.getWebappDirectory(), targetFilename );
+        context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
         {
-            final String owner = context.getWebappStructure().getOwner( targetFilename );
-            if ( sourceId.equals( owner ) )
+            public void registered( String ownerId, String targetFilename )
+                throws IOException
             {
-                return copyFile( context, file, targetFile, targetFilename, true );
+                copyFile( context, file, targetFile, targetFilename, false );
             }
-            else if ( context.getOwnerIds().contains( owner ) )
-            {
-                context.getLog().info(
-                    " - " + targetFilename + " wasn't copied because it has already been packaged." );
-                return false;
-            }
-            else
-            {
-                context.getLog().warn( "Overlay with id[" + owner +
-                    "] does not exist anymore in the current project. " +
-                    "It is recommended to invoke clean if the dependencies of the project changed." );
-                return copyFile( context, file, targetFile, targetFilename, false );
-            }
-        }
-        else
-        {
-            context.getWebappStructure().registerFile( sourceId, targetFilename );
-            return copyFile( context, file, targetFile, targetFilename, false );
-        }
 
+            public void alreadyRegistered( String ownerId, String targetFilename )
+                throws IOException
+            {
+                copyFile( context, file, targetFile, targetFilename, true );
+            }
+
+            public void refused( String ownerId, String targetFilename, String actualOwnerId )
+                throws IOException
+            {
+                context.getLog().info( " - " + targetFilename + " wasn't copied because it has " +
+                    "already been packaged for overlay[" + actualOwnerId + "]." );
+            }
+
+            public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
+                throws IOException
+            {
+                context.getLog().info( "File + " + targetFilename + " belonged to overlay[" + deprecatedOwnerId +
+                    "] so it will be overwritten." );
+                copyFile( context, file, targetFile, targetFilename, false );
+            }
+
+            public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
+                throws IOException
+            {
+                context.getLog().warn( "Overlay[" + unknownOwnerId + "] does not exist anymore in " +
+                    "the current project. It is recommended to invoke clean if the dependencies of " +
+                    "the project changed." );
+                copyFile( context, file, targetFile, targetFilename, false );
+            }
+        } );
     }
 
     /**

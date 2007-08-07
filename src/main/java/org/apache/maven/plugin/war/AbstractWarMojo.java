@@ -570,7 +570,7 @@ public abstract class AbstractWarMojo
         throws MojoExecutionException, MojoFailureException, IOException
     {
 
-        WebappStructure cache = new WebappStructure();
+        WebappStructure cache = new WebappStructure( null );
         if ( webappStructure != null && webappStructure.exists() )
         {
             // TODO: LOAD the webapp structure thingy using xstream

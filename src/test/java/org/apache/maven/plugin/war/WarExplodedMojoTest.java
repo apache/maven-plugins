@@ -318,58 +318,60 @@ public class WarExplodedMojoTest
         expectedFile.delete();
     }
 
-    /**
-     * Merge a dependent WAR that gets updated since the last run.
-     */
-    public void testExplodedWarMergeWarUpdated()
-        throws Exception
-    {
-        // setup test data
-        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-        WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
-
-        String testId = "testExplodedWarMergeWarUpdated";
-        File webAppDirectory = new File( getTestDirectory(), testId );
-        FileUtils.deleteDirectory( webAppDirectory );
-
-        File webAppSource = getWebAppSource( testId );
-
-        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        createDir( workDirectory );
-
-        File classesDir = createClassesDir( testId, true );
-
-        // configure mojo
-        project.addArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-        setVariableValueToObject( mojo, "workDirectory", workDirectory );
-        mojo.execute();
-
-        // validate operation
-        File expectedFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "", FileUtils.fileRead( expectedFile ) );
-
-        // update file, so the local one is older
-        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple-updated.war" ) );
-
-        mojo.execute();
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
-
-        // update file, so the local one is newer
-        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple.war" ) );
-
-        mojo.execute();
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
-
-        // house keeping
-        expectedFile.delete();
-    }
+//    The last modified thingy behavior is not applicable anymore. This is the only test that
+//    has been removed.
+//    /**
+//     * Merge a dependent WAR that gets updated since the last run.
+//     */
+//    public void testExplodedWarMergeWarUpdated()
+//        throws Exception
+//    {
+//        // setup test data
+//        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+//        WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
+//
+//        String testId = "testExplodedWarMergeWarUpdated";
+//        File webAppDirectory = new File( getTestDirectory(), testId );
+//        FileUtils.deleteDirectory( webAppDirectory );
+//
+//        File webAppSource = getWebAppSource( testId );
+//
+//        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
+//        createDir( workDirectory );
+//
+//        File classesDir = createClassesDir( testId, true );
+//
+//        // configure mojo
+//        project.addArtifact( warArtifact );
+//        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+//        setVariableValueToObject( mojo, "workDirectory", workDirectory );
+//        mojo.execute();
+//
+//        // validate operation
+//        File expectedFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "", FileUtils.fileRead( expectedFile ) );
+//
+//        // update file, so the local one is older
+//        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple-updated.war" ) );
+//
+//        mojo.execute();
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
+//
+//        // update file, so the local one is newer
+//        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple.war" ) );
+//
+//        mojo.execute();
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
+//
+//        // house keeping
+//        expectedFile.delete();
+//    }
 
     /**
      * @throws Exception
