@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugin.war.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,7 +22,6 @@ package org.apache.maven.plugin.war;
 import junit.framework.TestCase;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.stub.AbstractArtifactStub;
-import org.apache.maven.plugin.war.util.MappingUtils;
 
 /**
  * Tests the mapping of file names.
