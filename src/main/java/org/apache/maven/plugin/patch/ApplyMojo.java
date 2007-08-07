@@ -28,6 +28,7 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.shell.BourneShell;
 //import org.codehaus.plexus.util.cli.shell.BourneShell;
 
 import java.io.File;
@@ -541,8 +542,8 @@ public class ApplyMojo
      */
     private Commandline createPatchCommand( File patchFile )
     {
-        Commandline cli = new Commandline();
-        //cli.setShell( new BourneShell() );
+        Commandline cli = new Commandline(); 
+        cli.setShell( new BourneShell() );
 
         cli.setExecutable( "patch" );
 
@@ -550,42 +551,34 @@ public class ApplyMojo
 
         if ( originalFile != null )
         {
-            cli.createArgument().setLine( originalFile.getAbsolutePath() );
-            //cli.createArg().setLine( originalFile.getAbsolutePath() );
+            cli.createArg().setLine( originalFile.getAbsolutePath() );
 
             if ( destFile != null )
             {
-                cli.createArgument().setLine( "-o " + destFile.getAbsolutePath() );
-                //cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
+                cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
             }
 
-            cli.createArgument().setValue( patchFile.getAbsolutePath() );
-            //cli.createArg().setLine( patchFile.getAbsolutePath() );
+            cli.createArg().setLine( patchFile.getAbsolutePath() );
         }
 
-        cli.createArgument().setLine( "-p" + strip  );
-        //cli.createArg().setLine( "-p" + strip );
+        cli.createArg().setLine( "-p" + strip );
 
         if ( ignoreWhitespace )
         {
-            cli.createArgument().setValue( "-l" );
-            //cli.createArg().setLine( "-l" );
+            cli.createArg().setLine( "-l" );
         }
 
         if ( reverse )
         {
-            cli.createArgument().setValue( "-R" );
-            //cli.createArg().setLine( "-R" );
+            cli.createArg().setLine( "-R" );
         }
 
         if ( backups )
         {
-            cli.createArgument().setValue( "-b" );
-            //cli.createArg().setLine( "-b" );
+            cli.createArg().setLine( "-b" );
         }
-
-        cli.createArgument().setLine( "-i " +  patchFile.getAbsolutePath() );
-        //cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
+        
+        cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
 
         return cli;
     }
