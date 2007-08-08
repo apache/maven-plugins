@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly.mojos;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,12 +42,24 @@ public class AttachAssemblyDescriptorMojo
      */
     private MavenProjectHelper projectHelper;
 
+    /**
+     * @component
+     */
+    private ArtifactFactory factory;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        File pomFile = project.getFile();
-        project.getArtifact().setFile( pomFile );
-        projectHelper.attachArtifact( project, assemblyDescriptor, handler.getClassifier() );
+        Artifact artifact = factory.createProjectArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion() );
+        artifact.setFile( project.getFile() );
+
+        getLog().debug( "Replacing main project artifact with POM artifact: " + artifact.getId() );
+
+        project.setArtifact( artifact );
+
+        getLog().info( "Attaching assembly descriptor: " + assemblyDescriptor + " to the main project artifact under type: " + handler.getExtension() + " and classifier: " + handler.getClassifier() );
+
+        projectHelper.attachArtifact( project, handler.getExtension(), handler.getClassifier(), assemblyDescriptor );
     }
 
 }
