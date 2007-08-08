@@ -8,7 +8,7 @@
         <packaging>assembly-component</packaging>
         <classifier>assembly-component</classifier>
         <extension>xml</extension>
-        <type>assembly-component</type>
+        <type>xml</type>
         <addedToClasspath>false</addedToClasspath>
         <includesDependencies>true</includesDependencies>
       </configuration>
@@ -40,7 +40,7 @@
         <packaging>assembly-descriptor</packaging>
         <classifier>assembly-descriptor</classifier>
         <extension>xml</extension>
-        <type>assembly-descriptor</type>
+        <type>xml</type>
         <addedToClasspath>false</addedToClasspath>
         <includesDependencies>true</includesDependencies>
       </configuration>
