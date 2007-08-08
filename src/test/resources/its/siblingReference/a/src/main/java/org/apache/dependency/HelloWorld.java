@@ -1,4 +1,4 @@
-package org.apache.dependencyTest;
+package org.apache.dependency;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,10 +19,10 @@ package org.apache.dependencyTest;
  * under the License.    
  */
 
-public class HelloWorld2
+public class HelloWorld
 {
 	public void foo()
 	{
-		System.out.println("Hello World2");
+		System.out.println("Hello World");
 	}
 }
