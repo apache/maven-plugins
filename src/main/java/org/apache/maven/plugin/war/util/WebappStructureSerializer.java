@@ -69,6 +69,12 @@ public class WebappStructureSerializer
         FileWriter writer = null;
         try
         {
+            if ( !targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs() )
+            {
+                throw new IOException(
+                    "Could not create parent[" + targetFile.getParentFile().getAbsolutePath() + "]" );
+            }
+
             if ( !targetFile.exists() && !targetFile.createNewFile() )
             {
                 throw new IOException( "Could not create file[" + targetFile.getAbsolutePath() + "]" );

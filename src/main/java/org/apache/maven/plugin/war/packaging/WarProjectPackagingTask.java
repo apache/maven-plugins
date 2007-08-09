@@ -54,6 +54,7 @@ public class WarProjectPackagingTask
         throws MojoExecutionException, MojoFailureException
     {
 
+        context.getLog().info( "Processing war project" );
         // Prepare the INF directories
         File webinfDir = new File( context.getWebappDirectory(), WEB_INF_PATH );
         webinfDir.mkdirs();

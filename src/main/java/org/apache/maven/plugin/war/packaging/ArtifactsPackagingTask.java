@@ -80,6 +80,10 @@ public class ArtifactsPackagingTask
                         targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
                         copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
                     }
+                    else if ( "war".equals( type ) )
+                    {
+                        // Nothing to do here, it is an overlay and it's already handled
+                    }
                     else
                     {
                         context.getLog().debug(

@@ -19,19 +19,18 @@ import java.util.Set;
 public class WebappStructure
 {
 
-    private final Map registeredFiles;
+    private Map registeredFiles;
 
-    private final transient PathSet allFiles;
+    private transient PathSet allFiles = new PathSet();
 
-    private final transient WebappStructure cache;
+    private transient WebappStructure cache;
 
     /**
      * Creates a new empty instance.
      */
-    private WebappStructure()
+    public WebappStructure()
     {
         this.registeredFiles = new HashMap();
-        this.allFiles = new PathSet();
         this.cache = null;
     }
 
@@ -43,7 +42,6 @@ public class WebappStructure
     public WebappStructure( WebappStructure cache )
     {
         this.registeredFiles = new HashMap();
-        this.allFiles = new PathSet();
         if ( cache == null )
         {
             this.cache = new WebappStructure();
@@ -209,6 +207,19 @@ public class WebappStructure
     {
         getFullStructure().add( path );
         getStructure( id ).add( path );
+    }
+
+    private Object readResolve()
+    {
+        // the full structure should be resolved so let's rebuild it
+        this.allFiles = new PathSet();
+        final Iterator it = registeredFiles.values().iterator();
+        while ( it.hasNext() )
+        {
+            PathSet pathSet = (PathSet) it.next();
+            this.allFiles.addAll( pathSet );
+        }
+        return this;
     }
 
     /**
