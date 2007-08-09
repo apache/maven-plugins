@@ -27,13 +27,16 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.overlay.OverlayManager;
 import org.apache.maven.plugin.war.packaging.OverlayPackagingTask;
+import org.apache.maven.plugin.war.packaging.SaveWebappStructurePostPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarPackagingContext;
 import org.apache.maven.plugin.war.packaging.WarPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarPostPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
 import org.apache.maven.plugin.war.util.CompositeMap;
 import org.apache.maven.plugin.war.util.PropertyUtils;
 import org.apache.maven.plugin.war.util.ReflectionProperties;
 import org.apache.maven.plugin.war.util.WebappStructure;
+import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -150,11 +153,20 @@ public abstract class AbstractWarMojo
     /**
      * The file containing the webapp structure cache.
      *
-     * @paramenter expression="${project.build.directory}/.webapp-cache.xml"
+     * @parameter expression="${project.build.directory}/war/work/webapp-cache.xml"
      * @required
      * @since 2.1
      */
-    private File webappStructure;
+    private File cacheFile;
+
+    /**
+     * Whether the cache should be used to save the status of the webapp
+     * accross multiple runs.
+     *
+     * @parameter expression="${useCache}" default-value="true"
+     * @since 2.1
+     */
+    private boolean useCache = true;
 
     /**
      * To look up Archiver/UnArchiver implementations
@@ -222,6 +234,7 @@ public abstract class AbstractWarMojo
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
+    private final WebappStructureSerializer webappStructureSerialier = new WebappStructureSerializer();
 
     /**
      * Returns a string array of the excludes to be used
@@ -329,10 +342,14 @@ public abstract class AbstractWarMojo
         throws MojoExecutionException, MojoFailureException, IOException
     {
 
-        WebappStructure cache = new WebappStructure( null );
-        if ( webappStructure != null && webappStructure.exists() )
+        WebappStructure cache;
+        if ( useCache && cacheFile.exists() )
         {
-            // TODO: LOAD the webapp structure thingy using xstream
+            cache = new WebappStructure( webappStructureSerialier.fromXml( cacheFile ) );
+        }
+        else
+        {
+            cache = new WebappStructure( null );
         }
 
         final long startTime = System.currentTimeMillis();
@@ -348,9 +365,18 @@ public abstract class AbstractWarMojo
             WarPackagingTask warPackagingTask = (WarPackagingTask) it.next();
             warPackagingTask.performPackaging( context );
         }
+
+        // Post packaging
+        final List postPackagingTasks = getPostPackagingTasks();
+        final Iterator it2 = postPackagingTasks.iterator();
+        while ( it2.hasNext() )
+        {
+            WarPostPackagingTask task = (WarPostPackagingTask) it2.next();
+            task.performPostPackaging( context );
+
+        }
         getLog().info( "Webapp assembled in[" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
 
-        //TODO save the cache
     }
 
     /**
@@ -380,6 +406,24 @@ public abstract class AbstractWarMojo
             }
         }
         return packagingTasks;
+    }
+
+
+    /**
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPostPackagingTask}
+     * instances to invoke to perform the post-packaging.
+     *
+     * @return the list of post packaging tasks
+     */
+    private List getPostPackagingTasks()
+    {
+        final List postPackagingTasks = new ArrayList();
+        if ( useCache )
+        {
+            postPackagingTasks.add( new SaveWebappStructurePostPackagingTask( cacheFile ) );
+        }
+        // TODO add lib scanning to detect duplicates
+        return postPackagingTasks;
     }
 
     // War packaging implementation
@@ -659,14 +703,14 @@ public abstract class AbstractWarMojo
         this.workDirectory = workDirectory;
     }
 
-    public File getWebappStructure()
+    public File getCacheFile()
     {
-        return webappStructure;
+        return cacheFile;
     }
 
-    public void setWebappStructure( File webappStructure )
+    public void setCacheFile( File cacheFile )
     {
-        this.webappStructure = webappStructure;
+        this.cacheFile = cacheFile;
     }
 
     public String getWarSourceIncludes()
@@ -687,5 +731,16 @@ public abstract class AbstractWarMojo
     public void setWarSourceExcludes( String warSourceExcludes )
     {
         this.warSourceExcludes = warSourceExcludes;
+    }
+
+
+    public boolean isUseCache()
+    {
+        return useCache;
+    }
+
+    public void setUseCache( boolean useCache )
+    {
+        this.useCache = useCache;
     }
 }

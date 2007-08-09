@@ -61,6 +61,7 @@ public abstract class AbstractWarMojoTest
         throws Exception
     {
         setVariableValueToObject( mojo, "filters", filters );
+        setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
         mojo.setClassesDirectory( classesDir );
         mojo.setWarSourceDirectory( webAppSource );
         mojo.setWebappDirectory( webAppDir );
@@ -103,7 +104,7 @@ public abstract class AbstractWarMojoTest
      * @return the source directory for that test
      * @throws Exception if an exception occurs
      */
-    protected File getWebAppSource(String id)
+    protected File getWebAppSource( String id )
         throws Exception
     {
         return new File( getTestDirectory(), "/" + id + "-test-data/source" );
@@ -119,7 +120,7 @@ public abstract class AbstractWarMojoTest
     protected File createWebAppSource( String id, boolean createSamples )
         throws Exception
     {
-        File webAppSource = getWebAppSource( id);
+        File webAppSource = getWebAppSource( id );
         if ( createSamples )
         {
             File simpleJSP = new File( webAppSource, "pansit.jsp" );
@@ -234,7 +235,8 @@ public abstract class AbstractWarMojoTest
         throws Exception
     {
         final File destFile = new File( OVERLAYS_TEMP_DIR, id + ".war" );
-        if (destFile.exists()) {
+        if ( destFile.exists() )
+        {
             return destFile;
         }
 
@@ -267,7 +269,8 @@ public abstract class AbstractWarMojoTest
     {
         // Create war file
         final File destFile = new File( OVERLAYS_TEMP_DIR, id + ".war" );
-        if (!destFile.exists()) {
+        if ( !destFile.exists() )
+        {
             createArchive( new File( OVERLAYS_ROOT_DIR, id ), destFile );
         }
 
