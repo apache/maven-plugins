@@ -34,12 +34,12 @@ public class RepositoryAssemblyPhase
      * @plexus.requirement
      */
     private RepositoryAssembler repositoryAssembler;
-    
+
     public RepositoryAssemblyPhase()
     {
         // used for plexus.
     }
-    
+
     // introduced for testing.
     public RepositoryAssemblyPhase( RepositoryAssembler repositoryAssembler )
     {
@@ -50,7 +50,7 @@ public class RepositoryAssemblyPhase
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List repositoriesList = assembly.getRepositories();
-        
+
         File tempRoot = configSource.getTemporaryRootDirectory();
 
         for ( Iterator i = repositoriesList.iterator(); i.hasNext(); )
@@ -70,20 +70,20 @@ public class RepositoryAssemblyPhase
             }
             catch ( RepositoryAssemblyException e )
             {
-                throw new ArchiveCreationException( "Failed to assembly repository: " + e.getMessage(), e );
+                throw new ArchiveCreationException( "Failed to assemble repository: " + e.getMessage(), e );
             }
 
             String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
                                                         configSource.getFinalName() );
-            
+
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
-            
+
             task.setDirectoryMode( TypeConversionUtils.modeToInt( repository.getDirectoryMode(), getLogger() ) );
             task.setFileMode( TypeConversionUtils.modeToInt( repository.getFileMode(), getLogger() ) );
             task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
-            
+
             task.execute( archiver, configSource );
         }
     }
@@ -97,5 +97,5 @@ public class RepositoryAssemblyPhase
     {
         return new RepoInfoWrapper( repository );
     }
-    
+
 }
