@@ -34,7 +34,7 @@ public class WarInPlaceMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Generating webapp in source directory... " + getWarSourceDirectory() );
+        getLog().info( "Generating webapp in source directory[" + getWarSourceDirectory() + "]" );
 
         buildExplodedWebapp( getWarSourceDirectory() );
     }

@@ -161,10 +161,9 @@ public class WarMojo
         throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
         MojoExecutionException, MojoFailureException
     {
-        buildExplodedWebapp( getWebappDirectory() );
+        getLog().info( "Packaging webapp" );
 
-        //generate war file
-        getLog().info( "Generating war " + warFile.getAbsolutePath() );
+        buildExplodedWebapp( getWebappDirectory() );
 
         MavenArchiver archiver = new MavenArchiver();
 

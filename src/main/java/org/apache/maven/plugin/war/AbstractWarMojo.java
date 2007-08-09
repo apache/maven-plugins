@@ -310,8 +310,6 @@ public abstract class AbstractWarMojo
     public void buildExplodedWebapp( File webappDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Exploding webapp..." );
-
         webappDirectory.mkdirs();
 
         try
@@ -320,7 +318,7 @@ public abstract class AbstractWarMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Could not explode webapp...", e );
+            throw new MojoExecutionException( "Could not build webapp", e );
         }
     }
 

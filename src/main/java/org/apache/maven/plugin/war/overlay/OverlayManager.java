@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 /**
@@ -125,13 +126,19 @@ public class OverlayManager
         // Build the list of configured artifacts and makes sure that each overlay
         // refer to a valid artifact
         final List configuredWarArtifacts = new ArrayList();
-        final Iterator it = overlays.iterator();
+        final ListIterator it = overlays.listIterator();
         while ( it.hasNext() )
         {
             Overlay overlay = (Overlay) it.next();
             if ( overlay == null )
             {
                 throw new InvalidOverlayConfigurationException( "overlay could not be null." );
+            }
+            // If it's the current project, return the project instance
+            if ( overlay.isCurrentProject() )
+            {
+                overlay = Overlay.currentProjectInstance();
+                it.set( overlay );
             }
             // default includes/excludes - only if the overlay uses the default settings
             if ( Overlay.DEFAULT_INCLUDES.equals( overlay.getIncludes() ) &&

@@ -39,7 +39,7 @@ public class SaveWebappStructurePostPackagingTask
             try
             {
                 serialier.toXml( context.getWebappStructure(), targetFile );
-                context.getLog().info( "Cache saved successfully." );
+                context.getLog().debug( "Cache saved successfully." );
             }
             catch ( IOException e )
             {

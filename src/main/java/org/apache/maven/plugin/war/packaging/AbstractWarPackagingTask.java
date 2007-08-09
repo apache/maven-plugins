@@ -154,14 +154,14 @@ public abstract class AbstractWarPackagingTask
             public void refused( String ownerId, String targetFilename, String actualOwnerId )
                 throws IOException
             {
-                context.getLog().info( " - " + targetFilename + " wasn't copied because it has " +
+                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has " +
                     "already been packaged for overlay[" + actualOwnerId + "]." );
             }
 
             public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
                 throws IOException
             {
-                context.getLog().info( "File + " + targetFilename + " belonged to overlay[" + deprecatedOwnerId +
+                context.getLog().info( "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId +
                     "] so it will be overwritten." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
@@ -169,9 +169,9 @@ public abstract class AbstractWarPackagingTask
             public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
                 throws IOException
             {
-                context.getLog().warn( "Overlay[" + unknownOwnerId + "] does not exist anymore in " +
-                    "the current project. It is recommended to invoke clean if the dependencies of " +
-                    "the project changed." );
+                context.getLog().warn( "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId +
+                    "] which does not exist anymore in the current project. It is recommended to invoke " +
+                    "clean if the dependencies of the project changed." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
         } );
@@ -296,7 +296,7 @@ public abstract class AbstractWarPackagingTask
     {
         if ( onlyIfModified && destination.lastModified() >= source.lastModified() )
         {
-            context.getLog().info( " * " + targetFilename + " is up to date." );
+            context.getLog().debug( " * " + targetFilename + " is up to date." );
             return false;
         }
         else
@@ -304,7 +304,7 @@ public abstract class AbstractWarPackagingTask
             FileUtils.copyFile( source.getCanonicalFile(), destination );
             // preserve timestamp
             destination.setLastModified( source.lastModified() );
-            context.getLog().info( " + " + targetFilename + " has been copied." );
+            context.getLog().debug( " + " + targetFilename + " has been copied." );
             return true;
         }
     }
