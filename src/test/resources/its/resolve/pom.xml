@@ -37,14 +37,20 @@
   </dependencies>
     <!--This must be set so the correct version is used for the IT test-->
 	<build>
-    <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>test</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+      <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<executions>
+		<execution>
+			  <id>resolve</id>
+			  <phase>generate-sources</phase>
+			  <goals>
+                <goal>resolve</goal>
+			  </goals>
+			</execution>
+		</executions>
+      </plugin>
+    </plugins>
 	</build>
 </project>
