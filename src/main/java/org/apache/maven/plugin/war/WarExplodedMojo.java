@@ -35,6 +35,8 @@ public class WarExplodedMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info( "Exploding webapp" );
+
         buildExplodedWebapp( getWebappDirectory() );
     }
 

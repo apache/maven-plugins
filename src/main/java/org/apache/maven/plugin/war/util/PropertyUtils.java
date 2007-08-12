@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugin.war.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @version $Id$
- * @todo this is duplicated from the resources plugin - migrate to plexus-utils
+ * @todo this is duplicated from the resources plugin - migrate to plexus-util
  */
 public final class PropertyUtils
 {
@@ -47,6 +47,7 @@ public final class PropertyUtils
      * @param fail           wheter to throw an exception when the file cannot be loaded or to return null
      * @param useSystemProps wheter to incorporate System.getProperties settings into the returned Properties object.
      * @return the loaded and fully resolved Properties object
+     * @throws IOException if an error failed while loading the properties
      */
     public static Properties loadPropertyFile( File propfile, boolean fail, boolean useSystemProps )
         throws IOException
@@ -94,6 +95,10 @@ public final class PropertyUtils
      * the value of a property contains a key), and will
      * not loop endlessly on a pair like
      * test = ${test}.
+     *
+     * @param k the token
+     * @param p the properties containing the filter values
+     * @return the value
      */
     private static String getPropertyValue( String k, Properties p )
     {

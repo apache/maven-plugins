@@ -19,60 +19,39 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import java.io.File;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 /**
- * Stub
+ * stub for copy constructor
+ * to preven the copy constructor frow blowing up
  */
-public class SimpleWarArtifactStub
-    extends AbstractArtifactStub
+public class WarArtifact4CCStub
+    extends WarArtifactStub
 {
-
-    private String artifactId;
-
-    private File file;
-
-    public SimpleWarArtifactStub( String _basedir )
+    public WarArtifact4CCStub( String basedir )
     {
-        super( _basedir );
+        super( basedir );
     }
 
-    public String getType()
+    public VersionRange getVersionRange()
     {
-        return "war";
+        return VersionRange.createFromVersion( getVersion() );
     }
 
-    public String getArtifactId()
+    public String getGroupId()
     {
-        if ( artifactId == null )
-        {
-            return "simple";
-        }
-        else
-        {
-            return artifactId;
-        }
+        return "org.maven.plugin.test";
     }
 
-    public void setArtifactId( String _artifactId )
+    public String getClassifier()
     {
-        artifactId = _artifactId;
+        return "testclassifier";
     }
 
-    public File getFile()
+    public ArtifactHandler getArtifactHandler()
     {
-        if ( file == null )
-        {
-            return new File( basedir, "/target/test-classes/unit/sample_wars/simple.war" );
-        }
-        else
-        {
-            return file;
-        }
-    }
-
-    public void setFile( File _file )
-    {
-        file = _file;
+        return new DefaultArtifactHandler();
     }
 }

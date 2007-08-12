@@ -21,7 +21,9 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
+import org.apache.maven.plugin.war.stub.AarArtifactStub;
 import org.apache.maven.plugin.war.stub.EJBArtifactStub;
+import org.apache.maven.plugin.war.stub.EJBArtifactStubWithClassifier;
 import org.apache.maven.plugin.war.stub.EJBClientArtifactStub;
 import org.apache.maven.plugin.war.stub.IncludeExcludeWarArtifactStub;
 import org.apache.maven.plugin.war.stub.JarArtifactStub;
@@ -29,10 +31,8 @@ import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.PARArtifactStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
-import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
-import org.apache.maven.plugin.war.stub.EJBArtifactStubWithClassifier;
-import org.apache.maven.plugin.war.stub.AarArtifactStub;
+import org.apache.maven.plugin.war.stub.WarArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedReader;
@@ -44,26 +44,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class WarExplodedMojoTest
-    extends AbstractWarMojoTest
+    extends AbstractWarExplodedMojoTest
 {
-    protected static final String pomFilePath =
-        getBasedir() + "/target/test-classes/unit/warexplodedmojo/plugin-config.xml";
 
-    private WarExplodedMojo mojo;
-
-    protected File getTestDirectory()
-        throws Exception
+    protected File getPomFile()
     {
-        return new File( getBasedir(), "target/test-classes/unit/warexplodedmojo/test-dir" );
+        return new File( getBasedir(), "/target/test-classes/unit/warexplodedmojo/plugin-config.xml" );
     }
 
-    public void setUp()
-        throws Exception
+    protected File getTestDirectory()
     {
-        super.setUp();
-
-        mojo = (WarExplodedMojo) lookupMojo( "exploded", pomFilePath );
-        assertNotNull( mojo );
+        return new File( getBasedir(), "target/test-classes/unit/warexplodedmojo/test-dir" );
     }
 
     /**
@@ -84,8 +75,8 @@ public class WarExplodedMojoTest
 
         createFile( sampleResource );
 
-        assertTrue("sampeResource not found",sampleResource.exists());
-      
+        assertTrue( "sampeResource not found", sampleResource.exists() );
+
         // configure mojo
         resources[0].setDirectory( webAppResource.getAbsolutePath() );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
@@ -104,7 +95,7 @@ public class WarExplodedMojoTest
         assertTrue( "resources doesn't exist: " + expectedWebResourceFile, expectedWebResourceFile.exists() );
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -131,7 +122,7 @@ public class WarExplodedMojoTest
 
         // configure mojo
         resources[0].setDirectory( webAppResource.getAbsolutePath() );
-        resources[0].setTargetPath("targetPath");
+        resources[0].setTargetPath( "targetPath" );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "webResources", resources );
         mojo.execute();
@@ -148,13 +139,13 @@ public class WarExplodedMojoTest
         assertTrue( "resources doesn't exist: " + expectedWebResourceFile, expectedWebResourceFile.exists() );
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
-        expectedWebResourceFile.delete();        
-    }    
-    
+        expectedWebResourceFile.delete();
+    }
+
     /**
      * @throws Exception
      */
@@ -185,10 +176,10 @@ public class WarExplodedMojoTest
         assertTrue( "WEB XML not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
         assertEquals( "WEB XML not correct", mojo.getWebXml().toString(), FileUtils.fileRead( expectedWEBXMLFile ) );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
-        expectedWebSource2File.delete();      
+        expectedWebSource2File.delete();
         expectedWEBXMLFile.delete();
         expectedMETAINFDir.delete();
     }
@@ -223,12 +214,12 @@ public class WarExplodedMojoTest
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "Container Config XML not found:" + expectedContainerConfigXMLFile.toString(),
                     expectedContainerConfigXMLFile.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
-        expectedWebSource2File.delete();    
-        expectedContainerConfigXMLFile.delete();        
-        expectedWEBINFDir.delete();        
+        expectedWebSource2File.delete();
+        expectedContainerConfigXMLFile.delete();
+        expectedWEBINFDir.delete();
     }
 
     /**
@@ -239,29 +230,28 @@ public class WarExplodedMojoTest
     {
         // setup test data
         MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-        SimpleWarArtifactStub simpleWarArtifact = new SimpleWarArtifactStub( getBasedir() );
+        WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
 
         String testId = "ExplodedWar_WithSimpleExternalWARFile";
         File webAppDirectory = new File( getTestDirectory(), testId );
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
         File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        File simpleWarFile = simpleWarArtifact.getFile();
+        File simpleWarFile = warArtifact.getFile();
 
         assertTrue( "simple war not found: " + simpleWarFile.toString(), simpleWarFile.exists() );
 
         createDir( workDirectory );
 
         // configure mojo
-        project.addArtifact( simpleWarArtifact );
+        project.addArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
         mojo.execute();
 
-        // validate operation
+        // validate operation - META-INF is automatically excluded so remove the file from the list
         File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
-        File expectedManifestFile = new File( webAppDirectory, "META-INF/MANIFEST.MF" );
         File expectedWEBXMLFile = new File( webAppDirectory, "WEB-INF/web.xml" );
         File expectedWARFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
 
@@ -269,13 +259,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         // check simple.war in the unit test dir under resources to verify the list of files
         assertTrue( "web xml not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
-        assertTrue( "manifest file not found: " + expectedManifestFile.toString(), expectedManifestFile.exists() );
         assertTrue( "war file not found: " + expectedWARFile.toString(), expectedWARFile.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
-        expectedManifestFile.delete();
         expectedWEBXMLFile.delete();
         expectedWARFile.delete();
     }
@@ -288,11 +276,11 @@ public class WarExplodedMojoTest
     {
         // setup test data
         MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-        SimpleWarArtifactStub simpleWarArtifact = new SimpleWarArtifactStub( getBasedir() );
+        WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
 
         String testId = "testExplodedWarMergeWarLocalFileOverride";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
+        File webAppSource = getWebAppSource( testId );
         File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
         createFile( simpleJSP );
 
@@ -302,7 +290,7 @@ public class WarExplodedMojoTest
         File classesDir = createClassesDir( testId, true );
 
         // configure mojo
-        project.addArtifact( simpleWarArtifact );
+        project.addArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
         mojo.execute();
@@ -318,70 +306,72 @@ public class WarExplodedMojoTest
         simpleJSP.setLastModified( time );
         expectedFile.setLastModified( time );
 
-        project.addArtifact( simpleWarArtifact );
+        project.addArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
         mojo.execute();
 
         assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
         assertEquals( "file incorrect", simpleJSP.toString(), FileUtils.fileRead( expectedFile ) );
-        
+
         // house keeping
         expectedFile.delete();
     }
 
-    /**
-     * Merge a dependent WAR that gets updated since the last run.
-     */
-    public void testExplodedWarMergeWarUpdated()
-        throws Exception
-    {
-        // setup test data
-        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-        SimpleWarArtifactStub simpleWarArtifact = new SimpleWarArtifactStub( getBasedir() );
-
-        String testId = "testExplodedWarMergeWarUpdated";
-        File webAppDirectory = new File( getTestDirectory(), testId );
-        FileUtils.deleteDirectory( webAppDirectory );
-
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
-
-        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        createDir( workDirectory );
-
-        File classesDir = createClassesDir( testId, true );
-
-        // configure mojo
-        project.addArtifact( simpleWarArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-        setVariableValueToObject( mojo, "workDirectory", workDirectory );
-        mojo.execute();
-
-        // validate operation
-        File expectedFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "", FileUtils.fileRead( expectedFile ) );
-
-        // update file, so the local one is older
-        simpleWarArtifact.setFile( new File( simpleWarArtifact.getFile().getParentFile(), "simple-updated.war" ) );
-
-        mojo.execute();
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
-
-        // update file, so the local one is newer
-        simpleWarArtifact.setFile( new File( simpleWarArtifact.getFile().getParentFile(), "simple.war" ) );
-
-        mojo.execute();
-
-        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
-        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
-        
-        // house keeping
-        expectedFile.delete();
-    }
+//    The last modified thingy behavior is not applicable anymore. This is the only test that
+//    has been removed.
+//    /**
+//     * Merge a dependent WAR that gets updated since the last run.
+//     */
+//    public void testExplodedWarMergeWarUpdated()
+//        throws Exception
+//    {
+//        // setup test data
+//        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+//        WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
+//
+//        String testId = "testExplodedWarMergeWarUpdated";
+//        File webAppDirectory = new File( getTestDirectory(), testId );
+//        FileUtils.deleteDirectory( webAppDirectory );
+//
+//        File webAppSource = getWebAppSource( testId );
+//
+//        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
+//        createDir( workDirectory );
+//
+//        File classesDir = createClassesDir( testId, true );
+//
+//        // configure mojo
+//        project.addArtifact( warArtifact );
+//        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+//        setVariableValueToObject( mojo, "workDirectory", workDirectory );
+//        mojo.execute();
+//
+//        // validate operation
+//        File expectedFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "", FileUtils.fileRead( expectedFile ) );
+//
+//        // update file, so the local one is older
+//        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple-updated.war" ) );
+//
+//        mojo.execute();
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
+//
+//        // update file, so the local one is newer
+//        warArtifact.setFile( new File( warArtifact.getFile().getParentFile(), "simple.war" ) );
+//
+//        mojo.execute();
+//
+//        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+//        assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
+//
+//        // house keeping
+//        expectedFile.delete();
+//    }
 
     /**
      * @throws Exception
@@ -415,7 +405,7 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -451,7 +441,7 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -489,9 +479,9 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
-        
+
         // house keeping
-        expectedWebSourceFile.delete();        
+        expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedEJBArtifact.delete();
     }
@@ -527,9 +517,9 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "tld artifact not found: " + expectedTLDArtifact.toString(), expectedTLDArtifact.exists() );
-        
+
         // house keeping
-        expectedWebSourceFile.delete();        
+        expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedTLDArtifact.delete();
     }
@@ -565,7 +555,7 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "par artifact not found: " + expectedPARArtifact.toString(), expectedPARArtifact.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -648,7 +638,7 @@ public class WarExplodedMojoTest
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
         assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
                     expectedEJBDupArtifact.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -735,7 +725,7 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "classes not found: " + expectedClass.toString(), expectedClass.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -825,7 +815,7 @@ public class WarExplodedMojoTest
 
         assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
                       reader.readLine() );
-        
+
         // update property, and generate again
         File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
         createFile( filterFile );
@@ -853,14 +843,13 @@ public class WarExplodedMojoTest
         assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
                       reader.readLine() );
 
-        
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedResourceFile.delete();
         expectedResourceWDirFile.delete();
     }
-    
+
     public void testExplodedWar_WithSourceIncludeExclude()
         throws Exception
     {
@@ -887,7 +876,7 @@ public class WarExplodedMojoTest
         assertFalse( "source files found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "WEB XML not found: " + expectedWEBXMLDir.toString(), expectedWEBXMLDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
@@ -930,18 +919,18 @@ public class WarExplodedMojoTest
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
-        // check include-exclude.war in the unit test dir under resources to verify the list of files  
+        // check include-exclude.war in the unit test dir under resources to verify the list of files
         assertTrue( "web xml not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
         assertFalse( "manifest file found: " + expectedManifestFile.toString(), expectedManifestFile.exists() );
         assertTrue( "war file not found: " + expectedIncludedWARFile.toString(), expectedIncludedWARFile.exists() );
         assertFalse( "war file not found: " + expectedExcludedWarfile.toString(), expectedExcludedWarfile.exists() );
-        
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedManifestFile.delete();
         expectedWEBXMLFile.delete();
-        expectedIncludedWARFile.delete();        
+        expectedIncludedWARFile.delete();
         expectedExcludedWarfile.delete();
     }
 
@@ -979,17 +968,18 @@ public class WarExplodedMojoTest
         assertFalse( "source files not updated with new copy: " + expectedWebSourceFile.toString(),
                      "error".equals( FileUtils.fileRead( expectedWebSourceFile ) ) );
 
-// TODO: uncomment when lastModified problem is resolved
-//        FileWriter writer = new FileWriter(expectedWebSourceFile);
-//
-//        // 2nd phase destination is newer than source
-//        // destination should not be replaced with an blank source
-//        writer.write("newdata");
-//        mojo.execute();
-//        reader = new FileReader(expectedWebSourceFile);
-//        reader.read(data);
-//        assertTrue("source file updated with old copy: " +expectedWebSourceFile.toString(),String.valueOf(data).equals("newdata") );    }
-        
+        // TODO: uncomment when lastModified problem is resolved
+        // FileWriter writer = new FileWriter(expectedWebSourceFile);
+        //
+        // // 2nd phase destination is newer than source
+        // // destination should not be replaced with an blank source
+        // writer.write("newdata");
+        // mojo.execute();
+        // reader = new FileReader(expectedWebSourceFile);
+        // reader.read(data);
+        // assertTrue("source file updated with old copy: "
+        // +expectedWebSourceFile.toString(),String.valueOf(data).equals("newdata") ); }
+
         // house keeping
         expectedWEBINFDir.delete();
         expectedMETAINFDir.delete();
@@ -1014,7 +1004,7 @@ public class WarExplodedMojoTest
 
         // configure mojo
         project.addArtifact( jarArtifact );
-        mojo.setOutputFileNameMapping( "${artifactId}.${extension}");
+        mojo.setOutputFileNameMapping( "${artifactId}.${extension}" );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         mojo.execute();
 
@@ -1035,51 +1025,56 @@ public class WarExplodedMojoTest
     }
 
     /**
-        * @throws Exception
-        */
-       public void testExplodedWarWithOutputFileNameMappingAndDuplicateDependencies()
-           throws Exception
-       {
-           // setup test data
-           String testId = "ExplodedWarWithFileNameMappingAndDuplicateDependencies";
-           MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-           File webAppDirectory = new File( getTestDirectory(), testId );
-           File webAppSource = createWebAppSource( testId );
-           File classesDir = createClassesDir( testId, true );
-           EJBArtifactStub ejbArtifact = new EJBArtifactStub( getBasedir() );
-           EJBArtifactStub ejbArtifactDup = new EJBArtifactStub( getBasedir() );
-           File ejbFile = ejbArtifact.getFile();
+     * @throws Exception
+     */
+    public void testExplodedWarWithOutputFileNameMappingAndDuplicateDependencies()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithFileNameMappingAndDuplicateDependencies";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        EJBArtifactStub ejbArtifact = new EJBArtifactStub( getBasedir() );
+        EJBArtifactStub ejbArtifactDup = new EJBArtifactStub( getBasedir() );
+        File ejbFile = ejbArtifact.getFile();
 
-           // ejbArtifact has a hard coded file, only one assert is needed
-           assertTrue( "ejb not found: " + ejbFile.getAbsolutePath(), ejbFile.exists() );
+        // ejbArtifact has a hard coded file, only one assert is needed
+        assertTrue( "ejb not found: " + ejbFile.getAbsolutePath(), ejbFile.exists() );
 
-           // configure mojo
-           ejbArtifact.setGroupId( "org.sample.ejb" );
-           ejbArtifactDup.setGroupId( "org.dup.ejb" );
-           project.addArtifact( ejbArtifact );
-           project.addArtifact( ejbArtifactDup );
-           mojo.setOutputFileNameMapping( "${artifactId}.${extension}");
-           this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-           mojo.execute();
+        // configure mojo
+        ejbArtifact.setGroupId( "org.sample.ejb" );
+        ejbArtifactDup.setGroupId( "org.dup.ejb" );
+        project.addArtifact( ejbArtifact );
+        project.addArtifact( ejbArtifactDup );
+        mojo.setOutputFileNameMapping( "${artifactId}.${extension}" );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
 
-           // validate operation
-           File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
-           File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
-           // final name form is <artifactId>-<version>.<type>
-           File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/org.sample.ejb-ejbartifact.jar" );
-           File expectedEJBDupArtifact = new File( webAppDirectory, "WEB-INF/lib/org.dup.ejb-ejbartifact.jar" );
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/org.sample.ejb-ejbartifact.jar" );
+        File expectedEJBDupArtifact = new File( webAppDirectory, "WEB-INF/lib/org.dup.ejb-ejbartifact.jar" );
 
-           assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
-           assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
-           assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
-           assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
-                       expectedEJBDupArtifact.exists() );
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+        assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
+                    expectedEJBDupArtifact.exists() );
 
-           // house keeping
-           expectedWebSourceFile.delete();
-           expectedWebSource2File.delete();
-           expectedEJBArtifact.delete();
-           expectedEJBDupArtifact.delete();
-       }
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedEJBArtifact.delete();
+        expectedEJBDupArtifact.delete();
+    }
+
+    /* --------------------- 2.1 Overlay tests ----------------------------------- */
+
+    /*---------------------------*/
+
 
 }
