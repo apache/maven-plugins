@@ -21,7 +21,7 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.plugin.war.stub.MavenProject4CopyConstructor;
 import org.apache.maven.plugin.war.stub.ProjectHelperStub;
-import org.apache.maven.plugin.war.stub.SimpleWarArtifact4CCStub;
+import org.apache.maven.plugin.war.stub.WarArtifact4CCStub;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
@@ -70,7 +70,7 @@ public class WarMojoTest
         MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
         String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        SimpleWarArtifact4CCStub warArtifact = new SimpleWarArtifact4CCStub( getBasedir() );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
@@ -120,7 +120,7 @@ public class WarMojoTest
         MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
         String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        SimpleWarArtifact4CCStub warArtifact = new SimpleWarArtifact4CCStub( getBasedir() );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
         ProjectHelperStub projectHelper = new ProjectHelperStub();
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
@@ -172,7 +172,7 @@ public class WarMojoTest
         MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
         String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        SimpleWarArtifact4CCStub warArtifact = new SimpleWarArtifact4CCStub( getBasedir() );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
         ProjectHelperStub projectHelper = new ProjectHelperStub();
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
@@ -229,7 +229,7 @@ public class WarMojoTest
         MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
         String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        SimpleWarArtifact4CCStub warArtifact = new SimpleWarArtifact4CCStub( getBasedir() );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
         ProjectHelperStub projectHelper = new ProjectHelperStub();
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
