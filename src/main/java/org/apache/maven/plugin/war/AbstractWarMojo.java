@@ -20,43 +20,36 @@ package org.apache.maven.plugin.war;
  */
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.war.overlay.OverlayManager;
+import org.apache.maven.plugin.war.packaging.OverlayPackagingTask;
+import org.apache.maven.plugin.war.packaging.SaveWebappStructurePostPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarPackagingContext;
+import org.apache.maven.plugin.war.packaging.WarPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarPostPackagingTask;
+import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
+import org.apache.maven.plugin.war.util.CompositeMap;
+import org.apache.maven.plugin.war.util.PropertyUtils;
+import org.apache.maven.plugin.war.util.ReflectionProperties;
+import org.apache.maven.plugin.war.util.WebappStructure;
+import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 public abstract class AbstractWarMojo
     extends AbstractMojo
@@ -158,6 +151,24 @@ public abstract class AbstractWarMojo
     private String outputFileNameMapping;
 
     /**
+     * The file containing the webapp structure cache.
+     *
+     * @parameter expression="${project.build.directory}/war/work/webapp-cache.xml"
+     * @required
+     * @since 2.1
+     */
+    private File cacheFile;
+
+    /**
+     * Whether the cache should be used to save the status of the webapp
+     * accross multiple runs.
+     *
+     * @parameter expression="${useCache}" default-value="true"
+     * @since 2.1
+     */
+    private boolean useCache = true;
+
+    /**
      * To look up Archiver/UnArchiver implementations
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
@@ -169,12 +180,10 @@ public abstract class AbstractWarMojo
 
     private static final String META_INF = "META-INF";
 
-    private static final String[] DEFAULT_INCLUDES = {"**/**"};
-
-    private static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
+    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
         "${artifactId}-${version}-${classifier}.${extension}";
 
-    private static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
+    public static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -198,7 +207,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    private String dependentWarIncludes = "**";
+    private String dependentWarIncludes = "**/**";
 
     /**
      * The comma separated list of tokens to exclude when doing
@@ -206,7 +215,15 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    private String dependentWarExcludes;
+    private String dependentWarExcludes = "META-INF/**";
+
+    /**
+     * The overlays to apply.
+     *
+     * @parameter
+     * @since 2.1
+     */
+    private List overlays = new ArrayList();
 
     /**
      * The maven archive configuration to use.
@@ -217,76 +234,7 @@ public abstract class AbstractWarMojo
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
-
-    public MavenProject getProject()
-    {
-        return project;
-    }
-
-    public void setProject( MavenProject project )
-    {
-        this.project = project;
-    }
-
-    public File getClassesDirectory()
-    {
-        return classesDirectory;
-    }
-
-    public void setClassesDirectory( File classesDirectory )
-    {
-        this.classesDirectory = classesDirectory;
-    }
-
-    public File getWebappDirectory()
-    {
-        return webappDirectory;
-    }
-
-    public void setWebappDirectory( File webappDirectory )
-    {
-        this.webappDirectory = webappDirectory;
-    }
-
-    public File getWarSourceDirectory()
-    {
-        return warSourceDirectory;
-    }
-
-    public void setWarSourceDirectory( File warSourceDirectory )
-    {
-        this.warSourceDirectory = warSourceDirectory;
-    }
-
-    public File getWebXml()
-    {
-        return webXml;
-    }
-
-    public void setWebXml( File webXml )
-    {
-        this.webXml = webXml;
-    }
-
-    public File getContainerConfigXML()
-    {
-        return containerConfigXML;
-    }
-
-    public void setContainerConfigXML( File containerConfigXML )
-    {
-        this.containerConfigXML = containerConfigXML;
-    }
-
-    public String getOutputFileNameMapping()
-    {
-        return outputFileNameMapping;
-    }
-
-    public void setOutputFileNameMapping( String outputFileNameMapping )
-    {
-        this.outputFileNameMapping = outputFileNameMapping;
-    }
+    private final WebappStructureSerializer webappStructureSerialier = new WebappStructureSerializer();
 
     /**
      * Returns a string array of the excludes to be used
@@ -362,8 +310,6 @@ public abstract class AbstractWarMojo
     public void buildExplodedWebapp( File webappDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Exploding webapp..." );
-
         webappDirectory.mkdirs();
 
         try
@@ -372,715 +318,427 @@ public abstract class AbstractWarMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Could not explode webapp...", e );
+            throw new MojoExecutionException( "Could not build webapp", e );
         }
     }
 
-    private Map getBuildFilterProperties()
-        throws MojoExecutionException
-    {
-
-        Map filterProperties = new Properties();
-
-        // System properties
-        filterProperties.putAll( System.getProperties() );
-
-        // Project properties
-        filterProperties.putAll( project.getProperties() );
-
-        for ( Iterator i = filters.iterator(); i.hasNext(); )
-        {
-            String filtersfile = (String) i.next();
-
-            try
-            {
-                Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
-
-                filterProperties.putAll( properties );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
-            }
-        }
-
-        // can't putAll, as ReflectionProperties doesn't enumerate - so we make a composite map with the project variables as dominant
-        return new CompositeMap( new ReflectionProperties( project ), filterProperties );
-    }
 
     /**
-     * Copies webapp webResources from the specified directory.
-     * <p/>
-     * Note that the <tt>webXml</tt> parameter could be null and may
-     * specify a file which is not named <tt>web.xml<tt>. If the file
-     * exists, it will be copied to the <tt>META-INF</tt> directory and
-     * renamed accordingly.
-     *
-     * @param resource         the resource to copy
-     * @param webappDirectory  the target directory
-     * @param filterProperties
-     * @throws java.io.IOException if an error occured while copying webResources
-     */
-    public void copyResources( Resource resource, File webappDirectory, Map filterProperties )
-        throws IOException
-    {
-        if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
-        {
-            getLog().info( "Copy webapp webResources to " + webappDirectory.getAbsolutePath() );
-            if ( webappDirectory.exists() )
-            {
-                String[] fileNames = getWarFiles( resource );
-                String targetPath = ( resource.getTargetPath() == null ) ? "" : resource.getTargetPath();
-                File destination = new File( webappDirectory, targetPath );
-                for ( int i = 0; i < fileNames.length; i++ )
-                {
-                    if ( resource.isFiltering() )
-                    {
-                        copyFilteredFile( new File( resource.getDirectory(), fileNames[i] ),
-                                          new File( destination, fileNames[i] ), null, getFilterWrappers(),
-                                          filterProperties );
-                    }
-                    else
-                    {
-                        copyFileIfModified( new File( resource.getDirectory(), fileNames[i] ),
-                                            new File( destination, fileNames[i] ) );
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Copies webapp webResources from the specified directory.
-     * <p/>
-     * Note that the <tt>webXml</tt> parameter could be null and may
-     * specify a file which is not named <tt>web.xml<tt>. If the file
-     * exists, it will be copied to the <tt>META-INF</tt> directory and
-     * renamed accordingly.
-     *
-     * @param sourceDirectory the source directory
-     * @param webappDirectory the target directory
-     * @throws java.io.IOException if an error occured while copying webResources
-     */
-    public void copyResources( File sourceDirectory, File webappDirectory )
-        throws IOException
-    {
-        if ( !sourceDirectory.equals( webappDirectory ) )
-        {
-            getLog().info( "Copy webapp webResources to " + webappDirectory.getAbsolutePath() );
-            if ( warSourceDirectory.exists() )
-            {
-                String[] fileNames = getWarFiles( sourceDirectory );
-                for ( int i = 0; i < fileNames.length; i++ )
-                {
-                    copyFileIfModified( new File( sourceDirectory, fileNames[i] ),
-                                        new File( webappDirectory, fileNames[i] ) );
-                }
-            }
-        }
-    }
-
-    /**
-     * Generates the JAR.
-     *
-     * @todo Add license files in META-INF directory.
-     */
-    public void createJarArchive( File libDirectory )
-        throws MojoExecutionException
-    {
-        String archiveName = project.getBuild().getFinalName() + ".jar";
-
-        File jarFile = new File( libDirectory, archiveName );
-
-        MavenArchiver archiver = new MavenArchiver();
-
-        archiver.setArchiver( jarArchiver );
-
-        archiver.setOutputFile( jarFile );
-
-        try
-        {
-            archiver.getArchiver().addDirectory( classesDirectory, getIncludes(), getExcludes() );
-
-            archiver.createArchive( project, archive );
-        }
-        catch ( Exception e )
-        {
-            // TODO: improve error handling
-            throw new MojoExecutionException( "Error assembling JAR", e );
-        }
-    }
-
-    /**
-     * Builds the webapp for the specified project.
+     * Builds the webapp for the specified project with the new packaging task
+     * thingy
      * <p/>
      * Classes, libraries and tld files are copied to
      * the <tt>webappDirectory</tt> during this phase.
      *
      * @param project         the maven project
-     * @param webappDirectory
-     * @throws java.io.IOException if an error occured while building the webapp
+     * @param webappDirectory the target directory
+     * @throws MojoExecutionException if an error occured while packaging the webapp
+     * @throws MojoFailureException   if an unexpected error occured while packaging the webapp
+     * @throws IOException            if an error occured while copying the files
      */
     public void buildWebapp( MavenProject project, File webappDirectory )
-        throws MojoExecutionException, IOException, MojoFailureException
+        throws MojoExecutionException, MojoFailureException, IOException
     {
-        getLog().info( "Assembling webapp " + project.getArtifactId() + " in " + webappDirectory );
 
-        File webinfDir = new File( webappDirectory, WEB_INF );
-        webinfDir.mkdirs();
-
-        File metainfDir = new File( webappDirectory, META_INF );
-        metainfDir.mkdirs();
-
-        List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
-        if ( webResources != null && webResources.size() > 0 )
+        WebappStructure cache;
+        if ( useCache && cacheFile.exists() )
         {
-            Map filterProperties = getBuildFilterProperties();
-            for ( Iterator it = webResources.iterator(); it.hasNext(); )
-            {
-                Resource resource = (Resource) it.next();
-                if ( !( new File( resource.getDirectory() ) ).isAbsolute() )
-                {
-                    resource.setDirectory( project.getBasedir() + File.separator + resource.getDirectory() );
-                }
-                copyResources( resource, webappDirectory, filterProperties );
-            }
-        }
-
-        copyResources( warSourceDirectory, webappDirectory );
-
-        if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
-        {
-            if ( !webXml.exists() )
-            {
-                throw new MojoFailureException( "The specified web.xml file '" + webXml + "' does not exist" );
-            }
-
-            //rename to web.xml
-            copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
-        }
-
-        if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
-        {
-            metainfDir = new File( webappDirectory, META_INF );
-            String xmlFileName = containerConfigXML.getName();
-            copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
-        }
-
-        File libDirectory = new File( webinfDir, "lib" );
-
-        File servicesDirectory = new File( webinfDir, "services" );
-
-        File tldDirectory = new File( webinfDir, "tld" );
-
-        File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
-
-        if ( classesDirectory.exists() && !classesDirectory.equals( webappClassesDirectory ) )
-        {
-            if ( archiveClasses )
-            {
-                createJarArchive( libDirectory );
-            }
-            else
-            {
-                copyDirectoryStructureIfModified( classesDirectory, webappClassesDirectory );
-            }
-        }
-
-        Set artifacts = project.getArtifacts();
-
-        List duplicates = findDuplicates( artifacts );
-
-        List dependentWarDirectories = new ArrayList();
-
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String targetFileName = getFinalName( artifact );
-
-            getLog().debug( "Processing: " + targetFileName );
-
-            if ( duplicates.contains( targetFileName ) )
-            {
-                getLog().debug( "Duplicate found: " + targetFileName );
-                targetFileName = artifact.getGroupId() + "-" + targetFileName;
-                getLog().debug( "Renamed to: " + targetFileName );
-            }
-
-            // TODO: utilise appropriate methods from project builder
-            ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-            if ( !artifact.isOptional() && filter.include( artifact ) )
-            {
-                String type = artifact.getType();
-                if ( "tld".equals( type ) )
-                {
-                    copyFileIfModified( artifact.getFile(), new File( tldDirectory, targetFileName ) );
-                }
-                else if ( "aar".equals( type ) )
-                {
-                    copyFileIfModified( artifact.getFile(), new File( servicesDirectory, targetFileName ) );
-                }
-                else
-                {
-                    if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
-                        "test-jar".equals( type ) )
-                    {
-                        copyFileIfModified( artifact.getFile(), new File( libDirectory, targetFileName ) );
-                    }
-                    else
-                    {
-                        if ( "par".equals( type ) )
-                        {
-                            targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
-
-                            getLog().debug(
-                                "Copying " + artifact.getFile() + " to " + new File( libDirectory, targetFileName ) );
-
-                            copyFileIfModified( artifact.getFile(), new File( libDirectory, targetFileName ) );
-                        }
-                        else
-                        {
-                            if ( "war".equals( type ) )
-                            {
-                                dependentWarDirectories.add( unpackWarToTempDirectory( artifact ) );
-                            }
-                            else
-                            {
-                                getLog().debug( "Skipping artifact of type " + type + " for WEB-INF/lib" );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if ( dependentWarDirectories.size() > 0 )
-        {
-            getLog().info( "Overlaying " + dependentWarDirectories.size() + " war(s)." );
-
-            // overlay dependent wars
-            for ( Iterator iter = dependentWarDirectories.iterator(); iter.hasNext(); )
-            {
-                copyDependentWarContents( (File) iter.next(), webappDirectory );
-            }
-        }
-    }
-
-    /**
-     * Searches a set of artifacts for duplicate filenames and returns a list of duplicates.
-     *
-     * @param artifacts set of artifacts
-     * @return List of duplicated artifacts
-     */
-    private List findDuplicates( Set artifacts )
-    {
-        List duplicates = new ArrayList();
-        List identifiers = new ArrayList();
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String candidate = getFinalName( artifact );
-            if ( identifiers.contains( candidate ) )
-            {
-                duplicates.add( candidate );
-            }
-            else
-            {
-                identifiers.add( candidate );
-            }
-        }
-        return duplicates;
-    }
-
-    /**
-     * Unpacks war artifacts into a temporary directory inside <tt>workDirectory</tt>
-     * named with the name of the war.
-     *
-     * @param artifact War artifact to unpack.
-     * @return Directory containing the unpacked war.
-     * @throws MojoExecutionException
-     */
-    private File unpackWarToTempDirectory( Artifact artifact )
-        throws MojoExecutionException
-    {
-        String name = artifact.getFile().getName();
-        File tempLocation = new File( workDirectory, name.substring( 0, name.length() - 4 ) );
-
-        boolean process = false;
-        if ( !tempLocation.exists() )
-        {
-            tempLocation.mkdirs();
-            process = true;
-        }
-        else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
-        {
-            process = true;
-        }
-
-        if ( process )
-        {
-            File file = artifact.getFile();
-            try
-            {
-                unpack( file, tempLocation );
-            }
-            catch ( NoSuchArchiverException e )
-            {
-                this.getLog().info( "Skip unpacking dependency file with unknown extension: " + file.getPath() );
-            }
-        }
-
-        return tempLocation;
-    }
-
-    /**
-     * Unpacks the archive file.
-     *
-     * @param file     File to be unpacked.
-     * @param location Location where to put the unpacked files.
-     */
-    private void unpack( File file, File location )
-        throws MojoExecutionException, NoSuchArchiverException
-    {
-        String archiveExt = FileUtils.getExtension( file.getAbsolutePath() ).toLowerCase();
-
-        try
-        {
-            UnArchiver unArchiver = archiverManager.getUnArchiver( archiveExt );
-            unArchiver.setSourceFile( file );
-            unArchiver.setDestDirectory( location );
-            unArchiver.setOverwrite( true );
-            unArchiver.extract();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error unpacking file: " + file + "to: " + location, e );
-        }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Error unpacking file: " + file + "to: " + location, e );
-        }
-    }
-
-    /**
-     * Recursively copies contents of <tt>srcDir</tt> into <tt>targetDir</tt>.
-     * This will not overwrite any existing files.
-     *
-     * @param srcDir    Directory containing unpacked dependent war contents
-     * @param targetDir Directory to overlay srcDir into
-     */
-    private void copyDependentWarContents( File srcDir, File targetDir )
-        throws MojoExecutionException
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( srcDir );
-        scanner.setExcludes( getDependentWarExcludes() );
-        scanner.addDefaultExcludes();
-
-        scanner.setIncludes( getDependentWarIncludes() );
-
-        scanner.scan();
-
-        String[] dirs = scanner.getIncludedDirectories();
-        for ( int j = 0; j < dirs.length; j++ )
-        {
-            new File( targetDir, dirs[j] ).mkdirs();
-        }
-
-        String[] files = scanner.getIncludedFiles();
-
-        for ( int j = 0; j < files.length; j++ )
-        {
-            File targetFile = new File( targetDir, files[j] );
-
-            try
-            {
-                // Don't copy if it is in the source directory
-                if ( !new File( warSourceDirectory, files[j] ).exists() )
-                {
-                    targetFile.getParentFile().mkdirs();
-                    copyFileIfModified( new File( srcDir, files[j] ), targetFile );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'", e );
-            }
-        }
-    }
-
-    /**
-     * Returns a list of filenames that should be copied
-     * over to the destination directory.
-     *
-     * @param sourceDir the directory to be scanned
-     * @return the array of filenames, relative to the sourceDir
-     */
-    private String[] getWarFiles( File sourceDir )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( sourceDir );
-        scanner.setExcludes( getExcludes() );
-        scanner.addDefaultExcludes();
-
-        scanner.setIncludes( getIncludes() );
-
-        scanner.scan();
-
-        return scanner.getIncludedFiles();
-    }
-
-    /**
-     * Returns a list of filenames that should be copied
-     * over to the destination directory.
-     *
-     * @param resource the resource to be scanned
-     * @return the array of filenames, relative to the sourceDir
-     */
-    private String[] getWarFiles( Resource resource )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( resource.getDirectory() );
-        if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
-        {
-            scanner.setIncludes( (String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ) );
+            cache = new WebappStructure( webappStructureSerialier.fromXml( cacheFile ) );
         }
         else
         {
-            scanner.setIncludes( DEFAULT_INCLUDES );
+            cache = new WebappStructure( null );
         }
-        if ( resource.getExcludes() != null && !resource.getExcludes().isEmpty() )
+
+        final long startTime = System.currentTimeMillis();
+        getLog().info( "Assembling webapp[" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
+
+        final OverlayManager overlayManager =
+            new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes );
+        final List packagingTasks = getPackagingTasks( overlayManager );
+        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager );
+        final Iterator it = packagingTasks.iterator();
+        while ( it.hasNext() )
         {
-            scanner.setExcludes( (String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ) );
+            WarPackagingTask warPackagingTask = (WarPackagingTask) it.next();
+            warPackagingTask.performPackaging( context );
         }
 
-        scanner.addDefaultExcludes();
+        // Post packaging
+        final List postPackagingTasks = getPostPackagingTasks();
+        final Iterator it2 = postPackagingTasks.iterator();
+        while ( it2.hasNext() )
+        {
+            WarPostPackagingTask task = (WarPostPackagingTask) it2.next();
+            task.performPostPackaging( context );
 
-        scanner.scan();
+        }
+        getLog().info( "Webapp assembled in[" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
 
-        return scanner.getIncludedFiles();
     }
 
     /**
-     * Copy file from source to destination only if source is newer than the target file.
-     * If <code>destinationDirectory</code> does not exist, it
-     * (and any parent directories) will be created. If a file <code>source</code> in
-     * <code>destinationDirectory</code> exists, it will be overwritten.
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPackagingTask}
+     * instances to invoke to perform the packaging.
      *
-     * @param source               An existing <code>File</code> to copy.
-     * @param destinationDirectory A directory to copy <code>source</code> into.
-     * @throws java.io.FileNotFoundException if <code>source</code> isn't a normal file.
-     * @throws IllegalArgumentException      if <code>destinationDirectory</code> isn't a directory.
-     * @throws java.io.IOException           if <code>source</code> does not exist, the file in
-     *                                       <code>destinationDirectory</code> cannot be written to, or an IO error occurs during copying.
-     *                                       <p/>
-     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @param overlayManager the overlay manager
+     * @return the list of packaging tasks
+     * @throws MojoExecutionException if the packaging tasks could not be built
      */
-    private static void copyFileToDirectoryIfModified( File source, File destinationDirectory )
-        throws IOException
+    private List getPackagingTasks( OverlayManager overlayManager )
+        throws MojoExecutionException
     {
-        // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
-        // to plexus-utils 1.2.
-        if ( destinationDirectory.exists() && !destinationDirectory.isDirectory() )
+        final List packagingTasks = new ArrayList();
+        final List resolvedOverlays = overlayManager.getOverlays();
+        final Iterator it = resolvedOverlays.iterator();
+        while ( it.hasNext() )
         {
-            throw new IllegalArgumentException( "Destination is not a directory" );
-        }
-
-        copyFileIfModified( source, new File( destinationDirectory, source.getName() ) );
-    }
-
-    private FilterWrapper[] getFilterWrappers()
-    {
-        return new FilterWrapper[]{
-            // support ${token}
-            new FilterWrapper()
+            Overlay overlay = (Overlay) it.next();
+            if ( overlay.isCurrentProject() )
             {
-                public Reader getReader( Reader fileReader, Map filterProperties )
-                {
-                    return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
-                }
-            },
-            // support @token@
-            new FilterWrapper()
-            {
-                public Reader getReader( Reader fileReader, Map filterProperties )
-                {
-                    return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
-                }
-            }};
-    }
-
-    /**
-     * @param from
-     * @param to
-     * @param encoding
-     * @param wrappers
-     * @param filterProperties
-     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
-     */
-    private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
-                                          Map filterProperties )
-        throws IOException
-    {
-        // buffer so it isn't reading a byte at a time!
-        Reader fileReader = null;
-        Writer fileWriter = null;
-        try
-        {
-            // fix for MWAR-36, ensures that the parent dir are created first
-            to.getParentFile().mkdirs();
-
-            if ( encoding == null || encoding.length() < 1 )
-            {
-                fileReader = new BufferedReader( new FileReader( from ) );
-                fileWriter = new FileWriter( to );
+                packagingTasks.add( new WarProjectPackagingTask( webResources, webXml, containerConfigXML ) );
             }
             else
             {
-                FileInputStream instream = new FileInputStream( from );
-
-                FileOutputStream outstream = new FileOutputStream( to );
-
-                fileReader = new BufferedReader( new InputStreamReader( instream, encoding ) );
-
-                fileWriter = new OutputStreamWriter( outstream, encoding );
+                packagingTasks.add( new OverlayPackagingTask( overlay ) );
             }
-
-            Reader reader = fileReader;
-            for ( int i = 0; i < wrappers.length; i++ )
-            {
-                FilterWrapper wrapper = wrappers[i];
-                reader = wrapper.getReader( reader, filterProperties );
-            }
-
-            IOUtil.copy( reader, fileWriter );
         }
-        finally
-        {
-            IOUtil.close( fileReader );
-            IOUtil.close( fileWriter );
-        }
+        return packagingTasks;
     }
 
+
     /**
-     * Copy file from source to destination only if source timestamp is later than the destination timestamp.
-     * The directories up to <code>destination</code> will be created if they don't already exist.
-     * <code>destination</code> will be overwritten if it already exists.
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPostPackagingTask}
+     * instances to invoke to perform the post-packaging.
      *
-     * @param source      An existing non-directory <code>File</code> to copy bytes from.
-     * @param destination A non-directory <code>File</code> to write bytes to (possibly
-     *                    overwriting).
-     * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot be
-     *                                       written to, or an IO error occurs during copying.
-     * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
-     *                                       <p/>
-     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @return the list of post packaging tasks
      */
-    private static void copyFileIfModified( File source, File destination )
-        throws IOException
+    private List getPostPackagingTasks()
     {
-        // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
-        // to plexus-utils 1.2.
-        if ( destination.lastModified() < source.lastModified() )
+        final List postPackagingTasks = new ArrayList();
+        if ( useCache )
         {
-            FileUtils.copyFile( source.getCanonicalFile(), destination );
-            // preserve timestamp
-            destination.setLastModified( source.lastModified() );
+            postPackagingTasks.add( new SaveWebappStructurePostPackagingTask( cacheFile ) );
         }
+        // TODO add lib scanning to detect duplicates
+        return postPackagingTasks;
     }
 
-    /**
-     * Copies a entire directory structure but only source files with timestamp later than the destinations'.
-     * <p/>
-     * Note:
-     * <ul>
-     * <li>It will include empty directories.
-     * <li>The <code>sourceDirectory</code> must exists.
-     * </ul>
-     *
-     * @param sourceDirectory
-     * @param destinationDirectory
-     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
-     */
-    private static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
-        throws IOException
+    // War packaging implementation
+
+    private class DefaultWarPackagingContext
+        implements WarPackagingContext
     {
-        if ( !sourceDirectory.exists() )
+
+
+        private final WebappStructure webappStructure;
+
+        private final File webappDirectory;
+
+        private final OverlayManager overlayManager;
+
+        public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
+                                           final OverlayManager overlayManager )
         {
-            throw new IOException( "Source directory doesn't exists (" + sourceDirectory.getAbsolutePath() + ")." );
+            this.webappDirectory = webappDirectory;
+            this.webappStructure = webappStructure;
+            this.overlayManager = overlayManager;
+
+            // This is kinda stupid but if we loop over the current overlays and we request the path structure
+            // it will register it. This will avoid wrong warning messages in a later phase
+            final Iterator it = overlayManager.getOverlayIds().iterator();
+            while ( it.hasNext() )
+            {
+                String overlayId = (String) it.next();
+                webappStructure.getStructure( overlayId );
+            }
         }
 
-        File[] files = sourceDirectory.listFiles();
-
-        String sourcePath = sourceDirectory.getAbsolutePath();
-
-        for ( int i = 0; i < files.length; i++ )
+        public MavenProject getProject()
         {
-            File file = files[i];
+            return project;
+        }
 
-            String dest = file.getAbsolutePath();
+        public File getWebappDirectory()
+        {
+            return webappDirectory;
+        }
 
-            dest = dest.substring( sourcePath.length() + 1 );
+        public File getClassesDirectory()
+        {
+            return classesDirectory;
+        }
 
-            File destination = new File( destinationDirectory, dest );
+        public Log getLog()
+        {
+            return AbstractWarMojo.this.getLog();
+        }
 
-            if ( file.isFile() )
+        public String getOutputFileNameMapping()
+        {
+            return outputFileNameMapping;
+        }
+
+        public File getWebappSourceDirectory()
+        {
+            return warSourceDirectory;
+        }
+
+        public String[] getWebappSourceIncludes()
+        {
+            return getIncludes();
+        }
+
+        public String[] getWebappSourceExcludes()
+        {
+            return getExcludes();
+        }
+
+        public boolean archiveClasses()
+        {
+            return archiveClasses;
+        }
+
+        public File getOverlaysWorkDirectory()
+        {
+            return workDirectory;
+        }
+
+        public ArchiverManager getArchiverManager()
+        {
+            return archiverManager;
+        }
+
+        public MavenArchiveConfiguration getArchive()
+        {
+            return archive;
+        }
+
+        public JarArchiver getJarArchiver()
+        {
+            return jarArchiver;
+        }
+
+        public List getFilters()
+        {
+            return filters;
+        }
+
+        public Map getFilterProperties()
+            throws MojoExecutionException
+        {
+            Map filterProperties = new Properties();
+
+            // System properties
+            filterProperties.putAll( System.getProperties() );
+
+            // Project properties
+            filterProperties.putAll( project.getProperties() );
+
+            for ( Iterator i = filters.iterator(); i.hasNext(); )
             {
-                destination = destination.getParentFile();
+                String filtersfile = (String) i.next();
 
-                copyFileToDirectoryIfModified( file, destination );
-            }
-            else if ( file.isDirectory() )
-            {
-                if ( !destination.exists() && !destination.mkdirs() )
+                try
                 {
-                    throw new IOException(
-                        "Could not create destination directory '" + destination.getAbsolutePath() + "'." );
+                    Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
+
+                    filterProperties.putAll( properties );
                 }
-
-                copyDirectoryStructureIfModified( file, destination );
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
+                }
             }
-            else
-            {
-                throw new IOException( "Unknown file type: " + file.getAbsolutePath() );
-            }
+
+            // can't putAll, as ReflectionProperties doesn't enumerate - so we make a composite map with the project variables as dominant
+            return new CompositeMap( new ReflectionProperties( project ), filterProperties );
+        }
+
+        public WebappStructure getWebappStructure()
+        {
+            return webappStructure;
+        }
+
+        public List getOwnerIds()
+        {
+            return overlayManager.getOverlayIds();
         }
     }
 
-    /**
-     * TO DO: Remove this interface when Maven moves to plexus-utils version 1.4
-     */
-    private interface FilterWrapper
+    public MavenProject getProject()
     {
-        Reader getReader( Reader fileReader, Map filterProperties );
+        return project;
     }
 
-    /**
-     * Returns the final name of the specified artifact.
-     * <p/>
-     * If the <tt>outputFileNameMapping</tt> is set, it is used, otherwise
-     * the standard naming scheme is used.
-     *
-     * @param artifact the artifact
-     * @return the converted filename of the artifact
-     */
-    private String getFinalName( Artifact artifact )
+    public void setProject( MavenProject project )
     {
-        if ( outputFileNameMapping != null )
-        {
-            return MappingUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
-        }
-
-        String classifier = artifact.getClassifier();
-        if ( ( classifier != null ) && !( "".equals( classifier.trim() ) ) )
-        {
-            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, artifact );
-        }
-        else
-        {
-            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING, artifact );
-        }
-
+        this.project = project;
     }
 
+    public File getClassesDirectory()
+    {
+        return classesDirectory;
+    }
+
+    public void setClassesDirectory( File classesDirectory )
+    {
+        this.classesDirectory = classesDirectory;
+    }
+
+    public File getWebappDirectory()
+    {
+        return webappDirectory;
+    }
+
+    public void setWebappDirectory( File webappDirectory )
+    {
+        this.webappDirectory = webappDirectory;
+    }
+
+    public File getWarSourceDirectory()
+    {
+        return warSourceDirectory;
+    }
+
+    public void setWarSourceDirectory( File warSourceDirectory )
+    {
+        this.warSourceDirectory = warSourceDirectory;
+    }
+
+    public File getWebXml()
+    {
+        return webXml;
+    }
+
+    public void setWebXml( File webXml )
+    {
+        this.webXml = webXml;
+    }
+
+    public File getContainerConfigXML()
+    {
+        return containerConfigXML;
+    }
+
+    public void setContainerConfigXML( File containerConfigXML )
+    {
+        this.containerConfigXML = containerConfigXML;
+    }
+
+    public String getOutputFileNameMapping()
+    {
+        return outputFileNameMapping;
+    }
+
+    public void setOutputFileNameMapping( String outputFileNameMapping )
+    {
+        this.outputFileNameMapping = outputFileNameMapping;
+    }
+
+    public List getOverlays()
+    {
+        return overlays;
+    }
+
+    public void setOverlays( List overlays )
+    {
+        this.overlays = overlays;
+    }
+
+    public void addOverlay( Overlay overlay )
+    {
+        overlays.add( overlay );
+    }
+
+    public boolean isArchiveClasses()
+    {
+        return archiveClasses;
+    }
+
+    public void setArchiveClasses( boolean archiveClasses )
+    {
+        this.archiveClasses = archiveClasses;
+    }
+
+    public JarArchiver getJarArchiver()
+    {
+        return jarArchiver;
+    }
+
+    public void setJarArchiver( JarArchiver jarArchiver )
+    {
+        this.jarArchiver = jarArchiver;
+    }
+
+    public Resource[] getWebResources()
+    {
+        return webResources;
+    }
+
+    public void setWebResources( Resource[] webResources )
+    {
+        this.webResources = webResources;
+    }
+
+    public List getFilters()
+    {
+        return filters;
+    }
+
+    public void setFilters( List filters )
+    {
+        this.filters = filters;
+    }
+
+    public File getWorkDirectory()
+    {
+        return workDirectory;
+    }
+
+    public void setWorkDirectory( File workDirectory )
+    {
+        this.workDirectory = workDirectory;
+    }
+
+    public File getCacheFile()
+    {
+        return cacheFile;
+    }
+
+    public void setCacheFile( File cacheFile )
+    {
+        this.cacheFile = cacheFile;
+    }
+
+    public String getWarSourceIncludes()
+    {
+        return warSourceIncludes;
+    }
+
+    public void setWarSourceIncludes( String warSourceIncludes )
+    {
+        this.warSourceIncludes = warSourceIncludes;
+    }
+
+    public String getWarSourceExcludes()
+    {
+        return warSourceExcludes;
+    }
+
+    public void setWarSourceExcludes( String warSourceExcludes )
+    {
+        this.warSourceExcludes = warSourceExcludes;
+    }
+
+
+    public boolean isUseCache()
+    {
+        return useCache;
+    }
+
+    public void setUseCache( boolean useCache )
+    {
+        this.useCache = useCache;
+    }
 }

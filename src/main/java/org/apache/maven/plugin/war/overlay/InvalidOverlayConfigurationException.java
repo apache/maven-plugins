@@ -1,4 +1,6 @@
-package org.apache.maven.plugin.war.stub;
+package org.apache.maven.plugin.war.overlay;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,41 +21,22 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
-
 /**
- * 
- *  stub for copy constructor
- *  to preven the copy constructor frow blowing up
+ * Thrown if the overlay configuration is invalid.
  *
+ * @author Stephane Nicoll
  */
-public class SimpleWarArtifact4CCStub
-    extends SimpleWarArtifactStub
+public class InvalidOverlayConfigurationException
+    extends MojoExecutionException
 {
-    public SimpleWarArtifact4CCStub( String basedir )
+
+    public InvalidOverlayConfigurationException( String string )
     {
-        super( basedir );
+        super( string );
     }
 
-    public VersionRange getVersionRange()
+    public InvalidOverlayConfigurationException( String string, Throwable throwable )
     {
-        return VersionRange.createFromVersion( getVersion() );
-    }
-
-    public String getGroupId()
-    {
-        return "org.maven.plugin.test";
-    }
-
-    public String getClassifier()
-    {
-        return "testclassifier";
-    }
-
-    public ArtifactHandler getArtifactHandler()
-    {
-        return new DefaultArtifactHandler();
+        super( string, throwable );
     }
 }
