@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugin.war.packaging;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,19 +23,25 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Generates webapp in the source directory
+ * The base packaging task.
  *
- * @goal inplace
- * @requiresDependencyResolution runtime
+ * @author Stephane Nicoll
  */
-public class WarInPlaceMojo
-    extends AbstractWarMojo
+public interface WarPackagingTask
 {
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        getLog().info( "Generating webapp in source directory[" + getWarSourceDirectory() + "]" );
 
-        buildExplodedWebapp( getWarSourceDirectory() );
-    }
+    /**
+     * Performs the packaging for the specified task.
+     * <p/>
+     * The task is responsible to update the packaging context, namely
+     * with the files that have been copied.
+     *
+     * @param context the packaging context
+     * @throws MojoExecutionException if an error occured
+     * @throws MojoFailureException   if the project configuration is invalid
+     */
+    void performPackaging( WarPackagingContext context )
+        throws MojoExecutionException, MojoFailureException;
+
+
 }

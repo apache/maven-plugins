@@ -22,11 +22,12 @@ package org.apache.maven.plugin.war.stub;
 import java.io.File;
 
 public class IncludeExcludeWarArtifactStub
-    extends SimpleWarArtifactStub
+    extends WarArtifactStub
 {
     public IncludeExcludeWarArtifactStub( String id )
     {
         super( id );
+        setGroupId( "wartests" );
     }
 
     public String getArtifactId()
