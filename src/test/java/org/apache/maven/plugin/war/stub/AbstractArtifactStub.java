@@ -53,4 +53,104 @@ public abstract class AbstractArtifactStub
     {
         return new DefaultArtifactHandler( getType() );
     }
+
+    /*
+     * TODO: Coppied from org/apache/maven/artifact/DefaultArtifact.java; Consider merging...
+     */
+    public int compareTo( Object o )
+    {
+        Artifact a = (Artifact) o;
+
+        /* -- We need to support groupId=null (it is missing in DefaultArtifact.java) */
+        int result;
+        if ( a.getGroupId() != null )
+        {
+            result = getGroupId().compareTo( a.getGroupId() );
+        }
+        else
+        {
+            result = ( getGroupId() == null ? 0 : -1 );
+        }
+        /* -- */
+
+        if ( result == 0 )
+        {
+            result = getArtifactId().compareTo( a.getArtifactId() );
+            if ( result == 0 )
+            {
+                result = getType().compareTo( a.getType() );
+                if ( result == 0 )
+                {
+                    if ( getClassifier() == null )
+                    {
+                        if ( a.getClassifier() != null )
+                        {
+                            result = 1;
+                        }
+                    }
+                    else
+                    {
+                        if ( a.getClassifier() != null )
+                        {
+                            result = getClassifier().compareTo( a.getClassifier() );
+                        }
+                        else
+                        {
+                            result = -1;
+                        }
+                    }
+                    if ( result == 0 )
+                    {
+                        // We don't consider the version range in the comparison, just the resolved version
+                        result = getVersion().compareTo( a.getVersion() );
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /*
+     * TODO: Coppied from org/apache/maven/artifact/DefaultArtifact.java; Consider merging...
+     */
+    public boolean equals( Object o )
+    {
+        if ( o == this )
+        {
+            return true;
+        }
+
+        if ( !( o instanceof Artifact ) )
+        {
+            return false;
+        }
+
+        Artifact a = (Artifact) o;
+
+        /* -- We need to support groupId=null (it is missing in DefaultArtifact.java) */
+        if ( a.getGroupId() == null ? ( getGroupId() != null ) : a.getGroupId().equals( getGroupId() ) )
+        {
+            return false;
+        }
+        else if ( !a.getArtifactId().equals( getArtifactId() ) )
+        {
+            return false;
+        }
+        else if ( !a.getVersion().equals( getVersion() ) )
+        {
+            return false;
+        }
+        else if ( !a.getType().equals( getType() ) )
+        {
+            return false;
+        }
+        else if ( a.getClassifier() == null ? getClassifier() != null : !a.getClassifier().equals( getClassifier() ) )
+        {
+            return false;
+        }
+
+        // We don't consider the version range in the comparison, just the resolved version
+
+        return true;
+    }
 }

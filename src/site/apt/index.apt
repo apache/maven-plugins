@@ -40,7 +40,8 @@ Maven WAR Plugin
  
 * Usage
 
-  Instructions on how to use the Maven WAR Plugin can be found {{{usage.html}here}}.
+  Instructions on how to use the Maven WAR Plugin can be found {{{usage.html}here}}. Specific documentation
+  regarding overlays can be found {{{overlays.html}here}}  
 
 * Examples
  
@@ -48,8 +49,6 @@ Maven WAR Plugin
  you can take a look into the following examples:
  
  * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
- 
- * {{{examples/war-overlay.html}Manipulating WAR Overlays}}
  
  * {{{examples/war-manifest-guide.html}War Manifest Customization}}
 
