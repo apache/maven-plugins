@@ -450,6 +450,116 @@ public class WarOverlaysTest
 
     }
 
+    public void testCacheWithUpdatedOverlay()
+        throws Exception
+    {
+        // setup test data
+        final String testId = "cache-updated-overlay";
+
+        // Add an overlay
+        final ArtifactStub overlay = buildWarOverlayStub( "overlay-one" );
+        final ArtifactStub overlay2 = buildWarOverlayStub( "overlay-two" );
+
+        final File webAppDirectory = setUpMojo( testId, new ArtifactStub[]{overlay, overlay2} );
+        final List assertedFiles = new ArrayList();
+        try
+        {
+            // Use the cache
+            setVariableValueToObject( mojo, "useCache", Boolean.TRUE );
+            setVariableValueToObject( mojo, "cacheFile", new File( mojo.getWorkDirectory(), "cache.xml" ) );
+
+            final LinkedList overlays = new LinkedList();
+            overlays.add( new DefaultOverlay( overlay ) );
+            overlays.add( new DefaultOverlay( overlay2 ) );
+            mojo.setOverlays( overlays );
+
+            mojo.execute();
+
+            // Now change the overlay order and make sure the right file is overwritten
+            final LinkedList updatedOverlays = new LinkedList();
+            updatedOverlays.add( new DefaultOverlay( overlay2 ) );
+            updatedOverlays.add( new DefaultOverlay( overlay ) );
+            mojo.setOverlays( updatedOverlays );
+
+            mojo.execute();
+
+            assertedFiles.addAll( assertDefaultContent( webAppDirectory ) );
+            assertedFiles.addAll( assertWebXml( webAppDirectory ) );
+            assertedFiles.addAll( assertCustomContent( webAppDirectory,
+                                                       new String[]{"index.jsp", "login.jsp", "admin.jsp"},
+                                                       "overlay file not found" ) );
+
+            // index and login come from overlay2 now
+            assertOverlayedFile( webAppDirectory, "overlay-two", "index.jsp" );
+            assertOverlayedFile( webAppDirectory, "overlay-one", "login.jsp" );
+            assertOverlayedFile( webAppDirectory, "overlay-two", "admin.jsp" );
+
+            // Ok now check that there is no more files/directories
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            assertWebAppContent( webAppDirectory, assertedFiles, filter );
+        }
+        finally
+        {
+            cleanWebAppDirectory( webAppDirectory );
+        }
+    }
+
+    public void testCacheWithRemovedOverlay()
+        throws Exception
+    {
+        // setup test data
+        final String testId = "cache-removed-overlay";
+
+        // Add an overlay
+        final ArtifactStub overlay = buildWarOverlayStub( "overlay-one" );
+        final ArtifactStub overlay2 = buildWarOverlayStub( "overlay-two" );
+
+        final File webAppDirectory = setUpMojo( testId, new ArtifactStub[]{overlay, overlay2} );
+        final List assertedFiles = new ArrayList();
+        try
+        {
+            // Use the cache
+            setVariableValueToObject( mojo, "useCache", Boolean.TRUE );
+            setVariableValueToObject( mojo, "cacheFile", new File( mojo.getWorkDirectory(), "cache.xml" ) );
+
+            final LinkedList overlays = new LinkedList();
+            overlays.add( new DefaultOverlay( overlay ) );
+            overlays.add( new DefaultOverlay( overlay2 ) );
+            mojo.setOverlays( overlays );
+
+            mojo.execute();
+
+            // Now remove overlay one the right file is overwritten
+            final LinkedList updatedOverlays = new LinkedList();
+            updatedOverlays.add( new DefaultOverlay( overlay2 ) );
+            mojo.setOverlays( updatedOverlays );
+
+            // Remove overlay one as a dep
+            mojo.getProject().getArtifacts().remove( overlay );
+
+            mojo.execute();
+
+            assertedFiles.addAll( assertDefaultContent( webAppDirectory ) );
+            assertedFiles.addAll( assertWebXml( webAppDirectory ) );
+            assertedFiles.addAll( assertCustomContent( webAppDirectory,
+                                                       new String[]{"index.jsp", "login.jsp", "admin.jsp"},
+                                                       "overlay file not found" ) );
+
+            // index and login come from overlay2 now
+            assertOverlayedFile( webAppDirectory, "overlay-two", "index.jsp" );
+            assertOverlayedFile( webAppDirectory, "overlay-one", "login.jsp" );
+            assertOverlayedFile( webAppDirectory, "overlay-two", "admin.jsp" );
+
+            // Ok now check that there is no more files/directories
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            assertWebAppContent( webAppDirectory, assertedFiles, filter );
+        }
+        finally
+        {
+            cleanWebAppDirectory( webAppDirectory );
+        }
+    }
+
     // Helpers
 
 
