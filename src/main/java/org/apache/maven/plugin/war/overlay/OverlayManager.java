@@ -202,10 +202,10 @@ public class OverlayManager
             return null;
         }
 
-        // TODO this might not always return the artifacts in the right order. Hence some tests might fail
         final Iterator it = warArtifacts.iterator();
         while ( it.hasNext() )
         {
+            // TODO Handle ZIP artifact ; Handle classifier dependencies properly (clash management)
             Artifact artifact = (Artifact) it.next();
             if ( overlay.getGroupId().equals( artifact.getGroupId() ) &&
                 overlay.getArtifactId().equals( artifact.getArtifactId() ) &&

@@ -44,7 +44,7 @@ public class Overlay
 
     public static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
 
-    public static final String[] DEFAULT_EXCLUDES = new String[]{"META-INF/**"};
+    public static final String[] DEFAULT_EXCLUDES = new String[]{"META-INF/MANIFEST.MF"};
 
     private static Overlay currentProjectInstance;
 
