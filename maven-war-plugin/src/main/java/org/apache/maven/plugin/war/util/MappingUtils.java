@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugin.war.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  *
  * @author Stephane Nicoll
  */
-class MappingUtils
+public class MappingUtils
 {
 
     /**
@@ -99,9 +99,9 @@ class MappingUtils
 
 
     /**
-     * This a copy of the class in plexus-utils 1.4
+     * This a copy of the class in plexus-util 1.4
      * <p/>
-     * TODO: remove this once the plugin can depend on plexus-utils 1.4
+     * TODO: remove this once the plugin can depend on plexus-util 1.4
      */
     static class RegexBasedInterpolator
     {

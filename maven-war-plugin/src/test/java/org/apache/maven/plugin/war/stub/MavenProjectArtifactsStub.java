@@ -22,19 +22,19 @@ package org.apache.maven.plugin.war.stub;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class MavenProjectArtifactsStub
     extends MavenProjectBasicStub
 {
-    HashSet artifacts;
+    TreeSet artifacts;
 
     public MavenProjectArtifactsStub()
         throws Exception
     {
-        artifacts = new HashSet();
+        artifacts = new TreeSet();
     }
 
     public void addArtifact( ArtifactStub stub )
