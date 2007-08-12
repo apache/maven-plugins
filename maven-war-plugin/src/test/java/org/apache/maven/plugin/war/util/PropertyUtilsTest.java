@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugin.war.util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
