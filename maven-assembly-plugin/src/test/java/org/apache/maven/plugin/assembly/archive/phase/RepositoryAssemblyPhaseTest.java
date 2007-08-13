@@ -1,10 +1,14 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
@@ -12,6 +16,7 @@ import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.repository.RepositoryAssembler;
 import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.codehaus.plexus.archiver.Archiver;
@@ -23,6 +28,9 @@ import org.easymock.MockControl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -45,7 +53,7 @@ public class RepositoryAssemblyPhaseTest
         MockManager mm = new MockManager();
 
         MockAndControlForRepositoryAssembler macRepo = new MockAndControlForRepositoryAssembler( mm );
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        MockAndControlForDependencyResolver macResolver = new MockAndControlForDependencyResolver( mm );
         MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
         MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -59,8 +67,9 @@ public class RepositoryAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, macLogger.logger ).execute( assembly, macArchiver.archiver,
-                                                                              macCS.configSource );
+        createPhase( macRepo.repositoryAssembler, macResolver.dependencyResolver,
+                     new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly, macArchiver.archiver,
+                                                                                macCS.configSource );
 
         mm.verifyAll();
     }
@@ -71,7 +80,7 @@ public class RepositoryAssemblyPhaseTest
         MockManager mm = new MockManager();
 
         MockAndControlForRepositoryAssembler macRepo = new MockAndControlForRepositoryAssembler( mm );
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        MockAndControlForDependencyResolver macResolver = new MockAndControlForDependencyResolver( mm );
         MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
         MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -80,39 +89,45 @@ public class RepositoryAssemblyPhaseTest
         macCS.expectGetTemporaryRootDirectory( tempRoot );
         macCS.expectGetProject( new MavenProject( new Model() ) );
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectGetLocalRepository();
+        macCS.expectGetRemoteRepositories( Collections.EMPTY_LIST );
+
+        macResolver.expectResolveDependencies( Collections.EMPTY_SET );
 
         Assembly assembly = new Assembly();
 
         assembly.setId( "test" );
-        
+
         Repository repo = new Repository();
-        
+
         repo.setOutputDirectory( "out" );
         repo.setDirectoryMode( "777" );
         repo.setFileMode( "777" );
-        
+
         int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-        
+
         File outDir = new File( tempRoot, "out" );
-        
+
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
         macArchiver.expectAddDirectory( outDir, "out/", null, FileUtils.getDefaultExcludes() );
-        
+
         macRepo.expectAssemble( outDir, repo, macCS.configSource );
-        
+
         assembly.addRepository( repo );
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, macLogger.logger ).execute( assembly, macArchiver.archiver,
-                                                                              macCS.configSource );
+        createPhase( macRepo.repositoryAssembler, macResolver.dependencyResolver,
+                     new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly, macArchiver.archiver,
+                                                                                macCS.configSource );
 
         mm.verifyAll();
     }
 
-    private RepositoryAssemblyPhase createPhase( RepositoryAssembler repositoryAssembler, Logger logger )
+    private RepositoryAssemblyPhase createPhase( RepositoryAssembler repositoryAssembler, DependencyResolver resolver,
+                                                 Logger logger )
     {
-        RepositoryAssemblyPhase phase = new RepositoryAssemblyPhase( repositoryAssembler );
+        RepositoryAssemblyPhase phase = new RepositoryAssemblyPhase( repositoryAssembler, resolver );
         phase.enableLogging( logger );
 
         return phase;
@@ -129,9 +144,9 @@ public class RepositoryAssemblyPhaseTest
             control = MockControl.createControl( Archiver.class );
             mockManager.add( control );
 
-            archiver = ( Archiver ) control.getMock();
+            archiver = (Archiver) control.getMock();
         }
-        
+
         public void expectAddDirectory( File outDir, String location, String[] includes, String[] excludes )
         {
             try
@@ -142,13 +157,12 @@ public class RepositoryAssemblyPhaseTest
             {
                 Assert.fail( "Should never happen." );
             }
-            
+
             control.setMatcher( MockControl.ARRAY_MATCHER );
             control.setVoidCallable( MockControl.ONE_OR_MORE );
         }
 
-        void expectModeChange( int defaultDirMode, int defaultFileMode, int dirMode, int fileMode,
-                                                boolean expectTwoSets )
+        void expectModeChange( int defaultDirMode, int defaultFileMode, int dirMode, int fileMode, boolean expectTwoSets )
         {
             archiver.getDefaultDirectoryMode();
             control.setReturnValue( defaultDirMode );
@@ -165,7 +179,6 @@ public class RepositoryAssemblyPhaseTest
             archiver.setDefaultDirectoryMode( defaultDirMode );
             archiver.setDefaultFileMode( defaultFileMode );
         }
-
 
         // public void expectAddFile( File file, String outputLocation, int fileMode )
         // {
@@ -186,12 +199,37 @@ public class RepositoryAssemblyPhaseTest
 
         MockControl control;
 
+        ArtifactRepository localRepo;
+
+        MockControl localRepoCtl;
+
+        final MockManager mockManager;
+
         public MockAndControlForConfigSource( MockManager mockManager )
         {
+            this.mockManager = mockManager;
+
             control = MockControl.createControl( AssemblerConfigurationSource.class );
             mockManager.add( control );
 
-            configSource = ( AssemblerConfigurationSource ) control.getMock();
+            configSource = (AssemblerConfigurationSource) control.getMock();
+        }
+
+        public void expectGetRemoteRepositories( List remoteRepos )
+        {
+            configSource.getRemoteRepositories();
+            control.setReturnValue( remoteRepos, MockControl.ONE_OR_MORE );
+        }
+
+        public void expectGetLocalRepository()
+        {
+            localRepoCtl = MockControl.createControl( ArtifactRepository.class );
+            mockManager.add( localRepoCtl );
+
+            localRepo = (ArtifactRepository) localRepoCtl.getMock();
+
+            configSource.getLocalRepository();
+            control.setReturnValue( localRepo, MockControl.ONE_OR_MORE );
         }
 
         public void expectGetProject( MavenProject project )
@@ -199,7 +237,7 @@ public class RepositoryAssemblyPhaseTest
             configSource.getProject();
             control.setReturnValue( project, MockControl.ONE_OR_MORE );
         }
-        
+
         public void expectGetFinalName( String finalName )
         {
             configSource.getFinalName();
@@ -220,6 +258,44 @@ public class RepositoryAssemblyPhaseTest
         // }
     }
 
+    private final class MockAndControlForDependencyResolver
+    {
+
+        MockControl dependencyResolverCtl;
+
+        DependencyResolver dependencyResolver;
+
+        public MockAndControlForDependencyResolver( MockManager mm )
+        {
+            dependencyResolverCtl = MockControl.createControl( DependencyResolver.class );
+            mm.add( dependencyResolverCtl );
+
+            dependencyResolver = (DependencyResolver) dependencyResolverCtl.getMock();
+        }
+
+        public void expectResolveDependencies( Set resolvedArtifacts )
+        {
+            try
+            {
+                dependencyResolver.resolveDependencies( null, null, null, null );
+                dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
+                dependencyResolverCtl.setReturnValue( resolvedArtifacts );
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                Assert.fail( "Should never happen!" );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                Assert.fail( "Should never happen!" );
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+                Assert.fail( "Should never happen!" );
+            }
+        }
+    }
+
     private final class MockAndControlForRepositoryAssembler
     {
         RepositoryAssembler repositoryAssembler;
@@ -231,21 +307,22 @@ public class RepositoryAssemblyPhaseTest
             control = MockControl.createControl( RepositoryAssembler.class );
             mockManager.add( control );
 
-            repositoryAssembler = ( RepositoryAssembler ) control.getMock();
+            repositoryAssembler = (RepositoryAssembler) control.getMock();
         }
 
         public void expectAssemble( File dir, Repository repo, AssemblerConfigurationSource configSource )
         {
             try
             {
-                repositoryAssembler.buildRemoteRepository( dir, new RepoInfoWrapper( repo ), new RepoBuilderConfigSourceWrapper( configSource ) );
+                repositoryAssembler.buildRemoteRepository( dir, new RepoInfoWrapper( repo ),
+                                                           new RepoBuilderConfigSourceWrapper( configSource ) );
                 control.setMatcher( MockControl.ALWAYS_MATCHER );
             }
             catch ( RepositoryAssemblyException e )
             {
                 Assert.fail( "Should never happen" );
             }
-            
+
             control.setVoidCallable( MockControl.ONE_OR_MORE );
         }
     }
@@ -261,7 +338,7 @@ public class RepositoryAssemblyPhaseTest
             control = MockControl.createControl( Logger.class );
             mockManager.add( control );
 
-            logger = ( Logger ) control.getMock();
+            logger = (Logger) control.getMock();
         }
     }
 
