@@ -93,10 +93,10 @@ public class DeployFileMojoUnitTest
         try {
             mojo.initProperties();
         } catch (MojoExecutionException expected) {
-            assertTrue( true ); // missing artifact version and packaging
+            assertTrue( true ); // missing artifactId and packaging
         }
 
-        checkMojoProperties("parentGroup", null, null, null);
+        checkMojoProperties("parentGroup", null, "parentVersion", null);
     }
 
     public void testProcessPomFromPomFileWithParent2() throws MojoExecutionException
@@ -107,10 +107,10 @@ public class DeployFileMojoUnitTest
         try {
             mojo.initProperties();
         } catch (MojoExecutionException expected) {
-            assertTrue( true ); // missing version and packaging
+            assertTrue( true ); // missing packaging
         }
 
-        checkMojoProperties("parentGroup", "artifact", null, null );
+        checkMojoProperties("parentGroup", "artifact", "parentVersion", null );
 
     }
 
