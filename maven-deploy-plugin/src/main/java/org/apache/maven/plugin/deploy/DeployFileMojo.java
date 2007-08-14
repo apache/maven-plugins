@@ -268,9 +268,13 @@ public class DeployFileMojo
         {
             this.artifactId = model.getArtifactId();
         }
-        if ( this.version == null && model.getVersion() != null )
+        if ( this.version == null )
         {
-            this.version = model.getVersion();
+        	this.version = model.getVersion();
+        	if ( this.version == null && parent != null )
+        	{
+        		this.version = parent.getVersion();
+        	}
         }
         if ( this.packaging == null && model.getPackaging() != null )
         {
