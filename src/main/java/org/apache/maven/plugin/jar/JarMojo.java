@@ -49,6 +49,14 @@ public class JarMojo
     {
         return classifier;
     }
+    
+    /**
+     * @return type of the generated artifact
+     */
+    protected String getType()
+    {
+        return "jar";
+    }
 
     /**
      * Return the main classes directory, so it's used as the root of the jar.
