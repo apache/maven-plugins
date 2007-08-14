@@ -165,6 +165,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>Czech</td>
+                <td>
+                  <a
+                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_cs.properties">
+                    See
+                  </a>
+                </td>
+              </tr>
             </table>
             <br />
           </li>
@@ -301,6 +310,15 @@
                 <td>
                   <a
                     href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_sk.properties">
+                    See
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td>Czech</td>
+                <td>
+                  <a
+                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_cs.properties">
                     See
                   </a>
                 </td>
