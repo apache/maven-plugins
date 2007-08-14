@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.io.File;
+import java.io.Reader;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -40,6 +44,8 @@ import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
@@ -57,6 +63,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -506,4 +513,13 @@ public class PluginVersionsDefined
         return pluginDescriptor;
     }
 
+    private Model readModel( File model )
+        throws IOException, XmlPullParserException
+    {
+        MavenXpp3Reader xpp3 = new MavenXpp3Reader();
+
+        Reader reader = new FileReader( model );
+
+        return xpp3.read( reader );
+    }
 }
