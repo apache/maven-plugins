@@ -16,6 +16,12 @@ Maven Eclipse Plugin: Usage
 
  * {{{#Simple Project}Simple Project}}
 
+ * {{{#Project with Dependencies}Project with Dependencies}}
+
+ * {{{#Multiple Module Projects}Multiple Module Projects}}
+
+ * {{{#Eclipse PDE Projects}Eclipse PDE Projects}}
+
 * {Maven repository}
 
  Eclipse needs to know the path to the local maven repository. Therefore the
@@ -66,3 +72,35 @@ mvn eclipse:eclipse
  Existing Projects into Workspace). In the latter case the project (directory)
  should not be located in your workspace, because Eclipse might come into
  trouble, especially if you want to use Eclipse as the scm client.
+ 
+* {Project with Dependencies}
+
+ If your maven project has dependencies, the eclipse classpath will be
+ synchronised with the current list of maven dependencies, as well as
+ any transitive maven dependencies.
+ 
+ After making changes to your maven dependencies inside the pom file,
+ rerun <eclipse:eclipse> and refresh your eclipse workspace for the
+ new dependencies to take effect.
+ 
+* {Multiple Module Projects}
+
+ If your maven project consists of a number of aggregated projects with
+ a common root pom, and if some of these aggregated projects depend on
+ each other, the <eclipse:eclipse> goal will configure each dependent
+ project in eclipse as an eclipse project dependency, rather than an
+ eclipse jar dependency.
+ 
+ By doing this, changes to code within project A will be available immediately
+ to project B, assuming that project B defines a dependency on project A.
+ 
+ For further details, see {{{reactor.html}Multiple Module Projects}}.
+ 
+* {Eclipse PDE Projects}
+
+ This plugin is capable of creating and / or synchronising an Eclipse
+ Plugin Development Environment project.
+ 
+ For further details, see the configuration instructions
+ {{{pde.html}here}}.
+ 
