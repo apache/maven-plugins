@@ -16,6 +16,13 @@ package org.apache.maven.plugins.help;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -40,13 +47,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Describes the attributes of a plugin and/or plugin mojo.
  *
@@ -60,7 +60,7 @@ public class DescribeMojo
 
     /**
      * The plugin/mojo to describe. This must be specified in one of three ways:
-     * <p/>
+     * <br/>
      * 1. plugin-prefix
      * 2. groupId:artifactId
      * 3. groupId:artifactId:version
@@ -71,7 +71,6 @@ public class DescribeMojo
 
     /**
      * The plugin groupId to describe.
-     * <br/>
      * (Used with artifactId specification).
      *
      * @parameter expression="${groupId}"
@@ -80,7 +79,6 @@ public class DescribeMojo
 
     /**
      * The plugin artifactId to describe.
-     * <br/>
      * (Used with groupId specification).
      *
      * @parameter expression="${artifactId}"
@@ -98,9 +96,7 @@ public class DescribeMojo
 
     /**
      * The goal name of a mojo to describe within the specified plugin.
-     * <br/>
      * If this parameter is specified, only the corresponding mojo will
-     * <br/>
      * be described, rather than the whole plugin.
      *
      * @parameter expression="${mojo}"
@@ -116,9 +112,7 @@ public class DescribeMojo
 
     /**
      * The project builder instance used to retrieve the super-project instance
-     * <br/>
      * in the event there is no current MavenProject instance. Some MavenProject
-     * <br/>
      * instance has to be present to use in the plugin manager APIs.
      *
      * @component role="org.apache.maven.project.MavenProjectBuilder"
@@ -127,11 +121,8 @@ public class DescribeMojo
 
     /**
      * The current project, if there is one. This is listed as optional, since
-     * <br/>
      * the help plugin should be able to function on its own. If this
-     * <br/>
      * parameter is empty at execution time, this mojo will instead use the
-     * <br/>
      * super-project.
      *
      * @parameter expression="${project}"
@@ -141,7 +132,6 @@ public class DescribeMojo
 
     /**
      * The current user system settings for use in Maven. This is used for
-     * <br/>
      * plugin manager API calls.
      *
      * @parameter expression="${settings}"
@@ -152,7 +142,6 @@ public class DescribeMojo
 
     /**
      * The current build session instance. This is used for
-     * <br/>
      * plugin manager API calls.
      *
      * @parameter expression="${session}"
@@ -163,7 +152,6 @@ public class DescribeMojo
 
     /**
      * The local repository ArtifactRepository instance. This is used
-     * <br/>
      * for plugin manager API calls.
      *
      * @parameter expression="${localRepository}"
@@ -174,7 +162,6 @@ public class DescribeMojo
 
     /**
      * If specified, this parameter will cause the plugin/mojo descriptions
-     * <br/>
      * to be written to the path specified, instead of writing to the console.
      *
      * @parameter expression="${output}"
@@ -183,12 +170,19 @@ public class DescribeMojo
 
     /**
      * This flag specifies that full (verbose) information should be
-     * <br/>
      * given. Use true/false.
      *
      * @parameter expression="${full}" default-value="false"
      */
     private boolean full;
+
+    /**
+     * This flag specifies that a short list of mojo information should be
+     * given. Use true/false.
+     *
+     * @parameter expression="${medium}" default-value="false"
+     */
+    private boolean medium;
 
     /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
@@ -453,7 +447,7 @@ public class DescribeMojo
         prettyAppend( formatDescription( pd.getDescription() ), buffer );
         buffer.append( "\n" );
 
-        if ( full )
+        if ( full || medium )
         {
             buffer.append( "\nMojos:\n" );
 
@@ -463,14 +457,25 @@ public class DescribeMojo
             {
                 MojoDescriptor md = (MojoDescriptor) it.next();
 
-                buffer.append( line );
-                buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
-                buffer.append( line );
+                if( full )
+                {
+                    buffer.append( line );
+                    buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
+                    buffer.append( line );
 
-                describeMojoGuts( md, buffer, true );
+                    describeMojoGuts( md, buffer, true );
 
-                buffer.append( line );
-                buffer.append( "\n\n" );
+                    buffer.append( line );
+                    buffer.append( "\n\n" );
+                }
+                else
+                {
+                    buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
+
+                    describeMojoGuts( md, buffer, false );
+
+                    buffer.append( "\n" );
+                }
             }
         }
     }
@@ -543,9 +548,12 @@ public class DescribeMojo
      */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
     {
-        buffer.append( "\nDescription:\n\n" );
+        buffer.append( "\nDescription:\n" );
         prettyAppend( formatDescription( md.getDescription() ), buffer );
-        buffer.append( "\n" );
+        if( fullDescription )
+        {
+            buffer.append( "\n" );
+        }
 
         String deprecation = md.getDeprecated();
 
@@ -696,7 +704,7 @@ public class DescribeMojo
                 buffer.append( "\nRequired: " ).append( parameter.isRequired() );
                 buffer.append( "\nDirectly editable: " ).append( parameter.isEditable() );
 
-                buffer.append( "\nDescription:\n\n" );
+                buffer.append( "\nDescription:\n" );
                 prettyAppend( formatDescription( parameter.getDescription() ), buffer );
 
                 String deprecation = parameter.getDeprecated();
