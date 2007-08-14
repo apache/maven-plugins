@@ -107,6 +107,11 @@ public abstract class AbstractJarMojo
      * Overload this to produce a test-jar, for example.
      */
     protected abstract String getClassifier();
+    
+    /**
+     * Overload this to produce a test-jar, for example.
+     */
+    protected abstract String getType();
 
     protected static File getJarFile( File basedir, String finalName, String classifier )
     {
@@ -172,11 +177,11 @@ public abstract class AbstractJarMojo
         throws MojoExecutionException
     {
         File jarFile = createArchive();
-
+     	
         String classifier = getClassifier();
         if ( classifier != null )
         {
-            projectHelper.attachArtifact( getProject(), "jar", classifier, jarFile );
+            projectHelper.attachArtifact( getProject(), getType(), classifier, jarFile );
         }
         else
         {

@@ -44,6 +44,14 @@ public class TestJarMojo
     }
 
     /**
+     * @return type of the generated artifact
+     */
+    protected String getType()
+    {
+        return "test-jar";
+    }
+
+    /**
      * Return the test-classes directory, to serve as the root of the tests jar.
      */
     protected File getClassesDirectory()
