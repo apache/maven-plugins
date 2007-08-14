@@ -34,11 +34,10 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
- * 
+ * @requiresDependencyResolution test
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
- * @requiresDependencyResolution test
  * @version $Id$
  */
 public class EnforceMojo
@@ -96,6 +95,11 @@ public class EnforceMojo
      * @required
      */
     private EnforcerRule[] rules;
+    
+    /**
+     * True if dependencies are resolved
+     */
+    private boolean dependenciesAreResolved = false;
 
     /**
      * Entry point to the mojo
@@ -135,7 +139,7 @@ public class EnforceMojo
                     EnforcerRule rule = rules[i];
                     if ( rule != null )
                     {
-                        // store the current rule for loggin purposes
+                        // store the current rule for logging purposes
                         currentRule = rule.getClass().getName();
                         log.debug( "Executing rule: " + currentRule );
                         try
@@ -304,5 +308,21 @@ public class EnforceMojo
     public void setTranslator( PathTranslator theTranslator )
     {
         this.translator = theTranslator;
+    }
+
+    /**
+     * @return the dependenciesAreResolved
+     */
+    public boolean isDependenciesAreResolved ()
+    {
+        return this.dependenciesAreResolved;
+    }
+
+    /**
+     * @param theDependenciesAreResolved the dependenciesAreResolved to set
+     */
+    public void setDependenciesAreResolved ( boolean theDependenciesAreResolved )
+    {
+        this.dependenciesAreResolved = theDependenciesAreResolved;
     }
 }
