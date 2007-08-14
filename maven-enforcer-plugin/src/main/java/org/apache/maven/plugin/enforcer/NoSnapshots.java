@@ -19,23 +19,12 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugin.enforcer.util.EnforcerUtils;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that no snapshots are included.
