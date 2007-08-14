@@ -8,6 +8,7 @@
     </menu>
     <menu name="Configuration">
       <item name="Multiple Module Projects" href="reactor.html"/>
+      <item name="Eclipse PDE Projects" href="pde.html"/>
       <item name="WTP Support" href="wtp.html"/>
     </menu>
 
