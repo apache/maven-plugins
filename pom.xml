@@ -118,6 +118,13 @@ under the License.
         <role>Slovak translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Petr Ferschmann</name>
+      <email>pferschmann@softeu.com</email>
+      <roles>
+        <role>Czech translator</role>
+      </roles>
+    </contributor>
   </contributors>
   <properties>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
