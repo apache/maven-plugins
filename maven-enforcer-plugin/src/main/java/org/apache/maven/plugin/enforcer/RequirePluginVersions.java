@@ -76,7 +76,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * This rule will enforce that all plugins specified in the
  * poms have a version declared.
  */
-public class PluginVersionsDefined
+public class RequirePluginVersions
     implements EnforcerRule
 {
 
