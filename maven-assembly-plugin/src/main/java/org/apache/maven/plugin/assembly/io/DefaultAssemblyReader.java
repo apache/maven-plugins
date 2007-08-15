@@ -265,6 +265,8 @@ public class DefaultAssemblyReader
             AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
 
+            mergeComponentsWithMainAssembly( assembly, configSource );
+
             assembly = new AssemblyInterpolator().interpolate( assembly, project, context );
         }
         catch ( IOException e )
@@ -288,8 +290,6 @@ public class DefaultAssemblyReader
         {
             includeSiteInAssembly( assembly, configSource );
         }
-
-        mergeComponentsWithMainAssembly( assembly, configSource );
 
         return assembly;
     }
