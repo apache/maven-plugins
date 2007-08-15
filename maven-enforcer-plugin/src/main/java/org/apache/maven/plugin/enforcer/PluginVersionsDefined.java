@@ -19,6 +19,10 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,23 +32,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.io.File;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.maven.BuildFailureException;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.Lifecycle;
 import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.PluginManager;
@@ -109,25 +113,41 @@ public class PluginVersionsDefined
 
     private List lifecycles;
 
+    ArtifactFactory factory;
+
+    ArtifactResolver resolver;
+
+    ArtifactRepository local;
+
+    List remoteRepositories;
+
     Log log;
+    
+    MavenSession session;
 
     public void execute ( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         log = helper.getLog();
 
-
         MavenProject project;
         try
         {
-            // get the various expressions out of the helper.
+            // get the various expressions out of the
+            // helper.
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
-            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
+            session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
-
-            //I couldn't find a direct way to get at the lifecycles list.
+            factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
+            resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
+            local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
+            remoteRepositories = project.getRemoteArtifactRepositories();
+            
+            
+            // I couldn't find a direct way to get at the
+            // lifecycles list.
             lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
 
             // hardcoded for now
@@ -137,44 +157,23 @@ public class PluginVersionsDefined
 
             log.debug( "All Plugins: " + allPlugins );
 
+            List plugins = getAllPluginEntries( project );
             
-            //NOTE: This code here is not getting the raw model. Substitute with a method to get the 
-            //raw pom values for plugins and pluginManagement and the rest should be good.
-            List plugins = new ArrayList();
-            List pluginMgt = new ArrayList();
-            try
-            {
-                plugins = project.getModel().getBuild().getPlugins();
-            }
-            catch ( NullPointerException e )
-            {
-                // nothing set, just skip it
-            }
-            try
-            {
-                pluginMgt = project.getModel().getBuild().getPluginManagement().getPlugins();
-            }
-            catch ( NullPointerException e )
-            {
-                // nothing set, just skip it
-            }
-            
-            //end code attempting to get raw model.
-            
-            //now look for the versions that aren't valid and add to a list.
+            // now look for the versions that aren't valid
+            // and add to a list.
             ArrayList failures = new ArrayList();
             Iterator iter = allPlugins.iterator();
             while ( iter.hasNext() )
             {
                 Plugin plugin = (Plugin) iter.next();
-                if ( !hasVersionSpecified( plugin, plugins, banRelease, banLatest )
-                    && !hasVersionSpecified( plugin, pluginMgt, banRelease, banLatest ) )
+                if ( !hasVersionSpecified( plugin, plugins ))
                 {
                     failures.add( plugin );
                 }
             }
 
-            //if anything was found, log it then append the optional message.
+            // if anything was found, log it then append the
+            // optional message.
             if ( !failures.isEmpty() )
             {
                 StringBuffer newMsg = new StringBuffer();
@@ -185,7 +184,10 @@ public class PluginVersionsDefined
                     Plugin plugin = (Plugin) iter.next();
                     newMsg.append( plugin.getGroupId() + ":" + plugin.getArtifactId() + "\n" );
                 }
-                newMsg.append( message );
+                if (StringUtils.isNotEmpty( message ))
+                {
+                    newMsg.append( message );
+                }
 
                 throw new EnforcerRuleException( newMsg.toString() );
             }
@@ -214,14 +216,31 @@ public class PluginVersionsDefined
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new EnforcerRuleException( e.getLocalizedMessage());
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new EnforcerRuleException( e.getLocalizedMessage());
+        }
+        catch ( IOException e )
+        {
+            throw new EnforcerRuleException( e.getLocalizedMessage());
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new EnforcerRuleException( e.getLocalizedMessage());
+        }
 
     }
 
     /*
-     * Checks to see if the version is specified for the plugin. Can optionally ban "RELEASE" or "LATEST" even
+     * Checks to see if the version is specified for the
+     * plugin. Can optionally ban "RELEASE" or "LATEST" even
      * if specified.
      */
-    public boolean hasVersionSpecified ( Plugin source, List plugins, boolean banRelease, boolean banLatest )
+    public boolean hasVersionSpecified ( Plugin source, List plugins )
     {
         Iterator iter = plugins.iterator();
         while ( iter.hasNext() )
@@ -254,7 +273,8 @@ public class PluginVersionsDefined
     }
 
     /*
-     * Uses borrowed lifecycle code to get a list of all plugins bound to the lifecycle.
+     * Uses borrowed lifecycle code to get a list of all
+     * plugins bound to the lifecycle.
      */
     private Set getAllPlugins ( MavenSession session, MavenProject project, Lifecycle lifecycle )
         throws PluginNotFoundException, LifecycleExecutionException
@@ -277,14 +297,11 @@ public class PluginVersionsDefined
             plugins.add( plugin );
         }
 
-        //NOTE: I'm not positive of the format returned here. Needs more investigation.
-        //For now, I assume it's the same as the method above.
         List mojos = findOptionalMojosForLifecycle( session, project, lifecycle );
         iter = mojos.iterator();
         while ( iter.hasNext() )
         {
-            Entry entry = (Entry) iter.next();
-            String value = (String) entry.getValue();
+            String value = (String) iter.next();
             String tokens[] = value.split( ":" );
 
             Plugin plugin = new Plugin();
@@ -301,10 +318,9 @@ public class PluginVersionsDefined
         return plugins;
     }
 
-    
     /*
-     * NOTE:
-     * All the code following this point was scooped from the DefaultLifecycleExecutor. There must be a 
+     * NOTE: All the code following this point was scooped
+     * from the DefaultLifecycleExecutor. There must be a
      * better way but for now it should work.
      * 
      */
@@ -513,13 +529,202 @@ public class PluginVersionsDefined
         return pluginDescriptor;
     }
 
-    private Model readModel( File model )
+    /**
+     * Gets the pom model for this file.
+     * 
+     * @param pom
+     * @return
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    private Model readModel ( File pom )
         throws IOException, XmlPullParserException
     {
+        Reader reader = new FileReader( pom );
         MavenXpp3Reader xpp3 = new MavenXpp3Reader();
+        Model model = null;
+        try
+        {
+            model = xpp3.read( reader );
+        }
+        finally
+        {
+            reader.close();
+            reader = null;
+        }
+        return model;
+    }
 
-        Reader reader = new FileReader( model );
+    /**
+     * This method gets the model for the defined artifact. Looks first in the filesystem, then tries to get it from the repo.
+     * 
+     * @param groupId
+     * @param artifactId
+     * @param classifier
+     * @param version
+     * @return
+     * @throws ArtifactResolutionException
+     * @throws ArtifactNotFoundException
+     * @throws XmlPullParserException 
+     * @throws IOException 
+     */
+    private Model getPomModel ( String groupId, String artifactId, String version, File pom )
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        Model model= null;
+        
+        //do we want to look in the reactor like the project builder? Would require @aggregator goal 
+        //which causes problems in maven core right now because we also need dependency resolution in other
+        //rules. (MNG-2277)
+        
+        //look in the location specified by pom first.
+        boolean found = false;
+        try
+        {
+            model = readModel(pom);
+            
+            //i found a model, lets make sure it's the one I want
+            found = checkIfModelMatches( groupId, artifactId, version, model );
+        }
+        catch ( IOException e )
+        {
+            //nothing here, but lets look in the repo before giving up.
+        }
+        catch ( XmlPullParserException e )
+        {
+            //nothing here, but lets look in the repo before giving up.
+        }
+        
+        //i didn't find it in the local file system, go look in the repo
+        if (!found)
+        {
+            Artifact pomArtifact = factory.createArtifact( groupId, artifactId, version, null, "pom" );
+            resolver.resolve( pomArtifact, remoteRepositories, local );
+            model = readModel( pomArtifact.getFile() );
+        }
+        
+        
 
-        return xpp3.read( reader );
+        return model;
+    }
+
+    /**
+     * This method loops through all the parents, getting
+     * each pom model and then its parent.
+     * 
+     * @param groupId
+     * @param artifactId
+     * @param version
+     * @return
+     * @throws ArtifactResolutionException
+     * @throws ArtifactNotFoundException
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    private List getModelsRecursively ( String groupId, String artifactId, String version, File pom )
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        List models = null;
+        Model model = getPomModel( groupId, artifactId, version, pom );
+
+        Parent parent = model.getParent();
+
+        //recurse into the parent
+        if ( parent != null )
+        {
+            //get the relative path
+            String relativePath = parent.getRelativePath();
+            if (StringUtils.isEmpty( relativePath ))
+            {
+                relativePath = "../pom.xml";
+            }
+            //calculate the recursive path
+            File parentPom = new File(pom.getParent(),relativePath);
+            
+            models = getModelsRecursively( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), parentPom );
+        }
+        else
+        {
+            // only create it here since I'm not at the top
+            models = new ArrayList();
+        }
+        models.add( model );
+
+        return models;
+    }
+
+    /**
+     * Gets all plugin entries in build.plugins or
+     * build.pluginManagement.plugins in this project and
+     * all parents
+     * 
+     * @param project
+     * @return
+     * @throws ArtifactResolutionException
+     * @throws ArtifactNotFoundException
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    private List getAllPluginEntries ( MavenProject project )
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        List plugins = new ArrayList();
+        // get all the pom models
+        List models = getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),new File(project.getBasedir(),"pom.xml"));
+
+        // now find all the plugin entries, either in
+        // build.plugins or build.pluginManagement.plugins
+        Iterator iter = models.iterator();
+        while ( iter.hasNext() )
+        {
+            Model model = (Model) iter.next();
+            try
+            {
+                plugins.addAll( model.getBuild().getPlugins() );
+            }
+            catch ( NullPointerException e )
+            {
+                // guess there are no plugins here.
+            }
+
+            try
+            {
+                plugins.addAll( model.getBuild().getPluginManagement().getPlugins() );
+            }
+            catch ( NullPointerException e )
+            {
+                // guess there are no plugins here.
+            }
+        }
+
+        return plugins;
+    }
+    
+    private boolean checkIfModelMatches(String groupId, String artifactId, String version, Model model)
+    {
+        //try these first.
+        String modelGroup = model.getGroupId();
+        String modelVersion = model.getVersion();
+        
+        try
+        {
+        if (StringUtils.isEmpty( modelGroup ))
+        {
+            modelGroup = model.getParent().getGroupId();
+        }
+        
+        if (StringUtils.isEmpty( modelVersion ))
+        {
+            modelVersion = model.getParent().getVersion();
+        }
+        }
+        catch (NullPointerException e)
+        {
+            //this is probably bad. I don't have a valid group or version and I can't find a parent????
+            //lets see if it's what we're looking for anyway.
+        }
+        return (groupId.equals( modelGroup ) &&
+            artifactId.equals( model.getArtifactId() ) &&
+            version.equals( modelVersion ));
     }
 }
