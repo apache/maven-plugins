@@ -560,7 +560,6 @@ public class PluginVersionsDefined
      * 
      * @param groupId
      * @param artifactId
-     * @param classifier
      * @param version
      * @return
      * @throws ArtifactResolutionException

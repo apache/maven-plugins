@@ -73,8 +73,7 @@
 								<exclude>org.apache.maven</exclude>
 								</excludes>
 								</bannedDependencies>-->
-								<pluginVersionsDefined>
-								</pluginVersionsDefined>
+								<requirePluginVersions/>
 							</rules>
 						</configuration>
 						<goals>
