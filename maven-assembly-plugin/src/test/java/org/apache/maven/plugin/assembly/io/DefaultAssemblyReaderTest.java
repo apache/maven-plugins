@@ -659,6 +659,74 @@ public class DefaultAssemblyReaderTest
         mockManager.verifyAll();
     }
 
+    public void testReadAssembly_ShouldReadAssemblyWithComponentInterpolationWithoutSiteDirInclusionOrAssemblyInterpolation()
+			throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+	 {
+		File componentsFile = fileManager.createTempFile();
+
+		File basedir = componentsFile.getParentFile();
+		String componentsFilename = componentsFile.getName();
+
+		Component component = new Component();
+
+		FileSet fs = new FileSet();
+		fs.setDirectory("${groupId}-dir");
+
+		component.addFileSet(fs);
+
+		FileWriter fw = null;
+
+		try {
+			fw = new FileWriter(componentsFile);
+			new ComponentXpp3Writer().write(fw, component);
+		} finally {
+			IOUtil.close(fw);
+		}
+
+		Assembly assembly = new Assembly();
+		assembly.setId("test");
+
+		assembly.addComponentDescriptor(componentsFilename);
+
+		StringWriter sw = new StringWriter();
+		AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
+
+		assemblyWriter.write(sw, assembly);
+
+		StringReader sr = new StringReader(sw.toString());
+
+		configSource.getBasedir();
+		configSourceControl.setReturnValue(basedir, MockControl.ONE_OR_MORE);
+
+		Model model = new Model();
+		model.setGroupId("group");
+		model.setArtifactId("artifact");
+		model.setVersion("version");
+
+		MavenProject project = new MavenProject(model);
+
+		configSource.getProject();
+		configSourceControl.setReturnValue(project);
+
+		configSource.isSiteIncluded();
+		configSourceControl.setReturnValue(false);
+
+		mockManager.replayAll();
+
+		Assembly result = new DefaultAssemblyReader().readAssembly(sr,
+				"testLocation", configSource);
+
+		assertEquals(assembly.getId(), result.getId());
+
+		List fileSets = result.getFileSets();
+
+		assertEquals(1, fileSets.size());
+
+		assertEquals("group-dir", ((FileSet) fileSets.get(0)).getDirectory());
+
+		mockManager.verifyAll();
+	}
+
     public void testReadAssembly_ShouldReadAssemblyWithInterpolationWithoutComponentsOrSiteDirInclusion()
         throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
     {
