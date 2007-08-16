@@ -77,11 +77,11 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * Pull down resourceBundles containing remote resources and process the resources contained
  * inside the artifact.
  * <p/>
- * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is 
+ * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is
  * stripped off for the final artifact name and it's  fed through velocity to have properties
  * expanded, conditions processed, etc...
  * <p/>
- * Resources that don't end in ".vm" are copied "as is". 
+ * Resources that don't end in ".vm" are copied "as is".
  *
  * @goal process
  * @requiresDependencyResolution runtime
@@ -102,7 +102,16 @@ public class ProcessRemoteResourcesMojo
      *
      * @parameter expression="${project.repositories}"
      */
-    private List remoteRepositories;
+    private List repositories;
+
+    /**
+     * List of Remote Repositories used by the resolver
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     * @required
+     */
+    private List remoteArtifactRepositories;
 
     /**
      * The current Maven project.
@@ -117,36 +126,36 @@ public class ProcessRemoteResourcesMojo
      * @parameter expression="${project.build.directory}/maven-shared-archive-resources"
      */
     private File outputDirectory;
-    
+
     /**
      * The directory containing extra information appended to the generated resources.
      *
      * @parameter expression="${basedir}/src/main/appended-resources"
      */
     private File appendedResourcesDirectory;
-    
+
     /**
      * Supplemental model data.  Useful when processing
      * artifacts with incomplete POM metadata.
-     * 
+     *
      * By default, this Mojo looks for supplemental model
      * data in the file "${appendedResourcesDirectory}/supplemental-models.xml".
-     * 
+     *
      * @parameter
      * @since 1.0-alpha-5
      */
     private String[] supplementalModels;
-    
+
     /**
      * Map of artifacts to supplemental project object models.
      */
     private Map supplementModels;
-    
+
     /**
      * Merges supplemental data model with artifact
      * metadata.  Useful when processing artifacts with
      * incomplete POM metadata.
-     * 
+     *
      * @component
      */
     private ModelInheritanceAssembler inheritanceAssembler;
@@ -158,10 +167,10 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private List resourceBundles;
-  
+
     /**
      * Skip remote-resource processing
-     * 
+     *
      * @parameter expression="${remoteresources.skip}" default-value="false"
      * @since 1.0-alpha-5
      */
@@ -176,12 +185,12 @@ public class ProcessRemoteResourcesMojo
      *   projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
      * <p/>
      * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
-     * the javadoc for MavenProject</a> for information about the properties on the MavenProject. 
+     * the javadoc for MavenProject</a> for information about the properties on the MavenProject.
      *
      * @parameter
      */
     private Map properties = new HashMap();
-    
+
     /**
      * The list of resources defined for the project.
      *
@@ -189,7 +198,7 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private List resources;
-     
+
     /**
      * Artifact downloader.
      *
@@ -215,21 +224,21 @@ public class ProcessRemoteResourcesMojo
      * @component
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
-    
+
     /**
      * Artifact factory, needed to create artifacts.
      *
      * @component
      */
     private ArtifactFactory artifactFactory;
-    
+
     /**
      * The Maven session.
      *
      * @parameter expression="${session}"
      */
     private MavenSession mavenSession;
-    
+
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
      *
@@ -238,13 +247,13 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      */
     private MavenProjectBuilder mavenProjectBuilder;
-    
+
     /**
      * @component
      * @required
      * @readonly
      */
-    private ResourceManager locator;    
+    private ResourceManager locator;
 
     public void execute()
         throws MojoExecutionException
@@ -253,26 +262,26 @@ public class ProcessRemoteResourcesMojo
         {
             return;
         }
-        if ( supplementalModels == null ) 
+        if ( supplementalModels == null )
         {
             File sups = new File( appendedResourcesDirectory, "supplemental-models.xml" );
             if ( sups.exists() )
             {
-                try 
+                try
                 {
                     supplementalModels = new String[] { sups.toURL().toString() };
                 }
-                catch ( MalformedURLException e ) 
+                catch ( MalformedURLException e )
                 {
                     //ignore
                     getLog().debug( "URL issue with supplemental-models.xml: " + e.toString() );
                 }
             }
         }
-        
-                
+
+
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
-        if ( appendedResourcesDirectory != null ) 
+        if ( appendedResourcesDirectory != null )
         {
             locator.addSearchPath( FileResourceLoader.ID, appendedResourcesDirectory.getAbsolutePath() );
         }
@@ -283,20 +292,20 @@ public class ProcessRemoteResourcesMojo
         try
         {
             Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-            
+
             validate();
-    
+
             List resourceBundleArtifacts = downloadResourceBundles( resourceBundles );
             supplementModels = loadSupplements( supplementalModels );
-            
+
             VelocityContext context = new VelocityContext( properties );
             configureVelocityContext( context );
-            
-            RemoteResourcesClassLoader classLoader 
+
+            RemoteResourcesClassLoader classLoader
                 = new RemoteResourcesClassLoader( this.getClass().getClassLoader() );
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
-            
+
             processResourceBundles( classLoader, context );
 
             try
@@ -309,10 +318,10 @@ public class ProcessRemoteResourcesMojo
                     // ----------------------------------------------------------------------------
                     Resource resource = new Resource();
                     resource.setDirectory( outputDirectory.getAbsolutePath() );
-    
+
                     project.getResources().add( resource );
                     project.getTestResources().add( resource );
-                    
+
                     // ----------------------------------------------------------------------------
                     // Write out archiver dot file
                     // ----------------------------------------------------------------------------
@@ -326,22 +335,23 @@ public class ProcessRemoteResourcesMojo
                 throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
             }
         }
-        finally 
+        finally
         {
-            Thread.currentThread().setContextClassLoader( origLoader );            
+            Thread.currentThread().setContextClassLoader( origLoader );
         }
     }
-    
+
     protected List getProjects()
         throws MojoExecutionException
     {
         List projects = new ArrayList();
-        
-        for ( Iterator it = project.getArtifacts().iterator() ; it.hasNext() ; ) 
+
+        for ( Iterator it = project.getArtifacts().iterator() ; it.hasNext() ; )
         {
             Artifact artifact = (Artifact) it.next();
-            try 
+            try
             {
+                List remoteRepo = repositories;
                 if ( artifact.isSnapshot() )
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
@@ -353,40 +363,41 @@ public class ProcessRemoteResourcesMojo
                                                                          artifact.getScope(),
                                                                          null,
                                                                          artifact.isOptional() );
+                    remoteRepo = remoteArtifactRepositories;
                 }
-                
+
                 getLog().debug( "Building project for " + artifact );
                 MavenProject p = null;
-                try 
+                try
                 {
                     p = mavenProjectBuilder.buildFromRepository( artifact,
-                                                            remoteRepositories,
+                                                                 remoteRepo,
                                                             localRepository,
                                                             true );
                 }
                 catch ( InvalidProjectModelException e )
                 {
-                   getLog().warn( "Invalid project model for artifact [" 
-                                  + artifact.getArtifactId() + ":" 
-                                  + artifact.getGroupId() + ":" 
-                                  + artifact.getVersion() + "]. " 
-                                  + "It will be ignored by the remote resources Mojo." ); 
+                   getLog().warn( "Invalid project model for artifact ["
+                                  + artifact.getArtifactId() + ":"
+                                  + artifact.getGroupId() + ":"
+                                  + artifact.getVersion() + "]. "
+                                  + "It will be ignored by the remote resources Mojo." );
                    continue;
                 }
-                
-    
-                String supplementKey = generateSupplementMapKey( p.getModel().getGroupId(), 
+
+
+                String supplementKey = generateSupplementMapKey( p.getModel().getGroupId(),
                                                                  p.getModel().getArtifactId() );
-                
+
                 if ( supplementModels.containsKey( supplementKey ) )
                 {
-                    Model mergedModel = mergeModels( p.getModel(), 
+                    Model mergedModel = mergeModels( p.getModel(),
                                                      (Model) supplementModels.get( supplementKey ) );
                     MavenProject mergedProject = new MavenProject( mergedModel );
                     projects.add( mergedProject );
                     getLog().debug( "Adding project with groupId [" + mergedProject.getGroupId() + "] (supplemented)" );
                 }
-                else 
+                else
                 {
                     projects.add( p );
                     getLog().debug( "Adding project with groupId [" + p.getGroupId() + "]" );
@@ -400,9 +411,9 @@ public class ProcessRemoteResourcesMojo
         }
         return projects;
     }
-    
+
     protected boolean copyResourceIfExists( File file, String relFileName )
-        throws IOException 
+        throws IOException
     {
         for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
@@ -415,23 +426,23 @@ public class ProcessRemoteResourcesMojo
             }
             //TODO - really should use the resource includes/excludes and name mapping
             File source = new File( resourceDirectory, relFileName );
-            
-            if ( source.exists() 
+
+            if ( source.exists()
                 && !source.equals( file ) )
             {
                 //TODO - should use filters here
                 FileUtils.copyFile( source, file );
-                
+
                 //exclude the original (so eclipse doesn't complain about duplicate resources)
                 resource.addExclude( relFileName );
-                
+
                 return true;
             }
-            
+
         }
         return false;
     }
-    
+
     protected void validate() throws MojoExecutionException
     {
         int bundleCount = 1;
@@ -465,21 +476,21 @@ public class ProcessRemoteResourcesMojo
                 }
 
                 throw new MojoExecutionException( "The " + position
-                    + " resource bundle configured must specify a groupId, artifactId, and" 
-                    + " version for a remote resource bundle. " 
+                    + " resource bundle configured must specify a groupId, artifactId, and"
+                    + " version for a remote resource bundle. "
                     + "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
             }
-            
+
             bundleCount++;
         }
-                
+
     }
-    
+
     protected void configureVelocityContext( VelocityContext context ) throws MojoExecutionException
     {
         String inceptionYear = project.getInceptionYear();
         String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
-        
+
         if ( StringUtils.isEmpty( inceptionYear ) )
         {
             getLog().info( "inceptionYear not specified, defaulting to " + year );
@@ -487,7 +498,7 @@ public class ProcessRemoteResourcesMojo
         }
         context.put( "project", project );
         context.put( "projects", getProjects() );
-        
+
         context.put( "presentYear", year );
 
         if ( inceptionYear.equals( year ) )
@@ -499,11 +510,11 @@ public class ProcessRemoteResourcesMojo
             context.put( "projectTimespan", inceptionYear + "-" + year );
         }
     }
-    
+
     private List downloadResourceBundles( List resourceBundles ) throws MojoExecutionException
     {
         List resourceBundleArtifacts = new ArrayList();
-        
+
         try
         {
             for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
@@ -512,10 +523,10 @@ public class ProcessRemoteResourcesMojo
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
                 File artifact = downloader.download( s[0], s[1], s[2], localRepository,
-                        ProjectUtils.buildArtifactRepositories( remoteRepositories,
+                        ProjectUtils.buildArtifactRepositories( repositories,
                             artifactRepositoryFactory,
                             mavenSession.getContainer() ) );
-                
+
                 resourceBundleArtifacts.add( artifact );
             }
         }
@@ -531,10 +542,10 @@ public class ProcessRemoteResourcesMojo
         {
             throw new MojoExecutionException( "Resources JAR cannot be found.", e );
         }
-        
+
         return resourceBundleArtifacts;
     }
-    
+
     private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts ) throws MojoExecutionException
     {
         try
@@ -542,7 +553,7 @@ public class ProcessRemoteResourcesMojo
             for ( Iterator i = artifacts.iterator(); i.hasNext(); )
             {
                 File artifact = (File) i.next();
-                cl.addURL( artifact.toURI().toURL() );            
+                cl.addURL( artifact.toURI().toURL() );
             }
         }
         catch ( MalformedURLException e )
@@ -550,15 +561,15 @@ public class ProcessRemoteResourcesMojo
             throw new MojoExecutionException( "Unable to configure resources classloader: " + e.getMessage(), e );
         }
     }
-    
+
     protected void processResourceBundles( RemoteResourcesClassLoader classLoader, VelocityContext context )
         throws MojoExecutionException
     {
         InputStreamReader reader = null;
-        
+
         try
         {
-            
+
             for ( Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
                   e.hasMoreElements(); )
             {
@@ -569,50 +580,50 @@ public class ProcessRemoteResourcesMojo
                 conn.connect();
 
                 reader = new InputStreamReader( conn.getInputStream() );
-                               
-                try 
+
+                try
                 {
 
                     RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
-    
+
                     RemoteResourcesBundle bundle = bundleReader.read( reader );
-    
+
                     for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
                     {
                         String bundleResource = (String) i.next();
-    
+
                         String projectResource = bundleResource;
-    
+
                         boolean doVelocity = false;
                         if ( projectResource.endsWith( ".vm" ) )
                         {
                             projectResource = projectResource.substring( 0, projectResource.length() - 3 );
                             doVelocity = true;
                         }
-    
+
                         // Don't overwrite resource that are already being provided.
-    
+
                         File f = new File( outputDirectory, projectResource );
-    
+
                         FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
-    
+
                         if ( !copyResourceIfExists( f, projectResource ) )
                         {
-                            if ( doVelocity ) 
+                            if ( doVelocity )
                             {
                                 PrintWriter writer = new PrintWriter( new FileWriter( f ) );
-                                try 
+                                try
                                 {
                                     velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-        
+
                                     File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
-                                    if ( appendedResourceFile.exists() ) 
+                                    if ( appendedResourceFile.exists() )
                                     {
                                         FileReader freader = new FileReader( appendedResourceFile );
                                         BufferedReader breader = new BufferedReader( freader );
-                                        
+
                                         String line = breader.readLine();
-                               
+
                                         while ( line != null )
                                         {
                                             writer.println( line );
@@ -661,85 +672,85 @@ public class ProcessRemoteResourcesMojo
     {
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
         Model model = null;
-        
+
         try
         {
             model = modelReader.read( new StringReader( supplementModelXml.toString() ) );
             String groupId = model.getGroupId();
             String artifactId = model.getArtifactId();
-    
-            if ( groupId == null 
+
+            if ( groupId == null
                 || groupId.trim().equals( "" ) )
             {
                 throw new MojoExecutionException( "Supplemental project XML "
                                                   + "requires that a <groupId> element be present." );
             }
-            
-            if ( artifactId == null 
+
+            if ( artifactId == null
                 || artifactId.trim().equals( "" ) )
             {
                 throw new MojoExecutionException( "Supplemental project XML "
                                                   + "requires that a <artifactId> element be present." );
-            }              
-        } 
+            }
+        }
         catch ( IOException e )
         {
             getLog().warn( "Unable to read supplemental XML: " + e.getMessage(), e );
-        } 
+        }
         catch ( XmlPullParserException e )
         {
             getLog().warn( "Unable to parse supplemental XML: " + e.getMessage(), e );
         }
-        
+
         return model;
     }
 
     protected Model mergeModels( Model parent, Model child )
     {
-        inheritanceAssembler.assembleModelInheritance( child, parent );  
+        inheritanceAssembler.assembleModelInheritance( child, parent );
         return child;
     }
-    
+
     private static String generateSupplementMapKey( String groupId, String artifactId )
     {
         return groupId.trim() + ":" + artifactId.trim();
     }
-    
+
     private Map loadSupplements( String models[] ) throws MojoExecutionException
-    {  
+    {
         if ( models == null )
         {
-            getLog().debug( "Supplemental data models won't be loaded.  " 
+            getLog().debug( "Supplemental data models won't be loaded.  "
                             + "No models specified." );
             return Collections.EMPTY_MAP;
         }
-        
+
         List supplements = new ArrayList();
-        for ( int idx = 0; idx < models.length; idx++ ) 
+        for ( int idx = 0; idx < models.length; idx++ )
         {
             String set = models[idx];
             getLog().debug( "Preparing ruleset: " + set );
             try
             {
                 File f = locator.getResourceAsFile( set, getLocationTemp( set ) );
-            
+
                 if ( null == f || !f.exists() )
                 {
                     throw new MavenReportException( "Cold not resolve " + set );
                 }
                 if ( !f.canRead() )
                 {
-                    throw new MavenReportException( "Supplemental data models won't be loaded. " 
-                                                    + "File " + f.getAbsolutePath() 
+                    throw new MavenReportException( "Supplemental data models won't be loaded. "
+                                                    + "File " + f.getAbsolutePath()
                                                     + " cannot be read, check permissions on the file." );
                 }
-                
+
                 getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
-                
+
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
                 SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
                 supplements.addAll( supplementalModel.getSupplement() );
-            } 
+            }
             catch ( Exception e )
             {
                 String msg = "Error loading supplemental data models: " + e.getMessage();
@@ -749,21 +760,21 @@ public class ProcessRemoteResourcesMojo
         }
 
         getLog().debug( "Loading supplements complete." );
-        
+
         Map supplementMap = new HashMap();
         for ( Iterator i = supplements.iterator(); i.hasNext(); )
         {
             Supplement sd = (Supplement) i.next();
-            
+
             Xpp3Dom dom = (Xpp3Dom) sd.getProject();
-            
+
             Model m = getSupplement( dom );
             supplementMap.put( generateSupplementMapKey( m.getGroupId(), m.getArtifactId() ), m );
         }
-        
+
         return supplementMap;
     }
-    
+
     /**
      * Convenience method to get the location of the specified file name.
      *
@@ -784,5 +795,5 @@ public class ProcessRemoteResourcesMojo
         getLog().debug( "Before: " + name + " After: " + loc );
         return loc;
     }
-    
+
 }
