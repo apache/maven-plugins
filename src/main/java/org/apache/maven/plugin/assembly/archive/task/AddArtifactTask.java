@@ -49,7 +49,7 @@ public class AddArtifactTask
     {
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName() );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName() );
 
         if ( unpack )
         {

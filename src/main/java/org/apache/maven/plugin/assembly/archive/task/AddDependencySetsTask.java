@@ -118,7 +118,7 @@ public class AddDependencySetsTask
 
             if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
             {
-                addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver );
+                addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver, configSource );
             }
             else
             {
@@ -215,14 +215,14 @@ public class AddDependencySetsTask
     }
 
     protected void addNonArchiveDependency( Artifact depArtifact, MavenProject depProject, DependencySet dependencySet,
-                                            Archiver archiver )
+                                            Archiver archiver, AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         File source = depArtifact.getFile();
 
         String outputDirectory = dependencySet.getOutputDirectory();
 
-        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject, depProject.getBuild()
+        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), depProject, depProject.getBuild()
             .getFinalName() );
         String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
                                                                        depArtifact );

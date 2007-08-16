@@ -46,7 +46,12 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
 
-    public static String getOutputDirectory( String output, MavenProject project, String finalName )
+    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject, String finalName )
+    {
+        return getOutputDirectory( output, mainProject, artifactProject, finalName, "artifact" );
+    }
+
+    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject, String finalName, String artifactProjectRefName )
     {
         String value = output;
         if ( value == null )
@@ -66,9 +71,15 @@ public final class AssemblyFormatUtils
 
         interpolator.addValueSource( new PropertiesInterpolationValueSource( specialExpressionOverrides ) );
 
-        if ( project != null )
+        if ( mainProject != null )
         {
-            interpolator.addValueSource( new ObjectBasedValueSource( project ) );
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "pom.", mainProject ) );
+            interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
+        }
+
+        if ( artifactProject != null )
+        {
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifactProject ) );
         }
 
         value = interpolator.interpolate( value, "__project" );

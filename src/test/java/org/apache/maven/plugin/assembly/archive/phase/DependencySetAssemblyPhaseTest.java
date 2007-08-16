@@ -46,7 +46,7 @@ public class DependencySetAssemblyPhaseTest
         assembly.setIncludeBaseDirectory( false );
         assembly.addDependencySet( ds );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, null, project );
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetType( "jar" );
@@ -60,7 +60,6 @@ public class DependencySetAssemblyPhaseTest
 
         project.setArtifacts( Collections.singleton( macTask.artifact ) );
 
-        macTask.expectGetProject( project );
         macTask.expectCSGetFinalName( "final-name" );
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
@@ -86,9 +85,7 @@ public class DependencySetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
-
-        macTask.expectGetProject( null );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, null, null );
 
         mockManager.replayAll();
 
