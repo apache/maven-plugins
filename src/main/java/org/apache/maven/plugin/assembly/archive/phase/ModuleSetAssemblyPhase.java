@@ -80,7 +80,7 @@ public class ModuleSetAssemblyPhase
             ModuleSources sources = moduleSet.getSources();
             ModuleBinaries binaries = moduleSet.getBinaries();
 
-            if ( sources == null && binaries == null )
+            if ( ( sources == null ) && ( binaries == null ) )
             {
                 getLogger().warn( "Encountered ModuleSet with no sources or binaries specified. Skipping." );
                 continue;
@@ -116,7 +116,7 @@ public class ModuleSetAssemblyPhase
                 it.remove();
             }
         }
-        
+
         String classifier = binaries.getAttachmentClassifier();
 
         for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
@@ -124,7 +124,7 @@ public class ModuleSetAssemblyPhase
             MavenProject project = ( MavenProject ) j.next();
 
             Artifact artifact = null;
-            
+
             if ( classifier == null )
             {
                 getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
@@ -136,12 +136,12 @@ public class ModuleSetAssemblyPhase
                 getLogger().debug( "Processing binary attachment: " + classifier + " for module project: " + project.getId() );
 
                 List attachments = project.getAttachedArtifacts();
-                if ( attachments != null && !attachments.isEmpty() )
+                if ( ( attachments != null ) && !attachments.isEmpty() )
                 {
                     for ( Iterator attachmentIterator = attachments.iterator(); attachmentIterator.hasNext(); )
                     {
                         Artifact attachment = (Artifact) attachmentIterator.next();
-                        
+
                         if ( classifier.equals( attachment.getClassifier() ) )
                         {
                             artifact = attachment;
@@ -149,7 +149,7 @@ public class ModuleSetAssemblyPhase
                         }
                     }
                 }
-                
+
                 if ( artifact == null )
                 {
                     throw new InvalidAssemblerConfigurationException( "Cannot find attachment with classifier: " + classifier + " in module project: " + project.getId() + ". Please exclude this module from the module-set." );
@@ -161,7 +161,7 @@ public class ModuleSetAssemblyPhase
 
         List depSets = binaries.getDependencySets();
 
-        if ( ( depSets == null || depSets.isEmpty() ) && binaries.isIncludeDependencies() )
+        if ( ( ( depSets == null ) || depSets.isEmpty() ) && binaries.isIncludeDependencies() )
         {
             DependencySet impliedDependencySet = new DependencySet();
 
@@ -268,7 +268,7 @@ public class ModuleSetAssemblyPhase
 
         List subFileSets = sources.getFileSets();
 
-        if ( subFileSets == null || subFileSets.isEmpty() )
+        if ( ( subFileSets == null ) || subFileSets.isEmpty() )
         {
             FileSet fs = new FileSet();
             fs.setDirectory( "src" );
@@ -288,7 +288,7 @@ public class ModuleSetAssemblyPhase
             {
                 FileSet fileSet = ( FileSet ) fsIterator.next();
 
-                FileSet moduleFileSet = createFileSet( fileSet, sources, moduleProject );
+                FileSet moduleFileSet = createFileSet( fileSet, sources, moduleProject, configSource );
 
                 AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( moduleFileSet ) );
 
@@ -311,11 +311,11 @@ public class ModuleSetAssemblyPhase
         {
             result = true;
         }
-        else if ( sources.getIncludes() != null && !sources.getIncludes().isEmpty() )
+        else if ( ( sources.getIncludes() != null ) && !sources.getIncludes().isEmpty() )
         {
             result = true;
         }
-        else if ( sources.getExcludes() != null && !sources.getExcludes().isEmpty() )
+        else if ( ( sources.getExcludes() != null ) && !sources.getExcludes().isEmpty() )
         {
             result = true;
         }
@@ -337,7 +337,7 @@ public class ModuleSetAssemblyPhase
         return result;
     }
 
-    protected FileSet createFileSet( FileSet fileSet, ModuleSources sources, MavenProject moduleProject )
+    protected FileSet createFileSet( FileSet fileSet, ModuleSources sources, MavenProject moduleProject, AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         FileSet fs = new FileSet();
@@ -366,7 +366,7 @@ public class ModuleSetAssemblyPhase
         List excludes = new ArrayList();
 
         List originalExcludes = fileSet.getExcludes();
-        if ( originalExcludes != null && !originalExcludes.isEmpty() )
+        if ( ( originalExcludes != null ) && !originalExcludes.isEmpty() )
         {
             excludes.addAll( originalExcludes );
         }
@@ -412,7 +412,7 @@ public class ModuleSetAssemblyPhase
             destPath = destPathPrefix + destPath;
         }
 
-        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "" );
+        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject, "", "module" );
 
         fs.setOutputDirectory( destPath );
 

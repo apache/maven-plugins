@@ -61,7 +61,7 @@ public class FileItemAssemblyPhase
             }
 
             String outputDirectory = AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(),
-                configSource.getProject(), configSource.getFinalName() );
+                configSource.getProject(), null, configSource.getFinalName() );
 
             String target;
 

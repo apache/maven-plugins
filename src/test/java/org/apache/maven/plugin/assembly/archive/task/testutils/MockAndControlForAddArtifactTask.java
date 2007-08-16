@@ -38,14 +38,17 @@ public class MockAndControlForAddArtifactTask
 
     private final String classifier;
 
+    private MavenProject project = null;
+
     public MockAndControlForAddArtifactTask( MockManager mockManager )
     {
-        this( mockManager, null );
+        this( mockManager, null, null );
     }
 
-    public MockAndControlForAddArtifactTask( MockManager mockManager, String classifier )
+    public MockAndControlForAddArtifactTask( MockManager mockManager, String classifier, MavenProject project )
     {
         this.classifier = classifier;
+        this.project = project;
 
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
@@ -74,6 +77,9 @@ public class MockAndControlForAddArtifactTask
     {
         artifact.getClassifier();
         artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
+
+        configSource.getProject();
+        configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
     }
 
     public void expectGetArtifactHandler()
@@ -192,12 +198,6 @@ public class MockAndControlForAddArtifactTask
     {
         artifact.getScope();
         artifactCtl.setReturnValue( scope, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectGetProject( MavenProject project )
-    {
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
     }
 
     public void expectGetReactorProjects( List projects )
