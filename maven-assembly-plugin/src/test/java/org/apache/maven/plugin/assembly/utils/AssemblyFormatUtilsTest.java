@@ -2,6 +2,7 @@ package org.apache.maven.plugin.assembly.utils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -27,6 +28,46 @@ public class AssemblyFormatUtilsTest
     public void testGetDistroName_ShouldUseFinalNamePlusClassifierWhenAppendAssemblyIdIsNull()
     {
         verifyDistroName( "assembly", "classifier", "finalName", false, "finalName-classifier" );
+    }
+
+    public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseArtifactInfo()
+    {
+        verifyOutputDir( "${artifact.groupId}", null, "group", null, null, null, "group/", false );
+    }
+
+    public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseArtifactInfo()
+    {
+        verifyOutputDir( "${artifact.artifactId}", null, null, "artifact", null, null, "artifact/", false );
+    }
+
+    public void testGetOutputDir_ShouldResolveVersionInOutDir_UseArtifactInfo()
+    {
+        verifyOutputDir( "${artifact.version}", null, null, null, "version", null, "version/", false );
+    }
+
+    public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseArtifactInfo()
+    {
+        verifyOutputDir( "${artifact.build.finalName}", null, null, null, null, "finalName", "finalName/", false );
+    }
+
+    public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseExplicitMainProject()
+    {
+        verifyOutputDir( "${pom.groupId}", null, "group", null, null, null, "group/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject()
+    {
+        verifyOutputDir( "${pom.artifactId}", null, null, "artifact", null, null, "artifact/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveVersionInOutDir_UseExplicitMainProject()
+    {
+        verifyOutputDir( "${pom.version}", null, null, null, "version", null, "version/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseExplicitMainProject()
+    {
+        verifyOutputDir( "${pom.build.finalName}", null, null, null, null, "finalName", "finalName/", true );
     }
 
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions()
@@ -139,19 +180,44 @@ public class AssemblyFormatUtilsTest
 
     private void verifyOutputDir( String outDir, String finalName, String groupId, String artifactId, String version, String checkValue )
     {
-        MavenProject project = null;
+        verifyOutputDir( outDir, finalName, groupId, artifactId, version, null, checkValue, true );
+    }
 
-        if ( ( groupId != null ) || ( artifactId != null ) || ( version != null ) )
+    private void verifyOutputDir( String outDir, String finalName, String groupId, String artifactId, String version, String projectFinalName, String checkValue, boolean usingMainProject )
+    {
+        MavenProject project = null;
+        if ( ( groupId != null ) || ( artifactId != null ) || ( version != null ) || ( projectFinalName != null ) )
         {
             Model model = new Model();
             model.setGroupId( groupId );
             model.setArtifactId( artifactId );
             model.setVersion( version );
 
+            if ( projectFinalName != null )
+            {
+                Build build = new Build();
+                build.setFinalName( projectFinalName );
+
+                model.setBuild( build );
+            }
+
             project = new MavenProject( model );
         }
 
-        String result = AssemblyFormatUtils.getOutputDirectory( outDir, project, finalName );
+        MavenProject mainProject;
+        MavenProject artifactProject = null;
+
+        if ( usingMainProject )
+        {
+            mainProject = project;
+        }
+        else
+        {
+            artifactProject = project;
+            mainProject = new MavenProject( new Model() );
+        }
+
+        String result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, artifactProject, finalName );
 
         assertEquals( checkValue, result );
     }

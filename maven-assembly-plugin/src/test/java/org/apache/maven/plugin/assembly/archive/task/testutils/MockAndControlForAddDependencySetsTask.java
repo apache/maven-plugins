@@ -54,13 +54,16 @@ public class MockAndControlForAddDependencySetsTask
 
     private String classifier;
 
+    private MavenProject project;
+
     public MockAndControlForAddDependencySetsTask( MockManager mockManager )
     {
-        this( mockManager, null );
+        this( mockManager, null, null );
     }
 
-    public MockAndControlForAddDependencySetsTask( MockManager mockManager, String classifier )
+    public MockAndControlForAddDependencySetsTask( MockManager mockManager, String classifier, MavenProject project )
     {
+        this.project = project;
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
 
@@ -100,6 +103,9 @@ public class MockAndControlForAddDependencySetsTask
     {
         artifact.getClassifier();
         artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
+
+        configSource.getProject();
+        configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
     }
 
     public void expectGetArtifactHandler()
@@ -223,12 +229,6 @@ public class MockAndControlForAddDependencySetsTask
     {
         artifact.getScope();
         artifactCtl.setReturnValue( scope, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectGetProject( MavenProject project )
-    {
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
     }
 
     public void expectGetReactorProjects( List projects )

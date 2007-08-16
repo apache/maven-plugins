@@ -103,32 +103,37 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        FileSet fs = new FileSet();
-
-        ModuleSources sources = new ModuleSources();
-        sources.setIncludeModuleDirectory( true );
-
         Model model = new Model();
         model.setArtifactId( "artifact" );
 
         MavenProject project = new MavenProject( model );
 
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test", project );
+
+        FileSet fs = new FileSet();
+
+        ModuleSources sources = new ModuleSources();
+        sources.setIncludeModuleDirectory( true );
+
         File basedir = fileManager.createTempDir();
 
-        project.setFile( new File( basedir, "pom.xml" ) );
+        MavenProject artifactProject = new MavenProject( new Model() );
+
+        artifactProject.setFile( new File( basedir, "pom.xml" ) );
 
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
         macArtifact.expectGetArtifactHandler();
 
-        project.setArtifact( macArtifact.artifact );
+        artifactProject.setArtifact( macArtifact.artifact );
 
         mm.replayAll();
 
         FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
                                                                                                              sources,
-                                                                                                             project );
+                                                                                                             artifactProject,
+                                                                                                             macTask.configSource );
 
         assertEquals( "artifact/", result.getOutputDirectory() );
 
@@ -140,33 +145,38 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
+        Model model = new Model();
+        model.setArtifactId( "artifact" );
+
+        MavenProject project = new MavenProject( model );
+
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test", project );
+
         FileSet fs = new FileSet();
         fs.setOutputDirectory( "out" );
 
         ModuleSources sources = new ModuleSources();
         sources.setIncludeModuleDirectory( true );
 
-        Model model = new Model();
-        model.setArtifactId( "artifact" );
-
-        MavenProject project = new MavenProject( model );
+        MavenProject artifactProject = new MavenProject( new Model() );
 
         File basedir = fileManager.createTempDir();
 
-        project.setFile( new File( basedir, "pom.xml" ) );
+        artifactProject.setFile( new File( basedir, "pom.xml" ) );
 
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
         macArtifact.expectGetArtifactHandler();
 
-        project.setArtifact( macArtifact.artifact );
+        artifactProject.setArtifact( macArtifact.artifact );
 
         mm.replayAll();
 
         FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
                                                                                                              sources,
-                                                                                                             project );
+                                                                                                             artifactProject,
+                                                                                                             macTask.configSource );
 
         assertEquals( "artifact/out/", result.getOutputDirectory() );
 
@@ -177,6 +187,8 @@ public class ModuleSetAssemblyPhaseTest
         throws AssemblyFormattingException
     {
         MockManager mm = new MockManager();
+
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test", null );
 
         FileSet fs = new FileSet();
 
@@ -205,7 +217,8 @@ public class ModuleSetAssemblyPhaseTest
 
         FileSet result = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs,
                                                                                                              sources,
-                                                                                                             project );
+                                                                                                             project,
+                                                                                                             macTask.configSource );
 
         assertEquals( 1, result.getExcludes().size() );
         assertEquals( "submodule/**", result.getExcludes().get( 0 ) );
@@ -228,9 +241,10 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null, project );
+
         MavenProject module = createProject( "group", "module", "version", project );
 
         macTask.expectArtifactGetFile();
@@ -238,10 +252,8 @@ public class ModuleSetAssemblyPhaseTest
 
         List projects = new ArrayList();
 
-        projects.add( project );
         projects.add( module );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
@@ -319,7 +331,7 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test" );
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, "test", null );
 
         macTask.expectArtifactGetFile( true );
         macTask.expectGetFinalName( "final-name" );
@@ -680,6 +692,8 @@ public class ModuleSetAssemblyPhaseTest
 
         MavenProject project = createProject( "group", "artifact", "version", null );
 
+        macTask.expectGetProject( project );
+
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
@@ -720,13 +734,12 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, null, project );
 
         List projects = Collections.singletonList( project );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
@@ -746,16 +759,16 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, null, project );
+
         MavenProject project2 = createProject( "group", "artifact2", "version", null );
 
         List projects = new ArrayList();
         projects.add( project );
         projects.add( project2 );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
@@ -775,16 +788,16 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, null, project );
+
         MavenProject project2 = createProject( "group", "artifact2", "version", project );
 
         List projects = new ArrayList();
         projects.add( project );
         projects.add( project2 );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
@@ -808,9 +821,10 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, null, project );
+
         MavenProject project2 = createProject( "group", "artifact2", "version", project );
         MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
 
@@ -819,7 +833,6 @@ public class ModuleSetAssemblyPhaseTest
         projects.add( project2 );
         projects.add( project3 );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
@@ -845,11 +858,12 @@ public class ModuleSetAssemblyPhaseTest
     {
         MockManager mm = new MockManager();
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
+        MavenProject project = createProject( "group", "artifact", "version", null );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, null, project );
 
         List macArtifacts = new ArrayList();
 
-        MavenProject project = createProject( "group", "artifact", "version", null );
         macArtifacts.add( addArtifact( project, mm, false, false ) );
 
         MavenProject project2 = createProject( "group", "artifact2", "version", project );
@@ -869,7 +883,6 @@ public class ModuleSetAssemblyPhaseTest
         projects.add( project2 );
         projects.add( project3 );
 
-        macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();

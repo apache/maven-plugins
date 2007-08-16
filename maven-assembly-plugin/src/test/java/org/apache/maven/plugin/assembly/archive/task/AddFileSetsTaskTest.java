@@ -32,7 +32,7 @@ public class AddFileSetsTaskTest
         mockManager = new MockManager();
 
         fileManager = new TestFileManager( "add-fileset.test.", "" );
-        
+
         macTask = new MockAndControlForAddFileSetsTask( mockManager, fileManager );
     }
 
@@ -121,9 +121,11 @@ public class AddFileSetsTaskTest
         int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
 
         macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
-        
+
+        macTask.expectGetProject( null );
+
         MavenProject project = new MavenProject( new Model() );
-        
+
         mockManager.replayAll();
 
         AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
@@ -154,7 +156,9 @@ public class AddFileSetsTaskTest
         int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
 
         macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
-        
+
+        macTask.expectGetProject( null );
+
         MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
@@ -181,7 +185,9 @@ public class AddFileSetsTaskTest
         File archiveBaseDir = fileManager.createTempDir();
 
         macTask.expectGetFinalName( "finalName" );
-        
+
+        macTask.expectGetProject( null );
+
         macTask.archiver.getDefaultDirectoryMode();
         macTask.archiverCtl.setReturnValue( -1 );
         macTask.archiver.getDefaultFileMode();
@@ -230,7 +236,7 @@ public class AddFileSetsTaskTest
         throws AssemblyFormattingException, IOException
     {
         File archiveBaseDir = fileManager.createTempFile();
-        
+
         macTask.archiveBaseDir = archiveBaseDir;
         macTask.expectGetArchiveBaseDirectory();
 
