@@ -22,7 +22,7 @@ public class AddFileSetsTask
 {
 
     private final List fileSets;
-    
+
     private Logger logger;
 
     private MavenProject project;
@@ -31,11 +31,11 @@ public class AddFileSetsTask
     {
         this.fileSets = fileSets;
     }
-    
+
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        // don't need this check here. it's more efficient here, but the logger is not actually 
+        // don't need this check here. it's more efficient here, but the logger is not actually
         // used until addFileSet(..)...and the check should be there in case someone extends the
         // class.
         // checkLogger();
@@ -74,7 +74,7 @@ public class AddFileSetsTask
         FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
 
         File basedir = project.getBasedir();
-        
+
         if ( project == null )
         {
             project = configSource.getProject();
@@ -95,7 +95,7 @@ public class AddFileSetsTask
                 + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName() );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName() );
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
 
