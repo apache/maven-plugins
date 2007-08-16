@@ -263,6 +263,7 @@ public abstract class AbstractAssemblyMojo
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
+        boolean warnedAboutMainProjectArtifact = false;
         for ( Iterator assemblyIterator = assemblies.iterator(); assemblyIterator.hasNext(); )
         {
             Assembly assembly = (Assembly) assemblyIterator.next();
@@ -291,13 +292,24 @@ public abstract class AbstractAssemblyMojo
                         }
                         else
                         {
-                            StringBuffer message = new StringBuffer();
+                            if ( !warnedAboutMainProjectArtifact )
+                            {
+                                StringBuffer message = new StringBuffer();
 
-                            message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
-                            message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
-                            message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
+                                message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
+                                message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
+                                message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
 
-                            getLog().warn( message );
+                                getLog().warn( message );
+                                warnedAboutMainProjectArtifact = true;
+                            }
+
+                            File existingFile = project.getArtifact().getFile();
+                            if ( ( existingFile != null ) && existingFile.exists() )
+                            {
+                                getLog().warn( "Replacing pre-existing project main-artifact file: " + existingFile + "\nwith assembly file: " + destFile );
+                            }
+
                             project.getArtifact().setFile( destFile );
                         }
                     }
