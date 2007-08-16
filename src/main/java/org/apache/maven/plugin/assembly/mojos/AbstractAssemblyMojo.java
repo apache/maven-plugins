@@ -291,8 +291,19 @@ public abstract class AbstractAssemblyMojo
                         }
                         else
                         {
-                            projectHelper.attachArtifact( project, format, null, destFile );
+                            StringBuffer message = new StringBuffer();
+
+                            message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
+                            message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
+                            message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
+
+                            getLog().warn( message );
+                            project.getArtifact().setFile( destFile );
                         }
+                    }
+                    else
+                    {
+                        getLog().warn( "Assembly file: " + destFile + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
                     }
                 }
             }
