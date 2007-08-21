@@ -40,12 +40,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -210,7 +211,8 @@ public abstract class AbstractSiteRenderingMojo
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
                 getLog().debug( "Reading site descriptor from " + siteDescriptor );
-                siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
+                Reader siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
+                siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
             }
         }
         catch ( IOException e )
