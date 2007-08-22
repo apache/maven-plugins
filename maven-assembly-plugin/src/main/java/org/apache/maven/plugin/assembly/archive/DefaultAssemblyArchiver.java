@@ -11,8 +11,6 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
@@ -23,11 +21,7 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.collections.ActiveCollectionManager;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +29,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver" role-hint="default"
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
-    implements AssemblyArchiver, Contextualizable
+    implements AssemblyArchiver
 {
 
     /**
@@ -54,12 +49,10 @@ public class DefaultAssemblyArchiver
      */
     private List assemblyPhases;
 
-//    /**
-//     * @plexus.requirement
-//     */
-//    private ActiveCollectionManager collectionManager;
-
-    private PlexusContainer container;
+    /**
+     * @plexus.requirement role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
+     */
+    private Map containerDescriptorHandlers;
 
     public DefaultAssemblyArchiver()
     {
@@ -70,7 +63,6 @@ public class DefaultAssemblyArchiver
     public DefaultAssemblyArchiver( ArchiverManager archiverManager, ActiveCollectionManager collectionManager, List assemblyPhases )
     {
         this.archiverManager = archiverManager;
-//        this.collectionManager = collectionManager;
         this.assemblyPhases = assemblyPhases;
     }
 
@@ -131,40 +123,27 @@ public class DefaultAssemblyArchiver
         return destFile;
     }
 
-    private List createContainerDescriptorHandlers( List containerDescriptorHandlers )
+    private List createContainerDescriptorHandlers( List requestedContainerDescriptorHandlers )
         throws InvalidAssemblerConfigurationException
     {
-        if ( containerDescriptorHandlers == null )
+        if ( requestedContainerDescriptorHandlers == null )
         {
-            containerDescriptorHandlers = new ArrayList();
+            requestedContainerDescriptorHandlers = new ArrayList();
         }
 
         List handlers = new ArrayList();
         boolean foundPlexus = false;
 
-        if ( ( containerDescriptorHandlers != null ) && !containerDescriptorHandlers.isEmpty() )
+        if ( ( requestedContainerDescriptorHandlers != null ) && !requestedContainerDescriptorHandlers.isEmpty() )
         {
-//            ActiveMap handlerMap = collectionManager.getActiveMap( ContainerDescriptorHandler.class );
-
-            for ( Iterator it = containerDescriptorHandlers.iterator(); it.hasNext(); )
+            for ( Iterator it = requestedContainerDescriptorHandlers.iterator(); it.hasNext(); )
             {
                 ContainerDescriptorHandlerConfig config = (ContainerDescriptorHandlerConfig) it.next();
 
                 String hint = config.getHandlerName();
-                ContainerDescriptorHandler handler;
+                ContainerDescriptorHandler handler = (ContainerDescriptorHandler) containerDescriptorHandlers.get( hint );
 
-                try
-                {
-                    handler = (ContainerDescriptorHandler) container.lookup( ContainerDescriptorHandler.class.getName(), hint );
-//                    handler = (ContainerDescriptorHandler) handlerMap.checkedGet( hint );
-                }
-                catch ( ComponentLookupException e )
-                {
-                    getLogger().debug( "Failed to load container descriptor handler: " + hint, e );
-                    throw new InvalidAssemblerConfigurationException( "containerDescriptorHandler: " + hint + " could not be loaded.", e );
-                }
-
-                System.out.println( "Loaded container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
+                System.out.println( "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
 
                 handlers.add( handler );
 
@@ -285,12 +264,6 @@ public class DefaultAssemblyArchiver
         tarArchiver.setLongfile( tarFileMode );
 
         return tarArchiver;
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
