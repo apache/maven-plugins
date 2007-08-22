@@ -27,6 +27,8 @@ public class AddFileSetsTask
 
     private MavenProject project;
 
+    private String artifactExpressionPrefix;
+
     public AddFileSetsTask( List fileSets )
     {
         this.fileSets = fileSets;
@@ -95,7 +97,7 @@ public class AddFileSetsTask
                 + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName() );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
 
@@ -176,6 +178,11 @@ public class AddFileSetsTask
     public void setProject( MavenProject project )
     {
         this.project = project;
+    }
+
+    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    {
+        this.artifactExpressionPrefix = artifactExpressionPrefix;
     }
 
 }
