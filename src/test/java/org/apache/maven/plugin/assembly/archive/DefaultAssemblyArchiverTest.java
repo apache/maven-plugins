@@ -19,6 +19,7 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.collections.ActiveCollectionManager;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.ArgumentsMatcher;
 import org.easymock.MockControl;
@@ -411,10 +412,12 @@ public class DefaultAssemblyArchiverTest
     {
         DefaultAssemblyArchiver subject = new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.collectionManager, phases );
 
-        if ( logger != null )
+        if ( logger == null )
         {
-            subject.enableLogging( logger );
+            logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
         }
+
+        subject.enableLogging( logger );
 
         return subject;
     }
