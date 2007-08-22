@@ -9,6 +9,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
 import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
+import java.io.IOException;
 import java.util.Properties;
 
 public final class AssemblyFormatUtils
@@ -46,17 +47,42 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
 
-    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject, String finalName )
+    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
+                                             String finalName )
+        throws AssemblyFormattingException
     {
-        return getOutputDirectory( output, mainProject, artifactProject, finalName, "artifact" );
+        return getOutputDirectory( output, mainProject, artifactProject, finalName, "artifact." );
     }
 
-    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject, String finalName, String artifactProjectRefName )
+    /*
+     * ORDER OF INTERPOLATION PRECEDENCE:
+     *
+     * 1. Support for special expressions, like ${dashClassifier?}
+     * 2. prefixed with artifactProjectRefName, from parameters list above.
+     *    A. MavenProject instance for artifact
+     * 3. prefixed with "artifact.", if artifactProjectRefName != "artifact."
+     *    A. MavenProject instance for artifact
+     * 4. prefixed with "pom."
+     *    A. MavenProject instance from current build
+     * 5. no prefix, using main project instance
+     *    A. MavenProject instance from current build
+     * 6. System properties
+     * 7. environment variables.
+     *
+     */
+    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
+                                             String finalName, String artifactProjectRefName )
+        throws AssemblyFormattingException
     {
         String value = output;
         if ( value == null )
         {
             value = "";
+        }
+
+        if ( ( artifactProjectRefName != null ) && !artifactProjectRefName.endsWith( "." ) )
+        {
+            artifactProjectRefName += ".";
         }
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
@@ -74,12 +100,34 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectBasedValueSource( "pom.", mainProject ) );
-            interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
         }
 
         if ( artifactProject != null )
         {
-            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifactProject ) );
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( artifactProjectRefName, artifactProject ) );
+
+            if ( !"artifact.".equals( artifactProjectRefName ) )
+            {
+                interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifactProject ) );
+            }
+        }
+
+        if ( mainProject != null )
+        {
+            interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
+        }
+
+        // 6
+        interpolator.addValueSource( new PropertiesInterpolationValueSource( System.getProperties() ) );
+
+        try
+        {
+            // 7
+            interpolator.addValueSource( new PropertiesInterpolationValueSource( CommandLineUtils.getSystemEnvVars( false ) ) );
+        }
+        catch ( IOException e )
+        {
+            throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: " + e.getMessage(), e );
         }
 
         value = interpolator.interpolate( value, "__project" );
@@ -97,30 +145,96 @@ public final class AssemblyFormatUtils
         return value;
     }
 
-    /**
-     * Evaluates Filename Mapping
-     *
-     * @param expression
-     * @param artifact
-     * @return expression
-     * @throws AssemblyFormattingException
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     */
-    public static String evaluateFileNameMapping( String expression, Artifact artifact )
+    public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject, MavenProject artifactProject )
         throws AssemblyFormattingException
     {
+        return evaluateFileNameMapping( expression, artifact, mainProject, artifactProject, "artifact." );
+    }
+
+    /*
+     * ORDER OF INTERPOLATION PRECEDENCE:
+     *
+     * 1. prefixed with artifactProjectRefName, from parameters list above.
+     *    A. Artifact instance
+     *    B. ArtifactHandler instance for artifact
+     *    C. MavenProject instance for artifact
+     * 2. prefixed with "artifact.", if artifactProjectRefName != "artifact."
+     *    A. Artifact instance
+     *    B. ArtifactHandler instance for artifact
+     *    C. MavenProject instance for artifact
+     * 3. prefixed with "pom."
+     *    A. MavenProject instance from current build
+     * 4. no prefix, using main project instance
+     *    A. MavenProject instance from current build
+     * 5. Support for special expressions, like ${dashClassifier?}
+     * 6. System properties
+     * 7. environment variables.
+     *
+     */
+    public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject, MavenProject artifactProject, String artifactProjectRefName )
+        throws AssemblyFormattingException
+    {
+        System.out.println( "in evaluateFileNameMapping, using expression: " + expression + "\nartifact: "
+                            + artifact.getId() + "\nmainProject: "
+                            + ( mainProject != null ? mainProject.getId() : "null" ) + "\nartifactProject: "
+                            + ( artifactProject != null ? artifactProject.getId() : "null" )
+                            + "\nartifactProjectRefName: " + artifactProjectRefName );
+
         String value = expression;
 
-        // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
+        if ( ( artifactProjectRefName != null ) && !artifactProjectRefName.endsWith( "." ) )
+        {
+            artifactProjectRefName += ".";
+        }
+
+        // TODO: This is BAD! Accessors SHOULD NOT change the behavior of the object.
+        // [jdcasey; 16-Aug-1007] This is fixed in SVN, just waiting for it to pass out of legacy.
         artifact.isSnapshot();
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
-        interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
-        interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
+        // 1A
+        interpolator.addValueSource( new PrefixedObjectBasedValueSource( artifactProjectRefName, artifact ) );
+
+        // 1B
+        interpolator.addValueSource( new PrefixedObjectBasedValueSource( artifactProjectRefName, artifact.getArtifactHandler() ) );
+        interpolator.addValueSource( new PrefixedObjectBasedValueSource( artifactProjectRefName
+                                                                         + ( artifactProjectRefName.endsWith( "." )
+                                                                                         ? "" : "." ) + "handler.",
+                                                                         artifact.getArtifactHandler() ) );
+
+        // 1C
+        if ( artifactProject != null )
+        {
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( artifactProjectRefName, artifactProject ) );
+        }
+
+        if ( !"artifact.".equals( artifactProjectRefName ) )
+        {
+            // 2A
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifact ) );
+
+            // 2B
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifact.getArtifactHandler() ) );
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.handler.", artifact.getArtifactHandler() ) );
+
+            // 2C
+            if ( artifactProject != null )
+            {
+                interpolator.addValueSource( new PrefixedObjectBasedValueSource( "artifact.", artifactProject ) );
+            }
+        }
+
+        if ( mainProject != null )
+        {
+            // 3
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "pom.", mainProject ) );
+
+            // 4
+            interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
+        }
 
         Properties specialRules = new Properties();
-//      specialRules.setProperty( "classifier", "" );
 
         String classifier = artifact.getClassifier();
         if ( classifier != null )
@@ -132,9 +246,26 @@ public final class AssemblyFormatUtils
             specialRules.setProperty( "dashClassifier?", "" );
         }
 
+        // 5
         interpolator.addValueSource( new PropertiesInterpolationValueSource( specialRules ) );
 
+        // 6
+        interpolator.addValueSource( new PropertiesInterpolationValueSource( System.getProperties() ) );
+
+        try
+        {
+            // 7
+            interpolator.addValueSource( new PropertiesInterpolationValueSource( CommandLineUtils.getSystemEnvVars( false ) ) );
+        }
+        catch ( IOException e )
+        {
+            throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: " + e.getMessage(), e );
+        }
+
+        // Now, run the interpolation using the rules stated above.
         value = interpolator.interpolate( value, "__artifact" );
+
+        System.out.println( "Result of outputFileNameMapping evaluation: \'" + value + "\'" );
 
         return value;
     }

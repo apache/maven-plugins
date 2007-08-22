@@ -1,0 +1,28 @@
+
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includeSubModules>true</includeSubModules>
+
+      <sources>
+        <excludeSubModuleDirectories>true</excludeSubModuleDirectories>
+        <includeModuleDirectory>true</includeModuleDirectory>
+        <outputDirectoryMapping>modules/${module.artifactId}</outputDirectoryMapping>
+
+        <fileSets>
+          <fileSet>
+            <excludes>
+              <exclude>**/target/**</exclude>
+              <exclude>**/.svn/**</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>

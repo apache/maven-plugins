@@ -214,7 +214,27 @@
         </pluginRepository>
       </pluginRepositories>
       
+      <properties>
+        <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
+      </properties>
+  
       <build>
+        <testResources>
+          <testResource>
+            <directory>src/it/projects</directory>
+            <targetPath>projects</targetPath>
+          </testResource>
+          <testResource>
+            <directory>src/it/it-project-parent</directory>
+            <targetPath>it-project-parent</targetPath>
+            <filtering>true</filtering>
+          </testResource>
+          <testResource>
+            <directory>src/it/remote-repository</directory>
+            <targetPath>remote-repository</targetPath>
+          </testResource>
+        </testResources>
+
         <plugins>
           <plugin>
             <artifactId>maven-clean-plugin</artifactId>
@@ -234,7 +254,24 @@
           <plugin>
             <artifactId>maven-component-it-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
+            
+            <configuration>
+              <pluginVersion>testing</pluginVersion>
+              <repositoryDirectory>${project.build.directory}/local-repository</repositoryDirectory>
+              <skipUnitTests>true</skipUnitTests>
+            </configuration>
+            
             <executions>
+              <execution>
+                <id>inject-localrepo-path</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>inject-local-repository-path</goal>
+                </goals>
+                <configuration>
+                  <property>local.repo.path</property>
+                </configuration>
+              </execution>
               <execution>
                 <id>stage-artifact-types</id>
                 <phase>pre-integration-test</phase>
@@ -259,23 +296,41 @@
             <version>1.1-SNAPSHOT</version>
             <executions>
               <execution>
+                <id>setup-integration-test-parent</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <suppressSummaries>true</suppressSummaries>
+                  <goals>
+                    <goal>install</goal>
+                  </goals>
+                  <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
+                  <pom>${project.build.testOutputDirectory}/it-project-parent/pom.xml</pom>
+                  <streamLogs>true</streamLogs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>integration-test</id>
                 <phase>integration-test</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <projectsDirectory>src/it</projectsDirectory>
+                  <projectsDirectory>${project.build.testOutputDirectory}/projects</projectsDirectory>
                   
                   <!-- Useful config for debugging one IT -->
                   <!-- 
                   <debug>true</debug>
                   <pomIncludes>
-                    <pomInclude>container-descriptors/custom-handler-withFileEntries/pom.xml</pomInclude>
+                    <pomInclude>multimodule/twoLevel-includeSubModules-excludeSubModuleSourceDirs/pom.xml</pomInclude>
+                    <pomInclude>multimodule/twoLevel-dontIncludeSubModules-artifactIdExprOutDir/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
                    -->
                   <!-- END single-IT debugging block. -->
+                  
                   <pomIncludes>
                     <pomInclude>**/pom.xml</pomInclude>
                   </pomIncludes>
@@ -289,7 +344,7 @@
                     <pomExclude>**/assembly/pom.xml</pomExclude>
                   </pomExcludes>
                   <postBuildHookScript>verify.bsh</postBuildHookScript>
-                  <localRepositoryPath>${basedir}/target/local-repository</localRepositoryPath>
+                  <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
                 </configuration>
               </execution>
            </executions>
