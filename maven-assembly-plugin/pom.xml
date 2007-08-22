@@ -342,6 +342,10 @@
                     <pomExclude>**/descriptor/pom.xml</pomExclude>
                     <pomExclude>**/handler-def/pom.xml</pomExclude>
                     <pomExclude>**/assembly/pom.xml</pomExclude>
+                    
+                    <!-- MASSEMBLY-233 -->
+                    <pomExclude>**/container-descriptors/**</pomExclude>
+                    
                   </pomExcludes>
                   <postBuildHookScript>verify.bsh</postBuildHookScript>
                   <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
