@@ -4,6 +4,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -15,6 +16,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -31,11 +33,16 @@ public class DependencySetAssemblyPhaseTest
     {
         String outputLocation = "/out";
 
-        MavenProject project = new MavenProject( new Model() );
+        MavenProject project = newMavenProject( "group", "project", "0" );
+
+        ArtifactMock projectArtifactMock = new ArtifactMock( mockManager, "group", "project", "0", "jar", false );
+
+        project.setArtifact( projectArtifactMock.getArtifact() );
 
         DependencySet ds = new DependencySet();
+        ds.setUseProjectArtifact( false );
         ds.setOutputDirectory( outputLocation );
-        ds.setOutputFileNameMapping( "artifact" );
+        ds.setOutputFileNameMapping( "${artifact.artifactId}" );
         ds.setUnpack( false );
         ds.setScope( Artifact.SCOPE_COMPILE );
         ds.setFileMode( Integer.toString( 10, 8 ) );
@@ -46,25 +53,25 @@ public class DependencySetAssemblyPhaseTest
         assembly.setIncludeBaseDirectory( false );
         assembly.addDependencySet( ds );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, null, project );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, project );
 
-        macTask.expectArtifactGetFile();
-        macTask.expectArtifactGetType( "jar" );
-        macTask.expectIsSnapshot( false );
-        macTask.expectGetArtifactHandler();
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "dep", "1", "jar", false );
+        File artifactFile = artifactMock.setNewFile();
+
+        System.out.println( "On test setup, hashcode for dependency artifact: " + artifactMock.getArtifact().hashCode() );
 
         macTask.expectCSGetRepositories( null, null );
-        macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
+        macTask.expectResolveDependencies( Collections.singleton( artifactMock.getArtifact() ) );
 
-        macTask.expectAddFile( "out/artifact", 10 );
+        macTask.expectAddFile( artifactFile, "out/dep", 10 );
 
-        project.setArtifacts( Collections.singleton( macTask.artifact ) );
+        project.setArtifacts( Collections.singleton( artifactMock.getArtifact() ) );
 
         macTask.expectCSGetFinalName( "final-name" );
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        MavenProject depProject = new MavenProject( new Model() );
+        MavenProject depProject = newMavenProject( "group", "dep", "1" );
 
         macTask.expectBuildFromRepository( depProject );
 
@@ -73,6 +80,16 @@ public class DependencySetAssemblyPhaseTest
         createPhase( macTask, logger ).execute( assembly, macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
+    }
+
+    private MavenProject newMavenProject( String groupId, String artifactId, String version )
+    {
+        Model model = new Model();
+        model.setGroupId( groupId );
+        model.setArtifactId( artifactId );
+        model.setVersion( version );
+
+        return new MavenProject( model );
     }
 
     public void testExecute_ShouldNotAddDependenciesWhenProjectHasNone()
@@ -85,7 +102,7 @@ public class DependencySetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, null, null );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, null );
 
         mockManager.replayAll();
 

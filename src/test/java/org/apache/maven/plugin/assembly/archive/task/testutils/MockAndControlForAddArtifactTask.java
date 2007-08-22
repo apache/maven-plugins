@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.assembly.archive.task.testutils;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
@@ -10,19 +8,12 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.MockControl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import junit.framework.Assert;
 
 public class MockAndControlForAddArtifactTask
 {
-
-    public MockControl artifactCtl;
-
-    public Artifact artifact;
-
-    public File artifactFile;
 
     public Archiver archiver;
 
@@ -32,33 +23,16 @@ public class MockAndControlForAddArtifactTask
 
     public MockControl configSourceCtl;
 
-    public ArtifactHandler artifactHandler;
-
-    public MockControl artifactHandlerCtl;
-
-    private final String classifier;
-
     private MavenProject project = null;
 
     public MockAndControlForAddArtifactTask( MockManager mockManager )
     {
-        this( mockManager, null, null );
+        this( mockManager, null );
     }
 
-    public MockAndControlForAddArtifactTask( MockManager mockManager, String classifier, MavenProject project )
+    public MockAndControlForAddArtifactTask( MockManager mockManager, MavenProject project )
     {
-        this.classifier = classifier;
         this.project = project;
-
-        artifactCtl = MockControl.createControl( Artifact.class );
-        mockManager.add( artifactCtl );
-
-        artifact = ( Artifact ) artifactCtl.getMock();
-
-        artifactHandlerCtl = MockControl.createControl( ArtifactHandler.class );
-        mockManager.add( artifactHandlerCtl );
-
-        artifactHandler = (ArtifactHandler) artifactHandlerCtl.getMock();
 
         archiverCtl = MockControl.createControl( Archiver.class );
         mockManager.add( archiverCtl );
@@ -75,17 +49,8 @@ public class MockAndControlForAddArtifactTask
 
     private void enableDefaultExpectations()
     {
-        artifact.getClassifier();
-        artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
-
         configSource.getProject();
         configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
-    }
-
-    public void expectGetArtifactHandler()
-    {
-        artifact.getArtifactHandler();
-        artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
     }
 
     public void expectGetFinalName( String finalName )
@@ -94,25 +59,7 @@ public class MockAndControlForAddArtifactTask
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
 
-    public void expectArtifactGetFile() throws IOException
-    {
-        expectArtifactGetFile( true );
-    }
-
-    public void expectArtifactGetFile( boolean createTempFile ) throws IOException
-    {
-        if ( createTempFile )
-        {
-            artifactFile = File.createTempFile( "add-artifact-task.test.", ".jar" );
-            artifactFile.deleteOnExit();
-        }
-
-        artifact.getFile();
-
-        artifactCtl.setReturnValue( artifactFile, MockControl.ZERO_OR_MORE );
-    }
-
-    public void expectAddArchivedFileSet( String outputLocation, String[] includes, String[] excludes )
+    public void expectAddArchivedFileSet( File artifactFile, String outputLocation, String[] includes, String[] excludes )
     {
         try
         {
@@ -154,33 +101,6 @@ public class MockAndControlForAddArtifactTask
         archiver.setDefaultFileMode( originalFileMode );
     }
 
-    public void expectAddFile( String outputLocation )
-    {
-        try
-        {
-            archiver.addFile( artifactFile, outputLocation );
-            archiverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
-        }
-        catch ( ArchiverException e )
-        {
-            Assert.fail( "Should never happen." );
-        }
-    }
-
-    public void expectAddFile( String outputLocation, int fileMode )
-    {
-        try
-        {
-            archiver.addFile( artifactFile, outputLocation, fileMode );
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
-        }
-        catch ( ArchiverException e )
-        {
-            Assert.fail( "Should never happen." );
-        }
-    }
-
     public void expectAddFile( File file, String outputLocation, int fileMode )
     {
         try
@@ -194,10 +114,17 @@ public class MockAndControlForAddArtifactTask
         }
     }
 
-    public void expectArtifactGetScope( String scope )
+    public void expectAddFile( File file, String outputLocation )
     {
-        artifact.getScope();
-        artifactCtl.setReturnValue( scope, MockControl.ONE_OR_MORE );
+        try
+        {
+            archiver.addFile( file, outputLocation );
+            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+        }
+        catch ( ArchiverException e )
+        {
+            Assert.fail( "Should never happen." );
+        }
     }
 
     public void expectGetReactorProjects( List projects )
@@ -205,29 +132,4 @@ public class MockAndControlForAddArtifactTask
         configSource.getReactorProjects();
         configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
     }
-
-    public void expectArtifactGetDependencyConflictId( String dependencyConflictId )
-    {
-        artifact.getDependencyConflictId();
-        artifactCtl.setReturnValue( dependencyConflictId, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectIsSnapshot( boolean isSnapshot )
-    {
-        artifact.isSnapshot();
-        artifactCtl.setReturnValue( isSnapshot, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectArtifactGetType( String type )
-    {
-        artifact.getType();
-        artifactCtl.setReturnValue( type, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectArtifactGetArtifactId( String artifactId )
-    {
-        artifact.getArtifactId();
-        artifactCtl.setReturnValue( artifactId, MockControl.ONE_OR_MORE );
-    }
-
 }

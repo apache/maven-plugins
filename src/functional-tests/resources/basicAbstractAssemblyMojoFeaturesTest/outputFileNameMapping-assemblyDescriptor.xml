@@ -11,7 +11,7 @@
         <include>org.test.2:test2</include>
       </includes>
       <outputDirectory>/dependencies/</outputDirectory>
-      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>

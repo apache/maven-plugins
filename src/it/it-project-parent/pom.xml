@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugin.assembly.test</groupId>
+  <artifactId>it-project-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1</version>
+  
+  <repositories>
+    <repository>
+      <id>main.local.as.remote</id>
+      <url>file://${local.repo.path}</url>
+    </repository>
+    <repository>
+      <id>integration.test.repo</id>
+      <url>${test.remote.repo.url}</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>main.local.as.remote</id>
+      <url>file://${local.repo.path}</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>integration.test.repo</id>
+      <url>${test.remote.repo.url}</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>integration.test.repo</id>
+      <url>${test.remote.repo.url}</url>
+    </repository>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>testing</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
