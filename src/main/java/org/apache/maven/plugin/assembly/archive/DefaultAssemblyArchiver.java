@@ -91,7 +91,7 @@ public class DefaultAssemblyArchiver
                                                                   null, finalName );
             }
 
-            List containerHandlers = createContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers() );
+            List containerHandlers = selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers() );
 
             Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource,
                                                 containerHandlers );
@@ -123,9 +123,14 @@ public class DefaultAssemblyArchiver
         return destFile;
     }
 
-    private List createContainerDescriptorHandlers( List requestedContainerDescriptorHandlers )
+    private List selectContainerDescriptorHandlers( List requestedContainerDescriptorHandlers )
         throws InvalidAssemblerConfigurationException
     {
+        getLogger().debug(
+                           "All known ContainerDescritporHandler components: "
+                                           + ( containerDescriptorHandlers == null ? "none; map is null."
+                                                           : "" + containerDescriptorHandlers.keySet() ) );
+
         if ( requestedContainerDescriptorHandlers == null )
         {
             requestedContainerDescriptorHandlers = new ArrayList();
