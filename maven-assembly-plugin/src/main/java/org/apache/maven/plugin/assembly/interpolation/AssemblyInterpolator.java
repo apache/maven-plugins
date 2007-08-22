@@ -31,12 +31,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,38 +45,16 @@ public class AssemblyInterpolator
 
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile( "\\$\\{(pom\\.|project\\.|env\\.)?([^}]+)\\}" );
 
-    private static final Map INTERPOLATION_BLACKLIST;
+    private static final Set INTERPOLATION_BLACKLIST;
 
     static
     {
-        Map blacklist = new HashMap();
+        Set blacklist = new HashSet();
 
-        List ofnmBlacklistings = new ArrayList();
+        blacklist.add( "outputFileNameMapping" );
+        blacklist.add( "outputDirectoryMapping" );
+        blacklist.add( "outputDirectory" );
 
-        ofnmBlacklistings.add( "groupId" );
-        ofnmBlacklistings.add( "artifactId" );
-        ofnmBlacklistings.add( "version" );
-        
-        // TODO: We should be blacklisting these, but currently they're not supported by filename mapping interpolation.
-//        ofnmBlacklistings.add( "build.finalName" );
-//        ofnmBlacklistings.add( "finalName" );
-
-        blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
-        blacklist.put( "outputDirectoryMapping", ofnmBlacklistings );
-
-        
-        List odBlacklist = new ArrayList();
-        
-        odBlacklist.add( "groupId" );
-        odBlacklist.add( "artifactId" );
-        odBlacklist.add( "version" );
-        odBlacklist.add( "build.finalName" );
-        
-        // wouldn't work, but just to future-proof this...
-        odBlacklist.add( "finalName" );
-        
-        blacklist.put( "outputDirectory", odBlacklist );
-        
         INTERPOLATION_BLACKLIST = blacklist;
     }
 
@@ -160,27 +136,23 @@ public class AssemblyInterpolator
             // 1. the element is not in the interpolation blacklist.
             // 2. the value is not empty (otherwise there's nothing to interpolate)
             // 3. the value contains a "${" (a pretty good clue that there's an expression in it)
-            if ( StringUtils.isNotEmpty( value ) && value.indexOf( "${" ) > -1 )
+            if ( StringUtils.isNotEmpty( value ) && ( value.indexOf( "${" ) > -1 ) )
             {
-                List blacklistedExpressions = (List) INTERPOLATION_BLACKLIST.get( elementName );
-                if ( blacklistedExpressions == null )
+                if ( !INTERPOLATION_BLACKLIST.contains( elementName ) )
                 {
-                    blacklistedExpressions = Collections.EMPTY_LIST;
+                    String interpolatedValue =
+                        interpolateElementValue( value, assembly, project, context );
+
+                    String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
+                    result = StringUtils.replace( result, element, modifiedElement );
                 }
-
-                String interpolatedValue =
-                    interpolateElementValue( value, assembly, project, context, blacklistedExpressions );
-
-                String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
-                result = StringUtils.replace( result, element, modifiedElement );
             }
         }
 
         return result;
     }
 
-    private String interpolateElementValue( String src, Assembly assembly, MavenProject project, Map context,
-                                            List blacklistedExpressions )
+    private String interpolateElementValue( String src, Assembly assembly, MavenProject project, Map context )
         throws AssemblyInterpolationException
     {
         String result = src;
@@ -190,11 +162,6 @@ public class AssemblyInterpolator
         {
             String wholeExpr = matcher.group( 0 );
             String realExpr = matcher.group( 2 );
-
-            if ( blacklistedExpressions.contains( realExpr ) )
-            {
-                continue;
-            }
 
             Object value = context.get( realExpr );
 
@@ -246,14 +213,14 @@ public class AssemblyInterpolator
     protected Logger getLogger()
     {
         Logger logger = super.getLogger();
-        
+
         if ( logger == null )
         {
             logger = new ConsoleLogger( Logger.LEVEL_INFO, "interpolator-internal" );
-            
+
             enableLogging( logger );
         }
-        
+
         return logger;
     }
 }

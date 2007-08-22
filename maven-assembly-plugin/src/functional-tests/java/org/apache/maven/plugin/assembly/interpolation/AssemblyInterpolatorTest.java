@@ -27,7 +27,7 @@ public class AssemblyInterpolatorTest
         Assembly assembly = new Assembly();
 
         DependencySet set = new DependencySet();
-        set.setOutputFileNameMapping( "${artifactId}.${extension}" );
+        set.setOutputFileNameMapping( "${artifact.artifactId}.${artifact.extension}" );
 
         assembly.addDependencySet( set );
 

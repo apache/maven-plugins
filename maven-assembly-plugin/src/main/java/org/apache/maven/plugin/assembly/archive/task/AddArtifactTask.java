@@ -1,8 +1,5 @@
 package org.apache.maven.plugin.assembly.archive.task;
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -13,6 +10,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
+
+import java.io.File;
+import java.util.List;
 
 public class AddArtifactTask
     implements ArchiverTask
@@ -38,6 +38,8 @@ public class AddArtifactTask
 
     private final Logger logger;
 
+    private String artifactExpressionPrefix = "artifact.";
+
     public AddArtifactTask( Artifact artifact, Logger logger )
     {
         this.artifact = artifact;
@@ -49,7 +51,7 @@ public class AddArtifactTask
     {
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName() );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
 
         if ( unpack )
         {
@@ -65,6 +67,8 @@ public class AddArtifactTask
 
             int oldDirMode = archiver.getDefaultDirectoryMode();
             int oldFileMode = archiver.getDefaultFileMode();
+
+            logger.debug( "Unpacking artifact: " + artifact.getId() + " to assembly location: " + outputLocation + "." );
 
             try
             {
@@ -85,10 +89,12 @@ public class AddArtifactTask
                 }
                 else if ( artifactFile.isDirectory() )
                 {
+                    logger.debug( "Adding artifact directory contents for: " + artifact + " to: " + outputLocation );
                     archiver.addDirectory( artifactFile, outputLocation, includesArray, excludesArray );
                 }
                 else
                 {
+                    logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
                     archiver.addArchivedFileSet( artifactFile, outputLocation, includesArray, excludesArray );
                 }
             }
@@ -105,23 +111,25 @@ public class AddArtifactTask
         }
         else
         {
-            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
+            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact, configSource.getProject(), project, artifactExpressionPrefix );
 
             String outputLocation = destDirectory + fileNameMapping;
 
             try
             {
+                File artifactFile = artifact.getFile();
+
+                logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: " + outputLocation + "." );
+
                 if ( fileMode != null )
                 {
-                    File artifactFile = artifact.getFile();
-
                     int mode = TypeConversionUtils.modeToInt( fileMode, logger );
 
                     archiver.addFile( artifactFile, outputLocation, mode );
                 }
                 else
                 {
-                    archiver.addFile( artifact.getFile(), outputLocation );
+                    archiver.addFile( artifactFile, outputLocation );
                 }
             }
             catch ( ArchiverException e )
@@ -180,6 +188,11 @@ public class AddArtifactTask
     public void setFileNameMapping( String outputFileNameMapping, String defaultOutputFileNameMapping )
     {
         setFileNameMapping( outputFileNameMapping == null ? defaultOutputFileNameMapping : outputFileNameMapping );
+    }
+
+    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    {
+        this.artifactExpressionPrefix = artifactExpressionPrefix;
     }
 
 }

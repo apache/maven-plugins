@@ -358,11 +358,12 @@
           <name>outputFileNameMapping</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <defaultValue>${artifactId}-${version}${dashClassifier?}.${extension}</defaultValue>
+          <defaultValue>${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</defaultValue>
           <description>
             Sets the mapping pattern for all dependencies included in this
-            assembly. Default is ${artifactId}-${version}${dashClassifier?}.${extension}.
+            assembly. Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
             If the artifact doesn't have a classifier, that part of the pattern will be left off.
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
           </description>
         </field>
         <field>

@@ -1,0 +1,20 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>test:child1</include>
+      </includes>
+      <unpack>true</unpack>
+      <outputDirectory>/${artifact.artifactId}</outputDirectory>
+      <scope>test</scope>
+      <excludes>
+        <exclude>junit:junit</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

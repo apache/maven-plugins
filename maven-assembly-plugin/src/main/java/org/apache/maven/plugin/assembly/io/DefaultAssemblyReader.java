@@ -15,6 +15,7 @@ import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
+import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.io.location.ArtifactLocatorStrategy;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -267,7 +269,11 @@ public class DefaultAssemblyReader
 
             mergeComponentsWithMainAssembly( assembly, configSource );
 
+            debugPrintAssembly( "Before assembly is interpolated:", assembly );
+
             assembly = new AssemblyInterpolator().interpolate( assembly, project, context );
+
+            debugPrintAssembly( "After assembly is interpolated:", assembly );
         }
         catch ( IOException e )
         {
@@ -292,6 +298,21 @@ public class DefaultAssemblyReader
         }
 
         return assembly;
+    }
+
+    private void debugPrintAssembly( String message, Assembly assembly )
+    {
+        StringWriter sWriter = new StringWriter();
+        try
+        {
+            new AssemblyXpp3Writer().write( sWriter, assembly );
+        }
+        catch ( IOException e )
+        {
+            getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: " + message, e );
+        }
+
+        getLogger().debug( message + "\n\n" + sWriter.toString() + "\n\n" );
     }
 
     /**

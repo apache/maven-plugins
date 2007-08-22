@@ -4,6 +4,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForArtifact;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -13,6 +14,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +27,70 @@ public class AddDependencySetsTaskTest
 {
 
     private MockManager mockManager = new MockManager();
+
+    public void testAddDependencySet_ShouldInterpolateDefaultOutputFileNameMapping()
+        throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException, IOException
+    {
+        String outDir = "tmp/";
+        String mainAid = "main";
+        String mainGid = "org.maingrp";
+        String mainVer = "9";
+        String depAid = "dep";
+        String depGid = "org.depgrp";
+        String depVer = "1";
+        String depExt = "war";
+
+        DependencySet ds = new DependencySet();
+        ds.setOutputDirectory( outDir );
+        ds.setDirectoryMode( Integer.toString( 10, 8 ) );
+        ds.setFileMode( Integer.toString( 10, 8 ) );
+
+        Model mainModel = new Model();
+        mainModel.setArtifactId( mainAid );
+        mainModel.setGroupId( mainGid );
+        mainModel.setVersion( mainVer );
+
+        MavenProject mainProject = new MavenProject( mainModel );
+
+        ArtifactMock mainArtifactMock = new ArtifactMock( mockManager, mainGid, mainAid, mainVer, "jar", false );
+
+        mainProject.setArtifact( mainArtifactMock.getArtifact() );
+
+        Model depModel = new Model();
+        depModel.setArtifactId( depAid );
+        depModel.setGroupId( depGid );
+        depModel.setVersion( depVer );
+        depModel.setPackaging( depExt );
+
+        MavenProject depProject = new MavenProject( depModel );
+
+        ArtifactMock depArtifactMock = new ArtifactMock( mockManager, depGid, depAid, depVer, depExt, false );
+
+        File newFile = depArtifactMock.setNewFile();
+
+        depProject.setArtifact( depArtifactMock.getArtifact() );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, mainProject );
+
+        macTask.expectBuildFromRepository( depProject );
+        macTask.expectCSGetFinalName( mainAid + "-" + mainVer );
+
+        macTask.expectCSGetRepositories( null, null );
+        macTask.expectResolveDependencies( Collections.singleton( depArtifactMock.getArtifact() ) );
+
+        macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
+
+        mockManager.replayAll();
+
+        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), depProject, macTask.projectBuilder,
+                                                                macTask.dependencyResolver, logger );
+
+        task.addDependencySet( ds, macTask.archiver, macTask.configSource );
+
+        mockManager.verifyAll();
+    }
 
     public void testAddDependencySet_ShouldNotAddDependenciesWhenProjectHasNone()
         throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
@@ -79,22 +145,20 @@ public class AddDependencySetsTaskTest
 
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
-        macTask.expectArtifactGetFile();
-        macTask.expectArtifactGetType( "jar" );
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
+        File artifactFile = artifactMock.setNewFile();
 
         macTask.expectCSGetRepositories( null, null );
-        macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
+        macTask.expectResolveDependencies( Collections.singleton( artifactMock.getArtifact() ) );
 
         if ( unpack )
         {
-            macTask.expectAddArchivedFileSet( outputLocation + "/", null, null );
+            macTask.expectAddArchivedFileSet( artifactFile, outputLocation + "/", null, null );
             macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else
         {
-            macTask.expectAddFile( outputLocation + "/artifact", 10 );
-            macTask.expectIsSnapshot( false );
-            macTask.expectGetArtifactHandler();
+            macTask.expectAddFile( artifactFile, outputLocation + "/artifact", 10 );
         }
 
         macTask.expectCSGetFinalName( "final-name" );
@@ -122,10 +186,12 @@ public class AddDependencySetsTaskTest
 
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
-        macTask.expectCSGetRepositories( null, null );
-        macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
 
-        project.setArtifacts( Collections.singleton( macTask.artifact ) );
+        macTask.expectCSGetRepositories( null, null );
+        macTask.expectResolveDependencies( Collections.singleton( artifactMock.getArtifact() ) );
+
+        project.setArtifacts( Collections.singleton( artifactMock.getArtifact() ) );
 
         DependencySet dependencySet = new DependencySet();
 
@@ -140,7 +206,7 @@ public class AddDependencySetsTaskTest
 
         assertNotNull( result );
         assertEquals( 1, result.size() );
-        assertSame( macTask.artifact, result.iterator().next() );
+        assertSame( artifactMock.getArtifact(), result.iterator().next() );
 
         mockManager.verifyAll();
     }
