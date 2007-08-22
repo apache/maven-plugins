@@ -1,0 +1,22 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.test:child1</include>
+        <include>org.test:child3</include>
+      </includes>
+      <sources>
+        <outputDirectory>sources/${artifact.artifactId}</outputDirectory>
+        <excludes>
+          <exclude>target/**</exclude>
+          <exclude>**/*~</exclude>
+        </excludes>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>

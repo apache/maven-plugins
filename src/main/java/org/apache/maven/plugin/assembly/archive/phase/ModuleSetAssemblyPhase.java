@@ -156,7 +156,7 @@ public class ModuleSetAssemblyPhase
                 }
             }
 
-            addArtifact( artifact, project, archiver, configSource, binaries );
+            addModuleArtifact( artifact, project, archiver, configSource, binaries );
         }
 
         List depSets = binaries.getDependencySets();
@@ -178,6 +178,13 @@ public class ModuleSetAssemblyPhase
 
         if ( depSets != null )
         {
+            // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
+            for ( Iterator it = depSets.iterator(); it.hasNext(); )
+            {
+                DependencySet ds = (DependencySet) it.next();
+                ds.setUseProjectArtifact( false );
+            }
+
             // FIXME: This will produce unpredictable results when module dependencies have a version conflict.
             getLogger().warn(
                               "NOTE: Currently, inclusion of module dependencies may produce unpredictable "
@@ -192,6 +199,7 @@ public class ModuleSetAssemblyPhase
                 AddDependencySetsTask task =
                     new AddDependencySetsTask( depSets, moduleProject, projectBuilder, dependencyResolver, getLogger() );
 
+                task.setArtifactExpressionPrefix( "module." );
                 task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
                 task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
 
@@ -221,7 +229,7 @@ public class ModuleSetAssemblyPhase
         return excludes;
     }
 
-    protected void addArtifact( Artifact artifact, MavenProject project, Archiver archiver,
+    protected void addModuleArtifact( Artifact artifact, MavenProject project, Archiver archiver,
                                 AssemblerConfigurationSource configSource, ModuleBinaries binaries )
         throws ArchiveCreationException, AssemblyFormattingException
     {
@@ -234,6 +242,7 @@ public class ModuleSetAssemblyPhase
 
         AddArtifactTask task = new AddArtifactTask( artifact, getLogger() );
 
+        task.setArtifactExpressionPrefix( "module." );
         task.setFileNameMapping( binaries.getOutputFileNameMapping() );
         task.setOutputDirectory( binaries.getOutputDirectory() );
         task.setProject( project );
@@ -292,6 +301,7 @@ public class ModuleSetAssemblyPhase
 
                 AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( moduleFileSet ) );
 
+                task.setArtifactExpressionPrefix( "module." );
                 task.setProject( moduleProject );
                 task.setLogger( getLogger() );
 
@@ -393,7 +403,7 @@ public class ModuleSetAssemblyPhase
         {
             destPathPrefix =
                 AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
-                                                             moduleProject.getArtifact() );
+                                                             moduleProject.getArtifact(), configSource.getProject(), moduleProject, "module." );
 
             if ( !destPathPrefix.endsWith( "/" ) )
             {
@@ -412,7 +422,7 @@ public class ModuleSetAssemblyPhase
             destPath = destPathPrefix + destPath;
         }
 
-        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject, "", "module" );
+        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject, configSource.getFinalName(), "module." );
 
         fs.setOutputDirectory( destPath );
 

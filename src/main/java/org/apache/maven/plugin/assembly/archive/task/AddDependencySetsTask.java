@@ -59,6 +59,8 @@ public class AddDependencySetsTask
 
     private final DependencyResolver dependencyResolver;
 
+    private String artifactExpressionPrefix = "artifact.";
+
     public AddDependencySetsTask( List dependencySets, MavenProject project, MavenProjectBuilder projectBuilder,
                                   DependencyResolver dependencyResolver, Logger logger )
     {
@@ -99,6 +101,7 @@ public class AddDependencySetsTask
         logger.info( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
 
         Set dependencyArtifacts = resolveDependencyArtifacts( dependencySet, configSource );
+        logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
         for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
         {
@@ -116,6 +119,8 @@ public class AddDependencySetsTask
                     + "; Reason: " + e.getMessage(), e );
             }
 
+            System.out.println( "Hashcode for dependency artifact: " + depArtifact.hashCode() );
+
             if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
             {
                 addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver, configSource );
@@ -125,6 +130,7 @@ public class AddDependencySetsTask
                 AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
 
                 task.setProject( depProject );
+                task.setArtifactExpressionPrefix( artifactExpressionPrefix );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
                 task.setFileNameMapping( dependencySet.getOutputFileNameMapping(), defaultOutputFileNameMapping );
                 task.setDirectoryMode( dependencySet.getDirectoryMode() );
@@ -223,9 +229,9 @@ public class AddDependencySetsTask
         String outputDirectory = dependencySet.getOutputDirectory();
 
         outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), depProject, depProject.getBuild()
-            .getFinalName() );
+            .getFinalName(), artifactExpressionPrefix );
         String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
-                                                                       depArtifact );
+                                                                       depArtifact, configSource.getProject(), depProject, artifactExpressionPrefix );
 
         String target;
 
@@ -277,5 +283,10 @@ public class AddDependencySetsTask
     public void setDefaultOutputFileNameMapping( String defaultOutputFileNameMapping )
     {
         this.defaultOutputFileNameMapping = defaultOutputFileNameMapping;
+    }
+
+    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    {
+        this.artifactExpressionPrefix = artifactExpressionPrefix;
     }
 }

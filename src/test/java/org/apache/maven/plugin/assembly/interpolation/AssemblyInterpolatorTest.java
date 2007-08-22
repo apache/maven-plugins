@@ -3,7 +3,6 @@ package org.apache.maven.plugin.assembly.interpolation;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -29,7 +28,7 @@ public class AssemblyInterpolatorTest
         interpolator.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
     }
 
-    public void testBlacklistedExpressionsInDependencyOutputFileNameMappingsAreNotInterpolated()
+    public void testDependencySetOutputFileNameMappingsAreNotInterpolated()
         throws IOException, AssemblyInterpolationException
     {
         Model model = new Model();
@@ -37,7 +36,7 @@ public class AssemblyInterpolatorTest
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
-        
+
         MavenProject project = new MavenProject( model );
 
         Assembly assembly = new Assembly();
@@ -57,10 +56,10 @@ public class AssemblyInterpolatorTest
 
         DependencySet outputSet = (DependencySet) outputDependencySets.get( 0 );
 
-        assertEquals( "${artifactId}.jar", outputSet.getOutputFileNameMapping() );
+        assertEquals( "${artifactId}.${packaging}", outputSet.getOutputFileNameMapping() );
     }
 
-    public void testBlacklistedExpressionsInDependencySetOutputDirectoryIsNotInterpolated()
+    public void testDependencySetOutputDirectoryIsNotInterpolated()
         throws IOException, AssemblyInterpolationException
     {
         Model model = new Model();
@@ -85,7 +84,7 @@ public class AssemblyInterpolatorTest
 
         DependencySet outputSet = (DependencySet) outputDependencySets.get( 0 );
 
-        assertEquals( "${artifactId}.jar", outputSet.getOutputDirectory() );
+        assertEquals( "${artifactId}.${packaging}", outputSet.getOutputDirectory() );
     }
 
     public void testShouldResolveModelGroupIdInAssemblyId()
@@ -151,50 +150,6 @@ public class AssemblyInterpolatorTest
             "still.another.id" ) );
 
         assertEquals( "assembly.still.another.id", result.getId() );
-    }
-
-    public void testShouldResolveEnvarHOMEValueInDependencySetOutputDirectory()
-        throws IOException, AssemblyInterpolationException
-    {
-        Model model = new Model();
-        model.setArtifactId( "artifact-id" );
-        model.setGroupId( "group.id" );
-        model.setVersion( "1" );
-        model.setPackaging( "jar" );
-
-        Assembly assembly = new Assembly();
-
-        Properties envars = CommandLineUtils.getSystemEnvVars( false );
-
-        String homeValue = envars.getProperty( "PATH" );
-
-        String outputDirectory = "${env.PATH}";
-
-        DependencySet set = new DependencySet();
-        set.setOutputDirectory( outputDirectory );
-
-        assembly.addDependencySet( set );
-
-        Assembly outputAssembly = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
-
-        List outputDependencySets = outputAssembly.getDependencySets();
-        assertEquals( 1, outputDependencySets.size() );
-
-        DependencySet outputSet = (DependencySet) outputDependencySets.get( 0 );
-
-        // an environment variable named "PATH" may not exist on all systems.
-        // On Windows environment variables are not case sensitive and "PATH" can be named "Path"
-        // without this check the test will fail in such situation, but it's not a problem of the assembly plugin:
-        // make the test exit with success also if the interpolation of environment properties is not really tested,
-        // the plugin is anyway behaving as expected
-        if ( homeValue != null )
-        {
-            assertEquals( homeValue, outputSet.getOutputDirectory() );
-        }
-        else
-        {
-            assertEquals( "${env.PATH}", outputSet.getOutputDirectory() );
-        }
     }
 
     public void testShouldNotTouchUnresolvedExpression()

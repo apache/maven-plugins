@@ -117,13 +117,13 @@ Type: jar
   The following <<<outputFileNameMapping>>>:
   
 ---
-${groupId}-${artifactId}-${version}.${extension}
+${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
 ---
 
   Will result in a file called <<<org.test-project-1.0.jar>>> being created
   within the assembly.
   
-  <NOTE: The expression <<<$\{extension\}>>> is mapped to the file extension
+  <NOTE: The expression <<<$\{module.extension\}>>> is mapped to the file extension
   supplied by the ArtifactHandler for the type <<<jar>>>. It's important to
   remember that the file extension <<need not be .jar>>.>
 
@@ -411,7 +411,7 @@ ${groupId}-${artifactId}-${version}.${extension}
       <binaries>
         <attachmentClassifier>site</attachmentClassifier>
         <outputDirectory>doc</outputDirectory>
-        <outputFileNameMapping>website.${extension}</outputFileNameMapping>
+        <outputFileNameMapping>website.${module.extension}</outputFileNameMapping>
       </binaries>
     </moduleSet>
     [...]
@@ -464,7 +464,7 @@ ${groupId}-${artifactId}-${version}.${extension}
       <binaries>
         <attachmentClassifier>jar-with-dependencies</attachmentClassifier>
         <outputDirectory>lib</outputDirectory>
-        <outputFileNameMapping>${artifactId}-${version}-${classifier}.${extension}</outputFileNameMapping>
+        <outputFileNameMapping>${module.artifactId}-${module.version}-${module.classifier}.${module.extension}</outputFileNameMapping>
       </binaries>
     </moduleSet>
     [...]

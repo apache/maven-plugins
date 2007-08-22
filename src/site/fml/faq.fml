@@ -57,7 +57,7 @@
           simply add the following to your dependencySet:
         </p>
         <pre>
-          &lt;outputFileNameMapping&gt;${artifactId}-${version}${dashClassifier?}.${extension}&lt;/outputFileNameMapping&gt;
+          &lt;outputFileNameMapping&gt;${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}&lt;/outputFileNameMapping&gt;
         </pre>
       </answer>
     </faq>
