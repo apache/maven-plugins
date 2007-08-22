@@ -319,10 +319,10 @@
                 </goals>
                 <configuration>
                   <projectsDirectory>${project.build.testOutputDirectory}/projects</projectsDirectory>
+                  <debug>true</debug>
                   
                   <!-- Useful config for debugging one IT -->
                   <!-- 
-                  <debug>true</debug>
                   <pomIncludes>
                     <pomInclude>multimodule/twoLevel-includeSubModules-excludeSubModuleSourceDirs/pom.xml</pomInclude>
                     <pomInclude>multimodule/twoLevel-dontIncludeSubModules-artifactIdExprOutDir/pom.xml</pomInclude>
