@@ -2260,6 +2260,35 @@ public abstract class AbstractJavadocMojo
      */
     private void addLinkofflineArguments( List arguments )
     {
+        if ( !aggregate && reactorProjects != null )
+        {
+            String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
+
+            for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+            {
+                MavenProject p = (MavenProject) it.next();
+
+                // don't add projects that have not built yet.
+                if ( p.getId().equals( project.getId() ) )
+                {
+                    break;
+                }
+                
+                if ( p.getUrl() != null )
+                {
+                    if ( offlineLinks == null )
+                    {
+                        offlineLinks = new ArrayList();
+                    }
+
+                    OfflineLink ol = new OfflineLink();
+                    ol.setUrl( p.getUrl() + "/apidocs" );
+                    ol.setLocation( p.getBasedir().getAbsolutePath() + "/" + javadocDirRelative );
+                    offlineLinks.add( ol );
+                }
+            }
+        }
+
         if ( offlineLinks != null )
         {
             for ( int i = 0; i < offlineLinks.size(); i++ )
@@ -2303,6 +2332,7 @@ public abstract class AbstractJavadocMojo
 
                 try
                 {
+                    // XXX links can be relative paths or files - they're not necessarily URLs.
                     URL linkUrl = new URL( link + "/package-list" );
                     fetchURL( settings, linkUrl );
                     addArgIfNotEmpty( arguments, "-link", quotedPathArgument( link ), true );
