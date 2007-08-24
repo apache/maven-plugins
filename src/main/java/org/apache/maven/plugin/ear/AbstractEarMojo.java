@@ -293,8 +293,23 @@ public abstract class AbstractEarMojo
                 final String loaderRepository = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY ).getValue();
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
                 final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
+
+                final List dataSources = new ArrayList();
+                final PlexusConfiguration dataSourcesEl = jboss.getChild( JbossConfiguration.DATASOURCES );
+                if ( dataSourcesEl != null )
+                {
+
+                    final PlexusConfiguration[] dataSourcesConfig =
+                        dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
+                    for ( int i = 0; i < dataSourcesConfig.length; i++ )
+                    {
+                        PlexusConfiguration dataSourceConfig = dataSourcesConfig[i];
+                        dataSources.add( dataSourceConfig.getValue() );
+
+                    }
+                }
                 jbossConfiguration = new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
-                                                             loaderRepository, moduleOrder );
+                                                             loaderRepository, moduleOrder, dataSources );
             }
             catch ( PlexusConfigurationException e )
             {
