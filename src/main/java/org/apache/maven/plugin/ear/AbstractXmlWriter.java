@@ -38,6 +38,10 @@ abstract class AbstractXmlWriter
 
     private final String encoding;
 
+    protected static final String MODULE_ELEMENT = "module";
+
+    protected static final String SERVICE_ELEMENT = "service";
+
     AbstractXmlWriter( String encoding )
     {
         this.encoding = encoding;
