@@ -128,6 +128,20 @@ mvn package
 
    * <<module-order>>: specify the order in which the modules specified in the application.xml file gets loaded (JBoss 4.2 only)
 
+   * <<data-sources>>: specify the desired data source(s) to add into the jboss-app.xml, usage is as follows:
+
++-----
+<configuration>
+  <jboss>
+    [...]
+    <data-sources>
+      <data-source>main-ds.xml</data-source>
+      <data-source>config/secondary-ds.xml</data-source>
+      [...]
+    </data-sources>
+  </jboss>
+</configuration>
++-----
   
 
   Hibernate archives (HAR) and Service archives (SAR) will be recognized automatically

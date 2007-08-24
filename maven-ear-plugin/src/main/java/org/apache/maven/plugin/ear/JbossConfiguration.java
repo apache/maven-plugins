@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.ear;
 
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -47,6 +49,9 @@ class JbossConfiguration
 
     static final String MODULE_ORDER = "module-order";
 
+    static final String DATASOURCES = "data-sources";
+
+    static final String DATASOURCE = "data-source";
 
     private final String version;
 
@@ -66,9 +71,11 @@ class JbossConfiguration
 
     private final String moduleOrder;
 
+    private final List dataSources;
+
 
     public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName,
-                               String loaderRepository, String moduleOrder )
+                               String loaderRepository, String moduleOrder, List dataSources )
         throws EarPluginException
     {
         if ( version == null )
@@ -100,6 +107,7 @@ class JbossConfiguration
             this.jmxName = jmxName;
             this.loaderRepository = loaderRepository;
             this.moduleOrder = moduleOrder;
+            this.dataSources = dataSources;
         }
     }
 
@@ -227,6 +235,18 @@ class JbossConfiguration
     public String getModuleOrder()
     {
         return moduleOrder;
+    }
+
+    /**
+     * Returns the list of datasources to include in the <tt>jboss-app.xml</tt>
+     * file as services. Each element of the list is the relative path to the
+     * datasource file contained in the EAR archive.
+     *
+     * @return the list of datasources paths
+     */
+    public List getDataSources()
+    {
+        return dataSources;
     }
 
 }

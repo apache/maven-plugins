@@ -118,6 +118,22 @@ final class JbossAppXmlWriter
             writer.endElement();
         }
 
+        List dataSources = jbossConfiguration.getDataSources();
+        // Write out data source modules first
+        if ( dataSources != null )
+        {
+            final Iterator it = dataSources.iterator();
+            while ( it.hasNext() )
+            {
+                String dsPath = (String) it.next();
+                writer.startElement( MODULE_ELEMENT );
+                writer.startElement( SERVICE_ELEMENT );
+                writer.writeText( dsPath );
+                writer.endElement();
+                writer.endElement();
+            }
+        }
+
         // Write the JBoss specific modules
         final Iterator it = earModules.iterator();
         while ( it.hasNext() )
