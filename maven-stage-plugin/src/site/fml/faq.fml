@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="Why isn't my username being picked up when I specify a repositoryId?">
+      <question>Why isn't my username being picked up when I specify a repositoryId?</question>
+      <answer>
+        <p>
+          The plugin <i>should</i> pick up your username/password from your
+          <code>settings.xml</code> file. Due to a bug in Wagon this isn't
+          happening. To get around this you can pass along your username like
+          this:
+        </p>
+        <source>
+mvn stage:copy -Dstage.username=dennisl ...
+        </source>
+      </answer>
+    </faq>
+  </part>
+</faqs>
