@@ -42,12 +42,12 @@ public interface RepositoryCopier
     /**
      * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies 
      */
-    public void copy( String source, String target, String version )
+    void copy( String source, String target, String version )
         throws WagonException, IOException;
 
-    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
+    void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
         throws WagonException, IOException;
 
-    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
+    void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
         throws WagonException, IOException;
 }
