@@ -30,10 +30,10 @@
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-stage-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven Staging Plugin</name>
+  <name>Maven Stage Plugin</name>
   <version>1.0-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.5</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
