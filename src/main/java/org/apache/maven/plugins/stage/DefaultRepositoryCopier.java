@@ -225,7 +225,7 @@ public class DefaultRepositoryCopier
 
             // We use an explicit unix '\n' line-ending here instead of using the println() method.
             // Using println() will cause files and folders to have a '\r' at the end if the plugin is run on Windows.
-            rw.print( s + "\n");
+            rw.print( s + "\n" );
         }
 
         IOUtil.close( rw );
