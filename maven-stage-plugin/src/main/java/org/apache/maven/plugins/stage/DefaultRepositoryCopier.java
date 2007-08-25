@@ -99,9 +99,9 @@ public class DefaultRepositoryCopier
     public void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
         throws WagonException, IOException
     {
-        String groupId = "staging-plugin";
+        String prefix = "staging-plugin";
 
-        String fileName = groupId + "-" + version + ".zip";
+        String fileName = prefix + "-" + version + ".zip";
 
         String tempdir = System.getProperty( "java.io.tmpdir" );
 
@@ -109,17 +109,19 @@ public class DefaultRepositoryCopier
 
         // Create the renameScript script
 
-        String renameScriptName = groupId + "-" + version + "-rename.sh";
+        String renameScriptName = prefix + "-" + version + "-rename.sh";
 
         File renameScript = new File( tempdir, renameScriptName );
 
         // Work directory
 
-        File basedir = new File( tempdir, groupId + "-" + version );
+        File basedir = new File( tempdir, prefix + "-" + version );
 
         FileUtils.deleteDirectory( basedir );
 
         basedir.mkdirs();
+
+        logger.info( "Downloading files from source repository." );
 
         Repository sourceRepository = new Repository( "source", sourceRepositoryUrl );
 
@@ -151,9 +153,11 @@ public class DefaultRepositoryCopier
 
         // ----------------------------------------------------------------------------
         // Now all the files are present locally and now we are going to grab the
-        // metadata files from the targetRepositoryUrl stage and pull those down locally
+        // metadata files from the targetRepositoryUrl and pull those down locally
         // so that we can merge the metadata.
         // ----------------------------------------------------------------------------
+
+        logger.info( "Downloading metadata from the target repository." );
 
         // TODO BUG for some reason it gets the wagon without authentication info
         Wagon targetWagon = wagonManager.getWagon( targetRepository );
@@ -209,6 +213,8 @@ public class DefaultRepositoryCopier
         // Create the Zip file that we will deploy to the targetRepositoryUrl stage
         // ----------------------------------------------------------------------------
 
+        logger.info( "Creating zip file." );
+
         OutputStream os = new FileOutputStream( archive );
 
         ZipOutputStream zos = new ZipOutputStream( os );
@@ -218,6 +224,8 @@ public class DefaultRepositoryCopier
         // ----------------------------------------------------------------------------
         // Create the renameScript script. This is as atomic as we can
         // ----------------------------------------------------------------------------
+
+        logger.info( "Creating rename script." );
 
         for ( Iterator i = moveCommands.iterator(); i.hasNext(); )
         {
@@ -246,7 +254,11 @@ public class DefaultRepositoryCopier
 
         // Push the Zip to the target system
 
+        logger.info( "Uploading zip file to the target repository." );
+
         targetWagon.put( archive, fileName );
+
+        logger.info( "Unpacking zip file on the target machine." );
 
         String targetRepoBaseDirectory = targetRepository.getBasedir();
 
@@ -256,13 +268,19 @@ public class DefaultRepositoryCopier
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
 
+        logger.info( "Deleting zip file from the target repository." );
+
         command = "rm -f " + targetRepoBaseDirectory + "/" + fileName;
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
 
+        logger.info( "Running rename script on the target machine." );
+
         command = "cd " + targetRepoBaseDirectory + "; sh " + renameScriptName;
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
+
+        logger.info( "Deleting rename script from the target repository." );
 
         command = "rm -f " + targetRepoBaseDirectory + "/" + renameScriptName;
 
