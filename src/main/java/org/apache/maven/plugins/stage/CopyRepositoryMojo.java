@@ -28,6 +28,8 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.IOException;
 
 /**
+ * Copies artifacts from one repository to the another repository.
+ * 
  * @author Jason van Zyl
  * @requiresProject false
  * @goal copy
@@ -35,13 +37,25 @@ import java.io.IOException;
 public class CopyRepositoryMojo
     extends AbstractMojo
 {
-    /** @parameter expression="${source}" */
+    /**
+     * The URL to the source repository.
+     *
+     * @parameter expression="${source}"
+     */
     private String source;
 
-    /** @parameter expression="${target}" */
+    /**
+     * The URL to the target repository.
+     * 
+     * @parameter expression="${target}"
+     */
     private String target;
 
-    /** @parameter expression="${repositoryId}" default-value="target" */
+    /**
+     * The id of the target repository.
+     * 
+     * @parameter expression="${repositoryId}" default-value="target"
+     */
     private String repositoryId;
 
     /**
@@ -54,12 +68,22 @@ public class CopyRepositoryMojo
     private String username;
 
     /**
+     * The version of the artifact that is to be copied.
+     * <p>
+     * <b>Note:</b> This is currently only used for naming temporary files.
+     * <i>All</i> versions of the artifacts will be copied.
+     * </p>
+     *
      * @parameter expression="${version}"
      * @required
      */
     private String version;
 
-    /** @component */
+    /**
+     * The repository copier to use.
+     *
+     * @component
+     */
     private RepositoryCopier copier;
 
     public void execute()
