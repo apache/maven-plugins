@@ -89,6 +89,9 @@ public class DependenciesReport
     private Settings settings;
 
     /**
+     * Display file details for each dependency, such as: file size, number of
+     * classes, number of packages etc.
+     * 
      * @parameter expression="${dependency.details.enabled}" default-value="true"
      */
     private boolean dependencyDetailsEnabled;
