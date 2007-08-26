@@ -31,6 +31,9 @@ under the License.
   <name>Maven Project Info Reports Plugin</name>
   <version>2.1-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
+  <prerequisites>
+    <maven>2.0.4</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MPIR</url>
