@@ -28,7 +28,7 @@ public class PrefixedObjectBasedValueSource
 
     public Object getValue( String expression )
     {
-        if ( !expression.startsWith( prefix ) )
+        if ( ( expression == null ) || !expression.startsWith( prefix ) )
         {
             return null;
         }
