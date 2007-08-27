@@ -137,6 +137,12 @@ public class AssemblyFormatUtilsTest
         verifyOutputDir( "${version}", "finalName", null, null, "version", "version/" );
     }
 
+    public void testGetOutputDir_ShouldResolveVersionInLargerOutDirExpr()
+    throws AssemblyFormattingException
+    {
+        verifyOutputDir( "my-special-${version}", "finalName", null, null, "99", "my-special-99/" );
+    }
+
     public void testGetOutputDir_ShouldResolveFinalNameInOutDir()
     throws AssemblyFormattingException
     {

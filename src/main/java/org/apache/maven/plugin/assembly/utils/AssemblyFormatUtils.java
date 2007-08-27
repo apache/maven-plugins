@@ -74,6 +74,16 @@ public final class AssemblyFormatUtils
                                              String finalName, String artifactProjectRefName )
         throws AssemblyFormattingException
     {
+        if ( artifactProjectRefName == null )
+        {
+            artifactProjectRefName = "artifact.";
+        }
+
+        if ( !artifactProjectRefName.endsWith( "." ) )
+        {
+            artifactProjectRefName += ".";
+        }
+
         String value = output;
         if ( value == null )
         {
@@ -182,7 +192,12 @@ public final class AssemblyFormatUtils
 
         String value = expression;
 
-        if ( ( artifactProjectRefName != null ) && !artifactProjectRefName.endsWith( "." ) )
+        if ( artifactProjectRefName == null )
+        {
+            artifactProjectRefName = "artifact.";
+        }
+
+        if ( !artifactProjectRefName.endsWith( "." ) )
         {
             artifactProjectRefName += ".";
         }

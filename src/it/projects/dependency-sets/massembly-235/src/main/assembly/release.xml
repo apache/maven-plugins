@@ -1,8 +1,9 @@
 <assembly>
 	<id>release</id>
 	<formats>
-		<format>zip</format>
+		<format>dir</format>
 	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
 			<directory>target</directory>
@@ -15,10 +16,6 @@
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>/</outputDirectory>
-			<unpack>true</unpack>
-			<excludes>
-				<exclude>xmlenc:xmlenc</exclude>
-			</excludes>
 		</dependencySet>
 	</dependencySets>
 </assembly>
