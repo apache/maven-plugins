@@ -39,15 +39,6 @@ public interface RepositoryCopier
 
     String MAVEN_METADATA = "maven-metadata.xml";
 
-    /**
-     * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies 
-     */
-    void copy( String source, String target, String version )
-        throws WagonException, IOException;
-
-    void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
-        throws WagonException, IOException;
-
-    void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
+    void copy( Repository sourceRepository, Repository targetRepository, String version )
         throws WagonException, IOException;
 }
