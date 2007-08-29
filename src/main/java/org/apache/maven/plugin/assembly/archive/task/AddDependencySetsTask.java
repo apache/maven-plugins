@@ -100,7 +100,14 @@ public class AddDependencySetsTask
     {
         logger.info( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
 
+        if ( !dependencySet.isUseTransitiveDependencies() && dependencySet.isUseTransitiveFiltering() )
+        {
+            logger.warn( "DependencySet has nonsensical configuration: useTransitiveDependencies == false "
+                         + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
+        }
+
         Set dependencyArtifacts = resolveDependencyArtifacts( dependencySet, configSource );
+
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
         for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
@@ -157,8 +164,10 @@ public class AddDependencySetsTask
         Set dependencyArtifacts;
         try
         {
-            dependencyArtifacts = dependencyResolver
-                .resolveDependencies( project, dependencySet.getScope(), localRepository, additionalRemoteRepositories );
+            dependencyArtifacts = dependencyResolver.resolveDependencies( project, dependencySet.getScope(),
+                                                                          localRepository,
+                                                                          additionalRemoteRepositories,
+                                                                          dependencySet.isUseTransitiveDependencies() );
 
             if ( ( dependencyArtifacts != null ) && !dependencyArtifacts.isEmpty() )
             {
@@ -206,14 +215,25 @@ public class AddDependencySetsTask
                     }
                     else
                     {
-                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: " + project.getId() + "; it doesn't have an associated file or directory." );
+                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: "
+                                     + project.getId() + "; it doesn't have an associated file or directory." );
                     }
                 }
             }
         }
 
+        if ( dependencySet.isUseTransitiveFiltering() )
+        {
+            logger.debug( "Filtering dependency artifacts USING transitive dependency path information." );
+        }
+        else
+        {
+            logger.debug( "Filtering dependency artifacts WITHOUT transitive dependency path information." );
+        }
+
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
-                                     dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(), Collections.EMPTY_LIST, logger );
+                                     dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(),
+                                     Collections.EMPTY_LIST, logger );
 
         return dependencyArtifacts;
     }
@@ -226,10 +246,13 @@ public class AddDependencySetsTask
 
         String outputDirectory = dependencySet.getOutputDirectory();
 
-        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), depProject, depProject.getBuild()
-            .getFinalName(), artifactExpressionPrefix );
+        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(),
+                                                                  depProject, depProject.getBuild().getFinalName(),
+                                                                  artifactExpressionPrefix );
+
         String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
-                                                                       depArtifact, configSource.getProject(), depProject, artifactExpressionPrefix );
+                                                                       depArtifact, configSource.getProject(),
+                                                                       depProject, artifactExpressionPrefix );
 
         String target;
 

@@ -277,7 +277,7 @@ public class RepositoryAssemblyPhaseTest
         {
             try
             {
-                dependencyResolver.resolveDependencies( null, null, null, null );
+                dependencyResolver.resolveDependencies( null, null, null, null, true );
                 dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
                 dependencyResolverCtl.setReturnValue( resolvedArtifacts );
             }
