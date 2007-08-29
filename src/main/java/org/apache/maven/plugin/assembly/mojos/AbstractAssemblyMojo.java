@@ -48,6 +48,13 @@ public abstract class AbstractAssemblyMojo
 {
 
     /**
+     * If this flag is set, everything up to the call to Archiver.createArchive() will be executed.
+     *
+     * @parameter expression="${assembly.dryRun}" default-value="false"
+     */
+    private boolean dryRun;
+
+    /**
      * Local Maven repository where artifacts are cached during the build process.
      *
      * @parameter default-value="${localRepository}"
@@ -575,6 +582,11 @@ public abstract class AbstractAssemblyMojo
     public List getRemoteRepositories()
     {
         return remoteRepositories;
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
     }
 
 }

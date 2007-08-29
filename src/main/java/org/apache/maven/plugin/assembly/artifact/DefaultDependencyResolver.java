@@ -28,6 +28,7 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,6 +102,8 @@ public class DefaultDependencyResolver
 
         Set dependencyArtifacts =
             MavenMetadataSource.createArtifacts( factory, project.getDependencies(), null, filter, project );
+
+        getLogger().debug( "Project dependencies are:\n" + StringUtils.join( dependencyArtifacts.iterator(), "\n" ) );
 
         ArtifactResolutionResult result;
         try

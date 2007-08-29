@@ -11,17 +11,31 @@ import org.codehaus.plexus.archiver.util.DefaultArchivedFileSet;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class PrefixingProxyArchiver
+/**
+ * Delegating archiver implementation that supports:
+ * <ul>
+ * <li>dry-running (where the delegate archiver is never actually called)</li>
+ * <li>prefixing (where all paths have a set global prefix prepended before addition)</li>
+ * <li>duplication checks on archive additions (for archive-file path + prefix)</li>
+ * </ul>
+ *
+ * @author jdcasey
+ *
+ */
+public class AssemblyProxyArchiver
     implements Archiver
 {
 
@@ -33,11 +47,25 @@ public class PrefixingProxyArchiver
 
     private ThreadLocal inPublicApi = new ThreadLocal();
 
-    public PrefixingProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
-                                   List extraSelectors, List extraFinalizers )
+    private final Logger logger;
+
+    private final boolean dryRun;
+
+    private Set seenPaths = new HashSet();
+
+    public AssemblyProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
+                                   List extraSelectors, List extraFinalizers, Logger logger )
+    {
+        this( rootPrefix, delegate, containerDescriptorHandlers, extraSelectors, extraFinalizers, logger, false );
+    }
+
+    public AssemblyProxyArchiver( String rootPrefix, Archiver delegate, List containerDescriptorHandlers,
+                                   List extraSelectors, List extraFinalizers, Logger logger, boolean dryRun )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
+        this.logger = logger;
+        this.dryRun = dryRun;
 
         if ( !"".equals( rootPrefix ) && !rootPrefix.endsWith( "/" ) )
         {
@@ -89,6 +117,13 @@ public class PrefixingProxyArchiver
     public void addArchivedFileSet( File archiveFile, String prefix, String[] includes, String[] excludes )
         throws ArchiverException
     {
+        String archiveKey = getArchiveKey( archiveFile, prefix );
+        if ( seenPaths.contains( archiveKey ) )
+        {
+            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
+            return;
+        }
+
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -100,7 +135,17 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix + prefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addArchivedFileSet( fs );
+            debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addArchivedFileSet( fs );
+                seenPaths.add( archiveKey );
+            }
         }
         finally
         {
@@ -108,9 +153,37 @@ public class PrefixingProxyArchiver
         }
     }
 
+    private String getArchiveKey( File archiveFile, String prefix )
+    {
+        return archiveFile.getAbsolutePath() + ":" + prefix;
+    }
+
+    private void debug( String message )
+    {
+        if ( ( logger != null ) && logger.isDebugEnabled() )
+        {
+            logger.debug( message );
+        }
+    }
+
+    private void warn( String message )
+    {
+        if ( ( logger != null ) && logger.isWarnEnabled() )
+        {
+            logger.warn( message );
+        }
+    }
+
     public void addArchivedFileSet( File archiveFile, String prefix )
         throws ArchiverException
     {
+        String archiveKey = getArchiveKey( archiveFile, prefix );
+        if ( seenPaths.contains( archiveKey ) )
+        {
+            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
+            return;
+        }
+
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -120,7 +193,17 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix + prefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addArchivedFileSet( fs );
+            debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addArchivedFileSet( fs );
+                seenPaths.add( archiveKey );
+            }
         }
         finally
         {
@@ -131,6 +214,13 @@ public class PrefixingProxyArchiver
     public void addArchivedFileSet( File archiveFile, String[] includes, String[] excludes )
         throws ArchiverException
     {
+        String archiveKey = getArchiveKey( archiveFile, "" );
+        if ( seenPaths.contains( archiveKey ) )
+        {
+            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
+            return;
+        }
+
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -142,7 +232,17 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addArchivedFileSet( fs );
+            debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addArchivedFileSet( fs );
+                seenPaths.add( archiveKey );
+            }
         }
         finally
         {
@@ -153,6 +253,13 @@ public class PrefixingProxyArchiver
     public void addArchivedFileSet( File archiveFile )
         throws ArchiverException
     {
+        String archiveKey = getArchiveKey( archiveFile, "" );
+        if ( seenPaths.contains( archiveKey ) )
+        {
+            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
+            return;
+        }
+
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -162,7 +269,17 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addArchivedFileSet( fs );
+            debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addArchivedFileSet( fs );
+                seenPaths.add( archiveKey );
+            }
         }
         finally
         {
@@ -184,7 +301,16 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix + prefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addFileSet( fs );
+            debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addFileSet( fs );
+            }
         }
         finally
         {
@@ -204,7 +330,16 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix + prefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addFileSet( fs );
+            debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addFileSet( fs );
+            }
         }
         finally
         {
@@ -226,7 +361,16 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addFileSet( fs );
+            debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addFileSet( fs );
+            }
         }
         finally
         {
@@ -246,7 +390,16 @@ public class PrefixingProxyArchiver
             fs.setPrefix( rootPrefix );
             fs.setFileSelectors( selectors );
 
-            delegate.addFileSet( fs );
+            debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addFileSet( fs );
+            }
         }
         finally
         {
@@ -262,7 +415,16 @@ public class PrefixingProxyArchiver
             inPublicApi.set( Boolean.TRUE );
             try
             {
-                delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
+                debug( "Adding file: " + inputFile + " to archive location: " + rootPrefix + destFileName );
+
+                if ( dryRun )
+                {
+                    debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+                }
+                else
+                {
+                    delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
+                }
             }
             finally
             {
@@ -279,7 +441,16 @@ public class PrefixingProxyArchiver
             inPublicApi.set( Boolean.TRUE );
             try
             {
-                delegate.addFile( inputFile, rootPrefix + destFileName );
+                debug( "Adding file: " + inputFile + " to archive location: " + rootPrefix + destFileName );
+
+                if ( dryRun )
+                {
+                    debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+                }
+                else
+                {
+                    delegate.addFile( inputFile, rootPrefix + destFileName );
+                }
             }
             finally
             {
@@ -294,7 +465,14 @@ public class PrefixingProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            delegate.createArchive();
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.createArchive();
+            }
         }
         finally
         {
@@ -460,25 +638,35 @@ public class PrefixingProxyArchiver
 
     public void setDotFileDirectory( File dotFileDirectory )
     {
-        inPublicApi.set( Boolean.TRUE );
-        try
-        {
-            throw new UnsupportedOperationException(
-                                                     "Undocumented feature of plexus-archiver; this is not yet supported." );
-        }
-        finally
-        {
-            inPublicApi.set( null );
-        }
+        throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
     }
 
     public void addArchivedFileSet( ArchivedFileSet fileSet )
         throws ArchiverException
     {
+        String archiveKey = getArchiveKey( fileSet.getArchive(), "" );
+        if ( seenPaths.contains( archiveKey ) )
+        {
+            warn( "Archive: " + fileSet.getArchive() + " has already been added. Skipping." );
+            return;
+        }
+
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            delegate.addArchivedFileSet( new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors ) );
+            PrefixedArchivedFileSet fs = new PrefixedArchivedFileSet( fileSet, rootPrefix, selectors );
+
+            debug( "Adding archived file-set in: " + fileSet.getArchive() + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addArchivedFileSet( fs );
+                seenPaths.add( archiveKey );
+            }
         }
         finally
         {
@@ -492,12 +680,33 @@ public class PrefixingProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            delegate.addFileSet( new PrefixedFileSet( fileSet, rootPrefix, selectors ) );
+            PrefixedFileSet fs = new PrefixedFileSet( fileSet, rootPrefix, selectors );
+
+            debug( "Adding file-set in: " + fileSet.getDirectory() + " to archive location: " + fs.getPrefix() );
+
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addFileSet( fs );
+            }
         }
         finally
         {
             inPublicApi.set( null );
         }
+    }
+
+    private String getMethodName()
+    {
+        NullPointerException npe = new NullPointerException();
+        StackTraceElement[] trace = npe.getStackTrace();
+
+        StackTraceElement methodElement = trace[1];
+
+        return methodElement.getMethodName() + " (archiver line: " + methodElement.getLineNumber() + ")";
     }
 
     private boolean acceptFile( File inputFile )
