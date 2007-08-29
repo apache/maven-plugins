@@ -6,6 +6,8 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -15,7 +17,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-public class PrefixingProxyArchiverTest
+public class AssemblyProxyArchiverTest
     extends TestCase
 {
 
@@ -42,8 +44,8 @@ public class PrefixingProxyArchiverTest
 
         delegateControl.replay();
 
-        PrefixingProxyArchiver archiver = new PrefixingProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
-                                                                      Collections.EMPTY_LIST );
+        AssemblyProxyArchiver archiver = new AssemblyProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
+                                                                      Collections.EMPTY_LIST, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         File inputFile = fileManager.createTempFile();
 
@@ -65,8 +67,8 @@ public class PrefixingProxyArchiverTest
         CounterSelector counter = new CounterSelector( false );
         List selectors = Collections.singletonList( counter );
 
-        PrefixingProxyArchiver archiver = new PrefixingProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
-                                                                      Collections.EMPTY_LIST );
+        AssemblyProxyArchiver archiver = new AssemblyProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
+                                                                      Collections.EMPTY_LIST, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         File dir = fileManager.createTempDir();
         fileManager.createFile( dir, "file.txt", "This is a test." );
