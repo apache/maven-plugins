@@ -118,8 +118,9 @@ public class RepositoryAssemblyPhase
         Set dependencyArtifacts;
         try
         {
+            // NOTE: hard-coding to resolve artifacts transitively, since this is meant to be a self-contained repository...
             dependencyArtifacts = dependencyResolver
-                .resolveDependencies( project, repository.getScope(), localRepository, additionalRemoteRepositories );
+                .resolveDependencies( project, repository.getScope(), localRepository, additionalRemoteRepositories, true );
 
             if ( ( dependencyArtifacts != null ) && !dependencyArtifacts.isEmpty() )
             {

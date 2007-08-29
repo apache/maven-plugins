@@ -321,11 +321,12 @@
                   <projectsDirectory>${project.build.testOutputDirectory}/projects</projectsDirectory>
                   <debug>true</debug>
                   
-                  <!-- Useful config for debugging one IT -->
+                 <!-- Useful config for debugging one IT -->
                   <!-- 
                   <pomIncludes>
-                    <pomInclude>multimodule/twoLevel-includeSubModules-excludeSubModuleSourceDirs/pom.xml</pomInclude>
-                    <pomInclude>multimodule/twoLevel-dontIncludeSubModules-artifactIdExprOutDir/pom.xml</pomInclude>
+                    <pomInclude>dependency-sets/including-pom-dependency/pom.xml</pomInclude>
+                    <pomInclude>dependency-sets/including-sar-dependency/pom.xml</pomInclude>
+                    <pomInclude>dependency-sets/massembly-235/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
                    -->
