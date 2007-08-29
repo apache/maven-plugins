@@ -52,20 +52,18 @@ public class CopyRepositoryMojo
     private String target;
 
     /**
-     * The id of the target repository.
+     * The id of the source repository, required if you need the configuration from the user settings.
      * 
-     * @parameter expression="${repositoryId}" default-value="target"
+     * @parameter expression="${sourceRepositoryId}" default-value="source"
      */
-    private String repositoryId;
+    private String sourceRepositoryId;
 
     /**
-     * The plugin doesn't currently read username/password from settings.xml.
-     * If your local username is different than your Apache username, you can
-     * specify your Apache username with this parameter.
-     *
-     * @parameter expression="${stage.username}"
+     * The id of the target repository, required if you need the configuration from the user settings.
+     * 
+     * @parameter expression="${targetRepositoryId}" default-value="target"
      */
-    private String username;
+    private String targetRepositoryId;
 
     /**
      * The version of the artifact that is to be copied.
@@ -91,16 +89,9 @@ public class CopyRepositoryMojo
     {
         try
         {
-            Repository targetRepository = new Repository( repositoryId, target );
-            getLog().debug( "username: " + username );
-            if ( StringUtils.isEmpty( username ) )
-            {
-                copier.copy( source, targetRepository, version );
-            }
-            else
-            {
-                copier.copy( source, targetRepository, version, username );
-            }
+            Repository sourceRepository = new Repository( sourceRepositoryId, source );
+            Repository targetRepository = new Repository( targetRepositoryId, target );
+            copier.copy( sourceRepository, targetRepository, version );
         }
         catch ( IOException e )
         {

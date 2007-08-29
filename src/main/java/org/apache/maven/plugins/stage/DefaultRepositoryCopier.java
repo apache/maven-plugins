@@ -79,24 +79,7 @@ public class DefaultRepositoryCopier
 
     private Logger logger;
 
-    /**
-     * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies
-     */
-    public void copy( String sourceRepositoryUrl, String targetRepositoryUrl, String version )
-        throws WagonException, IOException
-    {
-        Repository targetRepository = new Repository( "target", targetRepositoryUrl );
-
-        copy( sourceRepositoryUrl, targetRepository, version );
-    }
-
-    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
-        throws WagonException, IOException
-    {
-        copy( sourceRepositoryUrl, targetRepository, version, null );
-    }
-
-    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version, String username )
+    public void copy( Repository sourceRepository, Repository targetRepository, String version )
         throws WagonException, IOException
     {
         String prefix = "staging-plugin";
@@ -123,13 +106,12 @@ public class DefaultRepositoryCopier
 
         logger.info( "Downloading files from source repository." );
 
-        Repository sourceRepository = new Repository( "source", sourceRepositoryUrl );
-
         String protocol = sourceRepository.getProtocol();
 
-        Wagon sourceWagon = wagonManager.getWagon( protocol );
+        Wagon sourceWagon = wagonManager.getWagon( sourceRepository );
+        AuthenticationInfo sourceAuth = wagonManager.getAuthenticationInfo( sourceRepository.getId() );
 
-        sourceWagon.connect( sourceRepository );
+        sourceWagon.connect( sourceRepository, sourceAuth );
 
         List files = new ArrayList();
 
@@ -159,13 +141,10 @@ public class DefaultRepositoryCopier
 
         logger.info( "Downloading metadata from the target repository." );
 
-        // TODO BUG for some reason it gets the wagon without authentication info
         Wagon targetWagon = wagonManager.getWagon( targetRepository );
+        AuthenticationInfo targetAuth = wagonManager.getAuthenticationInfo( targetRepository.getId() );
 
-        // @todo Work around the bug above
-        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
-        authenticationInfo.setUserName( username );
-        targetWagon.connect( targetRepository, authenticationInfo );
+        targetWagon.connect( targetRepository, targetAuth );
 
         PrintWriter rw = new PrintWriter( new FileWriter( renameScript ) );
 

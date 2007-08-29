@@ -31,24 +31,27 @@ Usage
 
  The plugin is used from the command line. In the following example we will
  copy artifacts from a staging repository located at
- <<<http://people.apache.org/~snicoll/maven-stage-repo/>>> to the Apache rsync
- repository located at
- <<<scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository>>>.
+ <<<http://people.apache.org/~snicoll/maven-stage-repo/>>>
+ that is configured in the user settings file with an <<<apache.staging>>> id 
+ to the Apache scp repository located at
+ <<<scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository>>>
+ that is configured in the user settings file with an <<<apache.releases>>> id.
+ If no special configuration is required for the source or target repositories the
+ sourceRepositoryId or targetRepositoryId parameters respectively can be ommited
 
 -------------------
 mvn stage:copy -Dsource="http://people.apache.org/~snicoll/maven-stage-repo/" \
                -Dtarget="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository" \
-               -Dversion=2.0.3
+               -DsourceRepositoryId=apache.staging \
+               -DtargetRepositoryId=apache.releases
 -------------------
 
- <<Note:>> Although it looks like we are only copying version <<<2.0.3>>>, we
- are in fact copying <<everything>> from the source URL to the target. This is
- due to a bug and will change in the future.
+ <<Note:>> we are copying <<everything>> from the source URL to the target.
 
 
 * What is happening under the hood?
 
- The follwing tasks will be performed by the plugin:
+ The following tasks will be performed by the plugin:
 
  * Download the files from the source repository
 
