@@ -5,6 +5,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.wagon.repository.Repository;
 
 import java.io.File;
 import java.io.Reader;
@@ -34,7 +35,10 @@ public class RepositoryCopierTest
 
         File stagingRepo = new File( getBasedir(), "src/test/staging-repository" );
 
-        copier.copy( "file://" + stagingRepo, "scp://localhost/" + targetRepo, version );
+        Repository sourceRepository = new Repository( "source", "file://" + stagingRepo );
+        Repository targetRepository = new Repository( "target", "scp://localhost/" + targetRepo );
+
+        copier.copy( sourceRepository, targetRepository, version );
 
         String s[] = {
             "maven",
