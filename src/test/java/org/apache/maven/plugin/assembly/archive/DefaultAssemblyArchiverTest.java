@@ -75,6 +75,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getTemporaryRootDirectory();
         csControl.setReturnValue( tempDir, MockControl.ZERO_OR_MORE );
 
+        configSource.isDryRun();
+        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         File outDir = fileManager.createTempDir();
 
         macMgr.archiver.setDestFile( new File( outDir, "full-name.zip" ) );
@@ -126,6 +129,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getTarLongFileMode();
         configCtl.setReturnValue( TarLongFileMode.FAIL, MockControl.ZERO_OR_MORE );
 
+        configSource.isDryRun();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.add( configCtl );
 
         mm.replayAll();
@@ -152,12 +158,18 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "war", twArchiver );
 
+        MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+
+        configSource.isDryRun();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.replayAll();
 
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "war", false, null, null, null );
+        subject.createArchiver( "war", false, null, configSource, null );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -173,12 +185,18 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "zip", archiver );
 
+        MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+
+        configSource.isDryRun();
+        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         mm.replayAll();
 
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "zip", false, null, null, null );
+        subject.createArchiver( "zip", false, null, configSource, null );
     }
 
     // TODO: Re-implement these tests on the createArchiver(..) method. For now, they're no big loss.

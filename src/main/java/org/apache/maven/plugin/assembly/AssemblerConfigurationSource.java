@@ -55,4 +55,6 @@ public interface AssemblerConfigurationSource
 
     List getRemoteRepositories();
 
+    boolean isDryRun();
+
 }
