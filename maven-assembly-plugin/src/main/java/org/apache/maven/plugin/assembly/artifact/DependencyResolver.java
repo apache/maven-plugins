@@ -13,7 +13,7 @@ public interface DependencyResolver
 {
 
     public abstract Set resolveDependencies( MavenProject project, String scope, ArtifactRepository localRepository,
-                                             List remoteRepositories )
+                                             List remoteRepositories, boolean resolveTransitively )
         throws InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException;
 
 }
