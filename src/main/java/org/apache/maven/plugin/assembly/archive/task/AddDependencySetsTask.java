@@ -119,8 +119,6 @@ public class AddDependencySetsTask
                     + "; Reason: " + e.getMessage(), e );
             }
 
-            System.out.println( "Hashcode for dependency artifact: " + depArtifact.hashCode() );
-
             if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
             {
                 addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver, configSource );
