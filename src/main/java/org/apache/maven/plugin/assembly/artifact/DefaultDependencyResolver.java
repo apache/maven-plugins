@@ -88,7 +88,7 @@ public class DefaultDependencyResolver
      * @see org.apache.maven.plugin.assembly.artifact.DependencyResolver#resolveDependencies(org.apache.maven.project.MavenProject, java.lang.String, org.apache.maven.artifact.repository.ArtifactRepository, java.util.List)
      */
     public Set resolveDependencies( MavenProject project, String scope, ArtifactRepository localRepository,
-                                    List remoteRepositories )
+                                    List remoteRepositories, boolean resolveTransitively )
         throws InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException
     {
         List repos = aggregateRemoteArtifactRepositories( remoteRepositories, project );
@@ -105,6 +105,36 @@ public class DefaultDependencyResolver
 
         getLogger().debug( "Project dependencies are:\n" + StringUtils.join( dependencyArtifacts.iterator(), "\n" ) );
 
+        if ( resolveTransitively )
+        {
+            getLogger().debug( "Resolving project dependencies transitively." );
+            return resolveTransitively( dependencyArtifacts, artifact, localRepository, repos, filter, project );
+        }
+        else
+        {
+            getLogger().debug( "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
+            return resolveNonTransitively( dependencyArtifacts, artifact, localRepository, repos, filter );
+        }
+    }
+
+    private Set resolveNonTransitively( Set dependencyArtifacts, Artifact artifact, ArtifactRepository localRepository,
+                                        List repos, ArtifactFilter filter )
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        for ( Iterator it = dependencyArtifacts.iterator(); it.hasNext(); )
+        {
+            Artifact depArtifact = (Artifact) it.next();
+
+            resolver.resolve( depArtifact, repos, localRepository );
+        }
+
+        return dependencyArtifacts;
+    }
+
+    private Set resolveTransitively( Set dependencyArtifacts, Artifact artifact, ArtifactRepository localRepository,
+                                     List repos, ArtifactFilter filter, MavenProject project )
+        throws InvalidDependencyVersionException, ArtifactResolutionException, ArtifactNotFoundException
+    {
         ArtifactResolutionResult result;
         try
         {
