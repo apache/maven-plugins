@@ -2,7 +2,7 @@ package org.apache.maven.plugin.assembly.archive;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugin.assembly.archive.archiver.PrefixingProxyArchiver;
+import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
@@ -219,7 +219,7 @@ public class DefaultAssemblyArchiver
             prefix = finalName;
         }
 
-        archiver = new PrefixingProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers );
+        archiver = new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers, getLogger(), configSource.isDryRun() );
 
         return archiver;
     }
