@@ -421,6 +421,20 @@
           ]]></description>
         </field>
         <field>
+          <name>useTransitiveDependencies</name>
+          <version>1.1.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+          Determines whether transitive dependencies will be included in the processing of
+          the current dependency set. If true, includes/excludes/useTransitiveFiltering
+          will apply to transitive dependency artifacts in addition to the main project
+          dependency artifacts. If false, useTransitiveFiltering is meaningless, and 
+          includes/excludes only affect the immediate dependencies of the project.
+          By default, this value is true. (Since 2.2)
+          </description>
+        </field>
+        <field>
           <name>useTransitiveFiltering</name>
           <version>1.1.0</version>
           <type>boolean</type>
