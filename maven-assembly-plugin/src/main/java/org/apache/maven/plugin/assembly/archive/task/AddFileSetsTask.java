@@ -115,8 +115,7 @@ public class AddFileSetsTask
                     + e.getMessage(), e );
             }
 
-            logger.debug( "file-set directory: '" + fileSetDir.getAbsolutePath() + "'" );
-            logger.debug( "output directory: '" + destDirectory + "'" );
+            logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath() + "'\nassembly output directory is: \'" + destDirectory + "\'" );
 
             AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
