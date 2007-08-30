@@ -112,6 +112,16 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<!-- Need of more head space in order to run the unit tests !-->
+					<argLine>-Xmx256m</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<!-- Include the apache process LICENSE and NOTICE files.-->
@@ -241,6 +251,53 @@
 				</exclusion>			  
 			</exclusions>
 		</dependency>
+		
+                <!-- 
+                <dependency>
+                    <groupId>classworlds</groupId>
+                    <artifactId>classworlds</artifactId>
+                    <version>1.1-alpha-2</version>
+                    <scope>test</scope>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.apache.maven.shared</groupId>
+                    <artifactId>maven-invoker</artifactId>
+                    <version>2.0.6</version>
+                    <scope>test</scope>
+                </dependency>-->
+                
+		<!-- Dependencies for Analyze-report mojo -->
+                <dependency>
+                    <groupId>org.apache.maven.reporting</groupId>
+                    <artifactId>maven-reporting-api</artifactId>
+                    <version>2.0.6</version>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.apache.maven.reporting</groupId>
+                    <artifactId>maven-reporting-impl</artifactId>
+                    <version>2.0.4</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.maven.doxia</groupId>
+                    <artifactId>doxia-sink-api</artifactId>
+                    <version>1.0-alpha-8</version>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.apache.maven.doxia</groupId>
+                    <artifactId>doxia-site-renderer</artifactId>
+                    <version>1.0-alpha-8</version>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>2.0-SNAPSHOT</version>
+                </dependency>
+                
+		
 	</dependencies>
 
 	<!-- TODO: remove when plexus-archiver is released -->
@@ -253,4 +310,21 @@
 			</releases>
 		</repository>
 	</repositories>
+        
+        <reporting>
+            <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.0-alpha-5-SNAPSHOT</version>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>analyze-report</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>                      
+                    </plugin>
+            </plugins>
+        </reporting>
 </project>
