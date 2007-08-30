@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<style type="text/css">
+    
+    th {
+        vertical-align: bottom;
+        
+    }
+    
+    td,th {
+        /* Cheating here so we can get a default font and size. If it's set in the outline then it'll get redeclared below
+           and overwritten (hopefully).
+        */
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
+        
+
+        empty-cells: show;
+    }
+
+    /* Level Styles */
+    
+    .wholeDocument {
+        
+    }
+    
+    .columntitle { 
+        text-decoration: underline;font-weight: 900;  
+    }
+
+    .level1 { 
+        color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;
+    }
+
+    .level2 { 
+        font-weight: 900;  
+    }
+
+
+    td.subcell {
+        border: none;
+    }
+
+    .indicator {
+        white-space: nowrap;
+        text-align:right;
+        margin-right: 2px;
+        vertical-align: top;
+        padding-top: 3px;
+    }
+    
+    table.subtable {
+    }
+    
+    div.row {
+    }
+
+    .expanded {
+        display: inline;
+    }
+    .collapsed {
+        display: none;
+    }
+    
+    
+    .note { 
+border: none;
+color:rgb(84,84,84) ;  font-style: italic;font-size: 11px;
+    }
+
+    
+    /* Total table width is 900
+      Adjusted table width is 1035 */
+    
+    table.row {
+        width: 1035px;
+    
+    }
+    
+    
+    .col_width1 { 
+        width: 1035px;  /* Actual width is 900 */
+    }
+
+    .col1 { 
+        
+    }
+
+    .ns-Highlight { 
+        background-color:rgb(253,255,89) ;  }
+
+    .ns-Citation { 
+        text-decoration: underline;}
+
+    .ns-Emphasis { 
+        font-style: italic;}
+</style>
+</head>
+<body><table cellspacing="0">
+<tr><td class="col1 col_width1" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Mojos (org.apache.maven.plugin.assembly.mojo)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyArchiver</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Provides:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> implementation of <span class=" ns-Citation">AssemblyConfigurationSource</span>, for use in assembly components<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyConfigurationSource</span> transports build state given by mojo parameters to deeper assembly components<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyArchiver</span> abstracts the business of creating the assembly artifact from the mojos<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> AssemblyArchiver (org.apache.maven.plugin.assembly.archive)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArchiverManager</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> the set of <span class=" ns-Citation">ArchiveAssemblyPhase</span> implementations<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyDescriptorReader</span> and <span class=" ns-Citation">AssemblyInterpolator</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Provides:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> logic to discover and read assembly descriptors<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 77px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyDescriptorReader</span> and <span class=" ns-Citation">AssemblyInterpolator</span> help with this task<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> logic to discover and add filters that merge container descriptor files<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 77px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> these are implementations of <span class=" ns-Citation">ContainerDescriptorHandler</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">Archiver</span> instances are retrieved from the <span class=" ns-Citation">ArchiverManager</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">Archiver</span> instances are wrapped with <span class=" ns-Citation">AssemblyProxyArchiver</span>, which adds global prefixing, dry-run, and duplicate detection features<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArchiveAssemblyPhases</span> execute the actual interaction with the (proxied) <span class=" ns-Citation">Archiver</span> instance to produce the assembly<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyProxyArchiver</span> is the only one initialized as a POJO with the real <span class=" ns-Citation">Archiver</span> component instance passed into the constructor; all other classes used by the <span class=" ns-Citation">AssemblyArchiver</span> are components injected by Plexus<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArchiveAssemblyPhase</span> instances are injected via a Map which is keyed by their respective role-hints; I don't believe the ordering of keys in this map is deterministic.<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ContainerDescriptorHandler</span> instances are components that are injected via a Map which is keyed by their respective role-hints. Custom implementations can be added via the plugin-level dependency configuration in the pom.xml<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> ArchiverAssemblyPhase (org.apache.maven.plugin.assembly.archive.phase)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Default Implementations:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ModuleSetAssemblyPhase</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">DependencySetAssemblyPhase</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">FileSetAssemblyPhase</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">FileItemAssemblyPhase</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">RepositoryAssemblyPhase</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArchiverTask</span> implementations, as POJOs<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">FileFormatter</span> (<span class=" ns-Citation">FileItemAssemblyPhase</span>)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">RepositoryAssembler</span> (from maven-repository-builder; used by <span class=" ns-Citation">RepositoryAssemblyPhase</span>)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Initialized as Plexus components<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> generally, each implementation handles one top-level section of the assembly descriptor<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> phases share common logic in terms of how they interact with the <span class=" ns-Citation">Archiver</span> instance; this is captured in different <span class=" ns-Citation">ArchiverTask</span> implementations<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> ArchiverTask (org.apache.maven.plugin.assembly.archive.task)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Default Implementations:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AddArtifactTask</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AddDependencySetsTask</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AddDirectoryTask</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AddFileSetsTask</span><br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">DependencyResolver</span> (<span class=" ns-Citation">AddDependencySetsTask</span>)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">FileSetFormatter</span> (<span class=" ns-Citation">AddFileSetsTask</span>)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Used as POJOs that are initialized then executed by different <span class=" ns-Citation">ArchiverAssemblyPhase</span> instances.<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> ContainerDescriptorHandler (org.apache.maven.plugin.assembly.filter)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Added to the <span class=" ns-Citation">AssemblyProxyArchiver</span> as a filter and finalizer<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Ability to cherry-pick files before they're added to the assembly archive, and process them (processing usually means aggregation/merging, but could be anything)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Ability to add a set of "virtual" files to the assembly archive just before it is closed.<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ComponentsXmlArchiveFileFilter</span> (for plexus components.xml files) is always present during the assembly process.<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> DependencyResolver (org.apache.maven.plugin.assembly.artifact)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArtifactFactory</span> from maven-artifact<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArtifactRepository</span> from maven-artifact<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">MavenProjectBuilder</span> from maven-project<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">ArtifactResolver</span> from maven-artifact<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">MavenMetadataSource</span>/<span class=" ns-Citation">ArtifactMetadataSource</span> from maven-project/maven-artifact<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Selects the best implementation of <span class=" ns-Citation">ArtifactResolver</span> it can find, based on a String-array of preferential role-hints. If none of the preferred resolvers can be found, it defaults to a lookup without any role-hint. This is necessary for compatibility with maven 2.0.x.<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> This component can take a List of remote repositories from the current build, append to this the List of remote repositories from the project passed in (avoiding duplicate entries, based on repository id), and use that as a basis for resolving dependency artifacts<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyConfigurationSource.isUseTransitiveDependencies()</span> is used in calling components to control whether this component (the resolver) does a full transitive resolution of the project's dependencies, or just resolves the direct dependency artifacts<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="color:rgb(161,100,45) ;  background-color:rgb(191,191,191) ;  font-weight: 800;  font-size: 14px;"><div>
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> FileFormatter (org.apache.maven.plugin.assembly.format)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Uses:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> <span class=" ns-Citation">AssemblyFileUtils</span> for line-ending normalization and temp-dir/temp-file management<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Provides:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Interpolation of a given file's contents, based on project values and an optional Properties file or set of filter files (supplied by <span class=" ns-Citation">AssemblyConfigurationSource</span>)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Normalization of line endings, using values: keep (don't change), dos (\r\n), crlf (\r\n), unix (\n), lf (\n)<br>
+</div></td></tr>
+<tr><td class="col1 col_width1" style="font-weight: 900;  "><div style="margin-left: 47px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="wedge" src="Expanded.png" title="collapse"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> Notes:<br>
+</div></td></tr>
+<tr><td class="col1 col_width1 altRow" style=""><div style="margin-left: 62px; text-indent: -32px;">
+<img border="0" hspace="3" vspace="0" alt="*" src="LeafRowHandle.png"><img border="0" hspace="2" vspace="0" alt=" " src="Unchecked.png"> If line ending is not 'keep', the final line in the file will <span style="font-weight: 900;  ">always</span> end with a newline string, regardless of whether this is the case in the original file. See MASSEMBLY-96.<br>
+</div></td></tr>
+</table></body>
+</html>
