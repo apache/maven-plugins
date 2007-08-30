@@ -51,7 +51,7 @@ No Snapshots
           <execution>
             <id>enforce-no-snapshots</id>
             <goals>
-              <goal>enforce-once</goal>
+              <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>

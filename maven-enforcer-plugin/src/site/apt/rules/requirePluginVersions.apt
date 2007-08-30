@@ -16,29 +16,29 @@
 ~~ under the License.    
  
   ------
-  Beanshell
+  Require Plugin Versions
   ------
   Brian Fox
   ------
-  June 2007
+  August 2007
   ------
 
-Beanshell
+Require Plugin Versions
 
-  This rule can execute a beanshell script and evaluate the result.
-
+   This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
 
    The following parameters are supported by this rule:
    
-   * condition - the beanshell statement to evaluate.
-   
    * message - an optional message to the user if the rule fails.
+   
+   * banLatest - disallow any use of "LATEST" as a version for any plugin. Default = true
+   
+   * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true
    
    []
 
+   Sample Plugin Configuration:
    
-  Sample Plugin Configuration:
-  
 +---+
 <project>
   [...]
@@ -49,17 +49,18 @@ Beanshell
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>enforce-beanshell</id>
+            <id>enforce-plugin-versions</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <evaluateBeanshell>
-		<condition>${project.artifactId} == foo</condition>
-	      </evaluateBeanshell>
-             </rules>  
-            <fail>true</fail>
+                <requirePluginVersions>
+                   <message>Best Practice is to always define plugin versions!</message>
+                   <banLatest>true</banLatest>
+                   <banRelease>true</banRelease>
+                </requirePluginVersions>
+              </rules>    
             </configuration>
           </execution>
         </executions>
@@ -68,12 +69,4 @@ Beanshell
   </build>
   [...]
 </project>
-+---+
-  
-  The condition can be a complex script or a simple expression. As long as it results in True, the rule will succeed. This means code can be executed as long as the last line results in true.
-  
-+---+
-  <evaluateBeanshell>
-    <condition>for (int i = 0;i!=10;i++){print ("Hello World "+i);};1==1</condition>
-  </evaluateBeanshell>
-+---+
++---+  

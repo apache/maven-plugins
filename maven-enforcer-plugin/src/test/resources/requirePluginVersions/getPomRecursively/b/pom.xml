@@ -1,0 +1,16 @@
+<project>
+	<parent>
+		<artifactId>a</artifactId>
+		<groupId>group</groupId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>b</artifactId>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
