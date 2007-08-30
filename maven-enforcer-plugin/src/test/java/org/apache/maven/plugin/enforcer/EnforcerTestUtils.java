@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
@@ -53,5 +54,14 @@ public class EnforcerTestUtils
         ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
         															project );
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
+    }
+    
+    public static Plugin newPlugin(String groupId, String artifactId, String version)
+    {
+        Plugin plugin = new Plugin();
+        plugin.setArtifactId( artifactId );
+        plugin.setGroupId( groupId );
+        plugin.setVersion( version );
+        return plugin;
     }
 }

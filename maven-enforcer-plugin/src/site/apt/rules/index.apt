@@ -40,6 +40,8 @@ Standard Rules
 	
 	* {{{requireOS.html}requireOS}} - enforces the OS / CPU Archictecture.
 	
+	* {{{requirePluginVersions.html}requirePluginVersions}} - enforces that all plugins have a specified version.
+	
 	* {{{requireProperty.html}requireProperty}} - enforces the existence and values of properties.
 	
 	[]

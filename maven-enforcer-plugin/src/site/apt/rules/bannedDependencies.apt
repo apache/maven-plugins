@@ -63,7 +63,7 @@ Banned Dependencies
           <execution>
             <id>enforce-banned-dependencies</id>
             <goals>
-              <goal>enforce-once</goal>
+              <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>

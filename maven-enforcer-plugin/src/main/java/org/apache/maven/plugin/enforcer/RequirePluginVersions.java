@@ -122,7 +122,7 @@ public class RequirePluginVersions
     List remoteRepositories;
 
     Log log;
-    
+
     MavenSession session;
 
     public void execute ( EnforcerRuleHelper helper )
@@ -144,8 +144,7 @@ public class RequirePluginVersions
             resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             remoteRepositories = project.getRemoteArtifactRepositories();
-            
-            
+
             // I couldn't find a direct way to get at the
             // lifecycles list.
             lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
@@ -158,7 +157,7 @@ public class RequirePluginVersions
             log.debug( "All Plugins: " + allPlugins );
 
             List plugins = getAllPluginEntries( project );
-            
+
             // now look for the versions that aren't valid
             // and add to a list.
             ArrayList failures = new ArrayList();
@@ -166,7 +165,7 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 Plugin plugin = (Plugin) iter.next();
-                if ( !hasVersionSpecified( plugin, plugins ))
+                if ( !hasVersionSpecified( plugin, plugins ) )
                 {
                     failures.add( plugin );
                 }
@@ -184,7 +183,7 @@ public class RequirePluginVersions
                     Plugin plugin = (Plugin) iter.next();
                     newMsg.append( plugin.getGroupId() + ":" + plugin.getArtifactId() + "\n" );
                 }
-                if (StringUtils.isNotEmpty( message ))
+                if ( StringUtils.isNotEmpty( message ) )
                 {
                     newMsg.append( message );
                 }
@@ -218,19 +217,19 @@ public class RequirePluginVersions
         }
         catch ( ArtifactResolutionException e )
         {
-            throw new EnforcerRuleException( e.getLocalizedMessage());
+            throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
         catch ( ArtifactNotFoundException e )
         {
-            throw new EnforcerRuleException( e.getLocalizedMessage());
+            throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
         catch ( IOException e )
         {
-            throw new EnforcerRuleException( e.getLocalizedMessage());
+            throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
         catch ( XmlPullParserException e )
         {
-            throw new EnforcerRuleException( e.getLocalizedMessage());
+            throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
 
     }
@@ -240,8 +239,9 @@ public class RequirePluginVersions
      * plugin. Can optionally ban "RELEASE" or "LATEST" even
      * if specified.
      */
-    public boolean hasVersionSpecified ( Plugin source, List plugins )
+    protected boolean hasVersionSpecified ( Plugin source, List plugins )
     {
+        boolean status = false;
         Iterator iter = plugins.iterator();
         while ( iter.hasNext() )
         {
@@ -265,11 +265,18 @@ public class RequirePluginVersions
                     }
                     // the version was specified and not
                     // banned. It's ok.
-                    return true;
+                    
+                    status = true;  
+                    
+                    if (!banRelease && !banLatest)
+                    {
+                        //no need to keep looking
+                        break;
+                    }
                 }
             }
         }
-        return false;
+        return status;
     }
 
     /*
@@ -556,7 +563,9 @@ public class RequirePluginVersions
     }
 
     /**
-     * This method gets the model for the defined artifact. Looks first in the filesystem, then tries to get it from the repo.
+     * This method gets the model for the defined artifact.
+     * Looks first in the filesystem, then tries to get it
+     * from the repo.
      * 
      * @param groupId
      * @param artifactId
@@ -564,45 +573,50 @@ public class RequirePluginVersions
      * @return
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
-     * @throws XmlPullParserException 
-     * @throws IOException 
+     * @throws XmlPullParserException
+     * @throws IOException
      */
     private Model getPomModel ( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
-        Model model= null;
-        
-        //do we want to look in the reactor like the project builder? Would require @aggregator goal 
-        //which causes problems in maven core right now because we also need dependency resolution in other
-        //rules. (MNG-2277)
-        
-        //look in the location specified by pom first.
+        Model model = null;
+
+        // do we want to look in the reactor like the
+        // project builder? Would require @aggregator goal
+        // which causes problems in maven core right now
+        // because we also need dependency resolution in
+        // other
+        // rules. (MNG-2277)
+
+        // look in the location specified by pom first.
         boolean found = false;
         try
         {
-            model = readModel(pom);
-            
-            //i found a model, lets make sure it's the one I want
+            model = readModel( pom );
+
+            // i found a model, lets make sure it's the one
+            // I want
             found = checkIfModelMatches( groupId, artifactId, version, model );
         }
         catch ( IOException e )
         {
-            //nothing here, but lets look in the repo before giving up.
+            // nothing here, but lets look in the repo
+            // before giving up.
         }
         catch ( XmlPullParserException e )
         {
-            //nothing here, but lets look in the repo before giving up.
+            // nothing here, but lets look in the repo
+            // before giving up.
         }
-        
-        //i didn't find it in the local file system, go look in the repo
-        if (!found)
+
+        // i didn't find it in the local file system, go
+        // look in the repo
+        if ( !found )
         {
             Artifact pomArtifact = factory.createArtifact( groupId, artifactId, version, null, "pom" );
             resolver.resolve( pomArtifact, remoteRepositories, local );
             model = readModel( pomArtifact.getFile() );
         }
-        
-        
 
         return model;
     }
@@ -620,7 +634,7 @@ public class RequirePluginVersions
      * @throws IOException
      * @throws XmlPullParserException
      */
-    private List getModelsRecursively ( String groupId, String artifactId, String version, File pom )
+    protected List getModelsRecursively ( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         List models = null;
@@ -628,18 +642,18 @@ public class RequirePluginVersions
 
         Parent parent = model.getParent();
 
-        //recurse into the parent
+        // recurse into the parent
         if ( parent != null )
         {
-            //get the relative path
+            // get the relative path
             String relativePath = parent.getRelativePath();
-            if (StringUtils.isEmpty( relativePath ))
+            if ( StringUtils.isEmpty( relativePath ) )
             {
                 relativePath = "../pom.xml";
             }
-            //calculate the recursive path
-            File parentPom = new File(pom.getParent(),relativePath);
-            
+            // calculate the recursive path
+            File parentPom = new File( pom.getParent(), relativePath );
+
             models = getModelsRecursively( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), parentPom );
         }
         else
@@ -664,12 +678,13 @@ public class RequirePluginVersions
      * @throws IOException
      * @throws XmlPullParserException
      */
-    private List getAllPluginEntries ( MavenProject project )
+    protected List getAllPluginEntries ( MavenProject project )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         List plugins = new ArrayList();
         // get all the pom models
-        List models = getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),new File(project.getBasedir(),"pom.xml"));
+        List models = getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
+                                            new File( project.getBasedir(), "pom.xml" ) );
 
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins
@@ -698,32 +713,82 @@ public class RequirePluginVersions
 
         return plugins;
     }
-    
-    private boolean checkIfModelMatches(String groupId, String artifactId, String version, Model model)
+
+    protected boolean checkIfModelMatches ( String groupId, String artifactId, String version, Model model )
     {
-        //try these first.
+        // try these first.
         String modelGroup = model.getGroupId();
         String modelVersion = model.getVersion();
-        
+
         try
         {
-        if (StringUtils.isEmpty( modelGroup ))
+            if ( StringUtils.isEmpty( modelGroup ) )
+            {
+                modelGroup = model.getParent().getGroupId();
+            }
+
+            if ( StringUtils.isEmpty( modelVersion ) )
+            {
+                modelVersion = model.getParent().getVersion();
+            }
+        }
+        catch ( NullPointerException e )
         {
-            modelGroup = model.getParent().getGroupId();
+            // this is probably bad. I don't have a valid
+            // group or version and I can't find a
+            // parent????
+            // lets see if it's what we're looking for
+            // anyway.
         }
-        
-        if (StringUtils.isEmpty( modelVersion ))
-        {
-            modelVersion = model.getParent().getVersion();
-        }
-        }
-        catch (NullPointerException e)
-        {
-            //this is probably bad. I don't have a valid group or version and I can't find a parent????
-            //lets see if it's what we're looking for anyway.
-        }
-        return (groupId.equals( modelGroup ) &&
-            artifactId.equals( model.getArtifactId() ) &&
-            version.equals( modelVersion ));
+        return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils
+            .equals( artifactId, model.getArtifactId() ) );
+    }
+
+    /**
+     * @return the banLatest
+     */
+    protected boolean isBanLatest ()
+    {
+        return this.banLatest;
+    }
+
+    /**
+     * @param theBanLatest the banLatest to set
+     */
+    protected void setBanLatest ( boolean theBanLatest )
+    {
+        this.banLatest = theBanLatest;
+    }
+
+    /**
+     * @return the banRelease
+     */
+    protected boolean isBanRelease ()
+    {
+        return this.banRelease;
+    }
+
+    /**
+     * @param theBanRelease the banRelease to set
+     */
+    protected void setBanRelease ( boolean theBanRelease )
+    {
+        this.banRelease = theBanRelease;
+    }
+
+    /**
+     * @return the message
+     */
+    protected String getMessage ()
+    {
+        return this.message;
+    }
+
+    /**
+     * @param theMessage the message to set
+     */
+    protected void setMessage ( String theMessage )
+    {
+        this.message = theMessage;
     }
 }

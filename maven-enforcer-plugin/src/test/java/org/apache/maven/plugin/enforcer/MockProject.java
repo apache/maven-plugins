@@ -155,6 +155,8 @@ public class MockProject
     private Set artifacts;
     
     private Properties properties = new Properties();
+    
+    private File baseDir = null;
 
     public MockProject()
     {
@@ -240,7 +242,16 @@ public class MockProject
 
     public File getBasedir()
     {
-        return new File( PlexusTestCase.getBasedir() );
+        if (baseDir == null)
+        {
+            baseDir = new File( PlexusTestCase.getBasedir() ); 
+        }
+        return baseDir;
+    }
+    
+    public void setBaseDir(File base)
+    {
+        baseDir = base;
     }
 
     public void setDependencies( List list )

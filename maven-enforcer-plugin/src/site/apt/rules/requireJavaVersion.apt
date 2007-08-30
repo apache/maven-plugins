@@ -73,7 +73,7 @@ Require Java Version
           <execution>
             <id>enforce-java</id>
             <goals>
-              <goal>enforce-once</goal>
+              <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
