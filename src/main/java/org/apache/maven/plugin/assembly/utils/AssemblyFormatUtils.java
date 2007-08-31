@@ -184,12 +184,6 @@ public final class AssemblyFormatUtils
     public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject, MavenProject artifactProject, String artifactProjectRefName )
         throws AssemblyFormattingException
     {
-        System.out.println( "in evaluateFileNameMapping, using expression: " + expression + "\nartifact: "
-                            + artifact.getId() + "\nmainProject: "
-                            + ( mainProject != null ? mainProject.getId() : "null" ) + "\nartifactProject: "
-                            + ( artifactProject != null ? artifactProject.getId() : "null" )
-                            + "\nartifactProjectRefName: " + artifactProjectRefName );
-
         String value = expression;
 
         if ( artifactProjectRefName == null )
@@ -279,8 +273,6 @@ public final class AssemblyFormatUtils
 
         // Now, run the interpolation using the rules stated above.
         value = interpolator.interpolate( value, "__artifact" );
-
-        System.out.println( "Result of outputFileNameMapping evaluation: \'" + value + "\'" );
 
         return value;
     }

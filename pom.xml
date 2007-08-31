@@ -319,22 +319,22 @@
                 </goals>
                 <configuration>
                   <projectsDirectory>${project.build.testOutputDirectory}/projects</projectsDirectory>
+                  <!--
                   <debug>true</debug>
+                  -->
                   
                  <!-- Useful config for debugging one IT -->
-                  <!-- 
                   <pomIncludes>
-                    <pomInclude>dependency-sets/including-pom-dependency/pom.xml</pomInclude>
-                    <pomInclude>dependency-sets/including-sar-dependency/pom.xml</pomInclude>
-                    <pomInclude>dependency-sets/massembly-235/pom.xml</pomInclude>
+                    <pomInclude>dependency-sets/dependencySet-unpacked/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
-                   -->
                   <!-- END single-IT debugging block. -->
                   
+                  <!-- 
                   <pomIncludes>
                     <pomInclude>**/pom.xml</pomInclude>
                   </pomIncludes>
+                   -->
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
                     
@@ -357,8 +357,37 @@
         </plugins>
       </build>
     </profile>
+    
+    <profile>
+      <id>aspects</id>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <version>1.0-beta-2</version>
+            
+            <executions>
+              <execution>
+                <id>weave</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
+  
   <dependencies>
+    <dependency>
+      <groupId>aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.5.3</version>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
