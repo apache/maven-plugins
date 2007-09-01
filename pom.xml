@@ -105,7 +105,6 @@ under the License.
     <module>maven-ear-plugin</module>
     <module>maven-eclipse-plugin</module>
     <module>maven-ejb-plugin</module>
-    <module>maven-enforcer-plugin</module>
     <module>maven-gpg-plugin</module>
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
