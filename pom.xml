@@ -30,7 +30,7 @@ under the License.
   <name>Maven Site plugin</name>
   <version>2.0-beta-6-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.2</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
