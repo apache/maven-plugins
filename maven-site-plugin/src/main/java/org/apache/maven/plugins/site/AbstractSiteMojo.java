@@ -44,6 +44,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -861,6 +862,17 @@ public abstract class AbstractSiteMojo
     protected String getInterpolatedSiteDescriptorContent( Map props, MavenProject aProject, String siteDescriptorContent )
         throws IOException
     {
+        // MSITE-201: The ObjectBasedValueSource( aProject ) below will match
+        // ${modules} to aProject.getModules(), so we need to interpolate that
+        // first.
+
+        Map modulesProps = new HashMap();
+
+        // Legacy for the old ${modules} syntax
+        modulesProps.put( "modules", "<menu ref=\"modules\"/>" );
+
+        siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, modulesProps );
+
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
         interpolator.addValueSource( new EnvarBasedValueSource() );
@@ -877,9 +889,6 @@ public abstract class AbstractSiteMojo
 
         // Legacy for the old ${parentProject} syntax
         props.put( "parentProject", "<menu ref=\"parent\"/>" );
-
-        // Legacy for the old ${modules} syntax
-        props.put( "modules", "<menu ref=\"modules\"/>" );
 
         // Legacy for the old ${reports} syntax
         props.put( "reports", "<menu ref=\"reports\"/>" );
