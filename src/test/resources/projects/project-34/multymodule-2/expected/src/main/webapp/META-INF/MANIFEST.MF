@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: direct-optional-1.0.jar deps-direct-compile-1.0.jar multym
+ odule-4-1.0.jar refproject-compile-1.0.jar deps-refproject-compile-1.
+ 0.jar refproject-sysdep.jar direct-sysdep.jar direct-compile-1.0.jar
+

@@ -1,0 +1,16 @@
+<projectDescription>
+  <name>multymodule-2-1.0</name>
+  <comment/>
+  <projects>
+    <project>multymodule-4-1.0</project>
+    <project>multymodule-1-1.0</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
