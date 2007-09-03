@@ -239,6 +239,7 @@ public abstract class AbstractSiteRenderingMojo
         MavenProject parentProject = getParentProject( project );
         if ( parentProject != null )
         {
+        	getLog().debug("Parent project loaded ...");        	
             DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
             if ( decoration == null )
@@ -255,6 +256,8 @@ public abstract class AbstractSiteRenderingMojo
                 populateProjectParentMenu( decoration, locale, parentProject, true );
             }
         }
+        if(decoration!=null && decoration.getSkin()!=null)
+        	getLog().debug("Skin used : "+decoration.getSkin());
 
         return decoration;
     }
