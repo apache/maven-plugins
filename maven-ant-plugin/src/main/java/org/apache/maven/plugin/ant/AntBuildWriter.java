@@ -1141,7 +1141,7 @@ public class AntBuildWriter
                     writer.startElement( "get" );
                     writer.addAttribute( "src", repository.getUrl() + "/" + path );
                     AntBuildWriterUtil.addWrapAttribute( writer, "get", "dest", "${maven.repo.local}/" + path, 3 );
-                    AntBuildWriterUtil.addWrapAttribute( writer, "get", "usetimestamp", "true", 3 );
+                    AntBuildWriterUtil.addWrapAttribute( writer, "get", "usetimestamp", "false", 3 );
                     AntBuildWriterUtil.addWrapAttribute( writer, "get", "ignoreerrors", "true", 3 );
                     writer.endElement(); // get
                 }
