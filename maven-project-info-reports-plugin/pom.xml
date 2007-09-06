@@ -180,7 +180,7 @@ under the License.
   </dependencies>
   <properties>
     <wagon.version>1.0-beta-2</wagon.version>
-    <scm.version>1.0-beta-4</scm.version>
+    <scm.version>1.0</scm.version>
   </properties>
 </project>
 
