@@ -92,7 +92,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-tree</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
