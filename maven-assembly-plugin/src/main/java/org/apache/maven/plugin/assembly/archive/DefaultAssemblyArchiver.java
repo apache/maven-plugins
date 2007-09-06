@@ -70,7 +70,11 @@ public class DefaultAssemblyArchiver
                                AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        String filename = fullName + "." + format;
+        String filename = fullName;
+        if ( !configSource.isIgnoreDirFormatExtensions() || !format.startsWith( "dir" ) )
+        {
+            filename += "." + format;
+        }
 
         AssemblyFileUtils.verifyTempDirectoryAvailability( configSource.getTemporaryRootDirectory(), getLogger() );
 
@@ -96,14 +100,14 @@ public class DefaultAssemblyArchiver
             Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource,
                                                 containerHandlers );
 
+            archiver.setDestFile( destFile );
+
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
                 AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
 
                 phase.execute( assembly, archiver, configSource );
             }
-
-            archiver.setDestFile( destFile );
 
             archiver.createArchive();
         }
