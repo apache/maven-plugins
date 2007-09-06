@@ -57,4 +57,6 @@ public interface AssemblerConfigurationSource
 
     boolean isDryRun();
 
+    boolean isIgnoreDirFormatExtensions();
+
 }
