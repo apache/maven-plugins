@@ -55,6 +55,15 @@ public abstract class AbstractAssemblyMojo
     private boolean dryRun;
 
     /**
+     * If this flag is set, the ".dir" suffix will be suppressed in the output
+     * directory name when using assembly/format == 'dir' and other formats
+     * that begin with 'dir'.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean ignoreDirFormatExtensions;
+
+    /**
      * Local Maven repository where artifacts are cached during the build process.
      *
      * @parameter default-value="${localRepository}"
@@ -587,6 +596,11 @@ public abstract class AbstractAssemblyMojo
     public boolean isDryRun()
     {
         return dryRun;
+    }
+
+    public boolean isIgnoreDirFormatExtensions()
+    {
+        return ignoreDirFormatExtensions;
     }
 
 }
