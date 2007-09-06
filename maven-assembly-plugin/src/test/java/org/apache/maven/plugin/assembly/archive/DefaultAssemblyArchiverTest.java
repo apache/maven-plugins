@@ -78,6 +78,9 @@ public class DefaultAssemblyArchiverTest
         configSource.isDryRun();
         csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
+        configSource.isIgnoreDirFormatExtensions();
+        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
         File outDir = fileManager.createTempDir();
 
         macMgr.archiver.setDestFile( new File( outDir, "full-name.zip" ) );
