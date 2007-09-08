@@ -13,8 +13,62 @@
   <version>1</version>
   <name>custom-containerDescriptorHandler</name>
   
-  <modules>
-    <module>handler-def</module>
-    <module>assembly</module>
-  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-component-it-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        
+        <executions>
+          <execution>
+            <id>inject-localrepo-path</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>inject-local-repository-path</goal>
+            </goals>
+            <configuration>
+              <property>local.repo.path</property>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.0</version>
+        
+        <configuration>
+          <suppressSummaries>true</suppressSummaries>
+          <localRepositoryPath>${local.repo.path}</localRepositoryPath>
+          <streamLogs>true</streamLogs>
+          <goals>
+            <goal>install</goal>
+          </goals>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <id>handler-build</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <pom>handler-def/pom.xml</pom>
+            </configuration>
+          </execution>
+          <execution>
+            <id>assembly-build</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <debug>true</debug>
+              <pom>assembly/pom.xml</pom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
