@@ -319,22 +319,20 @@
                 </goals>
                 <configuration>
                   <projectsDirectory>${project.build.testOutputDirectory}/projects</projectsDirectory>
-                  <!--
                   <debug>true</debug>
-                  -->
                   
                  <!-- Useful config for debugging one IT -->
+                  <!-- 
                   <pomIncludes>
-                    <pomInclude>dependency-sets/dependencySet-unpacked/pom.xml</pomInclude>
+                    <pomInclude>**/container-descriptors/**/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
+                   -->
                   <!-- END single-IT debugging block. -->
                   
-                  <!-- 
                   <pomIncludes>
                     <pomInclude>**/pom.xml</pomInclude>
                   </pomIncludes>
-                   -->
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
                     
@@ -345,8 +343,9 @@
                     <pomExclude>**/assembly/pom.xml</pomExclude>
                     
                     <!-- MASSEMBLY-233 -->
+<!--
                     <pomExclude>**/container-descriptors/**</pomExclude>
-                    
+ -->                    
                   </pomExcludes>
                   <postBuildHookScript>verify.bsh</postBuildHookScript>
                   <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
