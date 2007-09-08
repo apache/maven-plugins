@@ -152,6 +152,11 @@ public class DefaultAssemblyArchiver
                 String hint = config.getHandlerName();
                 ContainerDescriptorHandler handler = (ContainerDescriptorHandler) containerDescriptorHandlers.get( hint );
 
+                if ( handler == null )
+                {
+                    throw new InvalidAssemblerConfigurationException( "Cannot find ContainerDescriptorHandler with hint: " + hint );
+                }
+
                 System.out.println( "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
 
                 handlers.add( handler );
