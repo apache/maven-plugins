@@ -128,7 +128,7 @@ under the License.
   </contributors>
   <properties>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
-    <doxiaSiteVersion>1.0-alpha-9-SNAPSHOT</doxiaSiteVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-9-SNAPSHOT</doxiaSitetoolsVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -154,7 +154,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaSiteVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -169,7 +169,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaSiteVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
