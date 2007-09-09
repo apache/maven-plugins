@@ -27,7 +27,7 @@
   <artifactId>maven-one-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven One Plugin</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
@@ -140,5 +140,11 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-one-plugin-1.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-one-plugin-1.2</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-one-plugin-1.2</url>
+  </scm>
 </project>
 
