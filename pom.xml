@@ -110,7 +110,7 @@
       <artifactId>maven-project</artifactId>
       <version>2.0</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-descriptor</artifactId>
       <version>2.0</version>
@@ -136,7 +136,7 @@
       <artifactId>maven-artifact-manager</artifactId>
       <version>2.0</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <version>2.0</version>
@@ -152,27 +152,27 @@
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>2.0</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>1.0-alpha-4</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>doxia</groupId>
       <artifactId>doxia-core</artifactId>
       <version>1.0-alpha-4</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.4.1</version>
     </dependency>
-		<dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9</version>
