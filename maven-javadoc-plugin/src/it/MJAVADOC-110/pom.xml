@@ -41,6 +41,9 @@
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <debug>true</debug>
+        </configuration>
         <executions>
           <execution>
             <id>javadoc</id>

@@ -25,7 +25,7 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
   <name>Maven Javadoc Plugin Javadoc Jar Invalid Destdir Test</name>
-  <url>http://maven.apache.org</url>    
+  <url>http://maven.apache.org</url>
   <build>
     <plugins>
       <plugin>
@@ -67,6 +67,7 @@ under the License.
           <links>
              <param>http://java.sun.com/j2se/1.4.2/docs/api</param>
           </links>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
