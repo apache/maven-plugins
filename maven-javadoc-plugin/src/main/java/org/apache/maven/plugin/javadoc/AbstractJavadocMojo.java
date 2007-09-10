@@ -81,7 +81,6 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @requiresDependencyResolution compile
- * @execute phase="generate-sources"
  * @aggregator
  */
 public abstract class AbstractJavadocMojo
@@ -2273,7 +2272,7 @@ public abstract class AbstractJavadocMojo
                 {
                     break;
                 }
-                
+
                 if ( p.getUrl() != null )
                 {
                     if ( offlineLinks == null )
