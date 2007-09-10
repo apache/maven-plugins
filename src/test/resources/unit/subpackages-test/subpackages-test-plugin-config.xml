@@ -25,7 +25,7 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
   <name>Maven Javadoc Plugin Subpackages Test</name>
-  <url>http://maven.apache.org</url>    
+  <url>http://maven.apache.org</url>
   <build>
     <plugins>
       <plugin>
@@ -63,6 +63,7 @@ under the License.
           <sourcepath>${basedir}/src/test/resources/unit/subpackages-test</sourcepath>
           <subpackages>subpackages.test</subpackages>
           <excludePackageNames>subpackages.test.excluded:subpackages.test.included.exclude</excludePackageNames>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
