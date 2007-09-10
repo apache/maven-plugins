@@ -43,6 +43,7 @@ under the License.
           <aggregate>true</aggregate>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-resources-test/src/main/javadoc</javadocDirectory>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>

@@ -57,6 +57,7 @@ under the License.
               ]]>
           </footer>
           <quiet>true</quiet>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
