@@ -38,6 +38,7 @@ under the License.
           <source>1.5</source>
           <windowtitle>Maven Javadoc Plugin Taglet jdk5 1.0-SNAPSHOT API</windowtitle>
           <quiet>true</quiet>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>

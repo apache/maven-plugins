@@ -74,6 +74,7 @@ under the License.
           <use>true</use>
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Doclet Path Test 1.0-SNAPSHOT API</windowtitle>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
