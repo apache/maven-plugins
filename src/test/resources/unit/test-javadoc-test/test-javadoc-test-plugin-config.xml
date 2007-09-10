@@ -45,6 +45,7 @@ under the License.
           <windowtitle>Maven Test Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/test-javadoc-test/src/test/javadoc</javadocDirectory>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
