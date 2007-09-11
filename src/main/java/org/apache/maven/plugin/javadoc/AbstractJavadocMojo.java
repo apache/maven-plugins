@@ -438,9 +438,12 @@ public abstract class AbstractJavadocMojo
      * Shuts off non-error and non-warning messages, leaving only the warnings and errors appear, making them
      * easier to view.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#quiet">quiet</a>.
+     * Note: was a standard doclet in Java 1.4.2 (refer to bug ID
+     * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4714350">4714350</a>).
      * <br/>
-     * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#quiet">quiet</a>.
+     * <br/>
+     * Since Java 5.0.
      *
      * @parameter expression="${quiet}" default-value="false"
      */
@@ -1212,7 +1215,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( getOverview().getAbsolutePath() ) );
         }
         arguments.add( getAccessLevel() );
-        addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
+        addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
         addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), SINCE_JAVADOC_1_4 );
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
@@ -1287,6 +1290,10 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
             addArgIf( arguments, notree, "-notree" );
             addArgIfNotEmpty( arguments, "-packagesheader", packagesheader, SINCE_JAVADOC_1_4_2 );
+            if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
+            {
+                addArgIf( arguments, quiet, "-quiet" );
+            }
             addArgIf( arguments, serialwarn, "-serialwarn" );
             addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
             if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
