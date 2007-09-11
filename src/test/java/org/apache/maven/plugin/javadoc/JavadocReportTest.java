@@ -55,14 +55,13 @@ public class JavadocReportTest
     protected void tearDown()
         throws Exception
     {
-        // nop
+        super.tearDown();
     }
 
     /**
      * Create test repository in target directory.
      *
-     * @throws IOException
-     *             if any
+     * @throws IOException if any
      */
     private void createTestRepo()
         throws IOException
@@ -171,7 +170,7 @@ public class JavadocReportTest
     /**
      * Test when default configuration is provided for the plugin
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testDefaultConfiguration()
         throws Exception
@@ -259,7 +258,7 @@ public class JavadocReportTest
     /**
      * Method for testing the subpackages and excludePackageNames parameter
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testSubpackages()
         throws Exception
@@ -299,7 +298,7 @@ public class JavadocReportTest
     /**
      * Test the recursion and exclusion of the doc-files subdirectories.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testDocfiles()
         throws Exception
@@ -330,9 +329,10 @@ public class JavadocReportTest
     }
 
     /**
-     * Test javadoc plugin using custom configuration. noindex, notree and nodeprecated parameters were set to true
+     * Test javadoc plugin using custom configuration. noindex, notree and nodeprecated parameters
+     * were set to true.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testCustomConfiguration()
         throws Exception
@@ -407,7 +407,7 @@ public class JavadocReportTest
     /**
      * Method to test the doclet artifact configuration
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testDoclets()
         throws Exception
@@ -451,7 +451,7 @@ public class JavadocReportTest
     /**
      * Method to test the aggregate parameter
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testAggregate()
         throws Exception
@@ -500,7 +500,7 @@ public class JavadocReportTest
     /**
      * Method to test when the path to the project sources has an apostrophe (')
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testQuotedPath()
         throws Exception
@@ -570,7 +570,7 @@ public class JavadocReportTest
     /**
      * Method to test the taglet artifact configuration
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testTaglets()
         throws Exception
@@ -595,7 +595,7 @@ public class JavadocReportTest
     /**
      * Method to test the jdk5 javadoc
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testJdk5()
         throws Exception
@@ -632,7 +632,7 @@ public class JavadocReportTest
      * Test to find the javadoc executable when <code>java.home</code> is not in the JDK_HOME. In this case, try to
      * use the <code>JAVA_HOME</code> environment variable.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testToFindJavadoc()
         throws Exception
@@ -650,7 +650,7 @@ public class JavadocReportTest
     /**
      * Test the javadoc resources.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testJavadocResources()
         throws Exception
@@ -682,7 +682,7 @@ public class JavadocReportTest
     /**
      * Test the javadoc resources in the aggregation case.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testAggregateJavadocResources()
         throws Exception
@@ -724,7 +724,7 @@ public class JavadocReportTest
     /**
      * Test the javadoc for a POM project.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testPom()
         throws Exception
@@ -739,7 +739,7 @@ public class JavadocReportTest
     /**
      * Test the javadoc with tag.
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testTag()
         throws Exception
@@ -761,7 +761,7 @@ public class JavadocReportTest
     /**
      * Test newline in the header/footer parameter
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testHeaderFooter()
         throws Exception
