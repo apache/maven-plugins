@@ -119,6 +119,13 @@ public abstract class AbstractJavadocMojo
      */
     private static final float SINCE_JAVADOC_1_5 = 1.5f;
 
+    /**
+     * For Javadoc options appears since Java 6.0.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html">
+     * Javadoc Technology</a>
+     */
+    private static final float SINCE_JAVADOC_1_6 = 1.6f;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -925,6 +932,17 @@ public abstract class AbstractJavadocMojo
     private Taglet[] taglets;
 
     /**
+     * Specifies the top text to be placed at the top of each output file.
+     * <br/>
+     * See <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6227616">6227616</a>.
+     * <br/>
+     * Since Java 6.0
+     *
+     * @parameter expression="${top}"
+     */
+    private String top;
+
+    /**
      * Includes one "Use" page for each documented class and package.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldoldocs/windows/javadoc.html#use">use</a>.
@@ -1351,6 +1369,8 @@ public abstract class AbstractJavadocMojo
                 }
             }
 
+            addArgIfNotEmpty( arguments, "-top", quotedArgument( StringUtils.replace( top, "\n", "" ) ), false, false,
+                              SINCE_JAVADOC_1_6 );
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
             addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( getWindowtitle() ), false, false );
@@ -2127,7 +2147,7 @@ public abstract class AbstractJavadocMojo
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @see #addArgIf(java.util.List,boolean,String)
-     * @see <a href="http://jakarta.apache.org/commons/lang/api/org/apache/commons/lang/SystemUtils.html#isJavaVersionAtLeast(float)">SystemUtils.html#isJavaVersionAtLeast(float)</a>
+     * @see #isJavaDocVersionAtLeast(float)
      */
     private void addArgIf( List arguments, boolean b, String value, float requiredJavaVersion )
     {
@@ -2155,6 +2175,33 @@ public abstract class AbstractJavadocMojo
     private void addArgIfNotEmpty( List arguments, String key, String value )
     {
         addArgIfNotEmpty( arguments, key, value, false );
+    }
+
+    /**
+     * Convenience method to add an argument to the <code>command line</code>
+     * if the the value is not null or empty.
+     * <p/>
+     * Moreover, the value could be comma separated.
+     *
+     * @param arguments
+     * @param key         the argument name.
+     * @param value       the argument value to be added.
+     * @param repeatKey   repeat or not the key in the command line
+     * @param splitValue  if <code>true</code> given value will be tokenized by comma
+     * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
+     * @see #addArgIfNotEmpty(List, String, String, boolean, boolean)
+     * @see #isJavaDocVersionAtLeast(float)
+     */
+    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey, boolean splitValue, float requiredJavaVersion )
+    {
+        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
+        {
+            addArgIfNotEmpty( arguments, key, value, repeatKey, splitValue );
+        }
+        else
+        {
+            getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+        }
     }
 
     /**
@@ -2244,7 +2291,7 @@ public abstract class AbstractJavadocMojo
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @param repeatKey           repeat or not the key in the command line
      * @see #addArgIfNotEmpty(java.util.List,String,String)
-     * @see <a href="http://jakarta.apache.org/commons/lang/api/org/apache/commons/lang/SystemUtils.html#isJavaVersionAtLeast(float)">SystemUtils.html#isJavaVersionAtLeast(float)</a>
+     * @see #isJavaDocVersionAtLeast(float)
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
                                    boolean repeatKey )
@@ -2574,6 +2621,7 @@ public abstract class AbstractJavadocMojo
      * @param javadocOutputDirectory
      * @param files
      * @throws MavenReportException if any
+     * @see #isJavaDocVersionAtLeast(float)
      */
     private void addCommandLineArgFile( Commandline cmd, File javadocOutputDirectory, List files )
         throws MavenReportException

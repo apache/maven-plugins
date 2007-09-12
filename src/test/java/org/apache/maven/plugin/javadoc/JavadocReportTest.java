@@ -603,7 +603,7 @@ public class JavadocReportTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
         {
             getContainer().getLogger().warn(
-                                             "JdkDK 5.0 or more is required to run javadoc for "
+                                             "JDK 5.0 or more is required to run javadoc for "
                                                  + "'org.apache.maven.plugin.javadoc.JavadocReportTest#testJdk5()'." );
             return;
         }
@@ -778,5 +778,45 @@ public class JavadocReportTest
         }
 
         assertTrue( true );
+    }
+
+    /**
+     * Method to test the jdk6 javadoc
+     *
+     * @throws Exception
+     */
+    public void testJdk6()
+        throws Exception
+    {
+        if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
+        {
+            getContainer().getLogger().warn(
+                                             "JDK 6.0 or more is required to run javadoc for "
+                                                 + "'org.apache.maven.plugin.javadoc.JavadocReportTest#testJdk6()'." );
+            return;
+        }
+
+        File testPom = new File( getBasedir(), "src/test/resources/unit/jdk6-test/jdk6-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File index = new File( getBasedir(), "target/test/unit/jdk6-test/target/site/apidocs/index.html" );
+        assertTrue( FileUtils.fileExists( index.getAbsolutePath() ) );
+
+        File overviewSummary = new File( getBasedir(),
+                                         "target/test/unit/jdk6-test/target/site/apidocs/overview-summary.html" );
+        assertTrue( FileUtils.fileExists( overviewSummary.getAbsolutePath() ) );
+        String readed = readFile( overviewSummary );
+        assertTrue( readed.indexOf( "Top - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( readed.indexOf( "Header - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( readed.indexOf( "Footer - Copyright &#169; All rights reserved." ) != -1 );
+
+        File packageSummary = new File( getBasedir(),
+                                        "target/test/unit/jdk6-test/target/site/apidocs/jdk6/test/package-summary.html" );
+        assertTrue( FileUtils.fileExists( packageSummary.getAbsolutePath() ) );
+        readed = readFile( packageSummary );
+        assertTrue( readed.indexOf( "Top - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( readed.indexOf( "Header - Copyright &#169; All rights reserved." ) != -1 );
+        assertTrue( readed.indexOf( "Footer - Copyright &#169; All rights reserved." ) != -1 );
     }
 }
