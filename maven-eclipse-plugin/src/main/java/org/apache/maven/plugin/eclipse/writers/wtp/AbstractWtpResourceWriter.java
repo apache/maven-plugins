@@ -19,6 +19,7 @@
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
@@ -27,8 +28,11 @@ import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base class to hold common constants used by extending classes.
@@ -149,7 +153,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
      * @param basedir
      * @throws MojoExecutionException
      */
-    protected void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository, File basedir )
+    protected void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository, File basedir, String deployPath )
         throws MojoExecutionException
     {
         String handle;
@@ -161,7 +165,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             // <dependency-type>uses</dependency-type>
             // </dependent-module>
 
-            handle = "module:/resource/" + dep.getArtifactId() + "/" + dep.getArtifactId(); //$NON-NLS-1$ //$NON-NLS-2$
+            handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName(); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else
         {
@@ -199,7 +203,9 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
 
         writer.startElement( ELT_DEPENDENT_MODULE );
 
-        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$
+        writer.addAttribute( "archiveName",dep.getEclipseProjectName()+"."+dep.getType()); 
+
+        writer.addAttribute( ATTR_DEPLOY_PATH, deployPath ); //$NON-NLS-1$
         writer.addAttribute( ATTR_HANDLE, handle );
 
         writer.startElement( ELT_DEPENDENCY_TYPE );
@@ -212,7 +218,15 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
     protected void writeWarOrEarResources( XMLWriter writer, MavenProject project, ArtifactRepository localRepository )
         throws MojoExecutionException
     {
-
+        // use /WEB-INF/lib for war projects and / or the configured defaultLibBundleDir for ear projects  
+    	String deployDir = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN,
+                "defaultLibBundleDir",
+                "/" );
+        
+        if (project.getPackaging().equals("war")) 
+        {
+            deployDir = "/WEB-INF/lib";
+        }
         // dependencies
         for ( int j = 0; j < config.getDeps().length; j++ )
         {
@@ -220,11 +234,11 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             String type = dep.getType();
 
             // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
-            // exclude test and provided deps
-            if ( ( !dep.isTestDependency() && !dep.isProvided() )
+            // exclude test and provided and system dependencies outside the project 
+            if ( ( !dep.isTestDependency() && !dep.isProvided() && !dep.isSystemScopedOutsideProject(project))
                             && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
-                addDependency( writer, dep, localRepository, config.getProject().getBasedir() );
+                addDependency( writer, dep, localRepository, config.getProject().getBasedir(), deployDir );
             }
         }
     }

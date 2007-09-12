@@ -195,6 +195,18 @@ public class IdeUtils
         return getProjectName( template, dep.getGroupId(), dep.getArtifactId(), dep.getVersion() );
     }
 
+    /**
+     * Use the project name template to create an eclipse project.
+     *  
+     * @param template Template for the project name
+     * @param artifact the artifact to create the project name for
+     * @return the created ide project name
+     */
+    public static String getProjectName( String template, Artifact artifact )
+    {
+        return getProjectName( template, artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion() );
+    }
+    
     public static String getProjectName( String template, MavenProject project )
     {
         return getProjectName( template, project.getGroupId(), project.getArtifactId(), project.getVersion() );

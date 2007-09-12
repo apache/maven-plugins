@@ -123,6 +123,10 @@ public class EclipseWriterConfig
     
     private String contextName;
     
+    /**
+     * @see EclipsePlugin#wtpapplicationxml()
+     */
+    private boolean wtpapplicationxml;
     
     /**
      * Getter for <code>deps</code>.
@@ -416,4 +420,13 @@ public class EclipseWriterConfig
         this.contextName = deployName;
     }
     
+    public boolean getWtpapplicationxml()
+    {
+         return this.wtpapplicationxml;
+    }
+    
+    public void setWtpapplicationxml( boolean wtpapplicationxml )
+    {
+        this.wtpapplicationxml = wtpapplicationxml;
+    }    
 }

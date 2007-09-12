@@ -31,14 +31,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig;
+import org.apache.maven.plugin.eclipse.writers.wtp.EclipseWtpApplicationXMLWriter;
 import org.apache.maven.plugin.eclipse.writers.wtp.EclipseWtpComponent15Writer;
 import org.apache.maven.plugin.eclipse.writers.wtp.EclipseWtpComponentWriter;
 import org.apache.maven.plugin.eclipse.writers.wtp.EclipseWtpFacetsWriter;
@@ -354,6 +357,20 @@ public class EclipsePlugin
      */
     private boolean isJavaProject;
 
+    /**
+     * Must the manifest files be written for java projects so that that the jee classpath for wtp is correct.
+     * 
+     * @parameter expression="${eclipse.wtpmanifest}" default-value="false"
+     */
+    private boolean wtpmanifest;
+    
+    /**
+     * Must the application files be written for ear projects in a separate directory.
+     * 
+     * @parameter expression="${eclipse.wtpapplicationxml}" default-value="false"
+     */
+    private boolean wtpapplicationxml;
+    
     protected boolean isJavaProject()
     {
         return isJavaProject;
@@ -776,6 +793,10 @@ public class EclipsePlugin
     {
         EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
+        if (wtpmanifest && isJavaProject())
+        {
+            EclipseManifestWriter.addManifestResource(getLog(), config);
+        }
         // NOTE: This could change the config!
         writeExtraConfiguration( config );
 
@@ -803,7 +824,12 @@ public class EclipsePlugin
         {
             new EclipseClasspathWriter().init( getLog(), config ).write();
         }
-
+        
+        if (wtpapplicationxml)
+        {
+            new EclipseWtpApplicationXMLWriter().init(getLog(), config).write();
+        }
+        
         if ( pde )
         {
             this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
@@ -862,6 +888,8 @@ public class EclipsePlugin
         String projectName = IdeUtils.getProjectName( config.getProjectNameTemplate(), project );
 
         config.setEclipseProjectName( projectName );
+        
+        config.setWtpapplicationxml(wtpapplicationxml);
 
         Set convertedBuildCommands = new LinkedHashSet();
 
@@ -1161,5 +1189,12 @@ public class EclipsePlugin
             return IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE;
         }
         return IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getProjectNameForArifact(Artifact artifact) {
+        return IdeUtils.getProjectName(calculateProjectNameTemplate(), artifact);
     }
 }

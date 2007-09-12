@@ -633,10 +633,13 @@ public abstract class AbstractIdeSupportMojo
                                 .getVersion(), art.getClassifier(), isReactorProject, Artifact.SCOPE_TEST.equals( art
                                 .getScope() ), Artifact.SCOPE_SYSTEM.equals( art.getScope() ), Artifact.SCOPE_PROVIDED
                                 .equals( art.getScope() ), art.getArtifactHandler().isAddedToClasspath(),
-                                                                   art.getFile(), art.getType(), isOsgiBundle,
-                                                                   osgiSymbolicName, dependencyDepth );
-
-                            dependencies.add( dep );
+                                art.getFile(), art.getType(), isOsgiBundle, osgiSymbolicName, dependencyDepth,
+                                getProjectNameForArifact(art));
+                            //no duplicate entries allowed. System paths can cause this problem.
+                            if ( !dependencies.contains(dep) )
+                            {
+                                dependencies.add( dep );
+                            }
                         }
 
                     }
@@ -656,7 +659,14 @@ public abstract class AbstractIdeSupportMojo
 
         return ideDeps;
     }
-
+    
+    /**
+     * Find the name of the project as used in eclipse.
+     * @param artifact The artifact to find the eclipse name for.
+     * @return The name os the eclipse project.
+     */
+    abstract public String getProjectNameForArifact(Artifact artifact) ;
+    
     /**
      * Returns the list of project artifacts. Also artifacts
      * generated from referenced projects will be added, but

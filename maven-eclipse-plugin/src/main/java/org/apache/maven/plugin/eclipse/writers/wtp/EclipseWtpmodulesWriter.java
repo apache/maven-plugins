@@ -64,7 +64,8 @@ public class EclipseWtpmodulesWriter
         writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
 
         writer.startElement( ELT_WB_MODULE );
-        writer.addAttribute( ATTR_DEPLOY_NAME, config.getProject().getArtifactId() );
+        // we should use the configured eclipse project name.
+        writer.addAttribute( ATTR_DEPLOY_NAME, this.config.getEclipseProjectName() );
 
         writer.startElement( ELT_MODULE_TYPE );
         writeModuleTypeAccordingToPackaging( config.getProject(), writer, config.getBuildOutputDirectory() );

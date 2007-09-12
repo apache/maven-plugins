@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: refproject-compile-1.0.jar refproject-sysdep.jar multymodu
+ le-4-1.0.jar refproject-optional-1.0.jar deps-refproject-compile-1.0.
+ jar
+
