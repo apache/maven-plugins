@@ -148,12 +148,12 @@ public class AnalyzeReportMojo
     
         public String getName( Locale locale )
     {
-        return "Analysis Dependencies" ;
+        return "Dependency Analysis" ;
     }
 
     public String getDescription( Locale locale )
     {
-        return "Analysis dependencies of the project (used declared, used undeclared, unused declared)" ;
+        return "Dependency Analysis of the project (used declared, used undeclared, unused declared)" ;
     }
 
     protected Renderer getSiteRenderer()
@@ -163,7 +163,7 @@ public class AnalyzeReportMojo
     
         public String getOutputName()
     {
-        return "Analysis Dependencies";
+        return "Dependency Analysis";
     }
   
         
