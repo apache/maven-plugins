@@ -20,6 +20,8 @@ package org.apache.maven.plugin.ide;
 
 import java.io.File;
 
+import org.apache.maven.project.MavenProject;
+
 /**
  * @author Fabrizio Giustina
  * @version $Id$
@@ -98,6 +100,11 @@ public class IdeDependency
     private boolean osgiBundle;
 
     /**
+     * How is this dependency called when it is an eclipse project. 
+     */
+    private String eclipseProjectName;
+    
+    /**
      * Creates an uninitialized instance
      */
     public IdeDependency()
@@ -120,10 +127,12 @@ public class IdeDependency
      * @param osgiBundle Does this artifact contains a OSGI Manifest?
      * @param osgiSymbolicName Bundle-SymbolicName from the Manifest (if available)
      * @param dependencyDepth Depth of this dependency in the transitive dependency trail.
+     * @param eclipseProjectName The name of the project in eclipse
      */
     public IdeDependency( String groupId, String artifactId, String version, String classifier, boolean referencedProject,
                           boolean testDependency, boolean systemScoped, boolean provided, boolean addedToClasspath,
-                          File file, String type, boolean osgiBundle, String osgiSymbolicName, int dependencyDepth )
+                          File file, String type, boolean osgiBundle, String osgiSymbolicName, int dependencyDepth,
+                          String eclipseProjectName)
     {
         // group:artifact:version
         this.groupId = groupId;
@@ -143,6 +152,7 @@ public class IdeDependency
         // file and type
         this.file = file;
         this.type = type;
+        this.eclipseProjectName = eclipseProjectName;
     }
 
     /**
@@ -398,6 +408,22 @@ public class IdeDependency
     }
 
     /**
+     * Getter for <code>eclipseProjectName</code>.
+     * @return Returns the eclipseProjectName.
+     */
+    public String getEclipseProjectName() {
+        return this.eclipseProjectName;
+    }
+    
+    /**
+     * Setter for <code>eclipseProjectName</code>.
+     * @param eclipseProjectName The eclipseProjectName to set.
+     */
+    public void setEclipseProjectName(String eclipseProjectName) {
+        this.eclipseProjectName = eclipseProjectName;
+    }
+    
+    /**
      * @see java.lang.Object#toString()
      */
     public String toString()
@@ -412,6 +438,11 @@ public class IdeDependency
     public int compareTo( Object o )
     {
         IdeDependency dep = (IdeDependency) o;
+        //in case of system scoped dependencies the files must be compared.
+        if (isSystemScoped() && dep.isSystemScoped() && getFile().equals(dep.getFile())) 
+        {
+            return 0;
+        }
         int equals = this.getGroupId().compareTo( dep.getGroupId() );
         if ( equals != 0 )
         {
@@ -427,8 +458,44 @@ public class IdeDependency
         {
             return equals;
         }
-
         return 0;
     }
 
+    /**
+     * Is this dependency System scoped outside the eclipse project. This is 
+     * NOT complete because in reality the check should mean that any module 
+     * in the reactor contains the system scope locally!
+     * @return Returns this dependency is systemScoped outside the project.
+     */
+    public boolean isSystemScopedOutsideProject( MavenProject project )
+    {
+        File modulesTop = project.getBasedir();
+        while (new File(modulesTop.getParentFile(), "pom.xml").exists())
+        {
+            modulesTop = modulesTop.getParentFile();
+        }
+        return isSystemScoped() && !getFile().getAbsolutePath().startsWith(modulesTop.getAbsolutePath());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object obj) 
+    {
+        return compareTo(obj) == 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        if (isSystemScoped()) 
+        {
+            return getFile().hashCode();
+        } 
+        else 
+        {
+            return this.getGroupId().hashCode() ^ this.getArtifactId().hashCode() ^ this.getType().hashCode();
+        }
+    }
 }

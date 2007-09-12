@@ -342,6 +342,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
         testProject( "project-32" );
     }
     
+    public void testProject34() throws Exception
+    {
+        testProject( "project-34" );
+    }
     
     /**
      * MECLIPSE-287 : dependencies with and without classifiers

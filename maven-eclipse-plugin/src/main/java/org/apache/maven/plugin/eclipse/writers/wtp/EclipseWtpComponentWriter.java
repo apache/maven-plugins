@@ -122,7 +122,8 @@ public class EclipseWtpComponentWriter
         }
         writer.startElement( ELT_WB_MODULE );
 
-        writer.addAttribute( ATTR_DEPLOY_NAME, config.getProject().getArtifactId() );
+        //we should use the eclipse project name as the deploy name.
+        writer.addAttribute( ATTR_DEPLOY_NAME, this.config.getEclipseProjectName() );
 
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
         String target = "/"; //$NON-NLS-1$
@@ -153,9 +154,12 @@ public class EclipseWtpComponentWriter
         }
         else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
+        	
+        	String defaultApplicationXML = config.getWtpapplicationxml()?"/target/eclipseEar":"/src/main/application";
+        	
             String earSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN,
                                                                    "earSourceDirectory", //$NON-NLS-1$
-                                                                   config.getProject().getBasedir()+"/src/main/application" ); //$NON-NLS-1$
+                                                                   config.getProject().getBasedir()+defaultApplicationXML); //$NON-NLS-1$
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
