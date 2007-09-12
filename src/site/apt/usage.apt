@@ -1,0 +1,73 @@
+ ------
+ Usage
+ ------
+ Lukas Theussl
+ ------
+ 12 September 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Using the PDF plugin
+
+  The Maven PDF Plugin allows you generate a PDF document of your documentation.
+
+* Using the PDF plugin from the command-line
+
+  The PDF plugin can be called to execute from the command-line without any
+  additional configurations.  Like the other plugins, to run the PDF plugin,
+  you use:
+
++-----
+  mvn pdf:pdf
++-----
+
+  where the first <<<pdf>>> refers to the plugin's alias, and the second
+  <<<pdf>>> refers to a plugin goal.
+
+* Running the PDF plugin automatically during a build
+
+  The PDF plugin can be put into a project's pom.xml so that it gets executed
+  everytime the project is built.  Below is a sample pom.xml for running the
+  PDF plugin in the <<<site>>> phase everytime the project is built:
+
++-----
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>site-pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++-----
