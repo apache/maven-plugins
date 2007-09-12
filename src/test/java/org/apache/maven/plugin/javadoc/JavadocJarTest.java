@@ -35,12 +35,23 @@ import java.util.HashSet;
 public class JavadocJarTest
     extends AbstractMojoTestCase
 {
-
+    /**
+     * @see org.apache.maven.plugin.testing.AbstractMojoTestCase#setUp()
+     */
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
         super.setUp();
+    }
+
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
+     */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
     }
 
     /**
@@ -90,9 +101,7 @@ public class JavadocJarTest
         generatedFile = new File( getBasedir(),
                                   "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/AppSample.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-
     }
-      
 
     /**
      * Test when the specified destDir parameter has an invalid value
@@ -102,7 +111,6 @@ public class JavadocJarTest
     public void testInvalidDestdir()
         throws Exception
     {
-
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/javadocjar-invalid-destdir/javadocjar-invalid-destdir-plugin-config.xml" );
         JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
@@ -112,13 +120,5 @@ public class JavadocJarTest
         File generatedFile = new File( getBasedir(),
                                        "target/test/unit/javadocjar-invalid-destdir/target/javadocjar-invalid-destdir-javadoc.jar" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-
-    }   
-
-    protected void tearDown()
-        throws Exception
-    {
-
     }
-
 }

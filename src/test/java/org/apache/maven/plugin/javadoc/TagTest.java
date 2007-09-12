@@ -28,10 +28,22 @@ import org.codehaus.plexus.PlexusTestCase;
 public class TagTest
     extends PlexusTestCase
 {
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#setUp()
+     */
     protected void setUp()
         throws Exception
     {
         super.setUp();
+    }
+
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
+     */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
     }
 
     /**
@@ -100,11 +112,5 @@ public class TagTest
 
         assertTrue( tag.toString().indexOf( "HEAD" ) != -1 );
         assertTrue( tag.toString().indexOf( "NAME" ) != -1 );
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
-
     }
 }

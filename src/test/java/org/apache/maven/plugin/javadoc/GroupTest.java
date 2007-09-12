@@ -28,11 +28,22 @@ import org.codehaus.plexus.PlexusTestCase;
 public class GroupTest
     extends PlexusTestCase
 {
-
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#setUp()
+     */
     protected void setUp()
         throws Exception
     {
         super.setUp();
+    }
+
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
+     */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
     }
 
     /**
@@ -99,11 +110,4 @@ public class GroupTest
         assertTrue( group.toString().indexOf( "GROUP" ) != -1 );
         assertTrue( group.toString().indexOf( "PACKAGES" ) != -1 );
     }
-
-    protected void tearDown()
-        throws Exception
-    {
-
-    }
-
 }
