@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-dependency-plugin</artifactId>
+  <version>test</version>
+  <versioning>
+    <versions>
+      <version>test</version>
+    </versions>
+    <lastUpdated>20070726203738</lastUpdated>
+  </versioning>
+</metadata>
