@@ -41,12 +41,12 @@ public class TestJavadocReportTest
     }
 
     /**
-     * @see junit.framework.TestCase#tearDown()
+     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
      */
     protected void tearDown()
         throws Exception
     {
-        // nop
+        super.tearDown();
     }
 
     /**
