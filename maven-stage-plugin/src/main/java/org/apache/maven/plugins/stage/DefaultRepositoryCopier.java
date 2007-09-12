@@ -104,8 +104,6 @@ public class DefaultRepositoryCopier
 
         basedir.mkdirs();
 
-        logger.info( "Downloading files from source repository." );
-
         String protocol = sourceRepository.getProtocol();
 
         Wagon sourceWagon = wagonManager.getWagon( sourceRepository );
@@ -113,9 +111,13 @@ public class DefaultRepositoryCopier
 
         sourceWagon.connect( sourceRepository, sourceAuth );
 
+        logger.info( "Looking for files in the source repository." );
+
         List files = new ArrayList();
 
         scan( sourceWagon, "", files );
+
+        logger.info( "Downloading files from the source repository to: " + basedir );
 
         for ( Iterator i = files.iterator(); i.hasNext(); )
         {
@@ -129,6 +131,8 @@ public class DefaultRepositoryCopier
             File f = new File( basedir, s );
 
             FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+
+            logger.info( "Downloading file from the source repository: " + s );
 
             sourceWagon.get( s, f );
         }
@@ -463,6 +467,7 @@ public class DefaultRepositoryCopier
                 for ( Iterator iterator = files.iterator(); iterator.hasNext(); )
                 {
                     String file = (String) iterator.next();
+                    logger.info( "Found file in the source repository: " + file );
                     scan( wagon, basePath + file, collected );
                 }
             }
