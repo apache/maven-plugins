@@ -1189,9 +1189,12 @@ public abstract class AbstractJavadocMojo
         Commandline cmd = new Commandline();
 
         // Set the proxy host and port
-        if ( StringUtils.isNotEmpty( proxyHost ) && proxyPort > 0 )
+        if ( StringUtils.isNotEmpty( proxyHost ) )
         {
             cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
+        }
+        if ( proxyPort > 0 )
+        {
             cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
         }
 
