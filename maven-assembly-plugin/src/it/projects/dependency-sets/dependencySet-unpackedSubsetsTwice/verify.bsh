@@ -1,0 +1,64 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try
+{
+    System.out.println( "Creating JarFile java.io.File." );
+    
+    File jarFile = new File( basedir, "child2/target/child2-1.0-SNAPSHOT-bin.jar" );
+    
+    System.out.println( "Checking for existence and file-ishness of: " + jarFile );
+    
+    if ( !jarFile.exists() || jarFile.isDirectory() )
+    {
+        System.err.println( "jar file is missing or a directory." );
+        return false;
+    }
+    
+    System.out.println( "Creating JarFile instance." );
+    
+    JarFile jf = new JarFile( jarFile );
+    
+    System.out.println( "Looking for 'classes1/test/App.class' jar entry." );
+    
+    if ( jf.getEntry( "classes1/test/App.class" ) == null )
+    {
+        System.err.println( "classes1/test/App.class entry is missing." );
+        result = false;
+    }
+    
+    System.out.println( "Looking for absence of 'classes1/test/App2.class' jar entry." );
+    
+    if ( jf.getEntry( "classes1/test/App2.class" ) != null )
+    {
+        System.err.println( "classes1/test/App2.class should not be present." );
+        result = false;
+    }
+    
+    System.out.println( "Looking for 'classes2/test/App2.class' jar entry." );
+    
+    if ( jf.getEntry( "classes2/test/App2.class" ) == null )
+    {
+        System.err.println( "classes2/test/App2.class entry is missing." );
+        result = false;
+    }
+    
+    System.out.println( "Looking for absence of 'classes2/test/App.class' jar entry." );
+    
+    if ( jf.getEntry( "classes2/test/App.class" ) != null )
+    {
+        System.err.println( "classes2/test/App.class should not be present." );
+        result = false;
+    }
+    
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
