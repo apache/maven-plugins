@@ -89,7 +89,13 @@ public class ComponentsXmlResourceTransformer
         {
             throw new IOException( "Error parsing components.xml in " + is );
         }
-
+        
+        // Only try to merge in components if there are some elements in the component-set
+        if ( newDom.getChild( "components" ) == null )
+        {
+            return;
+        }
+        
         Xpp3Dom[] children = newDom.getChild( "components" ).getChildren( "component" );
 
         for ( int i = 0; i < children.length; i++ )
