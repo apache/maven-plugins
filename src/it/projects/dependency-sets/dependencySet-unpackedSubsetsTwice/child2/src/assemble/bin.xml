@@ -1,0 +1,35 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>test:child1</include>
+      </includes>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <unpack>true</unpack>
+      <outputDirectory>/classes1</outputDirectory>
+      <unpackOptions>
+        <includes>
+          <include>**/App.class</include>
+        </includes>
+      </unpackOptions>
+    </dependencySet>
+    <dependencySet>
+      <includes>
+        <include>test:child1</include>
+      </includes>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <unpack>true</unpack>
+      <outputDirectory>/classes2</outputDirectory>
+      <unpackOptions>
+        <includes>
+          <include>**/App2.class</include>
+        </includes>
+      </unpackOptions>
+    </dependencySet>
+  </dependencySets>
+</assembly>
