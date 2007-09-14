@@ -1,9 +1,9 @@
  ------
- Maven PDF Plugin
+ Known Bugs and Limitations
  ------
  Lukas Theussl
  ------
- 12 September 2007
+ 14 September 2007
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,19 +26,35 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Overview
+Known Bugs and Limitations
 
-  This plug-in allows you to generate a PDF version of your
-  project's documentation.
+  Just a brief selection...
 
-* Goals Overview
+* Current limitations
 
-  The PDF Plugin only has one goal.
+  * FML parsing doesn't work due to {{{http://jira.codehaus.org/browse/DOXIA-148}DOXIA-148}}.
 
-  * {{{./pdf-mojo.html}pdf:pdf}} Generates a PDF document containing
-  all project documentation.
+  * Xdoc tables don't work due to a bug in the xdoc parser.
 
-* Usage
+  * Maven generated pages (reports) are ignored.
 
-  Instructions on the basic usage of the PDF Plugin can be found
-  {{{./usage.html}here}}.
+  * Links to other source documents have to start with "./" or "../".
+
+  * Table widths are always uniformly distributed (Apache FOP issue).
+
+  * Identical id attributes (eg anchors) within one document will lead to a build failure.
+
+* Missing features
+
+  * Page numbering
+
+  * Table of contents
+
+  * Page headers and footers
+
+  * Different graphics formats (currently a FO sink limitation)
+
+
+* Known bugs
+
+  None.

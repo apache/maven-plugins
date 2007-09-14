@@ -29,8 +29,9 @@
   </meta>
 
   <toc name="Table of Contents">
-    <item name="Introduction" ref="index.html"/>
-    <item name="Usage" ref="usage.html"/>
+    <item name="Introduction" ref="index.apt"/>
+    <item name="Usage" ref="usage.apt"/>
+    <item name="Limitations" ref="limitations.apt"/>
   </toc>
 
 </document>
