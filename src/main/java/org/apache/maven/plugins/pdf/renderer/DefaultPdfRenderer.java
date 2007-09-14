@@ -212,6 +212,8 @@ public class DefaultPdfRenderer
 
         sink.beginDocument();
 
+        sink.coverPage( documentModel.getMeta() );
+
         for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
         {
             DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
