@@ -54,9 +54,9 @@ import java.util.StringTokenizer;
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
  * outputting the results to the screen.
- * 
+ *
  * @goal run
- * 
+ *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  */
@@ -68,70 +68,70 @@ public class InvokerMojo
      * the only indication of the build's success or failure will be the effect it has on the main
      * build (if it fails, the main build should fail as well). If streamLogs is enabled, the sub-build
      * summary will also provide an indication. By default, this parameter is set to false.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean suppressSummaries;
-    
+
     /**
      * Flag used to determine whether the build logs should be output to the normal mojo log.
-     * 
+     *
      * @parameter expression="${invoker.streamLogs}" default-value="false"
      */
     private boolean streamLogs;
-    
+
     /**
      * The local repository for caching artifacts.
-     * 
+     *
      * @parameter expression="${invoker.localRepositoryPath}"
      */
     private String localRepositoryPath;
 
     /**
      * Directory to search for integration tests.
-     * 
+     *
      * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/projects/"
      */
     private File projectsDirectory;
-    
+
     /**
      * Directory to which projects should be cloned prior to execution.
-     * 
+     *
      * @parameter
      */
     private File cloneProjectsTo;
-    
+
     /**
      * A single POM to build, skipping any scanning parameters and behavior.
-     * 
+     *
      * @parameter expression="${invoker.pom}"
      */
     private File pom;
 
     /**
      * Includes for searching the integration test directory. This parameter is meant to be set from the POM.
-     * 
+     *
      * @parameter
      */
     private List pomIncludes = Collections.singletonList( "*/pom.xml" );
 
     /**
      * Excludes for searching the integration test directory. This parameter is meant to be set from the POM.
-     * 
+     *
      * @parameter
      */
     private List pomExcludes = Collections.EMPTY_LIST;
 
     /**
      * The comma-separated list of goals to execute on each project. Default is 'package'.
-     * 
+     *
      * @parameter
      */
     private List goals = Collections.singletonList( "package" );
 
     /**
      * The name of the project-specific file that contains the enumeration of goals to execute for that test.
-     * 
+     *
      * @parameter expression="${invoker.goalsFile}" default-value="goals.txt"
      */
     private String goalsFile;
@@ -143,52 +143,58 @@ public class InvokerMojo
 
     /**
      * relative path of a pre-build hook beanshell script to run prior to executing the build.
-     * 
+     *
      * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild.bsh"
      */
     private String preBuildHookScript;
 
     /**
      * relative path of a cleanup/verification beanshell script to run after executing the build.
-     * 
+     *
      * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
      */
     private String postBuildHookScript;
 
     /**
      * Location of a properties file that defines CLI properties for the test.
-     * 
+     *
      * @parameter expression="${invoker.testPropertiesFile}" default-value="test.properties"
      */
     private String testPropertiesFile;
-    
+
     /**
      * Common set of test properties to pass in on each IT's command line, via -D parameters.
-     * 
+     *
      * @parameter
      */
     private Properties testProperties;
 
     /**
      * Whether to show errors in the build output.
-     * 
+     *
      * @parameter expression="${invoker.showErrors}" default-value="false"
      */
     private boolean showErrors;
 
     /**
      * Whether to show debug statements in the build output.
-     * 
+     *
      * @parameter expression="${invoker.debug}" default-value="false"
      */
     private boolean debug;
 
     /**
      * Suppress logging to the build.log file.
-     * 
+     *
      * @parameter expression="${invoker.noLog}" default-value="false"
      */
     private boolean noLog;
+
+    /**
+     * List of profileId's to explicitly trigger in the build.
+     * @parameter
+     */
+    private List profiles;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -205,7 +211,7 @@ public class InvokerMojo
                 throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter. Reason: "
                     + e.getMessage(), e );
             }
-            
+
             includedPoms = new String[]{ pom.getName() };
         }
         else
@@ -220,20 +226,20 @@ public class InvokerMojo
                                 + "and projects directory. Reason: " + e.getMessage(), e );
             }
         }
-        
 
-        if ( includedPoms == null || includedPoms.length < 1 )
+
+        if ( ( includedPoms == null ) || ( includedPoms.length < 1 ) )
         {
             getLog().info( "No test-projects were selected for execution." );
             return;
         }
-        
+
         File projectsDir = projectsDirectory;
-        
+
         if ( cloneProjectsTo != null )
         {
             cloneProjectsTo.mkdirs();
-            
+
             try
             {
                 cloneProjects( includedPoms );
@@ -243,7 +249,7 @@ public class InvokerMojo
                 throw new MojoExecutionException( "Failed to clone projects from: " + projectsDirectory + " to: "
                     + cloneProjectsTo + ". Reason: " + e.getMessage(), e );
             }
-            
+
             projectsDir = cloneProjectsTo;
         }
 
@@ -285,7 +291,7 @@ public class InvokerMojo
         if ( !failures.isEmpty() )
         {
             String message = failures.size() + " builds failed.";
-            
+
             throw new MojoFailureException( this, message, message );
         }
     }
@@ -294,12 +300,12 @@ public class InvokerMojo
         throws IOException
     {
         List clonedSubpaths = new ArrayList();
-        
+
         for ( int i = 0; i < includedPoms.length; i++ )
         {
             String subpath = includedPoms[i];
             int lastSep = subpath.lastIndexOf( File.separator );
-            
+
             if ( lastSep > -1 )
             {
                 subpath = subpath.substring( 0, lastSep );
@@ -308,7 +314,7 @@ public class InvokerMojo
             {
                 subpath = ".";
             }
-            
+
             // avoid copying subdirs that are already cloned.
             if ( !alreadyCloned( subpath, clonedSubpaths ) )
             {
@@ -316,18 +322,18 @@ public class InvokerMojo
                 if ( ".".equals( subpath ) )
                 {
                     String cloneSubdir = normalizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
-                    
+
                     // avoid infinite recursion if the cloneTo path is a subdirectory.
                     if ( cloneSubdir != null )
                     {
                         File temp = File.createTempFile( "pre-invocation-clone.", "" );
                         temp.delete();
                         temp.mkdirs();
-                        
+
                         FileUtils.copyDirectoryStructure( projectsDirectory, temp );
-                        
+
                         FileUtils.deleteDirectory( new File( temp, cloneSubdir ) );
-                        
+
                         FileUtils.copyDirectoryStructure( temp, cloneProjectsTo );
                     }
                     else
@@ -339,7 +345,7 @@ public class InvokerMojo
                 {
                     FileUtils.copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo, subpath ) );
                 }
-                
+
                 clonedSubpaths.add( subpath );
             }
         }
@@ -350,13 +356,13 @@ public class InvokerMojo
         for ( Iterator iter = clonedSubpaths.iterator(); iter.hasNext(); )
         {
             String path = (String) iter.next();
-            
+
             if ( ".".equals( path ) || subpath.startsWith( path ) )
             {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -364,7 +370,7 @@ public class InvokerMojo
         throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, pom );
-        
+
         final File basedir = pomFile.getParentFile();
 
         getLog().info( "Building: " + pom );
@@ -389,7 +395,7 @@ public class InvokerMojo
                     {
                         logger = new FileLogger( outputLog );
                     }
-                    
+
                     getLog().debug( "build log initialized in: " + outputLog );
                 }
                 catch ( final IOException e )
@@ -416,7 +422,7 @@ public class InvokerMojo
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
-            if ( invocationGoals.size() == 1 && "_default".equals( invocationGoals.get( 0 ) ) )
+            if ( ( invocationGoals.size() == 1 ) && "_default".equals( invocationGoals.get( 0 ) ) )
             {
                 getLog().debug( "Executing default goal for project in: " + pom );
             }
@@ -430,14 +436,14 @@ public class InvokerMojo
             try
             {
                 Properties collectedTestProperties = new Properties();
-                
+
                 if ( testProperties != null )
                 {
                     collectedTestProperties.putAll( testProperties );
                 }
-                
+
                 final Properties loadedProperties = loadTestProperties( basedir );
-                
+
                 if ( loadedProperties != null )
                 {
                     collectedTestProperties.putAll( loadedProperties );
@@ -474,7 +480,7 @@ public class InvokerMojo
             request.setShowErrors( showErrors );
 
             request.setDebug( debug );
-            
+
             request.setBaseDirectory( basedir );
 
             if ( !noLog )
@@ -485,7 +491,12 @@ public class InvokerMojo
             }
 
             request.setPomFile( pomFile );
-            
+
+            if ( profiles != null )
+            {
+                request.setProfiles( profiles );
+            }
+
             try
             {
                 getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
@@ -615,7 +626,7 @@ public class InvokerMojo
 
             PrintStream origOut = System.out;
             PrintStream origErr = System.err;
-            
+
             FileReader reader = null;
             try
             {
@@ -625,7 +636,7 @@ public class InvokerMojo
 
                     System.setErr( logger.getPrintStream() );
                     System.setOut( logger.getPrintStream() );
-                    
+
                     engine.setErr( logger.getPrintStream() );
                     engine.setOut( logger.getPrintStream() );
                 }
@@ -693,7 +704,7 @@ public class InvokerMojo
             {
                 final List goals = readFromFile( projectGoalList );
 
-                if ( goals != null && !goals.isEmpty() )
+                if ( ( goals != null ) && !goals.isEmpty() )
                 {
                     getLog().debug( "Using goals specified in file: " + projectGoalList );
                     invocationGoals = goals;
@@ -708,8 +719,8 @@ public class InvokerMojo
         throws IOException
     {
         String[] poms;
-        
-        if ( pom != null && pom.exists() )
+
+        if ( ( pom != null ) && pom.exists() )
         {
             poms = new String[]{ pom.getAbsolutePath() };
         }
@@ -727,9 +738,9 @@ public class InvokerMojo
 
             poms = fsm.getIncludedFiles( fs );
         }
-        
+
         poms = normalizePomPaths( poms );
-        
+
         return poms;
     }
 
@@ -737,29 +748,29 @@ public class InvokerMojo
         throws IOException
     {
         String projectsDirPath = projectsDirectory.getCanonicalPath();
-        
+
         String[] results = new String[poms.length];
         for ( int i = 0; i < poms.length; i++ )
         {
             String pomPath = poms[i];
-            
+
             File pom = new File( pomPath );
-            
+
             if ( !pom.isAbsolute() )
             {
                 pom = new File( projectsDirectory, pomPath );
             }
-            
+
             String normalizedPath = normalizePath( pom, projectsDirPath );
-            
+
             if ( normalizedPath == null )
             {
                 normalizedPath = pomPath;
             }
-            
+
             results[i] = normalizedPath;
         }
-        
+
         return results;
     }
 
@@ -767,7 +778,7 @@ public class InvokerMojo
         throws IOException
     {
         String normalizedPath = path.getCanonicalPath();
-        
+
         if ( normalizedPath.startsWith( withinDirPath ) )
         {
             normalizedPath = normalizedPath.substring( withinDirPath.length() );
@@ -775,7 +786,7 @@ public class InvokerMojo
             {
                 normalizedPath = normalizedPath.substring( File.separator.length() );
             }
-            
+
             return normalizedPath;
         }
         else
@@ -830,7 +841,7 @@ public class InvokerMojo
     {
         final List result = new ArrayList();
 
-        if ( csv != null && csv.trim().length() > 0 )
+        if ( ( csv != null ) && ( csv.trim().length() > 0 ) )
         {
             final StringTokenizer st = new StringTokenizer( csv, "," );
 
