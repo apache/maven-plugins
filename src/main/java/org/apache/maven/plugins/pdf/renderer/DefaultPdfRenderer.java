@@ -38,7 +38,7 @@ import org.apache.maven.doxia.docrenderer.document.DocumentTOCItem;
 import org.apache.maven.doxia.docrenderer.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
-import org.apache.maven.doxia.module.fo.FoSink;
+import org.apache.maven.doxia.module.fo.FoAggregateSink;
 import org.apache.maven.doxia.module.fo.FoUtils;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
@@ -116,7 +116,7 @@ public class DefaultPdfRenderer
             pdfOutputFile.getParentFile().mkdirs();
         }
 
-        FoSink sink = new FoSink( new FileWriter( outputFOFile ), /** aggregate */ true );
+        FoAggregateSink sink = new FoAggregateSink( new FileWriter( outputFOFile ) );
 
         sink.beginDocument();
 
@@ -136,6 +136,8 @@ public class DefaultPdfRenderer
                     String doc = (String) j.next();
 
                     String fullPathDoc = new File( moduleBasedir, doc ).getPath();
+
+                    sink.setDocumentName( doc );
 
                     parse( fullPathDoc, module, sink );
                 }
@@ -206,10 +208,10 @@ public class DefaultPdfRenderer
         }
 
 
-        FoSink sink = new FoSink( new FileWriter( outputFOFile ), /** aggregate */ true );
+        FoAggregateSink sink = new FoAggregateSink( new FileWriter( outputFOFile ) );
 
         sink.beginDocument();
-        
+
         for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
         {
             DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
@@ -219,14 +221,14 @@ public class DefaultPdfRenderer
                 // TODO: getLogger().info( "No ref defined for an tocItem in the document descriptor." );
                 continue;
             }
-        
+
             String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-            
+
             if ( href.lastIndexOf( "." ) != -1 )
             {
                 href = href.substring( 0, href.lastIndexOf( "." ) );
             }
-            
+
             for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
             {
                 SiteModule module = (SiteModule) i.next();
@@ -235,10 +237,14 @@ public class DefaultPdfRenderer
 
                 if ( moduleBasedir.exists() && !"fml".equals( module.getExtension() ) )
                 {
-                    File source = new File( moduleBasedir, href + "." + module.getExtension() );
+                    String doc = href + "." + module.getExtension();
+
+                    File source = new File( moduleBasedir, doc );
 
                     if ( source.exists() )
                     {
+                        sink.setDocumentName( doc );
+
                         parse( source.getPath(), module, sink );
                     }
                 }
@@ -259,7 +265,7 @@ public class DefaultPdfRenderer
      * @throws DocRendererException
      * @throws IOException
      */
-    private void parse( String fullPathDoc, SiteModule module, FoSink sink )
+    private void parse( String fullPathDoc, SiteModule module, FoAggregateSink sink )
         throws DocRendererException, IOException
     {
         try
