@@ -96,7 +96,6 @@ under the License.
     <module>maven-changes-plugin</module>
     <module>maven-checkstyle-plugin</module>
     <module>maven-clean-plugin</module>
-    <module>maven-clover-plugin</module>
     <module>maven-compiler-plugin</module>
     <module>maven-dependency-plugin</module>
     <module>maven-deploy-plugin</module>
