@@ -25,14 +25,11 @@ under the License.
       <question>Why isn't my username being picked up when I specify a repositoryId?</question>
       <answer>
         <p>
-          The plugin <i>should</i> pick up your username/password from your
-          <code>settings.xml</code> file. Due to a bug in Wagon this isn't
-          happening. To get around this you can pass along your username like
-          this:
+          The plugin <i>will</i> pick up the username/password from your
+          <code>settings.xml</code> file. Make sure that you are using the same
+          <code>id</code> in your <code>settings.xml</code> that you are using
+          on the command line.
         </p>
-        <source>
-mvn stage:copy -Dstage.username=dennisl ...
-        </source>
       </answer>
     </faq>
   </part>

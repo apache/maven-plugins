@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.IOException;
 
 /**
- * Copies artifacts from one repository to the another repository.
+ * Copies artifacts from one repository to another repository.
  * 
  * @author Jason van Zyl
  * @requiresProject false
