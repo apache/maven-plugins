@@ -214,6 +214,8 @@ public class DefaultPdfRenderer
 
         sink.coverPage( documentModel.getMeta() );
 
+        sink.toc( documentModel.getToc() );
+
         for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
         {
             DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
@@ -246,6 +248,8 @@ public class DefaultPdfRenderer
                     if ( source.exists() )
                     {
                         sink.setDocumentName( doc );
+
+                        sink.setDocumentTitle( tocItem.getName() );
 
                         parse( source.getPath(), module, sink );
                     }
