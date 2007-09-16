@@ -23,7 +23,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.IOException;
 
