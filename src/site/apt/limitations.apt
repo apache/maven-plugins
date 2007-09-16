@@ -36,6 +36,9 @@ Known Bugs and Limitations
 
   * Xdoc tables don't work due to a bug in the xdoc parser.
 
+  * Xdoc parsing fails if two identical section/subsection titles are found in one
+    source document (Doxia xdoc parser issue).
+
   * Maven generated pages (reports) are ignored.
 
   * Links to other source documents have to start with "./" or "../".
@@ -44,16 +47,13 @@ Known Bugs and Limitations
 
   * Identical id attributes (eg anchors) within one document will lead to a build failure.
 
+  * Menu sub-items are not supported (every source document starts a new chapter).
+
+  * Cover page not configurable (apart from title and author).
+
 * Missing features
 
-  * Page numbering
-
-  * Table of contents
-
-  * Page headers and footers
-
-  * Different graphics formats (currently a FO sink limitation)
-
+  * Only .png graphics format is supported (currently a FO sink limitation)
 
 * Known bugs
 
