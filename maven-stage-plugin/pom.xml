@@ -41,7 +41,7 @@
   </issueManagement>
 
   <properties>
-    <wagonVersion>1.0-rc1-SNAPSHOT</wagonVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
     <mavenVersion>2.0.5</mavenVersion>
   </properties>
 
