@@ -19,13 +19,6 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,13 +28,20 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.mailsender.MailSenderException;
 import org.codehaus.plexus.util.IOUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Goal which sends an announcement through email.
  *
- * @goal announcement-mail
- * @execute goal="announcement-generate"
  * @author aramirez@exist.com
  * @version $Id$
+ * @goal announcement-mail
+ * @execute goal="announcement-generate"
  */
 public class AnnouncementMailMojo
     extends AbstractMojo
@@ -102,18 +102,28 @@ public class AnnouncementMailMojo
     private String subject;
 
     /**
-     * The id of the developer sending the announcement mail. This should match
-     * the id of one of the developers in the pom. If a matching developer is
-     * not found, then the first developer in the pom will be used.
+     * The id of the developer sending the announcement mail. Only used if the <tt>mailSender</tt>
+     * attribute is not set. In this case, this should match the id of one of the developers in
+     * the pom. If a matching developer is not found, then the first developer in the pom will be
+     * used.
      *
      * @parameter expression="${changes.fromDeveloperId}"
      */
     private String fromDeveloperId;
 
     /**
+     * Defines the sender of the announcement if the list of developer is empty or
+     * if the sender is not a member of the development team.
+     *
+     * @parameter
+     */
+    private MailSender mailSender;
+
+
+    /**
      * Recipient email address.
      *
-     * @parameter 
+     * @parameter
      * @required
      */
     private List toAddresses;
@@ -207,50 +217,30 @@ public class AnnouncementMailMojo
     /**
      * Send the email.
      *
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException if the mail could not be sent
      */
     protected void sendMessage()
         throws MojoExecutionException
     {
         String email = "";
-
+        final MailSender ms = getActualMailSender();
+        final String fromName = ms.getName();
+        final String fromAddress = ms.getEmail();
+        if ( fromAddress == null || fromAddress.equals( "" ) )
+        {
+            throw new MojoExecutionException( "Invalid mail sender: name and email is mandatory (" + ms + ")." );
+        }
+        getLog().info( "Using this sender for email announcement: " + fromAddress + " < " + fromName + " > " );
         try
         {
-            int i = 0;
-
-            Developer sendingDeveloper;
-            if ( getFromDeveloperId() != null )
+            final Iterator it = getToAddresses().iterator();
+            while ( it.hasNext() )
             {
-                sendingDeveloper = getDeveloperById( getFromDeveloperId(), getFrom() );
-            }
-            else
-            {
-                sendingDeveloper = getFirstDeveloper( getFrom() );
-            }
-
-            String fromName = sendingDeveloper.getName();
-            String fromAddress = sendingDeveloper.getEmail();
-
-            getLog().info( "Using this sender for email announcement: " + fromAddress + " < " + fromName + " > " );
-
-            if ( fromAddress == null || fromAddress.equals( "" ) )
-            {
-                throw new MojoExecutionException( "Email address in <developers> section is required." );
-            }
-
-
-            while ( i < getToAddresses().size() )
-            {
-                email = getToAddresses().get( i ).toString();
-
-                getLog().info( "Sending mail... " + email );
-
-                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ),
-                             email, "", fromAddress, fromName );
-
+                email = it.next().toString();
+                getLog().info( "Sending mail to " + email + "..." );
+                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ), email, "", fromAddress,
+                             fromName );
                 getLog().info( "Sent..." );
-
-                i++;
             }
         }
         catch ( IOException ioe )
@@ -278,19 +268,18 @@ public class AnnouncementMailMojo
 
     /**
      * Read the announcement generated file.
-     * 
-     * @param  fileName         Accepts filename to be read.
-     * @return  fileReader      Return the FileReader.
+     *
+     * @param fileName the filename to be read
+     * @return fileReader Return the FileReader
+     * @throws MojoExecutionException if the file could not be found
      */
-    public FileReader readAnnouncement( String fileName )
+    protected FileReader readAnnouncement( String fileName )
         throws MojoExecutionException
     {
-        FileReader fileReader = null;
-
+        FileReader fileReader;
         try
         {
             File file = new File( fileName );
-
             fileReader = new FileReader( file );
         }
         catch ( FileNotFoundException fnfe )
@@ -301,47 +290,50 @@ public class AnnouncementMailMojo
     }
 
     /**
-     * Retrieve the first name and email address found in the developers list.
+     * Returns the identify of the mail sender according to the plugin's configuration:
+     * <ul>
+     * <li>if the <tt>mailSender</tt> parameter is set, it is returned</li>
+     * <li>if no <tt>fromDeveloperId</tt> is set, the first developer in the list is returned</li>
+     * <li>if a <tt>fromDeveloperId</tt> is set, the developer with that id is returned</li>
+     * <li>if the developers list is empty or if the specified id does not exist, an exception is thrown</li>
+     * </ul>
      *
-     * @param developers A List of developers
-     * @return The first developer in the list
+     * @return the mail sender to use
+     * @throws MojoExecutionException if the mail sender could not be retrieved
      */
-    protected Developer getFirstDeveloper( List developers )
+    protected MailSender getActualMailSender()
         throws MojoExecutionException
     {
-        if ( developers.size() > 0 )
+        if ( mailSender != null )
         {
-            return (Developer) developers.get( 0 );
+            return mailSender;
+        }
+        else if ( from == null || from.isEmpty() )
+        {
+            throw new MojoExecutionException(
+                "<developers> section in your pom could not be empty: add a <developer> entry or set the " +
+                    "mailSender parameter." );
+        }
+        else if ( fromDeveloperId == null )
+        {
+            final Developer dev = (Developer) from.get( 0 );
+            return new MailSender( dev.getName(), dev.getEmail() );
         }
         else
         {
-            throw new MojoExecutionException( "Email address is required in the <developers> section in your pom." );
-        }
-    }
-
-    /**
-     * Retrieve the developer with the given id.
-     *
-     * @param developers A List of developers
-     * @return The developer in the list with the specified id
-     */
-    protected Developer getDeveloperById( String id, List developers )
-        throws MojoExecutionException
-    {
-        Iterator it = developers.iterator();
-        while ( it.hasNext() )
-        {
-            Developer developer = (Developer) it.next();
-
-            if ( id.equals( developer.getId() ) )
+            final Iterator it = from.iterator();
+            while ( it.hasNext() )
             {
-                return developer;
+                Developer developer = (Developer) it.next();
+
+                if ( fromDeveloperId.equals( developer.getId() ) )
+                {
+                    return new MailSender( developer.getName(), developer.getEmail() );
+                }
             }
-
+            throw new MojoExecutionException(
+                "Missing developer with id '" + fromDeveloperId + "' in the <developers> section in your pom." );
         }
-
-        throw new MojoExecutionException( "Missing developer with id '"  + id
-            + "' in the <developers> section in your pom." );
     }
 
     //================================
@@ -416,5 +408,66 @@ public class AnnouncementMailMojo
     public void setFromDeveloperId( String fromDeveloperId )
     {
         this.fromDeveloperId = fromDeveloperId;
+    }
+
+
+    public String getUsername()
+    {
+        return username;
+    }
+
+    public void setUsername( String username )
+    {
+        this.username = username;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword( String password )
+    {
+        this.password = password;
+    }
+
+    public boolean isSslMode()
+    {
+        return sslMode;
+    }
+
+    public void setSslMode( boolean sslMode )
+    {
+        this.sslMode = sslMode;
+    }
+
+    public MailSender getMailSender()
+    {
+        return mailSender;
+    }
+
+    public void setMailSender( MailSender mailSender )
+    {
+        this.mailSender = mailSender;
+    }
+
+    public String getTemplateOutputDirectory()
+    {
+        return templateOutputDirectory;
+    }
+
+    public void setTemplateOutputDirectory( String templateOutputDirectory )
+    {
+        this.templateOutputDirectory = templateOutputDirectory;
+    }
+
+    public String getTemplate()
+    {
+        return template;
+    }
+
+    public void setTemplate( String template )
+    {
+        this.template = template;
     }
 }
