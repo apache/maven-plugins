@@ -29,21 +29,26 @@
 
 Maven Stage Plugin
 
- The Maven Stage Plugin copies artifacts from one repository to another. Its
- main use is for copying artifacts from a staging repository to the real
- repository.
+  The Maven Stage Plugin copies artifacts from one repository to another. Its
+  main use is for copying artifacts from a staging repository to the real
+  repository.
 
 * Goals Overview
 
-   The Stage Plugin has one goal:
+  The Stage Plugin has one goal:
 
-   * {{{copy-mojo.html}stage:copy}} Copies artifacts from one repository to the
-   another repository.
+  * {{{copy-mojo.html}stage:copy}} Copies artifacts from one repository to
+    another repository.
 
-   Check the {{{usage.html}instructions on how to use the Stage Plugin}}.
+  []
+   
+* Usage
 
- ~~ * Examples
+  Instructions on how to use the Stage Plugin can be found {{{usage.html}here}}.
 
- ~~   The following examples show how to use the Stage Plugin in more advanced use-cases:
+~~ * Examples
 
- ~~   * {{{examples/advanced.html}Advanced}}
+~~   To provide you with better understanding of some usages of the Stage Plugin,
+~~   you can take a look into the following examples:
+
+~~   * {{{examples/advanced.html}Advanced}}
