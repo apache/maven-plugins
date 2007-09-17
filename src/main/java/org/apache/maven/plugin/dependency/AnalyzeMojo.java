@@ -148,7 +148,7 @@ public class AnalyzeMojo
         
         if ( outputDirectory == null || !outputDirectory.exists())
         {
-            getLog().info( "Skipping project with no Target directory" );
+            getLog().info( "Skipping project with no build directory" );
             return;
         }
 
@@ -165,64 +165,73 @@ public class AnalyzeMojo
     private boolean checkDependencies()
         throws MojoExecutionException
     {
-        boolean warning = false;
+        ProjectDependencyAnalysis analysis;
         try
         {
-            ProjectDependencyAnalysis analysis = analyzer.analyze( project );
-
-            if ( verbose )
-            {
-                getLog().info( "Used declared dependencies:" );
-
-                logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
-            }
-
-            getLog().info( "Used undeclared dependencies:" );
-
-            Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
-            logArtifacts( usedUndeclared, true );
-
-            getLog().info( "Unused declared dependencies:" );
-
-            Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
-
-            if ( ignoreNonCompile )
-            {
-                Set filteredUnusedDeclared = new HashSet( unusedDeclared );
-                Iterator iter = filteredUnusedDeclared.iterator();
-                while ( iter.hasNext() )
-                {
-                    Artifact artifact = (Artifact) iter.next();
-                    if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
-                    {
-                        iter.remove();
-                    }
-                }
-                unusedDeclared = filteredUnusedDeclared;
-            }
-            logArtifacts( unusedDeclared, true );
-
-            if ( outputXML )
-            {
-                writeDependencyXML( usedUndeclared );
-            }
-            if ( scriptableOutput )
-            {
-                writeScriptableOutput( usedUndeclared );
-            }
-
-            if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
-                            && !unusedDeclared.isEmpty() )
-            {
-                warning = true;
-            }
+            analysis = analyzer.analyze( project );
         }
         catch ( ProjectDependencyAnalyzerException exception )
         {
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
-        return warning;
+        Set usedDeclared = analysis.getUsedDeclaredArtifacts();
+        Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
+        Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
+        
+        if ( ignoreNonCompile )
+        {
+            Set filteredUnusedDeclared = new HashSet( unusedDeclared );
+            Iterator iter = filteredUnusedDeclared.iterator();
+            while ( iter.hasNext() )
+            {
+                Artifact artifact = (Artifact) iter.next();
+                if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
+                {
+                    iter.remove();
+                }
+            }
+            unusedDeclared = filteredUnusedDeclared;
+        }
+
+        if ( ( !verbose || usedDeclared.isEmpty() ) && usedUndeclared.isEmpty() && unusedDeclared.isEmpty() )
+        {
+            getLog().info( "No dependency problems found" );
+            return false;
+        }
+        
+        if ( verbose && !usedDeclared.isEmpty() )
+        {
+            getLog().info( "Used declared dependencies found:" );
+
+            logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
+        }
+        
+        if ( !usedUndeclared.isEmpty() )
+        {
+            getLog().warn( "Used undeclared dependencies found:" );
+
+            logArtifacts( usedUndeclared, true );
+        }
+
+        if ( !unusedDeclared.isEmpty() )
+        {
+            getLog().warn( "Unused declared dependencies found:" );
+            
+            logArtifacts( unusedDeclared, true );
+        }
+
+        if ( outputXML )
+        {
+            writeDependencyXML( usedUndeclared );
+        }
+        
+        if ( scriptableOutput )
+        {
+            writeScriptableOutput( usedUndeclared );
+        }
+
+        return !usedUndeclared.isEmpty() || !unusedDeclared.isEmpty();
     }
 
     private void logArtifacts( Set artifacts, boolean warn )
