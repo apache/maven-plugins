@@ -79,9 +79,9 @@ public class AnalyzeMojo
     /**
      * Output used dependencies
      * 
-     * @parameter expression="${mdep.analyze.displayUsed}" default-value="false"
+     * @parameter expression="${mdep.analyze.verbose}" default-value="false"
      */
-    private boolean displayUsed;
+    private boolean verbose;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
@@ -170,7 +170,7 @@ public class AnalyzeMojo
         {
             ProjectDependencyAnalysis analysis = analyzer.analyze( project );
 
-            if ( this.displayUsed )
+            if ( verbose )
             {
                 getLog().info( "Used declared dependencies:" );
 
