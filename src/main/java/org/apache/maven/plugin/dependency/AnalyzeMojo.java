@@ -51,7 +51,7 @@ public class AnalyzeMojo
     // fields -----------------------------------------------------------------
 
     /**
-     * 
+     * The Maven project to analyze.
      * 
      * @parameter expression="${project}"
      * @required
@@ -60,9 +60,9 @@ public class AnalyzeMojo
     private MavenProject project;
 
     /**
+     * The Maven project dependency analyzer to use.
      * 
-     * 
-     * @parameter expression="${component.org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer}"
+     * @component
      * @required
      * @readonly
      */
