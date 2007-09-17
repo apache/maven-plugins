@@ -187,10 +187,10 @@ public class DependencyStatusSets
                 log.info( "   " + ( (Artifact) i.next() ).getId() );
             }
         }
-        log.info( "" );
 
         if ( this.unResolvedDependencies != null && !this.unResolvedDependencies.isEmpty() )
         {
+            log.info( "" );
             log.info( "The following files have NOT been resolved: " );
             SortedSet sortedUnResolvedDependencies = new TreeSet();
             sortedUnResolvedDependencies.addAll( this.unResolvedDependencies );
