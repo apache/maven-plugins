@@ -85,14 +85,6 @@ public class AnalyzeMojo
     private ProjectDependencyAnalyzer analyzer;
 
     /**
-     * Ignore Direct Dependency Overrides of dependencyManagement section.
-     * 
-     * @parameter expression="${mdep.analyze.ignore.direct}"
-     *            default-value="true"
-     */
-    private boolean ignoreDirect;
-
-    /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
      * @parameter expression="${mdep.analyze.ignore.noncompile}"
@@ -165,15 +157,6 @@ public class AnalyzeMojo
         {
             throw new MojoExecutionException( "Found Dependency errors." );
         }
-
-        // now do AnalyzeDepMgt (put this in a lifecycle later)
-        AnalyzeDepMgt adm = new AnalyzeDepMgt();
-        adm.setLog( getLog() );
-        adm.setProject( this.project );
-        adm.setFailBuild( this.failBuild );
-        adm.setPluginContext( this.getPluginContext() );
-        adm.setIgnoreDirect( this.ignoreDirect );
-        adm.execute();
     }
 
     // private methods --------------------------------------------------------
