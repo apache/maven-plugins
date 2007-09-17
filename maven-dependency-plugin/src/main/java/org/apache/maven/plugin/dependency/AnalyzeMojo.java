@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -187,7 +188,8 @@ public class AnalyzeMojo
 
             if ( ignoreNonCompile )
             {
-                Iterator iter = unusedDeclared.iterator();
+                Set filteredUnusedDeclared = new HashSet( unusedDeclared );
+                Iterator iter = filteredUnusedDeclared.iterator();
                 while ( iter.hasNext() )
                 {
                     Artifact artifact = (Artifact) iter.next();
@@ -196,6 +198,7 @@ public class AnalyzeMojo
                         iter.remove();
                     }
                 }
+                unusedDeclared = filteredUnusedDeclared;
             }
             logArtifacts( unusedDeclared, true );
 
