@@ -129,7 +129,7 @@ public class AnalyzeMojo
      * @readonly
      * @since 2.0-alpha-5
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     // Mojo methods -----------------------------------------------------------
 
