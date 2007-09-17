@@ -69,11 +69,11 @@ public class AnalyzeMojo
     private ProjectDependencyAnalyzer analyzer;
 
     /**
-     * Fail Build on problem
+     * Whether to fail the build if a dependency warning is found.
      * 
-     * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
+     * @parameter expression="${mdep.analyze.failOnWarning}" default-value="false"
      */
-    private boolean failBuild;
+    private boolean failOnWarning;
 
     /**
      * Output used dependencies
@@ -151,11 +151,11 @@ public class AnalyzeMojo
             return;
         }
 
-        boolean result = checkDependencies();
+        boolean warning = checkDependencies();
 
-        if ( result && this.failBuild )
+        if ( warning && failOnWarning )
         {
-            throw new MojoExecutionException( "Found Dependency errors." );
+            throw new MojoExecutionException( "Dependency problems found" );
         }
     }
 
@@ -164,7 +164,7 @@ public class AnalyzeMojo
     private boolean checkDependencies()
         throws MojoExecutionException
     {
-        boolean result = false;
+        boolean warning = false;
         try
         {
             ProjectDependencyAnalysis analysis = analyzer.analyze( project );
@@ -197,7 +197,7 @@ public class AnalyzeMojo
                     }
                 }
             }
-            logArtifacts( unusedDeclared, false );
+            logArtifacts( unusedDeclared, true );
 
             if ( outputXML )
             {
@@ -211,8 +211,7 @@ public class AnalyzeMojo
             if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
                             && !unusedDeclared.isEmpty() )
             {
-                getLog().warn( "Potential problems discovered." );
-                result = true;
+                warning = true;
             }
         }
         catch ( ProjectDependencyAnalyzerException exception )
@@ -220,7 +219,7 @@ public class AnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
-        return result;
+        return warning;
     }
 
     private void logArtifacts( Set artifacts, boolean warn )
