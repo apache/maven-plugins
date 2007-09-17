@@ -86,14 +86,14 @@ public class AnalyzeMojo
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="true"
+     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="false"
      */
     private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
      * 
-     * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
+     * @parameter expression="${mdep.analyze.outputXML}" default-value="false"
      * @since 2.0-alpha-5
      */
     private boolean outputXML;
