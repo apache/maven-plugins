@@ -34,15 +34,17 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 
+
 /**
- * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and
- * dependencies that are declared but unused. It also executes the analyze-dep-mgt goal.
+ * This goal analyzes your project's dependencies and lists dependencies that
+ * should be declared, but are not, and dependencies that are declared but
+ * unused. It also executes the analyze-dep-mgt goal.
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @goal analyze
  * @requiresDependencyResolution test
- * @phase verify
+ * @execute phase="test-compile"
  * @since 2.0-alpha-3
  */
 public class AnalyzeMojo
@@ -51,7 +53,7 @@ public class AnalyzeMojo
     // fields -----------------------------------------------------------------
 
     /**
-     * The Maven project to analyze.
+     * 
      * 
      * @parameter expression="${project}"
      * @required
@@ -60,68 +62,74 @@ public class AnalyzeMojo
     private MavenProject project;
 
     /**
-     * The Maven project dependency analyzer to use.
+     * Fail Build on problem
      * 
-     * @component
-     * @required
-     * @readonly
+     * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
      */
-    private ProjectDependencyAnalyzer analyzer;
-
-    /**
-     * Whether to fail the build if a dependency warning is found.
-     * 
-     * @parameter expression="${mdep.analyze.failOnWarning}" default-value="false"
-     */
-    private boolean failOnWarning;
+    private boolean failBuild = false;
 
     /**
      * Output used dependencies
      * 
      * @parameter expression="${mdep.analyze.displayUsed}" default-value="false"
      */
-    private boolean displayUsed;
+    private boolean displayUsed = false;
+
+    /**
+     * 
+     * 
+     * @parameter expression="${component.org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer}"
+     * @required
+     * @readonly
+     */
+    private ProjectDependencyAnalyzer analyzer;
+
+    /**
+     * Ignore Direct Dependency Overrides of dependencyManagement section.
+     * 
+     * @parameter expression="${mdep.analyze.ignore.direct}"
+     *            default-value="true"
+     */
+    private boolean ignoreDirect = true;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="true"
+     * @parameter expression="${mdep.analyze.ignore.noncompile}"
+     *            default-value="true"
      */
-    private boolean ignoreNonCompile;
+    private boolean ignoreNonCompile = true;
 
     /**
      * Output the xml for the missing dependencies
-     * 
-     * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
      * @since 2.0-alpha-5
+     * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
      */
-    private boolean outputXML;
-
+    private boolean outputXML = true;
+    
     /**
      * Output scriptable values
-     * 
-     * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
      * @since 2.0-alpha-5
+     * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
      */
-    private boolean scriptableOutput;
-
+    private boolean scriptableOutput = false;
+    
     /**
      * Flag to use for scriptable output
-     * 
-     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
      * @since 2.0-alpha-5
+     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
      */
     private String scriptableFlag;
-
+    
     /**
      * Flag to use for scriptable output
      * 
-     * @parameter expression="${basedir}"
+     * @parameter expression="${basedir}" 
      * @readonly
      * @since 2.0-alpha-5
      */
     private File baseDir;
-
+    
     /**
      * Target folder
      * 
@@ -129,7 +137,7 @@ public class AnalyzeMojo
      * @readonly
      * @since 2.0-alpha-5
      */
-    private File outputDirectory;
+    protected File outputDirectory;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -151,12 +159,21 @@ public class AnalyzeMojo
             return;
         }
 
-        boolean warning = checkDependencies();
+        boolean result = checkDependencies();
 
-        if ( warning && failOnWarning )
+        if ( result && this.failBuild )
         {
-            throw new MojoExecutionException( "Dependency problems found" );
+            throw new MojoExecutionException( "Found Dependency errors." );
         }
+
+        // now do AnalyzeDepMgt (put this in a lifecycle later)
+        AnalyzeDepMgt adm = new AnalyzeDepMgt();
+        adm.setLog( getLog() );
+        adm.setProject( this.project );
+        adm.setFailBuild( this.failBuild );
+        adm.setPluginContext( this.getPluginContext() );
+        adm.setIgnoreDirect( this.ignoreDirect );
+        adm.execute();
     }
 
     // private methods --------------------------------------------------------
@@ -164,7 +181,7 @@ public class AnalyzeMojo
     private boolean checkDependencies()
         throws MojoExecutionException
     {
-        boolean warning = false;
+        boolean result = false;
         try
         {
             ProjectDependencyAnalysis analysis = analyzer.analyze( project );
@@ -197,21 +214,22 @@ public class AnalyzeMojo
                     }
                 }
             }
-            logArtifacts( unusedDeclared, true );
+            logArtifacts( unusedDeclared, false );
 
             if ( outputXML )
             {
                 writeDependencyXML( usedUndeclared );
             }
-            if ( scriptableOutput )
+            if (scriptableOutput)
             {
                 writeScriptableOutput( usedUndeclared );
             }
 
             if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
-                            && !unusedDeclared.isEmpty() )
+                && !unusedDeclared.isEmpty() )
             {
-                warning = true;
+                getLog().warn( "Potential problems discovered." );
+                result = true;
             }
         }
         catch ( ProjectDependencyAnalyzerException exception )
@@ -219,7 +237,7 @@ public class AnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
-        return warning;
+        return result;
     }
 
     private void logArtifacts( Set artifacts, boolean warn )
@@ -233,10 +251,10 @@ public class AnalyzeMojo
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
-
-                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                
+                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
-
+                
                 if ( warn )
                 {
                     getLog().warn( "   " + artifact );
@@ -264,9 +282,9 @@ public class AnalyzeMojo
             {
                 Artifact artifact = (Artifact) iter.next();
 
-                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
-
+                
                 writer.startElement( "dependency" );
                 writer.startElement( "groupId" );
                 writer.writeText( artifact.getGroupId() );
@@ -275,7 +293,7 @@ public class AnalyzeMojo
                 writer.writeText( artifact.getArtifactId() );
                 writer.endElement();
                 writer.startElement( "version" );
-                writer.writeText( artifact.getBaseVersion() );
+                writer.writeText( artifact.getBaseVersion());
                 writer.endElement();
 
                 if ( !Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )
@@ -291,26 +309,24 @@ public class AnalyzeMojo
         }
     }
     
-    public void writeScriptableOutput( Set artifacts )
+   public void writeScriptableOutput(Set artifacts)
     {
-        if ( !artifacts.isEmpty() )
-        {
-            getLog().info( "Missing dependencies: " );
-            String pomFile = baseDir.getAbsolutePath() + File.separatorChar + "pom.xml";
-            StringBuffer buf = new StringBuffer();
-            Iterator iter = artifacts.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = (Artifact) iter.next();
-
-                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
-                artifact.isSnapshot();
-
-                buf.append( scriptableFlag + ":" + pomFile + ":" + artifact.getDependencyConflictId() + ":"
-                                + artifact.getClassifier() + ":" + artifact.getBaseVersion() + ":"
-                                + artifact.getScope() + "\n" );
-            }
-            getLog().info( "\n" + buf );
-        }
+       if ( !artifacts.isEmpty() )
+       {
+           getLog().info( "Missing dependencies: " );
+           String pomFile = baseDir.getAbsolutePath()+File.separatorChar+"pom.xml";
+           StringBuffer buf = new StringBuffer();
+           Iterator iter = artifacts.iterator();
+           while ( iter.hasNext() )
+           {
+               Artifact artifact = (Artifact) iter.next();
+               
+               //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+               artifact.isSnapshot();
+               
+               buf.append( scriptableFlag+":"+pomFile+":"+artifact.getDependencyConflictId()+":"+artifact.getClassifier()+":"+artifact.getBaseVersion()+":"+artifact.getScope()+"\n");
+           }
+           getLog().info( "\n" +buf);
+       }
     }
 }
