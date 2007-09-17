@@ -66,14 +66,14 @@ public class AnalyzeMojo
      * 
      * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
      */
-    private boolean failBuild = false;
+    private boolean failBuild;
 
     /**
      * Output used dependencies
      * 
      * @parameter expression="${mdep.analyze.displayUsed}" default-value="false"
      */
-    private boolean displayUsed = false;
+    private boolean displayUsed;
 
     /**
      * 
@@ -90,7 +90,7 @@ public class AnalyzeMojo
      * @parameter expression="${mdep.analyze.ignore.direct}"
      *            default-value="true"
      */
-    private boolean ignoreDirect = true;
+    private boolean ignoreDirect;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
@@ -98,21 +98,21 @@ public class AnalyzeMojo
      * @parameter expression="${mdep.analyze.ignore.noncompile}"
      *            default-value="true"
      */
-    private boolean ignoreNonCompile = true;
+    private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
      * @since 2.0-alpha-5
      * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
      */
-    private boolean outputXML = true;
+    private boolean outputXML;
     
     /**
      * Output scriptable values
      * @since 2.0-alpha-5
      * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
      */
-    private boolean scriptableOutput = false;
+    private boolean scriptableOutput;
     
     /**
      * Flag to use for scriptable output
