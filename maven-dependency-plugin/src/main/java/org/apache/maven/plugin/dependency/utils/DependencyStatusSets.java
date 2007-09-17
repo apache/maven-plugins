@@ -169,8 +169,10 @@ public class DependencyStatusSets
                         artifactFilename = null;
                     }
                 }
-                log.info( "   " + artifact.getId() + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
-                    + ( outputScope ? " (scope = " + artifact.getScope() + ")" : "" ) );
+                
+                String id = outputScope ? artifact.toString() : artifact.getId();
+                
+                log.info( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) );
             }
         }
 
