@@ -34,11 +34,9 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 
-
 /**
- * This goal analyzes your project's dependencies and lists dependencies that
- * should be declared, but are not, and dependencies that are declared but
- * unused. It also executes the analyze-dep-mgt goal.
+ * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and
+ * dependencies that are declared but unused. It also executes the analyze-dep-mgt goal.
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
@@ -62,6 +60,15 @@ public class AnalyzeMojo
     private MavenProject project;
 
     /**
+     * 
+     * 
+     * @parameter expression="${component.org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer}"
+     * @required
+     * @readonly
+     */
+    private ProjectDependencyAnalyzer analyzer;
+
+    /**
      * Fail Build on problem
      * 
      * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
@@ -76,52 +83,45 @@ public class AnalyzeMojo
     private boolean displayUsed;
 
     /**
-     * 
-     * 
-     * @parameter expression="${component.org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer}"
-     * @required
-     * @readonly
-     */
-    private ProjectDependencyAnalyzer analyzer;
-
-    /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}"
-     *            default-value="true"
+     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="true"
      */
     private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
-     * @since 2.0-alpha-5
+     * 
      * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
+     * @since 2.0-alpha-5
      */
     private boolean outputXML;
-    
+
     /**
      * Output scriptable values
-     * @since 2.0-alpha-5
+     * 
      * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
+     * @since 2.0-alpha-5
      */
     private boolean scriptableOutput;
-    
-    /**
-     * Flag to use for scriptable output
-     * @since 2.0-alpha-5
-     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
-     */
-    private String scriptableFlag;
-    
+
     /**
      * Flag to use for scriptable output
      * 
-     * @parameter expression="${basedir}" 
+     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
+     * @since 2.0-alpha-5
+     */
+    private String scriptableFlag;
+
+    /**
+     * Flag to use for scriptable output
+     * 
+     * @parameter expression="${basedir}"
      * @readonly
      * @since 2.0-alpha-5
      */
     private File baseDir;
-    
+
     /**
      * Target folder
      * 
@@ -203,13 +203,13 @@ public class AnalyzeMojo
             {
                 writeDependencyXML( usedUndeclared );
             }
-            if (scriptableOutput)
+            if ( scriptableOutput )
             {
                 writeScriptableOutput( usedUndeclared );
             }
 
             if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
-                && !unusedDeclared.isEmpty() )
+                            && !unusedDeclared.isEmpty() )
             {
                 getLog().warn( "Potential problems discovered." );
                 result = true;
@@ -234,10 +234,10 @@ public class AnalyzeMojo
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
-                
-                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+
+                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
-                
+
                 if ( warn )
                 {
                     getLog().warn( "   " + artifact );
@@ -265,9 +265,9 @@ public class AnalyzeMojo
             {
                 Artifact artifact = (Artifact) iter.next();
 
-                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
-                
+
                 writer.startElement( "dependency" );
                 writer.startElement( "groupId" );
                 writer.writeText( artifact.getGroupId() );
@@ -276,7 +276,7 @@ public class AnalyzeMojo
                 writer.writeText( artifact.getArtifactId() );
                 writer.endElement();
                 writer.startElement( "version" );
-                writer.writeText( artifact.getBaseVersion());
+                writer.writeText( artifact.getBaseVersion() );
                 writer.endElement();
 
                 if ( !Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )
@@ -292,24 +292,26 @@ public class AnalyzeMojo
         }
     }
     
-   public void writeScriptableOutput(Set artifacts)
+    public void writeScriptableOutput( Set artifacts )
     {
-       if ( !artifacts.isEmpty() )
-       {
-           getLog().info( "Missing dependencies: " );
-           String pomFile = baseDir.getAbsolutePath()+File.separatorChar+"pom.xml";
-           StringBuffer buf = new StringBuffer();
-           Iterator iter = artifacts.iterator();
-           while ( iter.hasNext() )
-           {
-               Artifact artifact = (Artifact) iter.next();
-               
-               //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
-               artifact.isSnapshot();
-               
-               buf.append( scriptableFlag+":"+pomFile+":"+artifact.getDependencyConflictId()+":"+artifact.getClassifier()+":"+artifact.getBaseVersion()+":"+artifact.getScope()+"\n");
-           }
-           getLog().info( "\n" +buf);
-       }
+        if ( !artifacts.isEmpty() )
+        {
+            getLog().info( "Missing dependencies: " );
+            String pomFile = baseDir.getAbsolutePath() + File.separatorChar + "pom.xml";
+            StringBuffer buf = new StringBuffer();
+            Iterator iter = artifacts.iterator();
+            while ( iter.hasNext() )
+            {
+                Artifact artifact = (Artifact) iter.next();
+
+                // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                artifact.isSnapshot();
+
+                buf.append( scriptableFlag + ":" + pomFile + ":" + artifact.getDependencyConflictId() + ":"
+                                + artifact.getClassifier() + ":" + artifact.getBaseVersion() + ":"
+                                + artifact.getScope() + "\n" );
+            }
+            getLog().info( "\n" + buf );
+        }
     }
 }
