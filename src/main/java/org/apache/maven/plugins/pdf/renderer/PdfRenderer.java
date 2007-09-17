@@ -29,5 +29,6 @@ import org.apache.maven.doxia.docrenderer.DocRenderer;
  */
 public interface PdfRenderer extends DocRenderer
 {
+    /** Plexus lookup role. */
     String ROLE = PdfRenderer.class.getName();
 }

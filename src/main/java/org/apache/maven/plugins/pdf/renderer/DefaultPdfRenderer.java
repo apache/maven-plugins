@@ -20,18 +20,16 @@ package org.apache.maven.plugins.pdf.renderer;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.maven.doxia.Doxia;
-//import org.apache.maven.doxia.docrenderer.DocRenderer;
 import org.apache.maven.doxia.docrenderer.DocRendererException;
 import org.apache.maven.doxia.docrenderer.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.document.DocumentTOCItem;
@@ -75,7 +73,13 @@ public class DefaultPdfRenderer
     }
 
     /**
+     * Converts an FO file to a PDF file using FOP.
+     * @param foFile the FO file.
+     * @param pdfFile the target PDF file.
+     * @throws DocRendererException In case of a conversion problem.
+     * @see org.apache.maven.doxia.module.fo.FoUtils#convertFO2PDF(File,File,String);
      */
+
     public void generatePdf( File foFile, File pdfFile )
         throws DocRendererException
     {
@@ -85,8 +89,7 @@ public class DefaultPdfRenderer
         {
             FoUtils.convertFO2PDF( foFile, pdfFile, null );
         }
-        catch ( Exception e )
-        // TransformerException
+        catch ( TransformerException e )
         {
             throw new DocRendererException( "Error creating PDF from " + foFile + ": " + e.getMessage() );
         }
@@ -135,11 +138,11 @@ public class DefaultPdfRenderer
                 {
                     String doc = (String) j.next();
 
-                    String fullPathDoc = new File( moduleBasedir, doc ).getPath();
+                    String fullDocPath = new File( moduleBasedir, doc ).getPath();
 
                     sink.setDocumentName( doc );
 
-                    parse( fullPathDoc, module, sink );
+                    parse( fullDocPath, module, sink );
                 }
             }
         }
@@ -265,28 +268,29 @@ public class DefaultPdfRenderer
     /**
      * Parse a source document into a FO sink.
      *
-     * @param fullPathDoc full path to the source document.
+     * @param fullDocPath full path to the source document.
      * @param module the SiteModule that the source document belongs to (determines the parser to use).
      * @param sink the sink to receive the events.
-     * @throws DocRendererException
-     * @throws IOException
+     * @throws DocRendererException in case of a parsing error.
+     * @throws IOException if the source document cannot be opened.
      */
-    private void parse( String fullPathDoc, SiteModule module, FoAggregateSink sink )
+    private void parse( String fullDocPath, SiteModule module, FoAggregateSink sink )
         throws DocRendererException, IOException
     {
         try
         {
-            FileReader reader = new FileReader( fullPathDoc );
+            FileReader reader = new FileReader( fullDocPath );
 
             doxia.parse( reader, module.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
         {
-            throw new DocRendererException( "Error getting a parser for " + fullPathDoc + ": " + e.getMessage() );
+            throw new DocRendererException( "No parser '" + module.getParserId()
+                        + "' found for " + fullDocPath + ": " + e.getMessage() );
         }
         catch ( ParseException e )
         {
-            // TODO: getLogger().error( "Error parsing " + fullPathDoc + ": " + e.getMessage(), e );
+            throw new DocRendererException( "Error parsing " + fullDocPath + ": " + e.getMessage(), e );
         }
         finally
         {
