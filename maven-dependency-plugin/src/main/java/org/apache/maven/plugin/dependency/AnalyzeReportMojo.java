@@ -118,7 +118,7 @@ public class AnalyzeReportMojo
         Sink sink = getSink();
         ResourceBundle bundle = getBundle( locale );
 
-        // Step 3: Generate the repport
+        // Step 3: Generate the report
         AnalyzeReportView analyzethis = new AnalyzeReportView();
         analyzethis.generateReport( analysis, sink, bundle );
     }
