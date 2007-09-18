@@ -248,13 +248,13 @@ public class TreeMojo extends AbstractMojo
      */
     private void write( String string, File file ) throws IOException
     {
-        output.getParentFile().mkdirs();
+        file.getParentFile().mkdirs();
 
         FileWriter writer = null;
 
         try
         {
-            writer = new FileWriter( output );
+            writer = new FileWriter( file );
 
             writer.write( string );
         }
