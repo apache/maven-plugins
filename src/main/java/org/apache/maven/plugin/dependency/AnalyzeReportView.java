@@ -110,7 +110,6 @@ public class AnalyzeReportView
 
     /**
      * Generate a table for the given dependencies iterator.
-     * 
      */
     public void generateDependenciesTable( Sink sink, Iterator iter )
     {
