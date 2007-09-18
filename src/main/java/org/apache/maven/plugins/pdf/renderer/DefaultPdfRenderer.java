@@ -50,7 +50,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *
  * @author ltheussl
  * @version $Id$
- * @plexus.component role="org.apache.maven.plugins.pdf.renderer.PdfRenderer"
  */
 public class DefaultPdfRenderer
     implements PdfRenderer
@@ -163,7 +162,7 @@ public class DefaultPdfRenderer
             render( baseDirectory, outputDirectory );
             return;
         }
-        
+
         DocumentModel documentModel;
         try
         {

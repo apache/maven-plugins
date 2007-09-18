@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<document>
+
+  <properties>
+    <title>Usage - Test</title>
+    <author email="ltheussl_AT_apache_DOT_org">Lukas Theussl</author>
+  </properties>
+
+  <body>
+
+    <section name="Using the PDF plugin">
+
+      <p>
+        The Maven PDF Plugin allows you generate a PDF document of your documentation.
+      </p>
+
+      <subsection name="Using the PDF plugin from the command-line">
+        <p>
+          The PDF plugin can be called to execute from the command-line without any
+          additional configurations.  Like the other plugins, to run the PDF plugin,
+         you use:
+        </p>
+        <source>mvn pdf:pdf</source>
+        <p>
+          where the first <tt>pdf</tt> refers to the plugin's alias, and the second
+          <tt>pdf</tt> refers to a plugin goal.
+        </p>
+      </subsection>
+
+      <subsection name="Running the PDF plugin automatically during a build">
+        <p>
+          The PDF plugin can be put into a project's pom.xml so that it gets executed
+          everytime the project is built.  Below is a sample pom.xml for running the
+          PDF plugin in the <tt>site</tt> phase everytime the project is built:
+        </p>
+        <source><![CDATA[<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>site-pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>]]></source>
+      </subsection>
+
+    </section>
+
+  </body>
+
+</document>
