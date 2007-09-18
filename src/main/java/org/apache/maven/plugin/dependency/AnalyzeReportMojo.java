@@ -32,18 +32,15 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerExce
 import org.apache.maven.doxia.sink.Sink;
 
 /**
- * This goal analyzes your project's dependencies and lists dependencies that
- * should be declared, but are not, and dependencies that are declared but
- * unused.It directly generate an HTML report.
+ * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and
+ * dependencies that are declared but unused. It directly generate an HTML report.
  * 
- * 
- * @version $Id: AnalyzeReportMojo.java  2007-07-19 16:12:47Z  $
+ * @version $Id: AnalyzeReportMojo.java 2007-07-19 16:12:47Z $
  * @since 2.0-alpha-5
  * @execute phase="test-compile"
  * @goal analyze-report
  * @requiresDependencyResolution test
  */
-
 public class AnalyzeReportMojo
     extends AbstractMavenReport
 {
@@ -58,8 +55,6 @@ public class AnalyzeReportMojo
      */
     private MavenProject project;
 
- 
-
     /**
      * 
      * 
@@ -69,7 +64,15 @@ public class AnalyzeReportMojo
      */
     private ProjectDependencyAnalyzer analyzer;
 
-     
+    /**
+     * 
+     * 
+     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
+     * @required
+     * @readonly
+     */
+    private Renderer siteRenderer;
+
     /**
      * Target folder
      * 
@@ -78,102 +81,111 @@ public class AnalyzeReportMojo
      * @since 2.0-alpha-5
      */
     protected File outputDirectory;
-    
-    
-    
+
     // Mojo methods -----------------------------------------------------------
-   
-    
+
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void executeReport(Locale locale)
-        throws MavenReportException
+    public void executeReport( Locale locale ) throws MavenReportException
     {
-       
         // Step 0: Checking pom availability
-                if ( "pom".equals( project.getPackaging() ) )
+        if ( "pom".equals( project.getPackaging() ) )
         {
             getLog().info( "Skipping pom project" );
             return;
         }
-        if ( outputDirectory == null || !outputDirectory.exists())
+        
+        if ( outputDirectory == null || !outputDirectory.exists() )
         {
             getLog().info( "Skipping project with no Target directory" );
             return;
         }
-                
+
         // Step 1: Analyse the project
         ProjectDependencyAnalysis analysis = null;
-        try {
+        try
+        {
             analysis = analyzer.analyze( project );
-          
-        } catch ( ProjectDependencyAnalyzerException exception ) {
+        }
+        catch ( ProjectDependencyAnalyzerException exception )
+        {
             throw new MavenReportException( "Cannot analyze dependencies", exception );
         }
-                
-                             
-         // Step 2: Create sink and bundle
-         Sink sink = getSink();
-         ResourceBundle  bundle =  getBundle(locale);
-         
-         // Step 3: Generate the repport
-         AnalyzeReportView analyzethis = new AnalyzeReportView();
-         analyzethis.generateReport(analysis, sink, bundle);
+
+        // Step 2: Create sink and bundle
+        Sink sink = getSink();
+        ResourceBundle bundle = getBundle( locale );
+
+        // Step 3: Generate the repport
+        AnalyzeReportView analyzethis = new AnalyzeReportView();
+        analyzethis.generateReport( analysis, sink, bundle );
+    }
+    
+    // MavenReport methods ----------------------------------------------------
+
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputName()
+     */
+    public String getOutputName()
+    {
+        return "Dependency Analysis";
     }
 
-   
-   
-   
-     protected MavenProject getProject()
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getName(java.util.Locale)
+     */
+    public String getName( Locale locale )
+    {
+        return "Dependency Analysis";
+    }
+
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getDescription(java.util.Locale)
+     */
+    public String getDescription( Locale locale )
+    {
+        return "Dependency Analysis of the project (used declared, used undeclared, unused declared)";
+    }
+    
+    // AbstractMavenReport methods --------------------------------------------
+
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
+     */
+    protected MavenProject getProject()
     {
         return project;
     }
-     
+
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
+     */
     protected String getOutputDirectory()
     {
-       
-        getLog().info(outputDirectory.toString());
-  
+        getLog().info( outputDirectory.toString() );
+
         return outputDirectory.toString();
     }
-    
-     /**
-     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
-     * @required
-     * @readonly
+
+    /*
+     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    private Renderer siteRenderer;
-    
-    
-        public String getName( Locale locale )
-    {
-        return "Dependency Analysis" ;
-    }
-
-    public String getDescription( Locale locale )
-    {
-        return "Dependency Analysis of the project (used declared, used undeclared, unused declared)" ;
-    }
-
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
     
-        public String getOutputName()
-    {
-        return "Dependency Analysis";
-    }
-  
-        
-   /**
-   *
-   * @see org.apache.maven.reporting.MavenReport#getOutputName()
-   * @param locale the current locale
-   */
-    protected ResourceBundle getBundle( Locale locale ) {
-    return ResourceBundle.getBundle( "analyze-report", locale, this.getClass().getClassLoader() );
-    }
+    // protected methods ------------------------------------------------------
 
+    /**
+     * 
+     * 
+     * @param locale
+     *            the current locale
+     */
+    protected ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "analyze-report", locale, this.getClass().getClassLoader() );
+    }
 }
