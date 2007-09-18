@@ -26,174 +26,178 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 
 /**
- * This is the view part of the analyze-report mojo. It generates the HTML report
- * for the project website. The HTML output is same as the CLI output.  
- * 
+ * This is the view part of the analyze-report mojo. It generates the HTML report for the project website. The HTML
+ * output is same as the CLI output.
  */
-public class AnalyzeReportView {
-            
+public class AnalyzeReportView
+{
     /**
-     * Generates the HTML report
-     *
+     * Generates the HTML report.
      */
-    public void generateReport( ProjectDependencyAnalysis analysis, Sink sink, ResourceBundle bundle){
-        
-      
+    public void generateReport( ProjectDependencyAnalysis analysis, Sink sink, ResourceBundle bundle )
+    {
         sink.head();
         sink.title();
-        sink.text(bundle.getString("analyze.report.header"));
+        sink.text( bundle.getString( "analyze.report.header" ) );
         sink.title_();
         sink.head_();
         sink.body();
-        
-        //Generate title
+
+        // Generate title
         sink.section1();
         sink.sectionTitle1();
-        sink.text(bundle.getString("analyze.report.mainTitle"));
+        sink.text( bundle.getString( "analyze.report.mainTitle" ) );
         sink.sectionTitle1_();
         sink.section1_();
         sink.lineBreak();
-        
+
         // Generate Used Declared dependencies:
         sink.section2();
         sink.sectionTitle2();
-        sink.text(bundle.getString("analyze.report.UsedDeclaredDependencies"));
+        sink.text( bundle.getString( "analyze.report.UsedDeclaredDependencies" ) );
         sink.sectionTitle2_();
-        if (analysis.getUsedDeclaredArtifacts().isEmpty()) {
-            sink.text(bundle.getString("analyze.report.noDependency"));
+        if ( analysis.getUsedDeclaredArtifacts().isEmpty() )
+        {
+            sink.text( bundle.getString( "analyze.report.noDependency" ) );
             sink.horizontalRule();
-        }else{
+        }
+        else
+        {
             Iterator iter = analysis.getUsedDeclaredArtifacts().iterator();
-            generateDependenciesTable(sink, iter);
+            generateDependenciesTable( sink, iter );
         }
         sink.section2_();
-        
-        
+
         // Generate Used Undeclared dependencies:
         sink.section2();
         sink.sectionTitle2();
-        sink.text(bundle.getString("analyze.report.UsedUndeclaredDependencies"));
+        sink.text( bundle.getString( "analyze.report.UsedUndeclaredDependencies" ) );
         sink.sectionTitle2_();
-        if (analysis.getUsedUndeclaredArtifacts().isEmpty()){
-            sink.text(bundle.getString("analyze.report.noDependency"));
+        if ( analysis.getUsedUndeclaredArtifacts().isEmpty() )
+        {
+            sink.text( bundle.getString( "analyze.report.noDependency" ) );
             sink.horizontalRule();
-        }else{
+        }
+        else
+        {
             Iterator iter = analysis.getUsedUndeclaredArtifacts().iterator();
-            generateDependenciesTable(sink, iter);
+            generateDependenciesTable( sink, iter );
         }
         sink.section2_();
-        
-        
+
         // Generate Unused declared dependencies:
         sink.section2();
         sink.sectionTitle2();
-        sink.text(bundle.getString("analyze.report.UnusedDeclaredDependencies"));
+        sink.text( bundle.getString( "analyze.report.UnusedDeclaredDependencies" ) );
         sink.sectionTitle2_();
-        if (analysis.getUnusedDeclaredArtifacts().isEmpty()){
-            sink.text(bundle.getString("analyze.report.noDependency"));
+        if ( analysis.getUnusedDeclaredArtifacts().isEmpty() )
+        {
+            sink.text( bundle.getString( "analyze.report.noDependency" ) );
             sink.horizontalRule();
-        }else{
+        }
+        else
+        {
             Iterator iter = analysis.getUnusedDeclaredArtifacts().iterator();
-            generateDependenciesTable(sink, iter);
+            generateDependenciesTable( sink, iter );
         }
         sink.section2_();
-        
-        
+
         // Closing the report
         sink.body_();
         sink.flush();
         sink.close();
-
-       
     }
-    
+
     /**
-     * Generate a table for the given dependencies iterator
-     *
+     * Generate a table for the given dependencies iterator.
+     * 
      */
-    public void generateDependenciesTable( Sink sink, Iterator iter){
-        
-         
-         sink.table();
-      
-                   sink.tableRow();
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("GroupId");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("ArtifactId");
-                   sink.bold_();
-                   sink.tableCell_();
-         
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("Version");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("Scope");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("Classifier");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("Type");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableCell();
-                   sink.bold();
-                   sink.text("Optional");
-                   sink.bold_();
-                   sink.tableCell_();
-                   
-                   sink.tableRow_();
-         while ( iter.hasNext() )
-                {  
-                    Artifact artifact = (Artifact) iter.next();
-                         
-                      sink.tableRow();
-                      sink.tableCell();
-                      sink.text(artifact.getGroupId());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      sink.text(artifact.getArtifactId());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      sink.text(artifact.getVersion());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      sink.text(artifact.getScope());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      sink.text(artifact.getClassifier());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      sink.text(artifact.getType());
-                      sink.tableCell_();
-                      sink.tableCell();
-                      if (artifact.isOptional()){
-                             sink.text("");
-                      }else{ sink.text("false");}
-                      
-                      sink.tableCell_();
-                      sink.tableRow_();    
-                }
-                 
-            sink.table_();
-            sink.horizontalRule();
-        
+    public void generateDependenciesTable( Sink sink, Iterator iter )
+    {
+        sink.table();
+
+        sink.tableRow();
+        sink.tableCell();
+        sink.bold();
+        sink.text( "GroupId" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "ArtifactId" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "Version" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "Scope" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "Classifier" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "Type" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableCell();
+        sink.bold();
+        sink.text( "Optional" );
+        sink.bold_();
+        sink.tableCell_();
+
+        sink.tableRow_();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+
+            sink.tableRow();
+            sink.tableCell();
+            sink.text( artifact.getGroupId() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( artifact.getArtifactId() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( artifact.getVersion() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( artifact.getScope() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( artifact.getClassifier() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( artifact.getType() );
+            sink.tableCell_();
+            sink.tableCell();
+            if ( artifact.isOptional() )
+            {
+                sink.text( "" );
+            }
+            else
+            {
+                sink.text( "false" );
+            }
+
+            sink.tableCell_();
+            sink.tableRow_();
+        }
+
+        sink.table_();
+        sink.horizontalRule();
     }
 }
