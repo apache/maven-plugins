@@ -32,14 +32,15 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerExce
 import org.apache.maven.doxia.sink.Sink;
 
 /**
- * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and
- * dependencies that are declared but unused. It directly generate an HTML report.
+ * Analyzes the dependencies of this project and produces a report that summarises which are: used and declared; used
+ * and undeclared; unused and declared.
  * 
  * @version $Id: AnalyzeReportMojo.java 2007-07-19 16:12:47Z $
  * @since 2.0-alpha-5
- * @execute phase="test-compile"
+ * 
  * @goal analyze-report
  * @requiresDependencyResolution test
+ * @execute phase="test-compile"
  */
 public class AnalyzeReportMojo
     extends AbstractMavenReport
@@ -47,7 +48,7 @@ public class AnalyzeReportMojo
     // fields -----------------------------------------------------------------
 
     /**
-     * 
+     * The Maven project to analyze.
      * 
      * @parameter expression="${project}"
      * @required
@@ -56,9 +57,9 @@ public class AnalyzeReportMojo
     private MavenProject project;
 
     /**
+     * The Maven project dependency analyzer to use.
      * 
-     * 
-     * @parameter expression="${component.org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer}"
+     * @component
      * @required
      * @readonly
      */
@@ -67,7 +68,7 @@ public class AnalyzeReportMojo
     /**
      * 
      * 
-     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
+     * @component
      * @required
      * @readonly
      */
@@ -80,7 +81,7 @@ public class AnalyzeReportMojo
      * @readonly
      * @since 2.0-alpha-5
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     // Mojo methods -----------------------------------------------------------
 
