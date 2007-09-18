@@ -300,7 +300,7 @@ public abstract class AbstractAnalyzeMojo
         }
     }
     
-    public void writeScriptableOutput( Set artifacts )
+    private void writeScriptableOutput( Set artifacts )
     {
         if ( !artifacts.isEmpty() )
         {
