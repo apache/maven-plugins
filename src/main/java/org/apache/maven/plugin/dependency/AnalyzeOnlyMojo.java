@@ -30,11 +30,11 @@ package org.apache.maven.plugin.dependency;
  * @since 2.0-alpha-5
  * @see AnalyzeMojo
  * 
- * @goal analyze-attached
+ * @goal analyze-only
  * @requiresDependencyResolution test
  * @phase verify
  */
-public class AnalyzeAttachedMojo
+public class AnalyzeOnlyMojo
     extends AbstractAnalyzeMojo
 {
     // subclassed to provide plexus annotations
