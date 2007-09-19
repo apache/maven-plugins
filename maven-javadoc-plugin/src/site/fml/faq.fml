@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="Where in the pom.xml do I configure the Javadoc Plugin">
+      <question>Where in the pom.xml do I configure the Javadoc Plugin?</question>
+      <answer>
+        <p>
+          Like all other site report plugins, the Javadoc Plugin goes in the
+          <i>&lt;reporting/&gt;</i> section of your pom.xml.
+        </p>
+      </answer>
+    </faq>
+    <faq id="Where do I put javadoc resources like HTML files or images">
+      <question>Where do I put Javadoc resources like HTML files or images?</question>
+      <answer>
+        <p>
+          All javadoc resources like HTML files, images could be put in the
+          <i>${basedir}/src/main/javadoc</i> directory.
+        </p>
+        <p>
+          See <a href="examples/javadoc-resources.html">Using Javadoc Resources</a> for more information.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to know exactly the Javadoc command line">
+      <question>How to know exactly the Javadoc command line?</question>
+      <answer>
+        <p>
+          The Javadoc Plugin calls the Javadoc tool with
+          <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">argument files</a>,
+          i.e. files called 'options', 'packages' and 'argfile' (or 'files' with Jdk &lt; 1.4):
+          <source>${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+          @options @packages | @argfile</source>
+        </p>
+        <p>
+          These argument files are generated at runtime depending the Javadoc Plugin configuration and are deleted
+          when the Javadoc Plugin ended.
+        </p>
+        <p>
+          To preserve them, just add &lt;debug&gt;true&lt;debug&gt; in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to add additional Javadoc parameters">
+      <question>How to add additional Javadoc parameters?</question>
+      <answer>
+        <p>
+          You could need to add more Javadoc parameters to be process by the Javadoc Tool (i.e. for doclet).
+        </p>
+        <p>
+          For this, you should use the <i>&lt;additionalparam/&gt;</i> parameter in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to add additional Javadoc options">
+      <question>How to add additional Javadoc options?</question>
+      <answer>
+        <p>
+          You could need to add more J options (i.e. runtime system java options that runs Javadoc tool) to be process
+          by the Javadoc Tool (i.e. -J-Xss).
+        </p>
+        <p>
+          For this, you should use the <i>&lt;additionalJOption/&gt;</i> parameter in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to have less output">
+      <question>How to have less output?</question>
+      <answer>
+        <p>
+          Just set the <i>&lt;quiet/&gt;</i> parameter to <i>true</i> in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to remove test Javadocs report">
+      <question>How to remove test Javadocs report?</question>
+      <answer>
+        <p>
+          You need to configure the <i>&lt;reportSets/&gt;</i> parameter. Read the
+          <a href="examples/selective-javadocs-report.html">Selective Javadocs Reports</a> part for more information.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to deploy javadoc jar">
+      <question>How to deploy javadoc jar?</question>
+      <answer>
+        <p>
+          Basically, you need to call <i>mvn clean javadoc:jar deploy</i>. If you want to include the javadoc jar
+          in a release process, you need to attach it in the release profile, for instance:
+          <source>
+<project>
+  ...
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  ...
+</project></source>
+        </p>
+        <p>
+          To deploy the Javadoc jar on a given Maven repository, you could call:
+          <source>
+mvn deploy:deploy-file \
+    -DgroupId=&lt;group-id&gt; \
+    -DartifactId=&lt;artifact-id&gt; \
+    -Dversion=&lt;version&gt; \
+    -Dfile=&lt;path-to-file&gt; \
+    -Dpackaging=jar \
+    -DrepositoryId=&lt;repository-id&gt; \
+    -Durl=dav:http://www.myrepository.com/m2 \
+    -Dclassifier=javadoc</source>
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
