@@ -56,6 +56,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.maven.context.BuildContextManager;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 
 /**
  * Run tests using Surefire.
@@ -385,6 +388,19 @@ public class SurefirePlugin
      * @parameter expression="${enableAssertions}" default-value="true"
      */
     private boolean enableAssertions;
+    
+    /**
+     *
+     * @component
+     */
+    private ToolchainManager toolchainManager;
+    
+    /**
+     *
+     * @component
+     */
+    private BuildContextManager buildContextManager;
+    
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -659,7 +675,22 @@ public class SurefirePlugin
 
             surefireBooter.addClassPathUrl( classpathElement );
         }
-
+        
+        //use the compilerId as identifier for toolchains as well.
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk",  
+                                buildContextManager.readBuildContext(true));
+        if (tc != null) {
+            getLog().info("Toolchain in surefire: " + tc);
+            if (ForkConfiguration.FORK_NEVER.equals( forkMode ) ) {
+                forkMode = ForkConfiguration.FORK_ONCE;
+            }
+            if ( jvm  != null) {
+                getLog().warn("Toolchains are ignored, 'executable' parameter is set to " + jvm);
+            } else {
+                jvm = tc.findTool("java");
+            }
+        }
+        
         // ----------------------------------------------------------------------
         // Forking
         // ----------------------------------------------------------------------
