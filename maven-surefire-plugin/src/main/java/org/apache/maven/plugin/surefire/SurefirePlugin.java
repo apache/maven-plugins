@@ -676,18 +676,17 @@ public class SurefirePlugin
             surefireBooter.addClassPathUrl( classpathElement );
         }
         
-        //use the compilerId as identifier for toolchains as well.
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk",  
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk",  //NOI18N
                                 buildContextManager.readBuildContext(true));
         if (tc != null) {
-            getLog().info("Toolchain in surefire: " + tc);
+            getLog().info("Toolchain in surefire-plugin: " + tc);
             if (ForkConfiguration.FORK_NEVER.equals( forkMode ) ) {
                 forkMode = ForkConfiguration.FORK_ONCE;
             }
             if ( jvm  != null) {
                 getLog().warn("Toolchains are ignored, 'executable' parameter is set to " + jvm);
             } else {
-                jvm = tc.findTool("java");
+                jvm = tc.findTool("java"); //NOI18N
             }
         }
         
