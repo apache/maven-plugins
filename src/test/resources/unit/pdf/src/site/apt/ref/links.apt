@@ -26,13 +26,21 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Useful links
+{Testing links}
 
   Just a brief selection...
 
 * Internal links
 
-  * Link back to to {{{../index.html}index}}.
+  * Link back to {{{../index.html}index}}.
+
+  * Link back to {{{../index.html#Some useful links}index}}.
+
+  * Link back to {{{../index.html#Some_useful_links}index}}.
+
+  * Link back to {{{#Testing_links}chapter title}}.
+
+  * Link back to {{{Testing links}chapter title}}.
 
 Another chapter
 
