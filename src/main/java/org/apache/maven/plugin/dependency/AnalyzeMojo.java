@@ -22,12 +22,12 @@ package org.apache.maven.plugin.dependency;
 /**
  * Analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused
  * and declared. This goal is intended to be used standalone, thus it always executes the <code>test-compile</code>
- * phase - use the <code>dependency:analyze-attached</code> goal instead when participating in the build lifecycle.
+ * phase - use the <code>dependency:analyze-only</code> goal instead when participating in the build lifecycle.
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @since 2.0-alpha-3
- * @see AnalyzeAttachedMojo
+ * @see AnalyzeOnlyMojo
  * 
  * @goal analyze
  * @requiresDependencyResolution test
