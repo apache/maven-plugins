@@ -41,6 +41,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.maven.context.BuildContextManager;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 
 /**
  * TODO: At least one step could be optimized, currently the plugin will do two
@@ -238,6 +241,19 @@ public abstract class AbstractCompilerMojo
      * @component
      */
     private CompilerManager compilerManager;
+    
+    /**
+     *
+     * @component
+     */
+    private ToolchainManager toolchainManager;
+    
+    /**
+     *
+     * @component
+     */
+    private BuildContextManager buildContextManager;
+    
 
     protected abstract SourceInclusionScanner getSourceInclusionScanner( int staleMillis );
 
@@ -271,6 +287,19 @@ public abstract class AbstractCompilerMojo
             throw new MojoExecutionException( "No such compiler '" + e.getCompilerId() + "'." );
         }
 
+        //use the compilerId as identifier for toolchains as well.
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext(compilerId,  
+                                buildContextManager.readBuildContext(true));
+        if (tc != null) {
+            getLog().info("Toolchain in compiler-plugin: " + tc);
+            if ( executable  != null) { 
+                getLog().warn("Toolchains are ignored, 'executable' parameter is set to " + executable);
+            } else {
+                fork = true;
+                //TODO somehow shaky dependency between compilerId and tool executable.
+                executable = tc.findTool(compilerId);
+            }
+        }
         // ----------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------
