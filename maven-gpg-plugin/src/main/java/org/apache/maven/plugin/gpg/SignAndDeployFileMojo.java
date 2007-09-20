@@ -75,6 +75,13 @@ public class SignAndDeployFileMojo extends DeployFileMojo {
      */
     private boolean useAgent;
 
+    /**
+     * The directory where to store signature files.
+     *
+     * @parameter expression="${gpg.asc.directory}"
+     */
+    private File ascDirectory;
+    
     
     /**
      * @parameter expression="${settings}"
@@ -236,6 +243,8 @@ public class SignAndDeployFileMojo extends DeployFileMojo {
         signer.setInteractive( settings.isInteractiveMode() );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
+        signer.setOutputDirectory(ascDirectory);
+        signer.setBaseDirectory(new File("foo").getAbsoluteFile().getParentFile().getAbsoluteFile());
         
         setDeployer( new SignedArtifactDeployer( deployer, passphrase ) );
         super.execute();
