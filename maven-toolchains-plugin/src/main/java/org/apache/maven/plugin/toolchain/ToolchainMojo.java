@@ -40,97 +40,119 @@ import org.apache.maven.toolchain.ToolchainPrivate;
  *
  * @author mkleint
  */
-public class ToolchainMojo extends AbstractMojo {
+public class ToolchainMojo
+    extends AbstractMojo
+{
 
     /**
      *
      * @component
      */
     private ToolchainManager toolchainManager;
-    
+
     /**
      *
      * @component
      */
     private BuildContextManager buildContextManager;
-    
+
     /**
      * @parameter
      * @required
-     */ 
+     */
     private Toolchains toolchains;
-    
-    public ToolchainMojo() {
-    }
-    
-    
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (toolchains != null) {
-            Iterator en = toolchains.getToolchainsTypes().iterator();
-            List nonMatchedTypes = new ArrayList();
-            while (en.hasNext()) {
-                try {
+    public ToolchainMojo( )
+    {
+    }
+
+    public void execute( )
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( toolchains != null )
+        {
+            Iterator en = toolchains.getToolchainsTypes(  ).iterator(  );
+            List nonMatchedTypes = new ArrayList(  );
+            while ( en.hasNext(  ) )
+            {
+                try
+                {
                     String type = (String) en.next();
-                    getLog().info("Type:" + type);
-                    Map params = toolchains.getParams(type);
-                    ToolchainPrivate[] tcs = toolchainManager.getToolchainsForType(type);
+                    getLog(  ).info( "Type:" + type );
+                    Map params = toolchains.getParams( type );
+                    ToolchainPrivate[] tcs = toolchainManager.getToolchainsForType( type );
                     boolean matched = false;
-                    for (int i = 0; i < tcs.length; i++) {
-                        if (toolchainMatchesRequirements(tcs[i], params)) {
-                            getLog().info("Toolchain (" + type + ") matched:" + tcs[i]);
-                            toolchainManager.storeToolchainToBuildContext(tcs[i], buildContextManager.readBuildContext(true));
+                    for ( int i = 0; i < tcs.length; i++ )
+                    {
+                        if ( toolchainMatchesRequirements( tcs[i], params ) )
+                        {
+                            getLog(  ).info( "Toolchain (" + type + ") matched:" + tcs[i] );
+                            toolchainManager.storeToolchainToBuildContext( tcs[i],
+                                buildContextManager.readBuildContext( true ) );
                             matched = true;
                             break;
                         }
                     }
-                    if (!matched) {
-                        nonMatchedTypes.add(type);
+                    if ( !matched )
+                    {
+                        nonMatchedTypes.add( type );
                     }
-                } catch (MisconfiguredToolchainException ex) {
-                    throw new MojoExecutionException("Misconfigured toolchains.", ex);
+                }
+                catch ( MisconfiguredToolchainException ex )
+                {
+                    throw new MojoExecutionException( "Misconfigured toolchains.",
+                        ex );
                 }
             }
-            if (!nonMatchedTypes.isEmpty()) {
+            if ( !nonMatchedTypes.isEmpty(  ) )
+            {
                 //TODO add the default toolchain instance if defined??
                 String str = "Cannot find matching toolchain definitions for the following toolchain types:";
-                Iterator it = nonMatchedTypes.iterator();
-                while (it.hasNext()) {
+                Iterator it = nonMatchedTypes.iterator(  );
+                while ( it.hasNext(  ) )
+                {
                     String type = (String) it.next();
                     str = str + "\n" + type;
-                    Map params = toolchains.getParams(type);
-                    if (params.size() > 0) {
-                        Iterator it2 = params.keySet().iterator();
+                    Map params = toolchains.getParams( type );
+                    if ( params.size(  ) > 0 )
+                    {
+                        Iterator it2 = params.keySet(  ).iterator(  );
                         str = str + " [";
-                        while (it2.hasNext()) {
-                            String string = (String)it2.next();
-                            str = str + " " + string + "='" + params.get(string) + "' ";
+                        while ( it2.hasNext(  ) )
+                        {
+                            String string = (String) it2.next();
+                            str = str + " " + string + "='" + params.get( string ) + "' ";
                         }
                         str = str + "]";
-                        
                     }
                 }
-                getLog().error(str);
-                throw new MojoFailureException("Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file.");
+                getLog(  ).error( str );
+                throw new MojoFailureException( "Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
             }
-        } else {
+        }
+        else
+        {
             //can that happen?
         }
-                
     }
 
-    private boolean toolchainMatchesRequirements(ToolchainPrivate toolchain, Map params) {
-        Map matchers = toolchain.getRequirementMatchers();
-        Iterator it = params.keySet().iterator();
-        while (it.hasNext()) {
-            String key = (String)it.next();
+    private boolean toolchainMatchesRequirements( ToolchainPrivate toolchain,
+                                                  Map params )
+    {
+        Map matchers = toolchain.getRequirementMatchers(  );
+        Iterator it = params.keySet(  ).iterator(  );
+        while ( it.hasNext(  ) )
+        {
+            String key = (String) it.next();
             RequirementMatcher matcher = (RequirementMatcher) matchers.get(key);
-            if (matcher == null) {
-                getLog().debug("Toolchain " + toolchain + " is missing required property: " + key);
+            if ( matcher == null )
+            {
+                getLog(  ).debug( "Toolchain "  + toolchain + " is missing required property: "  + key );
                 return false;
             }
-            if (!matcher.matches((String)params.get(key))) {
-                getLog().debug("Toolchain " + toolchain + " doesn't match required property: " + key);
+            if ( !matcher.matches( (String) params.get(key) ) )
+            {
+                getLog(  ).debug( "Toolchain "  + toolchain + " doesn't match required property: "  + key );
                 return false;
             }
         }
