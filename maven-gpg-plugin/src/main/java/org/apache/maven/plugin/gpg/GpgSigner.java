@@ -42,6 +42,9 @@ public class GpgSigner
     private boolean useAgent;
     private boolean isInteractive = true;
     private String keyname;
+    private File outputDir;
+    private File buildDir;
+    private File baseDir;
     
     public GpgSigner()
     {
@@ -63,17 +66,64 @@ public class GpgSigner
         keyname = s;
     }
     
+    public void setOutputDirectory(File out) 
+    {
+        outputDir = out;
+    }
+    public void setBuildDirectory(File out) 
+    {
+        buildDir = out;
+    }
+    public void setBaseDirectory(File out) 
+    {
+        baseDir = out;
+    }
+    
     
     public File generateSignatureForArtifact( File file , String pass)
         throws MojoExecutionException
     {
         File signature = new File( file + SIGNATURE_EXTENSION );
     
+        boolean isInBuildDir = false;
+        if ( buildDir != null )
+        {
+            File parent = signature.getParentFile();
+            if ( buildDir.equals(parent) ) 
+            {
+                isInBuildDir = true;
+            }
+        }
+        if ( !isInBuildDir
+            && outputDir != null ) 
+        {
+            String fileDirectory = "";
+            File signatureDirectory = signature;
+            
+            while( ( signatureDirectory = signatureDirectory.getParentFile() ) != null )
+            {
+                if( !signatureDirectory.equals( baseDir ) )
+                {
+                    fileDirectory = signatureDirectory.getName() + File.separatorChar + fileDirectory;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            signatureDirectory = new File( outputDir, fileDirectory );
+            if( !signatureDirectory.exists() )
+            {
+                signatureDirectory.mkdirs();
+            }
+            signature = new File( signatureDirectory, file.getName() + SIGNATURE_EXTENSION );
+        }
+        
         if ( signature.exists() )
         {
             signature.delete();
         }
-    
+        
         Commandline cmd = new Commandline();
     
         cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
@@ -113,6 +163,9 @@ public class GpgSigner
         {
             cmd.createArgument().setValue( "--no-tty" );
         }
+        
+        cmd.createArgument().setValue( "--output" );
+        cmd.createArgument().setFile( signature );
         
         cmd.createArgument().setFile( file );
     

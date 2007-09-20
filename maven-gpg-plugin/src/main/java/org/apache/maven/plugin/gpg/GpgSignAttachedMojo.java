@@ -112,6 +112,14 @@ public class GpgSignAttachedMojo
     private String[] excludes;
 
     /**
+     * The directory where to store signature files.
+     *
+     * @parameter expression="${project.build.directory}/gpg"
+     * @since 1.0-alpha-4
+     */
+    private File outputDirectory;
+    
+    /**
      * The maven project.
      *
      * @parameter expression="${project}"
@@ -200,9 +208,12 @@ public class GpgSignAttachedMojo
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
 
-        signer.setInteractive(settings.isInteractiveMode());
-        signer.setKeyName(keyname);
-        signer.setUseAgent(useAgent);
+        signer.setInteractive( settings.isInteractiveMode() );
+        signer.setKeyName( keyname );
+        signer.setUseAgent( useAgent );
+        signer.setOutputDirectory( outputDirectory );
+        signer.setBuildDirectory( new File( project.getBuild().getDirectory() ) );
+        signer.setBaseDirectory( project.getBasedir() );
         
         List signingBundles = new ArrayList();
 
