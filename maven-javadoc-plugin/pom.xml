@@ -132,6 +132,18 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-toolchain</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <exclusions>
+        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
+        <exclusion>
+          <groupId>plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.4.3</version>

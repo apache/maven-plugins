@@ -53,6 +53,7 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.context.BuildContextManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
@@ -65,6 +66,8 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -86,6 +89,19 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
+    
+    /**
+     *
+     * @component
+     */
+    private ToolchainManager toolchainManager;
+    
+    /**
+     *
+     * @component
+     */
+    private BuildContextManager buildContextManager;
+
     /**
      * The current class directory
      */
@@ -2043,6 +2059,17 @@ public abstract class AbstractJavadocMojo
     private String getJavadocExecutable()
         throws IOException
     {
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk", //NOI18N
+                                buildContextManager.readBuildContext(true));
+        if (tc != null) {
+            getLog().info("Toolchain in javadoc-plugin: " + tc);
+            if ( javadocExecutable  != null) { 
+                getLog().warn("Toolchains are ignored, 'javadocExecutable' parameter is set to " + javadocExecutable);
+            } else {
+                javadocExecutable = tc.findTool("javadoc"); //NOI18N
+            }
+        }
+        
         String javadocCommand = "javadoc" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
         File javadocExe;
