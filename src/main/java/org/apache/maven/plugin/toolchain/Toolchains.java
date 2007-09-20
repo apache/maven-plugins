@@ -27,16 +27,19 @@ import java.util.Set;
  *
  * @author mkleint
  */
-public final class Toolchains {
+public final class Toolchains
+{
+
     /** <String type, Map<String param, String value>> */
     Map toolchains;
-    
-    public final Set getToolchainsTypes() {
-        return Collections.unmodifiableSet(toolchains.keySet());
+
+    public final Set getToolchainsTypes( )
+    {
+        return Collections.unmodifiableSet( toolchains.keySet(  ) );
     }
-    
-    public final Map getParams(String type) {
-        return Collections.unmodifiableMap((Map)toolchains.get(type));
+
+    public final Map getParams( String type )
+    {
+        return Collections.unmodifiableMap( (Map) toolchains.get(type) );
     }
-    
 }
