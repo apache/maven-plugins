@@ -62,7 +62,6 @@ import java.util.Map;
 public class GpgSignAttachedMojo
     extends AbstractMojo
 {
-    public static final String SIGNATURE_EXTENSION = ".asc";
     private static final String DEFAULT_EXCLUDES[] = new String[] {
         "**/*.md5",
         "**/*.sha1",
@@ -145,6 +144,9 @@ public class GpgSignAttachedMojo
      * @readonly
      */
     protected Settings settings;
+    
+    
+    private GpgSigner signer = new GpgSigner();
 
 
     public void execute()
@@ -185,7 +187,7 @@ public class GpgSignAttachedMojo
             }
             try 
             {
-                pass = getPassphrase();
+                pass = signer.getPassphrase(project);
             }
             catch (IOException e) 
             {
@@ -198,6 +200,10 @@ public class GpgSignAttachedMojo
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
 
+        signer.setInteractive(settings.isInteractiveMode());
+        signer.setKeyName(keyname);
+        signer.setUseAgent(useAgent);
+        
         List signingBundles = new ArrayList();
 
         if ( !"pom".equals( project.getPackaging() ) )
@@ -208,7 +214,7 @@ public class GpgSignAttachedMojo
 
             File projectArtifact = project.getArtifact().getFile();
 
-            File projectArtifactSignature = generateSignatureForArtifact( projectArtifact, pass );
+            File projectArtifactSignature = signer.generateSignatureForArtifact( projectArtifact, pass );
 
             if ( projectArtifactSignature != null )
             {
@@ -231,7 +237,7 @@ public class GpgSignAttachedMojo
             throw new MojoExecutionException( "Error copying POM for signing.", e );
         }
 
-        File pomSignature = generateSignatureForArtifact( pomToSign, pass );
+        File pomSignature = signer.generateSignatureForArtifact( pomToSign, pass );
 
         if ( pomSignature != null )
         {
@@ -248,7 +254,7 @@ public class GpgSignAttachedMojo
 
             File file = artifact.getFile();
 
-            File signature = generateSignatureForArtifact( file, pass );
+            File signature = signer.generateSignatureForArtifact( file, pass );
 
             if ( signature != null )
             {
@@ -286,88 +292,7 @@ public class GpgSignAttachedMojo
             }
         }
     }
-
-    private File generateSignatureForArtifact( File file , String pass)
-        throws MojoExecutionException
-    {
-        File signature = new File( file + SIGNATURE_EXTENSION );
-
-        if ( signature.exists() )
-        {
-            signature.delete();
-        }
-
-        Commandline cmd = new Commandline();
-
-        cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
-
-        if ( useAgent )
-        {
-            cmd.createArgument().setValue( "--use-agent" );
-        }
-        else
-        {
-            cmd.createArgument().setValue( "--no-use-agent" );
-        }
-
-        InputStream in = null;
-        if ( null != pass) 
-        {
-            cmd.createArgument().setValue( "--passphrase-fd" );
-
-            cmd.createArgument().setValue( "0" );
-
-            // Prepare the input stream which will be used to pass the passphrase to the executable
-            in = new ByteArrayInputStream( pass.getBytes() );
-        }
-
-        if ( null != keyname)
-        {
-            cmd.createArgument().setValue( "--local-user" );
-
-            cmd.createArgument().setValue( keyname );
-        }
-
-        cmd.createArgument().setValue( "--armor" );
-
-        cmd.createArgument().setValue( "--detach-sign" );
-        
-        if ( !settings.isInteractiveMode() )
-        {
-            cmd.createArgument().setValue( "--no-tty" );
-        }
-        
-        cmd.createArgument().setFile( file );
-
-
-        try
-        {
-            int exitCode = CommandLineUtils.executeCommandLine( cmd, in, new DefaultConsumer(), new DefaultConsumer() );
-
-            if ( exitCode != 0 )
-            {
-                throw new MojoExecutionException( "Exit code: " + exitCode );
-            }
-        }
-        catch ( CommandLineException e )
-        {
-            throw new MojoExecutionException( "Unable to execute gpg command", e );
-        }
-
-        return signature;
-    }
-
     
-    private MavenProject findReactorProject(MavenProject prj) {
-        if ( prj.getParent() != null )
-        {
-            if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
-            {
-                return findReactorProject( prj.getParent() );
-            }
-        }
-        return prj;
-    }
     /**
      * Tests whether or not a name matches against at least one exclude
      * pattern.
@@ -388,87 +313,4 @@ public class GpgSignAttachedMojo
         return false;
     }
     
-    protected String getPassphrase() throws IOException
-    {
-        String pass = project.getProperties().getProperty("gpg.passphrase");
-        if (pass == null) 
-        {
-            MavenProject prj2 = findReactorProject(project);
-            pass = prj2.getProperties().getProperty("gpg.passphrase");
-        }
-        if (pass == null) 
-        {
-            //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
-            
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            while (System.in.available() != 0)
-            {
-                //there's some junk already on the input stream, consume it
-                //so we can get the real passphrase
-                System.in.read();
-            }
-            
-            System.out.print("GPG Passphrase:  ");
-            MaskingThread thread = new MaskingThread();
-            thread.start();
-    
-    
-            pass = in.readLine();
-    
-            // stop masking
-            thread.stopMasking();
-        }
-        findReactorProject(project).getProperties().setProperty("gpg.passphrase", pass);
-        return pass;
-    }
-    
-    
-    // based on ideas from http://java.sun.com/developer/technicalArticles/Security/pwordmask/
-    class MaskingThread extends Thread
-    {
-        private volatile boolean stop;
-
-       /**
-        * Begin masking until asked to stop.
-        */
-        public void run()
-        {
-            //this needs to be high priority to make sure the characters don't
-            //really get to the screen.
-            
-            int priority = Thread.currentThread().getPriority();
-            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-
-            try {
-                stop = false;
-                while(!stop)
-                { 
-                    //print a backspace + * to overwrite anything they type
-                    System.out.print("\010*");
-                    try
-                    {
-                        //attempt masking at this rate
-                        Thread.sleep(1);
-                    }
-                    catch (InterruptedException iex)
-                    {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-                }
-            }
-            finally
-            {
-                // restore the original priority
-                Thread.currentThread().setPriority(priority);
-            }
-        }
-
-        /**
-         * Instruct the thread to stop masking.
-         */
-        public void stopMasking() {
-            this.stop = true;
-        }
-    }    
 }
