@@ -16,53 +16,53 @@
 ~~ under the License.    
  
   ------
-  Unpacking project dependencies
+  Failing the build on dependency analysis warnings
   ------
-  Allan Ramirez
-  Brian Fox
+  Mark Hobson
   ------
-  Nov 2006
+  Sep 2007
   ------
 
-Unpacking project dependencies
+Failing the build on dependency analysis warnings
 
-  This is pretty similar to the {{{copying-project-dependencies.html}Copying direct dependencies}}
-  example. The difference is that the direct dependencies are unpacked,
-  including the transitive dependencies. To unpack the artifacts, use the
-  <<<dependency:unpack-dependencies>>> mojo and configure the dependency plugin
-  to something like the sample below:
+	A project's dependencies can be analyzed as part of the build process by binding the <<<dependency:analyze-only>>>
+	goal to the lifecycle.  By default, the analysis will be performed during the <<<verify>>> lifecycle phase.  The
+	plugin can then be configured to fail the build if any dependency analysis warnings are	encountered by setting the
+	<<<failOnWarning>>> parameter.  See the following POM configuration for an example:
 
 +---+
 <project>
-  [...]
+  ...
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>unpack-dependencies</id>
-            <phase>package</phase>
+            <id>analyze</id>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>analyze-only</goal>
             </goals>
             <configuration>
-              <includes>**/*.class</includes>
-              <excludes>**/*.properties</excludes>
-              <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
+              <failOnWarning>true</failOnWarning>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-  [...]
+  ...
 </project>
 +---+
 
+	Note that the <<<dependency:analyze-only>>> goal is used in preference to <<<dependency:analyze>>> since it doesn't
+	force a further compilation of the project, but uses the compiled classes produced from the earlier
+	<<<test-compile>>> phase in the lifecycle.
 
-
-
+	The project's dependencies will then be automatically analyzed during the <<<verify>>> lifecycle phase, which can be
+	executed explicitly as follows:
+	
++---+
+mvn verify
++---+
