@@ -16,7 +16,7 @@
 ~~ under the License.    
  
   ------
-  Copying Project Dependencies
+  Copying project dependencies
   ------
   Allan Ramirez
   Brian Fox
@@ -24,7 +24,7 @@
   Nov 2006
   ------
 
-Copying Project Dependencies
+Copying project dependencies
 
    Project dependencies are the dependencies declared in your pom. To copy them with their transitive dependencies, use the
    <<<dependency:copy-dependencies>>> mojo and configure the plugin like
@@ -60,7 +60,7 @@ Copying Project Dependencies
 </project>
 +---+
 
-* Excluding Transitive Dependencies
+* Excluding transitive dependencies
 
    As mentioned, {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}transitive dependencies}} are copied by default. However, they
    can also be excluded by setting the <<<excludeTransitive>>> property to

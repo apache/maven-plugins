@@ -16,7 +16,7 @@
 ~~ under the License.    
  
   ------
-  Copying Specific Artifacts
+  Copying specific artifacts
   ------
   Allan Ramirez
   Brian Fox
@@ -24,7 +24,7 @@
   Mar 2007
   ------
 
-Copying Specific Artifacts
+Copying specific artifacts
 
   In copying specific artifacts, you need to bind the <<<dependency:copy>>>
   mojo to a lifecycle, configure the plugin and specify the artifacts you
@@ -113,7 +113,7 @@ Copying Specific Artifacts
 </project>
 +---+
 
-{Copying From the Command Line}:
+{Copying from the command line}:
   
 	If you intend to configure this mojo for execution on the command line using:
 
