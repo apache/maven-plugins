@@ -558,27 +558,13 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 mvn dependency:analyze
 +---+
 
-	This mojo also performs the checks described in the analyze-dep-mht section.
 	Sample output:
 
 +---+
 [INFO] [dependency:analyze]
-[INFO] Used declared dependencies:
-[INFO]    org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7:compile
-[INFO]    junit:junit:jar:3.8.1:test
-[INFO]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
-[INFO]    org.apache.maven:maven-model:jar:2.0.5:compile
-[INFO]    org.apache.maven:maven-project:jar:2.0.5:compile
-[INFO]    org.apache.maven.shared:file-management:jar:1.1:compile
-[INFO]    org.codehaus.plexus:plexus-utils:jar:1.1:compile
-[INFO]    org.apache.maven:maven-artifact:jar:2.0.5:compile
-[INFO]    org.apache.maven:maven-plugin-api:jar:2.0.5:compile
-[INFO]    org.apache.maven.shared:maven-plugin-testing-harness:jar:1.0-beta-1:test
-[INFO]    org.apache.maven.shared:maven-dependency-analyzer:jar:1.0-SNAPSHOT:compile
-[INFO] Used undeclared dependencies:
-[INFO]    None
-[INFO] Unused declared dependencies:
-[INFO]    None
+[WARNING] Used undeclared dependencies found:
+[WARNING]    classworlds:classworlds:jar:1.1-alpha-2:compile
+[WARNING]    org.apache.maven.shared:maven-invoker:jar:2.0.7-SNAPSHOT:test
 +---+
 
 * The <<<dependency:analyze-dep-mgt>>> mojo
