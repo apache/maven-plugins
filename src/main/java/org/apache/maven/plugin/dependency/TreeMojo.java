@@ -132,11 +132,6 @@ public class TreeMojo extends AbstractMojo
     private File output;
 
     /**
-     * The computed dependency tree root node of the Maven project.
-     */
-    private DependencyNode rootNode;
-
-    /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes.
      * 
@@ -178,6 +173,11 @@ public class TreeMojo extends AbstractMojo
      * @parameter expression="${excludes}"
      */
     private String excludes;
+
+    /**
+     * The computed dependency tree root node of the Maven project.
+     */
+    private DependencyNode rootNode;
 
     // Mojo methods -----------------------------------------------------------
 
