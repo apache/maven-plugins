@@ -69,28 +69,28 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Whether to fail the build if a dependency warning is found.
      * 
-     * @parameter expression="${mdep.analyze.failOnWarning}" default-value="false"
+     * @parameter expression="${failOnWarning}" default-value="false"
      */
     private boolean failOnWarning;
 
     /**
      * Output used dependencies
      * 
-     * @parameter expression="${mdep.analyze.verbose}" default-value="false"
+     * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="false"
+     * @parameter expression="${ignoreNonCompile}" default-value="false"
      */
     private boolean ignoreNonCompile;
 
     /**
      * Output the xml for the missing dependencies
      * 
-     * @parameter expression="${mdep.analyze.outputXML}" default-value="false"
+     * @parameter expression="${outputXML}" default-value="false"
      * @since 2.0-alpha-5
      */
     private boolean outputXML;
@@ -98,7 +98,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Output scriptable values
      * 
-     * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
+     * @parameter expression="${scriptableOutput}" default-value="false"
      * @since 2.0-alpha-5
      */
     private boolean scriptableOutput;
@@ -106,7 +106,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Flag to use for scriptable output
      * 
-     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
+     * @parameter expression="${scriptableFlag}" default-value="$$$%%%"
      * @since 2.0-alpha-5
      */
     private String scriptableFlag;
