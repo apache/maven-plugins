@@ -28,11 +28,11 @@
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-   	  <item name="Preparing Dependencies for Maven 2.0.6 / 2.1" href="examples/preparing-dependencies.html"/>
-      <item name="Copying Specific Artifacts" href="examples/copying-artifacts.html" />
-      <item name="Copying Project Dependencies" href="examples/copying-project-dependencies.html" />
-      <item name="Unpacking Specific Artifacts" href="examples/unpacking-artifacts.html" />
-      <item name="Unpacking the Project Dependencies" href="examples/unpacking-project-dependencies.html" />
+   	  <item name="Preparing dependencies for Maven 2.0.6 / 2.1" href="examples/preparing-dependencies.html"/>
+      <item name="Copying specific artifacts" href="examples/copying-artifacts.html" />
+      <item name="Copying project dependencies" href="examples/copying-project-dependencies.html" />
+      <item name="Unpacking specific artifacts" href="examples/unpacking-artifacts.html" />
+      <item name="Unpacking the project dependencies" href="examples/unpacking-project-dependencies.html" />
    	  <item name="Failing the build on dependency analysis warnings" href="examples/failing-the-build-on-dependency-analysis-warnings.html"/>
     </menu>
     <menu name="Resources">
