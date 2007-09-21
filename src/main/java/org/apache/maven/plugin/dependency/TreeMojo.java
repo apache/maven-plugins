@@ -135,12 +135,16 @@ public class TreeMojo extends AbstractMojo
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes.
      * 
+     * @since 2.0-alpha-6
+     * 
      * @parameter expression="${scope}"
      */
     private String scope;
 
     /**
      * Whether to include omitted nodes in the serialized dependency tree.
+     * 
+     * @since 2.0-alpha-6
      * 
      * @parameter expression="${verbose}" default-value="false"
      */
@@ -151,6 +155,8 @@ public class TreeMojo extends AbstractMojo
      * <code>standard</code> or <code>extended</code>, which use whitespace, standard or extended ASCII sets
      * respectively.
      * 
+     * @since 2.0-alpha-6
+     * 
      * @parameter expression="${tokens}" default-value="standard"
      */
     private String tokens;
@@ -160,6 +166,8 @@ public class TreeMojo extends AbstractMojo
      * filter the dependency tree. The artifact syntax is defined by <code>StrictPatternIncludesArtifactFilter</code>.
      * 
      * @see StrictPatternIncludesArtifactFilter
+     * @since 2.0-alpha-6
+     * 
      * @parameter expression="${includes}"
      */
     private String includes;
@@ -170,6 +178,8 @@ public class TreeMojo extends AbstractMojo
      * <code>StrictPatternExcludesArtifactFilter</code>.
      * 
      * @see StrictPatternExcludesArtifactFilter
+     * @since 2.0-alpha-6
+     * 
      * @parameter expression="${excludes}"
      */
     private String excludes;
