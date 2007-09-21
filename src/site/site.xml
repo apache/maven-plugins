@@ -33,6 +33,7 @@
       <item name="Copying Project Dependencies" href="examples/copying-project-dependencies.html" />
       <item name="Unpacking Specific Artifacts" href="examples/unpacking-artifacts.html" />
       <item name="Unpacking the Project Dependencies" href="examples/unpacking-project-dependencies.html" />
+   	  <item name="Failing the build on dependency analysis warnings" href="examples/failing-the-build-on-dependency-analysis-warnings.html"/>
     </menu>
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />
