@@ -127,8 +127,8 @@ under the License.
     </contributor>
   </contributors>
   <properties>
-    <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-9-SNAPSHOT</doxiaSitetoolsVersion>
+    <doxiaVersion>1.0-alpha-9</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-9</doxiaSitetoolsVersion>
   </properties>
   <dependencies>
     <dependency>
