@@ -1,0 +1,90 @@
+ ------
+ Usage
+ ------
+ Vincent Siveton
+ ------
+ 24 September 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Using the Linkcheck plugin
+
+  The Maven Linkcheck Plugin allows you generate a link check report of your documentation.
+
+* Using the Linkcheck plugin from the command-line
+
+  The Linkcheck plugin can be called to execute from the command-line without any
+  additional configurations. Like the other plugins, to run the Linkcheck plugin,
+  you use:
+
++-----
+<project>
+  [...]
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-linkcheck-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  [...]
+</project>
++-----
+
++-----
+  mvn site
++-----
+
+ Here is a simple report:
+
+[./images/sample.png] Sample report
+
+~~
+~~ * Running the Linkcheck plugin automatically during a build
+~~
+~~   The Linkcheck plugin can be put into a project's pom.xml so that it gets executed
+~~   everytime the project is built.  Below is a sample pom.xml for running the
+~~   Linkcheck plugin in the <<<post-site>>> phase everytime the project is built:
+~~
+~~ +-----
+~~ <project>
+~~   [...]
+~~   <build>
+~~     <plugins>
+~~       <plugin>
+~~         <artifactId>maven-inkcheck-plugin</artifactId>
+~~         <executions>
+~~           <execution>
+~~             <id>site-linkcheck</id>
+~~             <phase>post-site</phase>
+~~             <goals>
+~~               <goal>linkcheck</goal>
+~~             </goals>
+~~           </execution>
+~~         </executions>
+~~       </plugin>
+~~     </plugins>
+~~   </build>
+~~   [...]
+~~ </project>
+~~ +-----
