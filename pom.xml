@@ -120,6 +120,12 @@
         <configuration>
           <!-- Need of more head space in order to run the unit tests !-->
           <argLine>-Xmx256m</argLine>
+          <systemProperties>
+            <property>
+              <name>maven.home</name>
+              <value>${maven.home}</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
