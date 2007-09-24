@@ -212,11 +212,13 @@ public class DefaultPdfRenderer
 
         FoAggregateSink sink = new FoAggregateSink( new FileWriter( outputFOFile ) );
 
+        sink.setDocumentModel( documentModel );
+
         sink.beginDocument();
 
-        sink.coverPage( documentModel.getMeta() );
+        sink.coverPage();
 
-        sink.toc( documentModel.getToc() );
+        sink.toc();
 
         for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
         {
