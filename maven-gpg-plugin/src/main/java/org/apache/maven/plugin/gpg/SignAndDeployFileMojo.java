@@ -46,9 +46,12 @@ import org.apache.maven.settings.Settings;
 
 
 /**
+ * Signs artifacts and installs the artifact in the remote repository.
+ * 
  * @author Daniel Kulp
  * @goal sign-and-deploy-file
  * @requiresProject false
+ * @since 1.0-beta-4
  */
 public class SignAndDeployFileMojo extends DeployFileMojo {
     /**
