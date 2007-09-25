@@ -469,7 +469,7 @@ public class LinkcheckReport
             sink.rawText( "<th rowspan=\"2\">" );
             sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.documents" ) );
             sink.tableHeaderCell_();
-            sink.rawText( "<th colspan=\"4\">" );
+            sink.tableHeaderCell( "4" );
             sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.links" ) );
             sink.tableHeaderCell_();
             sink.tableRow_();
