@@ -485,7 +485,7 @@ mvn dependency:purge-local-repository -Dexclude=org.apache.maven:maven-plugin-ap
   command:
 
 +---+
-mvn dependency:prune-local-repository -DresolutionFuzziness=artifactId
+mvn dependency:purge-local-repository -DresolutionFuzziness=artifactId
 +---+
 
   Finally, it's possible to bind this mojo to the build lifecycle. One reason for this
@@ -552,12 +552,19 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 
 * The <<<dependency:analyze>>> mojo
 
+	This mojo performs byte code analysis to determine missing or unused dependencies. This goal is meant to be launched from the command line. It will fork the build and execute test-compile so there are class files to analyze.
+	If you want to bind analyze in your pom, use the <<<dependency:analyze-only>>> mojo instead.
+
 	This mojo can be executed from the command line:
 	
 +---+
 mvn dependency:analyze
 +---+
+<<<<<<< .mine
+	
+=======
 
+>>>>>>> .r579027
 	Sample output:
 
 +---+
@@ -577,8 +584,6 @@ mvn dependency:analyze
 	If you decide to override by using a dependency, be sure to note it so you can remove it later after upgrading to 2.0.6. You could also use the dependency:analyze mojo to uncover this unused direct dependency.
 	
 	This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
-	
-	NOTE: In 2.0-alpha-3, the Labels shown in the output are reversed. This is corrected in 2.0-alpha-4: See MDEP-78. Use mvn -U to update to alpha-4.
 	
 	This mojo can be executed from the command line:
 	
