@@ -50,6 +50,8 @@ Maven Dependency Plugin
   copy-dependencies but unpacks.
 
   *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
+  
+  *{{{resolve-mojo.html}dependency:list}} is an alias for dependency:resolve
 
   *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments, and displays the version.
 
@@ -71,7 +73,7 @@ Maven Dependency Plugin
 
   *{{{analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused and declared.
   
-  *{{{analyze-only-mojo.html}dependency:analyze-only}} same as analyze but doesn't compile the project first.
+  *{{{analyze-only-mojo.html}dependency:analyze-only}} is the same as analyze, but is meant to be bound in a pom. It does not fork the build and execute test-compile.
   
   *{{{analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches between resolved dependencies and those listed in your dependencyManagement section.
 
