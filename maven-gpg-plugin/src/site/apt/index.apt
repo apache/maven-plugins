@@ -31,6 +31,8 @@ Maven 2 GPG Plugin
 
   * {{{sign-mojo.html}gpg:sign}} Sign project artifact, the POM, and attached artifacts with GnuPG for deployment.
 
+  * {{{sign-and-deploy-file-mojo.html}gpg:sign-and-deploy-file}} Signs artifacts and installs the artifact in the remote repository.
+
   []
 
 * Usage
