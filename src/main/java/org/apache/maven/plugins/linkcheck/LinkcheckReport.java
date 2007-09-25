@@ -374,7 +374,7 @@ public class LinkcheckReport
 
                 sink.tableRow();
 
-                sink.tableCell( "15px" );
+                sink.tableCell();
                 if ( linkcheckFile.getUnsuccessful() == 0 )
                 {
                     iconValid();
@@ -399,11 +399,11 @@ public class LinkcheckReport
                 {
                     sink.tableRow();
 
-                    sink.tableCell( "15px" );
+                    sink.tableCell();
                     sink.text( "" );
                     sink.tableCell_();
 
-                    sink.rawText( "<td colspan=\"5\">" );
+                    sink.tableCell( "5" );
 
                     startTable();
 
@@ -418,7 +418,7 @@ public class LinkcheckReport
 
                         sink.tableRow();
 
-                        sink.tableCell( "15px" );
+                        sink.tableCell();
                         if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.WARNING_LEVEL )
                         {
                             iconWarning();
@@ -480,10 +480,10 @@ public class LinkcheckReport
             iconValid();
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
-            iconError();
+            iconWarning();
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
-            iconWarning();
+            iconError();
             sink.tableHeaderCell_();
             sink.tableRow_();
         }
