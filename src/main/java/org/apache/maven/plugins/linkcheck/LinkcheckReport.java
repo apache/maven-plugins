@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
@@ -34,6 +35,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
@@ -56,6 +59,15 @@ public class LinkcheckReport
     protected MavenProject project;
 
     /**
+     * The Maven Settings.
+     *
+     * @parameter default-value="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    /**
      * The settings offline paramater.
      *
      * @parameter expression="${settings.offline}"
@@ -63,6 +75,14 @@ public class LinkcheckReport
      * @readonly
      */
     private boolean offline;
+
+    /**
+     * If online, the HTTP method should automatically follow HTTP redirects,
+     * <tt>false</tt> otherwise.
+     *
+     * @parameter default-value="false"
+     */
+    protected boolean httpFollowRedirect;
 
     /**
      * Report output directory.
@@ -217,8 +237,21 @@ public class LinkcheckReport
         lc.setReportOutput( new File( linkcheckOutput ) );
         lc.setLinkCheckCache( new File( linkcheckCache ) );
         lc.setExcludedLinks( exludedLinks );
-        lc.setHttpMethod( httpMethod );
         lc.setReportLevel( reportLevel );
+
+        HttpBean bean = new HttpBean();
+        bean.setMethod( httpMethod );
+        bean.setFollowRedirects( httpFollowRedirect );
+
+        Proxy proxy = settings.getActiveProxy();
+        if ( proxy != null )
+        {
+            bean.setProxyHost( proxy.getHost() );
+            bean.setProxyPort( proxy.getPort() );
+            bean.setProxyUser( proxy.getUsername() );
+            bean.setProxyPassword( proxy.getPassword() );
+        }
+        lc.setHttp( bean );
 
         lc.doExecute();
 
