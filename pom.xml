@@ -94,6 +94,8 @@ under the License.
       <artifactId>maven-dependency-tree</artifactId>
       <version>1.0</version>
     </dependency>
+
+    <!-- wagon -->
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
@@ -114,6 +116,8 @@ under the License.
       <artifactId>wagon-http-lightweight</artifactId>
       <version>${wagon.version}</version>
     </dependency>
+
+    <!-- scm -->
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
@@ -149,16 +153,29 @@ under the License.
       <artifactId>maven-scm-provider-cvsexe</artifactId>
       <version>${scm.version}</version>
     </dependency>
+
+    <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-      <version>1.0-alpha-8</version>
+      <version>${doxia.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>${doxia.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxia.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>1.0-alpha-8</version>
+      <version>${doxia.version}</version>
     </dependency>
+
     <dependency>
       <groupId>httpunit</groupId>
       <artifactId>httpunit</artifactId>
@@ -179,6 +196,7 @@ under the License.
     </dependency>
   </dependencies>
   <properties>
+    <doxia.version>1.0-alpha-8</doxia.version>
     <wagon.version>1.0-beta-2</wagon.version>
     <scm.version>1.0</scm.version>
   </properties>
