@@ -87,11 +87,29 @@
     </developer>
   </developers>
   <dependencies>
+    <!-- maven -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>2.0.4</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
       <version>2.0.4</version>
     </dependency>
+
+    <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
@@ -102,6 +120,11 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-20</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-mail-sender-api</artifactId>
+      <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
       <groupId>plexus</groupId>
@@ -154,7 +177,7 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaSiteVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -169,7 +192,7 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaSiteVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -181,6 +204,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
@@ -214,6 +238,6 @@
   </reporting>
   <properties>
     <doxiaVersion>1.0-alpha-9</doxiaVersion>
-    <doxiaSiteVersion>1.0-alpha-9</doxiaSiteVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-9</doxiaSitetoolsVersion>
   </properties>
 </project>
