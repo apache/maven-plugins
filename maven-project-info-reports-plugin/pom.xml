@@ -32,7 +32,7 @@ under the License.
   <version>2.1-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
@@ -53,36 +53,31 @@ under the License.
     </plugins>
   </build>
   <dependencies>
+    <!-- Maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-repository-metadata</artifactId>
-      <version>2.0.4</version>
-      <scope>test</scope>
+      <artifactId>maven-project</artifactId>
+      <version>2.0.7</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-validator</groupId>
-      <artifactId>commons-validator</artifactId>
-      <version>1.2.0</version>
+      <version>2.0.7</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>2.0.4</version>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0.8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4</version>
+      <version>2.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -94,6 +89,8 @@ under the License.
       <artifactId>maven-dependency-tree</artifactId>
       <version>1.0</version>
     </dependency>
+
+    <!-- wagon -->
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
@@ -103,6 +100,13 @@ under the License.
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-ssh</artifactId>
       <version>${wagon.version}</version>
+      <exclusions>
+        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
+        <exclusion>
+          <groupId>plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
@@ -114,6 +118,8 @@ under the License.
       <artifactId>wagon-http-lightweight</artifactId>
       <version>${wagon.version}</version>
     </dependency>
+
+    <!-- scm -->
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
@@ -149,15 +155,37 @@ under the License.
       <artifactId>maven-scm-provider-cvsexe</artifactId>
       <version>${scm.version}</version>
     </dependency>
+
+    <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-      <version>1.0-alpha-8</version>
+      <version>1.0-beta-1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>1.0-alpha-8</version>
+      <version>1.0-beta-1-SNAPSHOT</version>
+    </dependency>
+
+    <!-- other -->
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.4.5</version>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-repository-metadata</artifactId>
+      <version>2.0.7</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>httpunit</groupId>
@@ -168,16 +196,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.4.3</version>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <properties>
     <wagon.version>1.0-beta-2</wagon.version>
     <scm.version>1.0</scm.version>
