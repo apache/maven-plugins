@@ -108,19 +108,18 @@
       <artifactId>maven-settings</artifactId>
       <version>2.0.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0.4</version>
+    </dependency>
 
     <!-- plexus -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-velocity</artifactId>
-      <version>1.1.7</version>
-    </dependency>
-    <dependency>
-      <!-- Required by plexus-velocity -->
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-20</version>
-    </dependency>
     <dependency>
       <groupId>plexus</groupId>
       <artifactId>plexus-mail-sender-api</artifactId>
@@ -128,12 +127,12 @@
     </dependency>
     <dependency>
       <groupId>plexus</groupId>
-      <artifactId>plexus-mail-sender-simple</artifactId>
+      <artifactId>plexus-mail-sender-javamail</artifactId>
       <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
       <groupId>plexus</groupId>
-      <artifactId>plexus-mail-sender-javamail</artifactId>
+      <artifactId>plexus-mail-sender-simple</artifactId>
       <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
@@ -145,9 +144,27 @@
       <version>1.4</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.4</version>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-velocity</artifactId>
+      <version>1.1.7</version>
+    </dependency>
+    <dependency>
+      <!-- Required by plexus-velocity -->
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-20</version>
+    </dependency>
+
+    <!-- commons -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.0.1</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -155,20 +172,12 @@
       <version>2.1</version>
     </dependency>
     <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4</version>
-    </dependency>
+
+    <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
@@ -209,11 +218,6 @@
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
       <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.0.1</version>
     </dependency>
   </dependencies>
   <reporting>
