@@ -694,12 +694,18 @@ public class DependenciesRenderer
                 List licenses = artifactProject.getLicenses();
 
                 sink.paragraph();
-                sink.anchor( id );
+                if( id != null )
+                {
+                    sink.anchor( id );
+                }
                 // startSection( artifactName );
                 sink.bold();
                 sink.text( artifactName );
                 sink.bold_();
-                sink.anchor_();
+                if( id != null )
+                {
+                    sink.anchor_();
+                }
                 sink.paragraph_();
 
                 if ( artifactDescription != null )
