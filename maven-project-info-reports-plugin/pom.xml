@@ -32,7 +32,7 @@ under the License.
   <version>2.1-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
@@ -187,18 +187,35 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-sink-api</artifactId>
+      <artifactId>doxia-module-xhtml</artifactId>
       <version>${doxia.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-decoration-model</artifactId>
+      <artifactId>doxia-sink-api</artifactId>
       <version>${doxia.version}</version>
+    </dependency>
+
+    <!-- doxia-sitetools -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxia-sitetools.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxia.version}</version>
+      <version>${doxia-sitetools.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- plexus -->
@@ -221,7 +238,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
+      <version>1.4.5</version>
     </dependency>
 
     <!-- test -->
@@ -239,7 +256,8 @@ under the License.
     </dependency>
   </dependencies>
   <properties>
-    <doxia.version>1.0-alpha-8</doxia.version>
+    <doxia.version>1.0-alpha-9</doxia.version>
+    <doxia-sitetools.version>1.0-alpha-9</doxia-sitetools.version>
     <wagon.version>1.0-beta-2</wagon.version>
     <scm.version>1.0</scm.version>
   </properties>
