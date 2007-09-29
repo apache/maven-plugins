@@ -130,7 +130,7 @@ public class AnalyzeReportMojo
      */
     public String getOutputName()
     {
-        return "Dependency Analysis";
+        return "dependency-analysis";
     }
 
     /*
