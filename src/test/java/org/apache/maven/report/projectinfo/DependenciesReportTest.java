@@ -31,7 +31,7 @@ import com.meterware.httpunit.WebTable;
 /**
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id: $
  */
 public class DependenciesReportTest
     extends AbstractProjectInfoTestCase
@@ -87,6 +87,8 @@ public class DependenciesReportTest
         assertEquals( textBlocks[6].getText(), getString( "report.dependencies.intro.test" ) );
         assertEquals( textBlocks[7].getText(), getString( "report.dependencies.graph.title" ) );
         assertEquals( textBlocks[8].getText(), getString( "report.dependencies.graph.tree.title" ) );
-        assertEquals( textBlocks[10].getText(), getString( "report.dependencies.graph.tables.title" ) );
+        assertEquals( textBlocks[10].getText(), "" );
+        assertEquals( textBlocks[11].getText(), "" );
+        assertEquals( textBlocks[12].getText(), getString( "report.dependencies.graph.tables.title" ) );
     }
 }
