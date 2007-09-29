@@ -19,6 +19,8 @@ package org.apache.maven.plugin.plugin;
  * under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -31,8 +33,6 @@ import org.apache.maven.tools.plugin.generator.Generator;
 import org.apache.maven.tools.plugin.generator.PluginXdocGenerator;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 import org.apache.maven.tools.plugin.util.PluginUtils;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -65,7 +65,7 @@ public class PluginReport
      *
      * @component
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * The Maven Project.
@@ -86,7 +86,7 @@ public class PluginReport
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
