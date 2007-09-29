@@ -11,7 +11,7 @@
   <name>Maven Changes Report Plugin</name>
   <version>2.0-beta-3-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>jira</system>
@@ -153,6 +153,11 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-20</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.4.5</version>
     </dependency>
 
     <!-- commons -->
