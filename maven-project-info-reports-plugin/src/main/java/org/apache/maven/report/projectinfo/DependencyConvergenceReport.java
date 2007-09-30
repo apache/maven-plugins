@@ -25,11 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,9 +48,6 @@ public class DependencyConvergenceReport
     extends AbstractProjectInfoReport
 {
     private static final int PERCENTAGE = 100;
-
-    private static final List SUPPORTED_FONT_FAMILY_NAMES = Arrays.asList( GraphicsEnvironment
-        .getLocalGraphicsEnvironment().getAvailableFontFamilyNames() );
 
     /**
      * The projects in the current build. The effective-POM for
@@ -146,10 +139,6 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "convergence.caption" ) );
         sink.sectionTitle2_();
 
-        // To know the cell width for version
-        String biggestVersion = getBiggestStringVersion( dependencyMap );
-        int cellWidth = getMavenTableCell( biggestVersion );
-
         Iterator it = dependencyMap.keySet().iterator();
         while ( it.hasNext() )
         {
@@ -161,7 +150,7 @@ public class DependencyConvergenceReport
             sink.text( key );
             sink.sectionTitle3_();
 
-            generateDependencyDetails( sink, depList, cellWidth );
+            generateDependencyDetails( sink, depList );
 
             sink.section3_();
         }
@@ -174,9 +163,8 @@ public class DependencyConvergenceReport
      *
      * @param sink
      * @param depList
-     * @param cellWidth
      */
-    private void generateDependencyDetails( Sink sink, List depList, int cellWidth )
+    private void generateDependencyDetails( Sink sink, List depList )
     {
         sink.table();
 
@@ -184,7 +172,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( "15px" ); // according /images/icon_success_sml.gif and /images/icon_error_sml.gif
+        sink.tableCell( );
         if ( artifactMap.size() > 1 )
         {
             iconError( sink );
@@ -204,7 +192,7 @@ public class DependencyConvergenceReport
         {
             String version = (String) it.next();
             sink.tableRow();
-            sink.tableCell( String.valueOf( cellWidth ) + "px" );
+            sink.tableCell( "25%" );
             sink.text( version );
             sink.tableCell_();
 
@@ -303,7 +291,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( "15px" ); // according /images/icon_success_sml.gif
+        sink.tableCell( );
         iconSuccess( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -314,7 +302,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( "15px" ); // according /images/icon_error_sml.gif
+        sink.tableCell( );
         iconError( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -350,18 +338,6 @@ public class DependencyConvergenceReport
 
         int convergence = (int) ( ( (double) depCount / (double) artifactCount ) * PERCENTAGE );
 
-        // To know the header cell width
-        List l = new ArrayList();
-        l.add( getI18nString( locale, "stats.subprojects" ) );
-        l.add( getI18nString( locale, "stats.dependencies" ) );
-        l.add( getI18nString( locale, "stats.artifacts" ) );
-        l.add( getI18nString( locale, "stats.snapshots" ) );
-        l.add( getI18nString( locale, "stats.convergence" ) );
-        l.add( getI18nString( locale, "stats.readyrelease" ) );
-
-        String biggest = getBiggestString( l );
-        String headerCellWidth = getMavenTableHeaderCell( biggest ) + "px";
-
         // Create report
         sink.table();
         sink.tableCaption();
@@ -371,7 +347,7 @@ public class DependencyConvergenceReport
         sink.tableCaption_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.subprojects" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -380,7 +356,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.dependencies" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -389,7 +365,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.artifacts" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -398,7 +374,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.snapshots" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -407,7 +383,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.convergence" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -427,7 +403,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( headerCellWidth );
+        sink.tableHeaderCell( );
         sink.text( getI18nString( locale, "stats.readyrelease" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -647,151 +623,5 @@ public class DependencyConvergenceReport
     {
         // only generate the convergency report if we are running a reactor build
         return reactorProjects.size() > 1;
-    }
-
-    /**
-     * @param dependencyMap a map with <code>version</code> as key
-     * @return the biggest string of <code>version</code>
-     */
-    private String getBiggestStringVersion( Map dependencyMap )
-    {
-        String biggestVersion = "";
-
-        Iterator it = dependencyMap.keySet().iterator();
-        while ( it.hasNext() )
-        {
-            String key = (String) it.next();
-            List depList = (List) dependencyMap.get( key );
-            Map artifactMap = getSortedUniqueArtifactMap( depList );
-
-            String biggestTmp = getBiggestString( artifactMap.keySet() );
-            if ( biggestVersion.length() < biggestTmp.length() )
-            {
-                biggestVersion = biggestTmp;
-            }
-        }
-
-        return biggestVersion;
-    }
-
-    /**
-     * @param l a collection of String
-     * @return the biggest <code>String</code> in the collection
-     */
-    private static String getBiggestString( Collection l )
-    {
-        String biggest = "";
-
-        Iterator it = l.iterator();
-        while ( it.hasNext() )
-        {
-            String text = (String) it.next();
-            if ( biggest.length() < text.length() )
-            {
-                biggest = text;
-            }
-        }
-
-        return biggest;
-    }
-
-    /**
-     * The header cell style has the following hierarchy:
-     * <pre>
-     * html > body .composite > div #bodyColumn > div #contentBox > div .section > div .section > table .bodyTable > tbody > tr .a > td > table .bodyTable > tbody > tr .b > td
-     * </pre>
-     * Extract from <code>maven-theme.css</code>:
-     * <pre>
-     * body, td, select, input, li{
-     *   font-family: Verdana, Helvetica, Arial, sans-serif;
-     *   font-size: 13px;
-     * }
-     * </pre>
-     *
-     * @param s a String
-     * @return the total advance width for showing the specified <code>String</code> using the Maven table cell.
-     * @see #getStringWidth(String, int, int)
-     */
-    private static int getMavenTableCell( String s )
-    {
-        return getStringWidth( s, Font.PLAIN, 13 );
-    }
-
-    /**
-     * The header cell style has the following hierarchy:
-     * <pre>
-     * html > body .composite > div #bodyColumn > div #contentBox > div .section > table .bodyTable > tbody > tr .a > th
-     * </pre>
-     * Extract from <code>maven-theme.css</code>:
-     * <pre>
-     * body, td, select, input, li{
-     *   font-family: Verdana, Helvetica, Arial, sans-serif;
-     *   font-size: 13px;
-     * }
-     * table.bodyTable th{
-     *   color: white;
-     *   background-color: #bbbbbb;
-     *   text-align: left;
-     *   font-weight: bold;
-     * }
-     * </pre>
-     *
-     * @param s a String
-     * @return the total advance width for showing the specified <code>String</code> using the Maven table header cell.
-     * @see #getStringWidth(String, int, int)
-     */
-    private static int getMavenTableHeaderCell( String s )
-    {
-        return getStringWidth( s, Font.BOLD, 13 );
-    }
-
-    /**
-     * @param s a String
-     * @param style an AWT style
-     * @param size an AWT size
-     * @return the total advance width for showing the specified <code>String</code> depending
-     * the Maven CSS, ie the font family and the specified <code>style</code> and <code>size</code>.
-     * @see #getMavenFontFamily()
-     */
-    private static int getStringWidth( String s, int style, int size )
-    {
-        Font font = new Font( getMavenFontFamily(), style, size );
-
-        return Toolkit.getDefaultToolkit().getFontMetrics( font ).stringWidth( s );
-    }
-
-    /**
-     * Extract from <code>maven-theme.css</code>:
-     * <pre>
-     * body, td, select, input, li{
-     *   font-family: Verdana, Helvetica, Arial, sans-serif;
-     *   font-size: 13px;
-     * }
-     * </pre>
-     *
-     * @todo maybe use batik-css to parse the maven-theme.css
-     *
-     * @return a AWT font family name
-     */
-    private static String getMavenFontFamily()
-    {
-        if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Verdana" ) )
-        {
-            return "Verdana";
-        }
-        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Helvetica" ) )
-        {
-            return "Helvetica";
-        }
-        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Arial" ) )
-        {
-            return "Arial";
-        }
-        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "SansSerif" ) )
-        {
-            return "SansSerif";
-        }
-
-        return "Default";
     }
 }
