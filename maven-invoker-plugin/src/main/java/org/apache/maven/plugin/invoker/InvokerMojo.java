@@ -19,9 +19,6 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import bsh.EvalError;
-import bsh.Interpreter;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,6 +48,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import bsh.EvalError;
+import bsh.Interpreter;
+
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
  * outputting the results to the screen.
@@ -63,6 +63,14 @@ import java.util.StringTokenizer;
 public class InvokerMojo
     extends AbstractMojo
 {
+    /**
+     * Flag used to suppress certain invocations. This is useful in tailoring the
+     * build using profiles.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean skipInvocation;
+
     /**
      * Flag used to suppress the summary output notifying of successes and failures. If set to true,
      * the only indication of the build's success or failure will be the effect it has on the main
@@ -199,6 +207,12 @@ public class InvokerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skipInvocation )
+        {
+            getLog().info( "Skipping invocation per configuration. If this is incorrect, ensure the skipInvocation parameter is not set to true." );
+            return;
+        }
+
         String[] includedPoms;
         if ( pom != null )
         {
