@@ -267,14 +267,8 @@ public class ShadeMojo
         {
             PackageRelocation r = relocations[i];
 
-            if ( r.getExcludes() != null )
-            {
-                relocators.add( new SimpleRelocator( r.getPattern(), r.getExcludes() ) );
-            }
-            else
-            {
-                relocators.add( new SimpleRelocator( r.getPattern(), null ) );
-            }
+            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getExcludes() ) );
+
         }
         return relocators;
     }

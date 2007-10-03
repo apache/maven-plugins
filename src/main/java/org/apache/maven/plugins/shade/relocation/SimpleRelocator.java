@@ -23,32 +23,44 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/** @author Jason van Zyl */
+/** 
+ * @author Jason van Zyl 
+ * @author Mauro Talevi
+ */
 public class SimpleRelocator
     implements Relocator
 {
     private String pattern;
+    
+    private String shadedPattern;
 
     private List excludes;
 
-    public SimpleRelocator( String pattern,
-                            List excludes )
+    public SimpleRelocator(String pattern, String shadedPattern, List excludes) 
     {
-        this.pattern = pattern.replace( '.', '/' );
+        this.pattern = pattern.replace('.', '/');
 
-        if ( excludes != null )
+        if ( shadedPattern != null )
+        {
+            this.shadedPattern = shadedPattern.replace('.', '/');            
+        } else 
+        {
+            this.shadedPattern = "hidden/" + pattern;
+        }
+
+        if (excludes != null) 
         {
             this.excludes = new ArrayList();
 
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
+            for (Iterator i = excludes.iterator(); i.hasNext();) 
             {
                 String e = (String) i.next();
 
-                this.excludes.add( e.replace( '.', '/' ) );
+                this.excludes.add(e.replace('.', '/'));
             }
         }
     }
-
+    
     public boolean canRelocate( String clazz )
     {
         if ( excludes != null )
@@ -74,6 +86,7 @@ public class SimpleRelocator
 
     public String relocate( String clazz )
     {
-        return "hidden/" + clazz;
+        return clazz.replaceFirst(pattern, shadedPattern);
     }
+
 }

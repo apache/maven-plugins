@@ -57,6 +57,7 @@
               <relocations>
                 <relocation>
                   <pattern>org.codehaus.plexus.util</pattern>
+                  <shadedPattern>org.shaded.plexus.util</shadedPattern>
                   <excludes>
                     <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
                     <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>

@@ -20,16 +20,26 @@ package org.apache.maven.plugins.shade.mojo;
 
 import java.util.List;
 
-/** @author Jason van Zyl */
+/** 
+ * @author Jason van Zyl 
+ * @author Mauro Talevi
+ */
 public class PackageRelocation
 {
     private String pattern;
+
+    private String shadedPattern;
 
     private List excludes;
 
     public String getPattern()
     {
         return pattern;
+    }
+
+    public String getShadedPattern()
+    {
+        return shadedPattern;
     }
 
     public List getExcludes()

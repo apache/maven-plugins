@@ -59,7 +59,7 @@ public class DefaultShader
     {
         Set resources = new HashSet();
 
-        MyRemapper remapper = new MyRemapper( relocators );
+        RelocatorRemapper remapper = new RelocatorRemapper( relocators );
 
         JarOutputStream jos = new JarOutputStream( new FileOutputStream( uberJar ) );
         
@@ -165,12 +165,12 @@ public class DefaultShader
         IOUtil.close( jos );
     }
 
-    class MyRemapper
+    class RelocatorRemapper
         extends Remapper
     {
         List relocators;
 
-        public MyRemapper( List relocators )
+        public RelocatorRemapper( List relocators )
         {
             this.relocators = relocators;
         }
