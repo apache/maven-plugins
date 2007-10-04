@@ -781,6 +781,28 @@ public class JavadocReportTest
     }
 
     /**
+     * Test newline in various string parameters
+     *
+     * @throws Exception if any
+     */
+    public void testNewline()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/newline-test/newline-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+        }
+        catch ( MojoExecutionException e )
+        {
+            fail( "Doesn't handle correctly newline for string parameters. See options and packages files." );
+        }
+
+        assertTrue( true );
+    }
+
+    /**
      * Method to test the jdk6 javadoc
      *
      * @throws Exception
