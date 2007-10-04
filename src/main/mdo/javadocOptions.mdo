@@ -165,12 +165,14 @@ under the License.
 
     <class>
       <name>DocletArtifact</name>
+      <description>A doclet parameter as artifact.</description>
       <version>1.0.0</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
 
     <class>
       <name>TagletArtifact</name>
+      <description>A taglet parameter as artifact.</description>
       <version>1.0.0</version>
       <superClass>JavadocPathArtifact</superClass>
     </class>
@@ -201,6 +203,28 @@ under the License.
           <association>
             <type>TagletArtifact</type>
           </association>
+        </field>
+      </fields>
+    </class>
+
+    <class>
+      <name>OfflineLink</name>
+      <description>An offline link parameter.</description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>url</name>
+          <description>The url of the link.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>location</name>
+          <description>The location of the link.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
         </field>
       </fields>
     </class>
