@@ -57,6 +57,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
+import org.apache.maven.plugin.javadoc.options.OfflineLink;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.plugin.javadoc.options.Taglet;
 import org.apache.maven.plugin.javadoc.options.TagletArtifact;
@@ -662,10 +663,20 @@ public abstract class AbstractJavadocMojo
      * referenced classes.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;offlineLinks&gt;<br/>
+     *   &lt;offlineLink&gt;<br/>
+     *     &lt;url&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/url&gt;<br/>
+     *     &lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;<br/>
+     *   &lt;/offlineLink&gt;<br/>
+     *  &lt;/offlineLinks&gt;
+     * </pre>
      *
      * @parameter expression="${offlineLinks}"
      */
-    private ArrayList offlineLinks;
+    private OfflineLink[] offlineLinks;
 
     /**
      * Creates an HTML version of each source file (with line numbers) and adds links to them from the standard
@@ -2315,6 +2326,8 @@ public abstract class AbstractJavadocMojo
      */
     private void addLinkofflineArguments( List arguments )
     {
+        List offlineLinksList = ( offlineLinks != null ? Arrays.asList( offlineLinks ) : new ArrayList() );
+
         if ( !aggregate && reactorProjects != null )
         {
             String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
@@ -2331,24 +2344,19 @@ public abstract class AbstractJavadocMojo
 
                 if ( p.getUrl() != null )
                 {
-                    if ( offlineLinks == null )
-                    {
-                        offlineLinks = new ArrayList();
-                    }
-
                     OfflineLink ol = new OfflineLink();
                     ol.setUrl( p.getUrl() + "/apidocs" );
                     ol.setLocation( p.getBasedir().getAbsolutePath() + "/" + javadocDirRelative );
-                    offlineLinks.add( ol );
+                    offlineLinksList.add( ol );
                 }
             }
         }
 
-        if ( offlineLinks != null )
+        if ( offlineLinksList != null )
         {
-            for ( int i = 0; i < offlineLinks.size(); i++ )
+            for ( int i = 0; i < offlineLinksList.size(); i++ )
             {
-                OfflineLink offlineLink = (OfflineLink) offlineLinks.get( i );
+                OfflineLink offlineLink = (OfflineLink) offlineLinksList.get( i );
                 addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " "
                     + quotedPathArgument( offlineLink.getLocation() ), true );
             }
