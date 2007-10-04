@@ -1262,8 +1262,7 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ),
-                              false, false );
+            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText() ), false, false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
@@ -1272,7 +1271,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( getDoctitle() ), false, false );
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-footer", quotedArgument( StringUtils.replace( footer, "\n", "" ) ), false, false );
+            addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ), false, false );
             if ( groups != null )
             {
                 for ( int i = 0; i < groups.length; i++ )
@@ -1290,7 +1289,7 @@ public abstract class AbstractJavadocMojo
                     }
                 }
             }
-            addArgIfNotEmpty( arguments, "-header", quotedArgument( StringUtils.replace( header, "\n", "" ) ), false, false );
+            addArgIfNotEmpty( arguments, "-header", quotedArgument( header ), false, false );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
             addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
@@ -1310,7 +1309,7 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, nosince, "-nosince" );
             addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
             addArgIf( arguments, notree, "-notree" );
-            addArgIfNotEmpty( arguments, "-packagesheader", packagesheader, SINCE_JAVADOC_1_4_2 );
+            addArgIfNotEmpty( arguments, "-packagesheader", quotedArgument( packagesheader ), SINCE_JAVADOC_1_4_2 );
             if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
             {
                 addArgIf( arguments, quiet, "-quiet" );
@@ -1372,8 +1371,7 @@ public abstract class AbstractJavadocMojo
                 }
             }
 
-            addArgIfNotEmpty( arguments, "-top", quotedArgument( StringUtils.replace( top, "\n", "" ) ), false, false,
-                              SINCE_JAVADOC_1_6 );
+            addArgIfNotEmpty( arguments, "-top", quotedArgument( top ), false, false, SINCE_JAVADOC_1_6 );
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
             addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( getWindowtitle() ), false, false );
@@ -1745,13 +1743,14 @@ public abstract class AbstractJavadocMojo
      * Method that sets the bottom text that will be displayed on the bottom of the
      * javadocs.
      *
-     * @param inceptionYear the year when the project was started
      * @return a String that contains the text that will be displayed at the bottom of the javadoc
      */
-    private String getBottomText( String inceptionYear )
+    private String getBottomText()
     {
         int actualYear = Calendar.getInstance().get( Calendar.YEAR );
         String year = String.valueOf( actualYear );
+
+        String inceptionYear = project.getInceptionYear();
 
         String theBottom = StringUtils.replace( this.bottom, "{currentYear}", year );
 
@@ -2784,7 +2783,10 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method to wrap an argument value in quotes. Intended for values which may contain whitespaces.
+     * Convenience method to wrap an argument value in single quotes (i.e. <code>'</code>). Intended for values
+     * which may contain whitespaces.
+     * <br/>
+     * To prevent javadoc error, the line separator (i.e. <code>\n</code>) are skipped.
      *
      * @param value the argument value.
      * @return argument with quote
@@ -2792,6 +2794,7 @@ public abstract class AbstractJavadocMojo
     private static String quotedArgument( String value )
     {
         String arg = value;
+
         if ( StringUtils.isNotEmpty( arg ) )
         {
             if ( arg.indexOf( "'" ) != -1 )
@@ -2799,6 +2802,9 @@ public abstract class AbstractJavadocMojo
                 arg = StringUtils.replace( arg, "'", "\\'" );
             }
             arg = "'" + arg + "'";
+
+            // To prevent javadoc error
+            arg = StringUtils.replace( arg, "\n", " " );
         }
 
         return arg;
