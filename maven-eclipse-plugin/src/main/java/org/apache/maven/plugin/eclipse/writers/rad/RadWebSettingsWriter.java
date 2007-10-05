@@ -26,6 +26,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -36,7 +38,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
-public class RadWebSettingsWriter extends AbstractEclipseWriter
+public class RadWebSettingsWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String COM_IBM_ETOOLS_SITEEDIT_WIZARDS_PROJECTFEATURE_WEB_SITE_FEATURE =
@@ -64,6 +67,14 @@ public class RadWebSettingsWriter extends AbstractEclipseWriter
 
     private static final String WEBSETTINGS_WEBSETTINGS = "websettings";
 
+    private static final String WEBSETTINGS_LIBMODULES = "lib-modules";
+
+    private static final String WEBSETTINGS_LIBMODULE = "lib-module";
+
+    private static final String WEBSETTINGS_LM_JAR = "jar";
+
+    private static final String WEBSETTINGS_LM_PROJECT = "project";
+
     /**
      * the context root to use for this project
      */
@@ -72,8 +83,7 @@ public class RadWebSettingsWriter extends AbstractEclipseWriter
     /**
      * required default constructor.
      * 
-     * @param warContextRoot
-     *            the context root to use for this project
+     * @param warContextRoot the context root to use for this project
      */
     public RadWebSettingsWriter( String warContextRoot )
     {
@@ -83,10 +93,10 @@ public class RadWebSettingsWriter extends AbstractEclipseWriter
     /**
      * write the websettings file for RAD6 if needed.
      * 
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @throws MojoExecutionException when writing the config files was not possible
      */
-    public void write() throws MojoExecutionException
+    public void write()
+        throws MojoExecutionException
     {
         FileWriter w;
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getProject().getPackaging() ) )
@@ -109,8 +119,7 @@ public class RadWebSettingsWriter extends AbstractEclipseWriter
     /**
      * write the websettings file for RAD6.
      * 
-     * @param writer
-     *            where to write to
+     * @param writer where to write to
      */
     private void writeModuleTypeFacetCore( XMLWriter writer )
     {
@@ -140,14 +149,51 @@ public class RadWebSettingsWriter extends AbstractEclipseWriter
         writer.endElement();
         writer.endElement();
         writer.endElement();
-        writer.endElement();
+
+        // library modules
+        writer.startElement( WEBSETTINGS_LIBMODULES );
+
+        // iterate relevant dependencies (non-test, non-provided, project)
+        IdeDependency[] deps = config.getDeps();
+        if ( deps != null )
+        {
+            for ( int i = 0; i < deps.length; i++ )
+            {
+                final IdeDependency dependency = deps[i];
+                log.debug( "RadWebSettingsWriter: checking dependency " + dependency.toString() );
+
+                if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
+                {
+                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
+                        + " selected for inclusion as lib-module" );
+                    
+                    String depName = IdeUtils.getProjectName( config.getProjectNameTemplate(), dependency );
+                    String depJar = dependency.getArtifactId() + ".jar";
+
+                    writer.startElement( WEBSETTINGS_LIBMODULE );
+
+                    writer.startElement( WEBSETTINGS_LM_JAR );
+                    writer.writeText( depJar );
+                    writer.endElement(); // jar
+
+                    writer.startElement( WEBSETTINGS_LM_PROJECT );
+                    writer.writeText( depName );
+                    writer.endElement(); // project
+
+                    writer.endElement(); // libmodule
+                }
+            }
+        }
+
+        writer.endElement(); // libmodules
+        writer.endElement(); // websettings
+
     }
 
     /**
      * Create the ContextRoot for this project, the default is the artifact id
      * 
-     * @param warContextRoot
-     *            set as a configuration property.
+     * @param warContextRoot set as a configuration property.
      * @return the context root to use
      */
     private String getContextRoot( String warContextRoot )

@@ -10,6 +10,7 @@
     <module>project-rad-1</module>
     <module>project-rad-2</module>
     <module>project-rad-3</module>
+    <module>project-rad-4</module>
   </modules>
   <build>
     <plugins>
