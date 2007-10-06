@@ -62,7 +62,7 @@ public class ToolchainMojo
      */
     private Toolchains toolchains;
 
-    public ToolchainMojo( )
+    public ToolchainMojo()
     {
     }
 
@@ -71,14 +71,14 @@ public class ToolchainMojo
     {
         if ( toolchains != null )
         {
-            Iterator en = toolchains.getToolchainsTypes(  ).iterator(  );
-            List nonMatchedTypes = new ArrayList(  );
-            while ( en.hasNext(  ) )
+            Iterator en = toolchains.getToolchainsTypes().iterator(  );
+            List nonMatchedTypes = new ArrayList();
+            while ( en.hasNext() )
             {
                 try
                 {
                     String type = (String) en.next();
-                    getLog(  ).info( "Type:" + type );
+                    getLog().info( "Type:" + type );
                     Map params = toolchains.getParams( type );
                     ToolchainPrivate[] tcs = toolchainManager.getToolchainsForType( type );
                     boolean matched = false;
@@ -104,21 +104,21 @@ public class ToolchainMojo
                         ex );
                 }
             }
-            if ( !nonMatchedTypes.isEmpty(  ) )
+            if ( !nonMatchedTypes.isEmpty() )
             {
                 //TODO add the default toolchain instance if defined??
                 String str = "Cannot find matching toolchain definitions for the following toolchain types:";
-                Iterator it = nonMatchedTypes.iterator(  );
-                while ( it.hasNext(  ) )
+                Iterator it = nonMatchedTypes.iterator();
+                while ( it.hasNext() )
                 {
                     String type = (String) it.next();
                     str = str + "\n" + type;
                     Map params = toolchains.getParams( type );
-                    if ( params.size(  ) > 0 )
+                    if ( params.size() > 0 )
                     {
-                        Iterator it2 = params.keySet(  ).iterator(  );
+                        Iterator it2 = params.keySet().iterator();
                         str = str + " [";
-                        while ( it2.hasNext(  ) )
+                        while ( it2.hasNext() )
                         {
                             String string = (String) it2.next();
                             str = str + " " + string + "='" + params.get( string ) + "' ";
@@ -126,7 +126,7 @@ public class ToolchainMojo
                         str = str + "]";
                     }
                 }
-                getLog(  ).error( str );
+                getLog().error( str );
                 throw new MojoFailureException( "Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
             }
         }
@@ -139,20 +139,20 @@ public class ToolchainMojo
     private boolean toolchainMatchesRequirements( ToolchainPrivate toolchain,
                                                   Map params )
     {
-        Map matchers = toolchain.getRequirementMatchers(  );
-        Iterator it = params.keySet(  ).iterator(  );
-        while ( it.hasNext(  ) )
+        Map matchers = toolchain.getRequirementMatchers();
+        Iterator it = params.keySet().iterator();
+        while ( it.hasNext() )
         {
             String key = (String) it.next();
             RequirementMatcher matcher = (RequirementMatcher) matchers.get(key);
             if ( matcher == null )
             {
-                getLog(  ).debug( "Toolchain "  + toolchain + " is missing required property: "  + key );
+                getLog().debug( "Toolchain "  + toolchain + " is missing required property: "  + key );
                 return false;
             }
             if ( !matcher.matches( (String) params.get(key) ) )
             {
-                getLog(  ).debug( "Toolchain "  + toolchain + " doesn't match required property: "  + key );
+                getLog().debug( "Toolchain "  + toolchain + " doesn't match required property: "  + key );
                 return false;
             }
         }
