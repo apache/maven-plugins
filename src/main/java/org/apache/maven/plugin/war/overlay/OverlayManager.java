@@ -41,8 +41,12 @@ public class OverlayManager
 
     private final MavenProject project;
 
-    private final List warArtifacts;
+    //private final List warArtifactss;
+    
+    //private final List zipArtifacts;
 
+    private final List artifactsOverlays;
+    
     /**
      * Creates a manager with the specified overlays.
      * <p/>
@@ -66,8 +70,12 @@ public class OverlayManager
         }
         this.project = project;
 
-        this.warArtifacts = getWarOverlaysAsArtifacts();
+        //this.warArtifacts = getOverlaysAsArtifactsWithType( "war" );
+        
+        //this.zipArtifacts = getOverlaysAsArtifactsWithType( "zip" );
 
+        this.artifactsOverlays = getOverlaysAsArtifacts();
+        
         // Initialize
         initialize( defaultIncludes, defaultExcludes );
 
@@ -78,10 +86,14 @@ public class OverlayManager
      *
      * @return a list of war Artifact
      */
+    /*
     public List getWarArtifacts()
     {
         return warArtifacts;
     }
+    */
+    
+    
 
     /**
      * Returns the resolved overlays.
@@ -157,7 +169,7 @@ public class OverlayManager
         }
 
         // Build the list of missing overlays
-        final Iterator it2 = warArtifacts.iterator();
+        final Iterator it2 = artifactsOverlays.iterator();
         while ( it2.hasNext() )
         {
             Artifact artifact = (Artifact) it2.next();
@@ -202,11 +214,10 @@ public class OverlayManager
             return null;
         }
 
-        final Iterator it = warArtifacts.iterator();
-        while ( it.hasNext() )
+        for (Iterator iterator = artifactsOverlays.iterator();iterator.hasNext();)
         {
             // TODO Handle ZIP artifact ; Handle classifier dependencies properly (clash management)
-            Artifact artifact = (Artifact) it.next();
+            Artifact artifact = (Artifact) iterator.next();
             if ( overlay.getGroupId().equals( artifact.getGroupId() ) &&
                 overlay.getArtifactId().equals( artifact.getArtifactId() ) &&
                 ( overlay.getClassifier() == null || ( overlay.getClassifier().equals( artifact.getClassifier() ) ) ) )
@@ -214,18 +225,19 @@ public class OverlayManager
                 return artifact;
             }
         }
+        
         throw new InvalidOverlayConfigurationException(
             "overlay[" + overlay + "] is not a dependency of the project." );
 
     }
-
+    
     /**
      * Returns a list of war {@link org.apache.maven.artifact.Artifact} describing
      * the overlays of the current project.
      *
      * @return the overlays as artifacts objects
-     */
-    List getWarOverlaysAsArtifacts()
+     */    
+    private List getOverlaysAsArtifacts()
     {
         ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
         final Set artifacts = project.getArtifacts();
@@ -235,7 +247,8 @@ public class OverlayManager
         while ( it.hasNext() )
         {
             Artifact artifact = (Artifact) it.next();
-            if ( !artifact.isOptional() && filter.include( artifact ) && "war".equals( artifact.getType() ) )
+            if ( !artifact.isOptional() && filter.include( artifact )
+                && ( "war".equals( artifact.getType() ) || "zip".equals( artifact.getType() ) ) )
             {
                 result.add( artifact );
             }

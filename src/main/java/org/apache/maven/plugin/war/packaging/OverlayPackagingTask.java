@@ -55,6 +55,7 @@ public class OverlayPackagingTask
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
+        System.out.print( "OverlayPackagingTask performPackaging overlay.getTargetPath() " + overlay.getTargetPath());
         if ( overlay.shouldSkip() )
         {
             context.getLog().info( "Skipping overlay[" + overlay + "]" );
@@ -70,9 +71,23 @@ public class OverlayPackagingTask
 
                 // Step2: setup
                 final PathSet includes = getFilesToIncludes( tmpDir, overlay.getIncludes(), overlay.getExcludes() );
-
+                
                 // Copy
-                copyFiles( overlay.getId(), context, tmpDir, includes );
+                if ( null == overlay.getTargetPath() )
+                {
+                    copyFiles( overlay.getId(), context, tmpDir, includes );
+                }
+                else
+                {
+                    // overlay.getTargetPath() must ended with /
+                    // if not we add it
+                    String targetPath = overlay.getTargetPath();
+                    if (!targetPath.endsWith( "/" ))
+                    {
+                        targetPath = targetPath + "/";
+                    }
+                    copyFiles( overlay.getId(), context, tmpDir, includes, targetPath );
+                }
             }
             catch ( IOException e )
             {
