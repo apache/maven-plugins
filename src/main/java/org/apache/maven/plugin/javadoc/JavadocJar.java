@@ -36,6 +36,8 @@ import java.util.Iterator;
 /**
  * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
  *
+ * @version $Id$
+ * @since 2.0
  * @goal jar
  * @phase package
  */
