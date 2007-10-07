@@ -78,6 +78,7 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @since 2.0
  * @requiresDependencyResolution compile
  * @aggregator
  */
@@ -100,6 +101,7 @@ public abstract class AbstractJavadocMojo
      * For Javadoc options appears since Java 1.4.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">
      * What's New in Javadoc 1.4</a>
+     * @since 2.1
      */
     private static final float SINCE_JAVADOC_1_4 = 1.4f;
 
@@ -107,6 +109,7 @@ public abstract class AbstractJavadocMojo
      * For Javadoc options appears since Java 1.4.2.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * What's New in Javadoc 1.4.2</a>
+     * @since 2.1
      */
     private static final float SINCE_JAVADOC_1_4_2 = 1.42f;
 
@@ -114,6 +117,7 @@ public abstract class AbstractJavadocMojo
      * For Javadoc options appears since Java 5.0.
      * See <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * What's New in Javadoc 5.0</a>
+     * @since 2.1
      */
     private static final float SINCE_JAVADOC_1_5 = 1.5f;
 
@@ -121,6 +125,7 @@ public abstract class AbstractJavadocMojo
      * For Javadoc options appears since Java 6.0.
      * See <a href="http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html">
      * Javadoc Technology</a>
+     * @since 2.4
      */
     private static final float SINCE_JAVADOC_1_6 = 1.6f;
 
@@ -147,6 +152,8 @@ public abstract class AbstractJavadocMojo
     protected MavenProject project;
 
     /**
+     * Specify if the javadoc should operate in offline mode.
+     *
      * @parameter default-value="${settings.offline}"
      * @required
      * @readonly
@@ -156,6 +163,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
      *
+     * @since 2.1
      * @parameter expression="${basedir}/src/main/javadoc"
      */
     private File javadocDirectory;
@@ -176,6 +184,7 @@ public abstract class AbstractJavadocMojo
      * </pre>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
      *
+     * @since 2.3
      * @parameter expression="${additionalJOption}"
      */
     private String additionalJOption;
@@ -226,6 +235,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Used to resolve artifacts of aggregated modules
      *
+     * @since 2.1
      * @component
      */
     private ArtifactMetadataSource artifactMetadataSource;
@@ -233,6 +243,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Set this to 'true' to debug Javadoc plugin. With this, 'options' and 'files' files are provided.
      *
+     * @since 2.1
      * @parameter expression="${debug}" default-value="false"
      */
     private boolean debug;
@@ -240,6 +251,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Sets the path of the Javadoc Tool executable to use.
      *
+     * @since 2.3
      * @parameter expression="${javadocExecutable}"
      */
     private String javadocExecutable;
@@ -247,6 +259,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Version of the Javadoc Tool executable to use, ex. "1.3", "1.5".
      *
+     * @since 2.3
      * @parameter expression="${javadocVersion}"
      */
     private String javadocVersion;
@@ -323,6 +336,7 @@ public abstract class AbstractJavadocMojo
      * &lt;/docletArtifacts&gt;
      * </pre>
      *
+     * @since 2.1
      * @parameter expression="${docletArtifacts}"
      */
     private DocletArtifact[] docletArtifacts;
@@ -642,6 +656,7 @@ public abstract class AbstractJavadocMojo
      * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      *
+     * @since 2.1
      * @parameter expression="${keywords}" default-value="false"
      */
     private boolean keywords;
@@ -773,6 +788,7 @@ public abstract class AbstractJavadocMojo
      * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      *
+     * @since 2.1
      * @parameter expression="${notimestamp}" default-value="false"
      */
     private boolean notimestamp;
@@ -792,6 +808,7 @@ public abstract class AbstractJavadocMojo
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * Java 1.4.2</a>.
      *
+     * @since 2.1
      * @parameter expression="${packagesheader}"
      */
     private String packagesheader;
@@ -817,6 +834,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since Java 5.0.
      *
+     * @since 2.1
      * @parameter expression="${sourcetab}" alias="linksourcetab"
      */
     private String sourcetab;
@@ -909,6 +927,7 @@ public abstract class AbstractJavadocMojo
      * &lt;/tagletArtifact&gt;
      * </pre>
      *
+     * @since 2.1
      * @parameter expression="${tagletArtifact}"
      */
     private TagletArtifact tagletArtifact;
@@ -935,6 +954,7 @@ public abstract class AbstractJavadocMojo
      *  &lt;/taglets&gt;
      * </pre>
      *
+     * @since 2.1
      * @parameter expression="${taglets}"
      */
     private Taglet[] taglets;
@@ -946,6 +966,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since Java 6.0
      *
+     * @since 2.4
      * @parameter expression="${top}"
      */
     private String top;

@@ -41,6 +41,7 @@ import java.util.Locale;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @since 2.0
  * @goal javadoc
  * @phase generate-sources
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
@@ -72,6 +73,7 @@ public class JavadocReport
     /**
      * The name of the destination directory.
      *
+     * @since 2.1
      * @parameter expression="${destDir}" default-value="apidocs"
      */
     private String destDir;
@@ -79,6 +81,7 @@ public class JavadocReport
     /**
      * The name of the Javadoc report.
      *
+     * @since 2.1
      * @parameter expression="${name}" default-value="JavaDocs"
      */
     private String name;
@@ -86,6 +89,7 @@ public class JavadocReport
     /**
      * The description of the Javadoc report.
      *
+     * @since 2.1
      * @parameter expression="${description}" default-value="JavaDoc API documentation."
      */
     private String description;
