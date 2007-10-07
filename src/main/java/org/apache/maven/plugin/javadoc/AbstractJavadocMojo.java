@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +62,6 @@ import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
@@ -1072,8 +1069,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @param locale
-     * @throws MavenReportException
+     * @param locale the wanted locale (actually unused).
+     * @throws MavenReportException if any
      */
     protected void executeReport( Locale locale )
         throws MavenReportException
@@ -1113,7 +1110,7 @@ public abstract class AbstractJavadocMojo
         float jVersion;
         try
         {
-            jVersion = getJavadocVersion( new File( jExecutable ) );
+            jVersion = JavadocUtil.getJavadocVersion( new File( jExecutable ) );
         }
         catch ( IOException e )
         {
@@ -1181,7 +1178,7 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isNotEmpty( this.locale ) )
         {
             options.append( "-locale " );
-            options.append( quotedArgument( this.locale ) );
+            options.append( JavadocUtil.quotedArgument( this.locale ) );
             options.append( SystemUtils.LINE_SEPARATOR );
         }
 
@@ -1189,7 +1186,7 @@ public abstract class AbstractJavadocMojo
         if ( classpath.length() > 0 )
         {
             options.append( "-classpath " );
-            options.append( quotedPathArgument( classpath ) );
+            options.append( JavadocUtil.quotedPathArgument( classpath ) );
             options.append( SystemUtils.LINE_SEPARATOR );
         }
 
@@ -1227,11 +1224,11 @@ public abstract class AbstractJavadocMojo
         addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
         if ( StringUtils.isNotEmpty( doclet ) )
         {
-            addArgIfNotEmpty( arguments, "-doclet", quotedArgument( doclet ) );
-            addArgIfNotEmpty( arguments, "-docletpath", quotedPathArgument( getDocletPath() ) );
+            addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
+            addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
         }
-        addArgIfNotEmpty( arguments, "-encoding", quotedArgument( encoding ) );
-        addArgIfNotEmpty( arguments, "-extdirs", quotedPathArgument( extdirs ) );
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
@@ -1244,11 +1241,11 @@ public abstract class AbstractJavadocMojo
 
         if ( ( getOverview() != null ) && ( getOverview().exists() ) )
         {
-            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( getOverview().getAbsolutePath() ) );
+            addArgIfNotEmpty( arguments, "-overview", JavadocUtil.quotedPathArgument( getOverview().getAbsolutePath() ) );
         }
         arguments.add( getAccessLevel() );
         addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
-        addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), SINCE_JAVADOC_1_4 );
+        addArgIfNotEmpty( arguments, "-source", JavadocUtil.quotedArgument( source ), SINCE_JAVADOC_1_4 );
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
 
@@ -1257,7 +1254,7 @@ public abstract class AbstractJavadocMojo
             sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
 
-        addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( getSourcePath( sourcePaths ) ) );
+        addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
         if ( StringUtils.isNotEmpty( sourcepath ) )
         {
@@ -1273,16 +1270,16 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText() ), false, false );
+            addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false, false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
-            addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
+            addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( charset ) );
+            addArgIfNotEmpty( arguments, "-d", JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-docencoding", quotedArgument( docencoding ) );
-            addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( getDoctitle() ), false, false );
-            addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
+            addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( docencoding ) );
+            addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false, false );
+            addArgIfNotEmpty( arguments, "-excludedocfilessubdir", JavadocUtil.quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ), false, false );
+            addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
             if ( groups != null )
             {
                 for ( int i = 0; i < groups.length; i++ )
@@ -1295,13 +1292,13 @@ public abstract class AbstractJavadocMojo
                     else
                     {
                         String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
-                        addArgIfNotEmpty( arguments, "-group", quotedArgument( groupTitle ) + " "
-                            + quotedArgument( groups[i].getPackages() ), true );
+                        addArgIfNotEmpty( arguments, "-group", JavadocUtil.quotedArgument( groupTitle ) + " "
+                            + JavadocUtil.quotedArgument( groups[i].getPackages() ), true );
                     }
                 }
             }
-            addArgIfNotEmpty( arguments, "-header", quotedArgument( header ), false, false );
-            addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
+            addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
+            addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
             addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
             if ( !isOffline )
@@ -1316,11 +1313,11 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, nohelp, "-nohelp" );
             addArgIf( arguments, noindex, "-noindex" );
             addArgIf( arguments, nonavbar, "-nonavbar" );
-            addArgIfNotEmpty( arguments, "-noqualifier", quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
+            addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
             addArgIf( arguments, nosince, "-nosince" );
             addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
             addArgIf( arguments, notree, "-notree" );
-            addArgIfNotEmpty( arguments, "-packagesheader", quotedArgument( packagesheader ), SINCE_JAVADOC_1_4_2 );
+            addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ), SINCE_JAVADOC_1_4_2 );
             if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
             {
                 addArgIf( arguments, quiet, "-quiet" );
@@ -1337,9 +1334,9 @@ public abstract class AbstractJavadocMojo
             }
             addArgIf( arguments, splitindex, "-splitindex" );
             addArgIfNotEmpty( arguments, "-stylesheetfile",
-                              quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
+                              JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
-            addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
+            addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
             if ( taglets != null )
             {
                 for ( int i = 0; i < taglets.length; i++ )
@@ -1350,12 +1347,12 @@ public abstract class AbstractJavadocMojo
                     }
                     else
                     {
-                        addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglets[i].getTagletClass() ),
+                        addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglets[i].getTagletClass() ),
                                           SINCE_JAVADOC_1_4 );
                     }
                 }
             }
-            addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( getTagletPath() ), SINCE_JAVADOC_1_4 );
+            addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ), SINCE_JAVADOC_1_4 );
 
             if ( tags != null )
             {
@@ -1382,10 +1379,10 @@ public abstract class AbstractJavadocMojo
                 }
             }
 
-            addArgIfNotEmpty( arguments, "-top", quotedArgument( top ), false, false, SINCE_JAVADOC_1_6 );
+            addArgIfNotEmpty( arguments, "-top", JavadocUtil.quotedArgument( top ), false, false, SINCE_JAVADOC_1_6 );
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
-            addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( getWindowtitle() ), false, false );
+            addArgIfNotEmpty( arguments, "-windowtitle", JavadocUtil.quotedArgument( getWindowtitle() ), false, false );
         }
 
         // ----------------------------------------------------------------------
@@ -1484,7 +1481,7 @@ public abstract class AbstractJavadocMojo
             for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
             {
                 File sourceDirectory = new File( (String) i.next() );
-                addFilesFromSource( files, sourceDirectory, excludedPackages );
+                JavadocUtil.addFilesFromSource( files, sourceDirectory, excludedPackages );
             }
         }
 
@@ -1562,7 +1559,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        sourcePaths = pruneSourceDirs( sourcePaths );
+        sourcePaths = JavadocUtil.pruneSourceDirs( sourcePaths );
         return sourcePaths;
     }
 
@@ -1605,7 +1602,7 @@ public abstract class AbstractJavadocMojo
             String[] excludedPackages = getExcludedPackages();
             String[] subpackagesList = subpackages.split( "[:]" );
 
-            excludedNames = getExcludedNames( sourcePaths, subpackagesList, excludedPackages );
+            excludedNames = JavadocUtil.getExcludedNames( sourcePaths, subpackagesList, excludedPackages );
         }
 
         String excludeArg = "";
@@ -1701,7 +1698,7 @@ public abstract class AbstractJavadocMojo
                             ArtifactResolutionResult result = resolver
                                 .resolveTransitively( dependencyArtifacts, subProject.getArtifact(), subProject
                                     .getRemoteArtifactRepositories(), localRepository, artifactMetadataSource );
-                            populateCompileArtifactMap( compileArtifactMap, getCompileArtifacts( result.getArtifacts() ) );
+                            populateCompileArtifactMap( compileArtifactMap, JavadocUtil.getCompileArtifacts( result.getArtifacts() ) );
                         }
                     }
                 }
@@ -1906,14 +1903,21 @@ public abstract class AbstractJavadocMojo
         return path.toString();
     }
 
-    private boolean isDocletArtifactEmpty( DocletArtifact docletArtifact )
+    /**
+     * Verify if a doclet artifact is empty or not
+     *
+     * @param aDocletArtifact
+     * @return true if aDocletArtifact or the groupId/artifactId/version of the doclet artifact is null, false otherwise.
+     */
+    private boolean isDocletArtifactEmpty( DocletArtifact aDocletArtifact )
     {
-        if ( docletArtifact == null )
+        if ( aDocletArtifact == null )
         {
             return true;
         }
-        return ( StringUtils.isEmpty( docletArtifact.getGroupId() )
-            && StringUtils.isEmpty( docletArtifact.getArtifactId() ) && StringUtils.isEmpty( docletArtifact
+
+        return ( StringUtils.isEmpty( aDocletArtifact.getGroupId() )
+            && StringUtils.isEmpty( aDocletArtifact.getArtifactId() ) && StringUtils.isEmpty( aDocletArtifact
             .getVersion() ) );
     }
 
@@ -2357,8 +2361,8 @@ public abstract class AbstractJavadocMojo
             for ( int i = 0; i < offlineLinksList.size(); i++ )
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinksList.get( i );
-                addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " "
-                    + quotedPathArgument( offlineLink.getLocation() ), true );
+                addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( offlineLink.getUrl() ) + " "
+                    + JavadocUtil.quotedPathArgument( offlineLink.getLocation() ), true );
             }
         }
     }
@@ -2397,8 +2401,8 @@ public abstract class AbstractJavadocMojo
                 {
                     // XXX links can be relative paths or files - they're not necessarily URLs.
                     URL linkUrl = new URL( link + "/package-list" );
-                    fetchURL( settings, linkUrl );
-                    addArgIfNotEmpty( arguments, "-link", quotedPathArgument( link ), true );
+                    JavadocUtil.fetchURL( settings, linkUrl );
+                    addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
                 }
                 catch ( MalformedURLException e )
                 {
@@ -2484,7 +2488,7 @@ public abstract class AbstractJavadocMojo
 
         if ( getJavadocDirectory() != null )
         {
-            copyJavadocResources( outputDirectory, getJavadocDirectory() );
+            JavadocUtil.copyJavadocResources( outputDirectory, getJavadocDirectory() );
         }
 
         if ( aggregate && project.isExecutionRoot() )
@@ -2497,7 +2501,7 @@ public abstract class AbstractJavadocMojo
                 {
                     String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                     File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
-                    copyJavadocResources( outputDirectory, javadocDir );
+                    JavadocUtil.copyJavadocResources( outputDirectory, javadocDir );
                 }
             }
         }
@@ -2704,443 +2708,6 @@ public abstract class AbstractJavadocMojo
         if ( !debug )
         {
             packagesFile.deleteOnExit();
-        }
-    }
-
-    // ----------------------------------------------------------------------
-    // private static methods
-    // ----------------------------------------------------------------------
-
-    /**
-     * Method that removes the invalid directories in the specified source directories
-     *
-     * @param sourceDirs the list of source directories that will be validated
-     * @return a List of valid source directories
-     */
-    // TODO: could be better aligned with JXR, including getFiles() vs hasSources that finds java files.
-    private static List pruneSourceDirs( List sourceDirs )
-    {
-        List pruned = new ArrayList( sourceDirs.size() );
-        for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
-        {
-            String dir = (String) i.next();
-            File directory = new File( dir );
-            if ( directory.exists() && directory.isDirectory() )
-            {
-                if ( !pruned.contains( dir ) )
-                {
-                    pruned.add( dir );
-                }
-            }
-        }
-
-        return pruned;
-    }
-
-    /**
-     * Method that gets all the source files to be excluded from the javadoc on the given
-     * source paths.
-     *
-     * @param sourcePaths      the path to the source files
-     * @param subpackagesList  list of subpackages to be included in the javadoc
-     * @param excludedPackages the package names to be excluded in the javadoc
-     * @return a List of the source files to be excluded in the generated javadoc
-     */
-    private static List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
-    {
-        List excludedNames = new ArrayList();
-        for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
-        {
-            String path = (String) i.next();
-            for ( int j = 0; j < subpackagesList.length; j++ )
-            {
-                List excludes = getExcludedPackages( path, excludedPackages );
-                excludedNames.addAll( excludes );
-            }
-        }
-
-        return excludedNames;
-    }
-
-    /**
-     * Copy from {@link MavenProject#getCompileArtifacts()}
-     * @param artifacts
-     * @return list of compile artifacts
-     */
-    private static List getCompileArtifacts( Set artifacts )
-    {
-        List list = new ArrayList( artifacts.size() );
-
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-        {
-            Artifact a = (Artifact) i.next();
-
-            // TODO: classpath check doesn't belong here - that's the other method
-            if ( a.getArtifactHandler().isAddedToClasspath() )
-            {
-                // TODO: let the scope handler deal with this
-                if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
-                    || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) )
-                {
-                    list.add( a );
-                }
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * Convenience method to wrap an argument value in single quotes (i.e. <code>'</code>). Intended for values
-     * which may contain whitespaces.
-     * <br/>
-     * To prevent javadoc error, the line separator (i.e. <code>\n</code>) are skipped.
-     *
-     * @param value the argument value.
-     * @return argument with quote
-     */
-    private static String quotedArgument( String value )
-    {
-        String arg = value;
-
-        if ( StringUtils.isNotEmpty( arg ) )
-        {
-            if ( arg.indexOf( "'" ) != -1 )
-            {
-                arg = StringUtils.replace( arg, "'", "\\'" );
-            }
-            arg = "'" + arg + "'";
-
-            // To prevent javadoc error
-            arg = StringUtils.replace( arg, "\n", " " );
-        }
-
-        return arg;
-    }
-
-    /**
-     * Convenience method to format a path argument so that it is properly interpreted by the javadoc tool. Intended
-     * for path values which may contain whitespaces.
-     *
-     * @param value the argument value.
-     * @return path argument with quote
-     */
-    private static String quotedPathArgument( String value )
-    {
-        String path = value;
-
-        if ( StringUtils.isNotEmpty( path ) )
-        {
-            path = path.replace( '\\', '/' );
-            if ( path.indexOf( "\'" ) != -1 )
-            {
-                String split[] = path.split( "\'" );
-                path = "";
-
-                for ( int i = 0; i < split.length; i++ )
-                {
-                    if ( i != split.length - 1 )
-                    {
-                        path = path + split[i] + "\\'";
-                    }
-                    else
-                    {
-                        path = path + split[i];
-                    }
-                }
-            }
-            path = "'" + path + "'";
-        }
-
-        return path;
-    }
-
-    /**
-     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDir</code>
-     * to the <code>outputDirectory</code>.
-     *
-     * @param outputDirectory the output directory
-     * @param javadocDir the javadoc directory
-     * @throws java.io.IOException if any
-     */
-    private static void copyJavadocResources( File outputDirectory, File javadocDir )
-        throws IOException
-    {
-        if ( javadocDir.exists() && javadocDir.isDirectory() )
-        {
-            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", null, false, true );
-            for ( Iterator it = docFiles.iterator(); it.hasNext(); )
-            {
-                String docFile = (String) it.next();
-
-                File docFileOutput = new File( outputDirectory, docFile );
-                FileUtils.mkdir( docFileOutput.getAbsolutePath() );
-                FileUtils.copyDirectory( new File( javadocDir, docFile ), docFileOutput );
-            }
-        }
-    }
-
-    /**
-     * Method that gets the files or classes that would be included in the javadocs using the subpackages
-     * parameter.
-     *
-     * @param sourceDirectory the directory where the source files are located
-     * @param fileList        the list of all files found in the sourceDirectory
-     * @param excludePackages package names to be excluded in the javadoc
-     * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
-     */
-    private static List getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
-    {
-        List files = new ArrayList();
-
-        for ( int j = 0; j < fileList.length; j++ )
-        {
-            boolean include = true;
-            for ( int k = 0; k < excludePackages.length && include; k++ )
-            {
-                // handle wildcards (*) in the excludePackageNames
-                String[] excludeName = excludePackages[k].split( "[*]" );
-
-                if ( excludeName.length > 1 )
-                {
-                    int u = 0;
-                    while ( include && u < excludeName.length )
-                    {
-                        if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1 )
-                        {
-                            include = false;
-                        }
-                        u++;
-                    }
-                }
-                else
-                {
-                    if ( fileList[j].startsWith( sourceDirectory.toString() + File.separatorChar + excludeName[0] ) )
-                    {
-                        if ( excludeName[0].endsWith( String.valueOf( File.separatorChar ) ) )
-                        {
-                            int i = fileList[j].lastIndexOf( File.separatorChar );
-                            String packageName = fileList[j].substring( 0, i + 1 );
-                            File currentPackage = new File( packageName );
-                            File excludedPackage = new File( sourceDirectory, excludeName[0] );
-                            if ( currentPackage.equals( excludedPackage )
-                                && fileList[j].substring( i ).indexOf( ".java" ) != -1 )
-                            {
-                                include = true;
-                            }
-                            else
-                            {
-                                include = false;
-                            }
-                        }
-                        else
-                        {
-                            include = false;
-                        }
-                    }
-                }
-            }
-
-            if ( include )
-            {
-                files.add( quotedPathArgument( fileList[j] ) );
-            }
-        }
-
-        return files;
-    }
-
-    /**
-     * Method that gets the complete package names (including subpackages) of the packages that were defined
-     * in the excludePackageNames parameter.
-     *
-     * @param sourceDirectory     the directory where the source files are located
-     * @param excludePackagenames package names to be excluded in the javadoc
-     * @return a List of the packagenames to be excluded
-     */
-    private static List getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
-    {
-        List files = new ArrayList();
-        for ( int i = 0; i < excludePackagenames.length; i++ )
-        {
-            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
-            for ( int j = 0; j < fileList.length; j++ )
-            {
-                String[] excludeName = excludePackagenames[i].split( "[*]" );
-                int u = 0;
-                while ( u < excludeName.length )
-                {
-                    if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1
-                        && sourceDirectory.indexOf( excludeName[u] ) == -1 )
-                    {
-                        files.add( fileList[j] );
-                    }
-                    u++;
-                }
-            }
-        }
-
-        List excluded = new ArrayList();
-        for ( Iterator it = files.iterator(); it.hasNext(); )
-        {
-            String file = (String) it.next();
-            int idx = file.lastIndexOf( File.separatorChar );
-            String tmpStr = file.substring( 0, idx );
-            tmpStr = tmpStr.replace( '\\', '/' );
-            String[] srcSplit = tmpStr.split( sourceDirectory.replace( '\\', '/' ) + '/' );
-            String excludedPackage = srcSplit[1].replace( '/', '.' );
-
-            if ( !excluded.contains( excludedPackage ) )
-            {
-                excluded.add( excludedPackage );
-            }
-        }
-
-        return excluded;
-    }
-
-    /**
-     * Convenience method that gets the files to be included in the javadoc.
-     *
-     * @param sourceDirectory the directory where the source files are located
-     * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
-     * @param excludePackages the packages to be excluded in the javadocs
-     */
-    private static void addFilesFromSource( List files, File sourceDirectory, String[] excludePackages )
-    {
-        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory.getPath(), new String[] { "java" } );
-        if ( fileList != null && fileList.length != 0 )
-        {
-            List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
-            files.addAll( tmpFiles );
-        }
-    }
-
-    /**
-     * Call the javadoc tool to have its version
-     *
-     * @param javadocExe
-     * @return the javadoc version as float
-     * @throws IOException if any
-     * @throws CommandLineException if any
-     */
-    private static float getJavadocVersion( File javadocExe )
-        throws IOException, CommandLineException
-    {
-        if ( !javadocExe.exists() || !javadocExe.isFile() )
-        {
-            throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. " );
-        }
-
-        Commandline cmd = new Commandline();
-        cmd.setExecutable( javadocExe.getAbsolutePath() );
-        cmd.setWorkingDirectory( javadocExe.getParentFile() );
-        cmd.createArgument().setValue( "-J-fullversion" );
-
-        CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
-        CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
-
-        int exitCode = CommandLineUtils.executeCommandLine( cmd, out, err );
-
-        if ( exitCode != 0 )
-        {
-            StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
-            msg.append( '\n' );
-            msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ) );
-            throw new CommandLineException( msg.toString() );
-        }
-
-        /*
-         * Exemple: java full version "1.5.0_11-b03"
-         *
-         * @see com.sun.tools.javac.main.JavaCompiler#fullVersion()
-         */
-        StringTokenizer token = new StringTokenizer( err.getOutput(), "\"" );
-        token.nextToken();
-
-        String version = token.nextToken();
-        String str = version.substring( 0, 3 );
-        if ( version.length() >= 5 )
-        {
-            str = str + version.substring( 4, 5 );
-        }
-
-        return Float.parseFloat( str );
-    }
-
-    /**
-     * Fetch an URL
-     *
-     * @param settings the user settings used to fetch the url like a proxy
-     * @param url the url to fetch
-     * @throws IOException if any
-     */
-    private static void fetchURL( Settings settings, URL url )
-        throws IOException
-    {
-        if ( url == null )
-        {
-            throw new IOException( "The url is null" );
-        }
-
-        if ( settings != null )
-        {
-            String scheme = url.getProtocol();
-            if ( !"file".equals( scheme ) )
-            {
-                Proxy proxy = settings.getActiveProxy();
-                if ( proxy != null )
-                {
-                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
-                    {
-                        scheme = "http.";
-                    }
-                    else if ( "ftp".equals( scheme ) )
-                    {
-                        scheme = "ftp.";
-                    }
-                    else
-                    {
-                        scheme = "";
-                    }
-
-                    String host = proxy.getHost();
-                    if ( !StringUtils.isEmpty( host ) )
-                    {
-                        Properties p = System.getProperties();
-                        p.setProperty( scheme + "proxySet", "true" );
-                        p.setProperty( scheme + "proxyHost", host );
-                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
-                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
-                        {
-                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
-                        }
-
-                        final String userName = proxy.getUsername();
-                        if ( !StringUtils.isEmpty( userName ) )
-                        {
-                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
-                            Authenticator.setDefault( new Authenticator()
-                            {
-                                protected PasswordAuthentication getPasswordAuthentication()
-                                {
-                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
-                                }
-                            } );
-                        }
-                    }
-                }
-            }
-        }
-
-        InputStream in = null;
-        try
-        {
-            in = url.openStream();
-        }
-        finally
-        {
-            IOUtil.close( in );
         }
     }
 }
