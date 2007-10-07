@@ -309,34 +309,6 @@ public abstract class AbstractWarPackagingTask
         }
     }
 
-
-    /**
-     * Copy file from source to destination only if source timestamp is later than the destination timestamp.
-     * The directories up to <code>destination</code> will be created if they don't already exist.
-     * <code>destination</code> will be overwritten if it already exists.
-     *
-     * @param source      An existing non-directory <code>File</code> to copy bytes from.
-     * @param destination A non-directory <code>File</code> to write bytes to (possibly
-     * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot be
-     *                                       written to, or an IO error occurs during copying.
-     * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
-     *                                       <p/>
-     *                                       TO DO: Remove this method when Maven moves to plexus-util version 1.4
-     *                                       TODO: WARNING this needs to be refactored once the protected list system is up to date
-     */
-    protected void copyFileIfModified( File source, File destination )
-        throws IOException
-    {
-        // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
-        // to plexus-util 1.2.
-        if ( destination.lastModified() < source.lastModified() )
-        {
-            FileUtils.copyFile( source.getCanonicalFile(), destination );
-            // preserve timestamp
-            destination.setLastModified( source.lastModified() );
-        }
-    }
-
     /**
      * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
      * default includes are used.
@@ -423,9 +395,6 @@ public abstract class AbstractWarPackagingTask
             }};
     }
 
-    /**
-     * TO DO: Remove this interface when Maven moves to plexus-util version 1.4
-     */
     private interface FilterWrapper
     {
         Reader getReader( Reader fileReader, Map filterProperties );
