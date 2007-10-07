@@ -84,6 +84,10 @@ public class ArtifactsPackagingTask
                     {
                         // Nothing to do here, it is an overlay and it's already handled
                     }
+                    else if ("zip".equals( type ))
+                    {
+                        // Nothing to do here, it is an overlay and it's already handled
+                    }
                     else
                     {
                         context.getLog().debug(
