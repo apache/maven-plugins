@@ -65,6 +65,8 @@ public class Overlay
     private boolean skip = false;
 
     private Artifact artifact;
+    
+    private String targetPath;
 
     public Overlay()
     {
@@ -215,6 +217,18 @@ public class Overlay
     {
         this.artifact = artifact;
     }
+
+    public String getTargetPath()
+    {
+        return targetPath;
+    }
+
+
+    public void setTargetPath( String targetPath )
+    {
+        this.targetPath = targetPath;
+    }
+
 
     public String toString()
     {
