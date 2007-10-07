@@ -42,6 +42,8 @@ public abstract class AbstractWarMojoTest
 
     protected static final File OVERLAYS_ROOT_DIR = new File( getBasedir(), "target/test-classes/overlays/" );
 
+    protected static final String MANIFEST_PATH = "META-INF" + File.separator + "MANIFEST.MF";
+
     protected abstract File getTestDirectory()
         throws Exception;
 
