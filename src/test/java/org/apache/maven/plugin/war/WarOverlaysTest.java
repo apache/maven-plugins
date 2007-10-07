@@ -112,7 +112,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-one", "login.jsp" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -151,7 +151,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-two", "admin.jsp" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -302,7 +302,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-full-1", "WEB-INF/lib/c.jar" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -370,7 +370,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-full-2", "WEB-INF/lib/c.jar" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -440,7 +440,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-full-2", "WEB-INF/lib/c.jar" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -495,7 +495,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-two", "admin.jsp" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally
@@ -551,7 +551,7 @@ public class WarOverlaysTest
             assertOverlayedFile( webAppDirectory, "overlay-two", "admin.jsp" );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{"META-INF/MANIFEST.MF"} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
         }
         finally

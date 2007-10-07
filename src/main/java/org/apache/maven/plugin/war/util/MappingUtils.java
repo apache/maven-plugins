@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utiities used to eveluate expression.
+ * Utilities used to evaluate expression.
  * <p/>
  * TODO: this comes from the assembly plugin; refactor when it's shared.
  * <p/>
