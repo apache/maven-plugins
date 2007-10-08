@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,10 +41,6 @@ public class OverlayManager
     private final List overlays;
 
     private final MavenProject project;
-
-    //private final List warArtifactss;
-    
-    //private final List zipArtifacts;
 
     private final List artifactsOverlays;
     
@@ -70,29 +67,12 @@ public class OverlayManager
         }
         this.project = project;
 
-        //this.warArtifacts = getOverlaysAsArtifactsWithType( "war" );
-        
-        //this.zipArtifacts = getOverlaysAsArtifactsWithType( "zip" );
-
         this.artifactsOverlays = getOverlaysAsArtifacts();
         
         // Initialize
         initialize( defaultIncludes, defaultExcludes );
 
     }
-
-    /**
-     * Returns the war artifactst attachted to the project.
-     *
-     * @return a list of war Artifact
-     */
-    /*
-    public List getWarArtifacts()
-    {
-        return warArtifacts;
-    }
-    */
-    
     
 
     /**
@@ -247,12 +227,43 @@ public class OverlayManager
         while ( it.hasNext() )
         {
             Artifact artifact = (Artifact) it.next();
-            if ( !artifact.isOptional() && filter.include( artifact )
-                && ( "war".equals( artifact.getType() ) || "zip".equals( artifact.getType() ) ) )
+            if ( !artifact.isOptional() && filter.include( artifact ) && ( "war".equals( artifact.getType() ) ) )
             {
+                result.add( artifact );
+            }
+            // zip overlay is disabled by default except if user want it in the mojo's overlays
+            if ( !artifact.isOptional() && filter.include( artifact ) && ( "zip".equals( artifact.getType() ) ) )
+            {
+                Overlay overlay = getAssociatedOverlay( artifact );
+                // if the overlay doesn't exists we create a new with skip by default
+                if ( overlay != null )
+                {
+                    Overlay zipOverlay = new DefaultOverlay(artifact);
+                    zipOverlay.setSkip( true );
+                    this.overlays.add( zipOverlay );
+                }
                 result.add( artifact );
             }
         }
         return result;
+    }
+    
+    private Overlay getAssociatedOverlay( Artifact artifact )
+    {
+        if ( this.overlays == null )
+        {
+            return null;
+        }
+        for ( Iterator iterator = this.overlays.iterator(); iterator.hasNext(); )
+        {
+            Overlay overlay = (Overlay) iterator.next();
+            if ( StringUtils.equals( artifact.getGroupId(), overlay.getGroupId() )
+                && StringUtils.equals( artifact.getArtifactId(), overlay.getArtifactId() )
+                && StringUtils.equals( artifact.getClassifier(), overlay.getClassifier() ))
+            {
+                return overlay;
+            }
+        }
+        return null;
     }
 }
