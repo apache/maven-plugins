@@ -89,11 +89,14 @@ public class WarZipTest
         return webAppDirectory;
     }
 
-    public void testOneZip()
+    public void testOneZipWithNoSkip()
         throws Exception
     {
         File webAppDirectory = configureMojo( "one-zip" );
         
+        Overlay overlay = new DefaultOverlay( buildZipArtifact() );
+        //overlay.setSkip( false );
+        mojo.addOverlay( overlay );        
         mojo.execute();
 
         File foo = new File( webAppDirectory, "foo.txt" );
@@ -115,7 +118,7 @@ public class WarZipTest
         File webAppDirectory = configureMojo( "one-zip-overlay-targetPath" );
         
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
-        //overlay.setIncludes( new String[] {"**/**"} );
+        overlay.setSkip( false );
         overlay.setTargetPath( "overridePath" );
         mojo.addOverlay( overlay );
         
@@ -134,17 +137,31 @@ public class WarZipTest
         assertTrue( "bar/bar.txt not a file", bar.isFile() );
     }  
     
-    public void testOneZipWithWithSkip()
+    public void testOneZipDefaultSkip()
         throws Exception
     {
         File webAppDirectory = configureMojo( "one-zip-overlay-skip" );
 
+        mojo.execute();
+
+        assertZipContentNotHere( webAppDirectory );
+    }
+
+    public void testOneZipWithWithForceSkip()
+        throws Exception
+    {
+        File webAppDirectory = configureMojo( "one-zip-overlay-skip" );
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         overlay.setSkip( true );
         mojo.addOverlay( overlay );
 
         mojo.execute();
+        assertZipContentNotHere( webAppDirectory );
 
+    }     
+    
+    protected void assertZipContentNotHere(File webAppDirectory)
+    {
         File foo = new File( webAppDirectory.getPath() + File.separatorChar + "overridePath", "foo.txt" );
         assertFalse( "foo.txt exists", foo.exists() );
         assertFalse( "foo.txt a file", foo.isFile() );
@@ -156,5 +173,5 @@ public class WarZipTest
         File bar = new File( barDirectory, "bar.txt" );
         assertFalse( "bar/bar.txt exists", bar.exists() );
         assertFalse( "bar/bar.txt is a file", bar.isFile() );
-    }    
+    }
 }
