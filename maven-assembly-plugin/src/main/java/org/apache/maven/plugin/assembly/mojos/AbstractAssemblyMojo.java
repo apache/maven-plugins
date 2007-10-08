@@ -137,7 +137,7 @@ public abstract class AbstractAssemblyMojo
     private String[] descriptorRefs;
 
     /**
-     * directory to scan for descriptor files in
+     * Directory to scan for descriptor files in.
      *
      * @parameter
      */
@@ -147,7 +147,7 @@ public abstract class AbstractAssemblyMojo
      * This is the base directory from which archive files are created.
      * This base directory pre-pended to any <code>&lt;directory&gt;</code>
      * specifications in the assembly descriptor.  This is an optional
-     * parameter
+     * parameter.
      *
      * @parameter
      */
@@ -187,7 +187,7 @@ public abstract class AbstractAssemblyMojo
     private File basedir;
 
     /**
-     * Maven ProjectHelper
+     * Maven ProjectHelper.
      *
      * @component
      */
@@ -239,7 +239,11 @@ public abstract class AbstractAssemblyMojo
     protected List filters;
 
     /**
+     * Controls whether the assembly plugin tries to attach the resulting
+     * assembly to the project.
+     *  
      * @parameter expression="${attach}" default-value="true"
+     * @since 2.2-beta-1
      */
     private boolean attach;
 
