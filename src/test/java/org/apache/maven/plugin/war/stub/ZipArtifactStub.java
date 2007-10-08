@@ -37,6 +37,12 @@ public class ZipArtifactStub
         this.zip = zipFile;
     }
 
+    
+    public String getId()
+    {
+        return null;
+    }
+
     public ArtifactHandler getArtifactHandler()
     {
         return super.getArtifactHandler();
