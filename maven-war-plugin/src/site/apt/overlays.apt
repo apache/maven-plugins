@@ -333,4 +333,34 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   [...]
 +-----------------+
 
+* Zip dependencies with overlays
 
+  The plugin now handles zip dependencies and can extract content to the webapp directory. 
+  
+  <<To preserve backward compatibility and some user workaround this features is disabled by default.>>
+  
+  To enable this you have to declare your zip dependency in the overlays mojo configuration section.
+  
+  A sample configuration for a zip (groupId : zipGroupId, artifactId : zipId). 
+  With this configuration, the zip content will be in webappDirectory/scripts/.  
+
++-----------------+
+ [...]
+   <plugins>
+     <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-war-plugin</artifactId>
+       <configuration>
+         <overlays>
+            <overlay>
+              <groupId>zipGroupId</groupId>
+              <artifactId>zipId</artifactId>
+              <!-- optionnal the path to put zip content -->
+              <targetPath>scripts</targetPath>
+            </overlay>
+          </overlays>
+       </configuration>
+      </plugin>
+   </plugins>
+ [...]
++-----------------+
