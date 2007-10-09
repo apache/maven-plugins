@@ -57,7 +57,7 @@ public abstract class AbstractPdfMojo
      *
      * @component
      */
-    protected I18N i18n;
+    private I18N i18n;
 
     /**
      * Init the <code>localesList</code> variable.

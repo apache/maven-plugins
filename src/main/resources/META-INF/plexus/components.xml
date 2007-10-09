@@ -3,8 +3,25 @@
   <components>
 
     <component>
-      <role>org.apache.maven.doxia.docrenderer.DocRenderer</role>
-      <implementation>org.apache.maven.plugins.pdf.renderer.DefaultPdfRenderer</implementation>
+      <role>org.apache.maven.doxia.docrenderer.DocumentRenderer</role>
+      <role-hint>fo</role-hint>
+      <implementation>org.apache.maven.doxia.docrenderer.pdf.fo.FoPdfRenderer</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.doxia.module.site.manager.SiteModuleManager</role>
+          <field-name>siteModuleManager</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.doxia.Doxia</role>
+          <field-name>doxia</field-name>
+        </requirement>
+      </requirements>
+    </component>
+
+    <component>
+      <role>org.apache.maven.doxia.docrenderer.DocumentRenderer</role>
+      <role-hint>itext</role-hint>
+      <implementation>org.apache.maven.doxia.docrenderer.pdf.itext.ITextPdfRenderer</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.doxia.module.site.manager.SiteModuleManager</role>

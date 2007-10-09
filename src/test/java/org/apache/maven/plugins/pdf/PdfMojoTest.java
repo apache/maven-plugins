@@ -38,7 +38,7 @@ public class PdfMojoTest
     }
 
     /**
-     * Tests the basic functioning of the pdf generation.
+     * Tests the basic functioning of the pdf generation using the FO implementation.
      *
      * @throws Exception if any.
      */
@@ -65,4 +65,40 @@ public class PdfMojoTest
 
         assertTrue( "Pdf file has no content!", pdfFile.length() > 0 );
     }
+
+    /**
+     * Tests the basic functioning of the pdf generation with iText.
+     *
+     * @throws Exception if any.
+     */
+    public void testITextImpl() throws Exception
+    {
+        File testPom = new File( getBasedir(), "/target/test-classes/unit/pdf/iText_pom.xml" );
+
+        assertTrue( "testPom does not exist!", testPom.exists() );
+
+        PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
+
+        assertNotNull( "pdf mojo not found!", mojo );
+
+        // TODO
+/*
+         File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
+
+        if ( pdfFile.exists() )
+        {
+            pdfFile.delete();
+        }
+ */
+
+        mojo.execute();
+
+/*
+        assertTrue( "Pdf file not created!", pdfFile.exists() );
+
+        assertTrue( "Pdf file has no content!", pdfFile.length() > 0 );
+ */
+     }
+
+
 }

@@ -25,8 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.maven.doxia.docrenderer.DocRenderer;
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRenderer;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.docrenderer.document.DocumentModel;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -47,7 +48,7 @@ public class PdfMojo
      * @parameter expression="${basedir}/src/site"
      * @required
      */
-    protected File siteDirectory;
+    private File siteDirectory;
 
     /**
      * Directory containing the generated project sites and report distributions.
@@ -55,33 +56,69 @@ public class PdfMojo
      * @parameter alias="workingDirectory" expression="${project.build.directory}/pdf"
      * @required
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     /**
      * File that contains the DocumentModel of the PDF to generate.
      *
      * @parameter expression="src/site/pdf.xml"
      * @required
+     * @todo shouldn't be required, construct info from pom
      */
-    protected File docDescriptor;
+    private File docDescriptor;
+
+    /**
+     * Identifies the framework to use for pdf generation: either "fo" (default) or "itext".
+     *
+     * @parameter expression="fo"
+     * @required
+     */
+    private String implementation = "fo";
+
+    /**
+     * FO Document Renderer.
+     *
+     * @component role-hint="fo"
+     */
+    private DocumentRenderer foRenderer;
+
+    /**
+     * IText Document Renderer.
+     *
+     * @component role-hint="itext"
+     */
+    private DocumentRenderer itextRenderer;
+
 
     /**
      * Document Renderer.
-     *
-     * @component
      */
-    private DocRenderer docRenderer;
+    private DocumentRenderer docRenderer;
 
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( "fo".equals( implementation ) )
+        {
+            this.docRenderer = foRenderer;
+        }
+        else if ( "itext".equals( implementation ) )
+        {
+            this.docRenderer = itextRenderer;
+        }
+        else
+        {
+            throw new MojoFailureException( "Not a valid implementation: " + implementation );
+        }
+
         try
         {
             List localesList = initLocalesList();
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
+
             Locale.setDefault( defaultLocale );
 
             for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
@@ -90,7 +127,6 @@ public class PdfMojo
 
                 File outputDir = getOutputDirectory( locale, defaultLocale );
 
-                // Generate static site
                 File siteDirectoryFile = siteDirectory;
 
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
@@ -98,10 +134,10 @@ public class PdfMojo
                     siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
                 }
 
-                docRenderer.render( siteDirectoryFile, outputDir, docDescriptor );
+                docRenderer.render( siteDirectoryFile, outputDir, getDocumentModel() );
             }
         }
-        catch ( DocRendererException e )
+        catch ( DocumentRendererException e )
         {
             throw new MojoExecutionException( "Error during document generation", e );
         }
@@ -111,7 +147,29 @@ public class PdfMojo
         }
     }
 
-    // TODO: can be re-used
+    /**
+     * Constructs a DocumentModel for the current project. The model is either read from
+     * a descriptor file, if it exists, or constructed from information in the pom and site.xml.
+     *
+     * @return DocumentModel.
+     * @throws DocumentRendererException if any.
+     * @throws IOException if any.
+     */
+    private DocumentModel getDocumentModel()
+        throws DocumentRendererException, IOException
+    {
+        // TODO: check if exists, construct from pom if not
+        return docRenderer.readDocumentModel( docDescriptor );
+    }
+
+    /**
+     * Return the output directory for a given Locale and the current default Locale.
+     *
+     * @param locale a Locale.
+     * @param defaultLocale the current default Locale.
+     * @return File.
+     * @todo can be re-used
+     */
     private File getOutputDirectory( Locale locale, Locale defaultLocale )
     {
         File file;
