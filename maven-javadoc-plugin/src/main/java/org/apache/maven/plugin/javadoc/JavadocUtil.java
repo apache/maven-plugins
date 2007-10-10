@@ -412,7 +412,7 @@ public class JavadocUtil
     /**
      * Fetch an URL
      *
-     * @param settings the user settings used to fetch the url like a proxy
+     * @param settings the user settings used to fetch the url with an active proxy, if defined.
      * @param url the url to fetch
      * @throws IOException if any
      */
@@ -424,43 +424,47 @@ public class JavadocUtil
             throw new IOException( "The url is null" );
         }
 
+        Properties oldSystemProperties = new Properties();
+        oldSystemProperties.putAll( System.getProperties() );
+
         if ( settings != null )
         {
             String scheme = url.getProtocol();
+
             if ( !"file".equals( scheme ) )
             {
-                Proxy proxy = settings.getActiveProxy();
-                if ( proxy != null )
+                Proxy activeProxy = settings.getActiveProxy();
+                if ( activeProxy != null )
                 {
-                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
+                    if ( "http".equals( scheme ) || "https".equals( scheme ) || "ftp".equals( scheme ) )
                     {
-                        scheme = "http.";
-                    }
-                    else if ( "ftp".equals( scheme ) )
-                    {
-                        scheme = "ftp.";
+                        scheme += ".";
                     }
                     else
                     {
                         scheme = "";
                     }
 
-                    String host = proxy.getHost();
-                    if ( !StringUtils.isEmpty( host ) )
+                    if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
                     {
-                        Properties p = System.getProperties();
-                        p.setProperty( scheme + "proxySet", "true" );
-                        p.setProperty( scheme + "proxyHost", host );
-                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
-                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
+                        Properties systemProperties = System.getProperties();
+                        systemProperties.setProperty( scheme + "proxySet", "true" );
+                        systemProperties.setProperty( scheme + "proxyHost", activeProxy.getHost() );
+
+                        if ( activeProxy.getPort() > 0 )
                         {
-                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
+                            systemProperties.setProperty( scheme + "proxyPort", String.valueOf( activeProxy.getPort() ) );
                         }
 
-                        final String userName = proxy.getUsername();
-                        if ( !StringUtils.isEmpty( userName ) )
+                        if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
                         {
-                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
+                            systemProperties.setProperty( scheme + "nonProxyHosts", activeProxy.getNonProxyHosts() );
+                        }
+
+                        final String userName = activeProxy.getUsername();
+                        if ( StringUtils.isNotEmpty( userName ) )
+                        {
+                            final String pwd = StringUtils.isEmpty( activeProxy.getPassword() ) ? "" : activeProxy.getPassword();
                             Authenticator.setDefault( new Authenticator()
                             {
                                 protected PasswordAuthentication getPasswordAuthentication()
@@ -482,6 +486,14 @@ public class JavadocUtil
         finally
         {
             IOUtil.close( in );
+
+            // Reset system properties
+            if ( ( settings != null ) && ( !"file".equals( url.getProtocol() ) )
+                && ( settings.getActiveProxy() != null ) && ( StringUtils.isNotEmpty( settings.getActiveProxy().getHost() ) ) )
+            {
+                System.setProperties( oldSystemProperties );
+                Authenticator.setDefault( null );
+            }
         }
     }
 }
