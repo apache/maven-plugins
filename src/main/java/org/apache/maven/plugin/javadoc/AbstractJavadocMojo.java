@@ -52,8 +52,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
+import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
 import org.apache.maven.plugin.javadoc.options.OfflineLink;
 import org.apache.maven.plugin.javadoc.options.Tag;
@@ -62,6 +62,7 @@ import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
@@ -136,6 +137,7 @@ public abstract class AbstractJavadocMojo
     /**
      * The Maven Settings.
      *
+     * @since 2.3
      * @parameter default-value="${settings}"
      * @required
      * @readonly
@@ -398,20 +400,22 @@ public abstract class AbstractJavadocMojo
     private String minmemory;
 
     /**
-     * Specifies the proxy host where the javadoc web access in -link would pass through.
-     * It defaults to the proxy host of the active proxy set in the settings.xml, otherwise it gets the proxy
+     * Specifies the proxy host where the javadoc web access in <code>-link</code> would pass through.
+     * It defaults to the proxy host of the active proxy set in the <code>settings.xml</code>, otherwise it gets the proxy
      * configuration set in the pom.
      *
      * @parameter expression="${proxyHost}" default-value="${settings.activeProxy.host}"
+     * @deprecated since 2.4. Instead of, configure an active proxy host in <code>settings.xml</code>.
      */
     private String proxyHost;
 
     /**
-     * Specifies the proxy port where the javadoc web access in -link would pass through.
-     * It defaults to the proxy port of the active proxy set in the settings.xml, otherwise it gets the proxy
+     * Specifies the proxy port where the javadoc web access in <code>-link</code> would pass through.
+     * It defaults to the proxy port of the active proxy set in the <code>settings.xml</code>, otherwise it gets the proxy
      * configuration set in the pom.
      *
      * @parameter expression="${proxyPort}" default-value="${settings.activeProxy.port}"
+     * @deprecated since 2.4. Instead of, configure an active proxy port in <code>settings.xml</code>.
      */
     private int proxyPort;
 
@@ -1216,32 +1220,25 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
 
         Commandline cmd = new Commandline();
+        cmd.getShell().setQuotedArgumentsEnabled( false ); // for Javadoc JVM args
+        cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
+        cmd.setExecutable( jExecutable );
 
-        // Set the proxy host and port
-        if ( StringUtils.isNotEmpty( proxyHost ) )
-        {
-            cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
-        }
-        if ( proxyPort > 0 )
-        {
-            cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
-        }
-
+        // Javadoc JVM args
         addMemoryArg( cmd, "-Xmx", this.maxmemory );
 
         addMemoryArg( cmd, "-Xms", this.minmemory );
+
+        addProxyArg( cmd );
 
         if ( StringUtils.isNotEmpty( additionalJOption ) )
         {
             cmd.createArgument().setValue( additionalJOption );
         }
 
+        // General javadoc arguments
         List arguments = new ArrayList();
 
-        cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
-        cmd.setExecutable( jExecutable );
-
-        // General javadoc arguments
         addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
         if ( StringUtils.isNotEmpty( doclet ) )
         {
@@ -1448,7 +1445,26 @@ public abstract class AbstractJavadocMojo
         // Execute command line
         // ----------------------------------------------------------------------
 
-        getLog().debug( Commandline.toString( cmd.getCommandline() ) );
+        getLog().debug( Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted arguments
+
+        if ( debug )
+        {
+            File commandLineFile = new File( javadocOutputDirectory, "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
+
+            try
+            {
+                FileUtils.fileWrite( commandLineFile.getAbsolutePath(), Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+
+                if ( !SystemUtils.IS_OS_WINDOWS )
+                {
+                    Runtime.getRuntime().exec( new String[] { "chmod", "a+x", commandLineFile.getAbsolutePath() } );
+                }
+            }
+            catch ( IOException e )
+            {
+                getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
+            }
+        }
 
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
         try
@@ -1459,7 +1475,7 @@ public abstract class AbstractJavadocMojo
             {
                 StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
                 msg.append( '\n' );
-                msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ) );
+                msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
                 throw new MavenReportException( msg.toString() );
             }
         }
@@ -2063,6 +2079,65 @@ public abstract class AbstractJavadocMojo
                 else
                 {
                     getLog().error( arg + " '" + memory + "' is not a valid number. Ignore this option." );
+                }
+            }
+        }
+    }
+
+    /**
+     * Method that adds/sets the javadoc proxy parameters in the command line execution.
+     *
+     * @param cmd    the command line execution object where the argument will be added
+     */
+    private void addProxyArg( Commandline cmd )
+    {
+        // backward compatible
+        if ( StringUtils.isNotEmpty( proxyHost ) )
+        {
+            getLog().warn( "The Javadoc plugin parameter 'proxyHost' is deprecated since 2.4. Please configure an active proxy in your settings.xml." );
+            cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
+
+            if ( proxyPort > 0 )
+            {
+                getLog().warn( "The Javadoc plugin parameter 'proxyPort' is deprecated since 2.4. Please configure an active proxy in your settings.xml." );
+                cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
+            }
+        }
+
+        if ( settings == null )
+        {
+            return;
+        }
+
+        Proxy activeProxy = settings.getActiveProxy();
+        if ( activeProxy != null )
+        {
+            String protocol = StringUtils.isNotEmpty( activeProxy.getProtocol() ) ? activeProxy.getProtocol() + "."
+                                                                                 : "";
+
+            if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
+            {
+                cmd.createArgument().setValue( "-J-D" + protocol + "proxySet=true" );
+                cmd.createArgument().setValue( "-J-D" + protocol + "proxyHost=" + activeProxy.getHost() );
+
+                if ( activeProxy.getPort() > 0 )
+                {
+                    cmd.createArgument().setValue( "-J-D" + protocol + "proxyPort=" + activeProxy.getPort() );
+                }
+
+                if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
+                {
+                    cmd.createArgument().setValue( "-J-D" + protocol + "nonProxyHosts=\"" + activeProxy.getNonProxyHosts() + "\"" );
+                }
+
+                if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) )
+                {
+                    cmd.createArgument().setValue( "-J-Dhttp.proxyUser=\"" + activeProxy.getUsername() + "\"" );
+
+                    if ( StringUtils.isNotEmpty( activeProxy.getPassword() ) )
+                    {
+                        cmd.createArgument().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
+                    }
                 }
             }
         }

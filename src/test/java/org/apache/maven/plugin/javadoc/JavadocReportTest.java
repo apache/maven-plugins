@@ -19,15 +19,15 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -805,7 +805,7 @@ public class JavadocReportTest
     /**
      * Method to test the jdk6 javadoc
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testJdk6()
         throws Exception
@@ -840,5 +840,28 @@ public class JavadocReportTest
         assertTrue( readed.indexOf( "Top - Copyright &#169; All rights reserved." ) != -1 );
         assertTrue( readed.indexOf( "Header - Copyright &#169; All rights reserved." ) != -1 );
         assertTrue( readed.indexOf( "Footer - Copyright &#169; All rights reserved." ) != -1 );
+    }
+
+    /**
+     * Method to test proxy support in the javadoc
+     *
+     * @throws Exception if any
+     */
+    public void testProxy()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/proxy-test/proxy-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
+        assertTrue( FileUtils.fileExists( commandLine.getAbsolutePath() ) );
+        String readed = readFile( commandLine );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=http://localhost" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=80" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\"toto\"" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\"toto\"" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\"" ) != -1 );
     }
 }
