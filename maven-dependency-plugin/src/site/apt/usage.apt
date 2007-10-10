@@ -560,11 +560,7 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 +---+
 mvn dependency:analyze
 +---+
-<<<<<<< .mine
 	
-=======
-
->>>>>>> .r579027
 	Sample output:
 
 +---+
