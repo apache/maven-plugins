@@ -49,15 +49,18 @@ under the License.
           The Javadoc Plugin calls the Javadoc tool with
           <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">argument files</a>,
           i.e. files called 'options', 'packages' and 'argfile' (or 'files' with Jdk &lt; 1.4):
-          <source>${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
-          @options @packages | @argfile</source>
+          <source>
+${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+    @options \
+    @packages | @argfile</source>
         </p>
         <p>
           These argument files are generated at runtime depending the Javadoc Plugin configuration and are deleted
           when the Javadoc Plugin ended.
         </p>
         <p>
-          To preserve them, just add &lt;debug&gt;true&lt;debug&gt; in your Javadoc Plugin configuration.
+          To preserve them, just add &lt;debug&gt;true&lt;debug&gt; in your Javadoc Plugin configuration. In this case,
+          an additional script file will be created.
         </p>
       </answer>
     </faq>
@@ -76,11 +79,39 @@ under the License.
       <question>How to add additional Javadoc options?</question>
       <answer>
         <p>
-          You could need to add more J options (i.e. runtime system java options that runs Javadoc tool) to be process
-          by the Javadoc Tool (i.e. -J-Xss).
+          You could need to add more J options (i.e. runtime system java options that runs Javadoc tool like -J-Xss)
+          to be process by the Javadoc Tool. For this, you should use the <i>&lt;additionalJOption/&gt;</i> parameter
+          in your Javadoc Plugin configuration.
         </p>
         <p>
-          For this, you should use the <i>&lt;additionalJOption/&gt;</i> parameter in your Javadoc Plugin configuration.
+          The Javadoc Plugin calls the Javadoc tool with J options, i.e.:
+          <source>
+${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+    -J-Xss128m \
+    @options \
+    @packages | @argfile</source>
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to add proxy support">
+      <question>How to add proxy support?</question>
+      <answer>
+        <p>
+          To specify a proxy in the Javadoc tool, you need to configure an active proxy in your <i>settings.xml</i>. Read the
+          <a href="http://maven.apache.org/guides/mini/guide-proxies.html">Configuring a proxy</a> guide for more information.
+        </p>
+        <p>
+          The Javadoc Plugin calls the Javadoc tool with networking J options, i.e.:
+          <source>
+${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+    -J-Dhttp.proxySet=true \
+    -J-Dhttp.proxyHost=http://localhost \
+    -J-Dhttp.proxyPort=80 \
+    -J-Dhttp.nonProxyHosts="www.google.com|*.somewhere.com" \
+    -J-Dhttp.proxyUser="toto" \
+    -J-Dhttp.proxyPassword="toto" \
+    @options \
+    @packages | @argfile</source>
         </p>
       </answer>
     </faq>
