@@ -30,7 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -358,17 +360,23 @@ public class JavadocUtil
     }
 
     /**
-     * Call the javadoc tool to have its version
+     * Call the Javadoc tool and parse its output to find its version, i.e.:
+     * <pre>
+     * javadoc.exe(or .sh) -J-fullversion
+     * </pre>
      *
-     * @param javadocExe
+     * @param javadocExe not null file
      * @return the javadoc version as float
-     * @throws IOException if any
+     * @throws IOException if javadocExe is null, doesn't exist or is not a file
      * @throws CommandLineException if any
+     * @throws PatternSyntaxException if the output contains a syntax error in the regular-expression pattern.
+     * @throws IllegalArgumentException if no output was found in the command line
+     * @see #parseJavadocVersion(String)
      */
     protected static float getJavadocVersion( File javadocExe )
-        throws IOException, CommandLineException
+        throws IOException, CommandLineException, IllegalArgumentException, PatternSyntaxException
     {
-        if ( !javadocExe.exists() || !javadocExe.isFile() )
+        if ( ( javadocExe == null ) || ( !javadocExe.exists() ) || ( !javadocExe.isFile() ) )
         {
             throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. " );
         }
@@ -391,22 +399,83 @@ public class JavadocUtil
             throw new CommandLineException( msg.toString() );
         }
 
-        /*
-         * Exemple: java full version "1.5.0_11-b03"
-         *
-         * @see com.sun.tools.javac.main.JavaCompiler#fullVersion()
-         */
-        StringTokenizer token = new StringTokenizer( err.getOutput(), "\"" );
-        token.nextToken();
-
-        String version = token.nextToken();
-        String str = version.substring( 0, 3 );
-        if ( version.length() >= 5 )
+        if ( StringUtils.isNotEmpty( err.getOutput() ) )
         {
-            str = str + version.substring( 4, 5 );
+            return parseJavadocVersion( err.getOutput() );
+        }
+        else if ( StringUtils.isNotEmpty( out.getOutput() ) )
+        {
+            return parseJavadocVersion( out.getOutput() );
         }
 
-        return Float.parseFloat( str );
+        throw new IllegalArgumentException( "No output found from the command line 'javadoc -J-fullversion'" );
+    }
+
+    /**
+     * Parse the output for 'javadoc -J-fullversion' and return the javadoc version recognized.
+     * <br/>
+     * Here are some output for 'javadoc -J-fullversion' depending the JDK used:
+     * <table>
+     * <tr>
+     *   <th>JDK</th>
+     *   <th>Output for 'javadoc -J-fullversion'</th>
+     * </tr>
+     * <tr>
+     *   <td>Sun 1.4</td>
+     *   <td>java full version "1.4.2_12-b03"</td>
+     * </tr>
+     * <tr>
+     *   <td>Sun 1.5</td>
+     *   <td>java full version "1.5.0_07-164"</td>
+     * </tr>
+     * <tr>
+     *   <td>IBM 1.4</td>
+     *   <td>javadoc full version "J2RE 1.4.2 IBM Windows 32 build cn1420-20040626"</td>
+     * </tr>
+     * <tr>
+     *   <td>IBM 1.5 (French JVM)</td>
+     *   <td>javadoc version complète de "J2RE 1.5.0 IBM Windows 32 build pwi32pdev-20070426a"</td>
+     * </tr>
+     * <tr>
+     *   <td>FreeBSD 1.5</td>
+     *   <td>java full version "diablo-1.5.0-b01"</td>
+     * </tr>
+     * </table>
+     *
+     * @param output for 'javadoc -J-fullversion'
+     * @return the version of the javadoc for the output.
+     * @throws PatternSyntaxException if the output doesn't match with the output pattern <tt>(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*</tt>.
+     * @throws IllegalArgumentException if the output is null
+     */
+    protected static float parseJavadocVersion( String output )
+        throws IllegalArgumentException, PatternSyntaxException
+    {
+        if ( StringUtils.isEmpty( output ) )
+        {
+            throw new IllegalArgumentException( "The output could not be null." );
+        }
+
+        Pattern pattern = Pattern.compile( "(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*" );
+
+        Matcher matcher = pattern.matcher( output );
+        if ( !matcher.matches() )
+        {
+            throw new PatternSyntaxException( "Unrecognized version of Javadoc: '" + output + "'", pattern.pattern(),
+                                              pattern.toString().length() - 1 );
+        }
+
+        String version = matcher.group( 3 );
+        if ( version == null )
+        {
+            version = matcher.group( 1 );
+        }
+        else
+        {
+            version = matcher.group( 1 ) + version;
+        }
+
+        return Float.parseFloat( version );
+
     }
 
     /**
@@ -453,7 +522,8 @@ public class JavadocUtil
 
                         if ( activeProxy.getPort() > 0 )
                         {
-                            systemProperties.setProperty( scheme + "proxyPort", String.valueOf( activeProxy.getPort() ) );
+                            systemProperties
+                                .setProperty( scheme + "proxyPort", String.valueOf( activeProxy.getPort() ) );
                         }
 
                         if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
@@ -464,7 +534,8 @@ public class JavadocUtil
                         final String userName = activeProxy.getUsername();
                         if ( StringUtils.isNotEmpty( userName ) )
                         {
-                            final String pwd = StringUtils.isEmpty( activeProxy.getPassword() ) ? "" : activeProxy.getPassword();
+                            final String pwd = StringUtils.isEmpty( activeProxy.getPassword() ) ? "" : activeProxy
+                                .getPassword();
                             Authenticator.setDefault( new Authenticator()
                             {
                                 protected PasswordAuthentication getPasswordAuthentication()
@@ -489,7 +560,8 @@ public class JavadocUtil
 
             // Reset system properties
             if ( ( settings != null ) && ( !"file".equals( url.getProtocol() ) )
-                && ( settings.getActiveProxy() != null ) && ( StringUtils.isNotEmpty( settings.getActiveProxy().getHost() ) ) )
+                && ( settings.getActiveProxy() != null )
+                && ( StringUtils.isNotEmpty( settings.getActiveProxy().getHost() ) ) )
             {
                 System.setProperties( oldSystemProperties );
                 Authenticator.setDefault( null );
