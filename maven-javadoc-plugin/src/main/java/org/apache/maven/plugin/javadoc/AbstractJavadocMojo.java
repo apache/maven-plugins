@@ -1139,12 +1139,23 @@ public abstract class AbstractJavadocMojo
         }
         catch ( IOException e )
         {
-            throw new MavenReportException( "Unable to find javadoc version: " + e.getMessage(), e );
+            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+            getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
         catch ( CommandLineException e )
         {
-            throw new MavenReportException( "Unable to find javadoc version: " + e.getMessage(), e );
+            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+            getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
+        catch ( IllegalArgumentException e )
+        {
+            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+            getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+        }
+
         if ( StringUtils.isNotEmpty( javadocVersion ) )
         {
             try
