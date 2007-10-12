@@ -479,7 +479,81 @@ public class JavadocUtil
         }
 
         return Float.parseFloat( version );
+    }
 
+    /**
+     * Parse a memory string which be used in the JVM arguments <code>-Xms</code> or <code>-Xmx</code>.
+     * <br/>
+     * Here are some supported memory string depending the JDK used:
+     * <table>
+     * <tr>
+     *   <th>JDK</th>
+     *   <th>Memory argument support for <code>-Xms</code> or <code>-Xmx</code></th>
+     * </tr>
+     * <tr>
+     *   <td>SUN</td>
+     *   <td>1024k | 128m | 1g | 1t</td>
+     * </tr>
+     * <tr>
+     *   <td>IBM</td>
+     *   <td>1024k | 1024b | 128m | 128mb | 1g | 1gb</td>
+     * </tr>
+     * <tr>
+     *   <td>BEA</td>
+     *   <td>1024k | 1024kb | 128m | 128mb | 1g | 1gb</td>
+     * </tr>
+     * </table>
+     *
+     * @param memory the memory to be parsed, not null.
+     * @return the memory parsed with a supported unit. If no unit specified in the <code>memory</code> parameter,
+     * the default unit is <code>m</code>. The units <code>g | gb</code> or <code>t | tb</code> will be converted
+     * in <code>m</code>.
+     * @throws IllegalArgumentException if the <code>memory</code> parameter is null or doesn't match any pattern.
+     */
+    protected static String parseJavadocMemory( String memory )
+        throws IllegalArgumentException
+    {
+        if ( StringUtils.isEmpty( memory ) )
+        {
+            throw new IllegalArgumentException( "The memory could not be null." );
+        }
+
+        Pattern p = Pattern.compile( "^\\s*(\\d+)\\s*?\\s*$" );
+        Matcher m = p.matcher( memory );
+        if ( m.matches() )
+        {
+            return m.group( 1 ) + "m";
+        }
+
+        p = Pattern.compile( "^\\s*(\\d+)\\s*k(b)?\\s*$", Pattern.CASE_INSENSITIVE );
+        m = p.matcher( memory );
+        if ( m.matches() )
+        {
+            return m.group( 1 ) + "k";
+        }
+
+        p = Pattern.compile( "^\\s*(\\d+)\\s*m(b)?\\s*$", Pattern.CASE_INSENSITIVE );
+        m = p.matcher( memory );
+        if ( m.matches() )
+        {
+            return m.group( 1 ) + "m";
+        }
+
+        p = Pattern.compile( "^\\s*(\\d+)\\s*g(b)?\\s*$", Pattern.CASE_INSENSITIVE );
+        m = p.matcher( memory );
+        if ( m.matches() )
+        {
+            return ( Integer.parseInt( m.group( 1 ) ) * 1024 ) + "m";
+        }
+
+        p = Pattern.compile( "^\\s*(\\d+)\\s*t(b)?\\s*$", Pattern.CASE_INSENSITIVE );
+        m = p.matcher( memory );
+        if ( m.matches() )
+        {
+            return ( Integer.parseInt( m.group( 1 ) ) * 1024 * 1024 ) + "m";
+        }
+
+        throw new IllegalArgumentException( "Could convert not to a memory size: " + memory );
     }
 
     /**
