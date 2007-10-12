@@ -172,19 +172,20 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
-     * parameters that include spaces.
+     * parameters that include spaces. Useful for a custom doclet.
      *
      * @parameter expression="${additionalparam}"
      */
     private String additionalparam;
 
     /**
-     * Set an additional J option(s) on the command line.
+     * Set an additional Javadoc option(s) (i.e. JVM options) on the command line.
      * Example:
      * <pre>
      * &lt;additionalJOption&gt;-J-Xss128m&lt;/additionalJOption&gt;
      * </pre>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
+     * See <a href="http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp">vmoptions</a>.
      *
      * @since 2.3
      * @parameter expression="${additionalJOption}"
@@ -384,16 +385,22 @@ public abstract class AbstractJavadocMojo
     private String locale;
 
     /**
-     * Specifies the maximum Java heap size to be used when launching the javadoc executable.
-     * Some JVMs refer to this property as the -Xmx parameter. Example: '512' or '512m'.
+     * Specifies the maximum Java heap size to be used when launching the Javadoc tool.
+     * JVMs refer to this property as the <code>-Xmx</code> parameter. Example: '512' or '512m'.
+     * The memory unit depends on the JVM used. The units supported could be: <code>k</code>, <code>kb</code>,
+     * <code>m</code>, <code>mb</code>, <code>g</code>, <code>gb</code>, <code>t</code>, <code>tb</code>.
+     *  If no unit specified, the default unit is <code>m</code>.
      *
      * @parameter expression="${maxmemory}"
      */
     private String maxmemory;
 
     /**
-     * Specifies the minimum Java heap size to be used when launching the javadoc executable.
-     * Some JVMs refer to this property as the -Xms parameter. Example: '128' or '128m'.
+     * Specifies the minimum Java heap size to be used when launching the Javadoc tool.
+     * JVMs refer to this property as the <code>-Xms</code> parameter. Example: '512' or '512m'.
+     * The memory unit depends on the JVM used. The units supported could be: <code>k</code>, <code>kb</code>,
+     * <code>m</code>, <code>mb</code>, <code>g</code>, <code>gb</code>, <code>t</code>, <code>tb</code>.
+     *  If no unit specified, the default unit is <code>m</code>.
      *
      * @parameter expression="${minmemory}"
      */
@@ -1261,7 +1268,7 @@ public abstract class AbstractJavadocMojo
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
-            getLog().warn( "Javadoc 1.4 doesn't support the -1.1 switch anymore. Ignore this option." );
+            getLog().warn( "Javadoc 1.4+ doesn't support the -1.1 switch anymore. Ignore this option." );
         }
         else
         {
@@ -1316,7 +1323,7 @@ public abstract class AbstractJavadocMojo
                     if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
                         || StringUtils.isEmpty( groups[i].getPackages() ) )
                     {
-                        getLog().info( "A group option is empty. Ignore this option." );
+                        getLog().warn( "A group option is empty. Ignore this option." );
                     }
                     else
                     {
@@ -1372,7 +1379,7 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
                     {
-                        getLog().info( "A taglet option is empty. Ignore this option." );
+                        getLog().warn( "A taglet option is empty. Ignore this option." );
                     }
                     else
                     {
@@ -1389,7 +1396,7 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( StringUtils.isEmpty( tags[i].getName() ) )
                     {
-                        getLog().info( "A tag name is empty. Ignore this option." );
+                        getLog().warn( "A tag name is empty. Ignore this option." );
                     }
                     else
                     {
@@ -2070,27 +2077,19 @@ public abstract class AbstractJavadocMojo
      * @param cmd    the command line execution object where the argument will be added
      * @param arg    the argument parameter name
      * @param memory the JVM memory value to be set
+     * @see JavadocUtil#parseJavadocMemory(String)
      */
     private void addMemoryArg( Commandline cmd, String arg, String memory )
     {
         if ( StringUtils.isNotEmpty( memory ) )
         {
-            // Allow '128' or '128m'
-            if ( NumberUtils.isDigits( memory ) )
+            try
             {
-                cmd.createArgument().setValue( "-J" + arg + memory + "m" );
+                cmd.createArgument().setValue( "-J" + arg + JavadocUtil.parseJavadocMemory( memory ) );
             }
-            else
+            catch ( IllegalArgumentException e )
             {
-                if ( NumberUtils.isDigits( memory.substring( 0, memory.length() - 1 ) )
-                    && memory.toLowerCase().endsWith( "m" ) )
-                {
-                    cmd.createArgument().setValue( "-J" + arg + memory );
-                }
-                else
-                {
-                    getLog().error( arg + " '" + memory + "' is not a valid number. Ignore this option." );
-                }
+                getLog().error( "Malformed memory pattern for '" + arg + memory + "'. Ignore this option." );
             }
         }
     }
@@ -2281,7 +2280,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion );
+            getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion + ". Ignore this option." );
         }
     }
 
@@ -2324,7 +2323,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+            getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion + ". Ignore this option." );
         }
     }
 
@@ -2513,11 +2512,11 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    getLog().error( "Malformed link: " + link + "/package-list. IGNORED IT." );
+                    getLog().error( "Malformed link: " + link + "/package-list. Ignored it." );
                 }
                 catch ( IOException e )
                 {
-                    getLog().error( "Error fetching link: " + link + "/package-list. IGNORED IT." );
+                    getLog().error( "Error fetching link: " + link + "/package-list. Ignored it." );
                 }
             }
         }

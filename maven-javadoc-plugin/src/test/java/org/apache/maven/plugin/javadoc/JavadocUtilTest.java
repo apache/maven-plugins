@@ -31,7 +31,7 @@ public class JavadocUtilTest
     extends TestCase
 {
     /**
-     * Method to test the javadoc parsing.
+     * Method to test the javadoc version parsing.
      *
      * @throws Exception if any
      */
@@ -80,6 +80,13 @@ public class JavadocUtilTest
         // Other tests
         version = "java full version \"1.5.0_07-164\"" + System.getProperty( "line.separator" );
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\""
+            + System.getProperty( "line.separator" );
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        version = "java full" + System.getProperty( "line.separator" ) + " version \"1.5.0_07-164\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
 
         version = "java full version \"1.99.123-b01\"";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.99123f, 0 );
@@ -97,6 +104,80 @@ public class JavadocUtilTest
             assertTrue( "Not catch wrong pattern", false );
         }
         catch ( PatternSyntaxException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    /**
+     * Method to test the javadoc memory parsing.
+     *
+     * @throws Exception if any
+     */
+    public void testParseJavadocMemory()
+        throws Exception
+    {
+        String memory = null;
+        try
+        {
+            JavadocUtil.parseJavadocMemory( memory );
+            assertTrue( "Not catch null", false );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertTrue( true );
+        }
+
+        memory = "128";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+
+        memory = "128k";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128k" );
+        memory = "128kb";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128k" );
+
+        memory = "128m";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+        memory = "128mb";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+
+        memory = "1g";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "1024m" );
+        memory = "1gb";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "1024m" );
+
+        memory = "1t";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "1048576m" );
+        memory = "1tb";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "1048576m" );
+
+        memory = System.getProperty( "line.separator" ) + "128m";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+        memory = System.getProperty( "line.separator" ) + "128m" + System.getProperty( "line.separator" );
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+
+        memory = "     128m";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+        memory = "     128m     ";
+        assertEquals( JavadocUtil.parseJavadocMemory( memory ), "128m" );
+
+        memory = "1m28m";
+        try
+        {
+            JavadocUtil.parseJavadocMemory( memory );
+            assertTrue( "Not catch wrong pattern", false );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertTrue( true );
+        }
+        memory = "ABC128m";
+        try
+        {
+            JavadocUtil.parseJavadocMemory( memory );
+            assertTrue( "Not catch wrong pattern", false );
+        }
+        catch ( IllegalArgumentException e )
         {
             assertTrue( true );
         }
