@@ -133,9 +133,10 @@ public class TreeMojo extends AbstractMojo
 
     /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
-     * all scopes.
+     * all scopes. Note that this feature does not currently work due to MNG-3236.
      * 
      * @since 2.0-alpha-6
+     * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
      * 
      * @parameter expression="${scope}"
      */
@@ -200,7 +201,8 @@ public class TreeMojo extends AbstractMojo
 
         try
         {
-            // TODO: fix DependencyTreeBuilder to apply filter
+            // TODO: note that filter does not get applied due to MNG-3236
+
             rootNode =
                 dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
                                                            artifactMetadataSource, artifactFilter, artifactCollector );
