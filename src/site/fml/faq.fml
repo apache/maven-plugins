@@ -93,6 +93,40 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
         </p>
       </answer>
     </faq>
+    <faq id="How to increase Javadoc heap size">
+      <question>How to increase Javadoc heap size?</question>
+      <answer>
+        <p>
+          If you need to increase the Javadoc heap size, you should use the <i>&lt;minmemory/&gt;</i> and
+          <i>&lt;maxmemory/&gt;</i> parameters in your Javadoc Plugin configuration. For instance:
+          <source>
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <minmemory>128m</minmemory>
+          <maxmemory>1g</maxmemory>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project></source>
+        </p>
+        <p>
+          <b>Note:</b> The memory unit depends on the JVM used. The units supported could be: <code>k</code>,
+          <code>kb</code>, <code>m</code>, <code>mb</code>, <code>g</code>, <code>gb</code>, <code>t</code>,
+          <code>tb</code>. If no unit specified, the default unit is <code>m</code>.
+        </p>
+      </answer>
+    </faq>
     <faq id="How to add proxy support">
       <question>How to add proxy support?</question>
       <answer>
