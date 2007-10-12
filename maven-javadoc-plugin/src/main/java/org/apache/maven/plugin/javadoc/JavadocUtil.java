@@ -440,6 +440,10 @@ public class JavadocUtil
      *   <td>FreeBSD 1.5</td>
      *   <td>java full version "diablo-1.5.0-b01"</td>
      * </tr>
+     * <tr>
+     *   <td>BEA jrockit 1.5</td>
+     *   <td>java full version "1.5.0_11-b03"</td>
+     * </tr>
      * </table>
      *
      * @param output for 'javadoc -J-fullversion'

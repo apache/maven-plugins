@@ -69,8 +69,12 @@ public class JavadocUtilTest
         version = "J2RE 1.5.0 IBM Windows 32 build pwi32devifx-20070323 (ifix 117674: SR4 + 116644 + 114941 + 116110 + 114881)";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
 
-        //FreeBSD
+        // FreeBSD
         version = "java full version \"diablo-1.5.0-b01\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+
+        // BEA
+        version = "java full version \"1.5.0_11-b03\"";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
 
         // Other tests
