@@ -46,6 +46,7 @@ import java.util.ArrayList;
  * @phase package
  * @requiresProject
  * @todo refactor the common code with javadoc plugin
+ * @requiresDependencyResolution runtime
  */
 public class JarSignVerifyMojo
     extends AbstractMojo

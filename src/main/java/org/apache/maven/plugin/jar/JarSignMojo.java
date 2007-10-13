@@ -45,6 +45,7 @@ import java.util.StringTokenizer;
  * @phase package
  * @requiresProject
  * @todo refactor the common code with javadoc plugin
+ * @requiresDependencyResolution runtime
  */
 public class JarSignMojo
     extends AbstractMojo
