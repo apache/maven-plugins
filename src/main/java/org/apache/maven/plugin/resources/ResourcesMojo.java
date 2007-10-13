@@ -38,6 +38,7 @@ import java.util.Properties;
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author Andreas Hoheneder
+ * @author William Ferguson
  * @version $Id$
  * @goal resources
  * @phase process-resources
@@ -204,13 +205,18 @@ public class ResourcesMojo
         // Project properties
         filterProperties.putAll( project.getProperties() );
         
+        // Take a copy of filterProperties to ensure that evaluated filterTokens are not propagated 
+        // to subsequent filter files. NB this replicates current behaviour and seems to make sense. 
+        final Properties baseProps = new Properties();
+        baseProps.putAll( this.filterProperties );
+        
         for ( Iterator i = filters.iterator(); i.hasNext(); )
         {
             String filtersfile = (String) i.next();
             
             try
             {
-                Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
+                Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), baseProps );
                 
                 filterProperties.putAll( properties );
             }
