@@ -10,8 +10,8 @@
 Usage
 
  Some brief examples on how to use this plugin. If you want to use advanced
- configurations you should have a look at
- {{{http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}the Javadocs for MavenArchiveConfiguration}}.
+ configurations you should have a look at the Javadocs for 
+ {{{http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}MavenArchiveConfiguration}}.
  
 * How to build a jar file
 
@@ -86,6 +86,74 @@ Usage
 
 +-----------------+
   mvn ... -Dmaven.jar.skip.sign=true
++-----------------+
+
+* How to include/exclude content from jar artifact
+
+  Specify a list of fileset patterns to be included or excluded by adding
+  includes/include or excludes/exclude in your <<<pom.xml>>>.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+     	  <includes>
+            <include>**/service/*</include>
+          </includes>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+* How to create an additional attached jar artifact from project
+
+  Specify a list of fileset patterns to be included or excluded by adding
+  includes/include or excludes/exclude and add a classifier in your 
+  <<<pom.xml>>>.
+  
+  Note that the jar-plugin must be defined in a new execution, otherwise it 
+  will replace the default use of the jar-plugin instead of adding a second 
+  artifact. The classifier is also required to create more than one artifact.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <classifier>client</classifier>
+                <includes>
+                  <include>**/service/*</include>
+                </includes>
+              </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
 +-----------------+
 
   For full documentation, click {{{plugin-info.html}here}}.

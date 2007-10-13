@@ -28,7 +28,7 @@ import java.io.File;
 
 /**
  * Base class for creating a jar from project classes.
- *
+ * 
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
@@ -36,13 +36,27 @@ public abstract class AbstractJarMojo
     extends AbstractMojo
 {
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{"**/package.html"};
+    private static final String[] DEFAULT_EXCLUDES = new String[] { "**/package.html" };
 
-    private static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+
+    /**
+     * List of files to include, fileset pattern.
+     * 
+     * @parameter
+     */
+    private String[] includes;
+
+    /**
+     * List of files to exclude, fileset pattern.
+     * 
+     * @parameter
+     */
+    private String[] excludes;
 
     /**
      * Directory containing the generated JAR.
-     *
+     * 
      * @parameter expression="${project.build.directory}"
      * @required
      */
@@ -50,7 +64,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Name of the generated JAR.
-     *
+     * 
      * @parameter alias="jarName" expression="${project.build.finalName}"
      * @required
      */
@@ -58,7 +72,7 @@ public abstract class AbstractJarMojo
 
     /**
      * The Jar archiver.
-     *
+     * 
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      */
@@ -66,7 +80,7 @@ public abstract class AbstractJarMojo
 
     /**
      * The maven project.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -75,9 +89,11 @@ public abstract class AbstractJarMojo
 
     /**
      * The maven archive configuration to use.
-     *
-     * See <a href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">the Javadocs for MavenArchiveConfiguration</a>.
-     *
+     * 
+     * See <a
+     * href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">the
+     * Javadocs for MavenArchiveConfiguration</a>.
+     * 
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -89,6 +105,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Whether creating the archive should be forced.
+     * 
      * @parameter expression="${jar.forceCreation}" default-value="false"
      */
     private boolean forceCreation;
@@ -107,7 +124,7 @@ public abstract class AbstractJarMojo
      * Overload this to produce a test-jar, for example.
      */
     protected abstract String getClassifier();
-    
+
     /**
      * Overload this to produce a test-jar, for example.
      */
@@ -129,7 +146,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     *
+     * 
      * @todo Add license files in META-INF directory.
      */
     public File createArchive()
@@ -154,7 +171,7 @@ public abstract class AbstractJarMojo
             }
             else
             {
-                archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+                archiver.getArchiver().addDirectory( contentDirectory, getIncludes(), getExcludes() );
             }
 
             archiver.createArchive( project, archive );
@@ -170,14 +187,14 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     *
+     * 
      * @todo Add license files in META-INF directory.
      */
     public void execute()
         throws MojoExecutionException
     {
         File jarFile = createArchive();
-     	
+
         String classifier = getClassifier();
         if ( classifier != null )
         {
@@ -187,5 +204,23 @@ public abstract class AbstractJarMojo
         {
             getProject().getArtifact().setFile( jarFile );
         }
+    }
+
+    private String[] getIncludes()
+    {
+        if ( includes != null && includes.length > 0 )
+        {
+            return includes;
+        }
+        return DEFAULT_INCLUDES;
+    }
+
+    private String[] getExcludes()
+    {
+        if ( excludes != null && excludes.length > 0 )
+        {
+            return excludes;
+        }
+        return DEFAULT_EXCLUDES;
     }
 }
