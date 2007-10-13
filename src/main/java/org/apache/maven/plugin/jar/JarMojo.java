@@ -26,6 +26,7 @@ import java.io.File;
  * @goal jar
  * @phase package
  * @requiresProject
+ * @requiresDependencyResolution runtime
  */
 public class JarMojo
     extends AbstractJarMojo

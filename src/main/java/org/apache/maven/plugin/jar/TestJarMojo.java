@@ -26,6 +26,7 @@ import java.io.File;
  * @goal test-jar
  * @phase package
  * @requiresProject
+ * @requiresDependencyResolution test
  */
 public class TestJarMojo
     extends AbstractJarMojo
