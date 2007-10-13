@@ -22,12 +22,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
 
 
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
+ * @author William Ferguson
  * @version $Id$
  */
 public final class PropertyUtils
@@ -35,6 +36,60 @@ public final class PropertyUtils
     private PropertyUtils()
     {
         // prevent instantiation
+    }
+
+    /**
+     * Reads a property file, resolving all internal variables, using the supplied base properties.
+     * <p>
+     * The properties are resolved iteratively, so if the value of property A refers to property B, then after resolution
+     * the value of property B will contain the value of property B.
+     * </p>
+     * 
+     * @param propFile The property file to load.
+     * @param baseProps Properties containing the initial values to subsitute into the properties file.
+     * @return Properties object containing the properties in the file with their values fully resolved.
+     * @throws IOException if profile does not exist, or cannot be read.
+     */
+    public static Properties loadPropertyFile( File propFile, Properties baseProps )
+        throws IOException
+    {
+        if ( !propFile.exists() )
+        {
+            throw new FileNotFoundException( propFile.toString() );
+        }
+
+        final Properties fileProps = new Properties();
+        final FileInputStream inStream = new FileInputStream( propFile );
+        try
+        {
+            fileProps.load( inStream );
+        }
+        finally
+        {
+            IOUtil.close( inStream );
+        }
+
+        final Properties combinedProps = new Properties();
+        combinedProps.putAll( baseProps );
+        combinedProps.putAll( fileProps );
+
+        // The algorithm iterates only over the fileProps which is all that is required to resolve
+        // the properties defined within the file. This is slighlty different to current, however
+        // I suspect that this was the actual original intent.
+        // 
+        // The difference is that #loadPropertyFile(File, boolean, boolean) also resolves System properties
+        // whose values contain expressions. I believe this is unexpected and is not validated by the test cases,
+        // as can be verified by replacing the implementation of #loadPropertyFile(File, boolean, boolean)
+        // with the commented variant I have provided that reuses this method.
+
+        for ( Iterator iter = fileProps.keySet().iterator(); iter.hasNext(); )
+        {
+            final String k = (String) iter.next();
+            final String propValue = getPropertyValue( k, combinedProps );
+            fileProps.setProperty( k, propValue );
+        }
+
+        return fileProps;
     }
 
     /**
@@ -48,37 +103,32 @@ public final class PropertyUtils
     public static Properties loadPropertyFile( File propfile, boolean fail, boolean useSystemProps )
         throws IOException
     {
-        Properties props = new Properties();
+        
+        final Properties baseProps = new Properties();
 
-        if ( useSystemProps )
+        if (useSystemProps) 
         {
-            props = new Properties( System.getProperties() );
+            baseProps.putAll(System.getProperties());
         }
 
-        if ( propfile.exists() )
+        final Properties resolvedProps = new Properties();
+        try 
         {
-            FileInputStream inStream = new FileInputStream( propfile );
-            try
+            resolvedProps.putAll(loadPropertyFile(propfile, baseProps));
+        } catch (FileNotFoundException e)
+        {
+            if (fail) 
             {
-                props.load( inStream );
-            }
-            finally
-            {
-                IOUtil.close( inStream );
+                throw new FileNotFoundException(propfile.toString());
             }
         }
-        else if ( fail )
+
+        if (useSystemProps) 
         {
-            throw new FileNotFoundException( propfile.toString() );
+            resolvedProps.putAll(baseProps);
         }
 
-        for ( Enumeration n = props.propertyNames(); n.hasMoreElements(); )
-        {
-            String k = (String) n.nextElement();
-            props.setProperty( k, getPropertyValue( k, props ) );
-        }
-
-        return props;
+        return resolvedProps;
     }
 
 
