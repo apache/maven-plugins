@@ -416,6 +416,43 @@ public class ResourcesMojoTest
     }
 
     /**
+     * Validates that a Filter token containing a project property will be
+     * resolved before the Filter is applied to the resources.
+     * 
+     * @throws Exception
+     */
+    public void testPropertyFiles_Filtering_TokensInFilters() 
+        throws Exception
+    {
+        final File testPom = new File(getBasedir(), defaultPomFilePath);
+        final ResourcesMojo mojo = (ResourcesMojo) lookupMojo("resources", testPom);
+        final MavenProjectResourcesStub project = new MavenProjectResourcesStub(
+                "resourcePropertyFiles_Filtering_TokensInFilters");
+        final List resources = project.getBuild().getResources();
+        final LinkedList filterList = new LinkedList();
+
+        assertNotNull(mojo);
+
+        project.addFile("file4.properties", "current working directory=${filter.token}");
+        project.addFile("filter.properties", "filter.token=${pom-property}");
+        project.setResourceFiltering(0, true);
+        project.addProperty("pom-property", "foobar");
+        project.setupBuildEnvironment();
+        filterList.add(project.getResourcesDirectory() + "filter.properties");
+
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
+        setVariableValueToObject(mojo, "project", project);
+        setVariableValueToObject(mojo, "resources", resources);
+        setVariableValueToObject(mojo, "outputDirectory", project.getBuild().getOutputDirectory());
+        setVariableValueToObject(mojo, "filters", filterList);
+        mojo.execute();
+        final String resourcesDir = project.getOutputDirectory();
+        final String checkString = "current working directory=foobar";
+
+        assertContent(resourcesDir + "/file4.properties", checkString);
+    }    
+    
+    /**
      * Ensures the file exists and its first line equals the given data.
      */
     private void assertContent( String fileName, String data )
