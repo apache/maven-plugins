@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade;
+package org.apache.maven.plugins.shade.mojo;
 
 import java.io.File;
 import java.util.ArrayList;
