@@ -1,20 +1,16 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package org.apache.maven.plugins.shade;
@@ -51,10 +47,7 @@ public class DefaultShader
     extends AbstractLogEnabled
     implements Shader
 {
-    public void shade( Set jars,
-                       File uberJar,
-                       List relocators,
-                       List resourceTransformers )
+    public void shade( Set jars, File uberJar, List relocators, List resourceTransformers )
         throws IOException
     {
         Set resources = new HashSet();
@@ -62,7 +55,7 @@ public class DefaultShader
         RelocatorRemapper remapper = new RelocatorRemapper( relocators );
 
         JarOutputStream jos = new JarOutputStream( new FileOutputStream( uberJar ) );
-        
+
         for ( Iterator i = jars.iterator(); i.hasNext(); )
         {
             File jar = (File) i.next();
@@ -79,59 +72,20 @@ public class DefaultShader
 
                 if ( entry.isDirectory() )
                 {
-                    if (!resources.contains(name)) {
-                        jos.putNextEntry( new JarEntry( name ) );
-                        resources.add(name);
+                    if ( !resources.contains( name ) )
+                    {
+                        addDirectory( resources, jos, name );
                     }
                 }
                 else
                 {
                     if ( name.endsWith( ".class" ) )
                     {
-                        ClassReader cr = new ClassReader( is );
-
-                        ClassWriter cw = new ClassWriter( cr, 0 );
-
-                        ClassVisitor cv = new RemappingClassAdapter( cw, remapper );
-
-                        cr.accept( cv, 0 );
-
-                        byte[] renamedClass = cw.toByteArray();
-
-                        // Need to take the .class off for remapping evaluation                        
-                        String newName = remapper.map( name.substring( 0, name.indexOf( '.' ) ) );
-
-                        try
-                        {
-                            // Now we put it back on so the class file is written out with the right extension.
-                            jos.putNextEntry( new JarEntry( newName + ".class" ) );
-
-                            IOUtil.copy( renamedClass, jos );
-                        }
-                        catch ( ZipException e )
-                        {
-                            getLogger().warn( "We have a duplicate " + newName + " in " + jar );
-                        }
+                        addRemappedClass( remapper, jos, jar, name, is );
                     }
                     else
                     {
-                        boolean resourceTransformed = false;
-
-                        for ( Iterator k = resourceTransformers.iterator(); k.hasNext(); )
-                        {
-                            ResourceTransformer transformer = (ResourceTransformer) k.next();
-
-                            if ( transformer.canTransformResource( name ) )
-                            {
-                                transformer.processResource( is );
-
-                                resourceTransformed = true;
-
-                                break;
-                            }
-                        }
-
-                        if ( !resourceTransformed )
+                        if ( !resourceTransformed( resourceTransformers, name, is ) )
                         {
                             // Avoid duplicates that aren't accounted for by the resource transformers
                             if ( resources.contains( name ) )
@@ -139,11 +93,7 @@ public class DefaultShader
                                 continue;
                             }
 
-                            jos.putNextEntry( new JarEntry( name ) );
-
-                            IOUtil.copy( is, jos );
-
-                            resources.add( name );
+                            addResource( resources, jos, name, is );
                         }
                     }
                 }
@@ -163,6 +113,73 @@ public class DefaultShader
         }
 
         IOUtil.close( jos );
+    }
+
+    private void addDirectory( Set resources, JarOutputStream jos, String name )
+        throws IOException
+    {
+        jos.putNextEntry( new JarEntry( name ) );
+        resources.add( name );
+    }
+
+    private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name, InputStream is )
+        throws IOException
+    {
+        ClassReader cr = new ClassReader( is );
+
+        ClassWriter cw = new ClassWriter( cr, 0 );
+
+        ClassVisitor cv = new RemappingClassAdapter( cw, remapper );
+
+        cr.accept( cv, 0 );
+
+        byte[] renamedClass = cw.toByteArray();
+
+        // Need to take the .class off for remapping evaluation                        
+        String mappedName = remapper.map( name.substring( 0, name.indexOf( '.' ) ) );
+
+        try
+        {
+            // Now we put it back on so the class file is written out with the right extension.
+            jos.putNextEntry( new JarEntry( mappedName + ".class" ) );
+
+            IOUtil.copy( renamedClass, jos );
+        }
+        catch ( ZipException e )
+        {
+            getLogger().warn( "We have a duplicate " + mappedName + " in " + jar );
+        }
+    }
+
+    private boolean resourceTransformed( List resourceTransformers, String name, InputStream is )
+        throws IOException
+    {
+        boolean resourceTransformed = false;
+
+        for ( Iterator k = resourceTransformers.iterator(); k.hasNext(); )
+        {
+            ResourceTransformer transformer = (ResourceTransformer) k.next();
+
+            if ( transformer.canTransformResource( name ) )
+            {
+                transformer.processResource( is );
+
+                resourceTransformed = true;
+
+                break;
+            }
+        }
+        return resourceTransformed;
+    }
+
+    private void addResource( Set resources, JarOutputStream jos, String name, InputStream is )
+        throws IOException
+    {
+        jos.putNextEntry( new JarEntry( name ) );
+
+        IOUtil.copy( is, jos );
+
+        resources.add( name );
     }
 
     class RelocatorRemapper
