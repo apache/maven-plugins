@@ -19,17 +19,17 @@ package org.apache.maven.plugin.war.overlay;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.plugin.war.Overlay;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.war.Overlay;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Manages the overlays.
@@ -71,7 +71,7 @@ public class OverlayManager
         
         // Initialize
         initialize( defaultIncludes, defaultExcludes );
-
+        
     }
     
 
@@ -194,21 +194,40 @@ public class OverlayManager
             return null;
         }
 
-        for (Iterator iterator = artifactsOverlays.iterator();iterator.hasNext();)
+        for ( Iterator iterator = artifactsOverlays.iterator(); iterator.hasNext(); )
         {
-            // TODO Handle ZIP artifact ; Handle classifier dependencies properly (clash management)
+            // Handle classifier dependencies properly (clash management)
             Artifact artifact = (Artifact) iterator.next();
-            if ( overlay.getGroupId().equals( artifact.getGroupId() ) &&
-                overlay.getArtifactId().equals( artifact.getArtifactId() ) &&
-                ( overlay.getClassifier() == null || ( overlay.getClassifier().equals( artifact.getClassifier() ) ) ) )
+            if ( compareOverlayWithArtifact(overlay, artifact) )
             {
                 return artifact;
             }
         }
         
+        // maybe its a project dependencies zip or an other type
+        Set projectArtifacts = this.project.getDependencyArtifacts();
+        if (projectArtifacts != null)
+        {
+            for( Iterator iterator = projectArtifacts.iterator();iterator.hasNext();)
+            {
+                Artifact artifact = (Artifact) iterator.next();
+                if ( compareOverlayWithArtifact(overlay, artifact) )
+                {
+                    return artifact;
+                }
+            }
+        }
         throw new InvalidOverlayConfigurationException(
             "overlay[" + overlay + "] is not a dependency of the project." );
 
+    }
+    
+    private boolean compareOverlayWithArtifact(Overlay overlay, Artifact artifact)
+    {
+       return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
+            && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
+            && StringUtils.equals( overlay.getType(), artifact.getType() ) && ( overlay.getClassifier() == null || ( StringUtils
+            .equals( overlay.getClassifier(), artifact.getClassifier() ) ) ) );
     }
     
     /**
@@ -231,39 +250,7 @@ public class OverlayManager
             {
                 result.add( artifact );
             }
-            // zip overlay is disabled by default except if user want it in the mojo's overlays
-            if ( !artifact.isOptional() && filter.include( artifact ) && ( "zip".equals( artifact.getType() ) ) )
-            {
-                Overlay overlay = getAssociatedOverlay( artifact );
-                // if the overlay doesn't exists we create a new with skip by default
-                if ( overlay != null )
-                {
-                    Overlay zipOverlay = new DefaultOverlay(artifact);
-                    zipOverlay.setSkip( true );
-                    this.overlays.add( zipOverlay );
-                }
-                result.add( artifact );
-            }
         }
         return result;
-    }
-    
-    private Overlay getAssociatedOverlay( Artifact artifact )
-    {
-        if ( this.overlays == null )
-        {
-            return null;
-        }
-        for ( Iterator iterator = this.overlays.iterator(); iterator.hasNext(); )
-        {
-            Overlay overlay = (Overlay) iterator.next();
-            if ( StringUtils.equals( artifact.getGroupId(), overlay.getGroupId() )
-                && StringUtils.equals( artifact.getArtifactId(), overlay.getArtifactId() )
-                && StringUtils.equals( artifact.getClassifier(), overlay.getClassifier() ))
-            {
-                return overlay;
-            }
-        }
-        return null;
     }
 }
