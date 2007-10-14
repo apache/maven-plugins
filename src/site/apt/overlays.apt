@@ -147,7 +147,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
   * <<includes>> - sets the files to include. By default, all files are included.
 
-  * <<excludes>> - sets the files to exclude. By default, the <<<META-INF/MANIFEST.MF>>>
+  * <<excludes>> - sets the files to exclude. By default, the <<<META-INF>>> directory
   is excluded.
 
   * <<skip>> - set to true to skip this overlay. Default is false.
