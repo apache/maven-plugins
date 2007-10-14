@@ -28,6 +28,7 @@ import org.apache.maven.plugin.war.overlay.DefaultOverlay;
 import org.apache.maven.plugin.war.stub.MavenZipProject;
 import org.apache.maven.plugin.war.stub.WarArtifactStub;
 import org.apache.maven.plugin.war.stub.ZipArtifactStub;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
@@ -60,22 +61,29 @@ public class WarZipTest
     {
         ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
         File zipFile = new File( getTestDirectory(), "foobar.zip" );
-        return new ZipArtifactStub( "src/test/resources/unit/warziptest", artifactHandler, zipFile );
+        Artifact artifact = new ZipArtifactStub( "src/test/resources/unit/warziptest", artifactHandler, zipFile );
+        return artifact;
     }
     
     private File configureMojo( String testId )
         throws Exception
     {
         MavenZipProject project = new MavenZipProject();
-        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        String outputDir = getTestDirectory().getAbsolutePath() + File.separatorChar + testId + "-output";
+        // clean up
+        File outputDirFile = new File(outputDir);
+        if (outputDirFile.exists())
+        {
+            FileUtils.deleteDirectory( outputDirFile );
+        }
         File webAppDirectory = new File( getTestDirectory(), testId );
         WarArtifactStub warArtifact = new WarArtifactStub( getBasedir() );
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
         File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
-
         project.setArtifact( warArtifact );
+        
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
@@ -96,6 +104,7 @@ public class WarZipTest
         
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         //overlay.setSkip( false );
+        overlay.setType( "zip" );
         mojo.addOverlay( overlay );        
         mojo.execute();
 
@@ -119,6 +128,7 @@ public class WarZipTest
         
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         overlay.setSkip( false );
+        overlay.setType( "zip" );
         overlay.setTargetPath( "overridePath" );
         mojo.addOverlay( overlay );
         
@@ -147,12 +157,13 @@ public class WarZipTest
         assertZipContentNotHere( webAppDirectory );
     }
 
-    public void testOneZipWithWithForceSkip()
+    public void testOneZipWithForceSkip()
         throws Exception
     {
         File webAppDirectory = configureMojo( "one-zip-overlay-skip" );
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         overlay.setSkip( true );
+        overlay.setType( "zip" );
         mojo.addOverlay( overlay );
 
         mojo.execute();
