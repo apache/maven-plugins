@@ -129,6 +129,11 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  |   `-- websource.jsp
 +-----------------+
 
+* Overlay types
+
+  The war plugin handles both <<war>> and <<zip>> artifacts. However, for backard compatibility reason, zip
+  overlays are handled only if they are defined explicitely in the plugin's configuration.
+
 
 * Configuring Overlays
 
@@ -149,6 +154,10 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
   * <<excludes>> - sets the files to exclude. By default, the <<<META-INF>>> directory
   is excluded.
+
+  * <<targetPath>> - sets the target relative path in the webapp structure, which is only
+  available for <<war>> overlays. By default, the content of the overlay is added in the root
+  structure of the webapp.
 
   * <<skip>> - set to true to skip this overlay. Default is false.
 
@@ -335,14 +344,8 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
 * Zip dependencies with overlays
 
-  The plugin now handles zip dependencies and can extract content to the webapp directory. 
-  
-  <<To preserve backward compatibility and some user workaround this features is disabled by default.>>
-  
-  To enable this you have to declare your zip dependency in the overlays mojo configuration section.
-  
-  A sample configuration for a zip (groupId : zipGroupId, artifactId : zipId). 
-  With this configuration, the zip content will be in webappDirectory/scripts/.  
+  To use a <<zip>> dependency as an overlay you have to configure it explicitely in the plugins's configuration. For
+  instance to inject the content of a zip overlay in the <<scripts>> directory of the webapp, do as follows:
 
 +-----------------+
  [...]
@@ -354,8 +357,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
          <overlays>
             <overlay>
               <groupId>zipGroupId</groupId>
-              <artifactId>zipId</artifactId>
-              <!-- optionnal the path to put zip content -->
+              <artifactId>zipArtifactId</artifactId>
               <targetPath>scripts</targetPath>
             </overlay>
           </overlays>
