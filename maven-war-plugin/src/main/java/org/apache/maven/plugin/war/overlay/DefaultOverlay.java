@@ -43,6 +43,7 @@ public class DefaultOverlay
         setArtifactId( a.getArtifactId() );
         setClassifier( a.getClassifier() );
         setArtifact( a );
+        setType( a.getType() );
     }
 
     /**
