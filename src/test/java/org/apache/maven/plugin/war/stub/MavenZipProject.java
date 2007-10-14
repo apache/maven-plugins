@@ -3,6 +3,8 @@ package org.apache.maven.plugin.war.stub;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -41,6 +43,16 @@ public class MavenZipProject
     public Set getArtifacts()
     {
         return this.artifacts;
+    }
+    
+    public Set getDependencyArtifacts()
+    {
+        return this.artifacts;
+    }
+
+    public void addArtifact( Artifact artifact )
+    {
+        this.artifacts.add( artifact );
     }
 
 }
