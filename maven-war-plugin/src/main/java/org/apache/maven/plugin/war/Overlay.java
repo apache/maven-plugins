@@ -67,6 +67,9 @@ public class Overlay
     private Artifact artifact;
     
     private String targetPath;
+    
+    /** default overlay type is war */ 
+    private String type = "war";
 
     public Overlay()
     {
@@ -229,10 +232,20 @@ public class Overlay
         this.targetPath = targetPath;
     }
 
+    public String getType()
+    {
+        return type;
+    }
 
+
+    public void setType( String type )
+    {
+        this.type = type;
+    }
+    
     public String toString()
     {
-        return getId();
+        return " id " + getId();
     }
 
 
@@ -292,4 +305,5 @@ public class Overlay
             return (String[]) result.toArray( new String[result.size()] );
         }
     }
+
 }
