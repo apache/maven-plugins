@@ -56,7 +56,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.6</version>
+      <version>1.4.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
@@ -76,5 +76,15 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <!-- TODO: remove when plexus-utils is released -->
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>  
 </project>
 
