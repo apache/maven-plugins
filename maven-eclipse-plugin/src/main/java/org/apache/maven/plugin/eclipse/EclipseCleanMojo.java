@@ -77,8 +77,6 @@ public class EclipseCleanMojo
     /**
      * Packaging for the current project.
      * @parameter expression="${project.packaging}"
-     * @required
-     * @readonly
      */
     private String packaging;
 
@@ -195,6 +193,20 @@ public class EclipseCleanMojo
     public void setBasedir( File basedir )
     {
         this.basedir = basedir;
+    }
+
+    /**
+     * @return the packaging
+     */
+    public String getPackaging() {
+        return this.packaging;
+    }
+
+    /**
+     * @param packaging the packaging to set
+     */
+    public void setPackaging(String packaging) {
+        this.packaging = packaging;
     }
 
 }

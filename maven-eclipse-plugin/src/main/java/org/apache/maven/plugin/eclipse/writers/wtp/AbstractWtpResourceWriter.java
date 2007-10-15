@@ -89,7 +89,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
     protected void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer,
                                                         File buildOutputDirectory ) throws MojoExecutionException
     {
-        if ( "war".equals( project.getPackaging() ) ) //$NON-NLS-1$
+        if ( "war".equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$
 
@@ -105,7 +105,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.addAttribute( ATTR_VALUE, contextRoot );
             writer.endElement();
         }
-        else if ( "ejb".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
+        else if ( "ejb".equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
@@ -122,7 +122,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.endElement();
 
         }
-        else if ( "ear".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
+        else if ( "ear".equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 

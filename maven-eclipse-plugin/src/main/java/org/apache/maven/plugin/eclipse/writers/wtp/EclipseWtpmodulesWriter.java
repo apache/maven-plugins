@@ -75,7 +75,7 @@ public class EclipseWtpmodulesWriter
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
 
         String target = "/"; //$NON-NLS-1$
-        if ( "war".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
+        if ( "war".equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", //$NON-NLS-1$
@@ -91,7 +91,7 @@ public class EclipseWtpmodulesWriter
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
-        else if ( "ear".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
+        else if ( "ear".equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$

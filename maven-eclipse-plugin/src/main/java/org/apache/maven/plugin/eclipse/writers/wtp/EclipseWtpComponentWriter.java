@@ -94,7 +94,7 @@ public class EclipseWtpComponentWriter
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
 
-        writeModuleTypeComponent( writer, config.getProject().getPackaging(), config.getBuildOutputDirectory(), config
+        writeModuleTypeComponent( writer, config.getPackaging(), config.getBuildOutputDirectory(), config
             .getSourceDirs(), config.getLocalRepository() );
 
         IOUtil.close( w );

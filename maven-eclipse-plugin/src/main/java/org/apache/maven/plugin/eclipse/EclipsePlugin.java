@@ -597,8 +597,6 @@ public class EclipsePlugin
 
         ready = validate();
 
-        String packaging = executedProject.getPackaging();
-
         // TODO: Why are we using project in some places, and executedProject in others??
         ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
 
@@ -714,8 +712,6 @@ public class EclipsePlugin
                 .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
                             wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
         }
-
-        String packaging = executedProject.getPackaging();
 
         assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
         assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
@@ -926,6 +922,7 @@ public class EclipsePlugin
         config.setSourceDirs( sourceDirs );
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
         config.setContextName( this.wtpContextName );
+        config.setPackaging(this.packaging);
 
         return config;
     }

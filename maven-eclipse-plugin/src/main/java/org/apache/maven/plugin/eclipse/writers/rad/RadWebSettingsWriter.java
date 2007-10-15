@@ -99,7 +99,7 @@ public class RadWebSettingsWriter
         throws MojoExecutionException
     {
         FileWriter w;
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getProject().getPackaging() ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getPackaging() ) )
         {
             try
             {
