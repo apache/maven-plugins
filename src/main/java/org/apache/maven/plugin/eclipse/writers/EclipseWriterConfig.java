@@ -38,6 +38,11 @@ public class EclipseWriterConfig
      * The maven project.
      */
     private MavenProject project;
+    
+    /**
+     * The maven project packaging.
+     */
+    private String packaging;
 
     /**
      * Eclipse project dir.
@@ -418,6 +423,20 @@ public class EclipseWriterConfig
     public void setContextName( String deployName )
     {
         this.contextName = deployName;
+    }
+
+    /**
+     * @return the packaging
+     */
+    public String getPackaging() {
+        return this.packaging;
+    }
+
+    /**
+     * @param packaging the packaging to set
+     */
+    public void setPackaging(String packaging) {
+        this.packaging = packaging;
     }
     
     public boolean getWtpapplicationxml()
