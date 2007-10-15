@@ -106,6 +106,13 @@ public abstract class AbstractIdeSupportMojo
     protected MavenProject executedProject;
 
     /**
+     * The project packaging.
+     * 
+     * @parameter expression="${project.packaging}"
+     */
+    protected String packaging;
+    
+    /**
      * Artifact factory, needed to download source jars for inclusion in classpath.
      * 
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"

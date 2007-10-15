@@ -96,13 +96,12 @@ public class RadCleanMojo
     private void handleLibs()
         throws MojoExecutionException
     {
-        String packaging = this.project.getPackaging();
 
-        if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
+        if ( Constants.PROJECT_PACKAGING_EAR.equals( getPackaging() ) )
         {
             handleEarLibs();
         }
-        else if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
+        else if ( Constants.PROJECT_PACKAGING_WAR.equals( getPackaging() ) )
         {
             handleWarLibs();
         }

@@ -91,7 +91,7 @@ public class RadEjbClasspathWriter
     public void write()
         throws MojoExecutionException
     {
-        String packaging = config.getProject().getPackaging();
+        String packaging = config.getPackaging();
         if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
             new File( config.getEclipseProjectDirectory(), TARGET_WEBSPHERE_CLASSES ).mkdirs();
