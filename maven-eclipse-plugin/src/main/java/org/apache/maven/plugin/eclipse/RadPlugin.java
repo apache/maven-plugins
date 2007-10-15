@@ -163,8 +163,6 @@ public class RadPlugin
             // written by the superclass
             new RadManifestWriter().init( getLog(), config ).write();
         }
-
-        String packaging = getExecutedProject().getPackaging();
         
         if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )

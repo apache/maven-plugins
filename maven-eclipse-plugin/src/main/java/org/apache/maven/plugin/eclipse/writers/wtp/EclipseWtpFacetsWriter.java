@@ -86,7 +86,7 @@ public class EclipseWtpFacetsWriter
 
         FileWriter w;
 
-        String packaging = config.getProject().getPackaging();
+        String packaging = config.getPackaging();
 
         // Write out facet core xml
         try

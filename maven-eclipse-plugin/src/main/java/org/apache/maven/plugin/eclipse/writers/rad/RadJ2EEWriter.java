@@ -67,7 +67,7 @@ public class RadJ2EEWriter extends AbstractEclipseWriter
     public void write() throws MojoExecutionException
     {
         FileWriter w;
-        String packaging = config.getProject().getPackaging();
+        String packaging = config.getPackaging();
 
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
                         || Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging )

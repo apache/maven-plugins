@@ -129,7 +129,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
      */
     public void write() throws MojoExecutionException
     {
-        String packaging = config.getProject().getPackaging();
+        String packaging = config.getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             File applicationXmlFile =

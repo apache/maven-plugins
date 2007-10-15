@@ -51,10 +51,9 @@ public class RadLibCopier
     public void write()
         throws MojoExecutionException
     {
-        MavenProject project = config.getProject();
         IdeDependency[] deps = config.getDeps();
 
-        String packaging = project.getPackaging();
+        String packaging = config.getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
         {
             handleEarLibs( deps );

@@ -65,10 +65,8 @@ public class RadWebsiteConfigWriter extends AbstractEclipseWriter
      */
     public void write() throws MojoExecutionException
     {
-        MavenProject project = config.getProject();
-
         FileWriter w;
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( project.getPackaging() ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getPackaging() ) )
         {
             try
             {
