@@ -50,7 +50,7 @@ import java.util.Map;
  *
  * @author mfranken@xebia.com
  * @author jruiz@exist.com
- * @version $Id: AbstractJiraDownloader.java 424727 2006-07-23 12:38:31 +0000 (sö, 23 jul 2006) fgiust $
+ * @version $Id$
  */
 public abstract class AbstractJiraDownloader
 {
