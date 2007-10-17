@@ -7,6 +7,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
+import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -342,6 +343,40 @@ public class DefaultAssemblyReaderTest
         assertEquals( Artifact.SCOPE_RUNTIME, ((Repository) depSets.get( 0 )).getScope() );
         assertEquals( Artifact.SCOPE_COMPILE, ((Repository) depSets.get( 1 )).getScope() );
         assertEquals( Artifact.SCOPE_SYSTEM, ((Repository) depSets.get( 2 )).getScope() );
+    }
+
+    public void testMergeComponentWithAssembly_ShouldAddOneContainerDescriptorHandlerToExistingListOfTwo()
+    {
+        Assembly assembly = new Assembly();
+
+        ContainerDescriptorHandlerConfig cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "one" );
+
+        assembly.addContainerDescriptorHandler( cfg );
+
+        cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "two" );
+
+        assembly.addContainerDescriptorHandler( cfg );
+
+        Component component = new Component();
+
+        cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "three" );
+
+        component.addContainerDescriptorHandler( cfg );
+
+        new DefaultAssemblyReader().mergeComponentWithAssembly( component, assembly );
+
+        List result = assembly.getContainerDescriptorHandlers();
+
+        assertNotNull( result );
+        assertEquals( 3, result.size() );
+
+        Iterator it = result.iterator();
+        assertEquals( "one", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
+        assertEquals( "two", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
+        assertEquals( "three", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
     }
 
     // FIXME: Deep merging should take place...
