@@ -30,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  * A helper class with common JIRA related functionality.
  *
  * @author Dennis Lundberg
- * @version $Id: JiraHelper.java 422265 2006-07-15 16:49:50 +0000 (l�, 15 jul 2006) dennisl $
+ * @version $Id$
  */
 public class JiraHelper
 {
