@@ -112,6 +112,20 @@
             ]]>
           </description>
         </field>
+        <field>
+          <name>containerDescriptorHandlers</name>
+          <version>1.1.0</version>
+          <association>
+            <type>ContainerDescriptorHandlerConfig</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Set of components which filter various container descriptors out of
+            the normal archive stream, so they can be aggregated then added.
+            ]]>
+          </description>
+        </field>
       </fields>
     </class>
 
@@ -558,6 +572,36 @@
           <defaultValue>false</defaultValue>
           <type>boolean</type>
         </field>
+      </fields>
+    </class>
+    <class>
+      <name>ContainerDescriptorHandlerConfig</name>
+      <version>1.1.0</version>
+      <description>
+        Configures a filter for files headed into the assembly archive, to enable
+        aggregation of various types of descriptor fragments, such as components.xml,
+        web.xml, etc.
+      </description>
+      <fields>
+        <field>
+          <name>handlerName</name>
+          <version>1.1.0</version>
+          <description>
+            The handler's plexus role-hint, for lookup from the container.
+          </description>
+          <type>String</type>
+          <required>true</required>
+        </field>
+        <!-- Commented out until it can be implemented and tested...
+        <field>
+          <name>configuration</name>
+          <version>1.1.0</version>
+          <description>
+            Configuration options for the handler.
+          </description>
+          <type>DOM</type>
+        </field>
+         -->
       </fields>
     </class>
   </classes>

@@ -48,6 +48,15 @@ public abstract class AbstractAssemblyMojo
 {
 
     /**
+     * Flag allowing one or more executions of the assembly plugin to be configured
+     * as skipped for a particular build. This makes the assembly plugin more controllable
+     * from profiles.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean skipAssembly;
+
+    /**
      * If this flag is set, everything up to the call to Archiver.createArchive() will be executed.
      *
      * @parameter expression="${assembly.dryRun}" default-value="false"
@@ -266,6 +275,12 @@ public abstract class AbstractAssemblyMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skipAssembly )
+        {
+            getLog().info( "Assemblies have been skipped per configuration of the skipAssembly parameter." );
+            return;
+        }
+
         List assemblies;
         try
         {
