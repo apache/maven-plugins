@@ -10,6 +10,7 @@ import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationExcep
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
+import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -382,6 +383,14 @@ public class DefaultAssemblyReader
      */
     protected void mergeComponentWithAssembly( Component component, Assembly assembly )
     {
+        List containerHandlerDescriptors = component.getContainerDescriptorHandlers();
+
+        for ( Iterator it = containerHandlerDescriptors.iterator(); it.hasNext(); )
+        {
+            ContainerDescriptorHandlerConfig cfg = (ContainerDescriptorHandlerConfig) it.next();
+            assembly.addContainerDescriptorHandler( cfg );
+        }
+
         List dependencySetList = component.getDependencySets();
 
         for ( Iterator it = dependencySetList.iterator(); it.hasNext(); )
