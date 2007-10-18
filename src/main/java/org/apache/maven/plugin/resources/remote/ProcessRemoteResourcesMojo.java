@@ -66,6 +66,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -386,6 +387,8 @@ public class ProcessRemoteResourcesMojo
                     Model mergedModel = mergeModels( p.getModel(), (Model) supplementModels.get( supplementKey ) );
                     MavenProject mergedProject = new MavenProject( mergedModel );
                     projects.add( mergedProject );
+                    mergedProject.setArtifact(artifact);
+                    mergedProject.setVersion(artifact.getVersion());
                     getLog().debug( "Adding project with groupId [" + mergedProject.getGroupId() + "] (supplemented)" );
                 }
                 else
@@ -400,14 +403,13 @@ public class ProcessRemoteResourcesMojo
                 e.printStackTrace();
             }
         }
+        Collections.sort(projects, new ProjectComparator());
         return projects;
     }
 
-    protected Map getProjectsSortedByOrganization()
+    protected Map getProjectsSortedByOrganization(List projects)
         throws MojoExecutionException
     {
-        List projects = getProjects();
-
         Map organizations = new TreeMap( new OrganizationComparator() );
         List unknownOrganization = new ArrayList();
         for ( Iterator i = projects.iterator(); i.hasNext(); )
@@ -525,8 +527,9 @@ public class ProcessRemoteResourcesMojo
             inceptionYear = year;
         }
         context.put( "project", project );
-        context.put( "projects", getProjects() );
-        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization() );
+        List projects = getProjects();
+        context.put( "projects", projects );
+        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization(projects) );
 
         context.put( "presentYear", year );
 
@@ -831,34 +834,50 @@ public class ProcessRemoteResourcesMojo
         {
             Organization org1 = (Organization) o1;
             Organization org2 = (Organization) o2;
-
-            if ( org1.getName() == null && org2.getName() == null )
-            {
-                return 0;
+            int i = compareStrings(org1.getName(), org2.getName());
+            if (i == 0) {
+                i = compareStrings(org1.getUrl(), org2.getUrl());
             }
-            else if ( org1.getName() == null && org2.getName() != null )
-            {
-                return 1;
-            }
-            
-            return org1.getName().compareToIgnoreCase( org2.getName() );
+            return i;
         }
 
         public boolean equals( Object o1, Object o2 )
         {
-            Organization org1 = (Organization) o1;
-            Organization org2 = (Organization) o2;
-
-            if ( org1.getName() == null && org2.getName() == null )
+            return compare(o1, o2) == 0;
+        }
+        
+        private int compareStrings(String s1, String s2) {
+            if ( s1 == null && s2 == null )
             {
-                return true;
+                return 0;
             }
-            else if ( org1.getName() == null && org2.getName() != null )
+            else if ( s1 == null && s2 != null )
             {
-                return false;
+                return 1;
             }
             
-            return org1.getName().equals( org2.getName() );
+            return s1.compareToIgnoreCase( s2 );
         }
     }
+
+    class ProjectComparator
+        implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            MavenProject p1 = (MavenProject) o1;
+            MavenProject p2 = (MavenProject) o2;
+                        
+            return p1.getArtifact().compareTo(p2.getArtifact());
+        }
+    
+        public boolean equals( Object o1, Object o2 )
+        {
+            MavenProject p1 = (MavenProject) o1;
+            MavenProject p2 = (MavenProject) o2;
+
+            return p1.getArtifact().equals(p2.getArtifact());
+        }
+    }
+
 }
