@@ -19,27 +19,6 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -48,12 +27,13 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
 import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
+import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.project.InvalidProjectModelException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -72,6 +52,29 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Pull down resourceBundles containing remote resources and process the resources contained
@@ -137,7 +140,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * Supplemental model data.  Useful when processing
      * artifacts with incomplete POM metadata.
-     *
+     * <p/>
      * By default, this Mojo looks for supplemental model
      * data in the file "${appendedResourcesDirectory}/supplemental-models.xml".
      *
@@ -180,9 +183,9 @@ public class ProcessRemoteResourcesMojo
      * Additional properties to be passed to velocity.
      * <p/>
      * Several properties are automatically added:<br/>
-     *   project - the current MavenProject <br/>
-     *   projects - the list of dependency projects<br/>
-     *   projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
+     * project - the current MavenProject <br/>
+     * projects - the list of dependency projects<br/>
+     * projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
      * <p/>
      * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
      * the javadoc for MavenProject</a> for information about the properties on the MavenProject.
@@ -269,7 +272,7 @@ public class ProcessRemoteResourcesMojo
             {
                 try
                 {
-                    supplementalModels = new String[] { sups.toURL().toString() };
+                    supplementalModels = new String[]{sups.toURL().toString()};
                 }
                 catch ( MalformedURLException e )
                 {
@@ -278,7 +281,6 @@ public class ProcessRemoteResourcesMojo
                 }
             }
         }
-
 
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         if ( appendedResourcesDirectory != null )
@@ -301,8 +303,7 @@ public class ProcessRemoteResourcesMojo
             VelocityContext context = new VelocityContext( properties );
             configureVelocityContext( context );
 
-            RemoteResourcesClassLoader classLoader
-                = new RemoteResourcesClassLoader( this.getClass().getClassLoader() );
+            RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader( this.getClass().getClassLoader() );
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
 
@@ -346,7 +347,7 @@ public class ProcessRemoteResourcesMojo
     {
         List projects = new ArrayList();
 
-        for ( Iterator it = project.getArtifacts().iterator() ; it.hasNext() ; )
+        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
@@ -356,12 +357,9 @@ public class ProcessRemoteResourcesMojo
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
                     artifact = artifactFactory.createDependencyArtifact( artifact.getGroupId(),
-                                                                         artifact.getArtifactId(),
-                                                                         rng,
-                                                                         artifact.getType(),
-                                                                         artifact.getClassifier(),
-                                                                         artifact.getScope(),
-                                                                         null,
+                                                                         artifact.getArtifactId(), rng,
+                                                                         artifact.getType(), artifact.getClassifier(),
+                                                                         artifact.getScope(), null,
                                                                          artifact.isOptional() );
                     remoteRepo = remoteArtifactRepositories;
                 }
@@ -370,29 +368,22 @@ public class ProcessRemoteResourcesMojo
                 MavenProject p = null;
                 try
                 {
-                    p = mavenProjectBuilder.buildFromRepository( artifact,
-                                                                 remoteRepo,
-                                                            localRepository,
-                                                            true );
+                    p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository, true );
                 }
                 catch ( InvalidProjectModelException e )
                 {
-                   getLog().warn( "Invalid project model for artifact ["
-                                  + artifact.getArtifactId() + ":"
-                                  + artifact.getGroupId() + ":"
-                                  + artifact.getVersion() + "]. "
-                                  + "It will be ignored by the remote resources Mojo." );
-                   continue;
+                    getLog().warn( "Invalid project model for artifact [" + artifact.getArtifactId() + ":" +
+                        artifact.getGroupId() + ":" + artifact.getVersion() + "]. " +
+                        "It will be ignored by the remote resources Mojo." );
+                    continue;
                 }
 
-
-                String supplementKey = generateSupplementMapKey( p.getModel().getGroupId(),
-                                                                 p.getModel().getArtifactId() );
+                String supplementKey =
+                    generateSupplementMapKey( p.getModel().getGroupId(), p.getModel().getArtifactId() );
 
                 if ( supplementModels.containsKey( supplementKey ) )
                 {
-                    Model mergedModel = mergeModels( p.getModel(),
-                                                     (Model) supplementModels.get( supplementKey ) );
+                    Model mergedModel = mergeModels( p.getModel(), (Model) supplementModels.get( supplementKey ) );
                     MavenProject mergedProject = new MavenProject( mergedModel );
                     projects.add( mergedProject );
                     getLog().debug( "Adding project with groupId [" + mergedProject.getGroupId() + "] (supplemented)" );
@@ -412,6 +403,42 @@ public class ProcessRemoteResourcesMojo
         return projects;
     }
 
+    protected Map getProjectsSortedByOrganization()
+        throws MojoExecutionException
+    {
+        List projects = getProjects();
+
+        Map organizations = new TreeMap( new OrganizationComparator() );
+        List unknownOrganization = new ArrayList();
+        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        {
+            MavenProject p = (MavenProject) i.next();
+            if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
+            {
+                List sortedProjects = (List) organizations.get( p.getOrganization()/*.getName()*/ );
+                if ( sortedProjects == null )
+                {
+                    sortedProjects = new ArrayList();
+                }
+                sortedProjects.add( p );
+
+                organizations.put( p.getOrganization()/*.getName()*/, sortedProjects );
+            }
+            else
+            {
+                unknownOrganization.add( p );
+            }
+        }
+        if ( !unknownOrganization.isEmpty() )
+        {
+            Organization unknownOrg = new Organization();
+            unknownOrg.setName( "an unknown organization" );
+            organizations.put( unknownOrg, unknownOrganization );
+        }
+
+        return organizations;
+    }
+
     protected boolean copyResourceIfExists( File file, String relFileName )
         throws IOException
     {
@@ -427,8 +454,7 @@ public class ProcessRemoteResourcesMojo
             //TODO - really should use the resource includes/excludes and name mapping
             File source = new File( resourceDirectory, relFileName );
 
-            if ( source.exists()
-                && !source.equals( file ) )
+            if ( source.exists() && !source.equals( file ) )
             {
                 //TODO - should use filters here
                 FileUtils.copyFile( source, file );
@@ -443,7 +469,8 @@ public class ProcessRemoteResourcesMojo
         return false;
     }
 
-    protected void validate() throws MojoExecutionException
+    protected void validate()
+        throws MojoExecutionException
     {
         int bundleCount = 1;
 
@@ -475,10 +502,10 @@ public class ProcessRemoteResourcesMojo
                     position = bundleCount + "th";
                 }
 
-                throw new MojoExecutionException( "The " + position
-                    + " resource bundle configured must specify a groupId, artifactId, and"
-                    + " version for a remote resource bundle. "
-                    + "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
+                throw new MojoExecutionException( "The " + position +
+                    " resource bundle configured must specify a groupId, artifactId, and" +
+                    " version for a remote resource bundle. " +
+                    "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
             }
 
             bundleCount++;
@@ -486,7 +513,8 @@ public class ProcessRemoteResourcesMojo
 
     }
 
-    protected void configureVelocityContext( VelocityContext context ) throws MojoExecutionException
+    protected void configureVelocityContext( VelocityContext context )
+        throws MojoExecutionException
     {
         String inceptionYear = project.getInceptionYear();
         String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
@@ -498,6 +526,7 @@ public class ProcessRemoteResourcesMojo
         }
         context.put( "project", project );
         context.put( "projects", getProjects() );
+        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization() );
 
         context.put( "presentYear", year );
 
@@ -511,7 +540,8 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    private List downloadResourceBundles( List resourceBundles ) throws MojoExecutionException
+    private List downloadResourceBundles( List resourceBundles )
+        throws MojoExecutionException
     {
         List resourceBundleArtifacts = new ArrayList();
 
@@ -523,9 +553,9 @@ public class ProcessRemoteResourcesMojo
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
                 File artifact = downloader.download( s[0], s[1], s[2], localRepository,
-                        ProjectUtils.buildArtifactRepositories( repositories,
-                            artifactRepositoryFactory,
-                            mavenSession.getContainer() ) );
+                                                     ProjectUtils.buildArtifactRepositories( repositories,
+                                                                                             artifactRepositoryFactory,
+                                                                                             mavenSession.getContainer() ) );
 
                 resourceBundleArtifacts.add( artifact );
             }
@@ -546,7 +576,8 @@ public class ProcessRemoteResourcesMojo
         return resourceBundleArtifacts;
     }
 
-    private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts ) throws MojoExecutionException
+    private void initalizeClassloader( RemoteResourcesClassLoader cl, List artifacts )
+        throws MojoExecutionException
     {
         try
         {
@@ -679,18 +710,16 @@ public class ProcessRemoteResourcesMojo
             String groupId = model.getGroupId();
             String artifactId = model.getArtifactId();
 
-            if ( groupId == null
-                || groupId.trim().equals( "" ) )
+            if ( groupId == null || groupId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException( "Supplemental project XML "
-                                                  + "requires that a <groupId> element be present." );
+                throw new MojoExecutionException(
+                    "Supplemental project XML " + "requires that a <groupId> element be present." );
             }
 
-            if ( artifactId == null
-                || artifactId.trim().equals( "" ) )
+            if ( artifactId == null || artifactId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException( "Supplemental project XML "
-                                                  + "requires that a <artifactId> element be present." );
+                throw new MojoExecutionException(
+                    "Supplemental project XML " + "requires that a <artifactId> element be present." );
             }
         }
         catch ( IOException e )
@@ -716,12 +745,12 @@ public class ProcessRemoteResourcesMojo
         return groupId.trim() + ":" + artifactId.trim();
     }
 
-    private Map loadSupplements( String models[] ) throws MojoExecutionException
+    private Map loadSupplements( String models[] )
+        throws MojoExecutionException
     {
         if ( models == null )
         {
-            getLog().debug( "Supplemental data models won't be loaded.  "
-                            + "No models specified." );
+            getLog().debug( "Supplemental data models won't be loaded.  " + "No models specified." );
             return Collections.EMPTY_MAP;
         }
 
@@ -740,9 +769,8 @@ public class ProcessRemoteResourcesMojo
                 }
                 if ( !f.canRead() )
                 {
-                    throw new MavenReportException( "Supplemental data models won't be loaded. "
-                                                    + "File " + f.getAbsolutePath()
-                                                    + " cannot be read, check permissions on the file." );
+                    throw new MavenReportException( "Supplemental data models won't be loaded. " + "File " +
+                        f.getAbsolutePath() + " cannot be read, check permissions on the file." );
                 }
 
                 getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
@@ -796,4 +824,41 @@ public class ProcessRemoteResourcesMojo
         return loc;
     }
 
+    class OrganizationComparator
+        implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            Organization org1 = (Organization) o1;
+            Organization org2 = (Organization) o2;
+
+            if ( org1.getName() == null && org2.getName() == null )
+            {
+                return 0;
+            }
+            else if ( org1.getName() == null && org2.getName() != null )
+            {
+                return 1;
+            }
+            
+            return org1.getName().compareToIgnoreCase( org2.getName() );
+        }
+
+        public boolean equals( Object o1, Object o2 )
+        {
+            Organization org1 = (Organization) o1;
+            Organization org2 = (Organization) o2;
+
+            if ( org1.getName() == null && org2.getName() == null )
+            {
+                return true;
+            }
+            else if ( org1.getName() == null && org2.getName() != null )
+            {
+                return false;
+            }
+            
+            return org1.getName().equals( org2.getName() );
+        }
+    }
 }
