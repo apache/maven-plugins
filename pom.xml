@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>maven-remote-resources-plugin</artifactId>
-  <version>1.0-alpha-6</version>
+  <version>1.0-alpha-7-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Remote Resources Plugin</name>
@@ -168,10 +168,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-remote-resources-plugin-1.0-alpha-6</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-remote-resources-plugin-1.0-alpha-6</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-remote-resources-plugin-1.0-alpha-6</url>
-  </scm>
 </project>
