@@ -33,6 +33,7 @@
       <item name="Copying project dependencies" href="examples/copying-project-dependencies.html" />
       <item name="Unpacking specific artifacts" href="examples/unpacking-artifacts.html" />
       <item name="Unpacking the project dependencies" href="examples/unpacking-project-dependencies.html" />
+      <item name="Using project dependencies' sources" href="examples/using-dependencies-sources.html" />
    	  <item name="Failing the build on dependency analysis warnings" href="examples/failing-the-build-on-dependency-analysis-warnings.html"/>
     </menu>
     <menu name="Resources">
