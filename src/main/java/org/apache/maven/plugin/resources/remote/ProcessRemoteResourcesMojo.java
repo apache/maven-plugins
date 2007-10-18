@@ -387,8 +387,8 @@ public class ProcessRemoteResourcesMojo
                     Model mergedModel = mergeModels( p.getModel(), (Model) supplementModels.get( supplementKey ) );
                     MavenProject mergedProject = new MavenProject( mergedModel );
                     projects.add( mergedProject );
-                    mergedProject.setArtifact(artifact);
-                    mergedProject.setVersion(artifact.getVersion());
+                    mergedProject.setArtifact( artifact );
+                    mergedProject.setVersion( artifact.getVersion() );
                     getLog().debug( "Adding project with groupId [" + mergedProject.getGroupId() + "] (supplemented)" );
                 }
                 else
@@ -403,11 +403,11 @@ public class ProcessRemoteResourcesMojo
                 e.printStackTrace();
             }
         }
-        Collections.sort(projects, new ProjectComparator());
+        Collections.sort( projects, new ProjectComparator() );
         return projects;
     }
 
-    protected Map getProjectsSortedByOrganization(List projects)
+    protected Map getProjectsSortedByOrganization( List projects )
         throws MojoExecutionException
     {
         Map organizations = new TreeMap( new OrganizationComparator() );
@@ -417,14 +417,14 @@ public class ProcessRemoteResourcesMojo
             MavenProject p = (MavenProject) i.next();
             if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
             {
-                List sortedProjects = (List) organizations.get( p.getOrganization()/*.getName()*/ );
+                List sortedProjects = (List) organizations.get( p.getOrganization() );
                 if ( sortedProjects == null )
                 {
                     sortedProjects = new ArrayList();
                 }
                 sortedProjects.add( p );
 
-                organizations.put( p.getOrganization()/*.getName()*/, sortedProjects );
+                organizations.put( p.getOrganization(), sortedProjects );
             }
             else
             {
@@ -529,7 +529,7 @@ public class ProcessRemoteResourcesMojo
         context.put( "project", project );
         List projects = getProjects();
         context.put( "projects", projects );
-        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization(projects) );
+        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
 
         context.put( "presentYear", year );
 
@@ -834,9 +834,10 @@ public class ProcessRemoteResourcesMojo
         {
             Organization org1 = (Organization) o1;
             Organization org2 = (Organization) o2;
-            int i = compareStrings(org1.getName(), org2.getName());
-            if (i == 0) {
-                i = compareStrings(org1.getUrl(), org2.getUrl());
+            int i = compareStrings( org1.getName(), org2.getName() );
+            if (i == 0)
+            {
+                i = compareStrings( org1.getUrl(), org2.getUrl() );
             }
             return i;
         }
@@ -846,7 +847,7 @@ public class ProcessRemoteResourcesMojo
             return compare(o1, o2) == 0;
         }
         
-        private int compareStrings(String s1, String s2) {
+        private int compareStrings( String s1, String s2 ) {
             if ( s1 == null && s2 == null )
             {
                 return 0;
@@ -868,7 +869,7 @@ public class ProcessRemoteResourcesMojo
             MavenProject p1 = (MavenProject) o1;
             MavenProject p2 = (MavenProject) o2;
                         
-            return p1.getArtifact().compareTo(p2.getArtifact());
+            return p1.getArtifact().compareTo( p2.getArtifact() );
         }
     
         public boolean equals( Object o1, Object o2 )
@@ -876,7 +877,7 @@ public class ProcessRemoteResourcesMojo
             MavenProject p1 = (MavenProject) o1;
             MavenProject p2 = (MavenProject) o2;
 
-            return p1.getArtifact().equals(p2.getArtifact());
+            return p1.getArtifact().equals( p2.getArtifact() );
         }
     }
 
