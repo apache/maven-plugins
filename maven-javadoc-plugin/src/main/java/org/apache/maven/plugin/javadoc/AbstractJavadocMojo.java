@@ -2436,7 +2436,7 @@ public abstract class AbstractJavadocMojo
      */
     private void addLinkofflineArguments( List arguments )
     {
-        List offlineLinksList = ( offlineLinks != null ? Arrays.asList( offlineLinks ) : new ArrayList() );
+        List offlineLinksList = ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ): new ArrayList() );
 
         if ( !aggregate && reactorProjects != null )
         {
