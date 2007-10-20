@@ -439,6 +439,8 @@ public abstract class AbstractJavadocMojo
      * Specifies that javadoc should retrieve the text for the overview documentation from the "source" file
      * specified by path/filename and place it on the Overview page (overview-summary.html).
      * <br/>
+     * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
@@ -649,6 +651,8 @@ public abstract class AbstractJavadocMojo
      * Specifies the path of an alternate help file path\filename that the HELP link in the top and bottom
      * navigation bars link to.
      * <br/>
+     * <b>Note</b>: could be in conflict with &lt;nohelp/&gt;.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#helpfile">helpfile</a>.
      *
      * @parameter expression="${helpfile}"
@@ -746,6 +750,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Omits the HELP link in the navigation bars at the top and bottom of each page of output.
      * <br/>
+     * <b>Note</b>: could be in conflict with &lt;helpfile/&gt;.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nohelp">nohelp</a>.
      *
      * @parameter expression="${nohelp}" default-value="false"
@@ -754,6 +760,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Omits the index from the generated docs.
+     * <br/>
+     * <b>Note</b>: could be in conflict with &lt;splitindex/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noindex">noindex</a>.
      *
@@ -772,6 +780,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Omits the entire overview page from the generated docs.
+     * <br/>
+     * <b>Note</b>: could be in conflict with &lt;overview/&gt;.
      * <br/>
      * Standard Doclet undocumented option.
      *
@@ -862,6 +872,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Splits the index file into multiple files, alphabetically, one file per letter, plus a file for any index
      * entries that start with non-alphabetical characters.
+     * <br/>
+     * <b>Note</b>: could be in conflict with &lt;noindex/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#splitindex">splitindex</a>.
      *
@@ -2857,7 +2869,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Checks for the validity of the Standard Doclet options.
      * <br/>
-     * For example, throw an exception if &lt;nohelp&gt; and &lt;helpfile&gt; options are used together.
+     * For example, throw an exception if &lt;nohelp/&gt; and &lt;helpfile/&gt; options are used together.
      *
      * @throws MavenReportException if error or conflict found
      */
