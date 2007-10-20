@@ -1525,9 +1525,12 @@ public abstract class AbstractJavadocMojo
 
             if ( exitCode != 0 )
             {
+                String cmdLine = Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" );
+                cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
+
                 StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
                 msg.append( '\n' );
-                msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+                msg.append( "Command line was:" + cmdLine );
                 throw new MavenReportException( msg.toString() );
             }
         }
