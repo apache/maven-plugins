@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--$Id$-->
+<project name="MSITE-265">
+  <publishDate format="dd MMM yyyy HH:mm"/>
+  <version position="left"/>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+  </skin>
+  <body>
+    <menu name="Releases TODO">
+      <item name="release1.6" href="releases/release1.6.html"/>
+      <item name="release1.6.3" href="releases/release1.6.3.html"/>
+    </menu>
+    <menu ref="parent"/>
+    <menu ref="reports"/>
+    <menu ref="modules"/>    
+  </body>
+</project>
