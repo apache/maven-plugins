@@ -40,7 +40,6 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -772,6 +771,16 @@ public abstract class AbstractJavadocMojo
     private boolean nonavbar = false;
 
     /**
+     * Omits the entire overview page from the generated docs.
+     * <br/>
+     * Standard Doclet undocumented option.
+     *
+     * @since 2.4
+     * @parameter expression="${nooverview}" default-value="false"
+     */
+    private boolean nooverview = false;
+
+    /**
      * Omits qualifying package name from ahead of class names in output.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noqualifier">noqualifier</a>.
@@ -1112,6 +1121,8 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
+        validateJavadocOptions();
+
         List sourcePaths = getSourcePaths();
 
         List files = getFiles( sourcePaths );
@@ -1185,6 +1196,14 @@ public abstract class AbstractJavadocMojo
         }
 
         File javadocOutputDirectory = new File( getOutputDirectory() );
+        if ( javadocOutputDirectory.exists() && !javadocOutputDirectory.isDirectory() )
+        {
+            throw new MavenReportException( "IOException: " + getOutputDirectory() + " is not a directory." );
+        }
+        if ( javadocOutputDirectory.exists() && !javadocOutputDirectory.canWrite() )
+        {
+            throw new MavenReportException( "IOException: " + getOutputDirectory() + " is not writable." );
+        }
         javadocOutputDirectory.mkdirs();
 
         // ----------------------------------------------------------------------
@@ -1300,11 +1319,13 @@ public abstract class AbstractJavadocMojo
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
         // ----------------------------------------------------------------------
-        // Wrap arguments for default doclet
+        // Wrap arguments for standard doclet
         // ----------------------------------------------------------------------
 
         if ( StringUtils.isEmpty( doclet ) )
         {
+            validateStandardDocletOptions();
+
             addArgIf( arguments, author, "-author" );
             addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false, false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
@@ -1349,6 +1370,7 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, nohelp, "-nohelp" );
             addArgIf( arguments, noindex, "-noindex" );
             addArgIf( arguments, nonavbar, "-nonavbar" );
+            addArgIf( arguments, nooverview, "-nooverview" );
             addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
             addArgIf( arguments, nosince, "-nosince" );
             addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
@@ -2814,6 +2836,60 @@ public abstract class AbstractJavadocMojo
         if ( !debug )
         {
             packagesFile.deleteOnExit();
+        }
+    }
+
+    /**
+     * Checks for the validity of the Javadoc options used by the user.
+     *
+     * @throws MavenReportException if error
+     */
+    private void validateJavadocOptions()
+        throws MavenReportException
+    {
+        // encoding
+        if ( StringUtils.isNotEmpty( encoding ) && !JavadocUtil.validateEncoding( encoding ) )
+        {
+            throw new MavenReportException( "Encoding not supported: " + encoding );
+        }
+    }
+
+    /**
+     * Checks for the validity of the Standard Doclet options.
+     * <br/>
+     * For example, throw an exception if &lt;nohelp&gt; and &lt;helpfile&gt; options are used together.
+     *
+     * @throws MavenReportException if error or conflict found
+     */
+    private void validateStandardDocletOptions()
+        throws MavenReportException
+    {
+        // docencoding
+        if ( StringUtils.isNotEmpty( docencoding ) && !JavadocUtil.validateEncoding( docencoding ) )
+        {
+            throw new MavenReportException( "Encoding not supported: " + docencoding );
+        }
+
+        // helpfile
+        if ( StringUtils.isNotEmpty( helpfile ) && nohelp )
+        {
+            throw new MavenReportException( "Option <nohelp/> conflicts with <helpfile/>" );
+        }
+        if ( ( StringUtils.isNotEmpty( helpfile ) ) && ( !new File( helpfile ).exists() ) )
+        {
+            throw new MavenReportException( "File not found: " + helpfile );
+        }
+
+        // overview
+        if ( ( getOverview() != null ) && nooverview )
+        {
+            throw new MavenReportException( "Option <nooverview/> conflicts with <overview/>" );
+        }
+
+        // index
+        if ( splitindex && noindex )
+        {
+            throw new MavenReportException( "Option <noindex/> conflicts with <splitindex/>" );
         }
     }
 }
