@@ -19,9 +19,13 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -645,5 +649,44 @@ public class JavadocUtil
                 Authenticator.setDefault( null );
             }
         }
+    }
+
+    /**
+     * Validate if a charset is supported on this platform.
+     *
+     * @param charsetName the charsetName to be check.
+     */
+    protected static boolean validateEncoding( String charsetName )
+    {
+        if ( StringUtils.isEmpty( charsetName ) )
+        {
+            return false;
+        }
+
+        OutputStream ost = new ByteArrayOutputStream();
+        OutputStreamWriter osw = null;
+        try
+        {
+            osw = new OutputStreamWriter( ost, charsetName );
+        }
+        catch ( UnsupportedEncodingException exc )
+        {
+            return false;
+        }
+        finally
+        {
+            try
+            {
+                if ( osw != null )
+                {
+                    osw.close();
+                }
+            }
+            catch ( IOException exc )
+            {
+                //nop
+            }
+        }
+        return true;
     }
 }
