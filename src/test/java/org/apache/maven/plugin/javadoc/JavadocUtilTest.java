@@ -21,6 +21,9 @@ package org.apache.maven.plugin.javadoc;
 
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
+
 import junit.framework.TestCase;
 
 /**
@@ -196,5 +199,51 @@ public class JavadocUtilTest
         assertTrue( "ISO-8859-1 not supported on this plateform", JavadocUtil.validateEncoding( "ISO-8859-1" ) );
         assertFalse( "latin is supported on this plateform???", JavadocUtil.validateEncoding( "latin" ) );
         assertFalse( "WRONG is supported on this plateform???", JavadocUtil.validateEncoding( "WRONG" ) );
+    }
+
+    /**
+     * Method to test the hiding proxy password.
+     *
+     * @throws Exception if any
+     */
+    public void testHideProxyPassword()
+        throws Exception
+    {
+        String cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+        + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
+        + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
+        assertFalse( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+
+        Settings settings = new Settings();
+        Proxy proxy = new Proxy();
+        proxy.setActive( true );
+        proxy.setHost( "http://localhost" );
+        proxy.setPort( 80 );
+        proxy.setUsername( "toto" );
+        proxy.setPassword( "toto" );
+        proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
+        settings.addProxy( proxy );
+
+        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+            + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
+            + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
+        assertTrue( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+
+        settings = new Settings();
+        proxy = new Proxy();
+        proxy.setActive( true );
+        proxy.setHost( "http://localhost" );
+        proxy.setPort( 80 );
+        proxy.setUsername( "toto" );
+        proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
+        settings.addProxy( proxy );
+
+        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=http://localhost "
+        + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
+        + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
+        assertFalse( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
     }
 }
