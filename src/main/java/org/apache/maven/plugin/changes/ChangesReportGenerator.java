@@ -222,7 +222,7 @@ public class ChangesReportGenerator
             Release release = (Release) releaseList.get( idx );
 
             sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
-                + release.getVersion() + " - " + release.getDateRelease(), release.getVersion() );
+                + release.getVersion() + " - " + release.getDateRelease(), HtmlTools.encodeId( release.getVersion() ) );
 
             constructActions( sink, release.getAction(), bundle );
         }
