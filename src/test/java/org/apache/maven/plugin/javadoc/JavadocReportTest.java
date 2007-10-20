@@ -864,4 +864,39 @@ public class JavadocReportTest
         assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\"toto\"" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\"" ) != -1 );
     }
+
+    /**
+     * Method to test error or conflict in Javadoc options and in standard doclet options.
+     *
+     * @throws Exception if any
+     */
+    public void testValidateOptions()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/validate-options-test/wrong-encoding-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+            assertTrue( "Not wrong encoding catch", false );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Not wrong encoding catch", e.getMessage().indexOf( "Encoding not supported" ) != -1 );
+        }
+
+        testPom = new File( getBasedir(),
+                            "src/test/resources/unit/validate-options-test/conflict-options-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        try
+        {
+            mojo.execute();
+            assertTrue( "Not conflict catch", false );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Not conflict catch", e.getMessage().indexOf( "Option <nohelp/> conflicts with <helpfile/>" ) != -1 );
+        }
+    }
 }
