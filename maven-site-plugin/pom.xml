@@ -22,7 +22,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>9-SNAPSHOT</version>
+    <version>9</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-site-plugin</artifactId>
@@ -127,8 +127,8 @@ under the License.
     </contributor>
   </contributors>
   <properties>
-    <doxiaVersion>1.0-alpha-9</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-9</doxiaSitetoolsVersion>
+    <doxiaVersion>1.0-alpha-10-SNAPSHOT</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-10-SNAPSHOT</doxiaSitetoolsVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -203,5 +203,71 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <packaging>${project.packaging}</packaging>
+                  <pomFile>${basedir}/pom.xml</pomFile>
+                  <createChecksum>true</createChecksum>
+                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                  <localRepositoryId>it-local-repo</localRepositoryId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.0</version>
+            <configuration>
+              <projectsDirectory>src/it</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>**/**/pom.xml</pomInclude>
+              </pomIncludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <goals>
+                <goal>clean</goal>
+                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
+              </goals>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+           </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>  
 </project>
 
