@@ -182,4 +182,19 @@ public class JavadocUtilTest
             assertTrue( true );
         }
     }
+
+    /**
+     * Method to test the validate encoding parsing.
+     *
+     * @throws Exception if any
+     */
+    public void testValidateEncoding()
+        throws Exception
+    {
+        assertFalse( "Not catch null", JavadocUtil.validateEncoding( null ) );
+        assertTrue( "UTF-8 not supported on this plateform", JavadocUtil.validateEncoding( "UTF-8" ) );
+        assertTrue( "ISO-8859-1 not supported on this plateform", JavadocUtil.validateEncoding( "ISO-8859-1" ) );
+        assertFalse( "latin is supported on this plateform???", JavadocUtil.validateEncoding( "latin" ) );
+        assertFalse( "WRONG is supported on this plateform???", JavadocUtil.validateEncoding( "WRONG" ) );
+    }
 }
