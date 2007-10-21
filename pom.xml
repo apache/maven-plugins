@@ -276,8 +276,8 @@ under the License.
     </dependency>
   </dependencies>
   <properties>
-    <doxia.version>1.0-alpha-9</doxia.version>
-    <doxia-sitetools.version>1.0-alpha-9</doxia-sitetools.version>
+    <doxia.version>1.0-alpha-10-SNAPSHOT</doxia.version>
+    <doxia-sitetools.version>1.0-alpha-10-SNAPSHOT</doxia-sitetools.version>
     <wagon.version>1.0-beta-2</wagon.version>
     <scm.version>1.0</scm.version>
   </properties>
