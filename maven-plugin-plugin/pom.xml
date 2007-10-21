@@ -162,17 +162,17 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
-      <version>1.0-alpha-9</version>
+      <version>${doxia.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-      <version>1.0-alpha-9</version>
+      <version>${doxia.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>1.0-alpha-9</version>
+      <version>${doxia-sitetools.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -209,5 +209,9 @@
       </plugins>
     </pluginManagement>
   </build>
+  <properties>
+    <doxia.version>1.0-alpha-10-SNAPSHOT</doxia.version>
+    <doxia-sitetools.version>1.0-alpha-10-SNAPSHOT</doxia-sitetools.version>
+  </properties>
 </project>
 
