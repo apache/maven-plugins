@@ -565,7 +565,7 @@ public class CheckstyleReport
                 // so we have to fix it
                 ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
                 Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
-                
+
 
                 String configFile = getConfigFile();
                 Properties overridingProperties = getOverridingProperties();
@@ -574,11 +574,11 @@ public class CheckstyleReport
                 CheckstyleResults results;
 
                 moduleFactory = getModuleFactory();
-                
+
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
                 results = executeCheckstyle( config, moduleFactory );
-                
+
                 ResourceBundle bundle = getBundle( locale );
                 generateReportStatics();
                 generateMainReport( results, config, moduleFactory, bundle );
@@ -780,7 +780,7 @@ public class CheckstyleReport
         }
 
         FilterSet filterSet = getSuppressions();
-        
+
         Checker checker = new Checker();
 
         // setup classloader, needed to avoid "Unable to get class information
@@ -1103,7 +1103,7 @@ public class CheckstyleReport
         try
         {
             File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
-            
+
             if ( suppressionsFile == null )
             {
                 return null;
