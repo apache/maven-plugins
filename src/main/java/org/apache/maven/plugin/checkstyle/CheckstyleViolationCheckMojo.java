@@ -28,8 +28,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * Perform a violation check against the last Checkstyle run to see if there are
@@ -102,7 +104,8 @@ public class CheckstyleViolationCheckMojo
             try
             {
                 XmlPullParser xpp = new MXParser();
-                FileReader freader = new FileReader( outputFile );
+                // TODO: use ReaderFactory.newXmlReader() when plexus-utils can be upgraded
+                Reader freader = new InputStreamReader( new FileInputStream( outputFile ), "UTF-8" );
                 BufferedReader breader = new BufferedReader( freader );
                 xpp.setInput( breader );
 
