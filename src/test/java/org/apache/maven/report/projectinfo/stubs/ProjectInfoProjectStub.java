@@ -20,7 +20,8 @@ package org.apache.maven.report.projectinfo.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +59,8 @@ public abstract class ProjectInfoProjectStub
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         try
         {
-            model = pomReader.read( new FileReader( new File( getBasedir(), getPOM() ) ) );
+            // TODO use ReaderFactory.newXmlReader() when plexus-util is upgraded to 1.4.5+
+            model = pomReader.read( new InputStreamReader( new FileInputStream( new File( getBasedir(), getPOM() ) ), "UTF-8" ) );
             setModel( model );
         }
         catch ( Exception e )

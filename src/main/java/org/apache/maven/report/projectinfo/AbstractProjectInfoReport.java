@@ -42,8 +42,9 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.i18n.I18N;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Locale;
@@ -169,7 +170,7 @@ public abstract class AbstractProjectInfoReport
 
             outputDirectory.mkdirs();
 
-            Writer writer = new FileWriter( new File( outputDirectory, getOutputName() + ".html" ) );
+            Writer writer = new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, getOutputName() + ".html" ) ), "UTF-8" );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
 
