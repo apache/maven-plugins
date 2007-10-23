@@ -19,8 +19,10 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,11 +126,11 @@ public class EclipseClasspathWriter
         throws MojoExecutionException
     {
 
-        FileWriter w;
+        Writer w;
 
         try
         {
-            w = new FileWriter( new File( config.getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) );
+            w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {
@@ -240,8 +242,9 @@ public class EclipseClasspathWriter
 
             try
             {
-                FileWriter buildXmlWriter = new FileWriter( new File( config.getEclipseProjectDirectory(),
-                                                                      "maven-eclipse.xml" ) );
+                Writer buildXmlWriter =
+                    new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                            "maven-eclipse.xml" ) ), "UTF-8" );
                 PrettyPrintXMLWriter buildXmlPrinter = new PrettyPrintXMLWriter( buildXmlWriter );
 
                 buildXmlPrinter.startElement( "project" );

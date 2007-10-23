@@ -27,8 +27,10 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 /**
  * Writes eclipse .wtpmodules file.
@@ -48,11 +50,11 @@ public class EclipseWtpmodulesWriter
     public void write()
         throws MojoExecutionException
     {
-        FileWriter w;
+        Writer w;
 
         try
         {
-            w = new FileWriter( new File( config.getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) );
+            w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {
