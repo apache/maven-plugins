@@ -1,10 +1,14 @@
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -365,8 +369,8 @@ public class EclipseWtpApplicationXMLWriter extends AbstractWtpResourceWriter {
 	 */
 	private Xpp3Dom readXMLFile(File xmlFile) {
 		try {
-			FileReader reader1 = new FileReader(xmlFile);
-			Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build(reader1);
+            Reader reader = new InputStreamReader( new FileInputStream( xmlFile ), "UTF-8" );
+            Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build( reader );
 			return applicationXmlDom;
 		} catch (FileNotFoundException e) {
 			return null;
@@ -500,10 +504,10 @@ public class EclipseWtpApplicationXMLWriter extends AbstractWtpResourceWriter {
 			this.log.info("Rad6CleanMojo.unchanged" + xmlFile.getAbsolutePath());
 			return;
 		}
-		FileWriter w = null;
+		Writer w = null;
 		xmlFile.getParentFile().mkdirs();
 		try {
-			w = new FileWriter(xmlFile);
+			w = new OutputStreamWriter( new FileOutputStream(xmlFile), "UTF-8" );
 		} catch (IOException ex) {
 			throw new MojoExecutionException("Rad6Plugin.erroropeningfile", ex); //$NON-NLS-1$
 		}

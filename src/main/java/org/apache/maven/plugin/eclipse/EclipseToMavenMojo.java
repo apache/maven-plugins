@@ -19,8 +19,10 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -406,7 +408,7 @@ public class EclipseToMavenMojo
     private void writeArtifact( EclipseOsgiPlugin plugin, Model model, ArtifactRepository remoteRepo )
         throws MojoExecutionException
     {
-        FileWriter fw = null;
+        Writer fw = null;
         ArtifactMetadata metadata = null;
         File pomFile = null;
         Artifact pomArtifact = artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model
@@ -417,7 +419,9 @@ public class EclipseToMavenMojo
         {
             pomFile = File.createTempFile( "pom-", ".xml" );
 
-            fw = new FileWriter( pomFile );
+            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+            fw = new OutputStreamWriter( new FileOutputStream( pomFile ), "UTF-8" );
+            model.setModelEncoding( "UTF-8" ); // to be removed when encoding is detected instead of forced to UTF-8
             pomFile.deleteOnExit();
             new MavenXpp3Writer().write( fw, model );
             metadata = new ProjectArtifactMetadata( pomArtifact, pomFile );
