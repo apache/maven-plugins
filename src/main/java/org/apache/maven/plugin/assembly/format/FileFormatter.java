@@ -56,7 +56,7 @@ public class FileFormatter
         throws AssemblyFormattingException
     {
         File result = source;
-        
+
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
 
         String sourceName = source.getName();
@@ -66,9 +66,9 @@ public class FileFormatter
             boolean contentIsChanged = false;
 
             String rawContents = readFile( source );
-            
+
             String contents = rawContents;
-            
+
             if ( filter )
             {
                 contents = filter( contents );
@@ -81,7 +81,7 @@ public class FileFormatter
             File tempFilterFile = FileUtils.createTempFile( sourceName + ".", ".filtered", tempRoot );
 
             boolean fileWritten = formatLineEndings( contentReader, tempFilterFile, lineEnding, contentIsChanged );
-            
+
             if ( fileWritten )
             {
                 result = tempFilterFile;
@@ -99,6 +99,11 @@ public class FileFormatter
         return result;
     }
 
+    /**
+     * Read file content, using platform encoding.
+     * @param source the file to read
+     * @return the file content, read with platform encoding
+     */
     private String readFile( File source )
         throws IOException
     {
@@ -108,7 +113,7 @@ public class FileFormatter
 
         try
         {
-            fileReader = new FileReader( source );
+            fileReader = new FileReader( source ); // platform encoding
 
             IOUtil.copy( fileReader, contentWriter );
         }
@@ -125,13 +130,13 @@ public class FileFormatter
         throws IOException, AssemblyFormattingException
     {
         boolean fileWritten = false;
-        
+
         String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
 
         if ( lineEndingChars != null )
         {
             AssemblyFileUtils.convertLineEndings( contentReader, tempFilterFile, lineEndingChars );
-            
+
             fileWritten = true;
         }
         else if ( contentIsChanged )
@@ -140,10 +145,10 @@ public class FileFormatter
 
             try
             {
-                fileWriter = new FileWriter( tempFilterFile );
+                fileWriter = new FileWriter( tempFilterFile ); // platform encoding
 
                 IOUtil.copy( contentReader, fileWriter );
-                
+
                 fileWritten = true;
             }
             finally
@@ -151,7 +156,7 @@ public class FileFormatter
                 IOUtil.close( fileWriter );
             }
         }
-        
+
         return fileWritten;
     }
 
