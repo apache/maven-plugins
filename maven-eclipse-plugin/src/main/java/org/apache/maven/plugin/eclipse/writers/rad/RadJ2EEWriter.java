@@ -19,8 +19,10 @@
 package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -66,7 +68,7 @@ public class RadJ2EEWriter extends AbstractEclipseWriter
      */
     public void write() throws MojoExecutionException
     {
-        FileWriter w;
+        Writer w;
         String packaging = config.getPackaging();
 
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
@@ -75,7 +77,7 @@ public class RadJ2EEWriter extends AbstractEclipseWriter
         {
             try
             {
-                w = new FileWriter( new File( config.getEclipseProjectDirectory(), J2EE_FILENAME ) );
+                w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), J2EE_FILENAME ) ), "UTF-8" );
             }
             catch ( IOException ex )
             {

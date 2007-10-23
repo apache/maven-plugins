@@ -19,10 +19,14 @@
 package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -101,7 +105,6 @@ public class RadEjbClasspathWriter
             {
                 return;
             }
-            FileWriter w;
             Xpp3Dom classpath = readXMLFile( classpathFile );
             Xpp3Dom[] children = classpath.getChildren();
             for ( int index = 0; index < children.length; index++ )
@@ -135,9 +138,10 @@ public class RadEjbClasspathWriter
             removeDupicateWAS6Libs( classpath );
             classpath = orderClasspath( classpath );
 
+            Writer w;
             try
             {
-                w = new FileWriter( classpathFile );
+                w = new OutputStreamWriter( new FileOutputStream( classpathFile ), "UTF-8" );
             }
             catch ( IOException ex )
             {
@@ -244,8 +248,8 @@ public class RadEjbClasspathWriter
     {
         try
         {
-            FileReader reader1 = new FileReader( xmlFile );
-            Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build( reader1 );
+            Reader reader = new InputStreamReader( new FileInputStream( xmlFile ), "UTF-8" );
+            Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build( reader );
             return applicationXmlDom;
         }
         catch ( FileNotFoundException e )

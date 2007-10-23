@@ -19,10 +19,12 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -94,10 +96,10 @@ public class EclipseProjectWriter
             log.info( Messages.getString( "EclipsePlugin.keepexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
 
             // parse existing file in order to keep manually-added entries
-            FileReader reader = null;
+            Reader reader = null;
             try
             {
-                reader = new FileReader( dotProject );
+                reader = new InputStreamReader( new FileInputStream( dotProject ), "UTF-8" );
                 Xpp3Dom dom = Xpp3DomBuilder.build( reader );
 
                 Xpp3Dom naturesElement = dom.getChild( ELT_NATURES );

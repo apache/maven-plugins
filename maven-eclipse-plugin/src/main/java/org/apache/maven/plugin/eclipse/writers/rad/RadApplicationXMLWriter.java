@@ -19,10 +19,14 @@
 package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -376,8 +380,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     {
         try
         {
-            FileReader reader1 = new FileReader( xmlFile );
-            Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build( reader1 );
+            Reader reader = new InputStreamReader( new FileInputStream( xmlFile ), "UTF-8" );
+            Xpp3Dom applicationXmlDom = Xpp3DomBuilder.build( reader );
             return applicationXmlDom;
         }
         catch ( FileNotFoundException e )
@@ -506,7 +510,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     }
 
     /**
-     * Find the contextRoot specified in the pom and convert it into contectroot for the application.xml.
+     * Find the contextRoot specified in the pom and convert it into contextroot for the application.xml.
      * 
      * @param artifactId
      *            the artifactid to search
@@ -540,11 +544,11 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
             log.info( Messages.getString( "EclipseCleanMojo.unchanged", xmlFile.getAbsolutePath() ) );
             return;
         }
-        FileWriter w = null;
+        Writer w = null;
         xmlFile.getParentFile().mkdirs();
         try
         {
-            w = new FileWriter( xmlFile );
+            w = new OutputStreamWriter( new FileOutputStream( xmlFile ), "UTF-8" );
         }
         catch ( IOException ex )
         {
