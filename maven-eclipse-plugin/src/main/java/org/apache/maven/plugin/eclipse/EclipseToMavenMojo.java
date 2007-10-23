@@ -224,8 +224,10 @@ public class EclipseToMavenMojo
             models.put( getKey( model ), model );
         }
 
+        int i = 1;
         for ( Iterator it = plugins.keySet().iterator(); it.hasNext(); )
         {
+            getLog().info( "Processing " + ( i++ ) + " of " + plugins.keySet().size() );
             String key = (String) it.next();
             EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
             Model model = (Model) models.get( key );
