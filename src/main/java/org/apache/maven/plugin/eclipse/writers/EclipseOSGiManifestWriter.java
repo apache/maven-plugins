@@ -20,10 +20,13 @@ package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -89,11 +92,11 @@ public class EclipseOSGiManifestWriter
         }
 
         StringBuffer manifestSb = rewriteManifest( config.getManifestFile() );
-        FileWriter fos = null;
+        Writer out = null;
         try
         {
-            fos = new FileWriter( config.getManifestFile() );
-            fos.write( manifestSb.toString() );
+            out = new OutputStreamWriter( new FileOutputStream( config.getManifestFile() ), "UTF-8" );
+            out.write( manifestSb.toString() );
         }
         catch ( FileNotFoundException e )
         {
@@ -107,7 +110,7 @@ public class EclipseOSGiManifestWriter
         }
         finally
         {
-            IOUtil.close( fos );
+            IOUtil.close( out );
         }
     }
 
@@ -120,7 +123,7 @@ public class EclipseOSGiManifestWriter
         StringBuffer manifestSb = new StringBuffer();
         try
         {
-            BufferedReader in = new BufferedReader( new FileReader( manifestFile ) );
+            BufferedReader in = new BufferedReader( new InputStreamReader( new FileInputStream( manifestFile ), "UTF-8" ) );
             String line;
             while ( ( line = in.readLine() ) != null )
             {

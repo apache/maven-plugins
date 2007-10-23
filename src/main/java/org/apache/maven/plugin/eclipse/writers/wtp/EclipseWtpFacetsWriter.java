@@ -27,8 +27,10 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -84,14 +86,14 @@ public class EclipseWtpFacetsWriter
         File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
         settingsDir.mkdirs();
 
-        FileWriter w;
+        Writer w;
 
         String packaging = config.getPackaging();
 
         // Write out facet core xml
         try
         {
-            w = new FileWriter( new File( settingsDir, FILE_FACET_CORE_XML ) );
+            w = new OutputStreamWriter( new FileOutputStream( new File( settingsDir, FILE_FACET_CORE_XML ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {

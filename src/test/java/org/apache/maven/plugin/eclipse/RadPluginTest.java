@@ -19,7 +19,8 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -128,10 +129,10 @@ public class RadPluginTest
                     new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
 
         Xpp3Dom applicationXml =
-            Xpp3DomBuilder.build( new FileReader( new File( basedir, "project-rad-1/META-INF/application.xml" ) ) );
+            Xpp3DomBuilder.build( new InputStreamReader( new FileInputStream( new File( basedir, "project-rad-1/META-INF/application.xml" ) ), "UTF-8" ) );
 
         Xpp3Dom modulesmapsXml =
-            Xpp3DomBuilder.build( new FileReader( new File( basedir, "project-rad-1/META-INF/.modulemaps" ) ) );
+            Xpp3DomBuilder.build( new InputStreamReader( new FileInputStream( new File( basedir, "project-rad-1/META-INF/.modulemaps" ) ), "UTF-8" ) );
 
         assertNotNull( modulesmapsXml );
 
@@ -148,7 +149,7 @@ public class RadPluginTest
         assertEquals( "project-rad-5_3.jar", ejbModule.getChild( "ejb" ).getValue() );
 
         Xpp3Dom websettings =
-            Xpp3DomBuilder.build( new FileReader( new File( basedir, "project-rad-2/.websettings" ) ) );
+            Xpp3DomBuilder.build( new InputStreamReader( new FileInputStream( new File( basedir, "project-rad-2/.websettings" ) ), "UTF-8" ) );
 
         assertEquals( "project-rad-5_4.jar",
                       websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "jar" ).getValue() );
@@ -215,7 +216,7 @@ public class RadPluginTest
 
         File application = new File( basedir, "project-rad-1/META-INF/application.xml" );
 
-        Xpp3Dom applicationXml = Xpp3DomBuilder.build( new FileReader( application ) );
+        Xpp3Dom applicationXml = Xpp3DomBuilder.build( new InputStreamReader( new FileInputStream( application ), "UTF-8" ) );
 
         Xpp3Dom[] children = applicationXml.getChildren( "module" );
 

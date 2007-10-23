@@ -19,7 +19,6 @@
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
@@ -28,11 +27,8 @@ import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.XMLWriter;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Base class to hold common constants used by extending classes.
