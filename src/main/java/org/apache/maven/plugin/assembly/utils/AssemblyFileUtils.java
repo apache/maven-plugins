@@ -30,7 +30,7 @@ public final class AssemblyFileUtils
     private AssemblyFileUtils()
     {
     }
-    
+
     public static void verifyTempDirectoryAvailability( final File tempDir, final Logger logger )
     {
         if (!tempDir.exists()) 
@@ -68,6 +68,7 @@ public final class AssemblyFileUtils
 
     /**
      * NOTE: It is the responsibility of the caller to close the source Reader instance.
+     * The file content is written using platform encoding.
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
      *   line-ending characters.
      */
@@ -87,7 +88,7 @@ public final class AssemblyFileUtils
                 bufferedSource = new BufferedReader( source );
             }
 
-            out = new BufferedWriter( new FileWriter( dest ) );
+            out = new BufferedWriter( new FileWriter( dest ) ); // platform encoding
 
             String line;
 
@@ -135,7 +136,7 @@ public final class AssemblyFileUtils
 
         return value;
     }
-    
+
     public static void copyFile( File src, File dst ) throws IOException
     {
         FileChannel c1 = new RandomAccessFile( src, "r" ).getChannel();
@@ -148,6 +149,6 @@ public final class AssemblyFileUtils
         c1.close();
         c2.force( true );
         c2.close();
-    }   
-    
+    }
+
 }
