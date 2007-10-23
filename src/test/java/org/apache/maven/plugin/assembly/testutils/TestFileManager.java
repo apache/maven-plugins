@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -140,23 +138,12 @@ public class TestFileManager
 
         File file = new File( dir, filename );
 
-        FileReader reader = null;
-        StringWriter writer = new StringWriter();
-
-        try
-        {
-            reader = new FileReader( file );
-
-            IOUtil.copy( reader, writer );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
-
-        Assert.assertEquals( contentsTest, writer.toString() );
+        Assert.assertEquals( contentsTest, getFileContents( file ) );
     }
 
+    /**
+     * NOTE: the file content is written using platform encoding.
+     */
     public File createFile( File dir, String filename, String contents )
         throws IOException
     {
@@ -168,9 +155,9 @@ public class TestFileManager
 
         try
         {
-            writer = new FileWriter( file );
+            writer = new FileWriter( file ); // platform encoding
 
-            IOUtil.copy( new StringReader( contents ), writer );
+            writer.write( contents );
         }
         finally
         {
@@ -182,6 +169,9 @@ public class TestFileManager
         return file;
     }
 
+    /**
+     * NOTE: the file content is read using platform encoding.
+     */
     public String getFileContents( File file )
         throws IOException
     {
@@ -190,13 +180,9 @@ public class TestFileManager
         FileReader reader = null;
         try
         {
-            reader = new FileReader( file );
+            reader = new FileReader( file ); // platform encoding
 
-            StringWriter writer = new StringWriter();
-
-            IOUtil.copy( reader, writer );
-
-            result = writer.toString();
+            result = IOUtil.toString( reader );
         }
         finally
         {

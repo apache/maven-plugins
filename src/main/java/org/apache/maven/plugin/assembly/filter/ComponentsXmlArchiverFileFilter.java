@@ -27,11 +27,13 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -108,7 +110,8 @@ public class ComponentsXmlArchiverFileFilter
             File f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            FileWriter fileWriter = new FileWriter( f );
+            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+            Writer fileWriter = new OutputStreamWriter( new FileOutputStream( f ), "UTF-8" );
             try
             {
                 Xpp3Dom dom = new Xpp3Dom( "component-set" );
@@ -184,7 +187,8 @@ public class ComponentsXmlArchiverFileFilter
                 try
                 {
                     stream = fileInfo.getContents();
-                    reader = new InputStreamReader( stream );
+                    // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+                    reader = new InputStreamReader( stream, "UTF-8" );
                     addComponentsXml( reader );
                 }
                 catch ( XmlPullParserException e )

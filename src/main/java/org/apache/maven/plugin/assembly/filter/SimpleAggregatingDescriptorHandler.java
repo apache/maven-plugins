@@ -81,7 +81,8 @@ public class SimpleAggregatingDescriptorHandler
             f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            writer = new FileWriter( f );
+            // FIXME if it is a properties file, encoding should be ISO-8859-1
+            writer = new FileWriter( f ); // platform encoding
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
@@ -148,7 +149,8 @@ public class SimpleAggregatingDescriptorHandler
         Reader reader = null;
         try
         {
-            reader = new InputStreamReader( fileInfo.getContents() );
+            // FIXME if it is a properties file, encoding should be ISO-8859-1
+            reader = new InputStreamReader( fileInfo.getContents() ); // platform encoding
 
             IOUtil.copy( reader, writer );
         }
