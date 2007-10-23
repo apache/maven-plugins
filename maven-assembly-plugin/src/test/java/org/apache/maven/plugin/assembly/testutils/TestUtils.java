@@ -17,13 +17,16 @@ public final class TestUtils
     {
     }
 
+    /**
+     * Write a text to a file using platform encoding.
+     */
     public static void writeToFile( File file, String testStr )
         throws IOException
     {
         FileWriter fw = null;
         try
         {
-            fw = new FileWriter( file );
+            fw = new FileWriter( file ); // platform encoding
             fw.write( testStr );
         }
         finally
@@ -31,25 +34,28 @@ public final class TestUtils
             IOUtil.close( fw );
         }
     }
-    
+
+    /**
+     * Read file content using platform encoding and converting line endings to \\n.
+     */
     public static String readFile( File file ) throws IOException
     {
         StringBuffer buffer = new StringBuffer();
-        
-        BufferedReader reader = new BufferedReader( new FileReader( file ) );
-        
+
+        BufferedReader reader = new BufferedReader( new FileReader( file ) ); // platform encoding
+
         String line = null;
-        
+
         while( ( line = reader.readLine() ) != null )
         {
             if ( buffer.length() > 0 )
             {
                 buffer.append( '\n' );
             }
-            
+
             buffer.append( line );
         }
-        
+
         return buffer.toString();
     }
 
@@ -57,9 +63,9 @@ public final class TestUtils
     {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter( sw );
-        
+
         error.printStackTrace( pw );
-        
+
         return sw.toString();
     }
 }

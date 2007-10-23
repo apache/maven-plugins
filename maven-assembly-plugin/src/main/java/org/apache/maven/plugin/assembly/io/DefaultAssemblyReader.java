@@ -34,12 +34,13 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -202,7 +203,16 @@ public class DefaultAssemblyReader
             throw new AssemblyReadException( "Descriptor with ID '" + ref + "' not found" );
         }
 
-        return readAssembly( new InputStreamReader( resourceAsStream ), ref, configSource );
+        try
+        {
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            return readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            // should not occur since UTF-8 support is mandatory
+            throw new AssemblyReadException( "Encoding not supported for descriptor with ID '" + ref + "'" );
+        }
     }
 
     public Assembly getAssemblyFromDescriptorFile( File descriptor, AssemblerConfigurationSource configSource )
@@ -211,7 +221,8 @@ public class DefaultAssemblyReader
         Reader r = null;
         try
         {
-            r = new FileReader( descriptor );
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            r = new InputStreamReader( new FileInputStream( descriptor ), "UTF-8" );
             return readAssembly( r, descriptor.getAbsolutePath(), configSource );
         }
         catch ( IOException e )
@@ -237,7 +248,8 @@ public class DefaultAssemblyReader
         Reader r = null;
         try
         {
-            r = new InputStreamReader( location.getInputStream() );
+         // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            r = new InputStreamReader( location.getInputStream(), "UTF-8" );
             return readAssembly( r, spec, configSource );
         }
         catch ( IOException e )
