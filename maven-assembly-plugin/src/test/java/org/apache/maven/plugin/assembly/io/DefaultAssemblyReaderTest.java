@@ -21,10 +21,12 @@ import org.codehaus.plexus.util.IOUtil;
 import org.easymock.MockControl;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -438,11 +440,11 @@ public class DefaultAssemblyReaderTest
 
         File componentFile = fileManager.createTempFile();
 
-        FileWriter writer = null;
+        Writer writer = null;
 
         try
         {
-            writer = new FileWriter( componentFile );
+            writer = new OutputStreamWriter( new FileOutputStream( componentFile ), "UTF-8" );
 
             ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
 
@@ -639,11 +641,11 @@ public class DefaultAssemblyReaderTest
 
         component.addFileSet( fs );
 
-        FileWriter fw = null;
+        Writer fw = null;
 
         try
         {
-            fw = new FileWriter( componentsFile );
+            fw = new OutputStreamWriter( new FileOutputStream( componentsFile ), "UTF-8" );
             new ComponentXpp3Writer().write( fw, component );
         }
         finally
@@ -695,72 +697,74 @@ public class DefaultAssemblyReaderTest
     }
 
     public void testReadAssembly_ShouldReadAssemblyWithComponentInterpolationWithoutSiteDirInclusionOrAssemblyInterpolation()
-			throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
-	 {
-		File componentsFile = fileManager.createTempFile();
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        File componentsFile = fileManager.createTempFile();
 
-		File basedir = componentsFile.getParentFile();
-		String componentsFilename = componentsFile.getName();
+        File basedir = componentsFile.getParentFile();
+        String componentsFilename = componentsFile.getName();
 
-		Component component = new Component();
+        Component component = new Component();
 
-		FileSet fs = new FileSet();
-		fs.setDirectory("${groupId}-dir");
+        FileSet fs = new FileSet();
+        fs.setDirectory( "${groupId}-dir" );
 
-		component.addFileSet(fs);
+        component.addFileSet( fs );
 
-		FileWriter fw = null;
+        Writer fw = null;
 
-		try {
-			fw = new FileWriter(componentsFile);
-			new ComponentXpp3Writer().write(fw, component);
-		} finally {
-			IOUtil.close(fw);
-		}
+        try
+        {
+            fw = new OutputStreamWriter( new FileOutputStream( componentsFile ), "UTF-8" );
+            new ComponentXpp3Writer().write( fw, component );
+        }
+        finally
+        {
+            IOUtil.close( fw );
+        }
 
-		Assembly assembly = new Assembly();
-		assembly.setId("test");
+        Assembly assembly = new Assembly();
+        assembly.setId( "test" );
 
-		assembly.addComponentDescriptor(componentsFilename);
+        assembly.addComponentDescriptor( componentsFilename );
 
-		StringWriter sw = new StringWriter();
-		AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
+        StringWriter sw = new StringWriter();
+        AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
 
-		assemblyWriter.write(sw, assembly);
+        assemblyWriter.write( sw, assembly );
 
-		StringReader sr = new StringReader(sw.toString());
+        StringReader sr = new StringReader( sw.toString() );
 
-		configSource.getBasedir();
-		configSourceControl.setReturnValue(basedir, MockControl.ONE_OR_MORE);
+        configSource.getBasedir();
+        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
 
-		Model model = new Model();
-		model.setGroupId("group");
-		model.setArtifactId("artifact");
-		model.setVersion("version");
+        Model model = new Model();
+        model.setGroupId( "group" );
+        model.setArtifactId( "artifact" );
+        model.setVersion( "version" );
 
-		MavenProject project = new MavenProject(model);
+        MavenProject project = new MavenProject( model );
 
-		configSource.getProject();
-		configSourceControl.setReturnValue(project);
+        configSource.getProject();
+        configSourceControl.setReturnValue( project );
 
-		configSource.isSiteIncluded();
-		configSourceControl.setReturnValue(false);
+        configSource.isSiteIncluded();
+        configSourceControl.setReturnValue( false );
 
-		mockManager.replayAll();
+        mockManager.replayAll();
 
-		Assembly result = new DefaultAssemblyReader().readAssembly(sr,
-				"testLocation", configSource);
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
 
-		assertEquals(assembly.getId(), result.getId());
+        assertEquals( assembly.getId(), result.getId() );
 
-		List fileSets = result.getFileSets();
+        List fileSets = result.getFileSets();
 
-		assertEquals(1, fileSets.size());
+        assertEquals( 1, fileSets.size() );
 
-		assertEquals("group-dir", ((FileSet) fileSets.get(0)).getDirectory());
+        assertEquals( "group-dir", ( (FileSet) fileSets.get( 0 ) ).getDirectory() );
 
-		mockManager.verifyAll();
-	}
+        mockManager.verifyAll();
+    }
 
     public void testReadAssembly_ShouldReadAssemblyWithInterpolationWithoutComponentsOrSiteDirInclusion()
         throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
@@ -826,10 +830,10 @@ public class DefaultAssemblyReaderTest
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
-        FileWriter writer = null;
+        Writer writer = null;
         try
         {
-            writer = new FileWriter( assemblyFile );
+            writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
             new AssemblyXpp3Writer().write( writer, assembly );
         }
         finally
@@ -1003,10 +1007,10 @@ public class DefaultAssemblyReaderTest
 
             File assemblyFile = new File( dir, assembly.getId() + ".xml" );
 
-            FileWriter writer = null;
+            Writer writer = null;
             try
             {
-                writer = new FileWriter( assemblyFile );
+                writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
                 new AssemblyXpp3Writer().write( writer, assembly );
             }
             finally
