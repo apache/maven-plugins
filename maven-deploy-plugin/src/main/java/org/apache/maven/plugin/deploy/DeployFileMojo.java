@@ -36,11 +36,14 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Map;
 
 /**
@@ -221,7 +224,7 @@ public class DeployFileMojo
         // Create the artifact
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
-        
+
         // Upload the POM if requested, generating one if need be
         if ( generatePom )
         {
@@ -270,11 +273,11 @@ public class DeployFileMojo
         }
         if ( this.version == null )
         {
-        	this.version = model.getVersion();
-        	if ( this.version == null && parent != null )
-        	{
-        		this.version = parent.getVersion();
-        	}
+            this.version = model.getVersion();
+            if ( this.version == null && parent != null )
+            {
+                this.version = parent.getVersion();
+            }
         }
         if ( this.packaging == null && model.getPackaging() != null )
         {
@@ -301,7 +304,8 @@ public class DeployFileMojo
         Reader reader = null;
         try
         {
-            reader = new FileReader( pomFile );
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            reader = new InputStreamReader( new FileInputStream( pomFile ), "UTF-8" );
             MavenXpp3Reader modelReader = new MavenXpp3Reader();
             return modelReader.read( reader );
         }
@@ -326,7 +330,7 @@ public class DeployFileMojo
     private File generatePomFile()
         throws MojoExecutionException
     {
-        FileWriter fw = null;
+        Writer fw = null;
         try
         {
             File tempFile = File.createTempFile( "mvninstall", ".pom" );
@@ -340,7 +344,8 @@ public class DeployFileMojo
             model.setPackaging( packaging );
             model.setDescription( description );
 
-            fw = new FileWriter( tempFile );
+            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+            fw = new OutputStreamWriter( new FileOutputStream( tempFile ), "UTF-8" );
             new MavenXpp3Writer().write( fw, model );
 
             return tempFile;
