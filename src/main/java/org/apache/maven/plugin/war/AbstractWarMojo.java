@@ -529,9 +529,6 @@ public abstract class AbstractWarMojo
         {
             Map filterProperties = new Properties();
 
-            // System properties
-            filterProperties.putAll( System.getProperties() );
-
             // Project properties
             filterProperties.putAll( project.getProperties() );
 
@@ -552,7 +549,8 @@ public abstract class AbstractWarMojo
             }
 
             // can't putAll, as ReflectionProperties doesn't enumerate - so we make a composite map with the project variables as dominant
-            return new CompositeMap( new ReflectionProperties( project ), filterProperties );
+            return new CompositeMap(
+                new Map[]{filterProperties, new ReflectionProperties( project ), System.getProperties()} );
         }
 
         public WebappStructure getWebappStructure()
