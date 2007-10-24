@@ -8,6 +8,9 @@
     <artifactId>maven-stylus-skin</artifactId>
   </skin>
   <body>
+    <breadcrumbs>
+      <item name="Maven" href="http://maven.apache.org/${currentVersion}"/>
+    </breadcrumbs>    
     <menu name="Releases TODO">
       <item name="release1.6" href="releases/release1.6.html"/>
       <item name="release1.6.3" href="releases/release1.6.3.html"/>
