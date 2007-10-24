@@ -26,8 +26,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.digest.Digester;
 import org.codehaus.plexus.digest.DigesterException;
-import org.codehaus.plexus.digest.Md5Digester;
-import org.codehaus.plexus.digest.Sha1Digester;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;

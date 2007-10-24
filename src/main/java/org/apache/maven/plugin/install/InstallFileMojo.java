@@ -37,11 +37,14 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -171,7 +174,7 @@ public class InstallFileMojo
                 ArtifactRepositoryLayout layout;
 
                 layout = ( ArtifactRepositoryLayout ) repositoryLayouts.get( repositoryLayout );
-                
+
                 getLog().info("Layout: " + layout.getClass());
                 localRepository = new DefaultArtifactRepository( localRepositoryId, localRepositoryPath.toURL()
                     .toString(), layout );
@@ -209,7 +212,7 @@ public class InstallFileMojo
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
         {
-            FileWriter fw = null;
+            Writer fw = null;
             try
             {
                 File tempFile = File.createTempFile( "mvninstall", ".pom" );
@@ -222,7 +225,8 @@ public class InstallFileMojo
                 model.setVersion( version );
                 model.setPackaging( packaging );
                 model.setDescription( "POM was created from install:install-file" );
-                fw = new FileWriter( tempFile );
+                // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+                fw = new OutputStreamWriter( new FileOutputStream( tempFile ), "UTF-8" );
                 tempFile.deleteOnExit();
                 new MavenXpp3Writer().write( fw, model );
                 metadata = new ProjectArtifactMetadata( artifact, tempFile );
@@ -298,7 +302,8 @@ public class InstallFileMojo
         Reader reader = null;
         try
         {
-            reader = new FileReader( aFile );
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            reader = new InputStreamReader( new FileInputStream( aFile ), "UTF-8" );
 
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
 
