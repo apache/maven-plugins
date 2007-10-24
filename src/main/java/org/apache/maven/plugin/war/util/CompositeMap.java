@@ -20,7 +20,6 @@ package org.apache.maven.plugin.war.util;
  */
 
 import java.util.AbstractMap;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,27 +30,29 @@ import java.util.Set;
 public class CompositeMap
     extends AbstractMap
 {
-    private Map recessive;
+    private final Map[] maps;
 
-    private Map dominant;
-
-    public CompositeMap( Map dominant, Map recessive )
+    /**
+     * Creates a new instance, which is composed from all the given maps.
+     *
+     * @param maps the map
+     */
+    public CompositeMap( Map[] maps )
     {
-        this.dominant = Collections.unmodifiableMap( dominant );
-
-        this.recessive = Collections.unmodifiableMap( recessive );
+        this.maps = maps;
     }
 
     public synchronized Object get( Object key )
     {
-        Object value = dominant.get( key );
-
-        if ( value == null )
+        for ( int i = 0; i < maps.length; i++ )
         {
-            value = recessive.get( key );
+            Object value = maps[i].get( key );
+            if ( value != null )
+            {
+                return value;
+            }
         }
-
-        return value;
+        return null;
     }
 
     public Set entrySet()
