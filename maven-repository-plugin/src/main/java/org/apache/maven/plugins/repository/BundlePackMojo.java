@@ -19,10 +19,12 @@
 package org.apache.maven.plugins.repository;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -166,7 +168,8 @@ public class BundlePackMojo
         Model model;
         try
         {
-            model = new MavenXpp3Reader().read( new FileReader( pom ) );
+            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+            model = new MavenXpp3Reader().read( new InputStreamReader( new FileInputStream( pom ), "UTF-8" ) );
         }
         catch ( XmlPullParserException e )
         {
@@ -240,7 +243,8 @@ public class BundlePackMojo
 
             if ( rewrite )
             {
-                new MavenXpp3Writer().write( new FileWriter( pom ), model );
+                // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+                new MavenXpp3Writer().write( new OutputStreamWriter( new FileOutputStream( pom ), "UTF-8" ), model );
             }
 
             String finalName = null;
