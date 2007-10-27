@@ -212,8 +212,19 @@ public abstract class AbstractSourceJarMojo
                 {
                     excludes = (String[]) resourceExcludes.toArray( new String[resourceExcludes.size()] );
                 }
-
-                addDirectory( archiver, sourceDirectory, includes, excludes );
+                String targetPath = resource.getTargetPath();
+                if ( targetPath != null )
+                {
+                    if ( !targetPath.trim().endsWith( "/" ) )
+                    {
+                        targetPath += "/";
+                    }
+                    addDirectory( archiver, sourceDirectory, targetPath, includes, excludes );
+                }
+                else
+                {
+                    addDirectory( archiver, sourceDirectory, includes, excludes );
+                }
             }
         }
     }
@@ -257,6 +268,20 @@ public abstract class AbstractSourceJarMojo
         try
         {
             archiver.addDirectory( sourceDirectory, includes, excludes );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error adding directory to source archive.", e );
+        }
+    }
+
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String prefix, String[] includes,
+                                 String[] excludes )
+        throws MojoExecutionException
+    {
+        try
+        {
+            archiver.addDirectory( sourceDirectory, prefix, includes, excludes );
         }
         catch ( ArchiverException e )
         {
