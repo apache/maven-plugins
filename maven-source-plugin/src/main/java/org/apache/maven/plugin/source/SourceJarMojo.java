@@ -20,11 +20,9 @@ package org.apache.maven.plugin.source;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.model.Resource;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This plugin bundles all the sources into a jar archive.
@@ -45,7 +43,14 @@ public class SourceJarMojo
 
     protected List getResources( MavenProject project )
     {
-        return project.getResources();
+        if ( excludeResources )
+        {
+            return Collections.EMPTY_LIST;
+        }
+        else
+        {
+            return project.getResources();
+        }
     }
 
     protected String getClassifier()

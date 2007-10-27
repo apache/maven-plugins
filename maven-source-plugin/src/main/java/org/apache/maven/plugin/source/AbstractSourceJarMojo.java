@@ -55,6 +55,15 @@ public abstract class AbstractSourceJarMojo
     private boolean attach;
 
     /**
+     * Specifies whether or not to exclude resources from the sources-jar. This
+     * can be convenient if your project includes large resources, such as
+     * images, and you don't want to include them in the sources-jar.
+     *
+     * @parameter expression="${source.excludeResources}" default-value="false"
+     */
+    protected boolean excludeResources;
+
+    /**
      * @component
      */
     private MavenProjectHelper projectHelper;
