@@ -69,6 +69,8 @@ public abstract class AbstractSourceJarMojo
     protected boolean excludeResources;
 
     /**
+     * Used for attaching the source jar to the project.
+     *
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -96,6 +98,8 @@ public abstract class AbstractSourceJarMojo
     protected String finalName;
 
     /**
+     * Contains the full list of projects in the reactor.
+     *
      * @parameter expression="${reactorProjects}"
      */
     protected List reactorProjects;
