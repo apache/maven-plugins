@@ -22,7 +22,7 @@ package org.apache.maven.plugin.source;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Aggregrate sources for all modules in a aggregator project.
+ * Aggregrate sources for all modules in an aggregator project.
  *
  * @goal aggregate
  * @phase package
