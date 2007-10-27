@@ -28,7 +28,7 @@ import java.util.List;
  * This plugin bundles all the sources into a jar archive.
  *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- * @version $Id: AbstractSourceJarMojo.java 389062 2006-03-27 08:19:25Z aramirez $
+ * @version $Id$
  * @goal jar
  * @phase package
  * @execute phase="generate-sources"
