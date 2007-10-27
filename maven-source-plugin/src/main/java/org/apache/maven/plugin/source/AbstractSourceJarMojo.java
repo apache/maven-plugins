@@ -35,10 +35,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Base class for bundling sources into a jar archive.
+ *
+ * @version $Id$
+ */
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
 {
-    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*",};
+    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*"};
 
     /**
      * @parameter expression="${project}"
@@ -124,9 +129,9 @@ public abstract class AbstractSourceJarMojo
     {
         if ( project.getArtifact().getClassifier() != null )
         {
-            getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier " +
-                "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a [" +
-                project.getArtifact().getClassifier() + "] classifier." );
+            getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
+                + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
+                + project.getArtifact().getClassifier() + "] classifier." );
         }
         else
         {
