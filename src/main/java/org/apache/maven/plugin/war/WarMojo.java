@@ -75,7 +75,6 @@ public class WarMojo
      */
     private WarArchiver warArchiver;
 
-
     /**
      * @component
      */
@@ -87,7 +86,15 @@ public class WarMojo
      *
      * @parameter expression="${primaryArtifact}" default-value="true"
      */
-    private boolean primaryArtifact;
+    private boolean primaryArtifact = true;
+
+    /**
+     * Whether or not to fail the build is the <code>web.xml</code> file is missing. Set to <code>false</code>
+     * if you want you war built without a <code>web.xml</code> file.
+     *
+     * @parameter expression="${failOnMissingWebXml}" default-value="true"
+     */
+    private boolean failOnMissingWebXml = true;
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -173,7 +180,17 @@ public class WarMojo
 
         warArchiver.addDirectory( getWebappDirectory() );
 
-        warArchiver.setWebxml( new File( getWebappDirectory(), "WEB-INF/web.xml" ) );
+        final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
+        if ( webXmlFile.exists() )
+        {
+            warArchiver.setWebxml( webXmlFile );
+        }
+        if ( !failOnMissingWebXml )
+        {
+            getLog().debug( "Build won't fail if web.xml file is missing." );
+            // The flag is wrong in plexus-archiver so it will need to be fixed at some point
+            warArchiver.setIgnoreWebxml( false );
+        }
 
         // create archive
         archiver.createArchive( getProject(), archive );
@@ -195,5 +212,15 @@ public class WarMojo
                 artifact.setFile( warFile );
             }
         }
+    }
+
+    public boolean isFailOnMissingWebXml()
+    {
+        return failOnMissingWebXml;
+    }
+
+    public void setFailOnMissingWebXml( boolean failOnMissingWebXml )
+    {
+        this.failOnMissingWebXml = failOnMissingWebXml;
     }
 }
