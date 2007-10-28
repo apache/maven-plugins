@@ -591,6 +591,7 @@ public class WarOverlaysTest
      * Note that the <tt>filePath</tt> is relative to both the webapp
      * directory and the overlayed directory, defined by the <tt>overlayId</tt>.
      *
+     * @param testId          te id of the test
      * @param webAppDirectory the webapp directory
      * @param filePath        the relative path
      * @throws IOException if an error occured while reading the files
