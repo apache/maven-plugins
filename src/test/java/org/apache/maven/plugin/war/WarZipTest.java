@@ -19,9 +19,6 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
-import java.io.File;
-import java.util.LinkedList;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.war.overlay.DefaultOverlay;
@@ -30,10 +27,13 @@ import org.apache.maven.plugin.war.stub.WarArtifactStub;
 import org.apache.maven.plugin.war.stub.ZipArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.File;
+import java.util.LinkedList;
+
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @since 7 Oct 07
  * @version $Id$
+ * @since 7 Oct 07
  */
 public class WarZipTest
     extends AbstractWarMojoTest
@@ -42,8 +42,7 @@ public class WarZipTest
 
     private static File pomFile = new File( getBasedir(), "src/test/resources/unit/warziptest/war-with-zip.xml" );
 
-      
-    
+
     protected File getTestDirectory()
     {
         return new File( getBasedir(), "target/test-classes/unit/warziptest" );
@@ -61,18 +60,17 @@ public class WarZipTest
     {
         ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
         File zipFile = new File( getTestDirectory(), "foobar.zip" );
-        Artifact artifact = new ZipArtifactStub( "src/test/resources/unit/warziptest", artifactHandler, zipFile );
-        return artifact;
+        return new ZipArtifactStub( "src/test/resources/unit/warziptest", artifactHandler, zipFile );
     }
-    
+
     private File configureMojo( String testId )
         throws Exception
     {
         MavenZipProject project = new MavenZipProject();
         String outputDir = getTestDirectory().getAbsolutePath() + File.separatorChar + testId + "-output";
         // clean up
-        File outputDirFile = new File(outputDir);
-        if (outputDirFile.exists())
+        File outputDirFile = new File( outputDir );
+        if ( outputDirFile.exists() )
         {
             FileUtils.deleteDirectory( outputDirFile );
         }
@@ -81,16 +79,14 @@ public class WarZipTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
         project.setArtifact( warArtifact );
-        
+
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         setVariableValueToObject( mojo, "workDirectory", new File( getTestDirectory(), "work" ) );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
-        
-
 
         project.getArtifacts().add( buildZipArtifact() );
 
@@ -101,11 +97,11 @@ public class WarZipTest
         throws Exception
     {
         File webAppDirectory = configureMojo( "one-zip" );
-        
+
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         //overlay.setSkip( false );
         overlay.setType( "zip" );
-        mojo.addOverlay( overlay );        
+        mojo.addOverlay( overlay );
         mojo.execute();
 
         File foo = new File( webAppDirectory, "foo.txt" );
@@ -125,13 +121,13 @@ public class WarZipTest
         throws Exception
     {
         File webAppDirectory = configureMojo( "one-zip-overlay-targetPath" );
-        
+
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
         overlay.setSkip( false );
         overlay.setType( "zip" );
         overlay.setTargetPath( "overridePath" );
         mojo.addOverlay( overlay );
-        
+
         mojo.execute();
 
         File foo = new File( webAppDirectory.getPath() + File.separatorChar + "overridePath", "foo.txt" );
@@ -145,8 +141,8 @@ public class WarZipTest
         File bar = new File( barDirectory, "bar.txt" );
         assertTrue( "bar/bar.txt not exists", bar.exists() );
         assertTrue( "bar/bar.txt not a file", bar.isFile() );
-    }  
-    
+    }
+
     public void testOneZipDefaultSkip()
         throws Exception
     {
@@ -169,9 +165,9 @@ public class WarZipTest
         mojo.execute();
         assertZipContentNotHere( webAppDirectory );
 
-    }     
-    
-    protected void assertZipContentNotHere(File webAppDirectory)
+    }
+
+    protected void assertZipContentNotHere( File webAppDirectory )
     {
         File foo = new File( webAppDirectory.getPath() + File.separatorChar + "overridePath", "foo.txt" );
         assertFalse( "foo.txt exists", foo.exists() );
