@@ -19,6 +19,7 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.stub.MavenProject4CopyConstructor;
 import org.apache.maven.plugin.war.stub.ProjectHelperStub;
 import org.apache.maven.plugin.war.stub.WarArtifact4CCStub;
@@ -261,7 +262,69 @@ public class WarMojoTest
             mojo.getWebXml().toString(), null, null, null, null} );
     }
 
-    protected void assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
+
+    public void testFailOnMissingWebXmlFalse()
+        throws Exception
+    {
+
+        String testId = "SimpleWarMissingWebXmlFalse";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setFailOnMissingWebXml( false );
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple.war" );
+        final Map jarContent = assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "pansit.jsp",
+            "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
+                                                                  new String[]{null, null, null, null, null} );
+
+        assertFalse( "web.xml should be missing", jarContent.containsKey( "WEB-INF/web.xml" ) );
+    }
+
+    public void testFailOnMissingWebXmlTrue()
+        throws Exception
+    {
+
+        String testId = "SimpleWarMissingWebXmlTrue";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setFailOnMissingWebXml( true );
+
+        try
+        {
+            mojo.execute();
+            fail( "Building of the war isn't possible because web.xml is missing" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            //expected behaviour
+        }
+    }
+
+
+    protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
         throws IOException
     {
         // Sanity check
@@ -290,6 +353,8 @@ public class WarMojoTest
                               IOUtil.toString( jarFile.getInputStream( (ZipEntry) jarContent.get( file ) ) ) );
             }
         }
+        return jarContent;
     }
+
 }
 
