@@ -273,4 +273,116 @@ public class WarMojoTest
         assertTrue( "pom properties not found",
                     jarContent.contains( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
     }
+
+    public void testMetaInfContent()
+        throws Exception
+    {
+        String testId = "SimpleWarWithMetaInfContent";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+
+        // Create the sample config.xml
+        final File configFile = new File( webAppSource, "META-INF/config.xml" );
+        createFile( configFile, "<config></config>" );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setWebXml( new File( xmlSource, "web.xml" ) );
+
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple.war" );
+        Map jarContent = new HashMap();
+
+        assertTrue( "war file not created: " + expectedJarFile.toString(), expectedJarFile.exists() );
+
+        JarFile jarFile = new JarFile( expectedJarFile );
+        JarEntry entry;
+        Enumeration enumeration = jarFile.entries();
+
+        while ( enumeration.hasMoreElements() )
+        {
+            entry = (JarEntry) enumeration.nextElement();
+            jarContent.put( entry.getName(), entry );
+        }
+
+        assertTrue( "manifest file not found", jarContent.containsKey( "META-INF/MANIFEST.MF" ) );
+        assertTrue( "custom manifest data file not found", jarContent.containsKey( "META-INF/config.xml" ) );
+        assertTrue( "web xml not found", jarContent.containsKey( "WEB-INF/web.xml" ) );
+        assertEquals( "web xml file incorrect", mojo.getWebXml().toString(),
+                      IOUtil.toString( jarFile.getInputStream( (ZipEntry) jarContent.get( "WEB-INF/web.xml" ) ) ) );
+        assertTrue( "web source not found: pansit.jsp", jarContent.containsKey( "pansit.jsp" ) );
+        assertTrue( "web source not found: org/web/app/last-exile.jsp",
+                    jarContent.containsKey( "org/web/app/last-exile.jsp" ) );
+        assertTrue( "pom file not found",
+                    jarContent.containsKey( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
+        assertTrue( "pom properties not found",
+                    jarContent.containsKey( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
+    }
+
+    public void testMetaInfContentWithContainerConfig()
+        throws Exception
+    {
+        String testId = "SimpleWarWithContainerConfig";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+
+        // Create the sample config.xml
+        final File configFile = new File( webAppSource, "META-INF/config.xml" );
+        createFile( configFile, "<config></config>" );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setWebXml( new File( xmlSource, "web.xml" ) );
+        mojo.setContainerConfigXML( configFile );
+
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple.war" );
+        Map jarContent = new HashMap();
+
+        assertTrue( "war file not created: " + expectedJarFile.toString(), expectedJarFile.exists() );
+
+        JarFile jarFile = new JarFile( expectedJarFile );
+        JarEntry entry;
+        Enumeration enumeration = jarFile.entries();
+
+        while ( enumeration.hasMoreElements() )
+        {
+            entry = (JarEntry) enumeration.nextElement();
+            jarContent.put( entry.getName(), entry );
+        }
+
+        assertTrue( "manifest file not found", jarContent.containsKey( "META-INF/MANIFEST.MF" ) );
+        assertTrue( "custom manifest data file not found", jarContent.containsKey( "META-INF/config.xml" ) );
+        assertTrue( "web xml not found", jarContent.containsKey( "WEB-INF/web.xml" ) );
+        assertEquals( "web xml file incorrect", mojo.getWebXml().toString(),
+                      IOUtil.toString( jarFile.getInputStream( (ZipEntry) jarContent.get( "WEB-INF/web.xml" ) ) ) );
+        assertTrue( "web source not found: pansit.jsp", jarContent.containsKey( "pansit.jsp" ) );
+        assertTrue( "web source not found: org/web/app/last-exile.jsp",
+                    jarContent.containsKey( "org/web/app/last-exile.jsp" ) );
+        assertTrue( "pom file not found",
+                    jarContent.containsKey( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
+        assertTrue( "pom properties not found",
+                    jarContent.containsKey( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
+    }
 }
+
