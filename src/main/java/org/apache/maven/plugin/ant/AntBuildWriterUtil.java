@@ -1182,7 +1182,7 @@ public class AntBuildWriterUtil
             }
             catch ( Exception e )
             {
-                throw new IOException( "Exception occured: " + e.getMessage() );
+                throw new IOException( "Exception occured: " + e.getMessage(), e );
             }
         }
 
