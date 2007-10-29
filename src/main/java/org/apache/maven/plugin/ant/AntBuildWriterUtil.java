@@ -1089,7 +1089,7 @@ public class AntBuildWriterUtil
                 XObject obj = XPathAPI.eval( doc, "//configuration/" + optionName );
 
                 NodeList nodeList = obj.nodelist();
-                if ( isList( nodeList.item( 0 ) ) )
+                if ( nodeList.getLength() > 0 && isList( nodeList.item( 0 ) ) )
                 {
                     /*
                      * <optionNames>
@@ -1182,7 +1182,6 @@ public class AntBuildWriterUtil
             }
             catch ( Exception e )
             {
-                e.printStackTrace();
                 throw new IOException( "Exception occured: " + e.getMessage() );
             }
         }
