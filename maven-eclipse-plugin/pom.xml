@@ -57,7 +57,7 @@ under the License.
           <systemProperties>
             <property>
               <name>maven.home</name>
-              <value>${env.M2_HOME}</value>
+              <value>${maven.home}</value>
             </property>
           </systemProperties>
         </configuration>
