@@ -86,6 +86,11 @@
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
+              <pomExcludes>
+                <pomExclude>pom.xml</pomExclude>
+                <pomExclude>test1/pom.xml</pomExclude>
+                <pomExclude>test3/pom.xml</pomExclude>
+              </pomExcludes>
             </configuration>
             <executions>
               <execution>
