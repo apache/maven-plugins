@@ -26,7 +26,7 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactor
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
-public class AbstractDependencyMojoTestCase
+public abstract class AbstractDependencyMojoTestCase
     extends AbstractMojoTestCase
 {
 
