@@ -65,10 +65,14 @@ public class DeployMojoTest
         
         localRepo = new File( LOCAL_REPO );
 
-
         if( localRepo.exists() )
         {
             FileUtils.deleteDirectory( localRepo );
+        }
+
+        if( remoteRepo.exists() )
+        {
+            FileUtils.deleteDirectory( remoteRepo );
         }
     }
     
