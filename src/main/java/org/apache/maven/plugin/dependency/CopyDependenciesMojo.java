@@ -118,7 +118,7 @@ public class CopyDependenciesMojo
             }
             catch ( Exception e )
             {
-                getLog().info( "Unable to retreive pom : " + e.getMessage() );
+                getLog().info( e.getMessage() );
             }
             // Copy the pom
             if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
