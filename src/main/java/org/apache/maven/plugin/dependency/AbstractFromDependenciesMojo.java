@@ -61,6 +61,16 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean useRepositoryLayout;
 
     /**
+     * Also copy the pom of each artifact.
+     * 
+     * @since 2.0-alpha-5
+     * @parameter expression="${mdep.copyPom}"
+     *            default-value="false"
+     * @optional
+     */
+    protected boolean copyPom = true;
+    
+    /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
      * 
@@ -179,5 +189,19 @@ public abstract class AbstractFromDependenciesMojo
     public void setUseRepositoryLayout( boolean useRepositoryLayout )
     {
         this.useRepositoryLayout = useRepositoryLayout;
+    }
+
+    /**
+     * @return true, if the pom of each artifact must be copied
+     */
+    public boolean isCopyPom() {
+        return this.copyPom;
+    }
+
+    /**
+     * @param copyPom - true if the pom of each artifact must be copied
+     */
+    public void setCopyPom(boolean copyPom) {
+        this.copyPom = copyPom;
     }
 }
