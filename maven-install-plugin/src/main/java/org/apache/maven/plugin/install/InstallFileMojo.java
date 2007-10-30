@@ -33,16 +33,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -225,8 +223,8 @@ public class InstallFileMojo
                 model.setVersion( version );
                 model.setPackaging( packaging );
                 model.setDescription( "POM was created from install:install-file" );
-                // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-                fw = new OutputStreamWriter( new FileOutputStream( tempFile ), "UTF-8" );
+
+                fw = WriterFactory.newXmlWriter( tempFile );
                 tempFile.deleteOnExit();
                 new MavenXpp3Writer().write( fw, model );
                 metadata = new ProjectArtifactMetadata( artifact, tempFile );
@@ -302,8 +300,7 @@ public class InstallFileMojo
         Reader reader = null;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            reader = new InputStreamReader( new FileInputStream( aFile ), "UTF-8" );
+            reader = ReaderFactory.newXmlReader( aFile );
 
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
 
