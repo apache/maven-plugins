@@ -19,12 +19,6 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,6 +29,14 @@ import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+
+import sun.security.action.GetLongAction;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class TestCopyDependenciesMojo
     extends AbstractDependencyMojoTestCase
@@ -742,6 +744,28 @@ public class TestCopyDependenciesMojo
             File file = new File( mojo.outputDirectory, fileName );
 
             assertEquals( !saf.include( artifact ), file.exists() );
+        }
+    }
+    
+    public void testCopyPom()
+        throws Exception
+    {
+        mojo.setCopyPom( true );
+        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+
+        Set set = new HashSet();
+        set.add( stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE ) );
+        mojo.project.setArtifacts( set );
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName.substring( 0, fileName.length() - 4 ) + ".pom" );
+            assertTrue( file.exists() );
         }
     }
 }

@@ -19,16 +19,17 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugin.logging.Log;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Goal that copies the project dependencies from the repository to a defined
@@ -104,6 +105,28 @@ public class CopyDependenciesMojo
         File destFile = new File( destDir, destFileName );
 
         copyFile( artifact.getFile(), destFile );
+        // Copy POM if asked
+        if ( isCopyPom() )
+        {
+            // Create the pom
+            Artifact pomArtifact = this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                artifact.getVersion(), "", "pom" );
+            // Resolve the pom artifact using repos
+            try
+            {
+                this.resolver.resolve( pomArtifact, this.remoteRepos, this.local );
+            }
+            catch ( Exception e )
+            {
+                getLog().debug( "Unable to retreive pom : " + e.getMessage() );
+            }
+            // Copy the pom
+            if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
+            {
+                File pomDestFile = new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion ) );
+                copyFile( pomArtifact.getFile(), pomDestFile );
+            }
+        }
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()
