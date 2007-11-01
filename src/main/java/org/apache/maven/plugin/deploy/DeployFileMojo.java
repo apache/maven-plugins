@@ -33,15 +33,13 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Map;
@@ -304,8 +302,7 @@ public class DeployFileMojo
         Reader reader = null;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            reader = new InputStreamReader( new FileInputStream( pomFile ), "UTF-8" );
+            reader = ReaderFactory.newXmlReader( pomFile );
             MavenXpp3Reader modelReader = new MavenXpp3Reader();
             return modelReader.read( reader );
         }
@@ -344,8 +341,7 @@ public class DeployFileMojo
             model.setPackaging( packaging );
             model.setDescription( description );
 
-            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            fw = new OutputStreamWriter( new FileOutputStream( tempFile ), "UTF-8" );
+            fw = WriterFactory.newXmlWriter( tempFile );
             new MavenXpp3Writer().write( fw, model );
 
             return tempFile;
