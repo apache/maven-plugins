@@ -18,23 +18,25 @@
  */
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
+import org.apache.maven.plugin.eclipse.EclipseSourceDir;
+import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
+
 /**
  * Writes eclipse .wtpmodules file.
- *
+ * 
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  * @version $Id$
  */
@@ -54,7 +56,9 @@ public class EclipseWtpmodulesWriter
 
         try
         {
-            w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) ), "UTF-8" );
+            w =
+                new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                        FILE_DOT_WTPMODULES ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {
@@ -77,23 +81,26 @@ public class EclipseWtpmodulesWriter
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
 
         String target = "/"; //$NON-NLS-1$
-        if ( "war".equals( config.getPackaging() ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
-            String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                   "warSourceDirectory", //$NON-NLS-1$
-                                                                   config.getProject().getBasedir()+"/src/main/webapp" ); //$NON-NLS-1$
+            String warSourceDirectory =
+                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                           "warSourceDirectory", //$NON-NLS-1$
+                                           config.getProject().getBasedir() + "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( warSourceDirectory ), false ) );
+                +
+                IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                    new File( warSourceDirectory ), false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
-        else if ( "ear".equals( config.getPackaging() ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$

@@ -18,14 +18,6 @@
  */
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.ide.JeeUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +25,15 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
+import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
@@ -117,37 +118,37 @@ public class EclipseWtpFacetsWriter
         writer.startElement( ELT_FIXED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
         writer.endElement(); // element fixed
-        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion(config.getProject()) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "ejb".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion(config.getProject()) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion(config.getProject()) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "jar".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_UTILITY );
@@ -161,14 +162,14 @@ public class EclipseWtpFacetsWriter
         // common installed element
         writer.startElement( ELT_INSTALLED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.addAttribute( ATTR_VERSION, IdeUtils.resolveJavaVersion(config.getProject()) );
+        writer.addAttribute( ATTR_VERSION, IdeUtils.resolveJavaVersion( config.getProject() ) );
         writer.endElement(); // installed
-        
+
         writeAdditionalProjectFacets( writer );
-        
+
         writer.endElement(); // faceted-project
     }
-    
+
     /**
      * Writes out any additional project facets specified in the plugin configuration
      * 
@@ -181,7 +182,7 @@ public class EclipseWtpFacetsWriter
         {
             return;
         }
-        
+
         Iterator facetIterator = config.getProjectFacets().entrySet().iterator();
         while ( facetIterator.hasNext() )
         {

@@ -18,6 +18,12 @@
  */
 package org.apache.maven.plugin.ide;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -32,11 +38,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -80,7 +81,8 @@ public class IdeUtils
      */
     private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
 
-    public static String getCanonicalPath( File file ) throws MojoExecutionException
+    public static String getCanonicalPath( File file )
+        throws MojoExecutionException
     {
         try
         {
@@ -96,8 +98,7 @@ public class IdeUtils
     /**
      * Returns a compiler plugin settings, considering also settings altered in plugin executions .
      * 
-     * @param project
-     *            maven project
+     * @param project maven project
      * @return option value (may be null)
      */
     public static String getCompilerPluginSetting( MavenProject project, String optionName )
@@ -116,8 +117,7 @@ public class IdeUtils
      * Returns the source version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
      * 
-     * @param project
-     *            maven project
+     * @param project maven project
      * @return java source version
      */
     public static String getCompilerSourceVersion( MavenProject project )
@@ -129,8 +129,7 @@ public class IdeUtils
      * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
      * 
-     * @param project
-     *            maven project
+     * @param project maven project
      * @return java target version
      */
     public static String getCompilerTargetVersion( MavenProject project )
@@ -141,12 +140,9 @@ public class IdeUtils
     /**
      * Extracts the version of the first matching dependency in the given list.
      * 
-     * @param artifactIds
-     *            artifact names to compare against for extracting version
-     * @param dependencies
-     *            Collection of dependencies for our project
-     * @param len
-     *            expected length of the version sub-string
+     * @param artifactIds artifact names to compare against for extracting version
+     * @param dependencies Collection of dependencies for our project
+     * @param len expected length of the version sub-string
      * @return
      */
     public static String getDependencyVersion( String[] artifactIds, List dependencies, int len )
@@ -167,27 +163,80 @@ public class IdeUtils
     }
 
     /**
+     * Search for a configuration setting of an other plugin for a configuration setting.
+     * 
      * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param pluginId the group id and artifact id of the plugin to search for
+     * @param optionName the option to get from the configuration
+     * @param defaultValue the default value if the configuration was not found
+     * @return the value of the option configured in the plugin configuration
      */
-    public static String getPluginSetting( MavenProject project, String artifactId, String optionName,
-                                           String defaultValue )
+    public static String getPluginSetting( MavenProject project, String pluginId, String optionName, String defaultValue )
     {
-        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
+        Xpp3Dom dom = getPluginConfigurationDom( project, pluginId );
+        if ( dom != null && dom.getChild( optionName ) != null )
         {
-            Plugin plugin = (Plugin) it.next();
+            return dom.getChild( optionName ).getValue();
+        }
+        return defaultValue;
+    }
 
-            if ( plugin.getArtifactId().equals( artifactId ) )
+    /**
+     * Search for the configuration Xpp3 dom of an other plugin.
+     * 
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param pluginId the group id and artifact id of the plugin to search for
+     * @return the value of the option configured in the plugin configuration
+     */
+    public static Xpp3Dom getPluginConfigurationDom( MavenProject project, String pluginId )
+    {
+
+        Plugin plugin = (org.apache.maven.model.Plugin) project.getBuild().getPluginsAsMap().get( pluginId );
+        if ( plugin != null )
+        {
+            return (Xpp3Dom) plugin.getConfiguration();
+        }
+        return null;
+    }
+
+    /**
+     * Search for the configuration Xpp3 dom of an other plugin.
+     * 
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param artifactId the artifact id of the plugin to search for
+     * @return the value of the option configured in the plugin configuration
+     */
+    public static Xpp3Dom[] getPluginConfigurationDom( MavenProject project, String artifactId,
+                                                       String[] subConfiguration )
+    {
+        ArrayList configurationDomList = new ArrayList();
+        Xpp3Dom configuration = getPluginConfigurationDom( project, artifactId );
+        if ( configuration != null )
+        {
+            configurationDomList.add( configuration );
+            for ( int index = 0; !configurationDomList.isEmpty() && subConfiguration != null &&
+                index < subConfiguration.length; index++ )
             {
-                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
-
-                if ( o != null && o.getChild( optionName ) != null )
+                ArrayList newConfigurationDomList = new ArrayList();
+                for ( Iterator childElement = configurationDomList.iterator(); childElement.hasNext(); )
                 {
-                    return o.getChild( optionName ).getValue();
+                    Xpp3Dom child = (Xpp3Dom) childElement.next();
+                    Xpp3Dom[] deeperChild = child.getChildren( subConfiguration[index] );
+                    for ( int deeperIndex = 0; deeperIndex < deeperChild.length; deeperIndex++ )
+                    {
+                        if ( deeperChild[deeperIndex] != null )
+                        {
+                            newConfigurationDomList.add( deeperChild[deeperIndex] );
+                        }
+                    }
                 }
+                configurationDomList = newConfigurationDomList;
             }
         }
-
-        return defaultValue;
+        return (Xpp3Dom[]) configurationDomList.toArray( new Xpp3Dom[configurationDomList.size()] );
     }
 
     public static String getProjectName( String template, IdeDependency dep )
@@ -197,7 +246,7 @@ public class IdeUtils
 
     /**
      * Use the project name template to create an eclipse project.
-     *  
+     * 
      * @param template Template for the project name
      * @param artifact the artifact to create the project name for
      * @return the created ide project name
@@ -206,7 +255,7 @@ public class IdeUtils
     {
         return getProjectName( template, artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion() );
     }
-    
+
     public static String getProjectName( String template, MavenProject project )
     {
         return getProjectName( template, project.getGroupId(), project.getArtifactId(), project.getVersion() );
@@ -215,13 +264,13 @@ public class IdeUtils
     public static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
     {
         return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
-                                                      : PROJECT_NAME_DEFAULT_TEMPLATE, dep );
+                        : PROJECT_NAME_DEFAULT_TEMPLATE, dep );
     }
 
     public static String getProjectName( MavenProject project, boolean addVersionToProjectName )
     {
         return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
-                                                      : PROJECT_NAME_DEFAULT_TEMPLATE, project );
+                        : PROJECT_NAME_DEFAULT_TEMPLATE, project );
     }
 
     public static Artifact resolveArtifactWithClassifier( String groupId, String artifactId, String version,
@@ -311,11 +360,11 @@ public class IdeUtils
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
         throws MojoExecutionException
     {
-        if ( ! fileToAdd.isAbsolute() )
+        if ( !fileToAdd.isAbsolute() )
         {
             fileToAdd = new File( basedir, fileToAdd.getPath() );
         }
-        
+
         String basedirpath;
         String absolutePath;
 
@@ -351,8 +400,7 @@ public class IdeUtils
     /**
      * Returns a compiler plugin settings from a list of plugins .
      * 
-     * @param project
-     *            maven project
+     * @param project maven project
      * @return option value (may be null)
      */
     private static String findCompilerPluginSettingInPlugins( List plugins, String optionName )
