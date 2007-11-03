@@ -1,0 +1,55 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Resolving conflicts using the dependency tree
+  ------
+  Mark Hobson
+  ------
+  Sep 2007
+  ------
+
+Resolving conflicts using the dependency tree
+
+	A project's dependency tree can be expanded to display dependency conflicts.  For example, to find out why Commons
+	Collections 2.0 is being used by the Maven Dependency Plugin, we can execute the following in the project's
+	directory:
+
++---+
+mvn dependency:tree -Dverbose -Dincludes=commons-collections
++---+
+
+	The <<<verbose>>> flag instructs the dependency tree to display conflicting dependencies that were omitted from the
+	resolved dependency tree.  In this case, the goal outputs:
+	
++---+
+[INFO] [dependency:tree]
+[INFO] org.apache.maven.plugins:maven-dependency-plugin:maven-plugin:2.0-alpha-5-SNAPSHOT
+[INFO] +- org.apache.maven.reporting:maven-reporting-impl:jar:2.0.4:compile
+[INFO] |  \- commons-validator:commons-validator:jar:1.2.0:compile
+[INFO] |     \- commons-digester:commons-digester:jar:1.6:compile
+[INFO] |        \- (commons-collections:commons-collections:jar:2.1:compile - omitted for conflict with 2.0)
+[INFO] \- org.apache.maven.doxia:doxia-site-renderer:jar:1.0-alpha-8:compile
+[INFO]    \- org.codehaus.plexus:plexus-velocity:jar:1.1.3:compile
+[INFO]       \- commons-collections:commons-collections:jar:2.0:compile
++---+
+
+	Thus we can see that Commons Collections 2.0 was chosen over 2.1 since it is nearer, and by default Maven resolves
+	version conflicts with a nearest-wins strategy.
+
+	More specifically, in verbose mode the dependency tree shows dependencies that were omitted for: being a duplicate
+	of another; conflicting with another's version and/or scope; and introducing a cycle into the dependency tree. 
