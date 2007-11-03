@@ -93,8 +93,8 @@ public class SiteStageMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( reactorProject != null && reactorProject.getParent() != null &&
-                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                if ( reactorProject != null && reactorProject.getParent() != null
+                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String structureReactorProject = getStructure( reactorProject, false );
                     reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
@@ -137,8 +137,8 @@ public class SiteStageMojo
             if ( !ignoreMissingSiteUrl )
             {
                 throw new MojoFailureException(
-                    "Missing site information in the distribution management element in the project: '" +
-                        project.getName() + "'." );
+                    "Missing site information in the distribution management element in the project: '"
+                    + project.getName() + "'." );
             }
 
             return null;
