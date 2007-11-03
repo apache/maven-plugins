@@ -230,7 +230,8 @@ public abstract class AbstractSiteRenderingMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(), e );
+                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(),
+                                                 e );
             }
 
             decoration = readDecorationModel( siteDescriptorContent );
@@ -427,8 +428,8 @@ public abstract class AbstractSiteRenderingMojo
                 // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
                 // be nice with them, output a warning and don't let them break anything
 
-                getLog().warn( "Error loading report " + report.getClass().getName() +
-                    " - AbstractMethodError: canGenerateReport()" );
+                getLog().warn( "Error loading report " + report.getClass().getName()
+                    + " - AbstractMethodError: canGenerateReport()" );
                 filteredReports.add( report );
             }
         }
@@ -545,7 +546,8 @@ public abstract class AbstractSiteRenderingMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(), e );
+                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(),
+                                                 e );
             }
 
             decorationModel = readDecorationModel( siteDescriptorContent );
@@ -584,8 +586,8 @@ public abstract class AbstractSiteRenderingMojo
             {
                 String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName +
-                    "\" already exists for the " + displayLanguage + " version." );
+                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
+                    + "\" already exists for the " + displayLanguage + " version." );
                 i.remove();
             }
             else

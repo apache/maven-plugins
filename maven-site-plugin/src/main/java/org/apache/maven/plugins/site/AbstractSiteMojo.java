@@ -155,9 +155,9 @@ public abstract class AbstractSiteMojo
                 {
                     if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
                     {
-                        getLog().warn( "The locale parsed defined by '" + locale +
-                            "' is not available in this Java Virtual Machine (" + System.getProperty( "java.version" ) +
-                            " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
+                        getLog().warn( "The locale parsed defined by '" + locale
+                            + "' is not available in this Java Virtual Machine (" + System.getProperty( "java.version" )
+                            + " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
                         continue;
                     }
 
@@ -343,8 +343,8 @@ public abstract class AbstractSiteMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( reactorProject != null && reactorProject.getParent() != null &&
-                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                if ( reactorProject != null && reactorProject.getParent() != null
+                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String reactorUrl = reactorProject.getUrl();
                     String name = reactorProject.getName();
@@ -556,8 +556,9 @@ public abstract class AbstractSiteMojo
         {
             // URLs, determine if they share protocol and domain info
 
-            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) ) &&
-                ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) ) && ( toUrl.getPort() == fromUrl.getPort() ) )
+            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) )
+                && ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) )
+                && ( toUrl.getPort() == fromUrl.getPort() ) )
             {
                 // shared URL domain details, use URI to determine relative path
 
@@ -611,8 +612,8 @@ public abstract class AbstractSiteMojo
         // check for the presence of windows drives. No relative way of
         // traversing from one to the other.
 
-        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) &&
-            ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
+        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) )
+            && ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
         {
             // they both have drive path element but they dont match, no
             // relative path
@@ -620,8 +621,8 @@ public abstract class AbstractSiteMojo
             return to;
         }
 
-        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) ) ||
-            ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
+        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) )
+            || ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
         {
 
             // one has a drive path element and the other doesnt, no relative
@@ -775,9 +776,9 @@ public abstract class AbstractSiteMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( reactorProject.getGroupId().equals( origParent.getGroupId() ) &&
-                    reactorProject.getArtifactId().equals( origParent.getArtifactId() ) &&
-                    reactorProject.getVersion().equals( origParent.getVersion() ) )
+                if ( reactorProject.getGroupId().equals( origParent.getGroupId() )
+                    && reactorProject.getArtifactId().equals( origParent.getArtifactId() )
+                    && reactorProject.getVersion().equals( origParent.getVersion() ) )
                 {
                     parentProject = reactorProject;
                     break;
@@ -791,9 +792,9 @@ public abstract class AbstractSiteMojo
                     MavenProject mavenProject = mavenProjectBuilder.build(
                         new File( aProject.getBasedir(), aProject.getModel().getParent().getRelativePath() ),
                         localRepository, null );
-                    if ( mavenProject.getGroupId().equals( origParent.getGroupId() ) &&
-                        mavenProject.getArtifactId().equals( origParent.getArtifactId() ) &&
-                        mavenProject.getVersion().equals( origParent.getVersion() ) )
+                    if ( mavenProject.getGroupId().equals( origParent.getGroupId() )
+                        && mavenProject.getArtifactId().equals( origParent.getArtifactId() )
+                        && mavenProject.getVersion().equals( origParent.getVersion() ) )
                     {
                         parentProject = mavenProject;
                     }
@@ -859,7 +860,8 @@ public abstract class AbstractSiteMojo
      * @return the site descriptor content with interpolate string
      * @throws IOException
      */
-    protected String getInterpolatedSiteDescriptorContent( Map props, MavenProject aProject, String siteDescriptorContent )
+    protected String getInterpolatedSiteDescriptorContent( Map props, MavenProject aProject,
+                                                           String siteDescriptorContent )
         throws IOException
     {
         // MSITE-201: The ObjectBasedValueSource( aProject ) below will match
