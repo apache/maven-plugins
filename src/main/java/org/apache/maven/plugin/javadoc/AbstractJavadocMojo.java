@@ -281,7 +281,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${breakiterator}" default-value="false"
      */
-    private boolean breakiterator = false;
+    private boolean breakiterator;
 
     /**
      * Specifies the class file that starts the doclet used in generating the documentation.
@@ -433,7 +433,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${old}" default-value="false"
      */
-    private boolean old = false;
+    private boolean old;
 
     /**
      * Specifies that javadoc should retrieve the text for the overview documentation from the "source" file
@@ -463,7 +463,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${show}" default-value="protected"
      */
-    private String show = "protected";
+    private String show;
 
     /**
      * Shuts off non-error and non-warning messages, leaving only the warnings and errors appear, making them
@@ -478,7 +478,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${quiet}" default-value="false"
      */
-    private boolean quiet = false;
+    private boolean quiet;
 
     /**
      * Necessary to enable javadoc to handle assertions present in J2SE v 1.4 source code.
@@ -520,7 +520,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${verbose}" default-value="false"
      */
-    private boolean verbose = false;
+    private boolean verbose;
 
     // ----------------------------------------------------------------------
     // Standard Doclet Options
@@ -533,7 +533,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${author}" default-value="true"
      */
-    private boolean author = true;
+    private boolean author;
 
     /**
      * Specifies the text to be placed at the bottom of each output file.<br/>
@@ -554,7 +554,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${charset}" default-value="ISO-8859-1"
      */
-    private String charset = "ISO-8859-1";
+    private String charset;
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
@@ -575,7 +575,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${docfilessubdirs}" default-value="false"
      */
-    private boolean docfilessubdirs = false;
+    private boolean docfilessubdirs;
 
     /**
      * Specifies the encoding of the generated HTML files.
@@ -714,7 +714,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${linksource}" default-value="false"
      */
-    private boolean linksource = false;
+    private boolean linksource;
 
     /**
      * Suppress the entire comment body, including the main description and all tags, generating only declarations.
@@ -725,7 +725,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nocomment}" default-value="false"
      */
-    private boolean nocomment = false;
+    private boolean nocomment;
 
     /**
      * Prevents the generation of any deprecated API at all in the documentation.
@@ -734,7 +734,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nodeprecated}" default-value="false"
      */
-    private boolean nodeprecated = false;
+    private boolean nodeprecated;
 
     /**
      * Prevents the generation of the file containing the list of deprecated APIs (deprecated-list.html) and the
@@ -745,7 +745,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nodeprecatedlist}" default-value="false"
      */
-    private boolean nodeprecatedlist = false;
+    private boolean nodeprecatedlist;
 
     /**
      * Omits the HELP link in the navigation bars at the top and bottom of each page of output.
@@ -756,7 +756,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nohelp}" default-value="false"
      */
-    private boolean nohelp = false;
+    private boolean nohelp;
 
     /**
      * Omits the index from the generated docs.
@@ -767,7 +767,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${noindex}" default-value="false"
      */
-    private boolean noindex = false;
+    private boolean noindex;
 
     /**
      * Omits the navigation bar from the generated docs.
@@ -776,7 +776,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nonavbar}" default-value="false"
      */
-    private boolean nonavbar = false;
+    private boolean nonavbar;
 
     /**
      * Omits the entire overview page from the generated docs.
@@ -788,7 +788,7 @@ public abstract class AbstractJavadocMojo
      * @since 2.4
      * @parameter expression="${nooverview}" default-value="false"
      */
-    private boolean nooverview = false;
+    private boolean nooverview;
 
     /**
      * Omits qualifying package name from ahead of class names in output.
@@ -808,7 +808,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${nosince}" default-value="false"
      */
-    private boolean nosince = false;
+    private boolean nosince;
 
     /**
      * Suppresses the timestamp, which is hidden in an HTML comment in the generated HTML near the top of each page.
@@ -830,7 +830,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${notree}" default-value="false"
      */
-    private boolean notree = false;
+    private boolean notree;
 
     /**
      * Specify the text for upper left frame.
@@ -850,7 +850,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${serialwarn}" default-value="false"
      */
-    private boolean serialwarn = false;
+    private boolean serialwarn;
 
     /**
      * Specify the number of spaces each tab takes up in the source. If no tab is used in source, the default
@@ -879,7 +879,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${splitindex}" default-value="false"
      */
-    private boolean splitindex = false;
+    private boolean splitindex;
 
     /**
      * Specifies whether the stylesheet to be used is the maven javadoc stylesheet or java's default stylesheet
@@ -1010,7 +1010,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${use}" default-value="true"
      */
-    private boolean use = true;
+    private boolean use;
 
     /**
      * Includes the version text in the generated docs.
@@ -1019,7 +1019,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${version}" default-value="true"
      */
-    private boolean version = true;
+    private boolean version;
 
     /**
      * Specifies the title to be placed in the HTML title tag.
@@ -1876,8 +1876,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            if ( ( project.getOrganization() != null )
-                && ( StringUtils.isNotEmpty( project.getOrganization().getName() ) ) )
+            if ( StringUtils.isNotEmpty( project.getOrganization().getName() ) )
             {
                 if ( StringUtils.isNotEmpty( project.getOrganization().getUrl() ) )
                 {
