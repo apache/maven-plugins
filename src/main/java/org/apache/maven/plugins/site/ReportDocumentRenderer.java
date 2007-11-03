@@ -155,7 +155,7 @@ public class ReportDocumentRenderer
             {
                 List sinks = sf.sinks();
 
-                log.debug( "Multipage report: " + sinks.size() + " subreports");
+                log.debug( "Multipage report: " + sinks.size() + " subreports" );
 
                 for ( Iterator it = sinks.iterator(); it.hasNext(); )
                 {
