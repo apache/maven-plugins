@@ -1,12 +1,6 @@
 package org.apache.maven.plugin.assembly.format;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -16,7 +10,13 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class FileSetFormatterTest
     extends TestCase
@@ -122,8 +122,15 @@ public class FileSetFormatterTest
 
         assertFalse( dir.equals( result ) );
 
-        fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
-        fileManager.assertFileContents( result, filename2, "Hello\r\nThis is also a test.\r\n" );
+        try
+        {
+            fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
+            fileManager.assertFileContents( result, filename2, "Hello\r\nThis is also a test.\r\n" );
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( result );
+        }
     }
 
     public void testShouldConvertLineEndingsOnOneFileWithAnotherExplicitlyExcluded()
@@ -149,8 +156,15 @@ public class FileSetFormatterTest
 
         assertFalse( dir.equals( result ) );
 
-        fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
-        fileManager.assertFileExistence( result, filename2, false );
+        try
+        {
+            fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
+            fileManager.assertFileExistence( result, filename2, false );
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( result );
+        }
     }
 
     public void testShouldConvertLineEndingsOnOneExplicitlyIncludedFile()
@@ -175,9 +189,15 @@ public class FileSetFormatterTest
         File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
-
-        fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
-        fileManager.assertFileExistence( result, filename2, false );
+        try
+        {
+            fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
+            fileManager.assertFileExistence( result, filename2, false );
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( result );
+        }
     }
 
     public void testShouldConvertLineEndingsOnOneFileAndIgnoreFileWithinDefaultExcludedDir()
@@ -202,11 +222,19 @@ public class FileSetFormatterTest
 
         assertFalse( dir.equals( result ) );
 
-        fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
-        fileManager.assertFileExistence( result, filename2, false );
+        try
+        {
+            fileManager.assertFileContents( result, filename1, "Hello\r\nThis is a test.\r\n" );
+            fileManager.assertFileExistence( result, filename2, false );
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( result );
+        }
     }
 
-    public void testShouldFilterSeveralFiles() throws IOException, AssemblyFormattingException
+    public void testShouldFilterSeveralFiles()
+        throws IOException, AssemblyFormattingException
     {
         File basedir = fileManager.createTempDir();
 
@@ -231,10 +259,19 @@ public class FileSetFormatterTest
         FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
         File result = formatter.formatFileSetForAssembly( basedir, fs );
 
-        fileManager.assertFileContents( result, filename1, "This is the filtered artifactId: artifact." );
-        fileManager.assertFileContents( result, filename2, "This is the filtered 'foo' property: bar." );
+        assertFalse( result.equals( basedir ) );
 
-        mockManager.verifyAll();
+        try
+        {
+            fileManager.assertFileContents( result, filename1, "This is the filtered artifactId: artifact." );
+            fileManager.assertFileContents( result, filename2, "This is the filtered 'foo' property: bar." );
+
+            mockManager.verifyAll();
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( result );
+        }
     }
 
     private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
