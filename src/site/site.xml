@@ -35,6 +35,8 @@
       <item name="Unpacking the project dependencies" href="examples/unpacking-project-dependencies.html" />
       <item name="Using project dependencies' sources" href="examples/using-dependencies-sources.html" />
    	  <item name="Failing the build on dependency analysis warnings" href="examples/failing-the-build-on-dependency-analysis-warnings.html"/>
+   	  <item name="Filtering the dependency tree" href="examples/filtering-the-dependency-tree.html"/>
+   	  <item name="Resolving conflicts using the dependency tree" href="examples/resolving-conflicts-using-the-dependency-tree.html"/>
     </menu>
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />
