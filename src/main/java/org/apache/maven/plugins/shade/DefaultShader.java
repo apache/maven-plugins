@@ -131,7 +131,7 @@ public class DefaultShader
 
         ClassVisitor cv = new RemappingClassAdapter( cw, remapper );
 
-        cr.accept( cv, 0 );
+        cr.accept( cv, ClassReader.EXPAND_FRAMES );
 
         byte[] renamedClass = cw.toByteArray();
 
