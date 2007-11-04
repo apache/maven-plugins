@@ -126,17 +126,7 @@ under the License.
       </roles>
     </contributor>
   </contributors>
-  <properties>
-    <doxiaVersion>1.0-alpha-10</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-10-SNAPSHOT</doxiaSitetoolsVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
-  </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
@@ -151,6 +141,11 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>2.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -223,6 +218,11 @@ under the License.
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
+      <version>1.0-alpha-7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9</version>
     </dependency>
@@ -248,16 +248,13 @@ under the License.
       <artifactId>jetty</artifactId>
       <version>6.1.5</version>
     </dependency>
+
+    <!-- test -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.0-beta-1</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-7</version>
     </dependency>
   </dependencies>
   <profiles>
@@ -326,5 +323,10 @@ under the License.
       </build>
     </profile>
   </profiles>  
+  <properties>
+    <doxiaVersion>1.0-alpha-10</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-10-SNAPSHOT</doxiaSitetoolsVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
+  </properties>
 </project>
 
