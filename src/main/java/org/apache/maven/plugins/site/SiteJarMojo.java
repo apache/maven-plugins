@@ -84,11 +84,12 @@ public class SiteJarMojo
 
         try
         {
-            File outputFile = createArchive( outputDirectory, finalName + "-site.jar" );
+            File outputFile = createArchive( outputDirectory,
+                                             finalName + "-" + getClassifier() + "." + getArtifactType() );
 
             if ( attach )
             {
-                projectHelper.attachArtifact( project, "jar", "site", outputFile );
+                projectHelper.attachArtifact( project, getArtifactType(), getClassifier(), outputFile );
             }
             else
             {
@@ -103,6 +104,16 @@ public class SiteJarMojo
         {
             throw new MojoExecutionException( "Error while creating archive.", e );
         }
+    }
+
+    protected String getArtifactType()
+    {
+        return "jar";
+    }
+
+    protected String getClassifier()
+    {
+        return "site";
     }
 
     /**
