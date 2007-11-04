@@ -202,6 +202,11 @@ under the License.
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
+      <version>1.0-alpha-7</version>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
