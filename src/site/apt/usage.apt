@@ -119,3 +119,10 @@ mvn site:run
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
   file, which uses the expression <<<$\{currentVersion}>>> to filter in a property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
+
+  <<Note:>> Velocity is used to apply the filtering. Because Velocity uses a
+  dot-notation internally you can <<not>> use dots in your properties. So if
+  you declare a property like this
+  <<<\<properties\>\<my.property\>My value\</my.property\>\</properties\>>>> in
+  your <<<pom.xml>>> file and then use the expression <<<$\{my.property\}>>> in
+  your document, it will <<not>> work.
