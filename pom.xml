@@ -129,6 +129,7 @@ under the License.
   <properties>
     <doxiaVersion>1.0-alpha-10</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-alpha-10-SNAPSHOT</doxiaSitetoolsVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -143,6 +144,16 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact-manager</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <version>2.0</version>
     </dependency>
@@ -151,6 +162,20 @@ under the License.
       <artifactId>maven-settings</artifactId>
       <version>2.0</version>
     </dependency>
+
+    <!-- doxia -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-xhtml</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+
+    <!-- doxia-sitetools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
@@ -181,16 +206,43 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
+    
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>2.0.4</version>
+    </dependency>
+
+    <!-- wagon -->
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+
+    <!-- plexus -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-i18n</artifactId>
+      <version>1.0-beta-7</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.4.5</version>
     </dependency>
+
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
