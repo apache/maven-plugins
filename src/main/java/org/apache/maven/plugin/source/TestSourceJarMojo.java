@@ -9,7 +9,7 @@ package org.apache.maven.plugin.source;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,11 +20,9 @@ package org.apache.maven.plugin.source;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.model.Resource;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This plugin bundles all the test sources into a jar archive.
@@ -32,6 +30,7 @@ import java.util.Iterator;
  * @goal test-jar
  * @phase package
  * @execute phase="generate-sources"
+ * @since 2.0.1
  */
 public class TestSourceJarMojo
     extends AbstractSourceJarMojo
@@ -43,7 +42,14 @@ public class TestSourceJarMojo
 
     protected List getResources( MavenProject project )
     {
-        return project.getTestResources();
+        if ( excludeResources )
+        {
+            return Collections.EMPTY_LIST;
+        }
+        else
+        {
+            return project.getTestResources();
+        }
     }
 
     protected String getClassifier()

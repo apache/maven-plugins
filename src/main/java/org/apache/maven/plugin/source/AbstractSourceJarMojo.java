@@ -9,7 +9,7 @@ package org.apache.maven.plugin.source;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -35,10 +35,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Base class for bundling sources into a jar archive.
+ *
+ * @version $Id$
+ */
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
 {
-    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*",};
+    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*"};
 
     /**
      * @parameter expression="${project}"
@@ -55,6 +60,18 @@ public abstract class AbstractSourceJarMojo
     private boolean attach;
 
     /**
+     * Specifies whether or not to exclude resources from the sources-jar. This
+     * can be convenient if your project includes large resources, such as
+     * images, and you don't want to include them in the sources-jar.
+     *
+     * @parameter expression="${source.excludeResources}" default-value="false"
+     * @since 2.0.4
+     */
+    protected boolean excludeResources;
+
+    /**
+     * Used for attaching the source jar to the project.
+     *
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -82,6 +99,8 @@ public abstract class AbstractSourceJarMojo
     protected String finalName;
 
     /**
+     * Contains the full list of projects in the reactor.
+     *
      * @parameter expression="${reactorProjects}"
      */
     protected List reactorProjects;
@@ -115,9 +134,9 @@ public abstract class AbstractSourceJarMojo
     {
         if ( project.getArtifact().getClassifier() != null )
         {
-            getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier " +
-                "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a [" +
-                project.getArtifact().getClassifier() + "] classifier." );
+            getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
+                + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
+                + project.getArtifact().getClassifier() + "] classifier." );
         }
         else
         {
@@ -212,8 +231,19 @@ public abstract class AbstractSourceJarMojo
                 {
                     excludes = (String[]) resourceExcludes.toArray( new String[resourceExcludes.size()] );
                 }
-
-                addDirectory( archiver, sourceDirectory, includes, excludes );
+                String targetPath = resource.getTargetPath();
+                if ( targetPath != null )
+                {
+                    if ( !targetPath.trim().endsWith( "/" ) )
+                    {
+                        targetPath += "/";
+                    }
+                    addDirectory( archiver, sourceDirectory, targetPath, includes, excludes );
+                }
+                else
+                {
+                    addDirectory( archiver, sourceDirectory, includes, excludes );
+                }
             }
         }
     }
@@ -257,6 +287,20 @@ public abstract class AbstractSourceJarMojo
         try
         {
             archiver.addDirectory( sourceDirectory, includes, excludes );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error adding directory to source archive.", e );
+        }
+    }
+
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String prefix, String[] includes,
+                                 String[] excludes )
+        throws MojoExecutionException
+    {
+        try
+        {
+            archiver.addDirectory( sourceDirectory, prefix, includes, excludes );
         }
         catch ( ArchiverException e )
         {
