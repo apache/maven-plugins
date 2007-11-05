@@ -25,7 +25,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-source-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven Source Plug-In</name>
+  <name>Maven Source Plugin</name>
   <version>2.0.4-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0</maven>
@@ -34,6 +34,11 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSOURCES</url>
   </issueManagement>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-source-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-source-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-source-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
