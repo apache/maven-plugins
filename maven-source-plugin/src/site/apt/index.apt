@@ -10,13 +10,15 @@
 Maven 2 Source Plugin
 
  The Maven 2 Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
- generated in the project's target directory.
+ created in the project's target directory.
 
 * Goals Overview
 
-   The Source Plugin has two goals:
+   The Source Plugin has three goals:
 
-   * {{{jar-mojo.html}source:jar}} is used to bundle the main sources of the project into a jar file.
+   * {{{aggregate-mojo.html}source:aggregate}} aggregrates sources for all modules in an aggregator project.
+
+   * {{{jar-mojo.html}source:jar}} is used to bundle the main sources of the project into a jar archive.
 
    * {{{test-jar-mojo.html}source:test-jar}} on the other hand, is used to bundle the test sources of the project into a
      jar archive.
