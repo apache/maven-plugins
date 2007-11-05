@@ -32,6 +32,7 @@ import java.util.List;
  * @goal jar
  * @phase package
  * @execute phase="generate-sources"
+ * @since 2.0
  */
 public class SourceJarMojo
     extends AbstractSourceJarMojo

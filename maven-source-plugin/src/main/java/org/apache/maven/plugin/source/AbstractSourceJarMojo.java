@@ -65,6 +65,7 @@ public abstract class AbstractSourceJarMojo
      * images, and you don't want to include them in the sources-jar.
      *
      * @parameter expression="${source.excludeResources}" default-value="false"
+     * @since 2.0.4
      */
     protected boolean excludeResources;
 
