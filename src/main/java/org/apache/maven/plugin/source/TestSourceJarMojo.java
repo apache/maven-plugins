@@ -30,6 +30,7 @@ import java.util.List;
  * @goal test-jar
  * @phase package
  * @execute phase="generate-sources"
+ * @since 2.0.1
  */
 public class TestSourceJarMojo
     extends AbstractSourceJarMojo
