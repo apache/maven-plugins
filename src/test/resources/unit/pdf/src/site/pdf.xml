@@ -33,6 +33,7 @@
     <item name="Usage" ref="usage.apt"/>
     <item name="Limitations" ref="limitations.apt"/>
     <item name="Links" ref="ref/links.apt"/>
+    <item name="FAQ" ref="faq.fml"/>
   </toc>
 
 </document>
