@@ -273,7 +273,7 @@ public abstract class AbstractSourceJarMojo
 
                 if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
                 {
-                    addDirectory( archiver, new File( r.getDirectory() ), new String[]{}, new String[]{} );
+                    addDirectory( archiver, new File( r.getDirectory() ), DEFAULT_INCLUDES, new String[]{} );
                 }
             }
         }
