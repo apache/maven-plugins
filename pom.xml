@@ -322,10 +322,10 @@ under the License.
         </plugins>
       </build>
     </profile>
-  </profiles>  
+  </profiles>
   <properties>
     <doxiaVersion>1.0-alpha-10</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-10-SNAPSHOT</doxiaSitetoolsVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-10</doxiaSitetoolsVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 </project>
