@@ -32,6 +32,8 @@
     <item name="Introduction" ref="index.apt"/>
     <item name="Usage" ref="usage.apt"/>
     <item name="Limitations" ref="limitations.apt"/>
+    <!-- TODO: this currently fails, FIXME! -->
+    <item name="FAQ" ref="faq.fml"/>
   </toc>
 
 </document>
