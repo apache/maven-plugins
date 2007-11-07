@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -229,7 +230,10 @@ public abstract class AbstractSourceJarMojo
                 }
                 else
                 {
-                    excludes = (String[]) resourceExcludes.toArray( new String[resourceExcludes.size()] );
+                    List allExcludes = new ArrayList();
+                    allExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
+                    allExcludes.addAll( resourceExcludes );
+                    excludes = (String[]) allExcludes.toArray( new String[allExcludes.size()] );
                 }
                 String targetPath = resource.getTargetPath();
                 if ( targetPath != null )
