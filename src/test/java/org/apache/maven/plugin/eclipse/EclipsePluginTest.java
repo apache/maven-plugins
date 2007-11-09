@@ -387,6 +387,33 @@ public class EclipsePluginTest
 
         checkContextRoot( basedir, "multymodule-war", "multymodule-ear", "/somethingVeryDifferent" );
 
+        FileReader reader =
+            new FileReader( new File( basedir, "multymodule-war/.settings/org.eclipse.wst.common.component" ) );
+        Xpp3Dom warComponent = Xpp3DomBuilder.build( reader );
+        Xpp3Dom[] dependentModules = warComponent.getChild( "wb-module" ).getChildren( "dependent-module" );
+        assertEquals( 2, dependentModules.length );
+        for ( int index = 0; index < dependentModules.length; index++ )
+        {
+            assertEquals( "/WEB-INF/lib", dependentModules[index].getAttribute( "deploy-path" ) );
+        }
+                     
+        reader = new FileReader( new File( basedir, "multymodule-ear/.settings/org.eclipse.wst.common.component" ) );
+        Xpp3Dom earComponent = Xpp3DomBuilder.build( reader );
+        dependentModules = earComponent.getChild( "wb-module" ).getChildren( "dependent-module" );
+        assertEquals( 2, dependentModules.length );
+        for ( int index = 0; index < dependentModules.length; index++ )
+        {
+            if ( dependentModules[index].getAttribute( "archiveName" ).endsWith( "war" ) )
+            {
+                assertEquals( "/", dependentModules[index].getAttribute( "deploy-path" ) );
+                assertTrue( !dependentModules[index].getAttribute( "archiveName" ).startsWith( ".." ) );
+            }
+            else
+            {
+                assertEquals( "lib", dependentModules[index].getAttribute( "deploy-path" ) );
+                assertTrue( dependentModules[index].getAttribute( "archiveName" ).startsWith( ".." ) );
+            }
+        }
     }
 
     private void checkContextRoot( File basedir, String warModule, String earModule, String expectedContextRoot )

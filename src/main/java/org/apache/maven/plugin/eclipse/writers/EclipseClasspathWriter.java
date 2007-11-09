@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.BuildCommand;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -488,8 +489,9 @@ public class EclipseClasspathWriter
 
         }
 
-        if ( config.getWtpapplicationxml() && kind.equals( ATTR_VAR ) && !dep.isTestDependency() && !dep.isProvided() &&
-            !dep.isSystemScoped() )
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( this.config.getPackaging() ) && config.getWtpapplicationxml()
+            && kind.equals( ATTR_VAR ) && !dep.isTestDependency() && !dep.isProvided()
+            && !dep.isSystemScopedOutsideProject( this.config.getProject() ) )
         {
             if ( !attributeElemOpen )
             {

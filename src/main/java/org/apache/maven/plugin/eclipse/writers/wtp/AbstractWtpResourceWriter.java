@@ -154,6 +154,14 @@ public abstract class AbstractWtpResourceWriter
     {
         String handle;
         String dependentObject = null;
+        String archiveName;
+
+        // ejb's and wars must always eb toplevel
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() )
+            || Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
+        {
+            deployPath = "/";
+        }
 
         if ( dep.isReferencedProject() )
         {
@@ -171,6 +179,7 @@ public abstract class AbstractWtpResourceWriter
             {
                 dependentObject = "WebModule_";
             }
+            archiveName = dep.getEclipseProjectName() + "." + dep.getType();
         }
         else
         {
@@ -204,11 +213,22 @@ public abstract class AbstractWtpResourceWriter
                     +
                     IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
             }
+            if ( Constants.PROJECT_PACKAGING_EAR.equals( this.config.getPackaging() ) && !"/".equals( deployPath ) )
+            {
+                // This is a very ugly hack around a WTP bug! a delpoydir in the configuration file is duplicated.
+                // a deploy dir like "lib" will be used as "lib/lib" the only workig workaround is to include a ..
+                // in the archive name.
+                archiveName = "../" + artifactPath.getName();
+            }
+            else
+            {
+                archiveName = artifactPath.getName();
+            }
         }
 
         writer.startElement( ELT_DEPENDENT_MODULE );
 
-        writer.addAttribute( "archiveName", dep.getEclipseProjectName() + "." + dep.getType() );
+        writer.addAttribute( "archiveName", archiveName );
 
         writer.addAttribute( ATTR_DEPLOY_PATH, deployPath ); //$NON-NLS-1$
         writer.addAttribute( ATTR_HANDLE, handle );

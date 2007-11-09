@@ -5,7 +5,7 @@
       <property name="context-root" value="contextName"/>
     </module-type>
     <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-    <dependent-module archiveName="maven-core.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar">
+    <dependent-module archiveName="maven-core-98.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>
