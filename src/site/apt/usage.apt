@@ -68,11 +68,18 @@ mvn site
 
   Then execute the <<<{{{deploy-mojo.html}site:deploy}}>>> goal from your project.
 
+  <<Note:>> A site must be generated first before executing <<<site:deploy>>>.
+
++-----+
+mvn site:deploy
++-----+
+
+  If you want to generate the site <and> deploy it in one go, you can utilize
+  the <<<site-deploy>>> phase of the site lifecycle. To do this, just execute:
+
 +-----+
 mvn site-deploy
 +-----+
-
-  <<Note:>> A site must be generated first before executing <<<site:deploy>>>.
 
 * Staging a Site
 
