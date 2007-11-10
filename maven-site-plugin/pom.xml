@@ -126,6 +126,11 @@ under the License.
       </roles>
     </contributor>
   </contributors>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-site-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
