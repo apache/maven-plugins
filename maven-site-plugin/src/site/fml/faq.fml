@@ -60,5 +60,28 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="Why doesn't the links between parent and child modules work when I run 'mvn site'?">
+      <question>Why doesn't the links between parent and child modules work when I run 'mvn site'?</question>
+      <answer>
+        <p>
+          What <code>'mvn site'</code> will do for you, in a multi-project
+          build, is to run <code>'mvn site'</code> for the parent and all its
+          modules <b>individually</b>. The links between parent and child will
+          <b>not</b> work here. They <b>will</b> however work when you deploy
+          the site. 
+        </p>
+        <p>
+          If you want to test this, prior to deplyment, you can run
+          <code>'mvn site:stage'</code> instead. This will produce the complete
+          site, including the parent and its modules, in the
+          <code>/target/staging/</code> directory of the parent. The site can
+          be found a couple of directory levels down from the there, because
+          the <i>hostname</i> and <i>path</i>, as specified in the
+          <code>&lt;distributionManagement&gt;/&lt;site&gt;/&lt;url&gt;</code>
+          element of your <code>pom.xml</code>, will each get their own
+          directory.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
