@@ -58,12 +58,13 @@ Creating Skins
 
 * Customizing the HTML output with a Velocity template
 
-  <<Details on the velocity template variables and use should be included>>.
+  <<Details on the Velocity template variables and use should be included>>.
 
-  The format of the velocity template is currently out of scope for this
-  document. To attempt this, start by copying <<<default-site.vm>>> from the
-  <<<doxia-site-renderer>>> JAR to
-  <<<src/main/resources/META-INF/maven/site.vm>>> and modify it to your needs.
+  The format of the Velocity template is currently out of scope for this
+  document. To attempt this, start by copying
+  <<<{{{https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default-site.vm}}>>>
+  to <<<src/main/resources/META-INF/maven/site.vm>>> in your project and then
+  modify it to your needs.
 
 * Examples of existing skins
 
