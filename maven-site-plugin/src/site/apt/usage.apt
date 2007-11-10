@@ -28,13 +28,14 @@
 
 Usage
 
- Aside from the reports, you can put additional content (e.g. additional documentation, resources, etc.) in your site.
- See {{{http://maven.apache.org/guides/mini/guide-site.html}http://maven.apache.org/guides/mini/guide-site.html}}
+ Aside from the reports, you can put additional content (e.g. additional
+ documentation, resources, etc.) in your site. See the
+ {{{http://maven.apache.org/guides/mini/guide-site.html}Guide to creating a site}}
  for more information on this.
 
 * Generating a Site
 
-  To generate the project's site and report distributions, execute
+  To generate the project's site and reports, execute:
 
 +-----+
 mvn site
@@ -42,8 +43,10 @@ mvn site
 
 * Deploying a Site
 
-  The {{{deploy-mojo.html}site:deploy}} goal supports scp and file protocols. To deploy the generated site, you first need to specify where
-  the site will be deployed. This can be set in the \<distributionManagement\> section of the pom as shown below.
+  The <<<{{{deploy-mojo.html}site:deploy}}>>> goal supports the <<<scp>>> and
+  <<<file>>> protocols. To deploy the generated site, you first need to specify
+  where the site will be deployed. This can be set in the
+  <<<\<distributionManagement\>>>> section of the pom as shown below.
 
 +-----+
 <project>
@@ -60,34 +63,35 @@ mvn site
 </project>
 +-----+
 
-  Then execute the {{{deploy-mojo.html}site:deploy}} goal from your project.
+  Then execute the <<<{{{deploy-mojo.html}site:deploy}}>>> goal from your project.
 
 +-----+
 mvn site-deploy
 +-----+
 
-  <<Note:>> A site must be generated first before executing site:deploy.
+  <<Note:>> A site must be generated first before executing <<<site:deploy>>>.
 
 * Staging a Site
 
-  <<Note:>> This goal is available in version 2.0-beta-5 or later of the Site plugin.
+  <<Note:>> This goal is available in version 2.0-beta-5 or later of the site plugin.
 
-  To review/test the generated Web site before an official deploy, you could stage the site in
-  a specific directory. It will use the \<distributionManagement\> elements or the project hierarchy to link the
+  To review/test the generated web site before an official deploy, you can stage the site in
+  a specific directory. It will use the <<<\<distributionManagement\>>>> element or the project hierarchy to link the
   project and its modules.
 
-  Just execute the {{{stage-mojo.html}site:stage}} goal from your project with the stagingDirectory parameter as shown below:
+  Just execute the <<<{{{stage-mojo.html}site:stage}}>>> goal from your project
+  with the <<<stagingDirectory>>> parameter as shown below:
 
 +-----+
 mvn site:stage -DstagingDirectory=C:\fullsite
 +-----+
 
-  <<Note:>> <<<stagingDirectory>>> can not be dynamic, i.e. stagingDirectory=$\{basedir\}\fullsite
+  <<Note:>> <<<stagingDirectory>>> can not be dynamic, i.e. <<<stagingDirectory=$\{basedir\}\fullsite>>>
 
-  To stage a site and to deploy it, just execute the {{{stage-deploy-mojo.html}site:stage-deploy}} goal from your project
+  To stage a site and to deploy it, just execute the <<<{{{stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
   with the required parameters. The <<<site:stage-deploy>>> goal will use the
   id <<<stagingSite>>> for deployment. So if you need to add your username or
-  password in <<<settings.xml>>> you should use <<<\<id\>stagingSite\</id\>>>>
+  password in <<<settings.xml>>>, you should use <<<\<id\>stagingSite\</id\>>>>
   for that <<<\<server\>>>> section. See the
   {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html}Guide to Deployment and Security Settings}}
   for more information on this.
@@ -99,30 +103,40 @@ mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
 
 * Running a Site
 
-  The Site plugin can also be used to start up the site in Jetty. To do this, execute
+  The site plugin can also be used to start up the site in Jetty. To do this,
+  execute:
 
 +-----+
 mvn site:run
 +-----+
 
   The server will, by default, be started on http://localhost:8080/. See
-  {{{http://jetty.mortbay.org/jetty/index.html}http://jetty.mortbay.org/jetty/index.html}} for more information about
+  {{{http://jetty.mortbay.org/}http://jetty.mortbay.org/}} for more information about
   the Jetty server.
 
 * Filtering
 
-  <<Note:>> This feature is available in version 2.0-beta-6 or later of the Site plugin.
+  <<Note:>> This feature is available in version 2.0-beta-6 or later of the site plugin.
 
-  To filter properties into any supported documentation format, add a <<<.vm>>> extension to the filename.
+  To filter properties into any supported documentation format, add a <<<.vm>>>
+  extension to the filename.
 
   For example, the module for the Maven website contains a
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/src/site/apt/download.apt.vm}<<<src/site/apt/download.apt.vm>>>}}
-  file, which uses the expression <<<$\{currentVersion}>>> to filter in a property set in the
+  file, which uses the expression <<<$\{currentVersion}>>> to filter in a
+  property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
 
   <<Note:>> Velocity is used to apply the filtering. Because Velocity uses a
   dot-notation internally you can <<not>> use dots in your properties. So if
   you declare a property like this
-  <<<\<properties\>\<my.property\>My value\</my.property\>\</properties\>>>> in
-  your <<<pom.xml>>> file and then use the expression <<<$\{my.property\}>>> in
+
++-----+
+  <properties>
+    <!-- This will not work because the name of the property has a dot in it -->
+    <my.property>My value</my.property>
+  </properties>
++-----+
+
+  in your <<<pom.xml>>> file and then use the expression <<<$\{my.property\}>>> in
   your document, it will <<not>> work.
