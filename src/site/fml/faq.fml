@@ -116,6 +116,43 @@ mvn scm:changelog
         </p>
       </answer>
     </faq>
+    <faq id="How do I use this plugin with Perforce?">
+      <question>How do I use this plugin with Perforce?</question>
+      <answer>
+        <p>
+          You have to specify your <code>clientspec</code> in the
+          <code>&lt;systemProperties&gt;</code> element of this plugin's
+          &lt;configuration&gt; element.
+<source>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>maven.scm.perforce.clientspec.name</name>
+              <value>your-client-spec-name</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+</source>
+        </p>
+      </answer>
+    </faq>
+    <faq id="The Developer Activity report is blank, but the other reports are fine">
+      <question>The Developer Activity report is blank, but the other reports are fine</question>
+      <answer>
+        <p>
+          You need to add
+          <a href="http://maven.apache.org/ref/current/maven-model/maven.html#class_developer"><code>&lt;developer&gt;</code></a>
+          elements in your <code>pom.xml</code> file. Their id:s need to match
+          the userid:s that are used in your SCM system. Only checkins made by
+          a developer found in the pom will be added to the Developer Activity
+          report.
+        </p>
+      </answer>
+    </faq>
     <faq id="I think I've found a bug in this plugin, what do I do">
       <question>I think I've found a bug in this plugin, what do I do?</question>
       <answer>
