@@ -33,29 +33,50 @@ Configuring the Site Descriptor
   to be accessible in the generated site, you must configure your site descriptor. You create the site descriptor in
   a file called <<<site.xml>>> which should be located in your <<<src/site>>> directory.
 
-* Publish Date
+* Title
 
-  With the out-of-the-box Velocity template, the "Last Published" position is configurable.
-  By default, the position is on the left but you could change it.
-  To do this, you could add a \<publishDate/> in the site.xml like the following:
+  The title of each generated page will be a combination of the "Site title"
+  and the title of the current page. By default the site plugin will use the
+  value of <<<$\{project.name\}>>> from your <<<pom.xml>>> file as the
+  "Site title". The title for this page is <"Maven Site plugin - Configuring
+  the Site Descriptor">.
+
+  If you want to use a different "Site title", but don't want to change the
+  <<<\<name\>>>> in your <<<pom.xml>>>, you can configure this in your
+  <<<site.xml>>>, like this:
 
 +-----+
-<project name="My Site Descriptor">
+<project name="My Site Title">
+  ...
+</project>
++-----+
+
+* Publish Date
+
+  With the out-of-the-box Velocity template, the position of the "Last Published" date is configurable.
+  By default, the position is on the left but you can change it.
+  To do this, you can add a <<<\<publishDate\>>>> element to your
+  <<<site.xml>>> like the following:
+
++-----+
+<project>
   ...
   <publishDate position="navigation-bottom" format="MM-dd-yy"/>
   ...
 </project>
 +-----+
 
-  The position could be: <<<left>>>, <<<right>>>, <<<navigation-top>>>, <<<navigation-bottom>>>, <<<bottom>>>.
+  The <<<position>>> attribute can have one of these values: <<<left>>>,
+  <<<right>>>, <<<navigation-top>>>, <<<navigation-bottom>>>, <<<bottom>>>.
 
 * Powered by logo
 
   You can add your own "Powered by" logo to your site.
-  To do this, you add a \<poweredBy/> in your <<<site.xml>>> like this:
+  To do this, you add a <<<\<poweredBy\>>>> element in your <<<site.xml>>> like
+  this:
 
 +-----+
-<project name="My Site Descriptor">
+<project>
   ...
   <poweredBy>
     <logo name="Maven" href="http://maven.apache.org/"
@@ -70,8 +91,9 @@ Configuring the Site Descriptor
   Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, its site
   descriptor is also deployed so that it can be inherited.
 
-  By default, only the basic settings are inherited. From the body, only the links are inherited, and these accumulate
-  to contain all of the descriptors' links.
+  By default, only the basic settings are inherited. From the body, <<only>>
+  the links are inherited, and these accumulate to contain all the parents'
+  site descriptor links.
 
   However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> attribute in the site descriptor. This can
   be either <<<top>>> or <<<bottom>>>, indicating where in the menu it will be placed after inheritance. For example:
@@ -81,7 +103,7 @@ Configuring the Site Descriptor
   ...
   <body>
     ...
-    <menu name="Common Links" inherit="top">
+    <menu name="My Inherited Menu" inherit="top">
       ...
     </menu>
     ...
@@ -95,11 +117,15 @@ Configuring the Site Descriptor
   There are several preset menus that can be used in the site descriptor to include generated content from your project.
   These are:
 
-  * <<<reports>>> - the reports menu for all of the generated reports from your project
+  * <<<reports>>> - a menu with links to all the generated reports for your
+  project
 
   * <<<parent>>> - a menu with a link to the parent project's site
 
-  * <<<modules>>> - a menu containing the submodules of this project and links to their sites
+  * <<<modules>>> - a menu containing the links to the sites of the submodules
+  of this project
+
+  []
 
   To include a preset menu, use the <<<ref>>> attribute. For example:
 
@@ -114,6 +140,11 @@ Configuring the Site Descriptor
   ...
 </project>
 +-----+
+
+  <<Note:>> The old syntax using <<<$\{reports\}>>>, <<<$\{parent\}>>> and
+  <<<$\{modules\}>>> has been deprecated and you are encouraged to use the new
+  syntax instead. The support for the old syntax will be removed in a future
+  version of maven-site-plugin.
 
 * Skinning
 
@@ -134,15 +165,15 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-  <<Note:>> The version is optional and, like plugins, if omitted the latest version available will be used.
+  <<Note:>> The <<<\<version\>>>> is optional and, like plugins, if omitted the latest version available will be used.
 
   This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
   template to render the site.
 
 * Expressions
 
-  The <<<site.xml>>> can contain some expressions, like <<<$\{project.name\}>>>. Each expression will be
-  evaluated when the site is rendered.
+  The <<<site.xml>>> can contain some expressions, like <<<$\{project.name\}>>>.
+  Each expression will be evaluated when the site is rendered.
 
   Expressions can be:
 
@@ -151,3 +182,10 @@ Configuring the Site Descriptor
   * $\{project.properties\}, for instance <<<$\{myProperty\}>>> referenced in <<< <project><properties><myProperty> >>>
 
   * $\{environmentVariable\}, for instance <<<$\{JAVA_HOME\}>>>
+
+  []
+
+  <<Note:>> Support for some expressions, like <<<$\{project.name\}>>> are present in
+  version 2.0-beta-5 of this plugin. Full support will be available in version
+  2.0-beta-6.
+
