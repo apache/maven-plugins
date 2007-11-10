@@ -135,6 +135,7 @@ public abstract class AbstractSiteRenderingMojo
      * are disabled. It is highly recommended that you package this as a skin instead.
      *
      * @parameter expression="${templateFile}"
+     * @since 2.0-beta-5
      */
     private File templateFile;
 
