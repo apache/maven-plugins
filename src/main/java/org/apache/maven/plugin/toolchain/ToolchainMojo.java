@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.toolchain.MisconfiguredToolchainException;
 import org.apache.maven.toolchain.RequirementMatcher;
-import org.apache.maven.toolchain.ToolchainManager;
+import org.apache.maven.toolchain.ToolchainManagerPrivate;
 import org.apache.maven.toolchain.ToolchainPrivate;
 
 /**
@@ -48,7 +48,7 @@ public class ToolchainMojo
      *
      * @component
      */
-    private ToolchainManager toolchainManager;
+    private ToolchainManagerPrivate toolchainManager;
 
     /**
      *
