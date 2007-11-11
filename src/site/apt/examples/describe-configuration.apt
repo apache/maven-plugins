@@ -26,13 +26,13 @@
 
 Configuring Describe Mojo
 
-  Below are other configuration examples for the Describe mojo.
+  Below are other configuration examples for the <<<describe>>> mojo.
 
 * The <<<plugin>>> Parameter
 
   The <<<plugin>>> parameter is meant to provide two things: convenience and prefix-based access.
 
-  The convenience comes when specifying a plugin by groupId:artifactId, or by groupId:artifactId:version. Where the more
+  The convenience comes when specifying a plugin by <<<groupId:artifactId>>>, or by <<<groupId:artifactId:version>>>. Where the more
   traditional specification of separate fields would mean specifying this:
 
 +---+
@@ -54,7 +54,7 @@ mvn help:describe -Dplugin=help
 
 * The <<<mojo>>> Parameter
 
- You can use the <<<mojo>>> parameter of the Describe Mojo to show or display relative information about the particular mojo
+ You can use the <<<mojo>>> parameter of the <<<describe>>> mojo to show or display relative information about a particular mojo
  of the plugin you specified.
 
  For example, when you execute the following command:
@@ -64,16 +64,25 @@ mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins
     -DartifactId=maven-help-plugin
 +-----+
 
- This would display brief information relative to the Describe Mojo only.
+ This would display brief information about the <<<describe>>> mojo only.
 
-* The <<<full>>> Parameter
+* The <<<medium>>> and <<<full>>> Parameters
 
- If you want to show or display detailed information about the mojo, you can use the <<<full>>> parameter, as
- shown below:
+ If you want to display more detailed information, you can use the <<<medium>>>
+ or <<<full>>> parameters.
+
+ The <<<medium>>> parameter adds a list with the mojos of the plugin and their
+ descriptions:
 
 +-----+
-mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins
-    -DartifactId=maven-help-plugin -Dfull=true
+mvn help:describe -Dplugin=help -Dmedium=true
 +-----+
 
- This would display information such as the mojo implementation, its parameters and component requirements, among others.
+ <<Note:>> The <<<medium>>> parameter was added in version 2.0.2 of this plugin.
+
+ The <<<full>>> parameter also displays information about the mojos'
+ implementation, their parameters and component requirements, among others.
+
++-----+
+mvn help:describe -Dplugin=help -Dfull=true
++-----+
