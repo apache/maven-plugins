@@ -101,7 +101,7 @@ public class ActiveProfilesMojo extends AbstractMojo
         {
             File dir = output.getParentFile();
             
-            if( !dir.exists() )
+            if ( !dir.exists() )
             {
                 dir.mkdirs();
             }
@@ -149,7 +149,7 @@ public class ActiveProfilesMojo extends AbstractMojo
         
         message.append( "Active Profiles for Project \'" + project.getId() + "\': \n\n" );
         
-        if( profiles == null || profiles.isEmpty() )
+        if ( profiles == null || profiles.isEmpty() )
         {
             message.append( "There are no active profiles." );
         }
@@ -163,7 +163,7 @@ public class ActiveProfilesMojo extends AbstractMojo
                 
                 message.append( "\n - " )
                        .append( profile.getId() )
-                       .append(" (source: " )
+                       .append( " (source: " )
                        .append( profile.getSource() ).append( ")" );
             }
             
