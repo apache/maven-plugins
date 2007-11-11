@@ -323,18 +323,18 @@ public class DescribeMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId +
-                    "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
+                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginManagerException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId +
-                    "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
+                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId +
-                    "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
+                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( ArtifactNotFoundException e )
             {
@@ -342,13 +342,13 @@ public class DescribeMojo
             }
             catch ( InvalidVersionSpecificationException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId +
-                    "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
+                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( InvalidPluginException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId +
-                    "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
+                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginNotFoundException e )
             {
@@ -364,8 +364,8 @@ public class DescribeMojo
 
         if ( descriptor == null )
         {
-            throw new MojoFailureException(
-                "Plugin could not be found. If you believe it is correct, check your pluginGroups setting, and run with -U to update the remote configuration" );
+            throw new MojoFailureException( "Plugin could not be found. If you believe it is correct,"
+                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
         }
 
         return descriptor;
@@ -389,28 +389,20 @@ public class DescribeMojo
                 switch ( pluginParts.length )
                 {
                     case ( 1 ):
-                    {
                         pi.prefix = pluginParts[0];
                         break;
-                    }
                     case ( 2 ):
-                    {
                         pi.groupId = pluginParts[0];
                         pi.artifactId = pluginParts[1];
                         break;
-                    }
                     case ( 3 ):
-                    {
                         pi.groupId = pluginParts[0];
                         pi.artifactId = pluginParts[1];
                         pi.version = pluginParts[2];
                         break;
-                    }
                     default:
-                    {
                         throw new MojoFailureException(
                             "plugin parameter must be a plugin prefix, or conform to: 'groupId:artifactId[:version]." );
-                    }
                 }
             }
             else
@@ -461,7 +453,7 @@ public class DescribeMojo
             {
                 MojoDescriptor md = (MojoDescriptor) it.next();
 
-                if( full )
+                if ( full )
                 {
                     buffer.append( line );
                     buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
@@ -554,7 +546,7 @@ public class DescribeMojo
     {
         buffer.append( "\nDescription:\n" );
         prettyAppend( formatDescription( md.getDescription() ), buffer );
-        if( fullDescription )
+        if ( fullDescription )
         {
             buffer.append( "\n" );
         }
