@@ -143,7 +143,7 @@ public class ActiveProfilesMojo extends AbstractMojo
      */
     private void getActiveProfileStatement( MavenProject project, StringBuffer message )
     {
-        List profiles = project.getActiveProfiles();
+        List profiles = collectActiveProfiles( project );
         
         message.append( "\n" );
         
@@ -170,6 +170,25 @@ public class ActiveProfilesMojo extends AbstractMojo
         }
         
         message.append( "\n" );
+    }
+
+    /**
+     * Recurses into the project's parent poms to find the active
+     * profiles of the specified project and all its parents.
+     *
+     * @param project The project to start with
+     * @return A list of active profiles
+     */
+    private List collectActiveProfiles( MavenProject project )
+    {
+        List profiles = project.getActiveProfiles();
+
+        if ( project.hasParent() )
+        {
+            profiles.addAll( collectActiveProfiles( project.getParent() ) );
+        }
+
+        return profiles;
     }
 
     /**
