@@ -181,6 +181,7 @@ public class DescribeMojo
      * given. Use true/false.
      *
      * @parameter expression="${medium}" default-value="false"
+     * @since 2.0.2
      */
     private boolean medium;
 
