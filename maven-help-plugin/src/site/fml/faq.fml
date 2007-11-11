@@ -21,10 +21,12 @@ under the License.
 
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="1">
-      <question>1</question>
+    <faq id="Why aren't profiles from the parent pom included?">
+      <question>Why aren't profiles from the parent pom included?</question>
       <answer>
-        <p>        
+        <p>
+          As of version 2.0.2 they are.
+          See <a href="http://jira.codehaus.org/browse/MPH-16">MPH-16</a> for more info.
         </p>
       </answer>
     </faq>
