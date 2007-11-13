@@ -122,6 +122,14 @@ public class CleanMojo
     private FileSetManager fileSetManager;
 
     /**
+     * Disable the plugin execution.
+     *
+     * @parameter expression="${clean.skip}" default-value="false"
+     * @since 2.2
+     */
+    private boolean skip;
+
+    /**
      * Deletes file-sets in the following project build directory order:
      * (source) directory, output directory, test directory, report directory,
      * and then the additional file-sets.
@@ -132,6 +140,12 @@ public class CleanMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            getLog().info( "Clean is skipped." );
+            return;
+        }
+
         fileSetManager = new FileSetManager( getLog(), verbose );
 
         removeDirectory( directory );
