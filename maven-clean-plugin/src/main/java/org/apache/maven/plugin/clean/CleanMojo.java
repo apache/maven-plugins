@@ -130,6 +130,14 @@ public class CleanMojo
     private boolean skip;
 
     /**
+     * Disable the plugin execution.
+     *
+     * @parameter expression="${clean.ignore.errors}" default-value="false"
+     * @since 2.2
+     */
+    private boolean ignoreErrors;
+
+    /**
      * Deletes file-sets in the following project build directory order:
      * (source) directory, output directory, test directory, report directory,
      * and then the additional file-sets.
@@ -146,14 +154,26 @@ public class CleanMojo
             return;
         }
 
-        fileSetManager = new FileSetManager( getLog(), verbose );
+        try
+        {
+            fileSetManager = new FileSetManager( getLog(), verbose );
 
-        removeDirectory( directory );
-        removeDirectory( outputDirectory );
-        removeDirectory( testOutputDirectory );
-        removeDirectory( reportDirectory );
+            removeDirectory( directory );
+            removeDirectory( outputDirectory );
+            removeDirectory( testOutputDirectory );
+            removeDirectory( reportDirectory );
 
-        removeAdditionalFilesets();
+            removeAdditionalFilesets();
+        }
+        catch ( MojoExecutionException e )
+        {
+            if ( !ignoreErrors )
+            {
+                throw e;
+            }
+
+            getLog().warn( e.getMessage() );
+        }
     }
 
     /**
