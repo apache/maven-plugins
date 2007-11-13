@@ -46,8 +46,8 @@ import java.util.List;
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal clean
- *
- * @see org.apache.maven.plugin.clean.Fileset.
+ * @since 2.0
+ * @see org.apache.maven.plugin.clean.Fileset
  */
 public class CleanMojo
     extends AbstractMojo
@@ -85,6 +85,7 @@ public class CleanMojo
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      * @readonly
+     * @since 2.1.1
      */
     private File reportDirectory;
 
@@ -92,6 +93,7 @@ public class CleanMojo
      * Sets whether the plugin runs in verbose mode.
      *
      * @parameter expression="${clean.verbose}" default-value="false"
+     * @since 2.1
      */
     private boolean verbose;
 
@@ -99,6 +101,7 @@ public class CleanMojo
      * The list of fileSets to delete, in addition to the default directories.
      *
      * @parameter
+     * @since 2.1
      */
     private List filesets;
 
@@ -106,15 +109,17 @@ public class CleanMojo
      * Sets whether the plugin should follow Symbolic Links to delete files.
      *
      * @parameter expression="${clean.followSymLinks}" default-value="false"
+     * @since 2.1
      */
     private boolean followSymLinks;
 
     /**
      * Finds and retrieves included and excluded files, and handles their
      * deletion
+     *
+     * @since 2.1
      */
     private FileSetManager fileSetManager;
-
 
     /**
      * Deletes file-sets in the following project build directory order:
@@ -122,7 +127,7 @@ public class CleanMojo
      * and then the additional file-sets.
      *
      * @see org.apache.maven.plugin.Mojo#execute()
-     * @throws MojoExecutionException When
+     * @throws MojoExecutionException When a directory failed to get deleted.
      */
     public void execute()
         throws MojoExecutionException
