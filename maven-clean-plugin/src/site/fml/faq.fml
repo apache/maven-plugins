@@ -34,5 +34,21 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="On Windows, I got Unable to delete directory. What is wrong?">
+      <question>On Windows, I got <i>"Unable to delete directory"</i>. What is wrong?</question>
+      <answer>
+        <p>
+          For instance, <i>clean</i> could fail if you already have opened a command
+          line with target as the current dir. Windows lock some ressources and you need
+          to close the handles on these ressources in <i>target</i> directory.
+        </p>
+        <p>
+          <a href="http://www.microsoft.com/technet/sysinternals/default.mspx">Sysinternals</a> produced
+          a number of utilities, like <a href="http://www.microsoft.com/technet/sysinternals/Utilities/ProcessExplorer.mspx">Process Explorer</a>
+          or <a href="http://www.microsoft.com/technet/sysinternals/utilities/handle.mspx">Handle</a>
+          that help you to deal with windows handles.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
