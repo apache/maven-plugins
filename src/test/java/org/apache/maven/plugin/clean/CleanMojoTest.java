@@ -19,21 +19,20 @@ package org.apache.maven.plugin.clean;
  * under the License.
  */
 
-import junit.framework.TestCase;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Arrays;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Test the clean mojo.
  */
 public class CleanMojoTest
-    extends TestCase
+    extends AbstractMojoTestCase
 {
     private static final String TARGET_TEST_DIR = "target/testDirectoryStructure";
 
@@ -124,7 +123,9 @@ public class CleanMojoTest
         String base = TARGET_TEST_DIR + "/target";
 
         CleanMojo mojo = new CleanMojo();
-
+        MavenProjectStub project = new MavenProjectStub();
+        project.setExecutionRoot( false );
+        setVariableValueToObject( mojo, "project", project );
         mojo.addFileset( createFileset( base, "**/file.txt", "**/subdir/**" ) );
 
         String outputDirectory = TARGET_TEST_DIR + "/buildOutputDirectory";
