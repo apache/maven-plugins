@@ -142,7 +142,7 @@ public class CleanMojo
     private boolean skip;
 
     /**
-     * Disable the plugin execution.
+     * Ignore exceptions or errors.
      *
      * @parameter expression="${clean.ignore.errors}" default-value="false"
      * @since 2.2
