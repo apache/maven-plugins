@@ -21,8 +21,10 @@ package org.apache.maven.plugin.clean;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +54,16 @@ import java.util.List;
 public class CleanMojo
     extends AbstractMojo
 {
+    /**
+     * The Maven Project Object
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     * @since 2.2
+     */
+    protected MavenProject project;
+
     /**
      * This is where build results go.
      *
@@ -193,6 +205,17 @@ public class CleanMojo
                 try
                 {
                     getLog().info( "Deleting " + fileset );
+
+                    if ( !project.isExecutionRoot() )
+                    {
+                        String projectBasedir = StringUtils.replace( project.getBasedir().getAbsolutePath(), "\\", "/" );
+                        String filesetDir = StringUtils.replace( fileset.getDirectory(), "\\", "/" );
+
+                        if ( filesetDir.indexOf( projectBasedir ) == -1 )
+                        {
+                            fileset.setDirectory( projectBasedir + "/" + filesetDir );
+                        }
+                    }
 
                     fileSetManager.delete( fileset );
                 }
