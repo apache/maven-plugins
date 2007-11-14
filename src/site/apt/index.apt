@@ -3,7 +3,7 @@
  ------
  Edwin Punzalan
  ------
- 03 July 2006
+ November 2007
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -53,4 +53,10 @@ Overview
   you can take a look into the following examples:
 
   * {{{examples/delete_additional_files.html}How to delete additional files outside of
-  the default directories}}
+  the default directories?}}
+
+  * {{{examples/ignoring-errors.html}How to ignore clean errors?}}
+
+  * {{{examples/skipping-clean.html}How to skipping clean execution?}}
+
+  []
