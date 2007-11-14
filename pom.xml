@@ -31,6 +31,9 @@ under the License.
   <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Clean Plugin</name>
+  <description>
+    The Maven Clean Plugin is a plugin that removes files generated at build-time in a project's directory.
+  </description>
   <inceptionYear>2001</inceptionYear>
 
   <prerequisites>
