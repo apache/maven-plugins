@@ -4,7 +4,8 @@
  Mike Perham
  <mperham@apache.org>
  ------
- June 20th, 2006
+ November 2007
+ ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -56,3 +57,18 @@ Delete Additional Files Not Exposed to Maven
   [...]
 </build>
 +---------
+
+ <<Note:>> The <<<directory>>> in the <<<fileset>>> is a relative path inside a project, in other words,
+
++--------
+  <directory>some/relative/path</directory>
++--------
+
+ is equivalent to:
+
++--------
+  <directory>${basedir}/some/relative/path</directory>
++--------
+
+ You could also define file set rules in a parent POM. In this case, the clean plugin adds the subproject
+ basedir to the defined relative path.
