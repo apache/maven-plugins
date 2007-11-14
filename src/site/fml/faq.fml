@@ -40,13 +40,13 @@ under the License.
         <p>
           For instance, <i>clean</i> could fail if you already have opened a command
           line with target as the current dir. Windows lock some ressources and you need
-          to close the handles on these ressources in <i>target</i> directory.
+          to close the handles on these ressources.
         </p>
         <p>
           <a href="http://www.microsoft.com/technet/sysinternals/default.mspx">Sysinternals</a> produced
           a number of utilities, like <a href="http://www.microsoft.com/technet/sysinternals/Utilities/ProcessExplorer.mspx">Process Explorer</a>
           or <a href="http://www.microsoft.com/technet/sysinternals/utilities/handle.mspx">Handle</a>
-          that help you to deal with windows handles.
+          that help you to deal with Windows handles.
         </p>
       </answer>
     </faq>
