@@ -69,8 +69,7 @@ public interface EclipseOsgiPlugin
         throws IOException;
 
     /**
-     * Loads the plugin.properties file from a the plugin, usually needed in order to resolve the
-     * artifact name.
+     * Loads the plugin.properties file from a the plugin, usually needed in order to resolve the artifact name.
      * 
      * @return loaded Properties (or an empty properties if no plugin.properties is found)
      * @throws IOException for exceptions while reading the file

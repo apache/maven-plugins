@@ -68,8 +68,8 @@ public abstract class AbstractEclipsePluginTestCase
     /**
      * Pom File
      */
-    protected static File PomFile = new File(getBasedir(),"pom.xml");
-    
+    protected static File PomFile = new File( getBasedir(), "pom.xml" );
+
     /**
      * Group-Id for running test builds.
      */
@@ -81,8 +81,7 @@ public abstract class AbstractEclipsePluginTestCase
     protected static final String ARTIFACT_ID = "maven-eclipse-plugin";
 
     /**
-     * Version under which the plugin was installed to the test-time local repository for running 
-     * test builds.
+     * Version under which the plugin was installed to the test-time local repository for running test builds.
      */
     protected static final String VERSION = "test";
 
@@ -98,8 +97,7 @@ public abstract class AbstractEclipsePluginTestCase
     {
         if ( !installed )
         {
-            System.out
-                .println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+            System.out.println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
         }
 
         super.setUp();
@@ -136,11 +134,12 @@ public abstract class AbstractEclipsePluginTestCase
             {
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
-                localRepositoryDirectory = pluginTestTool
-                    .preparePluginForUnitTestingWithMavenBuilds( PomFile, "test", localRepositoryDirectory );
+                localRepositoryDirectory =
+                    pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( PomFile, "test",
+                                                                               localRepositoryDirectory );
 
-                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
-                    + "\n" );
+                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory +
+                    "\n" );
 
                 installed = true;
             }
@@ -180,6 +179,7 @@ public abstract class AbstractEclipsePluginTestCase
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -191,6 +191,7 @@ public abstract class AbstractEclipsePluginTestCase
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @throws Exception any exception generated during test
@@ -204,6 +205,7 @@ public abstract class AbstractEclipsePluginTestCase
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -252,6 +254,7 @@ public abstract class AbstractEclipsePluginTestCase
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -259,10 +262,11 @@ public abstract class AbstractEclipsePluginTestCase
         throws Exception
     {
         testWorkspace( projectName, new Properties(), "configure-workspace" );
-    }    
-    
+    }
+
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -270,9 +274,11 @@ public abstract class AbstractEclipsePluginTestCase
         throws Exception
     {
         testWorkspace( projectName, new Properties(), goal );
-    }        
+    }
+
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -311,20 +317,21 @@ public abstract class AbstractEclipsePluginTestCase
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" );
+        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR +
+            "/" );
 
     }
-    
-    protected File getOutputDirectory( String projectName ) 
+
+    protected File getOutputDirectory( String projectName )
     {
         return getTestFile( "target/test-classes/projects/" + projectName );
     }
-    
+
     protected File getTestWorkspaceWorkDirectory( String projectName )
     {
         return new File( this.getOutputDirectory( projectName ), ".metadata" );
     }
-    
+
     protected void executeMaven( File pom, Properties properties, List goals )
         throws TestToolsException, ExecutionFailedException
     {
@@ -387,9 +394,9 @@ public abstract class AbstractEclipsePluginTestCase
             {
             }
 
-            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: "
-                + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: "
-                + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: " +
+                StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: " +
+                result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
 
@@ -403,14 +410,14 @@ public abstract class AbstractEclipsePluginTestCase
     {
         String pluginSpec = GROUP_ID + ":" + ARTIFACT_ID + ":";
 
-        //        String pluginVersion = System.getProperty( "pluginVersion" );
+        // String pluginVersion = System.getProperty( "pluginVersion" );
         //        
-        //        if ( pluginVersion != null )
-        //        {
-        //            pluginSpec += pluginVersion + ":";
-        //        }
+        // if ( pluginVersion != null )
+        // {
+        // pluginSpec += pluginVersion + ":";
+        // }
         //
-        //        System.out.println( "\n\nUsing Eclipse plugin version: " + pluginVersion + "\n\n" );
+        // System.out.println( "\n\nUsing Eclipse plugin version: " + pluginVersion + "\n\n" );
 
         // try using the test-version installed during setUp()
         pluginSpec += VERSION + ":";
@@ -441,8 +448,8 @@ public abstract class AbstractEclipsePluginTestCase
             for ( int j = 0; j < files.length; j++ )
             {
                 File expectedFile = files[j];
-                File actualFile = new File( projectOutputDir, additionalDir + expectedFile.getName() )
-                    .getCanonicalFile();
+                File actualFile =
+                    new File( projectOutputDir, additionalDir + expectedFile.getName() ).getCanonicalFile();
 
                 if ( !actualFile.exists() )
                 {
@@ -477,20 +484,21 @@ public abstract class AbstractEclipsePluginTestCase
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
             expected = StringUtils.replace( expected, "${basedir}", basedir );
-            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryDirectory.getCanonicalPath()
-                .replace( '\\', '/' ) );
+            expected =
+                StringUtils.replace( expected, "${M2_REPO}", localRepositoryDirectory.getCanonicalPath().replace( '\\',
+                                                                                                                  '/' ) );
 
             if ( actualLines.size() <= i )
             {
-                fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: "
-                    + expectedLines.size() );
+                fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: " +
+                    expectedLines.size() );
             }
 
             String actual = actualLines.get( i ).toString();
 
             if ( expected.startsWith( "#" ) && actual.startsWith( "#" ) )
             {
-                //ignore comments, for settings file
+                // ignore comments, for settings file
                 continue;
             }
 

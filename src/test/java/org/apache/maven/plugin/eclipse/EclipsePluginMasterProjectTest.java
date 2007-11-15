@@ -32,30 +32,35 @@ import org.codehaus.plexus.util.IOUtil;
  * Master test for eclipse .classpath and .wtpmodules generation.
  * </p>
  * <p>
- * This test use a 2 modules project with all the mvn dependencies flavours (direct, transitive, with  
+ * This test use a 2 modules project with all the mvn dependencies flavours (direct, transitive, with
  * compile/test/provided/system scope, required and optional, artifacts and modules).
  * </p>
  * <p>
- * In order to fully test the eclipse plugin execution in a such complex environment mvn is executed from a command line.
- * Mvn is started using a custom settings.xml file, created on the fly. The custom settings.xml only adds a mirror for
- * the central repository which is actually a local (file://) repository for loading files from <code>src/test/m2repo</code>
+ * In order to fully test the eclipse plugin execution in a such complex environment mvn is executed from a command
+ * line. Mvn is started using a custom settings.xml file, created on the fly. The custom settings.xml only adds a mirror
+ * for the central repository which is actually a local (file://) repository for loading files from
+ * <code>src/test/m2repo</code>
  * </p>
- * <p>The following is the base layout of modules/dependencies. The actual test is to check generated files for module-2</p>
+ * <p>
+ * The following is the base layout of modules/dependencies. The actual test is to check generated files for module-2
+ * </p>
+ * 
  * <pre>
  * 
  *            +----------------+       +-----------------+       +-----------------+
- *           /| module 1 (jar) | ----> |   refproject    | ----> | deps-refproject |
+ *           /| module 1 (jar) | ----&gt; |   refproject    | ----&gt; | deps-refproject |
  *          / +----------------+       +-----------------+       +-----------------+  
- *         /           ^
+ *         /           &circ;
  *    root             | (depends on)
  *         \           |
  *          \ +----------------+       +-----------------+       +-----------------+
- *           \| module 2 (war) | ----> |     direct      | ----> |   deps-direct   |
+ *           \| module 2 (war) | ----&gt; |     direct      | ----&gt; |   deps-direct   |
  *            +----------------+       +-----------------+       +-----------------+   
  * 
  * </pre>
+ * 
  * @todo a know problem with this approach is that tests are running with the installed version of the plugin! Don't
- * enable test in pom.xml at the moment or you will never be able to build.
+ *       enable test in pom.xml at the moment or you will never be able to build.
  * @author Fabrizio Giustina
  * @version $Id$
  */

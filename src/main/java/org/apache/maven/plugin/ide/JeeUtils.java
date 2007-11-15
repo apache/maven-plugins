@@ -18,10 +18,10 @@
  */
 package org.apache.maven.plugin.ide;
 
-import org.apache.maven.project.MavenProject;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.maven.project.MavenProject;
 
 public class JeeUtils
 {

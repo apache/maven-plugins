@@ -32,7 +32,7 @@ public final class Constants
     public static final String PROJECT_PACKAGING_WAR = "war";
 
     public static final String PROJECT_PACKAGING_POM = "pom";
-    
+
     private Constants()
     {
     }

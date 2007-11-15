@@ -18,13 +18,13 @@
  */
 package org.apache.maven.plugin.eclipse;
 
-import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.PlexusTestCase;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+
+import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author Edwin Punzalan
@@ -67,8 +67,8 @@ public class AddMavenRepoMojoTest
     private AddMavenRepoMojo getConfiguredMojo( String pomXml )
         throws Exception
     {
-        File pomXmlFile = new File( PlexusTestCase.getBasedir(), "target/test-classes/test-harness/add-maven-repo/"
-            + pomXml );
+        File pomXmlFile =
+            new File( PlexusTestCase.getBasedir(), "target/test-classes/test-harness/add-maven-repo/" + pomXml );
 
         AddMavenRepoMojo mojo = (AddMavenRepoMojo) lookupMojo( "add-maven-repo", pomXmlFile );
 

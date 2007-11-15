@@ -27,39 +27,47 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
-public class EclipsePluginTest extends AbstractEclipsePluginTestCase
+public class EclipsePluginTest
+    extends AbstractEclipsePluginTestCase
 {
     protected void setUp()
-    throws Exception
+        throws Exception
     {
         super.setUp();
     }
-    public void testProject01() throws Exception
+
+    public void testProject01()
+        throws Exception
     {
         testProject( "project-01" );
     }
 
-    public void testProject02() throws Exception
+    public void testProject02()
+        throws Exception
     {
         testProject( "project-02" );
     }
 
-    public void testProject03() throws Exception
+    public void testProject03()
+        throws Exception
     {
         testProject( "project-03" );
     }
 
-    public void testProject04() throws Exception
+    public void testProject04()
+        throws Exception
     {
         testProject( "project-04" );
     }
 
-    public void testProject05() throws Exception
+    public void testProject05()
+        throws Exception
     {
         testProject( "project-05" );
     }
 
-    public void testProject06() throws Exception
+    public void testProject06()
+        throws Exception
     {
         testProject( "project-06" );
     }
@@ -74,7 +82,8 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     // testProject( "project-07" );
     // }
 
-    public void testProject08() throws Exception
+    public void testProject08()
+        throws Exception
     {
         testProject( "project-08" );
     }
@@ -84,17 +93,20 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
      * 
      * @throws Exception
      */
-    public void testProject09() throws Exception
+    public void testProject09()
+        throws Exception
     {
         testProject( "project-09" );
     }
 
-    public void testProject10() throws Exception
+    public void testProject10()
+        throws Exception
     {
         testProject( "project-10" );
     }
 
-    public void testProject11() throws Exception
+    public void testProject11()
+        throws Exception
     {
         testProject( "project-11" );
     }
@@ -102,10 +114,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Ear packaging
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject12() throws Exception
+    public void testProject12()
+        throws Exception
     {
         testProject( "project-12" );
     }
@@ -113,10 +125,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Dependency range - MECLIPSE-96
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject13() throws Exception
+    public void testProject13()
+        throws Exception
     {
         testProject( "project-13" );
     }
@@ -124,10 +136,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Additional natures and builders - MECLIPSE-64
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject14() throws Exception
+    public void testProject14()
+        throws Exception
     {
         testProject( "project-14" );
     }
@@ -135,10 +147,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * <code>outputDirectory</code> parameter - MECLIPSE-11
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject15() throws Exception
+    public void testProject15()
+        throws Exception
     {
         Properties props = new Properties();
         props.put( "outputDirectory", "bin" );
@@ -170,10 +182,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * relative location of system dependencies - MECLIPSE-89
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject18() throws Exception
+    public void testProject18()
+        throws Exception
     {
         testProject( "project-18" );
     }
@@ -181,10 +193,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Resource targetPath is relative to the project's output directory - MECLIPSE-77
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject19() throws Exception
+    public void testProject19()
+        throws Exception
     {
         testProject( "project-19" );
     }
@@ -192,10 +204,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * WTP 1.5 changes in wtpmodules.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject20() throws Exception
+    public void testProject20()
+        throws Exception
     {
         testProject( "project-20" );
     }
@@ -203,10 +215,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * PDE support.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject21() throws Exception
+    public void testProject21()
+        throws Exception
     {
         testProject( "project-21" );
     }
@@ -214,10 +226,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * PDE support using eclipse-plugin packaging.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject22() throws Exception
+    public void testProject22()
+        throws Exception
     {
         testProject( "project-22" );
     }
@@ -225,10 +237,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Additional config files using "additionalConfig" property.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject23() throws Exception
+    public void testProject23()
+        throws Exception
     {
         testProject( "project-23" );
     }
@@ -236,10 +248,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Test rewriting of OSGI manifest files.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject24() throws Exception
+    public void testProject24()
+        throws Exception
     {
         testProject( "project-24" );
     }
@@ -247,10 +259,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Test source exclude/include.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject25() throws Exception
+    public void testProject25()
+        throws Exception
     {
         testProject( "project-25" );
     }
@@ -258,10 +270,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Test different compiler settings for test sources.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject26() throws Exception
+    public void testProject26()
+        throws Exception
     {
         testProject( "project-26" );
     }
@@ -269,10 +281,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * Test additional project facets specified.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject27() throws Exception
+    public void testProject27()
+        throws Exception
     {
         testProject( "project-27" );
     }
@@ -280,10 +292,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * MECLIPSE-241 : Compiler settings from parent project aren't used in wtp facet.
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject28() throws Exception
+    public void testProject28()
+        throws Exception
     {
         testProject( "project-28/module-1" );
     }
@@ -291,10 +303,10 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * MECLIPSE-198 : EJB version is not resloved
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject29() throws Exception
+    public void testProject29()
+        throws Exception
     {
         testProject( "project-29" );
     }
@@ -302,72 +314,68 @@ public class EclipsePluginTest extends AbstractEclipsePluginTestCase
     /**
      * MECLIPSE-108 : .wtpmodules with version 2.4 for javax.servlet:servlet-api:2.3
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject30() throws Exception
+    public void testProject30()
+        throws Exception
     {
         testProject( "project-30" );
     }
-    
+
     /**
      * MECLIPSE-185 : plugin doesn't fail when dependencies are missing
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject31() throws Exception
+    public void testProject31()
+        throws Exception
     {
-        try 
+        try
         {
             testProject( "project-31" );
-           
-            //disabling this test for now. See comments in MECLIPSE-185 - Bfox
+
+            // disabling this test for now. See comments in MECLIPSE-185 - Bfox
             // fail("Expected to receive a MojoExecutionException");
         }
-        catch (MojoExecutionException e)
+        catch ( MojoExecutionException e )
         {
-            //expected exception here
+            // expected exception here
         }
     }
 
     /**
      * MECLIPSE-109 : .component wb-resource source path incorrect for ear packaging
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    public void testProject32() throws Exception
+    public void testProject32()
+        throws Exception
     {
         testProject( "project-32" );
     }
-    
-    public void testProject34() throws Exception
+
+    public void testProject34()
+        throws Exception
     {
         testProject( "project-34" );
     }
-    
+
     /**
-     * MECLIPSE-287 : dependencies with and without classifiers
-     * MECLIPSE-151 : test jar source attachments
+     * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
      * 
-     * @throws Exception
-     *             any exception thrown during test
+     * @throws Exception any exception thrown during test
      */
-    /*@TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-     wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-     file-comparing step which at the moment just does line by line comparison   
-    project 7 is affected by this as well.
-    public void testProject33() throws Exception
-    {
-            testProject( "project-33" );
-    }*/
-    
-    
-    /*TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc
-     * path. This means that the expected .classpath can't match the final result as the result will
-     * have the absolute path to the user's local repo.
+    /*
+     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
+     * wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
+     * file-comparing step which at the moment just does line by line comparison project 7 is affected by this as well.
+     * public void testProject33() throws Exception { testProject( "project-33" ); }
      */
-    
-    
+
+    /*
+     * TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc path.
+     * This means that the expected .classpath can't match the final result as the result will have the absolute path to
+     * the user's local repo.
+     */
+
 }

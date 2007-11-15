@@ -40,7 +40,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
-public class RadWebsiteConfigWriter extends AbstractEclipseWriter
+public class RadWebsiteConfigWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String WEBSITE_CONFIG_FILENAME = ".website-config";
@@ -55,23 +56,22 @@ public class RadWebsiteConfigWriter extends AbstractEclipseWriter
      * write the website-config file for RAD6 if needed.
      * 
      * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
-     * @param sourceDirs
-     *            all eclipse source directorys
-     * @param localRepository
-     *            the local reposetory
-     * @param buildOutputDirectory
-     *            build output directory (target)
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @param sourceDirs all eclipse source directorys
+     * @param localRepository the local reposetory
+     * @param buildOutputDirectory build output directory (target)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
-    public void write() throws MojoExecutionException
+    public void write()
+        throws MojoExecutionException
     {
         Writer w;
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getPackaging() ) )
         {
             try
             {
-                w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), WEBSITE_CONFIG_FILENAME ) ), "UTF-8" );
+                w =
+                    new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                            WEBSITE_CONFIG_FILENAME ) ), "UTF-8" );
             }
             catch ( IOException ex )
             {
@@ -86,8 +86,7 @@ public class RadWebsiteConfigWriter extends AbstractEclipseWriter
     /**
      * write the website-config file.
      * 
-     * @param writer
-     *            wher to write to
+     * @param writer wher to write to
      */
     private void writeModuleTypeFacetCore( XMLWriter writer )
     {

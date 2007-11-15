@@ -105,7 +105,9 @@ public class RadWebSettingsWriter
         {
             try
             {
-                w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), WEBSETTINGS_FILENAME ) ), "UTF-8" );
+                w =
+                    new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                            WEBSETTINGS_FILENAME ) ), "UTF-8" );
             }
             catch ( IOException ex )
             {
@@ -166,9 +168,9 @@ public class RadWebSettingsWriter
 
                 if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
                 {
-                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
-                        + " selected for inclusion as lib-module" );
-                    
+                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString() +
+                        " selected for inclusion as lib-module" );
+
                     String depName = IdeUtils.getProjectName( config.getProjectNameTemplate(), dependency );
                     String depJar = dependency.getArtifactId() + ".jar";
 

@@ -51,7 +51,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
-public class RadApplicationXMLWriter extends AbstractEclipseWriter
+public class RadApplicationXMLWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String APPLICATION_XML_APPLICATION = "application";
@@ -122,16 +123,13 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
      * write the application.xml and the .modulemaps file to the META-INF directory.
      * 
      * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
-     * @param sourceDirs
-     *            all eclipse source directorys
-     * @param localRepository
-     *            the local reposetory
-     * @param buildOutputDirectory
-     *            build output directory (target)
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @param sourceDirs all eclipse source directorys
+     * @param localRepository the local reposetory
+     * @param buildOutputDirectory build output directory (target)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
-    public void write() throws MojoExecutionException
+    public void write()
+        throws MojoExecutionException
     {
         String packaging = config.getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
@@ -196,8 +194,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
         result.setAttribute( XMLNS, "http://java.sun.com/xml/ns/j2ee" );
         result.setAttribute( XMLNS_XSI, "http://www.w3.org/2001/XMLSchema-instance" );
         result.setAttribute( XMLNS_SCHEMA_LOCATION,
-                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_"
-                                             + j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
+                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_" +
+                                 j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
         result.addChild( new Xpp3Dom( APPLICATION_XML_DESCRIPTION ) );
         Xpp3Dom name = new Xpp3Dom( APPLICATION_XML_DISPLAY_NAME );
         name.setValue( config.getProject().getArtifactId() );
@@ -225,10 +223,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
      * find an existing module entry in the application.xml file by looking up the id in the modulemaps file and then
      * using that to locate the entry in the application.xml file.
      * 
-     * @param applicationXmlDom
-     *            application.xml dom tree
-     * @param mapping
-     *            .modulemaps dom tree
+     * @param applicationXmlDom application.xml dom tree
+     * @param mapping .modulemaps dom tree
      * @return dom tree representing the module
      */
     private Xpp3Dom findModuleInApplicationXml( Xpp3Dom applicationXmlDom, Xpp3Dom mapping )
@@ -249,10 +245,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * find an artifact in the modulemaps dom tree, if it is missing create a new entry in the modulemaps dom tree.
      * 
-     * @param dependency
-     *            dependency to find
-     * @param modulemapXmlDom
-     *            dom-tree of modulemaps
+     * @param dependency dependency to find
+     * @param modulemapXmlDom dom-tree of modulemaps
      * @return dom-tree representing the artifact
      */
     private Xpp3Dom findOrCreateArtifact( IdeDependency dependency, Xpp3Dom modulemapXmlDom )
@@ -263,22 +257,22 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
         {
             if ( children[index].getAttribute( MODULEMAPS_PROJECT_NAME ).equals( dependency.getArtifactId() ) )
             {
-                if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB )
-                                && children[index].getName().equals( MODULEMAPS_MAPPINGS )
-                                && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
-                                                                                                                       MODULEMAPS_APPLICATION_EJB_MODULE ) )
+                if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) &&
+                    children[index].getName().equals( MODULEMAPS_MAPPINGS ) &&
+                    children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                        MODULEMAPS_APPLICATION_EJB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR )
-                                && children[index].getName().equals( MODULEMAPS_MAPPINGS )
-                                && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
-                                                                                                                       MODULEMAPS_APPLICATION_WEB_MODULE ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) &&
+                    children[index].getName().equals( MODULEMAPS_MAPPINGS ) &&
+                    children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                        MODULEMAPS_APPLICATION_WEB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR )
-                                && children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR ) &&
+                    children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
                 }
@@ -330,8 +324,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * get the id from the href of a modulemap.
      * 
-     * @param mapping
-     *            the dom-tree of modulemaps
+     * @param mapping the dom-tree of modulemaps
      * @return module identifier
      */
     private String getIdFromMapping( Xpp3Dom mapping )
@@ -348,8 +341,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * mark the domtree entry as handled (all not handled ones will be deleted).
      * 
-     * @param xpp3Dom
-     *            dom element to mark handled
+     * @param xpp3Dom dom element to mark handled
      */
     private void handled( Xpp3Dom xpp3Dom )
     {
@@ -372,8 +364,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * read an xml file (application.xml or .modulemaps).
      * 
-     * @param xmlFile
-     *            an xmlfile
+     * @param xmlFile an xmlfile
      * @return dom-tree representing the file contents
      */
     private Xpp3Dom readXMLFile( File xmlFile )
@@ -399,10 +390,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * delete all unused entries from the dom-trees.
      * 
-     * @param applicationXmlDom
-     *            dom-tree of application.xml
-     * @param modulemapsXmlDom
-     *            dom-tree of modulemaps
+     * @param applicationXmlDom dom-tree of application.xml
+     * @param modulemapsXmlDom dom-tree of modulemaps
      */
     private void removeUnusedEntries( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapsXmlDom )
     {
@@ -413,8 +402,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
                 Xpp3Dom[] newModulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
                 for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
                 {
-                    if ( ( newModulemapsXmlDomChildren[newIndex] != null )
-                                    && ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
+                    if ( ( newModulemapsXmlDomChildren[newIndex] != null ) &&
+                        ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
                     {
                         modulemapsXmlDom.removeChild( newIndex );
                         break;
@@ -444,12 +433,9 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
      * go in both files all others only in the modulemaps files. Webapplications contextroots are corrected to the
      * contextRoot specified in the pom.
      * 
-     * @param applicationXmlDom
-     *            dom-tree of application.xml
-     * @param modulemapXmlDom
-     *            dom-tree of modulemaps
-     * @param dependency
-     *            the eclipse dependency to handle
+     * @param applicationXmlDom dom-tree of application.xml
+     * @param modulemapXmlDom dom-tree of modulemaps
+     * @param dependency the eclipse dependency to handle
      */
     private void updateApplicationXml( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapXmlDom, IdeDependency dependency )
     {
@@ -500,8 +486,8 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
                 {
                     handled( module );
                     module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_WEB_URI ).setValue(
-                                                                                                         dependency.getArtifactId()
-                                                                                                                         + ".war" );
+                                                                                                         dependency.getArtifactId() +
+                                                                                                             ".war" );
                     module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_CONTEXT_ROOT ).setValue(
                                                                                                               contextRootInPom );
                 }
@@ -512,8 +498,7 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * Find the contextRoot specified in the pom and convert it into contextroot for the application.xml.
      * 
-     * @param artifactId
-     *            the artifactid to search
+     * @param artifactId the artifactid to search
      * @return string with the context root
      */
     private String getContextRootFor( String artifactId )
@@ -529,14 +514,12 @@ public class RadApplicationXMLWriter extends AbstractEclipseWriter
     /**
      * write back a domtree to a xmlfile and use the pretty print for it so that it is human readable.
      * 
-     * @param xmlFile
-     *            file to write to
-     * @param xmlDomTree
-     *            dom-tree to write
-     * @throws MojoExecutionException
-     *             if the file could not be written
+     * @param xmlFile file to write to
+     * @param xmlDomTree dom-tree to write
+     * @throws MojoExecutionException if the file could not be written
      */
-    private void writePrettyXmlFile( File xmlFile, Xpp3Dom xmlDomTree ) throws MojoExecutionException
+    private void writePrettyXmlFile( File xmlFile, Xpp3Dom xmlDomTree )
+        throws MojoExecutionException
     {
         Xpp3Dom original = readXMLFile( xmlFile );
         if ( original != null && original.equals( xmlDomTree ) )

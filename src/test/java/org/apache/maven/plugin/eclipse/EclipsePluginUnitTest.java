@@ -73,8 +73,8 @@ public class EclipsePluginUnitTest
         File pom = new File( basedir, "pom.xml" );
         project.setFile( pom );
 
-        EclipseSourceDir[] result = new EclipsePlugin().buildDirectoryList( project, basedir,
-                                                                            new File( "target/classes" ) );
+        EclipseSourceDir[] result =
+            new EclipsePlugin().buildDirectoryList( project, basedir, new File( "target/classes" ) );
 
         assertEquals( "should have added 1 resource.", 1, result.length );
 
@@ -122,8 +122,8 @@ public class EclipsePluginUnitTest
 
         String prefix = "target/classes/";
 
-        assertTrue( "output directory should end with: " + prefix + resOutput + "\nWas: " + path, path.endsWith( prefix
-            + resOutput ) );
+        assertTrue( "output directory should end with: " + prefix + resOutput + "\nWas: " + path,
+                    path.endsWith( prefix + resOutput ) );
     }
 
     public void testExtractResourceDirs_ShouldUseSpecifiedOutputDirectory()
@@ -244,15 +244,15 @@ public class EclipsePluginUnitTest
 
         if ( basedir.equals( workspaceProjectBasedir ) )
         {
-            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir, path
-                .endsWith( testResDir ) );
+            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir,
+                        path.endsWith( testResDir ) );
         }
         else
         {
             testResDir = testResDir.replace( '\\', '/' ).replace( '/', '-' );
 
-            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir, path
-                .endsWith( testResDir ) );
+            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir,
+                        path.endsWith( testResDir ) );
         }
 
     }
