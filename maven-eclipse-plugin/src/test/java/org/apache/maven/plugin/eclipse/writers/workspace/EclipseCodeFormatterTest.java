@@ -23,17 +23,17 @@ public class EclipseCodeFormatterTest
     extends TestCase
 {
     private static File basedir = new File( System.getProperty( "basedir", "." ) );
-    
+
     public void testLoadFormatter()
         throws Exception
     {
         File testStyleFile = new File( basedir, "src/test/resources/projects/workspace-02/code-styles.xml" );
-        
+
         EclipseCodeFormatterProfile formatter = new EclipseCodeFormatterProfile();
         formatter.init( testStyleFile.toURL(), null );
-        
+
         assertEquals( "format-1", formatter.getProfileName() );
-        
-        //see integration test on workspace-02 for content validation
+
+        // see integration test on workspace-02 for content validation
     }
 }

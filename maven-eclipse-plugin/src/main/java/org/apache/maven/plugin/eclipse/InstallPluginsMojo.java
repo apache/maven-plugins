@@ -58,8 +58,8 @@ public class InstallPluginsMojo
 {
 
     /**
-     * Set this property in a plugin POM's &lt;properties/&gt; section to determine whether that
-     * plugin should be expanded during installation, or left as a jar file.
+     * Set this property in a plugin POM's &lt;properties/&gt; section to determine whether that plugin should be
+     * expanded during installation, or left as a jar file.
      */
     public static final String PROP_UNPACK_PLUGIN = "eclipse.unpack";
 
@@ -78,8 +78,8 @@ public class InstallPluginsMojo
     private boolean overwrite;
 
     /**
-     * The list of resolved dependencies from the current project. Since we're not resolving the
-     * dependencies by hand here, the build will fail if some of these dependencies do not resolve.
+     * The list of resolved dependencies from the current project. Since we're not resolving the dependencies by hand
+     * here, the build will fail if some of these dependencies do not resolve.
      * 
      * @parameter default-value="${project.artifacts}"
      * @required
@@ -88,8 +88,8 @@ public class InstallPluginsMojo
     private Collection artifacts;
 
     /**
-     * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse
-     * instance's plugins directory.
+     * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse instance's plugins
+     * directory.
      * 
      * @parameter expression="${pluginDependencyTypes}" default-value="jar"
      */
@@ -105,17 +105,17 @@ public class InstallPluginsMojo
     private ArtifactRepository localRepository;
 
     /**
-     * Used to retrieve the project metadata (POM) associated with each plugin dependency, to help
-     * determine whether that plugin should be installed as a jar, or expanded into a directory.
+     * Used to retrieve the project metadata (POM) associated with each plugin dependency, to help determine whether
+     * that plugin should be installed as a jar, or expanded into a directory.
      * 
      * @component
      */
     private MavenProjectBuilder projectBuilder;
 
     /**
-     * Used to configure and retrieve an appropriate tool for extracting each resolved plugin 
-     * dependency. It is conceivable that some resolved dependencies could be zip files, jar files,
-     * or other types, so the manager approach is a convenient way to provide extensibility here.
+     * Used to configure and retrieve an appropriate tool for extracting each resolved plugin dependency. It is
+     * conceivable that some resolved dependencies could be zip files, jar files, or other types, so the manager
+     * approach is a convenient way to provide extensibility here.
      * 
      * @component
      */
@@ -123,6 +123,7 @@ public class InstallPluginsMojo
 
     /**
      * Input handler, needed for comand line handling.
+     * 
      * @component
      */
     private InputHandler inputHandler;
@@ -132,7 +133,7 @@ public class InstallPluginsMojo
 
     public InstallPluginsMojo()
     {
-        //used for plexus init.
+        // used for plexus init.
     }
 
     // used primarily for testing.
@@ -153,9 +154,9 @@ public class InstallPluginsMojo
     }
 
     /**
-     * Traverse the list of resolved dependency artifacts. For each one having a type that is listed
-     * in the pluginDependencyTypes parameter value, resolve the associated project metadata (POM),
-     * and perform install(..) on that artifact.
+     * Traverse the list of resolved dependency artifacts. For each one having a type that is listed in the
+     * pluginDependencyTypes parameter value, resolve the associated project metadata (POM), and perform install(..) on
+     * that artifact.
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -198,8 +199,8 @@ public class InstallPluginsMojo
 
                 try
                 {
-                    project = projectBuilder.buildFromRepository( artifact, Collections.EMPTY_LIST, localRepository,
-                                                                  true );
+                    project =
+                        projectBuilder.buildFromRepository( artifact, Collections.EMPTY_LIST, localRepository, true );
                 }
                 catch ( ProjectBuildingException e )
                 {
@@ -211,38 +212,36 @@ public class InstallPluginsMojo
             }
             else
             {
-                getLog()
-                    .debug(
-                            "Skipping dependency: " + artifact.getId()
-                                + ". Set pluginDependencyTypes with a comma-separated list of types to change this." );
+                getLog().debug(
+                                "Skipping dependency: " + artifact.getId() +
+                                    ". Set pluginDependencyTypes with a comma-separated list of types to change this." );
             }
         }
     }
 
     /**
-     * <p>Install the plugin into the eclipse instance's /plugins directory</p>
-     * 
+     * <p>
+     * Install the plugin into the eclipse instance's /plugins directory
+     * </p>
      * <ol>
      * <li>Determine whether the plugin should be extracted into a directory or not</li>
      * <li>If the plugin's target location exists, or overwrite is set to true:
      * <ol type="a">
-     *   <li>if extract, ensure the plugin target location exists (mkdirs), and extract there.</li>
-     *   <li>copy the plugin file from the local repository to the target location</li>
+     * <li>if extract, ensure the plugin target location exists (mkdirs), and extract there.</li>
+     * <li>copy the plugin file from the local repository to the target location</li>
      * </ol>
-     * 
      * <p>
-     * Warn whenever a plugin will overwrite an existing file or directory, and emit an INFO message
-     * whenever a plugin installation is skipped because of an existing file and overwrite == false.
+     * Warn whenever a plugin will overwrite an existing file or directory, and emit an INFO message whenever a plugin
+     * installation is skipped because of an existing file and overwrite == false.
      * </p>
      * 
      * @param artifact The plugin dependency as it has been resolved.
-     * @param project The project metadata for the accompanying plugin-dependency artifact, used to
-     * determine whether to install as a jar or as a directory
-     * 
-     * @throws MojoExecutionException In the event the plugin should be extracted but cannot, or the
-     * file copy fails (in the event it should not be extracted)
-     * @throws MojoFailureException In the event that the plugins target directory (inside the 
-     * Eclipse instance directory) does not exist, or is not a directory.
+     * @param project The project metadata for the accompanying plugin-dependency artifact, used to determine whether to
+     *            install as a jar or as a directory
+     * @throws MojoExecutionException In the event the plugin should be extracted but cannot, or the file copy fails (in
+     *             the event it should not be extracted)
+     * @throws MojoFailureException In the event that the plugins target directory (inside the Eclipse instance
+     *             directory) does not exist, or is not a directory.
      */
     private void install( Artifact artifact, MavenProject project )
         throws MojoExecutionException, MojoFailureException
@@ -254,8 +253,8 @@ public class InstallPluginsMojo
 
         if ( !pluginsDir.exists() || !pluginsDir.isDirectory() )
         {
-            throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir
-                + " (plugins directory is missing or not a directory)." );
+            throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir +
+                " (plugins directory is missing or not a directory)." );
         }
 
         boolean installAsJar = true;
@@ -276,8 +275,8 @@ public class InstallPluginsMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to read manifest of plugin "
-                + artifact.getFile().getAbsolutePath(), e );
+            throw new MojoExecutionException( "Unable to read manifest of plugin " +
+                artifact.getFile().getAbsolutePath(), e );
         }
 
         String bundleVersion = attributes.getValue( "Bundle-Version" );
@@ -293,8 +292,8 @@ public class InstallPluginsMojo
         if ( bundleName == null )
         {
             getLog().debug(
-                            "Ignoring " + artifact.getArtifactId()
-                                + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
+                            "Ignoring " + artifact.getArtifactId() +
+                                " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
             return;
         }
 
@@ -313,8 +312,8 @@ public class InstallPluginsMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Failed to remove old plugin from: " + pluginFile + " or: "
-                        + pluginDir, e );
+                    throw new MojoExecutionException( "Failed to remove old plugin from: " + pluginFile + " or: " +
+                        pluginDir, e );
                 }
 
                 getLog().debug( "Removal of old plugin is complete; proceeding with plugin installation." );
@@ -342,14 +341,14 @@ public class InstallPluginsMojo
             if ( installAsJar )
             {
                 getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile
-                                   + " already exists. Set overwrite = true to override this." );
+                               "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile +
+                                   " already exists. Set overwrite = true to override this." );
             }
             else if ( !installAsJar )
             {
                 getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir
-                                   + " already exists. Set overwrite = true to override this." );
+                               "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir +
+                                   " already exists. Set overwrite = true to override this." );
             }
         }
     }
@@ -369,8 +368,8 @@ public class InstallPluginsMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Failed to copy Eclipse plugin: " + artifact.getId() + "\nfrom: "
-                    + artifact.getFile() + "\nto: " + pluginFile, e );
+                throw new MojoExecutionException( "Failed to copy Eclipse plugin: " + artifact.getId() + "\nfrom: " +
+                    artifact.getFile() + "\nto: " + pluginFile, e );
             }
         }
         else

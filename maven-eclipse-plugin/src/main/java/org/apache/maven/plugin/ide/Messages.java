@@ -41,7 +41,6 @@ class Messages
 
     /**
      * Don't instantiate.
-     *
      */
     private Messages()
     {
@@ -49,6 +48,7 @@ class Messages
 
     /**
      * Returns a string from the bundle.
+     * 
      * @param key message key
      * @return message value or <code>!key!</code> if key is not found
      */
@@ -66,6 +66,7 @@ class Messages
 
     /**
      * Returns a string from the bundle, formatting it using provided params.
+     * 
      * @param key message key
      * @param params MessageFormat arguments
      * @return message value or <code>!key!</code> if key is not found
@@ -84,6 +85,7 @@ class Messages
 
     /**
      * Returns a string from the bundle, formatting it using provided param.
+     * 
      * @param key message key
      * @param param MessageFormat arguments
      * @return message value or <code>!key!</code> if key is not found

@@ -47,7 +47,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Writes eclipse .project file.
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -231,18 +231,18 @@ public class EclipseProjectWriter
             if ( addLinks )
             {
 
-                addFileLink( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                    .getProject().getFile() );
+                addFileLink( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
+                             config.getProject().getFile() );
 
-                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                    .getProject().getCompileSourceRoots() );
-                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                    .getProject().getBuild().getResources() );
+                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
+                                config.getProject().getCompileSourceRoots() );
+                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
+                                  config.getProject().getBuild().getResources() );
 
-                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                    .getProject().getTestCompileSourceRoots() );
-                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                    .getProject().getBuild().getTestResources() );
+                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
+                                config.getProject().getTestCompileSourceRoots() );
+                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
+                                  config.getProject().getBuild().getTestResources() );
 
             }
 
@@ -252,8 +252,8 @@ public class EclipseProjectWriter
                 {
                     IdeDependency dep = config.getDeps()[j];
 
-                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
-                        && !dep.isTestDependency() && !dep.isOsgiBundle() )
+                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject() &&
+                        !dep.isTestDependency() && !dep.isOsgiBundle() )
                     {
                         String name = dep.getFile().getName();
                         addLink( writer, name, StringUtils.replace( IdeUtils.getCanonicalPath( dep.getFile() ), "\\",

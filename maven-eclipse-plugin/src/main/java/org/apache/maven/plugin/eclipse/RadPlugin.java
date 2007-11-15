@@ -52,19 +52,25 @@ public class RadPlugin
 
     private static final String COM_IBM_ETOOLS_SITEEDIT_SITE_NAV_BUILDER = "com.ibm.etools.siteedit.SiteNavBuilder";
 
-    private static final String COM_IBM_ETOOLS_SITEEDIT_SITE_UPDATE_BUILDER = "com.ibm.etools.siteedit.SiteUpdateBuilder";
+    private static final String COM_IBM_ETOOLS_SITEEDIT_SITE_UPDATE_BUILDER =
+        "com.ibm.etools.siteedit.SiteUpdateBuilder";
 
     private static final String COM_IBM_ETOOLS_SITEEDIT_WEB_SITE_NATURE = "com.ibm.etools.siteedit.WebSiteNature";
 
-    private static final String COM_IBM_ETOOLS_VALIDATION_VALIDATIONBUILDER = "com.ibm.etools.validation.validationbuilder";
+    private static final String COM_IBM_ETOOLS_VALIDATION_VALIDATIONBUILDER =
+        "com.ibm.etools.validation.validationbuilder";
 
-    private static final String COM_IBM_ETOOLS_WEBPAGE_TEMPLATE_TEMPLATEBUILDER = "com.ibm.etools.webpage.template.templatebuilder";
+    private static final String COM_IBM_ETOOLS_WEBPAGE_TEMPLATE_TEMPLATEBUILDER =
+        "com.ibm.etools.webpage.template.templatebuilder";
 
-    private static final String COM_IBM_ETOOLS_WEBPAGE_TEMPLATE_TEMPLATENATURE = "com.ibm.etools.webpage.template.templatenature";
+    private static final String COM_IBM_ETOOLS_WEBPAGE_TEMPLATE_TEMPLATENATURE =
+        "com.ibm.etools.webpage.template.templatenature";
 
-    private static final String COM_IBM_ETOOLS_WEBTOOLS_ADDITIONS_JSPCOMPILATIONBUILDER = "com.ibm.etools.webtools.additions.jspcompilationbuilder";
+    private static final String COM_IBM_ETOOLS_WEBTOOLS_ADDITIONS_JSPCOMPILATIONBUILDER =
+        "com.ibm.etools.webtools.additions.jspcompilationbuilder";
 
-    private static final String COM_IBM_ETOOLS_WEBTOOLS_ADDITIONS_LINKSBUILDER = "com.ibm.etools.webtools.additions.linksbuilder";
+    private static final String COM_IBM_ETOOLS_WEBTOOLS_ADDITIONS_LINKSBUILDER =
+        "com.ibm.etools.webtools.additions.linksbuilder";
 
     private static final String COM_IBM_SSE_MODEL_STRUCTUREDBUILDER = "com.ibm.sse.model.structuredbuilder";
 
@@ -77,7 +83,7 @@ public class RadPlugin
     private static final String COM_IBM_WTP_MIGRATION_MIGRATION_BUILDER = "com.ibm.wtp.migration.MigrationBuilder";
 
     private static final String COM_IBM_WTP_WEB_WEB_NATURE = "com.ibm.wtp.web.WebNature";
-    
+
     private static final String NO_GENERATED_RESOURCE_DIRNAME = "none";
 
     private static final String ORG_ECLIPSE_JDT_CORE_JAVABUILDER = "org.eclipse.jdt.core.javabuilder";
@@ -85,20 +91,18 @@ public class RadPlugin
     private static final String ORG_ECLIPSE_JDT_CORE_JAVANATURE = "org.eclipse.jdt.core.javanature";
 
     /**
-     * The context root of the webapplication. This parameter is only used when
-     * the current project is a war project, else it will be ignored.
+     * The context root of the webapplication. This parameter is only used when the current project is a war project,
+     * else it will be ignored.
      * 
      * @parameter
      */
     private String warContextRoot;
-    
-    
+
     /**
-     * Use this to specify a different generated resources folder than
-     * target/generated-resources/rad6.
-     * Set to "none" to skip this folder generation.
+     * Use this to specify a different generated resources folder than target/generated-resources/rad6. Set to "none" to
+     * skip this folder generation.
      * 
-     * @parameter  expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
+     * @parameter expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
      */
     private String generatedResourceDirName;
 
@@ -119,17 +123,11 @@ public class RadPlugin
     }
 
     /**
-     * write all rad6 configuration files.
-     * <br/>
-     * <b>
-     * NOTE: This could change the config!
-     * </b>
+     * write all rad6 configuration files. <br/> <b> NOTE: This could change the config! </b>
      * 
      * @see EclipsePlugin#writeConfiguration()
-     * @param deps
-     *            resolved dependencies to handle
-     * @throws MojoExecutionException
-     *             if the config files could not be written.
+     * @param deps resolved dependencies to handle
+     * @throws MojoExecutionException if the config files could not be written.
      */
     protected void writeExtraConfiguration( EclipseWriterConfig config )
         throws MojoExecutionException
@@ -150,28 +148,29 @@ public class RadPlugin
     }
 
     /**
-     * make room for a Manifest file. use a generated resource for JARS and for
-     * WARS use the manifest in the webapp/meta-inf directory.
-     * @throws MojoExecutionException 
+     * make room for a Manifest file. use a generated resource for JARS and for WARS use the manifest in the
+     * webapp/meta-inf directory.
+     * 
+     * @throws MojoExecutionException
      */
     private void addManifestResource( EclipseWriterConfig config )
         throws MojoExecutionException
     {
         if ( isJavaProject() )
         {
-            // special case must be done first because it can add stuff to the classpath that will be 
+            // special case must be done first because it can add stuff to the classpath that will be
             // written by the superclass
             new RadManifestWriter().init( getLog(), config ).write();
         }
-        
-        if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
-            && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
-            && !Constants.PROJECT_PACKAGING_EJB.equals( packaging )
-            && !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ))
+
+        if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) &&
+            !Constants.PROJECT_PACKAGING_WAR.equals( packaging ) &&
+            !Constants.PROJECT_PACKAGING_EJB.equals( packaging ) &&
+            !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ) )
         {
 
-            String generatedResourceDir = this.project.getBasedir().getAbsolutePath() + File.separatorChar
-                + this.generatedResourceDirName;
+            String generatedResourceDir =
+                this.project.getBasedir().getAbsolutePath() + File.separatorChar + this.generatedResourceDirName;
 
             String metainfDir = generatedResourceDir + File.separatorChar + "META-INF";
 
@@ -188,16 +187,15 @@ public class RadPlugin
 
         if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
         {
-            new File( this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar
-                + "main" + File.separatorChar + "webapp" + File.separatorChar + "META-INF" ).mkdirs();
+            new File( this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar +
+                "main" + File.separatorChar + "webapp" + File.separatorChar + "META-INF" ).mkdirs();
         }
     }
 
     /**
      * overwite the default builders with the builders required by RAD6.
      * 
-     * @param packaging
-     *            packaging-type (jar,war,ejb,ear)
+     * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultBuilders( String packaging )
     {
@@ -241,8 +239,7 @@ public class RadPlugin
     /**
      * overwite the default natures with the natures required by RAD6.
      * 
-     * @param packaging
-     *            packaging-type (jar,war,ejb,ear)
+     * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultNatures( String packaging )
     {
@@ -275,24 +272,21 @@ public class RadPlugin
     /**
      * Utility method that locates a project producing the given artifact.
      * 
-     * @param artifact
-     *            the artifact a project should produce.
-     * @return <code>true</code> if the artifact is produced by a reactor
-     *         projectart.
+     * @param artifact the artifact a project should produce.
+     * @return <code>true</code> if the artifact is produced by a reactor projectart.
      */
     protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
-        if ( this.reactorProjects != null
-            && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
-                || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR
-                .equals( artifact.getType() ) ) )
+        if ( this.reactorProjects != null &&
+            ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() ) ||
+                Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
         {
             for ( Iterator iter = this.reactorProjects.iterator(); iter.hasNext(); )
             {
                 MavenProject reactorProject = (MavenProject) iter.next();
 
-                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
-                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() ) &&
+                    reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
                 {
                     if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
                     {
@@ -300,12 +294,11 @@ public class RadPlugin
                     }
                     else
                     {
-                        getLog()
-                            .info(
-                                   "Artifact "
-                                       + artifact.getId()
-                                       + " already available as a reactor project, but with different version. Expected: "
-                                       + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
+                        getLog().info(
+                                       "Artifact " +
+                                           artifact.getId() +
+                                           " already available as a reactor project, but with different version. Expected: " +
+                                           artifact.getVersion() + ", found: " + reactorProject.getVersion() );
                     }
                 }
             }
@@ -314,8 +307,8 @@ public class RadPlugin
     }
 
     /**
-     * WARNING: The manifest resources added here will not have the benefit of the dependencies
-     * of the project, since that's not provided in the setup() apis...
+     * WARNING: The manifest resources added here will not have the benefit of the dependencies of the project, since
+     * that's not provided in the setup() apis...
      */
     protected void setupExtras()
         throws MojoExecutionException

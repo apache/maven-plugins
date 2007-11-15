@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Represents a buildCommand section in the <code>.project</code> file.
- *
+ * 
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
  * @author Jochen Kuhnle
  */
@@ -53,7 +53,7 @@ public class BuildCommand
 
     /**
      * Creates a new build command
-     *
+     * 
      * @param name Command name
      */
     public BuildCommand( String name )
@@ -76,7 +76,7 @@ public class BuildCommand
 
     /**
      * Creates a new build command
-     *
+     * 
      * @param name Command name
      * @param triggers Command triggers
      * @param arguments Command arguments
@@ -106,7 +106,7 @@ public class BuildCommand
      * Creates a new build command from a DOM subtree
      * <p>
      * The subtree must represent a &lt;buildCommand&gt; section from an Eclipse .project file
-     *
+     * 
      * @param node DOM node
      */
     public BuildCommand( Xpp3Dom node )
@@ -206,10 +206,10 @@ public class BuildCommand
         {
             BuildCommand b = (BuildCommand) obj;
 
-            return name.equals( b.name )
-                && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
-                && ( arguments == null || arguments.isEmpty() ? b.arguments == null || b.arguments.isEmpty()
-                                                             : arguments.equals( b.arguments ) );
+            return name.equals( b.name ) &&
+                ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) ) &&
+                ( arguments == null || arguments.isEmpty() ? b.arguments == null || b.arguments.isEmpty()
+                                : arguments.equals( b.arguments ) );
         }
         else
         {
@@ -219,7 +219,7 @@ public class BuildCommand
 
     public int hashCode()
     {
-        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() )
-            + ( arguments == null ? 0 : 17 * arguments.hashCode() );
+        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() ) +
+            ( arguments == null ? 0 : 17 * arguments.hashCode() );
     }
 }

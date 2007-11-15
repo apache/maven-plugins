@@ -1,18 +1,14 @@
 package org.apache.maven.plugin.eclipse.writers.workspace;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -22,7 +18,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * an Eclipse code style file
  * 
  * @author dtran
- * 
  */
 
 public class EclipseCodeFormatterProfile
@@ -32,13 +27,12 @@ public class EclipseCodeFormatterProfile
     private static final String ELT_PROFILE = "profile";
 
     /**
-     * String presentation of the formatter with EOLs are escaped so that it can
-     * be embedded in a property value
+     * String presentation of the formatter with EOLs are escaped so that it can be embedded in a property value
      */
     private String content;
 
     private String profileName;
-    
+
     public EclipseCodeFormatterProfile init( URL url, String profileName )
         throws MojoExecutionException
     {
@@ -49,9 +43,8 @@ public class EclipseCodeFormatterProfile
         {
             loadDefaultProfileName( url );
         }
-        
-        this.convertFormatterToString( url );
 
+        this.convertFormatterToString( url );
 
         return this;
     }
@@ -74,11 +67,11 @@ public class EclipseCodeFormatterProfile
         }
         catch ( XmlPullParserException e )
         {
-            throw new MojoExecutionException ( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException ( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
         }
         finally
         {
@@ -90,13 +83,13 @@ public class EclipseCodeFormatterProfile
         throws MojoExecutionException
     {
         InputStream is = null;
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        
+
         try
         {
             is = url.openStream();
-            
+
             IOUtil.copy( is, os );
         }
         catch ( IOException e )
@@ -107,9 +100,8 @@ public class EclipseCodeFormatterProfile
         {
             IOUtil.close( is );
         }
-        
+
         content = os.toString();
-        
 
     }
 
@@ -117,7 +109,7 @@ public class EclipseCodeFormatterProfile
     {
         return this.content;
     }
-    
+
     public String getProfileName()
     {
         return this.profileName;

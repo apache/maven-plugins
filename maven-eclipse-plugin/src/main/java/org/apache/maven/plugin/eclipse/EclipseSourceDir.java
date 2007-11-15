@@ -21,6 +21,7 @@ package org.apache.maven.plugin.eclipse;
 /**
  * Represent an eclipse source dir. Eclipse has no "main", "test" or "resource" concepts, so two source dirs with the
  * same path are equal.
+ * 
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  * @version $Id$
  */
@@ -55,7 +56,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>exclude</code>.
-     *
+     * 
      * @return Returns the exclude.
      */
     public String getExclude()
@@ -65,9 +66,8 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>exclude</code>.
-     *
-     * @param exclude
-     *            The exclude to set.
+     * 
+     * @param exclude The exclude to set.
      */
     public void setExclude( String exclude )
     {
@@ -76,7 +76,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>include</code>.
-     *
+     * 
      * @return Returns the include.
      */
     public String getInclude()
@@ -86,9 +86,8 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>include</code>.
-     *
-     * @param include
-     *            The include to set.
+     * 
+     * @param include The include to set.
      */
     public void setInclude( String include )
     {
@@ -97,7 +96,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>output</code>.
-     *
+     * 
      * @return Returns the output.
      */
     public String getOutput()
@@ -107,9 +106,8 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>output</code>.
-     *
-     * @param output
-     *            The output to set.
+     * 
+     * @param output The output to set.
      */
     public void setOutput( String output )
     {
@@ -118,7 +116,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>path</code>.
-     *
+     * 
      * @return Returns the path.
      */
     public String getPath()
@@ -128,9 +126,8 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>path</code>.
-     *
-     * @param path
-     *            The path to set.
+     * 
+     * @param path The path to set.
      */
     public void setPath( String path )
     {
@@ -139,7 +136,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>test</code>.
-     *
+     * 
      * @return Returns the test.
      */
     public boolean isTest()
@@ -149,9 +146,8 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>test</code>.
-     *
-     * @param test
-     *            The test to set.
+     * 
+     * @param test The test to set.
      */
     public void setTest( boolean test )
     {
@@ -160,6 +156,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>isResource</code>.
+     * 
      * @return Returns the isResource.
      */
     public boolean isResource()
@@ -180,8 +177,8 @@ public class EclipseSourceDir
      */
     public boolean equals( Object obj )
     {
-        return ( obj != null ) && ( obj instanceof EclipseSourceDir )
-            && this.path.equals( ( (EclipseSourceDir) obj ).path );
+        return ( obj != null ) && ( obj instanceof EclipseSourceDir ) &&
+            this.path.equals( ( (EclipseSourceDir) obj ).path );
     }
 
     /**

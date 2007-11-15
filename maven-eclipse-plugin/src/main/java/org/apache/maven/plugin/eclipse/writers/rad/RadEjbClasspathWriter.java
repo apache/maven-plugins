@@ -45,8 +45,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 
 /**
- * Adapts the .classpath file for RAD6 for now write hardcoded:
- * target/websphere/classes future releases could make this varriable.
+ * Adapts the .classpath file for RAD6 for now write hardcoded: target/websphere/classes future releases could make this
+ * varriable.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
@@ -76,21 +76,17 @@ public class RadEjbClasspathWriter
 
     private static final String VAR = "var";
 
-    private static final String WEBSPHERE6CONTAIGNER = "com.ibm.wtp.server.java.core.container/com.ibm.ws.ast.st.runtime.core.runtimeTarget.v60/was.base.v6";
+    private static final String WEBSPHERE6CONTAIGNER =
+        "com.ibm.wtp.server.java.core.container/com.ibm.ws.ast.st.runtime.core.runtimeTarget.v60/was.base.v6";
 
     /**
      * write the .classpath file to the project root directory.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[],
-     *      ArtifactRepository, File)
-     * @param sourceDirs
-     *            all eclipse source directorys
-     * @param localRepository
-     *            the local reposetory
-     * @param buildOutputDirectory
-     *            build output directory (target)
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
+     * @param sourceDirs all eclipse source directorys
+     * @param localRepository the local reposetory
+     * @param buildOutputDirectory build output directory (target)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
         throws MojoExecutionException
@@ -109,8 +105,8 @@ public class RadEjbClasspathWriter
             Xpp3Dom[] children = classpath.getChildren();
             for ( int index = 0; index < children.length; index++ )
             {
-                if ( LIB.equals( children[index].getAttribute( KIND ) )
-                    && TARGET_WEBSPHERE_CLASSES.equals( children[index].getAttribute( "path" ) ) )
+                if ( LIB.equals( children[index].getAttribute( KIND ) ) &&
+                    TARGET_WEBSPHERE_CLASSES.equals( children[index].getAttribute( "path" ) ) )
                 {
                     return; // nothing to do!
                 }
@@ -154,11 +150,9 @@ public class RadEjbClasspathWriter
     }
 
     /**
-     * determinate of witch type this classpath entry is. this is used for
-     * sorting them.
+     * determinate of witch type this classpath entry is. this is used for sorting them.
      * 
-     * @param classpathentry
-     *            the classpath entry to sort
+     * @param classpathentry the classpath entry to sort
      * @return an integer identifieing the type
      * @see RadEjbClasspathWriter#orderClasspath(Xpp3Dom)
      */
@@ -207,16 +201,11 @@ public class RadEjbClasspathWriter
     }
 
     /**
-     * Order of classpath this is nessesary for the ejb's the generated classes
-     * are elsewise not found.
+     * Order of classpath this is nessesary for the ejb's the generated classes are elsewise not found. 1 - kind=src
+     * ohne starting '/' oder '\' 2 - kind=lib kein ':' und kein start mit '/' oder '\' 3 - kind=src mit ohne starting
+     * '/' oder '\' 4 - kind=var 5 - kind=lib ein ':' oder start mit '/' oder '\' 6 - rest 7 - kind=output
      * 
-     * 1 - kind=src ohne starting '/' oder '\' 2 - kind=lib kein ':' und kein
-     * start mit '/' oder '\' 3 - kind=src mit ohne starting '/' oder '\' 4 -
-     * kind=var 5 - kind=lib ein ':' oder start mit '/' oder '\' 6 - rest 7 -
-     * kind=output
-     * 
-     * @param classpath
-     *            the classpath to sort
+     * @param classpath the classpath to sort
      * @return dom-tree representing ordered classpath
      */
     private Xpp3Dom orderClasspath( Xpp3Dom classpath )
@@ -240,8 +229,7 @@ public class RadEjbClasspathWriter
     /**
      * read an xml file (application.xml or .modulemaps).
      * 
-     * @param xmlFile
-     *            an xmlfile
+     * @param xmlFile an xmlfile
      * @return dom-tree representing the file contents
      */
     private Xpp3Dom readXMLFile( File xmlFile )
@@ -265,11 +253,9 @@ public class RadEjbClasspathWriter
     }
 
     /**
-     * Losche alle pfade die nach was6 zeigen diese sind erkennbar an den
-     * parrent runtimes/base_v6/lib.
+     * Losche alle pfade die nach was6 zeigen diese sind erkennbar an den parrent runtimes/base_v6/lib.
      * 
-     * @param classpath
-     *            classpath to remove was6 libraries
+     * @param classpath classpath to remove was6 libraries
      */
     private void removeDupicateWAS6Libs( Xpp3Dom classpath )
     {
@@ -281,9 +267,9 @@ public class RadEjbClasspathWriter
             {
                 File path = new File( children[index].getAttribute( PATH ) );
 
-                if ( path.exists() && path.getParentFile().getName().equals( LIB )
-                    && path.getParentFile().getParentFile().getName().equals( "base_v6" )
-                    && path.getParentFile().getParentFile().getParentFile().getName().equals( "runtimes" ) )
+                if ( path.exists() && path.getParentFile().getName().equals( LIB ) &&
+                    path.getParentFile().getParentFile().getName().equals( "base_v6" ) &&
+                    path.getParentFile().getParentFile().getParentFile().getName().equals( "runtimes" ) )
                 {
                     Xpp3Dom[] currentChildren = classpath.getChildren();
                     for ( int deleteIndex = currentChildren.length - 1; deleteIndex >= 0; deleteIndex-- )

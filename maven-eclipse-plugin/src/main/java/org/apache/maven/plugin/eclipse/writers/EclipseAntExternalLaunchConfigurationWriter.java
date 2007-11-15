@@ -25,9 +25,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes an external ant launch file.
- *
+ * 
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
- *
  */
 public class EclipseAntExternalLaunchConfigurationWriter
     extends EclipseLaunchConfigurationWriter
@@ -35,10 +34,8 @@ public class EclipseAntExternalLaunchConfigurationWriter
     private String buildfilePath;
 
     /**
-     *
      * @param launcherName Name of the launch file, for instance 'AntBuilder.launch'
-     * @param buildfilePath Project relative path to the ant build file, for instance
-     *            'eclipse-build.xml'
+     * @param buildfilePath Project relative path to the ant build file, for instance 'eclipse-build.xml'
      * @return this
      */
     public EclipseWriter init( Log log, EclipseWriterConfig config, String launcherName, String buildfilePath )
@@ -63,8 +60,8 @@ public class EclipseAntExternalLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_TYPES", new String[] { "1" } );
 
-        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS", new String[] { "/"
-            + config.getEclipseProjectName() + "/" + buildfilePath } );
+        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS", new String[] { "/" +
+            config.getEclipseProjectName() + "/" + buildfilePath } );
     }
 
     protected String getLaunchConfigurationType()

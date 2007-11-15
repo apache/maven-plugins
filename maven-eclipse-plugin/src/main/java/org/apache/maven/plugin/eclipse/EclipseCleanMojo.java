@@ -27,7 +27,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
- *
+ * 
  * @goal clean
  */
 public class EclipseCleanMojo
@@ -76,42 +76,41 @@ public class EclipseCleanMojo
 
     /**
      * Packaging for the current project.
+     * 
      * @parameter expression="${project.packaging}"
      */
     private String packaging;
 
     /**
      * The root directory of the project
-     *
+     * 
      * @parameter expression="${basedir}"
      */
     private File basedir;
 
-    
     /**
      * Skip the operation when true.
-     *
+     * 
      * @parameter expression="${eclipse.skip}" default-value="false"
      */
     private boolean skip;
-    
-    
+
     /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
         throws MojoExecutionException
     {
-    	if( skip )
-    	{
-    		return;
-    	}
+        if ( skip )
+        {
+            return;
+        }
 
         if ( Constants.PROJECT_PACKAGING_POM.equals( this.packaging ) )
         {
             return;
         }
-        
+
         delete( new File( basedir, FILE_DOT_PROJECT ) );
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
@@ -138,7 +137,7 @@ public class EclipseCleanMojo
 
     /**
      * Delete a file, handling log messages and exceptions
-     *
+     * 
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
@@ -165,8 +164,7 @@ public class EclipseCleanMojo
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
-                                                                          new Object[] {
-                                                                              f.getName(),
+                                                                          new Object[] { f.getName(),
                                                                               f.getAbsolutePath() } ) );
                 }
             }
@@ -179,6 +177,7 @@ public class EclipseCleanMojo
 
     /**
      * Getter for <code>basedir</code>.
+     * 
      * @return Returns the basedir.
      */
     public File getBasedir()
@@ -188,6 +187,7 @@ public class EclipseCleanMojo
 
     /**
      * Setter for <code>basedir</code>.
+     * 
      * @param basedir The basedir to set.
      */
     public void setBasedir( File basedir )
@@ -198,14 +198,16 @@ public class EclipseCleanMojo
     /**
      * @return the packaging
      */
-    public String getPackaging() {
+    public String getPackaging()
+    {
         return this.packaging;
     }
 
     /**
      * @param packaging the packaging to set
      */
-    public void setPackaging(String packaging) {
+    public void setPackaging( String packaging )
+    {
         this.packaging = packaging;
     }
 

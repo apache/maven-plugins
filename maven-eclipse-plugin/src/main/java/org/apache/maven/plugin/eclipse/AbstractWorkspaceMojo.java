@@ -22,7 +22,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 
 /**
- * 
  * @requiresProject true
  */
 public abstract class AbstractWorkspaceMojo

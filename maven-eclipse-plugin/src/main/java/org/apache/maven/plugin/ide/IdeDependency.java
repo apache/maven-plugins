@@ -88,7 +88,7 @@ public class IdeDependency
      * Artifact classifier
      */
     private String classifier;
-    
+
     /**
      * Artifact type.
      */
@@ -100,10 +100,10 @@ public class IdeDependency
     private boolean osgiBundle;
 
     /**
-     * How is this dependency called when it is an eclipse project. 
+     * How is this dependency called when it is an eclipse project.
      */
     private String eclipseProjectName;
-    
+
     /**
      * Creates an uninitialized instance
      */
@@ -112,7 +112,6 @@ public class IdeDependency
     }
 
     /**
-     * 
      * @param groupId Group id
      * @param artifactId Artifact id
      * @param version Artifact version
@@ -129,10 +128,10 @@ public class IdeDependency
      * @param dependencyDepth Depth of this dependency in the transitive dependency trail.
      * @param eclipseProjectName The name of the project in eclipse
      */
-    public IdeDependency( String groupId, String artifactId, String version, String classifier, boolean referencedProject,
-                          boolean testDependency, boolean systemScoped, boolean provided, boolean addedToClasspath,
-                          File file, String type, boolean osgiBundle, String osgiSymbolicName, int dependencyDepth,
-                          String eclipseProjectName)
+    public IdeDependency( String groupId, String artifactId, String version, String classifier,
+                          boolean referencedProject, boolean testDependency, boolean systemScoped, boolean provided,
+                          boolean addedToClasspath, File file, String type, boolean osgiBundle,
+                          String osgiSymbolicName, int dependencyDepth, String eclipseProjectName )
     {
         // group:artifact:version
         this.groupId = groupId;
@@ -157,6 +156,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>javadocAttachment</code>.
+     * 
      * @return Returns the javadocAttachment.
      */
     public File getJavadocAttachment()
@@ -166,6 +166,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>javadocAttachment</code>.
+     * 
      * @param javadocAttachment The javadocAttachment to set.
      */
     public void setJavadocAttachment( File javadocAttachment )
@@ -175,6 +176,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>artifactId</code>.
+     * 
      * @return Returns the artifactId.
      */
     public String getArtifactId()
@@ -184,6 +186,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>artifactId</code>.
+     * 
      * @param artifactId The artifactId to set.
      */
     public void setArtifactId( String artifactId )
@@ -193,6 +196,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>groupId</code>.
+     * 
      * @return Returns the groupId.
      */
     public String getGroupId()
@@ -202,6 +206,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>groupId</code>.
+     * 
      * @param groupId The groupId to set.
      */
     public void setGroupId( String groupId )
@@ -211,6 +216,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>version</code>.
+     * 
      * @return Returns the version.
      */
     public String getVersion()
@@ -220,6 +226,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>version</code>.
+     * 
      * @param version The version to set.
      */
     public void setVersion( String version )
@@ -229,6 +236,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>classifier</code>.
+     * 
      * @return Returns the classifier.
      */
     public String getClassifier()
@@ -238,15 +246,17 @@ public class IdeDependency
 
     /**
      * Setter for <code>groupId</code>.
+     * 
      * @param groupId The groupId to set.
      */
     public void setClassifier( String classifier )
     {
         this.classifier = classifier;
     }
-    
+
     /**
      * Getter for <code>referencedProject</code>.
+     * 
      * @return Returns the referencedProject.
      */
     public boolean isReferencedProject()
@@ -256,6 +266,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>osgiBundle</code>.
+     * 
      * @return Returns the osgiBundle.
      */
     public boolean isOsgiBundle()
@@ -265,6 +276,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>referencedProject</code>.
+     * 
      * @param referencedProject The referencedProject to set.
      */
     public void setReferencedProject( boolean referencedProject )
@@ -274,6 +286,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>sourceAttachment</code>.
+     * 
      * @return Returns the sourceAttachment.
      */
     public File getSourceAttachment()
@@ -283,6 +296,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>sourceAttachment</code>.
+     * 
      * @param sourceAttachment The sourceAttachment to set.
      */
     public void setSourceAttachment( File sourceAttachment )
@@ -292,6 +306,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>systemScoped</code>.
+     * 
      * @return Returns the systemScoped.
      */
     public boolean isSystemScoped()
@@ -301,6 +316,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>systemScoped</code>.
+     * 
      * @param systemScoped The systemScoped to set.
      */
     public void setSystemScoped( boolean systemScoped )
@@ -310,6 +326,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>testDependency</code>.
+     * 
      * @return Returns the testDependency.
      */
     public boolean isTestDependency()
@@ -319,6 +336,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>testDependency</code>.
+     * 
      * @param testDependency The testDependency to set.
      */
     public void setTestDependency( boolean testDependency )
@@ -328,6 +346,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>file</code>.
+     * 
      * @return Returns the file.
      */
     public File getFile()
@@ -337,6 +356,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>file</code>.
+     * 
      * @param file The file to set.
      */
     public void setFile( File file )
@@ -346,6 +366,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>artifactId</code>.
+     * 
      * @return Returns the artifactId.
      */
     public String getId()
@@ -355,6 +376,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>type</code>.
+     * 
      * @return Returns the type.
      */
     public String getType()
@@ -364,6 +386,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>type</code>.
+     * 
      * @param type The type to set.
      */
     public void setType( String type )
@@ -373,6 +396,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>addedToClasspath</code>.
+     * 
      * @return Returns the addedToClasspath.
      */
     public boolean isAddedToClasspath()
@@ -382,6 +406,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>addedToClasspath</code>.
+     * 
      * @param addedToClasspath The addedToClasspath to set.
      */
     public void setAddedToClasspath( boolean addedToClasspath )
@@ -391,6 +416,7 @@ public class IdeDependency
 
     /**
      * Getter for <code>provided</code>.
+     * 
      * @return Returns the provided.
      */
     public boolean isProvided()
@@ -400,6 +426,7 @@ public class IdeDependency
 
     /**
      * Setter for <code>provided</code>.
+     * 
      * @param provided The provided to set.
      */
     public void setProvided( boolean provided )
@@ -409,20 +436,24 @@ public class IdeDependency
 
     /**
      * Getter for <code>eclipseProjectName</code>.
+     * 
      * @return Returns the eclipseProjectName.
      */
-    public String getEclipseProjectName() {
+    public String getEclipseProjectName()
+    {
         return this.eclipseProjectName;
     }
-    
+
     /**
      * Setter for <code>eclipseProjectName</code>.
+     * 
      * @param eclipseProjectName The eclipseProjectName to set.
      */
-    public void setEclipseProjectName(String eclipseProjectName) {
+    public void setEclipseProjectName( String eclipseProjectName )
+    {
         this.eclipseProjectName = eclipseProjectName;
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */
@@ -432,14 +463,13 @@ public class IdeDependency
     }
 
     /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * Compare using groupId+artifactId+type Strings
+     * @see java.lang.Comparable#compareTo(java.lang.Object) Compare using groupId+artifactId+type Strings
      */
     public int compareTo( Object o )
     {
         IdeDependency dep = (IdeDependency) o;
-        //in case of system scoped dependencies the files must be compared.
-        if (isSystemScoped() && dep.isSystemScoped() && getFile().equals(dep.getFile())) 
+        // in case of system scoped dependencies the files must be compared.
+        if ( isSystemScoped() && dep.isSystemScoped() && getFile().equals( dep.getFile() ) )
         {
             return 0;
         }
@@ -462,38 +492,39 @@ public class IdeDependency
     }
 
     /**
-     * Is this dependency System scoped outside the eclipse project. This is 
-     * NOT complete because in reality the check should mean that any module 
-     * in the reactor contains the system scope locally!
+     * Is this dependency System scoped outside the eclipse project. This is NOT complete because in reality the check
+     * should mean that any module in the reactor contains the system scope locally!
+     * 
      * @return Returns this dependency is systemScoped outside the project.
      */
     public boolean isSystemScopedOutsideProject( MavenProject project )
     {
         File modulesTop = project.getBasedir();
-        while (new File(modulesTop.getParentFile(), "pom.xml").exists())
+        while ( new File( modulesTop.getParentFile(), "pom.xml" ).exists() )
         {
             modulesTop = modulesTop.getParentFile();
         }
-        return isSystemScoped() && !getFile().getAbsolutePath().startsWith(modulesTop.getAbsolutePath());
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object obj) 
-    {
-        return compareTo(obj) == 0;
+        return isSystemScoped() && !getFile().getAbsolutePath().startsWith( modulesTop.getAbsolutePath() );
     }
 
     /**
      * {@inheritDoc}
      */
-    public int hashCode() {
-        if (isSystemScoped()) 
+    public boolean equals( Object obj )
+    {
+        return compareTo( obj ) == 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode()
+    {
+        if ( isSystemScoped() )
         {
             return getFile().hashCode();
-        } 
-        else 
+        }
+        else
         {
             return this.getGroupId().hashCode() ^ this.getArtifactId().hashCode() ^ this.getType().hashCode();
         }
