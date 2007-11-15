@@ -65,10 +65,10 @@ public class EclipseClasspathWriterUnitTest
 
         new File( basedir, maskedOutputDir ).mkdirs();
 
-        EclipseSourceDir dir = new EclipseSourceDir( "src/main/resources", "target/classes", true, false, null, null,
-                                                     false );
-        EclipseSourceDir testDir = new EclipseSourceDir( "src/test/resources", "target/classes/test-resources", true,
-                                                         true, null, null, false );
+        EclipseSourceDir dir =
+            new EclipseSourceDir( "src/main/resources", "target/classes", true, false, null, null, false );
+        EclipseSourceDir testDir =
+            new EclipseSourceDir( "src/test/resources", "target/classes/test-resources", true, true, null, null, false );
 
         EclipseSourceDir[] dirs = { dir, testDir };
 
@@ -92,8 +92,8 @@ public class EclipseClasspathWriterUnitTest
 
         XPath testResourcePath = XPath.newInstance( "//classpathentry[@path='src/test/resources']" );
 
-        assertTrue( "test resources (minus custom output dir) classpath entry not found.", testResourcePath
-            .selectSingleNode( doc ) != null );
+        assertTrue( "test resources (minus custom output dir) classpath entry not found.",
+                    testResourcePath.selectSingleNode( doc ) != null );
 
         XPath stdOutputPath = XPath.newInstance( "//classpathentry[@kind='output' && @path='target/classes']" );
 

@@ -28,13 +28,11 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Copy all dependent jar in the directorys where RAD6 needs then to use the
- * runtime enviorment in RAD6. so all dependent jars in the EAR rootdirectory
- * and all dependend jars in the WAR WEB-INF/lib directory
+ * Copy all dependent jar in the directorys where RAD6 needs then to use the runtime enviorment in RAD6. so all
+ * dependent jars in the EAR rootdirectory and all dependend jars in the WAR WEB-INF/lib directory
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
@@ -45,8 +43,7 @@ public class RadLibCopier
     /**
      * copy the jars in the apropreate directorys.
      * 
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
         throws MojoExecutionException
@@ -65,26 +62,21 @@ public class RadLibCopier
     }
 
     /**
-     * Copies the Artifact after building the destination file name if
-     * overridden. This method also checks if the classifier is set and adds it
-     * to the destination file name if needed.
+     * Copies the Artifact after building the destination file name if overridden. This method also checks if the
+     * classifier is set and adds it to the destination file name if needed.
      * 
-     * @param deps
-     *            representing the dependencies to be copied.
-     * @param destDir
-     *            where should the atifact go.
-     * 
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     * 
+     * @param deps representing the dependencies to be copied.
+     * @param destDir where should the atifact go.
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
     private void copyArtifact( IdeDependency[] deps, File destDir )
         throws MojoExecutionException
     {
-        String[] oldFiles = FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
-                                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
+        String[] oldFiles =
+            FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
+                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
         for ( int index = 0; index < oldFiles.length; index++ )
         {
             if ( !new File( oldFiles[index] ).delete() )
@@ -94,8 +86,8 @@ public class RadLibCopier
         }
         for ( int index = 0; index < deps.length; index++ )
         {
-            if ( !deps[index].isTestDependency() && !deps[index].isProvided() && !deps[index].isReferencedProject()
-                && !deps[index].isSystemScoped() )
+            if ( !deps[index].isTestDependency() && !deps[index].isProvided() && !deps[index].isReferencedProject() &&
+                !deps[index].isSystemScoped() )
             {
                 copyFile( deps[index].getFile(), new File( destDir, deps[index].getFile().getName() ), log );
             }
@@ -105,14 +97,10 @@ public class RadLibCopier
     /**
      * Does the actual copy of the file and logging.
      * 
-     * @param artifact
-     *            represents the file to copy.
-     * @param destFile
-     *            file name of destination file.
-     * @param log
-     *            to use for output.
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
+     * @param artifact represents the file to copy.
+     * @param destFile file name of destination file.
+     * @param log to use for output.
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     private void copyFile( File artifact, File destFile, Log log )
         throws MojoExecutionException
@@ -131,10 +119,8 @@ public class RadLibCopier
     /**
      * EARs need the jars in the root directory.
      * 
-     * @param deps
-     *            dependencys to include
-     * @throws MojoExecutionException
-     *             if the copying fails
+     * @param deps dependencys to include
+     * @throws MojoExecutionException if the copying fails
      */
     private void handleEarLibs( IdeDependency[] deps )
         throws MojoExecutionException
@@ -146,19 +132,17 @@ public class RadLibCopier
     /**
      * WARs need the jars in the WEB-INF/lib directory.
      * 
-     * @param deps
-     *            dependencys to include
-     * @throws MojoExecutionException
-     *             if the copying fails
+     * @param deps dependencys to include
+     * @throws MojoExecutionException if the copying fails
      */
     private void handleWarLibs( IdeDependency[] deps )
         throws MojoExecutionException
     {
         File basedir = config.getProject().getBasedir();
 
-        String srcMainWebappWebInfLibDirName = basedir.getAbsolutePath() + File.separatorChar + "src"
-            + File.separatorChar + "main" + File.separatorChar + "webapp" + File.separatorChar + "WEB-INF"
-            + File.separatorChar + "lib";
+        String srcMainWebappWebInfLibDirName =
+            basedir.getAbsolutePath() + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar +
+                "webapp" + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirName );
         srcMainWebappWebInfLibDir.mkdirs();

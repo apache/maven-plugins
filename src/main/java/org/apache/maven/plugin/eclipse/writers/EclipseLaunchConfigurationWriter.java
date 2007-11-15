@@ -37,9 +37,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Base class for writing external launch configuration files.
- *
+ * 
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
- *
  */
 public abstract class EclipseLaunchConfigurationWriter
     extends AbstractEclipseWriter
@@ -52,7 +51,7 @@ public abstract class EclipseLaunchConfigurationWriter
 
     /**
      * Filename including .launch
-     *
+     * 
      * @param filename
      */
     protected EclipseWriter init( Log log, EclipseWriterConfig config, String filename )
@@ -93,8 +92,8 @@ public abstract class EclipseLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND", isLaunchInBackground() );
 
-        writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS", StringUtils
-            .join( getRunBuildKinds(), "," ) );
+        writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS",
+                        StringUtils.join( getRunBuildKinds(), "," ) );
 
         // i think this one means if the ATTR_RUN_BUILD_KINDS is not default.
         writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED", true );
@@ -119,9 +118,11 @@ public abstract class EclipseLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.core.capture_output", isCaptureOutput() );
 
-        String workingSet = "<?xml version='1.0'?>"
-            + "<launchConfigurationWorkingSet editPageId='org.eclipse.ui.resourceWorkingSetPage'"
-            + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'" + " name='workingSet'>";
+        String workingSet =
+            "<?xml version='1.0'?>"
+                + "<launchConfigurationWorkingSet editPageId='org.eclipse.ui.resourceWorkingSetPage'"
+                + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'"
+                + " name='workingSet'>";
 
         for ( Iterator it = getMonitoredResources().iterator(); it.hasNext(); )
         {

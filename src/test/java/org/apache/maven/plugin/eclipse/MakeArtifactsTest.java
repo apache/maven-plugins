@@ -44,9 +44,10 @@ public class MakeArtifactsTest
      */
     public void testParseDependencies()
     {
-        Dependency[] deps = mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
-            + "org.eclipse.ui.console;resolution:=\"optional\";bundle-version=\"[3.1.100,4.0.0)\",org.eclipse.help;"
-            + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"" );
+        Dependency[] deps =
+            mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
+                + "org.eclipse.ui.console;resolution:=\"optional\";bundle-version=\"[3.1.100,4.0.0)\",org.eclipse.help;"
+                + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"" );
 
         assertEquals( 4, deps.length );
         assertEquals( "org.eclipse.ui", deps[0].getArtifactId() );
@@ -64,8 +65,8 @@ public class MakeArtifactsTest
      */
     public void testParseDependenciesWithQualifier()
     {
-        Dependency[] deps = mojo
-            .parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0.0,4.0.0.0)\","
+        Dependency[] deps =
+            mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0.0,4.0.0.0)\","
                 + "org.eclipse.ui.console;resolution:=\"optional\";bundle-version=\"[3.1.100.0,4.0.0.0)\",org.eclipse.help;"
                 + "bundle-version=\"[3.2.0.1,4.0.0.2)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0.0,4.0.0.0)\"" );
 

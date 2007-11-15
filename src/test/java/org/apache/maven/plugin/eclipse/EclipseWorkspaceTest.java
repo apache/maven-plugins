@@ -29,11 +29,13 @@ public class EclipseWorkspaceTest
     extends AbstractEclipsePluginTestCase
 {
 
-    private static final String ECLIPSE_JDT_CORE_PREFS_PATH = EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR
-        + "/" + EclipseWorkspaceWriter.ECLIPSE_JDT_CORE_PREFS_FILE;
+    private static final String ECLIPSE_JDT_CORE_PREFS_PATH =
+        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" +
+            EclipseWorkspaceWriter.ECLIPSE_JDT_CORE_PREFS_FILE;
 
-    private static final String ECLIPSE_JDT_UI_PREFS_PATH = EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR
-        + "/" + EclipseWorkspaceWriter.ECLIPSE_JDT_UI_PREFS_FILE;
+    private static final String ECLIPSE_JDT_UI_PREFS_PATH =
+        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" +
+            EclipseWorkspaceWriter.ECLIPSE_JDT_UI_PREFS_FILE;
 
     protected void setUp()
         throws Exception
@@ -52,14 +54,15 @@ public class EclipseWorkspaceTest
         this.validateM2REPOVar( projectName );
 
         File eclipseJDTUIPrefsFile = new File( this.getOutputDirectory( projectName ), ECLIPSE_JDT_UI_PREFS_PATH );
-        
+
         assertFalse( eclipseJDTUIPrefsFile.exists() );
     }
 
     public void testWorkspace02()
         throws Exception
     {
-        // In this test we purposely do not include expected/.metatdata/.plugins/org.eclipse.core.runtime.settings/org.eclipse.jdt.core.prefs
+        // In this test we purposely do not include
+        // expected/.metatdata/.plugins/org.eclipse.core.runtime.settings/org.eclipse.jdt.core.prefs
         // The content of that file is heavily depended on the location of the test
 
         String projectName = "workspace-02";
@@ -68,11 +71,10 @@ public class EclipseWorkspaceTest
         testWorkspace( projectName );
 
         this.validateM2REPOVar( projectName );
-        
+
         File eclipseJDTUIPrefsFile = new File( this.getOutputDirectory( projectName ), ECLIPSE_JDT_UI_PREFS_PATH );
-        
+
         assertTrue( eclipseJDTUIPrefsFile.exists() );
-        
 
     }
 

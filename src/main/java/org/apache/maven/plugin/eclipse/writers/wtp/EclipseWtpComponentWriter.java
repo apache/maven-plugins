@@ -18,6 +18,12 @@
  */
 package org.apache.maven.plugin.eclipse.writers.wtp;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
@@ -27,15 +33,9 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
- *
+ * 
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
@@ -56,6 +56,7 @@ public class EclipseWtpComponentWriter
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
+     * 
      * @return <code>.component</code>
      */
     protected String getComponentFileName()
@@ -65,6 +66,7 @@ public class EclipseWtpComponentWriter
 
     /**
      * Version number added to component configuration.
+     * 
      * @return <code>1.0</code>
      */
     protected String getProjectVersion()
@@ -86,7 +88,9 @@ public class EclipseWtpComponentWriter
         Writer w;
         try
         {
-            w = new OutputStreamWriter( new FileOutputStream( new File( settingsDir, getComponentFileName() ) ), "UTF-8" );
+            w =
+                new OutputStreamWriter( new FileOutputStream( new File( settingsDir, getComponentFileName() ) ),
+                                        "UTF-8" );
         }
         catch ( IOException ex )
         {
@@ -96,19 +100,19 @@ public class EclipseWtpComponentWriter
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
 
-        writeModuleTypeComponent( writer, config.getPackaging(), config.getBuildOutputDirectory(), config
-            .getSourceDirs(), config.getLocalRepository() );
+        writeModuleTypeComponent( writer, config.getPackaging(), config.getBuildOutputDirectory(),
+                                  config.getSourceDirs(), config.getLocalRepository() );
 
         IOUtil.close( w );
     }
 
     /**
      * Writes out the module type settings for a Web Tools Project to a component file.
-     *
+     * 
      * @param writer
      * @param packaging
      * @param buildOutputDirectory
-     *  @param sourceDirs
+     * @param sourceDirs
      * @param localRepository
      * @throws MojoExecutionException
      */
@@ -124,7 +128,7 @@ public class EclipseWtpComponentWriter
         }
         writer.startElement( ELT_WB_MODULE );
 
-        //we should use the eclipse project name as the deploy name.
+        // we should use the eclipse project name as the deploy name.
         writer.addAttribute( ATTR_DEPLOY_NAME, this.config.getEclipseProjectName() );
 
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
@@ -134,38 +138,43 @@ public class EclipseWtpComponentWriter
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
-            File warSourceDirectory = new File( IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                   "warSourceDirectory", //$NON-NLS-1$
-                                                                   config.getProject().getBasedir()+"/src/main/webapp" ) ); //$NON-NLS-1$
-            
+            File warSourceDirectory =
+                new File( IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                     "warSourceDirectory", //$NON-NLS-1$
+                                                     config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
+
             writeContextRoot( writer );
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
-                .toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false ) );
+            writer.addAttribute( ATTR_SOURCE_PATH,
+                                 IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                                     warSourceDirectory, false ) );
             writer.endElement();
 
             // @todo is this really needed?
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
+                +
+                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement(); // property
 
         }
         else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
-        	
-        	String defaultApplicationXML = config.getWtpapplicationxml()?"/target/eclipseEar":"/src/main/application";
-        	
-            String earSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN,
-                                                                   "earSourceDirectory", //$NON-NLS-1$
-                                                                   config.getProject().getBasedir()+defaultApplicationXML); //$NON-NLS-1$
+
+            String defaultApplicationXML =
+                config.getWtpapplicationxml() ? "/target/eclipseEar" : "/src/main/application";
+
+            String earSourceDirectory =
+                IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN, "earSourceDirectory", //$NON-NLS-1$
+                                           config.getProject().getBasedir() + defaultApplicationXML ); //$NON-NLS-1$
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
-                                 .toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( earSourceDirectory ), false ) );
+            writer.addAttribute( ATTR_SOURCE_PATH,
+                                 IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                                     new File( earSourceDirectory ), false ) );
             writer.endElement();
         }
 

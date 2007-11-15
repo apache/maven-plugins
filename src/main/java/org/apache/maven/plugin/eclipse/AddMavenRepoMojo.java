@@ -19,6 +19,7 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.eclipse.writers.workspace.WorkspaceConfiguration;
@@ -38,7 +39,7 @@ public class AddMavenRepoMojo
     {
         WorkspaceConfiguration config = new WorkspaceConfiguration();
         config.setWorkspaceDirectory( new File( this.getWorkspace() ) );
-        config.setLocalRepository( this.getLocalRepository() );        
+        config.setLocalRepository( this.getLocalRepository() );
 
         new EclipseWorkspaceWriter().init( this.getLog(), config ).write();
     }

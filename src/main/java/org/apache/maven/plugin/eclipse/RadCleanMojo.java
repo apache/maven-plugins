@@ -25,8 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Deletes the config files used by Rad-6. the files .j2ee and the file
- * .websettings
+ * Deletes the config files used by Rad-6. the files .j2ee and the file .websettings
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  * @goal rad-clean
@@ -66,8 +65,7 @@ public class RadCleanMojo
     /**
      * getter for the instancevarriable project.
      * 
-     * @param project
-     *            the maven project decriptor
+     * @param project the maven project decriptor
      */
     public void setProject( MavenProject project )
     {
@@ -77,8 +75,7 @@ public class RadCleanMojo
     /**
      * Delete all jars in the EAR project root directory.
      * 
-     * @throws MojoExecutionException
-     *             only if a file exists and can't be deleted
+     * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleEarLibs()
         throws MojoExecutionException
@@ -90,8 +87,7 @@ public class RadCleanMojo
     /**
      * Delete all jars in the project that were required by rad6.
      * 
-     * @throws MojoExecutionException
-     *             only if a file exists and can't be deleted
+     * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleLibs()
         throws MojoExecutionException
@@ -110,15 +106,14 @@ public class RadCleanMojo
     /**
      * Delete all jars in the WAR project WEB-INF/lib directory.
      * 
-     * @throws MojoExecutionException
-     *             only if a file exists and can't be deleted
+     * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleWarLibs()
         throws MojoExecutionException
     {
-        String srcMainWebappWebInfLibDirname = this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src"
-            + File.separatorChar + "main" + File.separatorChar + "webapp" + File.separatorChar + "WEB-INF"
-            + File.separatorChar + "lib";
+        String srcMainWebappWebInfLibDirname =
+            this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar + "main" +
+                File.separatorChar + "webapp" + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirname );
         srcMainWebappWebInfLibDir.mkdirs();
@@ -129,16 +124,15 @@ public class RadCleanMojo
     /**
      * delete all Jar artifacts in the spedified directory.
      * 
-     * @param directory
-     *            to delete the jars from
-     * @throws MojoExecutionException
-     *             only if a file exists and can't be deleted
+     * @param directory to delete the jars from
+     * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     protected void deleteJarArtifactsInDirectory( File directory )
         throws MojoExecutionException
     {
-        String[] oldFiles = FileUtils.getFilesFromExtension( directory.getAbsolutePath(),
-                                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
+        String[] oldFiles =
+            FileUtils.getFilesFromExtension( directory.getAbsolutePath(),
+                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
         for ( int index = 0; index < oldFiles.length; index++ )
         {
             File f = new File( oldFiles[index] );

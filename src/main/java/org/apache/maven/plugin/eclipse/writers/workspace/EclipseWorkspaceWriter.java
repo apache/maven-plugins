@@ -18,17 +18,15 @@ public class EclipseWorkspaceWriter
 {
 
     /**
-     * Path under Eclipse workspace where Eclipse Plugin metadata/config is
-     * stored.
+     * Path under Eclipse workspace where Eclipse Plugin metadata/config is stored.
      */
     public static final String ECLIPSE_PLUGINS_METADATA_DIR = ".metadata/.plugins"; //$NON-NLS-1$
 
     /**
-     * Path under {@value #ECLIPSE_PLUGINS_METADATA_DIR } folder where Eclipse
-     * Workspace Runtime settings are stored.
+     * Path under {@value #ECLIPSE_PLUGINS_METADATA_DIR } folder where Eclipse Workspace Runtime settings are stored.
      */
-    public static final String ECLIPSE_CORE_RUNTIME_SETTINGS_DIR = ECLIPSE_PLUGINS_METADATA_DIR
-        + "/org.eclipse.core.runtime/.settings"; //$NON-NLS-1$
+    public static final String ECLIPSE_CORE_RUNTIME_SETTINGS_DIR =
+        ECLIPSE_PLUGINS_METADATA_DIR + "/org.eclipse.core.runtime/.settings"; //$NON-NLS-1$
 
     /**
      * File that stores the Eclipse JDT Core preferences.
@@ -80,8 +78,8 @@ public class EclipseWorkspaceWriter
 
         Properties props = loadProperties( f );
 
-        EclipseCodeFormatterProfile codeFormatter = new EclipseCodeFormatterProfile()
-            .init( config.getCodeStylesURL(), config.getActiveStyleProfileName() );
+        EclipseCodeFormatterProfile codeFormatter =
+            new EclipseCodeFormatterProfile().init( config.getCodeStylesURL(), config.getActiveStyleProfileName() );
 
         if ( codeFormatter.getProfileName() != null )
         {
@@ -120,13 +118,13 @@ public class EclipseWorkspaceWriter
             }
             catch ( FileNotFoundException e )
             {
-                throw new MojoExecutionException( Messages
-                    .getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException(
+                                                  Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages
-                    .getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException(
+                                                  Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
             }
         }
 
