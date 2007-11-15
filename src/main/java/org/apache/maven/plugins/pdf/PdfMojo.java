@@ -27,7 +27,7 @@ import java.util.Locale;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
-import org.apache.maven.doxia.docrenderer.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentModel;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
