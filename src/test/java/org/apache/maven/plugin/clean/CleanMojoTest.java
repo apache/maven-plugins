@@ -20,139 +20,149 @@ package org.apache.maven.plugin.clean;
  */
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Test the clean mojo.
+ *
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  */
 public class CleanMojoTest
     extends AbstractMojoTestCase
 {
-    private static final String TARGET_TEST_DIR = "target/testDirectoryStructure";
-
-    private String basedir;
-
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
         super.setUp();
-
-        basedir = System.getProperty( "basedir", System.getProperty( "user.dir" ) );
-
-        FileUtils.copyDirectoryStructure( new File( basedir, "src/test/resources/testDirectoryStructure" ),
-                                          new File( basedir, TARGET_TEST_DIR ) );
     }
 
+    /** {@inheritDoc} */
     protected void tearDown()
         throws Exception
     {
         super.tearDown();
-
-        FileUtils.deleteDirectory( new File( basedir, TARGET_TEST_DIR ) );
     }
 
-    public void testClean()
+    /**
+     * Tests the simple removal of directories
+     *
+     * @throws Exception
+     */
+    public void testBasicClean()
         throws Exception
     {
-        String base = TARGET_TEST_DIR;
-        String directory = base + "/buildDirectory";
-        String outputDirectory = base + "/buildOutputDirectory";
-        String testOutputDirectory = base + "/buildTestDirectory";
-        String reportDirectory = base + "/reportDirectory";
+        String pluginPom = getBasedir() + "/src/test/resources/unit/basic-clean-test/plugin-pom.xml";
 
-        CleanMojo mojo = new CleanMojo();
-
-        mojo.setDirectory( new File( basedir, directory ) );
-        mojo.setOutputDirectory( new File( basedir, outputDirectory ) );
-        mojo.setTestOutputDirectory( new File( basedir, testOutputDirectory ) );
-        mojo.setReportDirectory( new File( basedir, reportDirectory ) );
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         mojo.execute();
 
-        assertFalse( checkExists( directory ) );
-        assertFalse( checkExists( outputDirectory ) );
-        assertFalse( checkExists( testOutputDirectory ) );
-        assertFalse( checkExists( reportDirectory ) );
+        assertFalse( "Directory exists", checkExists( getBasedir() + "/target/test-classes/unit/"
+            + "basic-clean-test/buildDirectory" ) );
+        assertFalse( "Directory exists", checkExists( getBasedir() + "/target/test-classes/unit/basic-clean-test/"
+            + "buildOutputDirectory" ) );
+        assertFalse( "Directory exists", checkExists( getBasedir() + "/target/test-classes/unit/basic-clean-test/"
+            + "buildTestDirectory" ) );
     }
 
-    public void testNestedStructure()
+    /**
+     * Tests the removal of files and nested directories
+     *
+     * @throws Exception
+     */
+    public void testCleanNestedStructure()
         throws Exception
     {
-        String base = TARGET_TEST_DIR + "/target";
-        String outputDirectory = base + "/classes";
-        String testOutputDirectory = base + "/test-classes";
+        String pluginPom = getBasedir() + "/src/test/resources/unit/nested-clean-test/plugin-pom.xml";
 
-        CleanMojo mojo = new CleanMojo();
-
-        mojo.setDirectory( new File( basedir, base ) );
-        mojo.setOutputDirectory( new File( basedir, outputDirectory ) );
-        mojo.setTestOutputDirectory( new File( basedir, testOutputDirectory ) );
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         mojo.execute();
 
-        assertFalse( checkExists( base ) );
-        assertFalse( checkExists( outputDirectory ) );
-        assertFalse( checkExists( testOutputDirectory ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/nested-clean-test/target" ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/nested-clean-test/target/classes" ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/nested-clean-test/target/test-classes" ) );
     }
 
-    private boolean checkExists( String testOutputDirectory )
-    {
-        return FileUtils.fileExists( new File( basedir, testOutputDirectory ).getAbsolutePath() );
-    }
-
-    public void testEmptyDirectories()
+    /**
+     * Tests that no exception is thrown when all internal variables are empty and that it doesn't
+     * just remove whats there
+     *
+     * @throws Exception
+     */
+    public void testCleanEmptyDirectories()
         throws Exception
     {
-        CleanMojo mojo = new CleanMojo();
+        String pluginPom = getBasedir() + "/src/test/resources/unit/empty-clean-test/plugin-pom.xml";
+
+        CleanMojo mojo = (CleanMojo) lookupEmptyMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         mojo.execute();
 
-        // just checking no exceptions
-        assertTrue( true );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/empty-clean-test/testDirectoryStructure" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/empty-clean-test/"
+            + "testDirectoryStructure/file.txt" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/empty-clean-test/"
+            + "testDirectoryStructure/outputDirectory" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/empty-clean-test/"
+            + "testDirectoryStructure/outputDirectory/file.txt" ) );
     }
 
-    public void testFilesets()
+    /**
+     * Tests the removal of files using fileset
+     *
+     * @throws Exception
+     */
+    public void testFilesetsClean()
         throws Exception
     {
-        String base = TARGET_TEST_DIR + "/target";
+        String pluginPom = getBasedir() + "/src/test/resources/unit/fileset-clean-test/plugin-pom.xml";
 
-        CleanMojo mojo = new CleanMojo();
-        MavenProjectStub project = new MavenProjectStub();
-        project.setExecutionRoot( false );
-        setVariableValueToObject( mojo, "project", project );
-        mojo.addFileset( createFileset( base, "**/file.txt", "**/subdir/**" ) );
-
-        String outputDirectory = TARGET_TEST_DIR + "/buildOutputDirectory";
-        mojo.addFileset( createFileset( outputDirectory, "**", "" ) );
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         mojo.execute();
 
         // fileset 1
-        assertTrue( checkExists( base ) );
-        assertTrue( checkExists( base + "/classes" ) );
-        assertFalse( checkExists( base + "/classes/file.txt" ) );
-        /* TODO: looks like a bug in the file-management library
-         assertTrue( FileUtils.fileExists( base + "/subdir/file.txt" ) );
-         */
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/classes" ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/test-classes" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/classes/file.txt" ) );
+        assertTrue( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/classes" ) );
+        assertTrue( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
 
         // fileset 2
-        assertTrue( checkExists( outputDirectory ) );
-        assertFalse( checkExists( outputDirectory + "/file.txt" ) );
+        //TODO: MCLEAN-7
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/"
+            + "buildOutputDirectory" ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/fileset-clean-test/"
+            + "buildOutputDirectory/file.txt" ) );
     }
 
-    public void testInvalidDirectory()
-        throws MojoExecutionException
+    /**
+     * Tests the removal of a directory as file
+     *
+     * @throws Exception
+     */
+    public void testCleanInvalidDirectory()
+        throws Exception
     {
-        String path = TARGET_TEST_DIR + "/target/subdir/file.txt";
+        String pluginPom = getBasedir() + "/src/test/resources/unit/invalid-directory-test/plugin-pom.xml";
 
-        CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( basedir, path ) );
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         try
         {
@@ -166,81 +176,126 @@ public class CleanMojoTest
         }
     }
 
-    /* Unix will let you get away with it, not sure how to lock the file from Java.
-     public void testOpenFile()
-     throws MojoExecutionException, FileNotFoundException
-     {
-     String path = TARGET_TEST_DIR + "/target/subdir";
-
-     CleanMojo mojo = new CleanMojo();
-     mojo.setDirectory( new File( basedir, path ) );
-
-     FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
-
-     try
-     {
-     mojo.execute();
-
-     fail( "Should fail to delete a file that is open" );
-     }
-     catch ( MojoExecutionException expected )
-     {
-     assertTrue( true );
-     }
-     finally
-     {
-     IOUtil.close( fis );
-     }
-     }
-
-     public void testOpenFileInFileSet()
-     throws MojoExecutionException, FileNotFoundException
-     {
-     String path = TARGET_TEST_DIR + "/target/subdir";
-
-     CleanMojo mojo = new CleanMojo();
-     mojo.addFileset( createFileset( path, "**", "" ) );
-
-     FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
-
-     try
-     {
-     mojo.execute();
-
-     fail( "Should fail to delete a file that is open" );
-     }
-     catch ( MojoExecutionException expected )
-     {
-     assertTrue( true );
-     }
-     finally
-     {
-     IOUtil.close( fis );
-     }
-     }
+    /**
+     * Tests the removal of a missing directory
+     *
+     * @throws Exception
      */
-
     public void testMissingDirectory()
-        throws MojoExecutionException
+        throws Exception
     {
-        String path = TARGET_TEST_DIR + "/does-not-exist";
+        String pluginPom = getBasedir() + "/src/test/resources/unit/missing-directory-test/plugin-pom.xml";
 
-        CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( basedir, path ) );
-        assertFalse( checkExists( path ) );
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
 
         mojo.execute();
 
-        assertFalse( checkExists( path ) );
+        assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/missing-directory-test/does-not-exist" ) );
     }
 
-    private Fileset createFileset( String dir, String includes, String excludes )
+    /**
+     * Test the removal of a locked file
+     *
+     * @throws Exception
+     */
+    public void testCleanLockedFile()
+        throws Exception
     {
-        Fileset fileset = new Fileset();
-        fileset.setDirectory( new File( basedir, dir ).getAbsolutePath() );
-        fileset.setIncludes( Arrays.asList( new String[] { includes } ) );
-        fileset.setExcludes( Arrays.asList( new String[] { excludes } ) );
-        return fileset;
+        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
+
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
+
+        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
+        FileChannel channel = null;
+        FileLock lock = null;
+        try
+        {
+            channel = new RandomAccessFile( f, "rw" ).getChannel();
+            lock = channel.lock();
+
+            mojo.execute();
+
+            fail( "Should fail to delete a file that is locked" );
+        }
+        catch ( MojoExecutionException expected )
+        {
+            assertTrue( true );
+        }
+        finally
+        {
+            if ( lock != null )
+            {
+                lock.release();
+            }
+
+            if ( channel != null )
+            {
+                channel.close();
+            }
+        }
     }
 
+    /**
+     * Test the removal of a locked file
+     *
+     * @throws Exception
+     */
+    public void testCleanLockedFileWithNoError()
+        throws Exception
+    {
+        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
+
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        setVariableValueToObject( mojo, "ignoreErrors", Boolean.TRUE );
+        assertNotNull( mojo );
+
+        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
+        FileChannel channel = null;
+        FileLock lock = null;
+        try
+        {
+            channel = new RandomAccessFile( f, "rw" ).getChannel();
+            lock = channel.lock();
+
+            mojo.execute();
+
+            assertTrue( true );
+        }
+        catch ( MojoExecutionException expected )
+        {
+            fail( "Should display a warning when deleting a file that is locked" );
+        }
+        finally
+        {
+            if ( lock != null )
+            {
+                lock.release();
+            }
+
+            if ( channel != null )
+            {
+                channel.close();
+            }
+        }
+    }
+
+    /**
+     * @param dir a dir or a file
+     * @return true if a file/dir exists, false otherwise
+     */
+    private boolean checkExists( String dir )
+    {
+        return FileUtils.fileExists( new File( dir ).getAbsolutePath() );
+    }
+
+    /**
+     * @param dir a directory
+     * @return true if a dir is empty, false otherwise
+     */
+    private boolean checkEmpty( String dir )
+    {
+        return FileUtils.sizeOfDirectory( new File( dir ).getAbsolutePath() ) == 0;
+    }
 }
