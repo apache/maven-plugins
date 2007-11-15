@@ -36,11 +36,11 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * The <code>EclipseOSGiManifestWriter</code> ensures that value of the "Bundle-Classpath" property 
- * in META-INF/MANIFEST.MF is synchronized with the POM by adding all dependencies that don't have the
- * scope provided.
+ * The <code>EclipseOSGiManifestWriter</code> ensures that value of the "Bundle-Classpath" property in
+ * META-INF/MANIFEST.MF is synchronized with the POM by adding all dependencies that don't have the scope provided.
  * 
- * @deprecated use <a href="http://cwiki.apache.org/FELIX/bundle-plugin-for-maven-bnd.html/">Maven Bundle plugin</a> from Felix
+ * @deprecated use <a href="http://cwiki.apache.org/FELIX/bundle-plugin-for-maven-bnd.html/">Maven Bundle plugin</a>
+ *             from Felix
  */
 public class EclipseOSGiManifestWriter
     extends AbstractEclipseWriter
@@ -48,6 +48,7 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Constant used for newline.
+     * 
      * @todo check if we should use system-dependent newlines or if eclipse prefers a common format
      */
     private static final String NEWLINE = "\n";
@@ -86,8 +87,8 @@ public class EclipseOSGiManifestWriter
         // check for existence
         if ( !config.getManifestFile().exists() )
         {
-            log.warn( Messages.getString( "EclipseOSGiManifestWriter.nomanifestfile", config.getManifestFile()
-                .getAbsolutePath() ) );
+            log.warn( Messages.getString( "EclipseOSGiManifestWriter.nomanifestfile",
+                                          config.getManifestFile().getAbsolutePath() ) );
             return;
         }
 
@@ -100,13 +101,13 @@ public class EclipseOSGiManifestWriter
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile", config.getManifestFile()
-                .getAbsolutePath() ) );
+            throw new MojoExecutionException( Messages.getString( "cantwritetofile",
+                                                                  config.getManifestFile().getAbsolutePath() ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile", config.getManifestFile()
-                .getAbsolutePath() ), e );
+            throw new MojoExecutionException( Messages.getString( "cantwritetofile",
+                                                                  config.getManifestFile().getAbsolutePath() ), e );
         }
         finally
         {
@@ -123,7 +124,8 @@ public class EclipseOSGiManifestWriter
         StringBuffer manifestSb = new StringBuffer();
         try
         {
-            BufferedReader in = new BufferedReader( new InputStreamReader( new FileInputStream( manifestFile ), "UTF-8" ) );
+            BufferedReader in =
+                new BufferedReader( new InputStreamReader( new FileInputStream( manifestFile ), "UTF-8" ) );
             String line;
             while ( ( line = in.readLine() ) != null )
             {
@@ -140,7 +142,7 @@ public class EclipseOSGiManifestWriter
                 // Note that this could be the empty string, if we encounter
                 // a field that we weren't expecting to be multi-line.
                 String name = line.substring( 0, line.indexOf( ":" ) + 1 );
-                
+
                 if ( name.equalsIgnoreCase( ENTRY_BUNDLE_CLASSPATH ) )
                 {
                     inBundleClasspathEntry = true;
@@ -196,6 +198,7 @@ public class EclipseOSGiManifestWriter
     /**
      * Normalize a version number, by moving snapshot identifier to the 5th token (first 4 tokens must be numeric for
      * OSGI bundles)
+     * 
      * @param version original version
      * @return a normalized version number
      */
@@ -227,7 +230,8 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Add all libraries that don't have the scope "provided" to the "Bundle-Classpath".
-     * @return complete "Bundle-ClassPath:" entry for manifest 
+     * 
+     * @return complete "Bundle-ClassPath:" entry for manifest
      */
     protected String addBundleClasspathEntries()
     {

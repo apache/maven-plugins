@@ -19,9 +19,7 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 /**
- *
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
- *
  */
 public class MonitoredResource
 {
@@ -41,7 +39,7 @@ public class MonitoredResource
 
     public String print()
     {
-        return "<item factoryID='org.eclipse.ui.internal.model.ResourceFactory' path='" + path + "' type='" + type
-            + "'/>";
+        return "<item factoryID='org.eclipse.ui.internal.model.ResourceFactory' path='" + path + "' type='" + type +
+            "'/>";
     }
 }

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests the BuildCommand class.
- *
+ * 
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
  */
 public class BuildCommandTest

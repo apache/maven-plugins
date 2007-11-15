@@ -38,7 +38,7 @@ public class EclipseWriterConfig
      * The maven project.
      */
     private MavenProject project;
-    
+
     /**
      * The maven project packaging.
      */
@@ -93,16 +93,14 @@ public class EclipseWriterConfig
      * Project natures.
      */
     private List projectnatures;
-    
+
     /**
      * Project facets.
      */
     private Map projectFacets;
 
     /**
-     * Build commands.
-     *
-     * List&lt;BuildCommand&gt;
+     * Build commands. List&lt;BuildCommand&gt;
      */
     private List buildCommands;
 
@@ -110,9 +108,10 @@ public class EclipseWriterConfig
      * Classpath containers.
      */
     private List classpathContainers;
-    
+
     /**
      * Appends the version number to the project name if <tt>true</tt>.
+     * 
      * @deprecated use {@link #projectNameTemplate}
      */
     private boolean addVersionToProjectName;
@@ -125,25 +124,27 @@ public class EclipseWriterConfig
     /**
      * @see EclipsePlugin#deployName()
      */
-    
+
     private String contextName;
-    
+
     /**
      * @see EclipsePlugin#wtpapplicationxml()
      */
     private boolean wtpapplicationxml;
-    
+
     /**
      * Getter for <code>deps</code>.
+     * 
      * @return Returns the deps.
      */
     public IdeDependency[] getDeps()
     {
         return this.deps;
     }
-    
+
     /**
      * Setter for <code>deps</code>.
+     * 
      * @param deps The deps to set.
      */
     public void setDeps( IdeDependency[] deps )
@@ -153,6 +154,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>eclipseProjectDir</code>.
+     * 
      * @return Returns the eclipseProjectDir.
      */
     public File getEclipseProjectDirectory()
@@ -162,6 +164,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>eclipseProjectDir</code>.
+     * 
      * @param eclipseProjectDir The eclipseProjectDir to set.
      */
     public void setEclipseProjectDirectory( File eclipseProjectDir )
@@ -171,6 +174,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>eclipseProjectName</code>.
+     * 
      * @return Returns the project name used in eclipse.
      */
     public String getEclipseProjectName()
@@ -180,6 +184,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>eclipseProjectName</code>.
+     * 
      * @param eclipseProjectName the project name used in eclipse.
      */
     public void setEclipseProjectName( String eclipseProjectName )
@@ -189,6 +194,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>project</code>.
+     * 
      * @return Returns the project.
      */
     public MavenProject getProject()
@@ -198,6 +204,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>project</code>.
+     * 
      * @param project The project to set.
      */
     public void setProject( MavenProject project )
@@ -207,6 +214,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>sourceDirs</code>.
+     * 
      * @return Returns the sourceDirs.
      */
     public EclipseSourceDir[] getSourceDirs()
@@ -216,6 +224,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>sourceDirs</code>.
+     * 
      * @param sourceDirs The sourceDirs to set.
      */
     public void setSourceDirs( EclipseSourceDir[] sourceDirs )
@@ -225,6 +234,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>buildOutputDirectory</code>.
+     * 
      * @return Returns the buildOutputDirectory.
      */
     public File getBuildOutputDirectory()
@@ -234,6 +244,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>buildOutputDirectory</code>.
+     * 
      * @param buildOutputDirectory The buildOutputDirectory to set.
      */
     public void setBuildOutputDirectory( File buildOutputDirectory )
@@ -243,6 +254,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>localRepository</code>.
+     * 
      * @return Returns the localRepository.
      */
     public ArtifactRepository getLocalRepository()
@@ -252,6 +264,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>localRepository</code>.
+     * 
      * @param localRepository The localRepository to set.
      */
     public void setLocalRepository( ArtifactRepository localRepository )
@@ -261,6 +274,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>manifestFile</code>.
+     * 
      * @return Returns the manifestFile.
      */
     public File getManifestFile()
@@ -270,6 +284,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>manifestFile</code>.
+     * 
      * @param manifestFile The manifestFile to set.
      */
     public void setManifestFile( File manifestFile )
@@ -279,6 +294,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>classpathContainers</code>.
+     * 
      * @return Returns the classpathContainers.
      */
     public List getClasspathContainers()
@@ -288,6 +304,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>classpathContainers</code>.
+     * 
      * @param classpathContainers The classpathContainers to set.
      */
     public void setClasspathContainers( List classpathContainers )
@@ -297,6 +314,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>pde</code>.
+     * 
      * @return Returns the pde.
      */
     public boolean isPde()
@@ -306,6 +324,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>pde</code>.
+     * 
      * @param pde The pde to set.
      */
     public void setPde( boolean pde )
@@ -315,6 +334,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>buildCommands</code>.
+     * 
      * @return Returns the buildCommands.
      */
     public List getBuildCommands()
@@ -324,6 +344,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>buildCommands</code>.
+     * 
      * @param buildCommands The buildCommands to set.
      */
     public void setBuildCommands( List buildCommands )
@@ -333,6 +354,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>projectnatures</code>.
+     * 
      * @return Returns the projectnatures.
      */
     public List getProjectnatures()
@@ -342,6 +364,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>projectnatures</code>.
+     * 
      * @param projectnatures The projectnatures to set.
      */
     public void setProjectnatures( List projectnatures )
@@ -351,6 +374,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>projectFacets</code>.
+     * 
      * @return Returns the projectFacets
      */
     public Map getProjectFacets()
@@ -360,6 +384,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>projectFacets</code>
+     * 
      * @param projectFacets The projectFacets to set.
      */
     public void setProjectFacets( Map projectFacets )
@@ -369,6 +394,7 @@ public class EclipseWriterConfig
 
     /**
      * Getter for <code>projectBaseDir</code>.
+     * 
      * @return Returns the projectBaseDir.
      */
     public File getProjectBaseDir()
@@ -378,6 +404,7 @@ public class EclipseWriterConfig
 
     /**
      * Setter for <code>projectBaseDir</code>.
+     * 
      * @param projectBaseDir The projectBaseDir to set.
      */
     public void setProjectBaseDir( File projectBaseDir )
@@ -414,12 +441,12 @@ public class EclipseWriterConfig
     {
         return projectNameTemplate;
     }
-    
+
     public String getContextName()
     {
-         return this.contextName;
+        return this.contextName;
     }
-    
+
     public void setContextName( String deployName )
     {
         this.contextName = deployName;
@@ -428,24 +455,26 @@ public class EclipseWriterConfig
     /**
      * @return the packaging
      */
-    public String getPackaging() {
+    public String getPackaging()
+    {
         return this.packaging;
     }
 
     /**
      * @param packaging the packaging to set
      */
-    public void setPackaging(String packaging) {
+    public void setPackaging( String packaging )
+    {
         this.packaging = packaging;
     }
-    
+
     public boolean getWtpapplicationxml()
     {
-         return this.wtpapplicationxml;
+        return this.wtpapplicationxml;
     }
-    
+
     public void setWtpapplicationxml( boolean wtpapplicationxml )
     {
         this.wtpapplicationxml = wtpapplicationxml;
-    }    
+    }
 }

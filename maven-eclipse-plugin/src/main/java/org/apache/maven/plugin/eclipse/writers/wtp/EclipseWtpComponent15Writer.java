@@ -21,8 +21,9 @@ package org.apache.maven.plugin.eclipse.writers.wtp;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute has
- * been added. These ones are the only differences 
+ * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute
+ * has been added. These ones are the only differences
+ * 
  * @author Fabrizio Giustina
  * @version $Id$
  */
@@ -32,6 +33,7 @@ public class EclipseWtpComponent15Writer
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
+     * 
      * @return <code>org.eclipse.wst.common.component</code>
      */
     protected String getComponentFileName()
@@ -41,6 +43,7 @@ public class EclipseWtpComponent15Writer
 
     /**
      * Version number added to component configuration.
+     * 
      * @return <code>1.0</code>
      */
     protected String getProjectVersion()

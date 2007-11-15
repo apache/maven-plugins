@@ -41,13 +41,10 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Create or adapt the manifest files for the RAD6 runtime dependencys.
- * attention these will not be used for the real ear these are just to get the
- * runtime enviorment using the maven dependencies.
- * 
- * WARNING: The manifest resources added here will not have the benefit of the dependencies
- * of the project, since that's not provided in the setup() apis, one of the locations from which
- * this writer is used in the RadPlugin.
+ * Create or adapt the manifest files for the RAD6 runtime dependencys. attention these will not be used for the real
+ * ear these are just to get the runtime enviorment using the maven dependencies. WARNING: The manifest resources added
+ * here will not have the benefit of the dependencies of the project, since that's not provided in the setup() apis, one
+ * of the locations from which this writer is used in the RadPlugin.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
@@ -59,12 +56,11 @@ public class RadManifestWriter
 
     private static final String META_INF_DIRECTORY = "META-INF";
 
-    private static final String WEBAPP_RESOURCE_DIR = "src" + File.separatorChar + "main" + File.separatorChar
-        + "webapp";
+    private static final String WEBAPP_RESOURCE_DIR =
+        "src" + File.separatorChar + "main" + File.separatorChar + "webapp";
 
     /**
-     * Search the project for the existing META-INF directory where the manifest
-     * should be located.
+     * Search the project for the existing META-INF directory where the manifest should be located.
      * 
      * @return the apsolute path to the META-INF directory
      */
@@ -74,8 +70,8 @@ public class RadManifestWriter
 
         if ( config.getProject().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar
-                + WEBAPP_RESOURCE_DIR;
+            metaInfBaseDirectory =
+                config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
 
             log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
 
@@ -108,20 +104,14 @@ public class RadManifestWriter
     }
 
     /**
-     * Write the manifest files use an existing one it it exists (it will be
-     * overwritten!! in a war use webapp/META-INF else use the generated rad6
-     * sourcefolder
+     * Write the manifest files use an existing one it it exists (it will be overwritten!! in a war use webapp/META-INF
+     * else use the generated rad6 sourcefolder
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[],
-     *      ArtifactRepository, File)
-     * @param sourceDirs
-     *            all eclipse source directorys
-     * @param localRepository
-     *            the local reposetory
-     * @param buildOutputDirectory
-     *            build output directory (target)
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
+     * @param sourceDirs all eclipse source directorys
+     * @param localRepository the local reposetory
+     * @param buildOutputDirectory build output directory (target)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
         throws MojoExecutionException
@@ -137,8 +127,9 @@ public class RadManifestWriter
 
         Manifest manifest = createNewManifest();
 
-        File manifestFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY
-            + File.separatorChar + MANIFEST_MF_FILENAME );
+        File manifestFile =
+            new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar +
+                MANIFEST_MF_FILENAME );
 
         System.out.println( "MANIFEST LOCATION: " + manifestFile );
 
@@ -161,8 +152,8 @@ public class RadManifestWriter
             }
             catch ( Exception e )
             {
-                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { metaInfBaseDirectory
-                    + File.separatorChar + MANIFEST_MF_FILENAME } ) );
+                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { metaInfBaseDirectory +
+                    File.separatorChar + MANIFEST_MF_FILENAME } ) );
             }
 
         }
@@ -190,7 +181,8 @@ public class RadManifestWriter
 
             if ( !foundMetaInfBaseDirectory )
             {
-                EclipseSourceDir dir = new EclipseSourceDir( metaInfBaseDirectory, null, true, false, null, null, false );
+                EclipseSourceDir dir =
+                    new EclipseSourceDir( metaInfBaseDirectory, null, true, false, null, null, false );
 
                 EclipseSourceDir[] newSourceDirs = new EclipseSourceDir[sourceDirs.length + 1];
                 newSourceDirs[sourceDirs.length] = dir;
@@ -203,14 +195,11 @@ public class RadManifestWriter
     }
 
     /**
-     * Add one dependency to the black seperated classpath stringbuffer. Wenn
-     * the project is available in the reactor (current build) then the project
-     * is used else the jar representing the artifact.
+     * Add one dependency to the black seperated classpath stringbuffer. Wenn the project is available in the reactor
+     * (current build) then the project is used else the jar representing the artifact.
      * 
-     * @param classpath
-     *            existing classpath to append
-     * @param dependency
-     *            dependency to append as jar or as project
+     * @param classpath existing classpath to append
+     * @param dependency dependency to append as jar or as project
      */
     private void addDependencyToClassPath( StringBuffer classpath, IdeDependency dependency )
     {
@@ -235,16 +224,12 @@ public class RadManifestWriter
     }
 
     /**
-     * Check if the two manifests are equal. Manifest.equal can not be used
-     * because of the special case the Classpath entr, witch must be comaired
-     * sorted so that a different oder in the classpath does not result in "not
-     * equal". This not not realy correct but in this case it is more important
-     * to reduce the number of version-controll files.
+     * Check if the two manifests are equal. Manifest.equal can not be used because of the special case the Classpath
+     * entr, witch must be comaired sorted so that a different oder in the classpath does not result in "not equal".
+     * This not not realy correct but in this case it is more important to reduce the number of version-controll files.
      * 
-     * @param manifest
-     *            the new manifest
-     * @param existingManifest
-     *            to compaire the new one with
+     * @param manifest the new manifest
+     * @param existingManifest to compaire the new one with
      * @return are the manifests equal
      */
     private boolean areManifestsEqual( Manifest manifest, Manifest existingManifest )
@@ -272,8 +257,8 @@ public class RadManifestWriter
                 newValue = orderClasspath( newValue );
                 existingValue = orderClasspath( existingValue );
             }
-            if ( ( newValue == null || !newValue.equals( existingValue ) )
-                && ( existingValue == null || !existingValue.equals( newValue ) ) )
+            if ( ( newValue == null || !newValue.equals( existingValue ) ) &&
+                ( existingValue == null || !existingValue.equals( newValue ) ) )
             {
                 return false;
             }
@@ -282,8 +267,7 @@ public class RadManifestWriter
     }
 
     /**
-     * Convert all dependencies in a blank seperated list of jars and projects
-     * representing the classpath.
+     * Convert all dependencies in a blank seperated list of jars and projects representing the classpath.
      * 
      * @return the blank separeted classpath string
      */
@@ -314,11 +298,9 @@ public class RadManifestWriter
     }
 
     /**
-     * Aphabeticaly sort the classpath. Do this by splitting it up, sort the
-     * entries and gleue them together again.
+     * Aphabeticaly sort the classpath. Do this by splitting it up, sort the entries and gleue them together again.
      * 
-     * @param newValue
-     *            classpath to sort
+     * @param newValue classpath to sort
      * @return the sorted classpath
      */
     private String orderClasspath( String newValue )
@@ -337,11 +319,9 @@ public class RadManifestWriter
     /**
      * Read and parse the existing manifest file.
      * 
-     * @param manifestFile
-     *            file
+     * @param manifestFile file
      * @return the read manifest
-     * @throws IOException
-     *             if the file could not be read
+     * @throws IOException if the file could not be read
      */
     private Manifest readExistingManifest( File manifestFile )
         throws IOException
@@ -359,16 +339,13 @@ public class RadManifestWriter
     }
 
     /**
-     * Verify is the manifest sould be overwritten this sould take in account
-     * that the manifest should only be written if the contents of the classpath
-     * was changed not the order. The classpath sorting oder should be ignored.
+     * Verify is the manifest sould be overwritten this sould take in account that the manifest should only be written
+     * if the contents of the classpath was changed not the order. The classpath sorting oder should be ignored.
      * 
-     * @param manifest
-     *            the newly created classpath
-     * @param manifestFile
-     *            the file where the manifest
+     * @param manifest the newly created classpath
+     * @param manifestFile the file where the manifest
      * @return if the new manifest file must be written
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
     private boolean shouldNewManifestFileBeWritten( Manifest manifest, File manifestFile )
         throws MojoExecutionException
@@ -384,8 +361,8 @@ public class RadManifestWriter
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", manifestFile
-                .getAbsolutePath() ), e );
+            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound",
+                                                                  manifestFile.getAbsolutePath() ), e );
         }
         return true;
     }

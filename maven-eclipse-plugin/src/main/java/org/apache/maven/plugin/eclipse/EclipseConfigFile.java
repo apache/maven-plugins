@@ -20,6 +20,7 @@ package org.apache.maven.plugin.eclipse;
 
 /**
  * Represents a generic configuration file, with a name and a content.
+ * 
  * @author Fabrizio Giustina
  * @version $Id$
  */
@@ -37,6 +38,7 @@ public class EclipseConfigFile
 
     /**
      * Getter for <code>content</code>.
+     * 
      * @return Returns the content.
      */
     public String getContent()
@@ -46,6 +48,7 @@ public class EclipseConfigFile
 
     /**
      * Setter for <code>content</code>.
+     * 
      * @param content The content to set.
      */
     public void setContent( String content )
@@ -55,6 +58,7 @@ public class EclipseConfigFile
 
     /**
      * Getter for <code>name</code>.
+     * 
      * @return Returns the name.
      */
     public String getName()
@@ -64,6 +68,7 @@ public class EclipseConfigFile
 
     /**
      * Setter for <code>name</code>.
+     * 
      * @param name The name to set.
      */
     public void setName( String name )

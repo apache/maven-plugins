@@ -44,7 +44,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -130,7 +130,9 @@ public class EclipseClasspathWriter
 
         try
         {
-            w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) ), "UTF-8" );
+            w =
+                new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                        FILE_DOT_CLASSPATH ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {
@@ -141,8 +143,8 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATH );
 
-        String defaultOutput = IdeUtils.toRelativeAndFixSeparator( config.getProjectBaseDir(), config
-            .getBuildOutputDirectory(), false );
+        String defaultOutput =
+            IdeUtils.toRelativeAndFixSeparator( config.getProjectBaseDir(), config.getBuildOutputDirectory(), false );
 
         // ----------------------------------------------------------------------
         // Source roots and resources
@@ -163,8 +165,8 @@ public class EclipseClasspathWriter
             if ( byOutputDirs == null )
             {
                 // ArrayList<EclipseSourceDir>
-                byOutputDir.put( dir.getOutput() == null ? defaultOutput : dir.getOutput(),
-                                 byOutputDirs = new ArrayList() );
+                byOutputDir.put( dir.getOutput() == null ? defaultOutput : dir.getOutput(), byOutputDirs =
+                    new ArrayList() );
             }
             byOutputDirs.add( dir );
         }
@@ -173,8 +175,8 @@ public class EclipseClasspathWriter
         {
             EclipseSourceDir dir = config.getSourceDirs()[j];
 
-            log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output="
-                + dir.getOutput() + "; default output=" + defaultOutput );
+            log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output=" +
+                dir.getOutput() + "; default output=" + defaultOutput );
 
             boolean isSpecial = false;
 
@@ -185,7 +187,8 @@ public class EclipseClasspathWriter
                 // and if the default output has any sources that copy there.
 
                 if ( dir.getOutput() != null // resource output dir is set
-                    && !dir.getOutput().equals( defaultOutput ) // output dir is not default target/classes
+                    &&
+                    !dir.getOutput().equals( defaultOutput ) // output dir is not default target/classes
                     && dir.getOutput().startsWith( defaultOutput ) // ... but is nested
                     && byOutputDir.get( defaultOutput ) != null // ???
                     && !( (List) byOutputDir.get( defaultOutput ) ).isEmpty() // ???
@@ -194,8 +197,8 @@ public class EclipseClasspathWriter
                     // do not specify as source since the output will be nested. Instead, mark
                     // it as a todo, and handle it with a custom build.xml file later.
 
-                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output="
-                        + dir.getOutput() + ")" );
+                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output=" +
+                        dir.getOutput() + ")" );
 
                     isSpecial = true;
                     specialSources.add( dir );
@@ -291,8 +294,8 @@ public class EclipseClasspathWriter
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Cannot create " + config.getEclipseProjectDirectory()
-                    + "/maven-eclipse.xml", e );
+                throw new MojoExecutionException( "Cannot create " + config.getEclipseProjectDirectory() +
+                    "/maven-eclipse.xml", e );
             }
 
             log.info( "Creating external launcher file" );
@@ -302,11 +305,13 @@ public class EclipseClasspathWriter
 
             // finally add it to the project writer.
 
-            config.getBuildCommands()
-                .add(
-                      new BuildCommand( "org.eclipse.ui.externaltools.ExternalToolBuilder", "LaunchConfigHandle",
-                                        "<project>/" + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
-                                            + "Maven_Ant_Builder.launch" ) );
+            config.getBuildCommands().add(
+                                           new BuildCommand(
+                                                             "org.eclipse.ui.externaltools.ExternalToolBuilder",
+                                                             "LaunchConfigHandle",
+                                                             "<project>/" +
+                                                                 EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS +
+                                                                 "Maven_Ant_Builder.launch" ) );
         }
 
         // ----------------------------------------------------------------------
@@ -340,8 +345,8 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                String depId = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":"
-						+ dep.getVersion();
+                String depId =
+                    dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":" + dep.getVersion();
                 /* avoid duplicates in the classpath for artifacts with different types (like ejbs) */
                 if ( !addedDependencies.contains( depId ) )
                 {
@@ -431,10 +436,12 @@ public class EclipseClasspathWriter
                 {
                     if ( ATTR_VAR.equals( kind ) )
                     {
-                        sourcepath = M2_REPO
-                            + "/" //$NON-NLS-1$
-                            + IdeUtils
-                                .toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(), false );
+                        sourcepath =
+                            M2_REPO +
+                                "/" //$NON-NLS-1$
+                                +
+                                IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(),
+                                                                    false );
                     }
                     else
                     {
@@ -447,8 +454,8 @@ public class EclipseClasspathWriter
                 {
                     // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
                     // full path for the maven repo
-                    javadocpath = StringUtils.replace( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ),
-                                                       "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+                    javadocpath =
+                        StringUtils.replace( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ), "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
             }

@@ -54,8 +54,8 @@ public class InstallPluginsMojoTest
 
     private static final String VERSION = "0.0.9";
 
-    private static final String SOURCE_PATH = "/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/"
-        + ARTIFACT_ID + "-" + VERSION + ".jar";
+    private static final String SOURCE_PATH =
+        "/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/" + ARTIFACT_ID + "-" + VERSION + ".jar";
 
     private File sourceFile;
 
@@ -199,8 +199,8 @@ public class InstallPluginsMojoTest
 
         if ( resource == null )
         {
-            throw new IllegalStateException( "Cannot find test source jar: (m2repo|M2REPO)" + SOURCE_PATH
-                + " in context classloader!" );
+            throw new IllegalStateException( "Cannot find test source jar: (m2repo|M2REPO)" + SOURCE_PATH +
+                " in context classloader!" );
         }
 
         sourceFile = new File( resource.getPath() );
@@ -229,9 +229,9 @@ public class InstallPluginsMojoTest
 
         mm.replayAll();
 
-        InstallPluginsMojo mojo = new InstallPluginsMojo( eclipseDir, overwrite, Collections.singletonList( dep ),
-                                                          typeList, localRepo, projectBuilder, archiverManager,
-                                                          inputHandler, log );
+        InstallPluginsMojo mojo =
+            new InstallPluginsMojo( eclipseDir, overwrite, Collections.singletonList( dep ), typeList, localRepo,
+                                    projectBuilder, archiverManager, inputHandler, log );
 
         mojo.execute();
 

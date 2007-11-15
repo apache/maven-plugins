@@ -42,7 +42,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
-public class RadJ2EEWriter extends AbstractEclipseWriter
+public class RadJ2EEWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String J2EE_FILENAME = ".j2ee";
@@ -57,27 +58,26 @@ public class RadJ2EEWriter extends AbstractEclipseWriter
      * write the .j2ee file to the project root directory.
      * 
      * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
-     * @param sourceDirs
-     *            all eclipse source directorys
-     * @param localRepository
-     *            the local reposetory
-     * @param buildOutputDirectory
-     *            build output directory (target)
-     * @throws MojoExecutionException
-     *             when writing the config files was not possible
+     * @param sourceDirs all eclipse source directorys
+     * @param localRepository the local reposetory
+     * @param buildOutputDirectory build output directory (target)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
-    public void write() throws MojoExecutionException
+    public void write()
+        throws MojoExecutionException
     {
         Writer w;
         String packaging = config.getPackaging();
 
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
-                        || Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging )
-                        || Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ||
+            Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ||
+            Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             try
             {
-                w = new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(), J2EE_FILENAME ) ), "UTF-8" );
+                w =
+                    new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                            J2EE_FILENAME ) ), "UTF-8" );
             }
             catch ( IOException ex )
             {
@@ -93,10 +93,8 @@ public class RadJ2EEWriter extends AbstractEclipseWriter
     /**
      * Writes out the facet info for a faceted-project based on the packaging.
      * 
-     * @param writer
-     *            where to write to
-     * @param packaging
-     *            packaging type
+     * @param writer where to write to
+     * @param packaging packaging type
      */
     private void writeModuleTypeFacetCore( XMLWriter writer, String packaging )
     {

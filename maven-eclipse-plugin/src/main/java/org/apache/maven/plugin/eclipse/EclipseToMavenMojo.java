@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import aQute.lib.osgi.Analyzer;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
@@ -62,16 +64,11 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
-import aQute.lib.osgi.Analyzer;
-
 /**
  * Add eclipse artifacts from an eclipse installation to the local repo. This mojo automatically analize the eclipse
- * directory, copy plugins jars to the local maven repo, and generates appropriate poms.
- * 
- * This is the official central repository builder for Eclipse plugins, so it has the necessary default values.
- * For customized repositories see {@link MakeArtifactsMojo}
- * 
- * Typical usage:
+ * directory, copy plugins jars to the local maven repo, and generates appropriate poms. This is the official central
+ * repository builder for Eclipse plugins, so it has the necessary default values. For customized repositories see
+ * {@link MakeArtifactsMojo} Typical usage:
  * <code>mvn eclipse:to-maven -DdeployTo=maven.org::default::scpexe://repo1.maven.org/home/maven/repository-staging/to-ibiblio/eclipse -DeclipseDir=.</code>
  * 
  * @author Fabrizio Giustina
@@ -111,18 +108,21 @@ public class EclipseToMavenMojo
 
     /**
      * ArtifactFactory component.
+     * 
      * @component
      */
     private ArtifactFactory artifactFactory;
 
     /**
      * ArtifactInstaller component.
+     * 
      * @component
      */
     protected ArtifactInstaller installer;
 
     /**
      * ArtifactDeployer component.
+     * 
      * @component
      */
     private ArtifactDeployer deployer;
@@ -136,14 +136,14 @@ public class EclipseToMavenMojo
 
     /**
      * Input handler, needed for comand line handling.
+     * 
      * @component
      */
     protected InputHandler inputHandler;
 
     /**
      * Specifies a remote repository to which generated artifacts should be deployed to. If this property is specified,
-     * artifacts are also deployed to the remote repo.
-     * The format for this parameter is <code>id::layout::url</code>
+     * artifacts are also deployed to the remote repo. The format for this parameter is <code>id::layout::url</code>
      * 
      * @parameter expression="${deployTo}"
      */
@@ -218,8 +218,9 @@ public class EclipseToMavenMojo
 
             if ( plugins.containsKey( getKey( model ) ) )
             {
-                throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: "
-                    + getKey( model ) );
+                throw new MojoFailureException(
+                                                "There are two versions of the same plugin, can not resolve versions: " +
+                                                    getKey( model ) );
             }
 
             plugins.put( getKey( model ), plugin );
@@ -238,21 +239,19 @@ public class EclipseToMavenMojo
         }
     }
 
-    private String getKey(Model model)
+    private String getKey( Model model )
     {
         return model.getGroupId() + "." + model.getArtifactId();
     }
 
-    private String getKey(Dependency dependency)
+    private String getKey( Dependency dependency )
     {
         return dependency.getGroupId() + "." + dependency.getArtifactId();
     }
 
     /**
-     * Resolve version ranges in the model provided, overriding version ranges with versions from
-     * the dependency in the provided map of models.
-     * 
-     * TODO doesn't check if the version is in range, it just overwrites it
+     * Resolve version ranges in the model provided, overriding version ranges with versions from the dependency in the
+     * provided map of models. TODO doesn't check if the version is in range, it just overwrites it
      * 
      * @param model
      * @param models
@@ -274,8 +273,8 @@ public class EclipseToMavenMojo
                 }
                 else
                 {
-                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep
-                        + " in project " + key );
+                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep +
+                        " in project " + key );
                 }
             }
         }
@@ -331,8 +330,8 @@ public class EclipseToMavenMojo
 
             Analyzer analyzer = new Analyzer();
 
-            Map bundleSymbolicNameHeader = analyzer.parseHeader( plugin
-                .getManifestAttribute( Analyzer.BUNDLE_SYMBOLICNAME ) );
+            Map bundleSymbolicNameHeader =
+                analyzer.parseHeader( plugin.getManifestAttribute( Analyzer.BUNDLE_SYMBOLICNAME ) );
             bundleName = (String) bundleSymbolicNameHeader.keySet().iterator().next();
             version = plugin.getManifestAttribute( Analyzer.BUNDLE_VERSION );
 
@@ -397,7 +396,7 @@ public class EclipseToMavenMojo
 
         return model;
     }
-    
+
     /**
      * Writes the artifact to the repo
      * 
@@ -411,10 +410,10 @@ public class EclipseToMavenMojo
         Writer fw = null;
         ArtifactMetadata metadata = null;
         File pomFile = null;
-        Artifact pomArtifact = artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model
-            .getVersion(), null, "pom" );
-        Artifact artifact = artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model
-            .getVersion(), null, "jar" );
+        Artifact pomArtifact =
+            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "pom" );
+        Artifact artifact =
+            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "jar" );
         try
         {
             pomFile = File.createTempFile( "pom-", ".xml" );
@@ -478,6 +477,7 @@ public class EclipseToMavenMojo
     /**
      * The 4th (build) token MUST be separed with "-" and not with "." in maven. A version with 4 dots is not parsed,
      * and the whole string is considered a qualifier. See tests in DefaultArtifactVersion for reference.
+     * 
      * @param version initial version
      * @param forcedQualifier build number
      * @param stripQualifier always remove 4th token in version
@@ -498,8 +498,9 @@ public class EclipseToMavenMojo
             }
             else
             {
-                version = StringUtils.substring( version, 0, lastDot ) + "-"
-                    + StringUtils.substring( version, lastDot + 1, version.length() );
+                version =
+                    StringUtils.substring( version, 0, lastDot ) + "-" +
+                        StringUtils.substring( version, lastDot + 1, version.length() );
             }
         }
         return version;
@@ -556,8 +557,8 @@ public class EclipseToMavenMojo
     }
 
     /**
-     * Get the group id as the tokens until last dot
-     * e.g. <code>org.eclipse.jdt</code> -> <code>org.eclipse</code>
+     * Get the group id as the tokens until last dot e.g. <code>org.eclipse.jdt</code> -> <code>org.eclipse</code>
+     * 
      * @param bundleName bundle name
      * @return group id
      */
@@ -573,8 +574,8 @@ public class EclipseToMavenMojo
     }
 
     /**
-     * Get the artifact id as the tokens after last dot
-     * e.g. <code>org.eclipse.jdt</code> -> <code>jdt</code>
+     * Get the artifact id as the tokens after last dot e.g. <code>org.eclipse.jdt</code> -> <code>jdt</code>
+     * 
      * @param bundleName bundle name
      * @return artifact id
      */
@@ -591,6 +592,7 @@ public class EclipseToMavenMojo
 
     /**
      * Parses the "Require-Bundle" and convert it to a list of dependencies.
+     * 
      * @param requireBundle "Require-Bundle" entry
      * @return an array of <code>Dependency</code>
      */
@@ -641,6 +643,7 @@ public class EclipseToMavenMojo
 
     /**
      * Fix the separator for the 4th token in a versions. In maven this must be "-", in OSGI it's "."
+     * 
      * @param versionRange input range
      * @return modified version range
      */
@@ -664,8 +667,9 @@ public class EclipseToMavenMojo
             {
                 // build number found, fix it
                 int lastDot = group.lastIndexOf( "." );
-                group = StringUtils.substring( group, 0, lastDot ) + "-"
-                    + StringUtils.substring( group, lastDot + 1, group.length() );
+                group =
+                    StringUtils.substring( group, 0, lastDot ) + "-" +
+                        StringUtils.substring( group, lastDot + 1, group.length() );
             }
             matcher.appendReplacement( newVersionRange, group );
         }

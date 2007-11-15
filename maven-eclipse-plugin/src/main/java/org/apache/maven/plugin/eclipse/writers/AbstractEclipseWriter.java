@@ -38,7 +38,8 @@ public abstract class AbstractEclipseWriter
     protected EclipseWriterConfig config;
 
     /**
-     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#init(org.apache.maven.plugin.logging.Log, org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig)
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#init(org.apache.maven.plugin.logging.Log,
+     *      org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig)
      */
     public EclipseWriter init( Log log, EclipseWriterConfig config )
     {
