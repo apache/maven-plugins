@@ -36,6 +36,7 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -152,18 +153,9 @@ public class RadApplicationXMLWriter
             }
             this.modulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
 
-            try
-            {
-                this.webModulesFromPoms =
-                    ( (Xpp3Dom) ( (org.apache.maven.model.Plugin) config.getProject().getBuild().getPluginsAsMap().get(
-                                                                                                                        "org.apache.maven.plugins:maven-ear-plugin" ) ).getConfiguration() ).getChild(
-                                                                                                                                                                                                       "modules" ).getChildren(
-                                                                                                                                                                                                                                "webModule" );
-            }
-            catch ( java.lang.NullPointerException ex )
-            {
-                this.webModulesFromPoms = new Xpp3Dom[0];
-            }
+            this.webModulesFromPoms =
+                IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
+                                                    new String[] { "modules", "webModule" } );
 
             IdeDependency[] deps = config.getDeps();
             for ( int index = 0; index < deps.length; index++ )

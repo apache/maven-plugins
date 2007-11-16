@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.BuildCommand;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -471,18 +472,44 @@ public class EclipseClasspathWriter
             writer.addAttribute( ATTR_SOURCEPATH, sourcepath );
         }
 
+        boolean attributeElemOpen = false;
+        
         if ( javadocpath != null )
         {
-            writer.startElement( "attributes" ); //$NON-NLS-1$
+            if ( !attributeElemOpen )
+            {
+                writer.startElement( "attributes" ); //$NON-NLS-1$
+                attributeElemOpen = true;
+            }
 
             writer.startElement( "attribute" ); //$NON-NLS-1$
             writer.addAttribute( "value", "jar:file:/" + javadocpath + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             writer.addAttribute( "name", "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
-            writer.endElement();
         }
 
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( this.config.getPackaging() ) && config.getWtpapplicationxml() &&
+            kind.equals( ATTR_VAR ) && !dep.isTestDependency() && !dep.isProvided() &&
+            !dep.isSystemScopedOutsideProject( this.config.getProject() ) )
+        {
+            if ( !attributeElemOpen )
+            {
+                writer.startElement( "attributes" ); //$NON-NLS-1$
+                attributeElemOpen = true;
+            }
+
+            writer.startElement( "attribute" ); //$NON-NLS-1$
+            writer.addAttribute( "value", "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( "name", "org.eclipse.jst.component.dependency" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.endElement();
+
+        }
+
+        if ( attributeElemOpen )
+        {
+            writer.endElement();
+        }
         writer.endElement();
 
     }

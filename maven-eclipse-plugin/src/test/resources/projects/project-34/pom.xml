@@ -16,9 +16,9 @@
         <configuration>
           <workspace>${basedir}</workspace>
           <projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
-          <wtpContextName>${artifactId}-${version}</wtpContextName>
           <wtpmanifest>true</wtpmanifest>
           <wtpapplicationxml>true</wtpapplicationxml>
+          <wtpversion>2.0</wtpversion>
         </configuration>
       </plugin>
     </plugins>
