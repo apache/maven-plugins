@@ -49,9 +49,11 @@ import org.apache.maven.plugin.eclipse.writers.wtp.EclipseWtpmodulesWriter;
 import org.apache.maven.plugin.ide.AbstractIdeSupportMojo;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Generates the following eclipse configuration files:
@@ -105,7 +107,7 @@ public class EclipsePlugin
     protected static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
 
     // warning, order is important for binary search
-    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
 
     /**
      * Constant for 'artifactId' element in POM.xml.
@@ -268,7 +270,7 @@ public class EclipsePlugin
     /**
      * JEE context name of the WTP module. ( ex. WEB context name ).
      * 
-     * @parameter expression="${wtpContextName}" default-value="${project.artifactId}"
+     * @parameter expression="${wtpContextName}"
      */
     private String wtpContextName;
 
@@ -689,6 +691,10 @@ public class EclipsePlugin
         {
             wtpVersionFloat = 1.5f;
         }
+        else if ( "2.0".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtpVersionFloat = 2.0f;
+        }
         if ( !"none".equalsIgnoreCase( wtpversion ) )
         {
             getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
@@ -897,6 +903,8 @@ public class EclipsePlugin
 
         config.setWtpapplicationxml( wtpapplicationxml );
 
+        config.setWtpVersion( this.wtpVersionFloat );
+
         Set convertedBuildCommands = new LinkedHashSet();
 
         if ( buildcommands != null )
@@ -931,10 +939,73 @@ public class EclipsePlugin
         config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
-        config.setContextName( this.wtpContextName );
         config.setPackaging( this.packaging );
 
+        collectWarContextRootsFromReactorEarConfiguration( config );
+
         return config;
+    }
+
+    /**
+     * If this is a war module peek into the reactor an search for an ear module that defines the context root of this
+     * module.
+     * 
+     * @param config config to save the context root.
+     */
+    private void collectWarContextRootsFromReactorEarConfiguration( EclipseWriterConfig config )
+    {
+        if ( reactorProjects != null && this.wtpContextName == null &&
+            Constants.PROJECT_PACKAGING_WAR.equals( this.project.getPackaging() ) )
+        {
+            for ( Iterator iter = reactorProjects.iterator(); iter.hasNext(); )
+            {
+                MavenProject reactorProject = (MavenProject) iter.next();
+
+                if ( Constants.PROJECT_PACKAGING_EAR.equals( reactorProject.getPackaging() ) )
+                {
+                    Xpp3Dom[] warDefinitions =
+                        IdeUtils.getPluginConfigurationDom( reactorProject, JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
+                                                            new String[] { "modules", "webModule" } );
+                    for ( int index = 0; index < warDefinitions.length; index++ )
+                    {
+                        Xpp3Dom groupId = warDefinitions[index].getChild( "groupId" );
+                        Xpp3Dom artifactId = warDefinitions[index].getChild( "artifactId" );
+                        Xpp3Dom contextRoot = warDefinitions[index].getChild( "contextRoot" );
+                        if ( groupId != null && artifactId != null && contextRoot != null &&
+                            groupId.getValue() != null && artifactId.getValue() != null &&
+                            contextRoot.getValue() != null )
+                        {
+                            getLog().info(
+                                           "Found context root definition for " + groupId.getValue() + ":" +
+                                               artifactId.getValue() + " " + contextRoot.getValue() );
+                            if ( this.project.getArtifactId().equals( artifactId.getValue() ) &&
+                                this.project.getGroupId().equals( groupId.getValue() ) )
+                            {
+                                config.setContextName( contextRoot.getValue() );
+                            }
+                        }
+                        else
+                        {
+                            getLog().info(
+                                           "Found incomplete ear configuration in " + reactorProject.getGroupId() +
+                                               ":" + reactorProject.getGroupId() + " found " +
+                                               warDefinitions[index].toString() );
+                        }
+                    }
+                }
+            }
+        }
+        if ( config.getContextName() == null && Constants.PROJECT_PACKAGING_WAR.equals( this.project.getPackaging() ) )
+        {
+            if ( this.wtpContextName == null )
+            {
+                config.setContextName( this.project.getArtifactId() );
+            }
+            else
+            {
+                config.setContextName( this.wtpContextName );
+            }
+        }
     }
 
     /**
@@ -1027,8 +1098,8 @@ public class EclipsePlugin
 
         if ( wtpVersionFloat == 0.7f )
         {
-            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) ); // WTP 0.7
-                                                                                                            // builder
+            // WTP 0.7 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) ); 
         }
 
         if ( pde )

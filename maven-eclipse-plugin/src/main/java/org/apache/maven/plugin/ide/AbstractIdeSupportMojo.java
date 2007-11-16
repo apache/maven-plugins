@@ -60,6 +60,7 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -732,7 +733,7 @@ public abstract class AbstractIdeSupportMojo
             String type = dependency.getType();
             if ( type == null )
             {
-                type = "jar"; //$NON-NLS-1$
+                type = Constants.PROJECT_PACKAGING_JAR; //$NON-NLS-1$
             }
             String classifier = dependency.getClassifier();
             boolean optional = dependency.isOptional();

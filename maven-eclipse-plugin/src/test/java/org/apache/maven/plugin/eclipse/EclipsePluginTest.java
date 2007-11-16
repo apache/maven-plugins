@@ -18,9 +18,16 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -358,6 +365,89 @@ public class EclipsePluginTest
         throws Exception
     {
         testProject( "project-34" );
+    }
+
+    public void testJeeSimple()
+        throws Exception
+    {
+        testProject( "j2ee-simple" );
+
+        File basedir = getTestFile( "target/test-classes/projects/j2ee-simple" );
+
+        checkContextRoot( basedir, "servlets/servlet", "ear", "servlet" );
+
+    }
+
+    public void testProject35()
+        throws Exception
+    {
+        testProject( "project-35" );
+
+        File basedir = getTestFile( "target/test-classes/projects/project-35" );
+
+        checkContextRoot( basedir, "multymodule-war", "multymodule-ear", "/somethingVeryDifferent" );
+
+        FileReader reader =
+            new FileReader( new File( basedir, "multymodule-war/.settings/org.eclipse.wst.common.component" ) );
+        Xpp3Dom warComponent = Xpp3DomBuilder.build( reader );
+        Xpp3Dom[] dependentModules = warComponent.getChild( "wb-module" ).getChildren( "dependent-module" );
+        assertEquals( 2, dependentModules.length );
+        for ( int index = 0; index < dependentModules.length; index++ )
+        {
+            assertEquals( "/WEB-INF/lib", dependentModules[index].getAttribute( "deploy-path" ) );
+        }
+
+        reader = new FileReader( new File( basedir, "multymodule-ear/.settings/org.eclipse.wst.common.component" ) );
+        Xpp3Dom earComponent = Xpp3DomBuilder.build( reader );
+        dependentModules = earComponent.getChild( "wb-module" ).getChildren( "dependent-module" );
+        assertEquals( 2, dependentModules.length );
+        for ( int index = 0; index < dependentModules.length; index++ )
+        {
+            if ( dependentModules[index].getAttribute( "archiveName" ).endsWith( "war" ) )
+            {
+                assertEquals( "/", dependentModules[index].getAttribute( "deploy-path" ) );
+                assertTrue( !dependentModules[index].getAttribute( "archiveName" ).startsWith( ".." ) );
+            }
+            else
+            {
+                assertEquals( "lib", dependentModules[index].getAttribute( "deploy-path" ) );
+                assertTrue( dependentModules[index].getAttribute( "archiveName" ).startsWith( ".." ) );
+            }
+        }
+    }
+
+    private void checkContextRoot( File basedir, String warModule, String earModule, String expectedContextRoot )
+        throws FileNotFoundException, XmlPullParserException, IOException
+    {
+        FileReader reader =
+            new FileReader( new File( basedir, warModule + "/.settings/org.eclipse.wst.common.component" ) );
+        Xpp3Dom warComponent = Xpp3DomBuilder.build( reader );
+        Xpp3Dom[] properties = warComponent.getChild( "wb-module" ).getChildren( "property" );
+        boolean contextRootAvaliable = false;
+        for ( int index = 0; index < properties.length; index++ )
+        {
+            if ( properties[index].getAttribute( "name" ).equals( "context-root" ) )
+            {
+                assertEquals( "Context root detection in org.eclipse.wst.common.component", expectedContextRoot,
+                              properties[index].getAttribute( "value" ) );
+                contextRootAvaliable = true;
+            }
+        }
+        assertTrue( "there must be a context root here", contextRootAvaliable );
+
+        reader = new FileReader( new File( basedir, earModule + "/target/eclipseEar/META-INF/application.xml" ) );
+        Xpp3Dom generatedApplicationXML = Xpp3DomBuilder.build( reader );
+
+        Xpp3Dom[] modules = generatedApplicationXML.getChildren( "module" );
+        for ( int index = 0; index < modules.length; index++ )
+        {
+            if ( modules[index].getChild( "web" ) != null )
+            {
+                assertEquals( "Context root detection in target/eclipseEar/META-INF/application.xml",
+                              expectedContextRoot,
+                              modules[index].getChild( "web" ).getChild( "context-root" ).getValue() );
+            }
+        }
     }
 
     /**

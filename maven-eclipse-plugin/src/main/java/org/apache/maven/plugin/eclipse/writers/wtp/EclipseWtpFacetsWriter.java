@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
@@ -117,7 +118,7 @@ public class EclipseWtpFacetsWriter
         writer.startElement( ELT_FIXED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
         writer.endElement(); // element fixed
-        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
@@ -127,7 +128,7 @@ public class EclipseWtpFacetsWriter
             writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "ejb".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
@@ -137,7 +138,7 @@ public class EclipseWtpFacetsWriter
             writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
@@ -147,7 +148,7 @@ public class EclipseWtpFacetsWriter
             writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getProject() ) );
             writer.endElement(); // installed
         }
-        else if ( "jar".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_UTILITY );

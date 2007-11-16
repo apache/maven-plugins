@@ -26,9 +26,11 @@ import java.io.Writer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -134,12 +136,12 @@ public class EclipseWtpComponentWriter
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
         String target = "/"; //$NON-NLS-1$
 
-        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
             File warSourceDirectory =
-                new File( IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+                new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                      "warSourceDirectory", //$NON-NLS-1$
                                                      config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
 
@@ -161,14 +163,15 @@ public class EclipseWtpComponentWriter
             writer.endElement(); // property
 
         }
-        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
 
             String defaultApplicationXML =
                 config.getWtpapplicationxml() ? "/target/eclipseEar" : "/src/main/application";
 
             String earSourceDirectory =
-                IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN, "earSourceDirectory", //$NON-NLS-1$
+                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
+                                           "earSourceDirectory", //$NON-NLS-1$
                                            config.getProject().getBasedir() + defaultApplicationXML ); //$NON-NLS-1$
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
@@ -178,7 +181,8 @@ public class EclipseWtpComponentWriter
             writer.endElement();
         }
 
-        if ( "war".equalsIgnoreCase( packaging ) || "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ||
+            Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
             // write out the dependencies.
             writeWarOrEarResources( writer, config.getProject(), localRepository );

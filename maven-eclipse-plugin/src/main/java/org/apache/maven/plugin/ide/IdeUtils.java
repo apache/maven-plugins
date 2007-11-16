@@ -20,6 +20,7 @@ package org.apache.maven.plugin.ide;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -162,27 +163,80 @@ public class IdeUtils
     }
 
     /**
+     * Search for a configuration setting of an other plugin for a configuration setting.
+     * 
      * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param pluginId the group id and artifact id of the plugin to search for
+     * @param optionName the option to get from the configuration
+     * @param defaultValue the default value if the configuration was not found
+     * @return the value of the option configured in the plugin configuration
      */
-    public static String getPluginSetting( MavenProject project, String artifactId, String optionName,
-                                           String defaultValue )
+    public static String getPluginSetting( MavenProject project, String pluginId, String optionName, String defaultValue )
     {
-        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
+        Xpp3Dom dom = getPluginConfigurationDom( project, pluginId );
+        if ( dom != null && dom.getChild( optionName ) != null )
         {
-            Plugin plugin = (Plugin) it.next();
+            return dom.getChild( optionName ).getValue();
+        }
+        return defaultValue;
+    }
 
-            if ( plugin.getArtifactId().equals( artifactId ) )
+    /**
+     * Search for the configuration Xpp3 dom of an other plugin.
+     * 
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param pluginId the group id and artifact id of the plugin to search for
+     * @return the value of the option configured in the plugin configuration
+     */
+    public static Xpp3Dom getPluginConfigurationDom( MavenProject project, String pluginId )
+    {
+
+        Plugin plugin = (org.apache.maven.model.Plugin) project.getBuild().getPluginsAsMap().get( pluginId );
+        if ( plugin != null )
+        {
+            return (Xpp3Dom) plugin.getConfiguration();
+        }
+        return null;
+    }
+
+    /**
+     * Search for the configuration Xpp3 dom of an other plugin.
+     * 
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param artifactId the artifact id of the plugin to search for
+     * @return the value of the option configured in the plugin configuration
+     */
+    public static Xpp3Dom[] getPluginConfigurationDom( MavenProject project, String artifactId,
+                                                       String[] subConfiguration )
+    {
+        ArrayList configurationDomList = new ArrayList();
+        Xpp3Dom configuration = getPluginConfigurationDom( project, artifactId );
+        if ( configuration != null )
+        {
+            configurationDomList.add( configuration );
+            for ( int index = 0; !configurationDomList.isEmpty() && subConfiguration != null &&
+                index < subConfiguration.length; index++ )
             {
-                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
-
-                if ( o != null && o.getChild( optionName ) != null )
+                ArrayList newConfigurationDomList = new ArrayList();
+                for ( Iterator childElement = configurationDomList.iterator(); childElement.hasNext(); )
                 {
-                    return o.getChild( optionName ).getValue();
+                    Xpp3Dom child = (Xpp3Dom) childElement.next();
+                    Xpp3Dom[] deeperChild = child.getChildren( subConfiguration[index] );
+                    for ( int deeperIndex = 0; deeperIndex < deeperChild.length; deeperIndex++ )
+                    {
+                        if ( deeperChild[deeperIndex] != null )
+                        {
+                            newConfigurationDomList.add( deeperChild[deeperIndex] );
+                        }
+                    }
                 }
+                configurationDomList = newConfigurationDomList;
             }
         }
-
-        return defaultValue;
+        return (Xpp3Dom[]) configurationDomList.toArray( new Xpp3Dom[configurationDomList.size()] );
     }
 
     public static String getProjectName( String template, IdeDependency dep )
