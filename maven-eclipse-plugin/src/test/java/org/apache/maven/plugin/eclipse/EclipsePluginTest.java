@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -370,10 +372,14 @@ public class EclipsePluginTest
     public void testJeeSimple()
         throws Exception
     {
-        testProject( "j2ee-simple" );
-
+        // Install artefacts
         File basedir = getTestFile( "target/test-classes/projects/j2ee-simple" );
-
+        File pom = new File( basedir, "pom.xml" );
+        List goals = new ArrayList();
+        goals.add( "install" );
+        executeMaven( pom, new Properties(), goals );
+        // Test project
+        testProject( "j2ee-simple" );
         checkContextRoot( basedir, "servlets/servlet", "ear", "servlet" );
 
     }
