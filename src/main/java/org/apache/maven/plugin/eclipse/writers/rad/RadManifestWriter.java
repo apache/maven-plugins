@@ -68,7 +68,7 @@ public class RadManifestWriter
     {
         String metaInfBaseDirectory = null;
 
-        if ( config.getProject().equals( Constants.PROJECT_PACKAGING_WAR ) )
+        if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
             metaInfBaseDirectory =
                 config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;

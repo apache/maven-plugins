@@ -66,3 +66,4 @@ Maven Eclipse Plugin
 
   * {{{examples/load-code-styles.html}Load Code Style file}}
   
+  * {{{examples/multi-module-projects.html}Multi-module projects with WTP}}  

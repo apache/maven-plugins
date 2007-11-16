@@ -82,7 +82,8 @@ public class RadPluginTest
 
         MavenProject project = readProject( pom0 );
 
-        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        String outputDirPath =
+            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
         File outputDir;
 
         if ( outputDirPath == null )
@@ -151,7 +152,7 @@ public class RadPluginTest
 
         assertEquals( "project-rad-5_2.war", webappModule.getChild( "web" ).getChild( "web-uri" ).getValue() );
         assertEquals( "project-rad-5_2", webappModule.getChild( "web" ).getChild( "context-root" ).getValue() );
-        assertEquals( "project-rad-5_3.jar", ejbModule.getChild( "ejb" ).getValue() );
+        assertEquals( "project-rad-5_3.jar", ejbModule.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
 
         Xpp3Dom websettings =
             Xpp3DomBuilder.build( new InputStreamReader(
@@ -176,7 +177,8 @@ public class RadPluginTest
 
         MavenProject project = readProject( pom0 );
 
-        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        String outputDirPath =
+            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
         File outputDir;
 
         if ( outputDirPath == null )
@@ -245,7 +247,7 @@ public class RadPluginTest
             }
             else if ( child.getAttribute( "id" ).startsWith( "EjbModule_" ) )
             {
-                assertEquals( "project-rad-5_3.jar", child.getChild( "ejb" ).getValue() );
+                assertEquals( "project-rad-5_3.jar", child.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
                 ejbVerified = true;
             }
         }

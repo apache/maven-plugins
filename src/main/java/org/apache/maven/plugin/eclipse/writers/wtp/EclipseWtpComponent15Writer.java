@@ -48,7 +48,14 @@ public class EclipseWtpComponent15Writer
      */
     protected String getProjectVersion()
     {
-        return "1.5.0"; //$NON-NLS-1$
+        if ( this.config.getWtpVersion() < 2.0f )
+        {
+            return "1.5.0"; //$NON-NLS-1$
+        }
+        else
+        {
+            return "2.0"; //$NON-NLS-1$
+        }
     }
 
     /**

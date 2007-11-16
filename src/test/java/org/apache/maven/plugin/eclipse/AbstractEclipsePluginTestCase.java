@@ -230,7 +230,8 @@ public abstract class AbstractEclipsePluginTestCase
 
         MavenProject project = readProject( pom );
 
-        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        String outputDirPath =
+            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
         File outputDir;
         File projectOutputDir = basedir;
 
@@ -302,7 +303,8 @@ public abstract class AbstractEclipsePluginTestCase
 
         MavenProject project = readProject( pom );
 
-        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        String outputDirPath =
+            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
         File outputDir;
         File projectOutputDir = basedir;
 
@@ -430,7 +432,7 @@ public abstract class AbstractEclipsePluginTestCase
      * @param projectOutputDir
      * @throws IOException
      */
-    private void compareDirectoryContent( File basedir, File projectOutputDir, String additionalDir )
+    protected void compareDirectoryContent( File basedir, File projectOutputDir, String additionalDir )
         throws IOException
     {
         File expectedConfigDir = new File( basedir, "expected/" + additionalDir );

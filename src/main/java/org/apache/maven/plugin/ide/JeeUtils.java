@@ -25,6 +25,10 @@ import org.apache.maven.project.MavenProject;
 
 public class JeeUtils
 {
+    public static final String ARTIFACT_MAVEN_EAR_PLUGIN = "org.apache.maven.plugins:maven-ear-plugin"; //$NON-NLS-1$
+
+    public static final String ARTIFACT_MAVEN_WAR_PLUGIN = "org.apache.maven.plugins:maven-war-plugin"; //$NON-NLS-1$
+
     private static final Map ejbMap = new HashMap();
 
     private static final Map jeeMap = new HashMap();
