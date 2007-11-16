@@ -413,7 +413,8 @@ public class EclipseToMavenMojo
         Artifact pomArtifact =
             artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "pom" );
         Artifact artifact =
-            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "jar" );
+            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null,
+                                            Constants.PROJECT_PACKAGING_JAR );
         try
         {
             pomFile = File.createTempFile( "pom-", ".xml" );

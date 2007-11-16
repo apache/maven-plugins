@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -39,6 +40,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 public abstract class AbstractWtpResourceWriter
     extends AbstractEclipseWriter
 {
+
+    private static final String ELT_DEPENDENCY_OBJECT = "dependent-object"; //$NON-NLS-1$
 
     private static final String ELT_DEPENDENCY_TYPE = "dependency-type"; //$NON-NLS-1$
 
@@ -74,10 +77,6 @@ public abstract class AbstractWtpResourceWriter
 
     protected static final String ELT_PROJECT_MODULES = "project-modules"; //$NON-NLS-1$
 
-    protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$
-
-    protected static final String ARTIFACT_MAVEN_EAR_PLUGIN = "maven-ear-plugin"; //$NON-NLS-1$
-
     /**
      * @param project
      * @param writer
@@ -87,7 +86,7 @@ public abstract class AbstractWtpResourceWriter
                                                         File buildOutputDirectory )
         throws MojoExecutionException
     {
-        if ( "war".equals( config.getPackaging() ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$
 
@@ -103,7 +102,7 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_VALUE, contextRoot );
             writer.endElement();
         }
-        else if ( "ejb".equals( config.getPackaging() ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EJB.equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
@@ -119,7 +118,7 @@ public abstract class AbstractWtpResourceWriter
             writer.endElement();
 
         }
-        else if ( "ear".equals( config.getPackaging() ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equals( config.getPackaging() ) ) //$NON-NLS-1$
         {
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
@@ -154,6 +153,15 @@ public abstract class AbstractWtpResourceWriter
         throws MojoExecutionException
     {
         String handle;
+        String dependentObject = null;
+        String archiveName;
+
+        // ejb's and wars must always be toplevel
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() ) ||
+            Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
+        {
+            deployPath = "/";
+        }
 
         if ( dep.isReferencedProject() )
         {
@@ -163,6 +171,15 @@ public abstract class AbstractWtpResourceWriter
             // </dependent-module>
 
             handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName(); //$NON-NLS-1$ //$NON-NLS-2$
+            if ( Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
+            {
+                dependentObject = "EjbModule_";
+            }
+            else if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() ) )
+            {
+                dependentObject = "WebModule_";
+            }
+            archiveName = dep.getEclipseProjectName() + "." + dep.getType();
         }
         else
         {
@@ -196,14 +213,32 @@ public abstract class AbstractWtpResourceWriter
                     +
                     IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
             }
+            if ( Constants.PROJECT_PACKAGING_EAR.equals( this.config.getPackaging() ) && !"/".equals( deployPath ) )
+            {
+                // This is a very ugly hack around a WTP bug! a delpoydir in the configuration file is duplicated.
+                // a deploy dir like "lib" will be used as "lib/lib" the only workig workaround is to include a ..
+                // in the archive name.
+                archiveName = "../" + artifactPath.getName();
+            }
+            else
+            {
+                archiveName = artifactPath.getName();
+            }
         }
 
         writer.startElement( ELT_DEPENDENT_MODULE );
 
-        writer.addAttribute( "archiveName", dep.getEclipseProjectName() + "." + dep.getType() );
+        writer.addAttribute( "archiveName", archiveName );
 
         writer.addAttribute( ATTR_DEPLOY_PATH, deployPath ); //$NON-NLS-1$
         writer.addAttribute( ATTR_HANDLE, handle );
+
+        if ( dependentObject != null && config.getWtpVersion() >= 2.0f )
+        {
+            writer.startElement( ELT_DEPENDENCY_OBJECT );
+            writer.writeText( dependentObject + System.identityHashCode( dep ) );
+            writer.endElement();
+        }
 
         writer.startElement( ELT_DEPENDENCY_TYPE );
         writer.writeText( "uses" ); //$NON-NLS-1$
@@ -217,9 +252,10 @@ public abstract class AbstractWtpResourceWriter
     {
         // use /WEB-INF/lib for war projects and / or the configured defaultLibBundleDir for ear projects
         String deployDir =
-            IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_EAR_PLUGIN, "defaultLibBundleDir", "/" );
+            IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN, "defaultLibBundleDir",
+                                       "/" );
 
-        if ( project.getPackaging().equals( "war" ) )
+        if ( project.getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
             deployDir = "/WEB-INF/lib";
         }
@@ -232,7 +268,8 @@ public abstract class AbstractWtpResourceWriter
             // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
             // exclude test and provided and system dependencies outside the project
             if ( ( !dep.isTestDependency() && !dep.isProvided() && !dep.isSystemScopedOutsideProject( project ) ) &&
-                ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                ( Constants.PROJECT_PACKAGING_JAR.equals( type ) || Constants.PROJECT_PACKAGING_EJB.equals( type ) ||
+                    "ejb-client".equals( type ) || Constants.PROJECT_PACKAGING_WAR.equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
                 addDependency( writer, dep, localRepository, config.getProject().getBasedir(), deployDir );
             }

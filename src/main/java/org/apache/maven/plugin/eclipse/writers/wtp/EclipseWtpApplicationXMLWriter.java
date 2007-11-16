@@ -12,8 +12,11 @@ import java.io.Writer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -32,6 +35,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 public class EclipseWtpApplicationXMLWriter
     extends AbstractWtpResourceWriter
 {
+
     private static final String APPLICATION_XML_APPLICATION = "application";
 
     private static final String APPLICATION_XML_CONTEXT_ROOT = "context-root";
@@ -104,7 +108,7 @@ public class EclipseWtpApplicationXMLWriter
         throws MojoExecutionException
     {
         String packaging = this.config.getProject().getPackaging();
-        if ( "ear".equalsIgnoreCase( packaging ) )
+        if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             File applicationXmlFile =
                 new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar" +
@@ -137,10 +141,8 @@ public class EclipseWtpApplicationXMLWriter
             this.modulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
 
             this.webModulesFromPoms =
-                ( (Xpp3Dom) ( (org.apache.maven.model.Plugin) this.config.getProject().getBuild().getPluginsAsMap().get(
-                                                                                                                         "org.apache.maven.plugins:maven-ear-plugin" ) ).getConfiguration() ).getChild(
-                                                                                                                                                                                                        "modules" ).getChildren(
-                                                                                                                                                                                                                                 "webModule" );
+                IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
+                                                    new String[] { "modules", "webModule" } );
 
             IdeDependency[] deps = this.config.getDeps();
             for ( int index = 0; index < deps.length; index++ )
@@ -306,7 +308,8 @@ public class EclipseWtpApplicationXMLWriter
             if ( children[index].getAttribute( EclipseWtpApplicationXMLWriter.MODULEMAPS_PROJECT_NAME ).equals(
                                                                                                                 dependency.getEclipseProjectName() ) )
             {
-                if ( ( dependency.getType().equals( "ejb" ) || dependency.getType().equals( "ejb3" ) ) &&
+                if ( ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) || dependency.getType().equals(
+                                                                                                                      "ejb3" ) ) &&
                     children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS ) &&
                     children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
                                                                                                                     EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
@@ -314,7 +317,7 @@ public class EclipseWtpApplicationXMLWriter
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( "war" ) &&
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) &&
                     children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS ) &&
                     children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
                                                                                                                     EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
@@ -322,7 +325,7 @@ public class EclipseWtpApplicationXMLWriter
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( "jar" ) &&
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR ) &&
                     children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
@@ -337,7 +340,7 @@ public class EclipseWtpApplicationXMLWriter
         // ok, its missing (or it changed type). create a new one based on its
         // type
         long id = System.identityHashCode( dependency );
-        if ( dependency.getType().equals( "ejb" ) || dependency.getType().equals( "ejb3" ) )
+        if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) || dependency.getType().equals( "ejb3" ) )
         {
             Xpp3Dom mapping = new Xpp3Dom( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS );
             mapping.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID, "ModuleMapping_" + id );
@@ -351,7 +354,7 @@ public class EclipseWtpApplicationXMLWriter
             modulemapXmlDom.addChild( mapping );
             return mapping;
         }
-        else if ( dependency.getType().equals( "war" ) )
+        else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
             Xpp3Dom mapping = new Xpp3Dom( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS );
             mapping.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID, "ModuleMapping_" + id );
@@ -396,29 +399,6 @@ public class EclipseWtpApplicationXMLWriter
     }
 
     /**
-     * mark the domtree entry as handled (all not handled ones will be deleted).
-     * 
-     * @param xpp3Dom dom element to mark handled
-     */
-    private void handled( Xpp3Dom xpp3Dom )
-    {
-        for ( int index = 0; index < this.applicationXmlDomChildren.length; index++ )
-        {
-            if ( this.applicationXmlDomChildren[index] == xpp3Dom )
-            {
-                this.applicationXmlDomChildren[index] = null;
-            }
-        }
-        for ( int index = 0; index < this.modulemapsXmlDomChildren.length; index++ )
-        {
-            if ( this.modulemapsXmlDomChildren[index] == xpp3Dom )
-            {
-                this.modulemapsXmlDomChildren[index] = null;
-            }
-        }
-    }
-
-    /**
      * read an xml file (application.xml or .modulemaps).
      * 
      * @param xmlFile an xmlfile
@@ -441,6 +421,29 @@ public class EclipseWtpApplicationXMLWriter
             this.log.error( "cantreadfile" + xmlFile.getAbsolutePath() );
             // this will trigger creating a new file
             return null;
+        }
+    }
+
+    /**
+     * mark the domtree entry as handled (all not handled ones will be deleted).
+     * 
+     * @param xpp3Dom dom element to mark handled
+     */
+    private void handled( Xpp3Dom xpp3Dom )
+    {
+        for ( int index = 0; index < this.applicationXmlDomChildren.length; index++ )
+        {
+            if ( this.applicationXmlDomChildren[index] == xpp3Dom )
+            {
+                this.applicationXmlDomChildren[index] = null;
+            }
+        }
+        for ( int index = 0; index < this.modulemapsXmlDomChildren.length; index++ )
+        {
+            if ( this.modulemapsXmlDomChildren[index] == xpp3Dom )
+            {
+                this.modulemapsXmlDomChildren[index] = null;
+            }
         }
     }
 
@@ -502,7 +505,7 @@ public class EclipseWtpApplicationXMLWriter
         }
         Xpp3Dom mapping = findOrCreateArtifact( dependency, modulemapXmlDom );
         handled( mapping );
-        if ( dependency.getType().equals( "ejb" ) || dependency.getType().equals( "ejb3" ) )
+        if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) || dependency.getType().equals( "ejb3" ) )
         {
             Xpp3Dom module = findModuleInApplicationXml( applicationXmlDom, mapping );
             if ( module == null )
@@ -520,9 +523,9 @@ public class EclipseWtpApplicationXMLWriter
                 module.getChild( "ejb" ).setValue( dependency.getEclipseProjectName() + ".jar" );
             }
         }
-        else if ( dependency.getType().equals( "war" ) )
+        else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            String contextRootInPom = getContextRootFor( dependency.getEclipseProjectName() );
+            String contextRootInPom = getContextRootFor( dependency );
             Xpp3Dom module = findModuleInApplicationXml( applicationXmlDom, mapping );
             if ( module == null )
             {
@@ -555,19 +558,27 @@ public class EclipseWtpApplicationXMLWriter
     /**
      * Find the contextRoot specified in the pom and convert it into contectroot for the application.xml.
      * 
-     * @param artifactId the artifactid to search
+     * @param dependency the artifact to search
      * @return string with the context root
      */
-    private String getContextRootFor( String artifactId )
+    private String getContextRootFor( IdeDependency dependency )
     {
+        String artifactId = dependency.getArtifactId();
+        String groupId = dependency.getGroupId();
         for ( int index = 0; index < this.webModulesFromPoms.length; index++ )
         {
-            if ( this.webModulesFromPoms[index].getChild( "artifactId" ).getValue().equals( artifactId ) )
+            Xpp3Dom webGroupId = this.webModulesFromPoms[index].getChild( "groupId" );
+            Xpp3Dom webArtifactId = this.webModulesFromPoms[index].getChild( "artifactId" );
+            Xpp3Dom webContextRoot = this.webModulesFromPoms[index].getChild( "contextRoot" );
+
+            if ( webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals( artifactId ) &&
+                webGroupId != null && webGroupId.getValue().equals( groupId ) )
             {
-                return new File( this.webModulesFromPoms[index].getChild( "contextRoot" ).getValue() ).getName();
+                return webContextRoot.getValue();
             }
         }
-        return artifactId;
+        // no configuration found back to maven-ear-plugin default
+        return dependency.getArtifactId();
     }
 
     /**
@@ -600,4 +611,5 @@ public class EclipseWtpApplicationXMLWriter
         Xpp3DomWriter.write( writer, xmlDomTree );
         IOUtil.close( w );
     }
+
 }

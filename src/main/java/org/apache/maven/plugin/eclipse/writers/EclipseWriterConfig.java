@@ -133,6 +133,11 @@ public class EclipseWriterConfig
     private boolean wtpapplicationxml;
 
     /**
+     * @see EclipsePlugin#getWtpversion()
+     */
+    private float wtpVersion;
+
+    /**
      * Getter for <code>deps</code>.
      * 
      * @return Returns the deps.
@@ -468,13 +473,44 @@ public class EclipseWriterConfig
         this.packaging = packaging;
     }
 
+    /**
+     * Getter for <code>wtpapplicationxml</code>.
+     * 
+     * @return Returns the wtpapplicationxml.
+     */
     public boolean getWtpapplicationxml()
     {
         return this.wtpapplicationxml;
     }
 
+    /**
+     * Setter for <code>buildCommands</code>.
+     * 
+     * @param buildCommands The buildCommands to set.
+     */
     public void setWtpapplicationxml( boolean wtpapplicationxml )
     {
         this.wtpapplicationxml = wtpapplicationxml;
     }
+
+    /**
+     * Getter for <code>wtpVersion</code>.
+     * 
+     * @return Returns the wtpVersion.
+     */
+    public float getWtpVersion()
+    {
+        return wtpVersion;
+    }
+
+    /**
+     * Setter for <code>wtpVersion</code>.
+     * 
+     * @param wtpVersion The wtpVersion to set.
+     */
+    public void setWtpVersion( float wtpVersion )
+    {
+        this.wtpVersion = wtpVersion;
+    }
+
 }
