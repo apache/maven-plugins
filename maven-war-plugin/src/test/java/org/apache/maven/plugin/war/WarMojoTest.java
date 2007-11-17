@@ -323,6 +323,63 @@ public class WarMojoTest
         }
     }
 
+    public void testAttachClasses()
+        throws Exception
+    {
+        String testId = "AttachClasses";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, false );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setWebXml( new File( xmlSource, "web.xml" ) );
+        mojo.setAttachClasses( true );
+
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple-classes.jar" );
+        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "sample-servlet.class"},
+                          new String[]{null, null} );
+    }
+
+    public void testAttachClassesWithCustomClassifier()
+        throws Exception
+    {
+        String testId = "AttachClassesCustomClassifier";
+        MavenProject4CopyConstructor project = new MavenProject4CopyConstructor();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, false );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+
+        project.setArtifact( warArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+        mojo.setWebXml( new File( xmlSource, "web.xml" ) );
+        mojo.setAttachClasses( true );
+        mojo.setClassesClassifier( "mystuff" );
+
+        mojo.execute();
+
+        //validate jar file
+        File expectedJarFile = new File( outputDir, "simple-mystuff.jar" );
+        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "sample-servlet.class"},
+                          new String[]{null, null} );
+    }
+
 
     protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
         throws IOException
