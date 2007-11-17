@@ -24,6 +24,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.war.util.ClassesPackager;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -96,31 +97,25 @@ public class WarMojo
      */
     private boolean failOnMissingWebXml = true;
 
+    /**
+     * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the
+     * project.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean attachClasses = false;
+
+    /**
+     * The classifier to use for the attached classes artifact.
+     *
+     * @parameter default-value="classes"
+     */
+    private String classesClassifier = "classes";
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
-    /**
-     * Overload this to produce a test-war, for example.
-     */
-    protected String getClassifier()
-    {
-        return classifier;
-    }
-
-    protected static File getWarFile( File basedir, String finalName, String classifier )
-    {
-        if ( classifier == null )
-        {
-            classifier = "";
-        }
-        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
-        {
-            classifier = "-" + classifier;
-        }
-
-        return new File( basedir, finalName + classifier + ".war" );
-    }
 
     /**
      * Executes the WarMojo on the current project.
@@ -130,7 +125,7 @@ public class WarMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        File warFile = getWarFile( new File( outputDirectory ), warName, classifier );
+        File warFile = getTargetWarFile();
 
         try
         {
@@ -158,11 +153,13 @@ public class WarMojo
      * Generates the webapp according to the <tt>mode</tt> attribute.
      *
      * @param warFile the target war file
-     * @throws IOException
-     * @throws ArchiverException
-     * @throws ManifestException
+     * @throws IOException            if an error occured while copying files
+     * @throws ArchiverException      if the archive could not be created
+     * @throws ManifestException      if the manifest could not be created
      * @throws DependencyResolutionRequiredException
-     *
+     *                                if an error occured while resolving the dependencies
+     * @throws MojoExecutionException if the execution failed
+     * @throws MojoFailureException   if a fatal exception occured
      */
     private void performPackaging( File warFile )
         throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
@@ -195,6 +192,20 @@ public class WarMojo
         // create archive
         archiver.createArchive( getProject(), archive );
 
+        // create the classes to be attached if necessary
+        if ( isAttachClasses() )
+        {
+            ClassesPackager packager = new ClassesPackager();
+            final File classesDirectory = packager.getClassesDirectory( getWebappDirectory() );
+            if ( classesDirectory.exists() )
+            {
+                getLog().info( "Packaging classes" );
+                packager.packageClasses( classesDirectory, getTargetClassesFile(), getJarArchiver(), getProject(),
+                                         archive );
+                projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), getTargetClassesFile() );
+            }
+        }
+
         String classifier = this.classifier;
         if ( classifier != null )
         {
@@ -212,6 +223,115 @@ public class WarMojo
                 artifact.setFile( warFile );
             }
         }
+    }
+
+
+    protected static File getTargetFile( File basedir, String finalName, String classifier, String type )
+    {
+        if ( classifier == null )
+        {
+            classifier = "";
+        }
+        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        {
+            classifier = "-" + classifier;
+        }
+
+        return new File( basedir, finalName + classifier + "." + type );
+    }
+
+
+    protected File getTargetWarFile()
+    {
+        return getTargetFile( new File( getOutputDirectory() ), getWarName(), getClassifier(), "war" );
+
+    }
+
+    protected File getTargetClassesFile()
+    {
+        return getTargetFile( new File( getOutputDirectory() ), getWarName(), getClassesClassifier(), "jar" );
+    }
+
+    // Getters and Setters
+
+    public String getClassifier()
+    {
+        return classifier;
+    }
+
+    public void setClassifier( String classifier )
+    {
+        this.classifier = classifier;
+    }
+
+    public String getOutputDirectory()
+    {
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory( String outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    public String getWarName()
+    {
+        return warName;
+    }
+
+    public void setWarName( String warName )
+    {
+        this.warName = warName;
+    }
+
+    public WarArchiver getWarArchiver()
+    {
+        return warArchiver;
+    }
+
+    public void setWarArchiver( WarArchiver warArchiver )
+    {
+        this.warArchiver = warArchiver;
+    }
+
+    public MavenProjectHelper getProjectHelper()
+    {
+        return projectHelper;
+    }
+
+    public void setProjectHelper( MavenProjectHelper projectHelper )
+    {
+        this.projectHelper = projectHelper;
+    }
+
+    public boolean isPrimaryArtifact()
+    {
+        return primaryArtifact;
+    }
+
+    public void setPrimaryArtifact( boolean primaryArtifact )
+    {
+        this.primaryArtifact = primaryArtifact;
+    }
+
+    public boolean isAttachClasses()
+    {
+        return attachClasses;
+    }
+
+    public void setAttachClasses( boolean attachClasses )
+    {
+        this.attachClasses = attachClasses;
+    }
+
+    public String getClassesClassifier()
+    {
+        return classesClassifier;
+    }
+
+    public void setClassesClassifier( String classesClassifier )
+    {
+        this.classesClassifier = classesClassifier;
     }
 
     public boolean isFailOnMissingWebXml()

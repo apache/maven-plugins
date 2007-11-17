@@ -1,12 +1,29 @@
 package org.apache.maven.plugin.war.packaging;
 
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
+import org.apache.maven.plugin.war.util.ClassesPackager;
 import org.apache.maven.plugin.war.util.PathSet;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.ManifestException;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,32 +85,9 @@ public class ClassesPackagingTask
 
             final File libDirectory = new File( context.getWebappDirectory(), LIB_PATH );
             final File jarFile = new File( libDirectory, archiveName );
-
-            try
-            {
-                final MavenArchiver archiver = new MavenArchiver();
-                archiver.setArchiver( context.getJarArchiver() );
-                archiver.setOutputFile( jarFile );
-                archiver.getArchiver().addDirectory( context.getClassesDirectory(), context.getWebappSourceIncludes(),
-                                                     context.getWebappSourceExcludes() );
-                archiver.createArchive( context.getProject(), context.getArchive() );
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Could not create classes archive", e );
-            }
-            catch ( ManifestException e )
-            {
-                throw new MojoExecutionException( "Could not create classes archive", e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not create classes archive", e );
-            }
-            catch ( DependencyResolutionRequiredException e )
-            {
-                throw new MojoExecutionException( "Could not create classes archive", e );
-            }
+            final ClassesPackager packager = new ClassesPackager();
+            packager.packageClasses( context.getClassesDirectory(), jarFile, context.getJarArchiver(),
+                                     context.getProject(), context.getArchive() );
         }
         else
         {
