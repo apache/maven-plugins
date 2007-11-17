@@ -68,6 +68,7 @@ public class InvokerMojo
      * build using profiles.
      *
      * @parameter default-value="false"
+     * @since 1.1
      */
     private boolean skipInvocation;
 
@@ -106,6 +107,7 @@ public class InvokerMojo
      * Directory to which projects should be cloned prior to execution.
      *
      * @parameter
+     * @since 1.1
      */
     private File cloneProjectsTo;
 
@@ -201,6 +203,7 @@ public class InvokerMojo
     /**
      * List of profileId's to explicitly trigger in the build.
      * @parameter
+     * @since 1.1
      */
     private List profiles;
 
