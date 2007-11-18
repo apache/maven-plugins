@@ -28,13 +28,13 @@ public class JeeDescriptor
 
     private String jspVersion;
 
-    public static final String J2EE_1_2 = "1.2";
+    public static final String JEE_1_2 = "1.2";
 
-    public static final String J2EE_1_3 = "1.3";
+    public static final String JEE_1_3 = "1.3";
 
-    public static final String J2EE_1_4 = "1.4";
+    public static final String JEE_1_4 = "1.4";
 
-    public static final String J2EE_5_0 = "5.0";
+    public static final String JEE_5_0 = "5.0";
 
     public static final String EJB_1_1 = "1.1";
 
