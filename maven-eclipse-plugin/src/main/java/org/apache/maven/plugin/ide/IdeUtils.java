@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -162,6 +163,32 @@ public class IdeUtils
         return null;
     }
 
+    /**
+     * Extracts the version of the first matching artifact in the given list.
+     * 
+     * @param artifactIds artifact names to compare against for extracting version
+     * @param artifacts Set of artifacts for our project
+     * @param len expected length of the version sub-string
+     * @return
+     */
+    public static String getArtifactVersion( String[] artifactIds, Set artifacts, int len )
+    {
+        for ( int j = 0; j < artifactIds.length; j++ )
+        {
+            String id = artifactIds[j];
+            for ( Iterator itr = artifacts.iterator(); itr.hasNext(); )
+            {
+                Artifact artifact = (Artifact) itr.next();
+                if ( id.equals( artifact.getArtifactId() ) )
+                {
+                    return StringUtils.substring( artifact.getVersion(), 0, len );
+                }
+            }
+        }
+        return null;
+    }
+
+    
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
      * 
