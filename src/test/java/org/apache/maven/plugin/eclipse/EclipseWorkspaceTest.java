@@ -94,7 +94,9 @@ public class EclipseWorkspaceTest
 
         String localRepo = PlexusTestCase.getBasedir() + "/target/test-classes/m2repo";
 
-        assertEquals( "Test M2_REPO value", localRepo.replace( '\\', '/' ), M2_REPO.replace( '\\', '/' ) );
+        // comparing repo's all in lower case because windows is case insensitive and settings.xml may have
+        // a repository specified with different case
+        assertEquals( "Test M2_REPO value", localRepo.replace( '\\', '/' ).toLowerCase(), M2_REPO.replace( '\\', '/' ).toLowerCase() );
 
     }
 
