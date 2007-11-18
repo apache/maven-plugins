@@ -28,7 +28,7 @@
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-resources-plugin</url>
   </scm>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <dependencies>
     <dependency>
