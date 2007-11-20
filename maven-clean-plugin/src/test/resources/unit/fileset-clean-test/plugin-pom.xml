@@ -46,6 +46,7 @@
             </fileset>
           </filesets>
           <verbose>true</verbose>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

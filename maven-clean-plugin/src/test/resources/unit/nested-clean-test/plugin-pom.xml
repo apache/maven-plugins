@@ -27,6 +27,8 @@
           <directory>${basedir}/target/test-classes/unit/nested-clean-test/target</directory>
           <outputDirectory>${basedir}/target/test-classes/unit/nested-clean-test/target/classes</outputDirectory>
           <testOutputDirectory>${basedir}/target/test-classes/unit/nested-clean-test/target/test-classes</testOutputDirectory>
+          <verbose>true</verbose>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

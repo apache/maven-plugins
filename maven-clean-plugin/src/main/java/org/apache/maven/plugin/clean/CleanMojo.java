@@ -142,12 +142,12 @@ public class CleanMojo
     private boolean skip;
 
     /**
-     * Ignore exceptions or errors.
+     * Indicates whether the build will continue even if there are clean errors.
      *
-     * @parameter expression="${clean.ignore.errors}" default-value="false"
+     * @parameter expression="${maven.clean.failOnError}" default-value="true"
      * @since 2.2
      */
-    private boolean ignoreErrors;
+    private boolean failOnError;
 
     /**
      * Deletes file-sets in the following project build directory order:
@@ -179,7 +179,7 @@ public class CleanMojo
         }
         catch ( MojoExecutionException e )
         {
-            if ( !ignoreErrors )
+            if ( failOnError )
             {
                 throw e;
             }
@@ -217,7 +217,7 @@ public class CleanMojo
                         }
                     }
 
-                    fileSetManager.delete( fileset );
+                    fileSetManager.delete( fileset, failOnError );
                 }
                 catch ( IOException e )
                 {
@@ -257,7 +257,7 @@ public class CleanMojo
             try
             {
                 getLog().info( "Deleting directory " + dir.getAbsolutePath() );
-                fileSetManager.delete( fs );
+                fileSetManager.delete( fs, failOnError );
             }
             catch ( IOException e )
             {
