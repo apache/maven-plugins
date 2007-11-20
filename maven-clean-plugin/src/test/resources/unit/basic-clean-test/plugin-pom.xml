@@ -27,6 +27,8 @@
           <directory>${basedir}/target/test-classes/unit/basic-clean-test/buildDirectory</directory>
           <outputDirectory>${basedir}/target/test-classes/unit/basic-clean-test/buildOutputDirectory</outputDirectory>
           <testOutputDirectory>${basedir}/target/test-classes/unit/basic-clean-test/buildTestDirectory</testOutputDirectory>
+          <verbose>true</verbose>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>
