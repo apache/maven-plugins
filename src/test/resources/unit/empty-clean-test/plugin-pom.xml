@@ -24,6 +24,8 @@
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugin.clean.stubs.CleanProjectStub"/>
+          <verbose>true</verbose>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>
