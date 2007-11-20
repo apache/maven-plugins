@@ -61,6 +61,10 @@ public class CleanMojoTest
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/basic-clean-test/plugin-pom.xml";
 
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/basic-clean-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/basic-clean-test" ), null, "**/.svn,**/.svn/**" );
+
         CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
         assertNotNull( mojo );
 
@@ -84,6 +88,10 @@ public class CleanMojoTest
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/nested-clean-test/plugin-pom.xml";
 
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/nested-clean-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/nested-clean-test" ), null, "**/.svn,**/.svn/**" );
+
         CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
         assertNotNull( mojo );
 
@@ -104,6 +112,10 @@ public class CleanMojoTest
         throws Exception
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/empty-clean-test/plugin-pom.xml";
+
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/empty-clean-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/empty-clean-test" ), null, "**/.svn,**/.svn/**" );
 
         CleanMojo mojo = (CleanMojo) lookupEmptyMojo( "clean", pluginPom );
         assertNotNull( mojo );
@@ -128,6 +140,10 @@ public class CleanMojoTest
         throws Exception
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/fileset-clean-test/plugin-pom.xml";
+
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/fileset-clean-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/fileset-clean-test" ), null, "**/.svn,**/.svn/**" );
 
         CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
         assertNotNull( mojo );
@@ -161,6 +177,10 @@ public class CleanMojoTest
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/invalid-directory-test/plugin-pom.xml";
 
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/invalid-directory-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/invalid-directory-test" ), null, "**/.svn,**/.svn/**" );
+
         CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
         assertNotNull( mojo );
 
@@ -186,6 +206,10 @@ public class CleanMojoTest
     {
         String pluginPom = getBasedir() + "/src/test/resources/unit/missing-directory-test/plugin-pom.xml";
 
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/missing-directory-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/missing-directory-test" ), null, "**/.svn,**/.svn/**" );
+
         CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
         assertNotNull( mojo );
 
@@ -194,93 +218,116 @@ public class CleanMojoTest
         assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/missing-directory-test/does-not-exist" ) );
     }
 
-// Unix will let you get away with it, not sure how to lock the file from Java.
-//    /**
-//     * Test the removal of a locked file
-//     *
-//     * @throws Exception
-//     */
-//    public void testCleanLockedFile()
-//        throws Exception
-//    {
-//        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
-//
-//        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
-//        assertNotNull( mojo );
-//
-//        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
-//        FileChannel channel = null;
-//        FileLock lock = null;
-//        try
-//        {
-//            channel = new RandomAccessFile( f, "rw" ).getChannel();
-//            lock = channel.lock();
-//
-//            mojo.execute();
-//
-//            fail( "Should fail to delete a file that is locked" );
-//        }
-//        catch ( MojoExecutionException expected )
-//        {
-//            assertTrue( true );
-//        }
-//        finally
-//        {
-//            if ( lock != null )
-//            {
-//                lock.release();
-//            }
-//
-//            if ( channel != null )
-//            {
-//                channel.close();
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Test the removal of a locked file
-//     *
-//     * @throws Exception
-//     */
-//    public void testCleanLockedFileWithNoError()
-//        throws Exception
-//    {
-//        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
-//
-//        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
-//        setVariableValueToObject( mojo, "ignoreErrors", Boolean.TRUE );
-//        assertNotNull( mojo );
-//
-//        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
-//        FileChannel channel = null;
-//        FileLock lock = null;
-//        try
-//        {
-//            channel = new RandomAccessFile( f, "rw" ).getChannel();
-//            lock = channel.lock();
-//
-//            mojo.execute();
-//
-//            assertTrue( true );
-//        }
-//        catch ( MojoExecutionException expected )
-//        {
-//            fail( "Should display a warning when deleting a file that is locked" );
-//        }
-//        finally
-//        {
-//            if ( lock != null )
-//            {
-//                lock.release();
-//            }
-//
-//            if ( channel != null )
-//            {
-//                channel.close();
-//            }
-//        }
-//    }
+    /**
+     * Test the removal of a locked file on Windows systems.
+     * <br/>
+     * Note: Unix systems doesn't lock any files.
+     *
+     * @throws Exception
+     */
+    public void testCleanLockedFile()
+        throws Exception
+    {
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) == -1 )
+        {
+            assertTrue( "Ignored this test on none Windows based systems", true );
+            return;
+        }
+
+        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
+
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/locked-file-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/locked-file-test" ), null, "**/.svn,**/.svn/**" );
+
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        assertNotNull( mojo );
+
+        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
+        FileChannel channel = null;
+        FileLock lock = null;
+        try
+        {
+            channel = new RandomAccessFile( f, "rw" ).getChannel();
+            lock = channel.lock();
+
+            mojo.execute();
+
+            fail( "Should fail to delete a file that is locked" );
+        }
+        catch ( MojoExecutionException expected )
+        {
+            assertTrue( true );
+        }
+        finally
+        {
+            if ( lock != null )
+            {
+                lock.release();
+            }
+
+            if ( channel != null )
+            {
+                channel.close();
+            }
+        }
+    }
+
+    /**
+     * Test the removal of a locked file on Windows systems.
+     * <br/>
+     * Note: Unix systems doesn't lock any files.
+     *
+     * @throws Exception
+     */
+    public void testCleanLockedFileWithNoError()
+        throws Exception
+    {
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) == -1 )
+        {
+            assertTrue( "Ignored this test on none Windows based systems", true );
+            return;
+        }
+
+        String pluginPom = getBasedir() + "/src/test/resources/unit/locked-file-test/plugin-pom.xml";
+
+        // safety
+        FileUtils.copyDirectory( new File( getBasedir(), "src/test/resources/unit/locked-file-test" ),
+                                 new File( getBasedir(), "target/test-classes/unit/locked-file-test" ), null, "**/.svn,**/.svn/**" );
+
+        CleanMojo mojo = (CleanMojo) lookupMojo( "clean", pluginPom );
+        setVariableValueToObject( mojo, "failOnError", Boolean.FALSE );
+        assertNotNull( mojo );
+
+        File f = new File( getBasedir(), "target/test-classes/unit/locked-file-test/buildDirectory/file.txt" );
+        FileChannel channel = null;
+        FileLock lock = null;
+        try
+        {
+            channel = new RandomAccessFile( f, "rw" ).getChannel();
+            lock = channel.lock();
+
+            mojo.execute();
+
+            assertTrue( true );
+        }
+        catch ( MojoExecutionException expected )
+        {
+            fail( "Should display a warning when deleting a file that is locked" );
+        }
+        finally
+        {
+            if ( lock != null )
+            {
+                lock.release();
+            }
+
+            if ( channel != null )
+            {
+                channel.close();
+            }
+        }
+    }
 
     /**
      * @param dir a dir or a file
