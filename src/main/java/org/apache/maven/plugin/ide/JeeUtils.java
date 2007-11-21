@@ -148,7 +148,8 @@ public class JeeUtils
         {
             // No JEE dependency detected. Try to resolve the JEE
             // version from SERVLET.
-            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
+            JeeDescriptor descriptor =
+                getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getJeeVersion();
         }
@@ -187,7 +188,8 @@ public class JeeUtils
         {
             // No jsp dependency detected. Try to resolve the jsp
             // version from Servlet.
-            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
+            JeeDescriptor descriptor =
+                getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getJspVersion();
         }
@@ -246,9 +248,8 @@ public class JeeUtils
 
     private static String findJeeVersionInDependencies( IdeDependency[] artifacts )
     {
-        String[] artifactIds = new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        String version = IdeUtils.getArtifactVersion( artifactIds, artifacts, 3 );
+        String version =
+            IdeUtils.getArtifactVersion( new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }, artifacts, 3 );
 
         // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
@@ -267,9 +268,9 @@ public class JeeUtils
 
     private static String findServletVersionInDependencies( IdeDependency[] artifacts )
     {
-        String[] artifactIds = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        String version = IdeUtils.getArtifactVersion( artifactIds, artifacts, 3 );
+        String version =
+            IdeUtils.getArtifactVersion( new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" },
+                                         artifacts, 3 );
 
         // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
