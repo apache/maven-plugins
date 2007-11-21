@@ -42,6 +42,7 @@ under the License.
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <source>1.4</source>
           <target>1.4</target>
@@ -49,10 +50,12 @@ under the License.
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <excludes>
             <exclude>**/Abstract*TestCase.java</exclude>
             <exclude>**/InstallPluginsMojoTest.java</exclude>
+            <exclude>**/projects/**</exclude>
           </excludes>
           <systemProperties>
             <property>
@@ -168,6 +171,12 @@ under the License.
       <groupId>biz.aQute</groupId>
       <artifactId>bndlib</artifactId>
       <version>0.0.145</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   
