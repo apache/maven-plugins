@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.maven.context.BuildContextManager;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,10 +51,14 @@ public class ToolchainMojo
     private ToolchainManagerPrivate toolchainManager;
 
     /**
+     * The current build session instance. This is used for
+     * toolchain manager API calls.
      *
-     * @component
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
      */
-    private BuildContextManager buildContextManager;
+    private MavenSession session;
 
     /**
      * @parameter
@@ -88,7 +92,7 @@ public class ToolchainMojo
                         {
                             getLog(  ).info( "Toolchain (" + type + ") matched:" + tcs[i] );
                             toolchainManager.storeToolchainToBuildContext( tcs[i],
-                                buildContextManager.readBuildContext( true ) );
+                                session );
                             matched = true;
                             break;
                         }
@@ -127,7 +131,7 @@ public class ToolchainMojo
                     }
                 }
                 getLog().error( str );
-                throw new MojoFailureException( "Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
+                throw new MojoFailureException( str + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
             }
         }
         else
