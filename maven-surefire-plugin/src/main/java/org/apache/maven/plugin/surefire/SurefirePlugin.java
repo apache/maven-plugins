@@ -56,7 +56,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.maven.context.BuildContextManager;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 
@@ -396,10 +396,14 @@ public class SurefirePlugin
     private ToolchainManager toolchainManager;
     
     /**
+     * The current build session instance. This is used for
+     * toolchain manager API calls.
      *
-     * @component
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
      */
-    private BuildContextManager buildContextManager;
+    private MavenSession session;
     
 
     public void execute()
@@ -676,8 +680,8 @@ public class SurefirePlugin
             surefireBooter.addClassPathUrl( classpathElement );
         }
         
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext("jdk",  //NOI18N
-                                buildContextManager.readBuildContext(true));
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext( "jdk",  //NOI18N
+                                session );
         if (tc != null) {
             getLog().info("Toolchain in surefire-plugin: " + tc);
             if (ForkConfiguration.FORK_NEVER.equals( forkMode ) ) {
