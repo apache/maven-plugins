@@ -26,6 +26,13 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
+  </dependencies>
   <modules>
     <module>my-ejb</module>
     <module>my-ear</module>
