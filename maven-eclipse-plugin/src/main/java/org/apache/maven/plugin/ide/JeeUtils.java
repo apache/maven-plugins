@@ -19,11 +19,7 @@
 package org.apache.maven.plugin.ide;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.maven.project.MavenProject;
 
 public class JeeUtils
 {
@@ -110,19 +106,19 @@ public class JeeUtils
     /**
      * Search in dependencies a version of EJB APIs (or of JEE APIs).
      * 
-     * @param project The maven project descriptor.
+     * @param artifacts The list of dependencies where we search the information
      * @return An EJB version as defined by constants JeeDescriptor.EJB_x_x. By default, if nothing is found, returns
      *         JeeDescriptor.EJB_2_1.
      */
-    public static String resolveEjbVersion( MavenProject project )
+    public static String resolveEjbVersion( IdeDependency[] artifacts )
     {
-        String version = findEjbVersionInDependencies( project );
+        String version = findEjbVersionInDependencies( artifacts );
 
         if ( version == null )
         {
             // No ejb dependency detected. Try to resolve the ejb
             // version from J2EE/JEE.
-            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getEjbVersion();
         }
@@ -132,35 +128,58 @@ public class JeeUtils
     /**
      * Search in dependencies a version of JEE APIs.
      * 
-     * @param project The maven project descriptor.
+     * @param artifacts The list of dependencies where we search the information
      * @return A JEE version as defined by constants JeeDescriptor.JEE_x_x. By default, if nothing is found, returns
      *         JeeDescriptor.JEE_1_4.
      */
-    public static String resolveJeeVersion( MavenProject project )
+    public static String resolveJeeVersion( IdeDependency[] artifacts )
     {
         // try to find version in dependencies
-        String version = findJeeVersionInDependencies( project );
-
+        String version = findJeeVersionInDependencies( artifacts );
+        if ( version == null )
+        {
+            // No JEE dependency detected. Try to resolve the JEE
+            // version from EJB.
+            JeeDescriptor descriptor = getJeeDescriptorFromEjbVersion( findEjbVersionInDependencies( artifacts ) );
+            if ( descriptor != null )
+                version = descriptor.getJeeVersion();
+        }
+        if ( version == null )
+        {
+            // No JEE dependency detected. Try to resolve the JEE
+            // version from SERVLET.
+            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
+            if ( descriptor != null )
+                version = descriptor.getJeeVersion();
+        }
+        if ( version == null )
+        {
+            // No JEE dependency detected. Try to resolve the JEE
+            // version from JSP.
+            JeeDescriptor descriptor = getJeeDescriptorFromJspVersion( findJspVersionInDependencies( artifacts ) );
+            if ( descriptor != null )
+                version = descriptor.getJeeVersion();
+        }
         return version == null ? JeeDescriptor.JEE_1_4 : version; //$NON-NLS-1$
     }
 
     /**
      * Search in dependencies a version of JSP APIs (or from JEE APIs, or from Servlet APIs).
      * 
-     * @param project The maven project descriptor.
+     * @param artifacts The list of dependencies where we search the information
      * @return A JSP version as defined by constants JeeDescriptor.JSP_x_x. By default, if nothing is found, returns
      *         JeeDescriptor.JSP_2_0.
      */
 
-    public static String resolveJspVersion( MavenProject project )
+    public static String resolveJspVersion( IdeDependency[] artifacts )
     {
-        String version = findJspVersionInDependencies( project );
+        String version = findJspVersionInDependencies( artifacts );
 
         if ( version == null )
         {
             // No jsp dependency detected. Try to resolve the jsp
             // version from J2EE/JEE.
-            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getJspVersion();
         }
@@ -168,7 +187,7 @@ public class JeeUtils
         {
             // No jsp dependency detected. Try to resolve the jsp
             // version from Servlet.
-            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getJspVersion();
         }
@@ -178,19 +197,19 @@ public class JeeUtils
     /**
      * Search in dependencies a version of Servlet APIs (or of JEE APIs).
      * 
-     * @param project The maven project descriptor.
+     * @param artifacts The list of dependencies where we search the information
      * @return A SERVLET version as defined by constants JeeDescriptor.SERLVET_x_x. By default, if nothing is found,
      *         returns JeeDescriptor.SERVLET_2_4.
      */
-    public static String resolveServletVersion( MavenProject project )
+    public static String resolveServletVersion( IdeDependency[] artifacts )
     {
-        String version = findServletVersionInDependencies( project );
+        String version = findServletVersionInDependencies( artifacts );
 
         if ( version == null )
         {
             // No servlet dependency detected. Try to resolve the servlet
             // version from J2EE/JEE.
-            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( artifacts ) );
             if ( descriptor != null )
                 version = descriptor.getServletVersion();
         }
@@ -206,66 +225,61 @@ public class JeeUtils
         jspMap.put( jspVersion, descriptor );
     }
 
-    private static String findEjbVersionInDependencies( MavenProject project )
+    private static String findEjbVersionInDependencies( IdeDependency[] artifacts )
     {
 
         String version =
-            IdeUtils.getArtifactVersion( new String[] { "ejb", "ejb-api", "geronimo-spec-ejb" },
-                                           project.getArtifacts(), 3 );
-
+            IdeUtils.getArtifactVersion( new String[] { "ejb", "ejb-api", "geronimo-spec-ejb" }, artifacts, 3 );
         // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
         {
-            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-ejb_2.1_spec" }, project.getArtifacts(), 3 ) != null )
+            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-ejb_2.1_spec" }, artifacts, 3 ) != null )
                 return JeeDescriptor.EJB_2_1;
         }
         if ( version == null )
         {
-            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-ejb_3.0_spec" }, project.getArtifacts(), 3 ) != null )
+            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-ejb_3.0_spec" }, artifacts, 3 ) != null )
                 return JeeDescriptor.EJB_3_0;
         }
-
         return version;
     }
 
-    private static String findJeeVersionInDependencies( MavenProject project )
+    private static String findJeeVersionInDependencies( IdeDependency[] artifacts )
     {
         String[] artifactIds = new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String version = IdeUtils.getArtifactVersion( artifactIds, project.getArtifacts(), 3 );
+        String version = IdeUtils.getArtifactVersion( artifactIds, artifacts, 3 );
 
         // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
         {
-            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-j2ee_1.4_spec" }, project.getArtifacts(), 3 ) != null )
+            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-j2ee_1.4_spec" }, artifacts, 3 ) != null )
                 return JeeDescriptor.JEE_1_4;
         }
 
         return version;
     }
 
-    private static String findJspVersionInDependencies( MavenProject project )
+    private static String findJspVersionInDependencies( IdeDependency[] artifacts )
     {
         return null;
     }
 
-    private static String findServletVersionInDependencies( MavenProject project )
+    private static String findServletVersionInDependencies( IdeDependency[] artifacts )
     {
         String[] artifactIds = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String version = IdeUtils.getArtifactVersion( artifactIds, project.getArtifacts(), 3 );
+        String version = IdeUtils.getArtifactVersion( artifactIds, artifacts, 3 );
 
         // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
         {
-            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-servlet_2.4_spec" },
-                                                project.getArtifacts(), 3 ) != null )
+            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-servlet_2.4_spec" }, artifacts, 3 ) != null )
                 return JeeDescriptor.SERVLET_2_4;
         }
         if ( version == null )
         {
-            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-servlet_2.5_spec" },
-                                                project.getArtifacts(), 3 ) != null )
+            if ( IdeUtils.getArtifactVersion( new String[] { "geronimo-servlet_2.5_spec" }, artifacts, 3 ) != null )
                 return JeeDescriptor.SERVLET_2_5;
         }
 

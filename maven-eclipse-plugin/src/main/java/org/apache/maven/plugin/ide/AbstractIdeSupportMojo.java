@@ -498,12 +498,12 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Resolve project dependencies. Manual resolution is needed in order to avoid resoltion of multiproject artifacts
+     * Resolve project dependencies. Manual resolution is needed in order to avoid resolution of multiproject artifacts
      * (if projects will be linked each other an installed jar is not needed) and to avoid a failure when a jar is
      * missing.
      * 
      * @throws MojoExecutionException if dependencies can't be resolved
-     * @return resoved IDE dependencies, with attached jars for non-reactor dependencies
+     * @return resolved IDE dependencies, with attached jars for non-reactor dependencies
      */
     protected IdeDependency[] doDependencyResolution()
         throws MojoExecutionException
