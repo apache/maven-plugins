@@ -709,8 +709,19 @@ public class EclipsePlugin
 
     protected void verifyClasspathContainerListIsComplete()
     {
-        // this is an extension point.
-        if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
+        boolean containsJREContainer = false;
+        // Check if classpathContainer contains a JRE (default, alternate or Execution Environment)
+        for ( Iterator iter = classpathContainers.iterator(); iter.hasNext(); )
+        {
+            Object classPathContainer = iter.next();
+            if ( classPathContainer != null &&
+                classPathContainer.toString().startsWith( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
+            {
+                containsJREContainer = true;
+                break;
+            }
+        }
+        if ( !containsJREContainer )
         {
             getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
             classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
@@ -1099,7 +1110,7 @@ public class EclipsePlugin
         if ( wtpVersionFloat == 0.7f )
         {
             // WTP 0.7 builder
-            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) ); 
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) );
         }
 
         if ( pde )
