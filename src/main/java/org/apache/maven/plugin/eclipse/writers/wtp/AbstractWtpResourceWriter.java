@@ -92,7 +92,7 @@ public abstract class AbstractWtpResourceWriter
 
             writer.startElement( ELT_VERSION );
 
-            writer.writeText( JeeUtils.resolveServletVersion( project ) );
+            writer.writeText( JeeUtils.resolveServletVersion( config.getDeps() ) );
             writer.endElement();
 
             String contextRoot = config.getContextName();
@@ -107,7 +107,7 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( JeeUtils.resolveEjbVersion( project ) );
+            writer.writeText( JeeUtils.resolveEjbVersion( config.getDeps() ) );
 
             writer.endElement();
 
@@ -123,7 +123,7 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( JeeUtils.resolveJeeVersion( project ) );
+            writer.writeText( JeeUtils.resolveJeeVersion( config.getDeps() ) );
             writer.endElement();
         }
         else

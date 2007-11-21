@@ -104,19 +104,19 @@ public class RadJ2EEWriter
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            String servletVersion = JeeUtils.resolveServletVersion( config.getDeps() );
             writer.writeText( "" + servletVersion.charAt( 0 ) + servletVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            String ejbVersion = JeeUtils.resolveEjbVersion( config.getDeps() );
             writer.writeText( "" + ejbVersion.charAt( 0 ) + ejbVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             // In format X.X
-            String jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            String jeeVersion = JeeUtils.resolveJeeVersion( config.getDeps() );
             writer.writeText( "" + jeeVersion.charAt( 0 ) + jeeVersion.charAt( 2 ) );
         }
         writer.endElement();
