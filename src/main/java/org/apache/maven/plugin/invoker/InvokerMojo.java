@@ -527,7 +527,6 @@ public class InvokerMojo
 
             try
             {
-                System.out.println( "invoker == null " + (invoker == null) );
                 result = invoker.execute( request );
             }
             catch ( final MavenInvocationException e )
