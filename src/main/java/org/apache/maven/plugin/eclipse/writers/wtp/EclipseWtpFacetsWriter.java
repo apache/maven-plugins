@@ -125,7 +125,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion( config.getProject() ) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion( config.getDeps() ) );
             writer.endElement(); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion( config.getProject() ) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion( config.getDeps() ) );
             writer.endElement(); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getProject() ) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getDeps() ) );
             writer.endElement(); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$

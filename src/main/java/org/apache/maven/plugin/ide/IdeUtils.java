@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -31,7 +30,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -138,30 +136,30 @@ public class IdeUtils
         return IdeUtils.getCompilerPluginSetting( project, PROPERTY_TARGET );
     }
 
-    /**
-     * Extracts the version of the first matching dependency in the given list.
-     * 
-     * @param artifactIds artifact names to compare against for extracting version
-     * @param dependencies Collection of dependencies for our project
-     * @param len expected length of the version sub-string
-     * @return
-     */
-    public static String getDependencyVersion( String[] artifactIds, List dependencies, int len )
-    {
-        for ( int j = 0; j < artifactIds.length; j++ )
-        {
-            String id = artifactIds[j];
-            for ( Iterator itr = dependencies.iterator(); itr.hasNext(); )
-            {
-                Dependency dependency = (Dependency) itr.next();
-                if ( id.equals( dependency.getArtifactId() ) )
-                {
-                    return StringUtils.substring( dependency.getVersion(), 0, len );
-                }
-            }
-        }
-        return null;
-    }
+    // /**
+    // * Extracts the version of the first matching dependency in the given list.
+    // *
+    // * @param artifactIds artifact names to compare against for extracting version
+    // * @param dependencies Collection of dependencies for our project
+    // * @param len expected length of the version sub-string
+    // * @return
+    // */
+    // public static String getDependencyVersion( String[] artifactIds, List dependencies, int len )
+    // {
+    // for ( int j = 0; j < artifactIds.length; j++ )
+    // {
+    // String id = artifactIds[j];
+    // for ( Iterator itr = dependencies.iterator(); itr.hasNext(); )
+    // {
+    // Dependency dependency = (Dependency) itr.next();
+    // if ( id.equals( dependency.getArtifactId() ) )
+    // {
+    // return StringUtils.substring( dependency.getVersion(), 0, len );
+    // }
+    // }
+    // }
+    // return null;
+    // }
 
     /**
      * Extracts the version of the first matching artifact in the given list.
@@ -171,14 +169,14 @@ public class IdeUtils
      * @param len expected length of the version sub-string
      * @return
      */
-    public static String getArtifactVersion( String[] artifactIds, Set artifacts, int len )
+    public static String getArtifactVersion( String[] artifactIds, IdeDependency[] artifacts, int len )
     {
         for ( int j = 0; j < artifactIds.length; j++ )
         {
             String id = artifactIds[j];
-            for ( Iterator itr = artifacts.iterator(); itr.hasNext(); )
+            for ( int k = 0; k < artifacts.length; k++ )
             {
-                Artifact artifact = (Artifact) itr.next();
+                IdeDependency artifact = artifacts[k];
                 if ( id.equals( artifact.getArtifactId() ) )
                 {
                     return StringUtils.substring( artifact.getVersion(), 0, len );
@@ -188,7 +186,6 @@ public class IdeUtils
         return null;
     }
 
-    
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
      * 
@@ -336,22 +333,6 @@ public class IdeUtils
         return resolvedArtifact;
     }
 
-    /**
-     * @deprecated Use {@link JeeUtils#resolveEjbVersion(MavenProject)} instead
-     */
-    public static String resolveEjbVersion( MavenProject project )
-    {
-        return JeeUtils.resolveEjbVersion( project );
-    }
-
-    /**
-     * @deprecated Use {@link JeeUtils#resolveJeeVersion(MavenProject)} instead
-     */
-    public static String resolveJ2eeVersion( MavenProject project )
-    {
-        return JeeUtils.resolveJeeVersion( project );
-    }
-
     public static String resolveJavaVersion( MavenProject project )
     {
         String version = IdeUtils.getCompilerTargetVersion( project );
@@ -374,14 +355,6 @@ public class IdeUtils
         }
 
         return version == null ? IdeUtils.JAVA_1_4 : version; //$NON-NLS-1$
-    }
-
-    /**
-     * @deprecated Use {@link JeeUtils#resolveServletVersion(MavenProject)} instead
-     */
-    public static String resolveServletVersion( MavenProject project )
-    {
-        return JeeUtils.resolveServletVersion( project );
     }
 
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
