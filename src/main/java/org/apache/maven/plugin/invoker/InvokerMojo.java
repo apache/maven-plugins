@@ -527,6 +527,7 @@ public class InvokerMojo
 
             try
             {
+                System.out.println( "invoker == null " + (invoker == null) );
                 result = invoker.execute( request );
             }
             catch ( final MavenInvocationException e )
@@ -584,6 +585,10 @@ public class InvokerMojo
     private Properties loadTestProperties( final File basedir )
         throws IOException
     {
+        if (testProperties == null)
+        {
+            return new Properties();
+        }
         final File testProperties = new File( basedir, testPropertiesFile );
 
         final Properties testProps = new Properties();
@@ -709,7 +714,7 @@ public class InvokerMojo
         return result;
     }
 
-    private List getGoals( final File basedir )
+    protected List getGoals( final File basedir )
     {
         List invocationGoals = goals;
 
