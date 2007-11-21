@@ -377,6 +377,7 @@ public class EclipsePluginTest
         File pom = new File( basedir, "pom.xml" );
         List goals = new ArrayList();
         goals.add( "install" );
+        goals.add( "clean" );
         executeMaven( pom, new Properties(), goals );
         // Test project
         testProject( "j2ee-simple" );
@@ -473,5 +474,19 @@ public class EclipsePluginTest
      * This means that the expected .classpath can't match the final result as the result will have the absolute path to
      * the user's local repo.
      */
+
+    public void testProject36()
+        throws Exception
+    {
+        // Install artefacts
+        File basedir = getTestFile( "target/test-classes/projects/project-36" );
+        File pom = new File( basedir, "pom.xml" );
+        List goals = new ArrayList();
+        goals.add( "install" );
+        goals.add( "clean" );
+        executeMaven( pom, new Properties(), goals );
+        // Test
+        testProject( "project-36" );
+    }
 
 }
