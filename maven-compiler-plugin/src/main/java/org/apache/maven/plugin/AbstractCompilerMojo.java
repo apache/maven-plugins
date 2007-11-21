@@ -41,7 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.maven.context.BuildContextManager;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 
@@ -249,10 +249,14 @@ public abstract class AbstractCompilerMojo
     private ToolchainManager toolchainManager;
     
     /**
+     * The current build session instance. This is used for
+     * toolchain manager API calls.
      *
-     * @component
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
      */
-    private BuildContextManager buildContextManager;
+    private MavenSession session;
     
 
     protected abstract SourceInclusionScanner getSourceInclusionScanner( int staleMillis );
@@ -288,16 +292,20 @@ public abstract class AbstractCompilerMojo
         }
 
         //use the compilerId as identifier for toolchains as well.
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext(compilerId,  
-                                buildContextManager.readBuildContext(true));
-        if (tc != null) {
-            getLog().info("Toolchain in compiler-plugin: " + tc);
-            if ( executable  != null) { 
-                getLog().warn("Toolchains are ignored, 'executable' parameter is set to " + executable);
-            } else {
+        Toolchain tc = toolchainManager.getToolchainFromBuildContext( compilerId,  
+                                session );
+        if ( tc != null ) 
+        {
+            getLog().info( "Toolchain in compiler-plugin: " + tc );
+            if ( executable  != null ) 
+            { 
+                getLog().warn( "Toolchains are ignored, 'executable' parameter is set to " + executable );
+            } 
+            else 
+            {
                 fork = true;
                 //TODO somehow shaky dependency between compilerId and tool executable.
-                executable = tc.findTool(compilerId);
+                executable = tc.findTool( compilerId );
             }
         }
         // ----------------------------------------------------------------------

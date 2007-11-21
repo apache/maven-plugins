@@ -11,7 +11,7 @@
   <version>2.1-SNAPSHOT</version>
   <inceptionYear>2001</inceptionYear>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.1-SNAPSHOT</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
