@@ -43,10 +43,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
+ * Mojo that performs shading delegating to the Shader component.
+ * 
  * @author Jason van Zyl
  * @author Mauro Talevi
  * @goal shade
  * @phase package
+ * @requiresDependencyResolution runtime
  */
 public class ShadeMojo
     extends AbstractMojo
