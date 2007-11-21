@@ -369,22 +369,6 @@ public class EclipsePluginTest
         testProject( "project-34" );
     }
 
-    public void testJeeSimple()
-        throws Exception
-    {
-        // Install artefacts
-        File basedir = getTestFile( "target/test-classes/projects/j2ee-simple" );
-        File pom = new File( basedir, "pom.xml" );
-        List goals = new ArrayList();
-        goals.add( "install" );
-        goals.add( "clean" );
-        executeMaven( pom, new Properties(), goals );
-        // Test project
-        testProject( "j2ee-simple" );
-        checkContextRoot( basedir, "servlets/servlet", "ear", "servlet" );
-
-    }
-
     public void testProject35()
         throws Exception
     {
@@ -422,6 +406,34 @@ public class EclipsePluginTest
             }
         }
     }
+    
+    public void testProject36()
+        throws Exception
+    {
+        // Install artefacts
+        File basedir = getTestFile( "target/test-classes/projects/project-36" );
+        File pom = new File( basedir, "pom.xml" );
+        List goals = new ArrayList();
+        goals.add( "install" );
+        executeMaven( pom, new Properties(), goals );
+        // Test
+        testProject( "project-36" );
+    }
+
+    public void testJeeSimple()
+        throws Exception
+    {
+        // Install artefacts
+        File basedir = getTestFile( "target/test-classes/projects/j2ee-simple" );
+        File pom = new File( basedir, "pom.xml" );
+        List goals = new ArrayList();
+        goals.add( "install" );
+        executeMaven( pom, new Properties(), goals );
+        // Test project
+        testProject( "j2ee-simple" );
+        checkContextRoot( basedir, "servlets/servlet", "ear", "servlet" );
+    
+    }
 
     private void checkContextRoot( File basedir, String warModule, String earModule, String expectedContextRoot )
         throws FileNotFoundException, XmlPullParserException, IOException
@@ -456,7 +468,6 @@ public class EclipsePluginTest
             }
         }
     }
-
     /**
      * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
      * 
@@ -468,25 +479,10 @@ public class EclipsePluginTest
      * file-comparing step which at the moment just does line by line comparison project 7 is affected by this as well.
      * public void testProject33() throws Exception { testProject( "project-33" ); }
      */
-
+    
     /*
      * TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc path.
      * This means that the expected .classpath can't match the final result as the result will have the absolute path to
      * the user's local repo.
      */
-
-    public void testProject36()
-        throws Exception
-    {
-        // Install artefacts
-        File basedir = getTestFile( "target/test-classes/projects/project-36" );
-        File pom = new File( basedir, "pom.xml" );
-        List goals = new ArrayList();
-        goals.add( "install" );
-        goals.add( "clean" );
-        executeMaven( pom, new Properties(), goals );
-        // Test
-        testProject( "project-36" );
-    }
-
 }
