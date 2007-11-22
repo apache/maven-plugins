@@ -19,9 +19,25 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -33,20 +49,8 @@ import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.cli.CommandLineException;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -202,10 +206,29 @@ public class InvokerMojo
 
     /**
      * List of profileId's to explicitly trigger in the build.
+     * 
      * @parameter
      * @since 1.1
      */
     private List profiles;
+    
+    /**
+     * List properties which will be used to interpolate goal files.
+     * 
+     * @parameter
+     * @since 1.1
+     */    
+    private Properties interpolationsProperties;
+    
+    /**
+     * The Maven Project Object
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     * @since 1.1
+     */
+    private MavenProject project;    
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -824,7 +847,9 @@ public class InvokerMojo
 
         try
         {
-            reader = new BufferedReader( new FileReader( projectGoalList ) );
+            Map composite = new CompositeMap(this.project, this.interpolationsProperties);
+            reader = new BufferedReader( new InterpolationFilterReader( new FileReader( projectGoalList ), composite ) );
+            /// new BufferedReader( new FileReader( projectGoalList ) );
 
             result = new ArrayList();
 
