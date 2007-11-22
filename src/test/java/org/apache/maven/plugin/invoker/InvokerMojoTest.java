@@ -21,9 +21,7 @@ package org.apache.maven.plugin.invoker;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.invoker.Invoker;
