@@ -177,7 +177,7 @@ public class RadApplicationXMLWriter
      */
     private Xpp3Dom createNewApplicationXml()
     {
-        String j2eeVersion = JeeUtils.resolveJeeVersion( config.getDeps() );
+        String j2eeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
         // By default J2EE version is in the format X.X
         // Must be fixed for JEE < 1.4. Schemas didn't exist
         Xpp3Dom result = new Xpp3Dom( APPLICATION_XML_APPLICATION );

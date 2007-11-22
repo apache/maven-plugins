@@ -473,7 +473,7 @@ public class EclipseClasspathWriter
         }
 
         boolean attributeElemOpen = false;
-        
+
         if ( javadocpath != null )
         {
             if ( !attributeElemOpen )

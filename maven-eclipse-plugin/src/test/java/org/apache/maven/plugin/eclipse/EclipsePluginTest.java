@@ -406,7 +406,7 @@ public class EclipsePluginTest
             }
         }
     }
-    
+
     public void testProject36()
         throws Exception
     {
@@ -419,13 +419,13 @@ public class EclipsePluginTest
         // Test
         testProject( "project-36" );
     }
-    
+
     public void testProject37()
         throws Exception
     {
         testProject( "project-37" );
     }
-    
+
     public void testJeeSimple()
         throws Exception
     {
@@ -438,7 +438,7 @@ public class EclipsePluginTest
         // Test project
         testProject( "j2ee-simple" );
         checkContextRoot( basedir, "servlets/servlet", "ear", "servlet" );
-    
+
     }
 
     private void checkContextRoot( File basedir, String warModule, String earModule, String expectedContextRoot )
@@ -485,7 +485,7 @@ public class EclipsePluginTest
      * file-comparing step which at the moment just does line by line comparison project 7 is affected by this as well.
      * public void testProject33() throws Exception { testProject( "project-33" ); }
      */
-    
+
     /*
      * TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc path.
      * This means that the expected .classpath can't match the final result as the result will have the absolute path to

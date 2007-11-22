@@ -30,6 +30,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -169,18 +170,20 @@ public class IdeUtils
      * @param len expected length of the version sub-string
      * @return
      */
-    public static String getArtifactVersion( String[] artifactIds, IdeDependency[] artifacts, int len )
+    public static String getArtifactVersion( String[] artifactIds, List dependencies, int len )
     {
         for ( int j = 0; j < artifactIds.length; j++ )
         {
             String id = artifactIds[j];
-            for ( int k = 0; k < artifacts.length; k++ )
+            Iterator depIter = dependencies.iterator();
+            while ( depIter.hasNext() )
             {
-                IdeDependency artifact = artifacts[k];
-                if ( id.equals( artifact.getArtifactId() ) )
+                Dependency dep = (Dependency) depIter.next();
+                if ( id.equals( dep.getArtifactId() ) )
                 {
-                    return StringUtils.substring( artifact.getVersion(), 0, len );
+                    return StringUtils.substring( dep.getVersion(), 0, len );
                 }
+
             }
         }
         return null;

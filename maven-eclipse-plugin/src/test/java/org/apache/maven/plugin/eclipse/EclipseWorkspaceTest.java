@@ -96,7 +96,8 @@ public class EclipseWorkspaceTest
 
         // comparing repo's all in lower case because windows is case insensitive and settings.xml may have
         // a repository specified with different case
-        assertEquals( "Test M2_REPO value", localRepo.replace( '\\', '/' ).toLowerCase(), M2_REPO.replace( '\\', '/' ).toLowerCase() );
+        assertEquals( "Test M2_REPO value", localRepo.replace( '\\', '/' ).toLowerCase(),
+                      M2_REPO.replace( '\\', '/' ).toLowerCase() );
 
     }
 
