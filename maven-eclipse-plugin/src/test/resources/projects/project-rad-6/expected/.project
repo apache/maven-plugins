@@ -1,0 +1,16 @@
+<projectDescription>
+  <name>project-rad-6</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>com.ibm.etools.validation.validationbuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.sse.model.structuredbuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>com.ibm.wtp.j2ee.EARNature</nature>
+  </natures>
+</projectDescription>
