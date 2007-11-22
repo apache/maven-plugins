@@ -36,16 +36,16 @@ public class SimpleRelocator
 
     private List excludes;
 
-    public SimpleRelocator(String pattern, String shadedPattern, List excludes) 
+    public SimpleRelocator(String patt, String shadedPattern, List excludes) 
     {
-        this.pattern = pattern.replace('.', '/');
+        this.pattern = patt.replace('.', '/');
 
         if ( shadedPattern != null )
         {
             this.shadedPattern = shadedPattern.replace('.', '/');            
         } else 
         {
-            this.shadedPattern = "hidden/" + pattern;
+            this.shadedPattern = "hidden/" + this.pattern;
         }
 
         if (excludes != null) 
