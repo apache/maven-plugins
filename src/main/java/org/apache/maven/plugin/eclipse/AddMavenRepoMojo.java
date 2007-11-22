@@ -22,7 +22,6 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
-import org.apache.maven.plugin.eclipse.writers.workspace.WorkspaceConfiguration;
 
 /**
  * Adds the classpath variable M2_REPO to Eclipse.
