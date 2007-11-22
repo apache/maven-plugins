@@ -290,7 +290,7 @@ public class ShadeMojo
     {
         Artifact artifact = project.getArtifact();
         final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "." + artifact.getType();
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "." + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
@@ -302,11 +302,11 @@ public class ShadeMojo
         
         if ( finalName != null )
         {
-            shadedName = finalName + "." + artifact.getType();
+            shadedName = finalName + "." + artifact.getArtifactHandler().getExtension();
         }
         else
         {
-            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "." + artifact.getType();
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "." + artifact.getArtifactHandler().getExtension();
         }
         
         return new File( outputDirectory, shadedName );
