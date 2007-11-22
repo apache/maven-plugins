@@ -106,7 +106,7 @@ public class RadApplicationXMLWriter
 
     private static final String XMLNS_MODULEMAP = "xmlns:modulemap";
 
-    private static final String XMLNS_SCHEMA_LOCATION = "xmlns:schemaLocation";
+    private static final String XMLNS_SCHEMA_LOCATION = "xsi:schemaLocation";
 
     private static final String XMLNS_XMI = "xmlns:xmi";
 

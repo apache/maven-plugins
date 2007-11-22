@@ -256,4 +256,10 @@ public class RadPluginTest
         assertTrue( ejbVerified );
     }
 
+    public void testProject6()
+        throws Exception
+    {
+        testProject( "project-rad-6", new Properties(), "rad-clean", "rad" );
+    }
+
 }
