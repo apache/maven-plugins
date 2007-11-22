@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.eclipse.writers.workspace;
+package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.net.URL;

@@ -16,6 +16,7 @@ package org.apache.maven.plugin.eclipse.writers.workspace;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.logging.Log;
 
 /**
