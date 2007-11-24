@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -649,6 +648,9 @@ public class InvokerMojo
             }
             catch ( final EvalError e )
             {
+                String errorMessage = "error evaluating script " + basedir.getPath() + File.separatorChar
+                    + postBuildHookScript + ", " + e.getMessage();
+                getLog().error( errorMessage, e );
                 result = false;
             }
         }
@@ -729,6 +731,9 @@ public class InvokerMojo
             }
             catch ( final EvalError e )
             {
+                String errorMessage = "error evaluating script " + basedir.getPath() + File.separatorChar
+                    + postBuildHookScript + ", " + e.getMessage();
+                getLog().error( errorMessage, e );                
                 result = false;
             }
         }
