@@ -45,7 +45,7 @@ try
         System.err.println( "param.jsp file is missing or a directory." );
         return false;
     }    
-    
+    System.out.println (" before reading param " );
     FileInputStream fis = new FileInputStream ( param );
     String paramContent = IOUtil.toString ( fis );
     
@@ -53,12 +53,12 @@ try
     int indexOf = paramContent.indexOf( "<c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "param.jsp not contains <c:set var=\"app_version\" value="1.0-SNAPSHOT\"/>" );
+    	System.err.println( "param.jsp not contains <c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
     	return false;
     }
     
 }
-catch( Exception e )
+catch( Throwable e )
 {
     e.printStackTrace();
     result = false;
