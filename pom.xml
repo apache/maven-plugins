@@ -23,7 +23,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -44,6 +44,11 @@ under the License.
       <email>jruiz@exist.com</email>
     </contributor>
   </contributors>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-project-info-reports-plugin/</url>
+  </scm>
   <build>
     <plugins>
       <plugin>
