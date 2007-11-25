@@ -261,5 +261,15 @@ public class RadPluginTest
     {
         testProject( "project-rad-6", new Properties(), "rad-clean", "rad" );
     }
+    
+    /**
+     * Tests warSourceDirectory setting to be reflected in generated .websettings
+     * @throws Exception
+     */
+    public void testProject7()
+    throws Exception
+	{
+	    testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
+	}
 
 }
