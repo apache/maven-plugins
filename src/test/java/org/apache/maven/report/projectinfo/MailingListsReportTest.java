@@ -81,9 +81,18 @@ public class MailingListsReportTest
     public void testFrenchReport()
         throws Exception
     {
-        Locale.setDefault( Locale.FRENCH );
+        Locale oldLocale = Locale.getDefault();
 
-        generateReport( "mailing-list", "mailing-list-plugin-config.xml" );
-        assertTrue( "Test html generated", getGeneratedReport( "mail-lists.html" ).exists() );
+        try
+        {
+            Locale.setDefault( Locale.FRENCH );
+
+            generateReport( "mailing-list", "mailing-list-plugin-config.xml" );
+            assertTrue( "Test html generated", getGeneratedReport( "mail-lists.html" ).exists() );
+        }
+        finally
+        {
+            Locale.setDefault( oldLocale );
+        }
     }
 }
