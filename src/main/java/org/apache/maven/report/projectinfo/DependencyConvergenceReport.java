@@ -26,7 +26,6 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -455,7 +454,7 @@ public class DependencyConvergenceReport
             if ( iterator.hasNext() )
             {
                 ReverseDependencyLink rdl = (ReverseDependencyLink) iterator.next();
-                if( isReactorProject(rdl.getDependency()) )
+                if ( isReactorProject( rdl.getDependency() ) )
                 {
                     isReactorProject = true;
                 }
