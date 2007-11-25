@@ -1,0 +1,21 @@
+ ------
+ Advance Usage
+ ------
+ Olivier Lamy
+ ------
+ 24 November 2007
+ ------
+ 
+Advance Usage
+
+* Goals file Interpolation
+
+  goals files can be interpolated with some values : 
+  
+  * values from the project pom (you can use $\{pom.groupId} in your goals file)
+  
+  * In the plugin configuration you can add some properties in a interpolationsProperties element
+    
+    
+  
+   
