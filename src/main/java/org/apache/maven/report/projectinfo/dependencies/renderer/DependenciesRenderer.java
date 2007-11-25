@@ -102,28 +102,28 @@ public class DependenciesRenderer
         }
     };
 
-    public DependenciesRenderer( Sink sink, Locale _locale, I18N _i18n, Dependencies _dependencies,
-                                 DependencyTree _depTree, DependenciesReportConfiguration _config,
-                                 RepositoryUtils _repoUtils )
+    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
+                                 DependencyTree depTree, DependenciesReportConfiguration config,
+                                 RepositoryUtils repoUtils )
     {
         super( sink );
 
-        this.locale = _locale;
+        this.locale = locale;
 
-        this.dependencyTree = _depTree;
+        this.dependencyTree = depTree;
 
-        this.repoUtils = _repoUtils;
+        this.repoUtils = repoUtils;
 
-        this.dependencies = _dependencies;
+        this.dependencies = dependencies;
 
-        this.i18n = _i18n;
+        this.i18n = i18n;
 
-        this.configuration = _config;
+        this.configuration = config;
     }
 
-    public void setLog( Log _log )
+    public void setLog( Log log )
     {
-        log = _log;
+        this.log = log;
     }
 
     public String getTitle()
@@ -540,8 +540,8 @@ public class DependenciesRenderer
                     boolean dependencyExists = false;
 
                     // check snapshots in snapshots repository only and releases in release repositories...
-                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() ) ||
-                        ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
+                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
                     {
                         dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
                     }
@@ -694,7 +694,7 @@ public class DependenciesRenderer
                 List licenses = artifactProject.getLicenses();
 
                 sink.paragraph();
-                if( id != null )
+                if ( id != null )
                 {
                     sink.anchor( id );
                 }
@@ -702,7 +702,7 @@ public class DependenciesRenderer
                 sink.bold();
                 sink.text( artifactName );
                 sink.bold_();
-                if( id != null )
+                if ( id != null )
                 {
                     sink.anchor_();
                 }

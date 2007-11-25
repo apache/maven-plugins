@@ -193,8 +193,8 @@ public class ScmReport
                 return;
             }
 
-            if ( StringUtils.isEmpty( anonymousConnection ) && StringUtils.isEmpty( devConnection ) &&
-                StringUtils.isEmpty( scm.getUrl() ) )
+            if ( StringUtils.isEmpty( anonymousConnection ) && StringUtils.isEmpty( devConnection )
+                && StringUtils.isEmpty( scm.getUrl() ) )
             {
                 startSection( getTitle() );
 
@@ -295,8 +295,8 @@ public class ScmReport
          */
         private void renderAnonymousAccessSection( ScmRepository anonymousRepository )
         {
-            if ( isScmSystem( anonymousRepository, "clearcase" ) || isScmSystem( anonymousRepository, "perforce" ) ||
-                isScmSystem( anonymousRepository, "starteam" ) || StringUtils.isEmpty( anonymousConnection ) )
+            if ( isScmSystem( anonymousRepository, "clearcase" ) || isScmSystem( anonymousRepository, "perforce" )
+                || isScmSystem( anonymousRepository, "starteam" ) || StringUtils.isEmpty( anonymousConnection ) )
             {
                 return;
             }
@@ -622,7 +622,8 @@ public class ScmReport
             {
                 if ( svnRepo.getUrl().startsWith( "https://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.https" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.https" ) );
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn://" ) )
                 {
@@ -630,11 +631,13 @@ public class ScmReport
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn+ssh://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svnssh" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.svnssh" ) );
                 }
                 else
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.other" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.other" ) );
                 }
             }
 
@@ -681,7 +684,9 @@ public class ScmReport
 
         /**
          * Convenience method that return true is the defined <code>SCM repository</code> is a known provider.
-         * <p>Actually, we fully support Clearcase, CVS, Perforce, Starteam, SVN by the maven-scm-providers component.</p>
+         * <p>
+         * Actually, we fully support Clearcase, CVS, Perforce, Starteam, SVN by the maven-scm-providers component.
+         * </p>
          *
          * @param scmRepository a SCM repository
          * @param scmProvider   a SCM provider name
