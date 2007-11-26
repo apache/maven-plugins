@@ -270,6 +270,31 @@ public class RadPluginTest
     throws Exception
 	{
 	    testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
+
+	    /*
+	     *  testing libs in  web content directory
+	     */
+	    File basedir = getTestFile( "target/test-classes/projects/project-rad-7" );
+	    File pom = new File( basedir, "pom.xml" );
+        MavenProject project = readProject( pom );
+        File outputDir;
+        File projectOutputDir = basedir;
+
+        String outputDirPath =
+            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
+        if ( outputDirPath == null )
+        {
+            outputDir = basedir;
+        }
+        else
+        {
+            outputDir = new File( basedir, outputDirPath );
+            outputDir.mkdirs();
+            projectOutputDir = new File( outputDir, project.getArtifactId() );
+        }
+        
+        compareDirectoryContent( basedir, projectOutputDir, "WebContent/WEB-INF/lib/" );
+
 	}
 
 }
