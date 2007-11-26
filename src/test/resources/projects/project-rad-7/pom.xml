@@ -7,6 +7,13 @@
 	<artifactId>project-rad-7</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>eclipsetest</groupId>
+			<artifactId>deps-direct-compile</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
