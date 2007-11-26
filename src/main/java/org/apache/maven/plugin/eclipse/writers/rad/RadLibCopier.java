@@ -27,6 +27,8 @@ import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -140,9 +142,17 @@ public class RadLibCopier
     {
         File basedir = config.getProject().getBasedir();
 
+        // Generating web content settings based on war plug-in warSourceDirectory property 
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", //$NON-NLS-1$
+                                                 "src/main/webapp" ) ); //$NON-NLS-1$
+        String webContentDir = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                warSourceDirectory, false );
+        
         String srcMainWebappWebInfLibDirName =
-            basedir.getAbsolutePath() + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar +
-                "webapp" + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
+            basedir.getAbsolutePath() + File.separatorChar +
+            webContentDir + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirName );
         srcMainWebappWebInfLibDir.mkdirs();
