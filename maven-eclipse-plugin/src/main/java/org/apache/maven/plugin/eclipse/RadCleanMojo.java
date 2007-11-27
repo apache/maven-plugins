@@ -113,19 +113,18 @@ public class RadCleanMojo
     private void handleWarLibs()
         throws MojoExecutionException
     {
-    	File basedir = this.project.getBasedir();
-    	
+        File basedir = this.project.getBasedir();
+
         File warSourceDirectory =
             new File( IdeUtils.getPluginSetting( this.project, JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                  "warSourceDirectory", //$NON-NLS-1$
                                                  "src/main/webapp" ) ); //$NON-NLS-1$
-        
-        String webContentDir = IdeUtils.toRelativeAndFixSeparator( basedir,
-                warSourceDirectory, false );
-    	
+
+        String webContentDir = IdeUtils.toRelativeAndFixSeparator( basedir, warSourceDirectory, false );
+
         String srcMainWebappWebInfLibDirname =
-        	basedir.getAbsolutePath() + File.separatorChar + webContentDir + 
-            	File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
+            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF" +
+                File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirname );
         srcMainWebappWebInfLibDir.mkdirs();
