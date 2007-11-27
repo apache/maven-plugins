@@ -124,24 +124,25 @@ public class RadWebSettingsWriter
      * write the websettings file for RAD6.
      * 
      * @param writer where to write to
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
-    private void writeModuleTypeFacetCore( XMLWriter writer ) throws MojoExecutionException
+    private void writeModuleTypeFacetCore( XMLWriter writer )
+        throws MojoExecutionException
     {
         writer.startElement( WEBSETTINGS_WEBSETTINGS );
         writer.addAttribute( WEBSETTINGS_VERSION, "600" );
         writer.startElement( WEBSETTINGS_WEBCONTENT );
-        
-        // Generating web content settings based on war plug-in warSourceDirectory property 
+
+        // Generating web content settings based on war plug-in warSourceDirectory property
         File warSourceDirectory =
             new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                  "warSourceDirectory", //$NON-NLS-1$
                                                  config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
-        String webContentDir = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                warSourceDirectory, false );
-        
+        String webContentDir =
+            IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
+
         writer.writeText( webContentDir );
-        
+
         writer.endElement();
         writer.startElement( WEBSETTINGS_CONTEXT_ROOT );
         writer.writeText( getContextRoot( warContextRoot ) );
