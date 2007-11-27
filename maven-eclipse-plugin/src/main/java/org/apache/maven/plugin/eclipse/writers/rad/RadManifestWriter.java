@@ -65,24 +65,24 @@ public class RadManifestWriter
      * Search the project for the existing META-INF directory where the manifest should be located.
      * 
      * @return the apsolute path to the META-INF directory
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
-    private String getMetaInfBaseDirectory( MavenProject project ) throws MojoExecutionException
+    private String getMetaInfBaseDirectory( MavenProject project )
+        throws MojoExecutionException
     {
         String metaInfBaseDirectory = null;
 
         if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            // Generating web content settings based on war plug-in warSourceDirectory property 
+            // Generating web content settings based on war plug-in warSourceDirectory property
             File warSourceDirectory =
                 new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                      "warSourceDirectory", //$NON-NLS-1$
                                                      config.getProject().getBasedir() + DEFAULT_WEBAPP_RESOURCE_DIR ) ); //$NON-NLS-1$
-            
-            String webContentDir = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                    warSourceDirectory, false );
 
-        	
+            String webContentDir =
+                IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
+
             metaInfBaseDirectory =
                 config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + webContentDir;
 

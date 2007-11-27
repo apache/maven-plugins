@@ -261,22 +261,23 @@ public class RadPluginTest
     {
         testProject( "project-rad-6", new Properties(), "rad-clean", "rad" );
     }
-    
+
     /**
-     * Tests warSourceDirectory setting to be reflected in generated .websettings,
-     * location of jars in WEB-INF/lib and generation of MANIFEST.MF at the right place
+     * Tests warSourceDirectory setting to be reflected in generated .websettings, location of jars in WEB-INF/lib and
+     * generation of MANIFEST.MF at the right place
+     * 
      * @throws Exception
      */
     public void testProject7()
-    throws Exception
-	{
-	    testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
+        throws Exception
+    {
+        testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
 
-	    /*
-	     *  testing libs in  web content directory
-	     */
-	    File basedir = getTestFile( "target/test-classes/projects/project-rad-7" );
-	    File pom = new File( basedir, "pom.xml" );
+        /*
+         * testing libs in web content directory
+         */
+        File basedir = getTestFile( "target/test-classes/projects/project-rad-7" );
+        File pom = new File( basedir, "pom.xml" );
         MavenProject project = readProject( pom );
         File outputDir;
         File projectOutputDir = basedir;
@@ -293,10 +294,10 @@ public class RadPluginTest
             outputDir.mkdirs();
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
-        
+
         compareDirectoryContent( basedir, projectOutputDir, "WebContent/WEB-INF/lib/" );
         compareDirectoryContent( basedir, projectOutputDir, "WebContent/META-INF/" );
 
-	}
+    }
 
 }
