@@ -21,6 +21,8 @@ package org.apache.maven.plugin.eclipse;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -111,9 +113,19 @@ public class RadCleanMojo
     private void handleWarLibs()
         throws MojoExecutionException
     {
+    	File basedir = this.project.getBasedir();
+    	
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( this.project, JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", //$NON-NLS-1$
+                                                 "src/main/webapp" ) ); //$NON-NLS-1$
+        
+        String webContentDir = IdeUtils.toRelativeAndFixSeparator( basedir,
+                warSourceDirectory, false );
+    	
         String srcMainWebappWebInfLibDirname =
-            this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar + "main" +
-                File.separatorChar + "webapp" + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
+        	basedir.getAbsolutePath() + File.separatorChar + webContentDir + 
+            	File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirname );
         srcMainWebappWebInfLibDir.mkdirs();
@@ -122,7 +134,7 @@ public class RadCleanMojo
     }
 
     /**
-     * delete all Jar artifacts in the spedified directory.
+     * delete all Jar artifacts in the specified directory.
      * 
      * @param directory to delete the jars from
      * @throws MojoExecutionException only if a file exists and can't be deleted
