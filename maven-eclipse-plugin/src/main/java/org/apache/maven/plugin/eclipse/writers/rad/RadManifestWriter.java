@@ -38,6 +38,8 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -56,22 +58,33 @@ public class RadManifestWriter
 
     private static final String META_INF_DIRECTORY = "META-INF";
 
-    private static final String WEBAPP_RESOURCE_DIR =
+    private static final String DEFAULT_WEBAPP_RESOURCE_DIR =
         "src" + File.separatorChar + "main" + File.separatorChar + "webapp";
 
     /**
      * Search the project for the existing META-INF directory where the manifest should be located.
      * 
      * @return the apsolute path to the META-INF directory
+     * @throws MojoExecutionException 
      */
-    private String getMetaInfBaseDirectory( MavenProject project )
+    private String getMetaInfBaseDirectory( MavenProject project ) throws MojoExecutionException
     {
         String metaInfBaseDirectory = null;
 
         if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
+            // Generating web content settings based on war plug-in warSourceDirectory property 
+            File warSourceDirectory =
+                new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                     "warSourceDirectory", //$NON-NLS-1$
+                                                     config.getProject().getBasedir() + DEFAULT_WEBAPP_RESOURCE_DIR ) ); //$NON-NLS-1$
+            
+            String webContentDir = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                    warSourceDirectory, false );
+
+        	
             metaInfBaseDirectory =
-                config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
+                config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + webContentDir;
 
             log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
 

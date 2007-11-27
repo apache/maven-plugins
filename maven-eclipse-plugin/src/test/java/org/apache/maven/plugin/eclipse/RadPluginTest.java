@@ -263,7 +263,8 @@ public class RadPluginTest
     }
     
     /**
-     * Tests warSourceDirectory setting to be reflected in generated .websettings
+     * Tests warSourceDirectory setting to be reflected in generated .websettings,
+     * location of jars in WEB-INF/lib and generation of MANIFEST.MF at the right place
      * @throws Exception
      */
     public void testProject7()
@@ -294,6 +295,7 @@ public class RadPluginTest
         }
         
         compareDirectoryContent( basedir, projectOutputDir, "WebContent/WEB-INF/lib/" );
+        compareDirectoryContent( basedir, projectOutputDir, "WebContent/META-INF/" );
 
 	}
 
