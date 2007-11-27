@@ -142,17 +142,17 @@ public class RadLibCopier
     {
         File basedir = config.getProject().getBasedir();
 
-        // Generating web content settings based on war plug-in warSourceDirectory property 
+        // Generating web content settings based on war plug-in warSourceDirectory property
         File warSourceDirectory =
             new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                  "warSourceDirectory", //$NON-NLS-1$
                                                  "src/main/webapp" ) ); //$NON-NLS-1$
-        String webContentDir = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                warSourceDirectory, false );
-        
+        String webContentDir =
+            IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
+
         String srcMainWebappWebInfLibDirName =
-            basedir.getAbsolutePath() + File.separatorChar +
-            webContentDir + File.separatorChar + "WEB-INF" + File.separatorChar + "lib";
+            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF" +
+                File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirName );
         srcMainWebappWebInfLibDir.mkdirs();
