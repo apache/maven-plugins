@@ -69,7 +69,7 @@ import org.codehaus.plexus.util.StringUtils;
  * directory, copy plugins jars to the local maven repo, and generates appropriate poms. This is the official central
  * repository builder for Eclipse plugins, so it has the necessary default values. For customized repositories see
  * {@link MakeArtifactsMojo} Typical usage:
- * <code>mvn eclipse:to-maven -DdeployTo=maven.org::default::scpexe://repo1.maven.org/home/maven/repository-staging/to-ibiblio/eclipse -DeclipseDir=.</code>
+ * <code>mvn eclipse:to-maven -DdeployTo=maven.org::default::scpexe://repo1.maven.org/home/maven/repository-staging/to-ibiblio/eclipse-staging -DeclipseDir=.</code>
  * 
  * @author Fabrizio Giustina
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
@@ -200,31 +200,8 @@ public class EclipseToMavenMojo
             File file = files[j];
 
             getLog().info( "Processing file " + file.getAbsolutePath() );
-
-            EclipseOsgiPlugin plugin = getEclipsePlugin( file );
-
-            if ( plugin == null )
-            {
-                getLog().warn( "Skipping file " + file.getAbsolutePath() );
-                continue;
-            }
-
-            Model model = createModel( plugin );
-
-            if ( model == null )
-            {
-                continue;
-            }
-
-            if ( plugins.containsKey( getKey( model ) ) )
-            {
-                throw new MojoFailureException(
-                                                "There are two versions of the same plugin, can not resolve versions: " +
-                                                    getKey( model ) );
-            }
-
-            plugins.put( getKey( model ), plugin );
-            models.put( getKey( model ), model );
+            
+            processFile(file, plugins, models);
         }
 
         int i = 1;
@@ -234,17 +211,44 @@ public class EclipseToMavenMojo
             String key = (String) it.next();
             EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
             Model model = (Model) models.get( key );
-            resolveVersionRanges( model, models );
             writeArtifact( plugin, model, remoteRepo );
         }
     }
 
-    private String getKey( Model model )
+    protected void processFile( File file, Map plugins, Map models )
+        throws MojoExecutionException, MojoFailureException
+    {
+        EclipseOsgiPlugin plugin = getEclipsePlugin( file );
+
+        if ( plugin == null )
+        {
+            getLog().warn( "Skipping file " + file.getAbsolutePath() );
+            return;
+        }
+
+        Model model = createModel( plugin );
+
+        if ( model == null )
+        {
+            return;
+        }
+
+        processPlugin( plugin, model, plugins, models );
+    }
+
+    protected void processPlugin( EclipseOsgiPlugin plugin, Model model, Map plugins, Map models )
+        throws MojoExecutionException, MojoFailureException
+    {
+        plugins.put( getKey( model ), plugin );
+        models.put( getKey( model ), model );
+    }
+
+    protected String getKey( Model model )
     {
         return model.getGroupId() + "." + model.getArtifactId();
     }
 
-    private String getKey( Dependency dependency )
+    private String getKey(Dependency dependency)
     {
         return dependency.getGroupId() + "." + dependency.getArtifactId();
     }
@@ -396,7 +400,7 @@ public class EclipseToMavenMojo
 
         return model;
     }
-
+    
     /**
      * Writes the artifact to the repo
      * 
