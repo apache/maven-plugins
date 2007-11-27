@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.eclipse.osgiplugin.EclipseOsgiPlugin;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -122,4 +124,17 @@ public class MakeArtifactsMojo
             // do nothing
         }
     }
+
+    protected void processPlugin( EclipseOsgiPlugin plugin, Model model, Map plugins, Map models )
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( this.resolveVersionRanges && plugins.containsKey( getKey( model ) ) )
+        {
+            throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: "
+                + getKey( model ) );
+        }
+
+        super.processPlugin( plugin, model, plugins, models );
+    }
+
 }
