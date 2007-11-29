@@ -35,25 +35,25 @@ Delete Additional Files Not Exposed to Maven
 +--------
 <build>
   [...]
-    <plugin>
-      <artifactId>maven-clean-plugin</artifactId>
-      <configuration>
-        <filesets>
-          <fileset>
-            <directory>some/relative/path</directory>
-            <includes>
-              <include>**/*.tmp</include>
-              <include>**/*.log</include>
-            </includes>
-            <excludes>
-              <exclude>**/important.log</exclude>
-              <exclude>**/another-important.log</exclude>
-            </excludes>
-            <followSymlinks>false</followSymlinks>
-          </fileset>
-        </filesets>
-      </configuration>
-    </plugin>
+  <plugin>
+    <artifactId>maven-clean-plugin</artifactId>
+    <configuration>
+      <filesets>
+        <fileset>
+          <directory>some/relative/path</directory>
+          <includes>
+            <include>**/*.tmp</include>
+            <include>**/*.log</include>
+          </includes>
+          <excludes>
+            <exclude>**/important.log</exclude>
+            <exclude>**/another-important.log</exclude>
+          </excludes>
+          <followSymlinks>false</followSymlinks>
+        </fileset>
+      </filesets>
+    </configuration>
+  </plugin>
   [...]
 </build>
 +---------
