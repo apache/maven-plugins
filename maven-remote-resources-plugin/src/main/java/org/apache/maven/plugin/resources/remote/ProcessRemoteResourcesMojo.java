@@ -66,7 +66,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -78,14 +77,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * <p>
  * Pull down resourceBundles containing remote resources and process the resources contained
  * inside the artifact.
- * <p/>
+ * </p>
+ * <p>
  * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is
  * stripped off for the final artifact name and it's  fed through velocity to have properties
  * expanded, conditions processed, etc...
- * <p/>
+ * </p>
+ * <p>
  * Resources that don't end in ".vm" are copied "as is".
+ * </p>
  *
  * @goal process
  * @requiresDependencyResolution runtime
@@ -412,9 +415,11 @@ public class ProcessRemoteResourcesMojo
     {
         Map organizations = new TreeMap( new OrganizationComparator() );
         List unknownOrganization = new ArrayList();
+
         for ( Iterator i = projects.iterator(); i.hasNext(); )
         {
             MavenProject p = (MavenProject) i.next();
+
             if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
             {
                 List sortedProjects = (List) organizations.get( p.getOrganization() );
@@ -855,6 +860,10 @@ public class ProcessRemoteResourcesMojo
             else if ( s1 == null && s2 != null )
             {
                 return 1;
+            }
+            else if ( s1 != null && s2 == null )
+            {
+                return -1;
             }
             
             return s1.compareToIgnoreCase( s2 );
