@@ -19,12 +19,14 @@
 package org.apache.maven.plugin.invoker;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
@@ -71,10 +73,47 @@ public class InterpolationTest
         properties.put( "cleanProps", "clean" );
         properties.put( "version", "2.0-SNAPSHOT" );
         setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
-        String dirPath = getBasedir() + "/src/test/resources/unit/interpolation/";
+        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test"
+        + File.separatorChar + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( goals.toString(), 2, goals.size() );
         assertEquals( "clean", goals.get( 0 ) );
         assertEquals( "bar:foo:1.0-SNAPSHOT:mygoal", goals.get( 1 ) );
+    }
+    
+    public void testPomInterpolation()
+        throws Exception
+    {
+        FileReader fileReader = null;
+        File interpolatedPomFile = null;
+        try
+        {
+            InvokerMojo invokerMojo = new InvokerMojo();
+            setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
+            setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
+            Properties properties = new Properties();
+            properties.put( "foo", "bar" );
+            properties.put( "version", "2.0-SNAPSHOT" );
+            setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
+            String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test"
+                + File.separatorChar + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
+            interpolatedPomFile = invokerMojo.buildInterpolatedPomFile( new File( dirPath, "pom.xml" ),
+                                                                        new File( getBasedir() + File.separatorChar
+                                                                            + "target" ) );
+            fileReader = new FileReader( interpolatedPomFile );
+            String content = IOUtil.toString( fileReader );
+            assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
+        }
+        finally
+        {
+            if ( fileReader != null )
+            {
+                fileReader.close();
+            }
+            if ( interpolatedPomFile != null )
+            {
+                interpolatedPomFile.delete();
+            }
+        }
     }
 }
