@@ -257,7 +257,10 @@ public class PmdReport
                     
                     try
                     {
-                        r.render( stringwriter, report );
+                        r.setWriter(stringwriter);
+                        r.start();
+                        r.renderFileReport(report);
+                        r.end();
                         String buffer = stringwriter.toString();
                         
                         Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
