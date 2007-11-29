@@ -28,7 +28,7 @@ under the License.
   </parent>
 
   <artifactId>maven-clean-plugin</artifactId>
-  <version>2.3-SNAPSHOT</version>
+  <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Clean Plugin</name>
   <description>
