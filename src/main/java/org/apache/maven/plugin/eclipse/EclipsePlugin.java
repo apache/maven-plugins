@@ -81,7 +81,7 @@ public class EclipsePlugin
     private static final String BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER =
         "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver"; //$NON-NLS-1$
 
-    private static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder"; //$NON-NLS-1$
+    protected static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder"; //$NON-NLS-1$
 
     private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder"; //$NON-NLS-1$
 
