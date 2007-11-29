@@ -28,7 +28,7 @@
 
 Ignoring Clean Errors
 
-  To ignore errors when running the cleanup for a particular project, set the failOnError property to false.
+  To ignore errors when running the cleanup for a particular project, set the <<<failOnError>>> property to false.
 
 +--------
 <build>
