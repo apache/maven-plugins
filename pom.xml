@@ -103,10 +103,9 @@ under the License.
     <dependency>
       <groupId>pmd</groupId>
       <artifactId>pmd</artifactId>
-      <version>3.9</version>
+      <version>4.1</version>
       <exclusions>
-          <!-- 3.9 specifies a beta version of jaxen which doesn't have a pom resulting in
-                a warning whenever you use it.  Likewise for xom 1.0. -->
+          <!-- incorrect jaxen version in pom for 4.1 -->
           <exclusion>
              <groupId>jaxen</groupId>
              <artifactId>jaxen</artifactId>
@@ -116,18 +115,7 @@ under the License.
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xom</groupId>
-          <artifactId>xom</artifactId>
-         </exclusion>
-       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xom</groupId>
-      <artifactId>xom</artifactId>
-      <version>1.1</version>
+      <version>1.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
