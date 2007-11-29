@@ -182,7 +182,7 @@ public class CpdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new XMLRenderer();
+            renderer = new XMLRenderer("UTF-8");
         }
         else if ( "csv".equals( format ) )
         {

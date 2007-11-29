@@ -195,6 +195,7 @@ public class CpdReportTest extends AbstractMojoTestCase
 
         CPD tCpd = new MockCpd( 100, new JavaLanguage(), tList.iterator() );
 
+        tCpd.go();
         mojo.writeNonHtml( tCpd );
 
         File tReport = new File( "target/test/unit/default-configuration/target/cpd.xml" );
