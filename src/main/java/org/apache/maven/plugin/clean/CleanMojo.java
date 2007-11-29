@@ -62,7 +62,7 @@ public class CleanMojo
      * @readonly
      * @since 2.2
      */
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * This is where build results go.
@@ -208,7 +208,8 @@ public class CleanMojo
 
                     if ( !project.isExecutionRoot() )
                     {
-                        String projectBasedir = StringUtils.replace( project.getBasedir().getAbsolutePath(), "\\", "/" );
+                        String projectBasedir = StringUtils.replace( project.getBasedir().getAbsolutePath(),
+                                                                     "\\", "/" );
                         String filesetDir = StringUtils.replace( fileset.getDirectory(), "\\", "/" );
 
                         if ( filesetDir.indexOf( projectBasedir ) == -1 )

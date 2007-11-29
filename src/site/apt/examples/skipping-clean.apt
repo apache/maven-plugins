@@ -28,7 +28,7 @@
 
 Skipping Clean
 
-  To skip running the cleanup for a particular project, set the skip property to true.
+  To skip running the cleanup for a particular project, set the <<<skip>>> property to true.
 
 +--------
 <build>
