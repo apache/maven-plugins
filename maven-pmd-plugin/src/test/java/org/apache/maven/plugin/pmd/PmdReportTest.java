@@ -205,6 +205,24 @@ public class PmdReportTest
         }
     }
 
+    public void testInvalidTargetJdk()
+        throws Exception
+    {
+        try
+        {
+            File testPom =
+                new File( getBasedir(), "src/test/resources/unit/invalid-format/invalid-target-jdk-plugin-config.xml" );
+            PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+            mojo.execute();
+
+            fail( "Must throw MavenReportException." );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+        }
+    }
+
 
 
     /**

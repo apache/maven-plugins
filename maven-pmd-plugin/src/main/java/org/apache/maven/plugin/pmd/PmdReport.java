@@ -72,7 +72,7 @@ public class PmdReport
 {
     /**
      * The target JDK to analyse based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>.
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>.
      *
      * @parameter expression="${targetJdk}"
      */
@@ -175,7 +175,7 @@ public class PmdReport
                         
                         if ( null == ruleset )
                         {
-                            throw new MavenReportException( "Cold not resolve " + set );
+                            throw new MavenReportException( "Could not resolve " + set );
                         }
     
                         InputStream rulesInput = new FileInputStream( ruleset );
@@ -313,22 +313,22 @@ public class PmdReport
      * that configures the target JDK.
      *
      * @return the resulting PMD
+     * @throws org.apache.maven.reporting.MavenReportException
+     *          if targetJdk is not supported
      */
     public PMD getPMD()
+        throws MavenReportException
     {
         PMD pmd = new PMD();
 
-        if ( "1.5".equals( targetJdk ) )
+        if ( null != targetJdk )
         {
-            pmd.setJavaVersion( SourceType.JAVA_15 );
-        }
-        else if ( "1.4".equals( targetJdk ) )
-        {
-            pmd.setJavaVersion( SourceType.JAVA_14 );
-        }
-        else if ( "1.3".equals( targetJdk ) )
-        {
-            pmd.setJavaVersion( SourceType.JAVA_13 );
+            SourceType sourceType = SourceType.getSourceTypeForId("java " + targetJdk);
+            if ( sourceType == null )
+            {
+                throw new MavenReportException( "Unsupported targetJdk value '" + targetJdk + "'." );
+            }
+            pmd.setJavaVersion(sourceType);
         }
 
         return pmd;
