@@ -363,7 +363,7 @@ public class EclipseClasspathWriter
 
     }
 
-    private void addDependency( XMLWriter writer, IdeDependency dep )
+    protected void addDependency( XMLWriter writer, IdeDependency dep )
         throws MojoExecutionException
     {
 
