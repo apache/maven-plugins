@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
