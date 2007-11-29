@@ -22,8 +22,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 public class EclipseCodeFormatterProfile
 {
-    private static final String ELT_PROFILES = "profiles";
-
     private static final String ELT_PROFILE = "profile";
 
     /**
