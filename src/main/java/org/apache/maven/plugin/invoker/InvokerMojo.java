@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -228,6 +230,9 @@ public class InvokerMojo
      * @since 1.1
      */
     private MavenProject project;    
+    
+    // list to store interpolated pom for delete at the end
+    private List/*File*/ interpolatedPomFiles = new ArrayList();
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -294,11 +299,19 @@ public class InvokerMojo
 
         final List failures = new ArrayList();
 
-        for ( int i = 0; i < includedPoms.length; i++ )
+        try
         {
-            final String pom = includedPoms[i];
+            for ( int i = 0; i < includedPoms.length; i++ )
+            {
+                final String pom = includedPoms[i];
 
-            runBuild( projectsDir, pom, failures );
+                runBuild( projectsDir, pom, failures );
+            }
+        }
+        finally
+        {
+            // interpolated files cleanup
+            cleanupInterpolatedPomFiles();
         }
 
         if ( !suppressSummaries )
@@ -408,18 +421,17 @@ public class InvokerMojo
     private void runBuild( final File projectsDir, final String pom, final List failures )
         throws MojoExecutionException
     {
+        
         File pomFile = new File( projectsDir, pom );
-
         final File basedir = pomFile.getParentFile();
-
-        getLog().info( "Building: " + pom );
-
-        final File outputLog = new File( basedir, "build.log" );
-
+        File interpolatedPomFile = buildInterpolatedPomFile( pomFile, basedir );
         FileLogger logger = null;
-
         try
         {
+            getLog().info( "Building: " + pom );
+
+            final File outputLog = new File( basedir, "build.log" );
+
             if ( !noLog )
             {
                 outputLog.getParentFile().mkdirs();
@@ -448,7 +460,7 @@ public class InvokerMojo
                 }
             }
 
-            if ( !prebuild( basedir, pom, failures, logger ) )
+            if ( !prebuild( basedir, interpolatedPomFile, failures, logger ) )
             {
                 getLog().info( "...FAILED[pre-build script returned false]" );
 
@@ -529,8 +541,7 @@ public class InvokerMojo
                 request.setOutputHandler( logger );
             }
 
-            request.setPomFile( pomFile );
-
+            request.setPomFile( interpolatedPomFile );
             if ( profiles != null )
             {
                 request.setProfiles( profiles );
@@ -580,7 +591,7 @@ public class InvokerMojo
 
                 failures.add( pom );
             }
-            else if ( !verify( basedir, pom, failures, logger ) )
+            else if ( !verify( basedir, interpolatedPomFile, failures, logger ) )
             {
                 if ( !suppressSummaries )
                 {
@@ -589,7 +600,7 @@ public class InvokerMojo
 
                 failures.add( pom );
             }
-            else if (!suppressSummaries )
+            else if ( !suppressSummaries )
             {
                 getLog().info( "...SUCCESS." );
             }
@@ -632,7 +643,7 @@ public class InvokerMojo
         return testProps;
     }
 
-    private boolean verify( final File basedir, final String pom, final List failures, final FileLogger logger )
+    private boolean verify( final File basedir, final File pom, final List failures, final FileLogger logger )
     {
         boolean result = true;
 
@@ -715,7 +726,7 @@ public class InvokerMojo
         return scriptResult;
     }
 
-    private boolean prebuild( final File basedir, final String pom, final List failures, final FileLogger logger )
+    private boolean prebuild( final File basedir, final File pom, final List failures, final FileLogger logger )
     {
         boolean result = true;
 
@@ -903,6 +914,80 @@ public class InvokerMojo
         }
 
         return result;
+    }
+    
+    protected File buildInterpolatedPomFile( File pomFile, File targetDirectory )
+        throws MojoExecutionException
+    {
+        File interpolatedPomFile = new File( targetDirectory, "interpolated-pom.xml" );
+        interpolatedPomFiles.add( interpolatedPomFile );
+        Map composite = new CompositeMap( this.project, this.interpolationsProperties );
+
+        try
+        {
+            boolean created = interpolatedPomFile.createNewFile();
+            if ( !created )
+            {
+                throw new MojoExecutionException( "fail to create file " + interpolatedPomFile.getPath() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "fail to create file " + interpolatedPomFile.getPath() );
+        }
+        getLog().debug( "interpolate it pom to create interpolated in " + interpolatedPomFile.getPath() );
+
+        BufferedReader reader = null;
+        FileWriter fileWriter = null;
+        try
+        {
+            // pom interpolation with token @...@
+            reader = new BufferedReader( new InterpolationFilterReader( new XmlStreamReader( pomFile ), composite, "@",
+                                                                        "@" ) );
+            fileWriter = new FileWriter( interpolatedPomFile );
+            String line = null;
+            while ( ( line = reader.readLine() ) != null )
+            {
+                fileWriter.write( line );
+            }
+            fileWriter.flush();
+        }
+        catch ( IOException e )
+        {
+            String message = "error when interpolating it pom";
+            throw new MojoExecutionException( message, e );
+        }
+        finally
+        {
+            // IOUtil in p-u is null check and silently NPE
+            IOUtil.close( reader );
+            IOUtil.close( fileWriter );
+        }
+
+        if ( interpolatedPomFile == null )
+        {
+            // null check : normally impossibe but :-)
+            throw new MojoExecutionException( "pom file is null after interpolation" );
+        }
+        return interpolatedPomFile;
+    }
+    
+    private void cleanupInterpolatedPomFiles()
+    {
+        for ( Iterator iterator = this.interpolatedPomFiles.iterator(); iterator.hasNext(); )
+        {
+            File file = (File) iterator.next();
+            if ( file.exists() )
+            {
+                try
+                {
+                FileUtils.forceDelete( file );
+                } catch (IOException e)
+                {
+                    getLog().warn( "fail to clean file " + file.getPath() );
+                }
+            }
+        }
     }
 
 }
