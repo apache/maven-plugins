@@ -20,9 +20,13 @@ package org.apache.maven.plugin.pmd;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.spi.CharsetProvider;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -114,28 +118,7 @@ public class CpdReport
     
                 if ( !isHtml() )
                 {
-                    Renderer r = createRenderer();
-                    String buffer = r.render( cpd.getMatches() );
-                    try
-                    {
-                        targetDirectory.mkdirs();
-                        Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
-                        writer.write( buffer, 0, buffer.length() );
-                        writer.close();
-                        
-                        
-                        File siteDir = new File( targetDirectory, "site" );
-                        siteDir.mkdirs();
-                        writer = new FileWriter( new File( siteDir,
-                                                             "cpd." + format ) );
-                        writer.write( buffer, 0, buffer.length() );
-                        writer.close();
-                        
-                    }
-                    catch ( IOException ioe )
-                    {
-                        throw new MavenReportException( ioe.getMessage(), ioe );
-                    }
+                    writeNonHtml( cpd );
                 }
             }
             finally
@@ -143,6 +126,33 @@ public class CpdReport
                 Thread.currentThread().setContextClassLoader( origLoader );
             }
 
+        }
+    }
+
+    void writeNonHtml( CPD cpd ) throws MavenReportException
+    {
+        Renderer r = createRenderer();
+        String buffer = r.render( cpd.getMatches() );
+        try
+        {
+            targetDirectory.mkdirs();
+            FileOutputStream tStream = new FileOutputStream(new File( targetDirectory, "cpd." + format ));
+            Writer writer = new OutputStreamWriter(tStream, Charset.forName( "UTF-8" ));
+            writer.write( buffer, 0, buffer.length() );
+            writer.close();
+            
+            
+            File siteDir = new File( targetDirectory, "site" );
+            siteDir.mkdirs();
+            writer = new FileWriter( new File( siteDir,
+                                                 "cpd." + format ) );
+            writer.write( buffer, 0, buffer.length() );
+            writer.close();
+            
+        }
+        catch ( IOException ioe )
+        {
+            throw new MavenReportException( ioe.getMessage(), ioe );
         }
     }
 
