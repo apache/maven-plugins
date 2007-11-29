@@ -184,6 +184,14 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
+     * Skip remote-resource processing
+     *
+     * @parameter default-value="true"
+     * @since 1.0-beta-1
+     */
+    private boolean attached = true;
+
+    /**
      * Additional properties to be passed to velocity.
      * <p/>
      * Several properties are automatically added:<br/>
@@ -321,11 +329,14 @@ public class ProcessRemoteResourcesMojo
                     // Push our newly generated resources directory into the MavenProject so that
                     // these resources can be picked up by the process-resources phase.
                     // ----------------------------------------------------------------------------
-                    Resource resource = new Resource();
-                    resource.setDirectory( outputDirectory.getAbsolutePath() );
+                    if ( attached )
+                    {
+                        Resource resource = new Resource();
+                        resource.setDirectory( outputDirectory.getAbsolutePath() );
 
-                    project.getResources().add( resource );
-                    project.getTestResources().add( resource );
+                        project.getResources().add( resource );
+                        project.getTestResources().add( resource );
+                    }
 
                     // ----------------------------------------------------------------------------
                     // Write out archiver dot file
