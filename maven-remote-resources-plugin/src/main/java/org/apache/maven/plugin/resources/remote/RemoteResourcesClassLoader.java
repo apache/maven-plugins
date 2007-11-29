@@ -19,8 +19,10 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.net.URL;
+import java.util.Enumeration;
 
 /**
  * @author Jason van Zyl
@@ -37,4 +39,16 @@ public class RemoteResourcesClassLoader
     {
         super.addURL( url );
     }
+    
+    // don't check the parents for the resources.   Just check the jars
+    // that we have provided.   Thus, we don't pull junk from the
+    // system classpath jars and stuff instead of the jars
+    // we specifically provided
+    public URL getResource(String name) {
+        return findResource(name);
+    }
+    public Enumeration getResources(String name) throws IOException {
+        return findResources(name);
+    }
+
 }
