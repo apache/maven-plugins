@@ -24,16 +24,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.HashSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 public class ApacheNoticeResourceTransformer
     implements ResourceTransformer
 {
-    Set entries = new HashSet();
+    Set entries = new LinkedHashSet();
+    Map organizationEntries = new LinkedHashMap();
+    
     String projectName;
     
     String preamble1 = 
@@ -41,13 +48,18 @@ public class ApacheNoticeResourceTransformer
         + "// NOTICE file corresponding to the section 4d of The Apache License,\n"
         + "// Version 2.0, in this case for ";
     
-    String preamble2 = "\n// ------------------------------------------------------------------\n\n";
+    String preamble2 = "\n// ------------------------------------------------------------------\n";
         
-    String preamble3 = "This product includes software developed at\n" +
-        "Apache Software Foundation (http://www.apache.org/).\n";
-
-    String copyright;
+    String preamble3 = "This product includes software developed at\n";
     
+    //defaults overridable via config in pom
+    String organizationName = "The Apache Software Foundation";
+    String organizationURL = "http://www.apache.org/";
+    String inceptionYear = "2006";
+    
+    String copyright;
+
+        
     public boolean canTransformResource( String resource )
     {
         String s = resource.toLowerCase();
@@ -63,29 +75,84 @@ public class ApacheNoticeResourceTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-        copyright = projectName + "\nCopyright 2006-2007 Apache Software Foundation\n";
+        if ( entries.isEmpty() ) 
+        {
+            String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
+            if ( !inceptionYear.equals( year ) ) 
+            {
+                year = inceptionYear + "-" + year;
+            }
+            
+            
+            //add headers
+            entries.add( preamble1 + projectName + preamble2 );
+            //fake second entry, we'll look for a real one later
+            entries.add( projectName + "\nCopyright " + year + " " + organizationName + "\n" );
+            entries.add( preamble3 + organizationName + " ("+ organizationURL +").\n" );
+        }
+        
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         
         String line = reader.readLine();
         StringBuffer sb = new StringBuffer();
-        while (line != null) {
-            line = line.trim();
+        Set currentOrg = null;
+        int lineCount = 0;
+        while ( line != null )
+        {
+            String trimedLine = line.trim();
             
-            if (!line.startsWith("//")) {
-                if (line.length() > 0) {
-                    sb.append(line).append("\n");
-                } else {
-                    entries.add(sb.toString());
+            if ( !trimedLine.startsWith( "//" ) )
+            {
+                if ( trimedLine.length() > 0 )
+                {
+                    if ( trimedLine.startsWith( "- " ) )
+                    {
+                        //resource-bundle 1.3 mode
+                        if ( lineCount == 1 
+                            && sb.toString().contains( "This product includes/uses software(s) developed by" ))
+                        {
+                            currentOrg = (Set) organizationEntries.get( sb.toString().trim() );
+                            if ( currentOrg == null )
+                            {
+                                currentOrg = new TreeSet();
+                                organizationEntries.put( sb.toString().trim(), currentOrg );
+                            }
+                            sb = new StringBuffer();
+                        } 
+                        else if ( sb.length() > 0 && currentOrg != null )
+                        {
+                            currentOrg.add( sb.toString() );
+                            sb = new StringBuffer();
+                        }
+                        
+                    }
+                    sb.append( line ).append( "\n" );
+                    lineCount++;
+                }
+                else
+                {
+                    String ent = sb.toString();
+                    if ( ent.startsWith( projectName ) && ent.contains( "Copyright " ) ) 
+                    {
+                        copyright = ent;
+                    }
+                    if ( currentOrg == null )
+                    {
+                        entries.add( ent );                        
+                    }
+                    else
+                    {
+                        currentOrg.add( ent );
+                    }
                     sb = new StringBuffer();
+                    lineCount = 0;
+                    currentOrg = null;
                 }
             }
             
             line = reader.readLine();
         }
-        
-        entries.remove(preamble3);
-        entries.remove(copyright);
     }
 
     public boolean hasTransformedResource()
@@ -98,21 +165,43 @@ public class ApacheNoticeResourceTransformer
     {
         jos.putNextEntry( new JarEntry( "META-INF/NOTICE" ) );
         
-        OutputStreamWriter writer = new OutputStreamWriter(jos);
-        writer.write(preamble1);
-        writer.write(projectName);
-        writer.write(preamble2);
+        OutputStreamWriter writer = new OutputStreamWriter( jos );
         
-        writer.write(copyright);
-        writer.write("\n");
-        
-        writer.write(preamble3);
-        writer.write("\n");
-        
-        for (Iterator itr = entries.iterator(); itr.hasNext();) {
+        int count = 0;
+        for ( Iterator itr = entries.iterator() ; itr.hasNext() ; )
+        {
+            ++count;
             String line = (String) itr.next();
-            writer.append(line);
-            writer.append('\n');
+            if ( line.equals( copyright ) && count != 2)
+            {
+                continue;
+            }
+            
+            if ( count == 2 && copyright != null ) 
+            {
+                writer.append( copyright );
+                writer.append( '\n' );
+            }
+            else
+            {
+                writer.append( line );
+                writer.append( '\n' );
+            }
+            if (count == 3) 
+            {
+                //do org stuff
+                for (Iterator oit = organizationEntries.entrySet().iterator() ; oit.hasNext();)
+                {
+                    Map.Entry entry = (Map.Entry) oit.next();
+                    writer.append( entry.getKey().toString() ).append( '\n' );
+                    Set entrySet = (Set)entry.getValue();
+                    for (Iterator eit = entrySet.iterator() ; eit.hasNext() ;)
+                    {
+                        writer.append( eit.next().toString() );                        
+                    }
+                    writer.append( '\n' );
+                }
+            }
         }
         
         writer.flush();
