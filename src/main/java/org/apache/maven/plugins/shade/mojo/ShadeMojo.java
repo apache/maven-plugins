@@ -136,6 +136,16 @@ public class ShadeMojo
      * @parameter expression="${keepDependenciesWithProvidedScope}" default-value="false"
      */
     private boolean keepDependenciesWithProvidedScope;
+    
+    /**
+     * When true, transitive deps of removed dependencies are promoted to direct dependencies.
+     * This should allow the drop in replacement of the removed deps with the new shaded
+     * jar and everything should still work.
+     *
+     * @parameter expression="${promoteTransitiveDependencies}" default-value="false"
+     */
+    private boolean promoteTransitiveDependencies;
+    
 
     /**
      * The name of the classifier used in case the shaded artifact is attached.
@@ -334,13 +344,41 @@ public class ShadeMojo
         List dependencies = new ArrayList();
 
         boolean modified = false;
+        
+        List origDeps = getProject().getDependencies();
+        if ( promoteTransitiveDependencies ) 
+        {
+            origDeps = new ArrayList();
+            for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+            {
+                Artifact artifact = (Artifact) it.next();
 
-        for ( Iterator i = model.getDependencies().iterator(); i.hasNext(); )
+                //promote
+                Dependency dep = new Dependency();
+                dep.setArtifactId( artifact.getArtifactId() );
+                if (artifact.hasClassifier())
+                {
+                    dep.setClassifier( artifact.getClassifier() );
+                }
+                dep.setGroupId( artifact.getGroupId() );
+                dep.setOptional( artifact.isOptional() );
+                dep.setScope( artifact.getScope() );
+                dep.setType( artifact.getType() );
+                dep.setVersion( artifact.getVersion() );
+                
+                // How to do these?
+                //dep.setSystemPath( .... );
+                //dep.setExclusions( exclusions );
+                origDeps.add( dep );
+            }
+        }
+        
+        for ( Iterator i = origDeps.iterator(); i.hasNext(); )
         {
             Dependency d = (Dependency) i.next();
 
             dependencies.add( d );
-
+            
             String id = d.getGroupId() + ":" + d.getArtifactId();
 
             if ( artifactsToRemove.contains( id ) )
@@ -363,9 +401,11 @@ public class ShadeMojo
         {
             model.setDependencies( dependencies );
 
-            File f = new File( getProject().getFile().getParentFile(), "dependency-reduced-pom.xml" );
-
-            f.deleteOnExit();
+            File f = new File( outputDirectory, "dependency-reduced-pom.xml" );
+            if (f.exists()) 
+            {
+                f.delete();
+            }
 
             Writer w = new FileWriter( f );
 
