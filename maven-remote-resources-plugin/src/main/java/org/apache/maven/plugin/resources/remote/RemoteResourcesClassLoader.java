@@ -44,13 +44,23 @@ public class RemoteResourcesClassLoader
     // that we have provided.   Thus, we don't pull junk from the
     // system classpath jars and stuff instead of the jars
     // we specifically provided
-    public URL getResource(String name) 
+    public URL getResource( String name ) 
     {
-        return findResource(name);
+        URL url = findResource( name );
+        if ( url == null )
+        {
+            url = super.getResource( name );
+        }
+        return url;
     }
-    public Enumeration getResources(String name) throws IOException 
+    public Enumeration getResources( String name ) throws IOException 
     {
-        return findResources(name);
+        Enumeration en = findResources( name );
+        if ( en == null || !en.hasMoreElements() )
+        {
+            en = super.getResources( name );
+        }
+        return en;
     }
 
 }
