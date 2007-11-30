@@ -332,7 +332,7 @@ public class EclipseManifestWriter
     private String constructManifestClasspath()
     {
         StringBuffer stringBuffer = new StringBuffer();
-        IdeDependency[] deps = this.config.getDeps();
+        IdeDependency[] deps = this.config.getDepsOrdered();
 
         for ( int index = 0; index < deps.length; index++ )
         {

@@ -19,6 +19,8 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +64,12 @@ public class EclipseWriterConfig
     /**
      * List of IDE dependencies.
      */
-    private IdeDependency[] deps;
+    private IdeDependency[] deps = new IdeDependency[0];
+
+    /**
+     * List of IDE dependencies ordered.
+     */
+    private IdeDependency[] orderedDeps = new IdeDependency[0];
 
     /**
      * Source directories.
@@ -155,6 +162,24 @@ public class EclipseWriterConfig
     public void setDeps( IdeDependency[] deps )
     {
         this.deps = deps;
+        if ( deps != null )
+        {
+            // TODO get the right comparator depending on orderDependencies={name,nearness..};
+            // if none specified it could use a NullComparator to reduce the number of
+            // conditions that have to be checked
+            Comparator depsByArtifactId = new Comparator()
+            {
+                public int compare( Object o1, Object o2 )
+                {
+                    return ( (IdeDependency) o1 ).getArtifactId().compareToIgnoreCase(
+                                                                                       ( (IdeDependency) o2 ).getArtifactId() );
+                }
+            };
+
+            orderedDeps = new IdeDependency[deps.length];
+            System.arraycopy( deps, 0, orderedDeps, 0, deps.length );
+            Arrays.sort( orderedDeps, depsByArtifactId );
+        }
     }
 
     /**
@@ -511,6 +536,14 @@ public class EclipseWriterConfig
     public void setWtpVersion( float wtpVersion )
     {
         this.wtpVersion = wtpVersion;
+    }
+
+    /**
+     * @return an ordered list of dependencies
+     */
+    public IdeDependency[] getDepsOrdered()
+    {
+        return orderedDeps;
     }
 
 }
