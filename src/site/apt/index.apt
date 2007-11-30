@@ -44,7 +44,7 @@ Maven Eclipse Plugin
   installation directory.
 
   * {{{m2eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
-  files compatible with the usage of the {{{}M2Eclipse plugin for eclipse}}.
+  files compatible with the usage of the {{{http://m2eclipse.codehaus.org/}M2Eclipse plugin for eclipse}}.
     
   * {{{make-artifacts-mojo.html}eclipse:make-artifacts}} copies all Eclipse plugins from an 
   installation directory to the local repository, generating POMs for each.
