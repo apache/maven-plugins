@@ -16,7 +16,7 @@
    <faq id="use-add-maven-repo">
      <question>After running <i>mvn eclipse:eclipse</i>, the generated dependencies are pointing to a non-existing file. What needs to be done?</question>
      <answer>
-       <p>Before you can setup any maven project to your Eclipse IDE, you need to define first the location of your local repository to Eclipse. This is done by using:</p><pre>eclipse:add-maven-repo</pre>
+       <p>Before you can setup any maven project to your Eclipse IDE, you need to define first the location of your local repository to Eclipse. This is done by using: <a href="usage.html#Maven%20repository">eclipse:add-maven-repo</a></p>
      </answer>
    </faq>
    <faq id="import-javadoc">
