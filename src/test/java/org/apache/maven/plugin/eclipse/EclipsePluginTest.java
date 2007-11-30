@@ -426,6 +426,12 @@ public class EclipsePluginTest
         testProject( "project-37" );
     }
 
+    public void testProject38()
+        throws Exception
+    {
+        testProject( "project-38" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {
