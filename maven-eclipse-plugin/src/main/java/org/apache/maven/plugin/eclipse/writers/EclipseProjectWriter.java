@@ -188,9 +188,9 @@ public class EclipseProjectWriter
         // referenced projects should not be added for plugins
         if ( !config.isPde() )
         {
-            for ( int j = 0; j < config.getDeps().length; j++ )
+            for ( int j = 0; j < config.getDepsOrdered().length; j++ )
             {
-                IdeDependency dep = config.getDeps()[j];
+                IdeDependency dep = config.getDepsOrdered()[j];
                 if ( dep.isReferencedProject() )
                 {
                     writer.startElement( "project" ); //$NON-NLS-1$
@@ -224,7 +224,7 @@ public class EclipseProjectWriter
 
         boolean addLinks = !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() );
 
-        if ( addLinks || ( config.isPde() && config.getDeps().length > 0 ) )
+        if ( addLinks || ( config.isPde() && config.getDepsOrdered().length > 0 ) )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
 
@@ -248,9 +248,9 @@ public class EclipseProjectWriter
 
             if ( config.isPde() )
             {
-                for ( int j = 0; j < config.getDeps().length; j++ )
+                for ( int j = 0; j < config.getDepsOrdered().length; j++ )
                 {
-                    IdeDependency dep = config.getDeps()[j];
+                    IdeDependency dep = config.getDepsOrdered()[j];
 
                     if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject() &&
                         !dep.isTestDependency() && !dep.isOsgiBundle() )
