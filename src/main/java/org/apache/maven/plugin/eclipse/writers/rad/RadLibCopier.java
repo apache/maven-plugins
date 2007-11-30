@@ -50,7 +50,7 @@ public class RadLibCopier
     public void write()
         throws MojoExecutionException
     {
-        IdeDependency[] deps = config.getDeps();
+        IdeDependency[] deps = config.getDepsOrdered();
 
         String packaging = config.getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )

@@ -287,7 +287,7 @@ public class RadManifestWriter
     private String constructManifestClasspath()
     {
         StringBuffer stringBuffer = new StringBuffer();
-        IdeDependency[] deps = config.getDeps();
+        IdeDependency[] deps = config.getDepsOrdered();
 
         for ( int index = 0; index < deps.length; index++ )
         {

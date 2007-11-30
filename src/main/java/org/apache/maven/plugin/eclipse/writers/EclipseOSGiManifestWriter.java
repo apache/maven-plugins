@@ -241,7 +241,7 @@ public class EclipseOSGiManifestWriter
         // @todo handle expanded plugins
         bundleClasspathSb.append( " ." );
 
-        IdeDependency[] deps = config.getDeps();
+        IdeDependency[] deps = config.getDepsOrdered();
 
         // since Manifest is supposed to be in SVN, having the order of classpath entries shuffled at each run is very
         // annoying. For now just sort them by using groupId/artifactId
