@@ -30,6 +30,9 @@ Maven Eclipse Plugin
   * {{{eclipse-mojo.html}eclipse:eclipse}} generates the Eclipse configuration
   files.
   
+    * {{{eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
+  files that are already configured for {{{http://m2eclipse.codehaus.org}M2eclipse}}.
+  
   * {{{to-maven-mojo.html}eclipse:to-maven}} Add eclipse artifacts from an eclipse installation
   to the local repo. This mojo automatically analize the eclipse directory, copy plugins jars
   to the local maven repo, and generates appropriate poms. This is the official central repository
