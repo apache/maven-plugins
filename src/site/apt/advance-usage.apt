@@ -23,6 +23,12 @@ Advance Usage
   * values from the project pom (you must use @pom.groupId@ notation in your pom file)
   
   * In the plugin configuration you can add some properties in a interpolationsProperties element    
+
+* Running only some tests
+
+  The plugin support a parameter -Dinvoker.test to run only its in the directory match by the expressions 
+  used in the parameter 
+  command line is : mvn -Dinvoker.test=*MWAR*,simple*
     
   
    
