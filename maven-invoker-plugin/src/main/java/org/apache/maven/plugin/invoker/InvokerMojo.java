@@ -50,6 +50,7 @@ import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 
@@ -229,7 +230,17 @@ public class InvokerMojo
      * @readonly
      * @since 1.1
      */
-    private MavenProject project;    
+    private MavenProject project;  
+    
+    /**
+     * Specify this parameter to run individual tests by file name, overriding the <code>pomIncludes</code>
+     * and <code>pomExcludes</code> parameters.  Each pattern you specify here will be used to create an 
+     * include pattern formatted like <code>${projectsDirectory}/${invoker.test}</code>, 
+     * so you can just type "-Dinvoker.test=MyTest" to run a single it in ${projectsDirectory}/${invoker.test}".  
+     * @parameter expression="${invoker.test}"
+     * @since 1.1
+     */    
+    private String invokerTest;
     
     // list to store interpolated pom for delete at the end
     private List/*File*/ interpolatedPomFiles = new ArrayList();
@@ -775,7 +786,7 @@ public class InvokerMojo
         return invocationGoals;
     }
 
-    private String[] getPoms()
+    protected String[] getPoms()
         throws IOException
     {
         String[] poms;
@@ -784,6 +795,30 @@ public class InvokerMojo
         {
             poms = new String[]{ pom.getAbsolutePath() };
         }
+        else if ( invokerTest != null )
+        {
+            String[] testRegexes = StringUtils.split( invokerTest, "," );
+            List /* String */includes = new ArrayList( testRegexes.length );
+            
+            for ( int i = 0, size = testRegexes.length; i < size; i++ )
+            {
+                // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
+                includes.add( testRegexes[i].endsWith( "pom.xml" ) ? testRegexes[i] : testRegexes[i]
+                    + File.separatorChar + "pom.xml" );
+            }
+            
+            final FileSet fs = new FileSet();
+
+            fs.setIncludes( includes );
+            //fs.setExcludes( pomExcludes );
+            fs.setDirectory( projectsDirectory.getCanonicalPath() );
+            fs.setFollowSymlinks( false );
+            fs.setUseDefaultExcludes( false );
+
+            final FileSetManager fsm = new FileSetManager( getLog() );
+
+            poms = fsm.getIncludedFiles( fs );
+        }  
         else
         {
             final FileSet fs = new FileSet();
@@ -803,7 +838,7 @@ public class InvokerMojo
 
         return poms;
     }
-
+    
     private String[] normalizePomPaths( String[] poms )
         throws IOException
     {
