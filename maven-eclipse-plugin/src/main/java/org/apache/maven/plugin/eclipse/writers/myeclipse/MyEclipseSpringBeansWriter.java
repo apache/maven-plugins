@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -124,7 +125,7 @@ public class MyEclipseSpringBeansWriter
      */
     private Collection getConfigurationFilesList( String basedir, String pattern )
     {
-        Collection configFiles = new ArrayList();
+        ArrayList configFiles = new ArrayList();
 
         try
         {
@@ -149,7 +150,8 @@ public class MyEclipseSpringBeansWriter
         {
             log.error( "Error while retrieving Spring configuration files. Returning list in current state" );
         }
-
+        // Sort them to have something constant
+        Collections.sort( configFiles );
         return configFiles;
     }
 }
