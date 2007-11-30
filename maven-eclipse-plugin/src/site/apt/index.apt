@@ -17,11 +17,11 @@ Maven Eclipse Plugin
   The Maven Eclipse Plugin has five goals:
 
   * {{{add-maven-repo-mojo.html}eclipse:add-maven-repo}} is used to add the
-  classpath variable MAVEN_REPO to Eclipse which points to your local
-  repository. This goal is deprecated, please use eclipse:configure-workspace instead
+  classpath variable M2_REPO to Eclipse which points to your local
+  repository. <This goal is deprecated, please use eclipse:configure-workspace instead.>
 
   * {{{configure-workspace-mojo.html}eclipse:configure-workspace}} is used to add the
-  classpath variable MAVEN_REPO to Eclipse which points to your local repository and 
+  classpath variable M2_REPO to Eclipse which points to your local repository and 
   optional to configure other workspace features.
 
   * {{{clean-mojo.html}eclipse:clean}} is used to delete the files used by the
@@ -39,17 +39,24 @@ Maven Eclipse Plugin
   builder for Eclipse plugins, so it has the necessary default values. For customized repositories
   see {{{make-artifacts-mojo.html}eclipse:make-artifacts}}.
   
-  * {{{make-artifacts-mojo.html}eclipse:make-artifacts}} copies all Eclipse plugins from an 
-  installation directory to the local repository, generating POMs for each.
-  
   * {{{install-plugins-mojo.html}eclipse:install-plugins}} installs all resolved project 
   dependencies of a particular type (usually 'eclipse-plugin') into the specified Eclipse
   installation directory.
 
+  * {{{m2eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
+  files compatible with the usage of the {{{}M2Eclipse plugin for eclipse}}.
+    
+  * {{{make-artifacts-mojo.html}eclipse:make-artifacts}} copies all Eclipse plugins from an 
+  installation directory to the local repository, generating POMs for each.
+
+  * {{{myeclipse-mojo.html}eclipse:myeclipse}} Generates the MyEclipse configuration files.
+
+  * {{{myeclipse-clean-mojo.html}eclipse:myeclipse-clean}} Deletes the config files used by MyEclipse.
+
   * {{{rad-mojo.html}eclipse:rad}} Generates the Rad-6 configuration files.
 
   * {{{rad-clean-mojo.html}eclipse:rad-clean}} Deletes the config files used by Rad-6.
-
+  
 * Usage
 
   {{{usage.html}Instructions on how to use the Eclipse Plugin}}.
