@@ -340,9 +340,11 @@ public class EclipseClasspathWriter
         // The dependencies
         // ----------------------------------------------------------------------
         Set addedDependencies = new HashSet();
-        for ( int j = 0; j < config.getDeps().length; j++ )
+        // TODO if (..magic property equals orderDependencies..)
+        IdeDependency[] depsToWrite = config.getDepsOrdered();
+        for ( int j = 0; j < depsToWrite.length; j++ )
         {
-            IdeDependency dep = config.getDeps()[j];
+            IdeDependency dep = depsToWrite[j];
 
             if ( dep.isAddedToClasspath() )
             {

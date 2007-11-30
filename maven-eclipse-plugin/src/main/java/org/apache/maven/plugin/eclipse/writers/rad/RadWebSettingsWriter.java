@@ -170,7 +170,7 @@ public class RadWebSettingsWriter
         writer.startElement( WEBSETTINGS_LIBMODULES );
 
         // iterate relevant dependencies (non-test, non-provided, project)
-        IdeDependency[] deps = config.getDeps();
+        IdeDependency[] deps = config.getDepsOrdered();
         if ( deps != null )
         {
             for ( int i = 0; i < deps.length; i++ )
