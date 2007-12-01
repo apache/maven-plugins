@@ -31,7 +31,7 @@ import com.meterware.httpunit.WebResponse;
 /**
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class IssueTrackingReportTest
     extends AbstractProjectInfoTestCase

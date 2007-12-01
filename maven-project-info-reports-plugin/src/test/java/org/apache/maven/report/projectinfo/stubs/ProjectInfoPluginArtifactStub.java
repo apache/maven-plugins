@@ -25,7 +25,7 @@ import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class ProjectInfoPluginArtifactStub
     extends ArtifactStub
@@ -57,49 +57,37 @@ public class ProjectInfoPluginArtifactStub
         versionRange = VersionRange.createFromVersion( version );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#setGroupId(java.lang.String)
-     */
+    /** {@inheritDoc} */
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#getGroupId()
-     */
+    /** {@inheritDoc} */
     public String getGroupId()
     {
         return groupId;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#setArtifactId(java.lang.String)
-     */
+    /** {@inheritDoc} */
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#getArtifactId()
-     */
+    /** {@inheritDoc} */
     public String getArtifactId()
     {
         return artifactId;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#setVersion(java.lang.String)
-     */
+    /** {@inheritDoc} */
     public void setVersion( String version )
     {
         this.version = version;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#getVersion()
-     */
+    /** {@inheritDoc} */
     public String getVersion()
     {
         return version;
@@ -121,33 +109,25 @@ public class ProjectInfoPluginArtifactStub
         return packaging;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#getVersionRange()
-     */
+    /** {@inheritDoc} */
     public VersionRange getVersionRange()
     {
         return versionRange;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#setVersionRange(org.apache.maven.artifact.versioning.VersionRange)
-     */
+    /** {@inheritDoc} */
     public void setVersionRange( VersionRange versionRange )
     {
         this.versionRange = versionRange;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#getArtifactHandler()
-     */
+    /** {@inheritDoc} */
     public ArtifactHandler getArtifactHandler()
     {
         return handler;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.ArtifactStub#setArtifactHandler(org.apache.maven.artifact.handler.ArtifactHandler)
-     */
+    /** {@inheritDoc} */
     public void setArtifactHandler( ArtifactHandler handler )
     {
         this.handler = handler;

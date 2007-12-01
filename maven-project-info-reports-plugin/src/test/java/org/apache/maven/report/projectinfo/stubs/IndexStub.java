@@ -21,17 +21,14 @@ package org.apache.maven.report.projectinfo.stubs;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class IndexStub
     extends ProjectInfoProjectStub
 {
-    /**
-     * @see org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub#getPOM()
-     */
+    /** {@inheritDoc} */
     protected String getPOM()
     {
         return "index-plugin-config.xml";
     }
 }
-
