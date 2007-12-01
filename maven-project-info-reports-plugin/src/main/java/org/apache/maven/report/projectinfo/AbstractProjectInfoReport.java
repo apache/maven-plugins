@@ -54,6 +54,8 @@ import java.util.Map;
  * Base class with the things that should be in AbstractMavenReport anyway.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
+ * @since 2.0
  */
 public abstract class AbstractProjectInfoReport
     extends AbstractMavenReport
@@ -108,41 +110,11 @@ public abstract class AbstractProjectInfoReport
      */
     protected I18N i18n;
 
-    private File getSkinArtifactFile()
-        throws MojoExecutionException
-    {
-        Skin skin = Skin.getDefaultSkin();
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
-        String version = skin.getVersion();
-        Artifact artifact;
-        try
-        {
-            if ( version == null )
-            {
-                version = Artifact.RELEASE_VERSION;
-            }
-            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
-            artifact = factory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar",
-                                                         null, null );
-
-            resolver.resolve( artifact, project.getRemoteArtifactRepositories(), localRepository );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new MojoExecutionException( "The skin version '" + version + "' is not valid: " + e.getMessage() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Unable to find skin", e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "The skin does not exist: " + e.getMessage() );
-        }
-
-        return artifact.getFile();
-    }
-
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -194,35 +166,70 @@ public abstract class AbstractProjectInfoReport
         }
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
+    /** {@inheritDoc} */
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_INFORMATION;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
+    // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
+    /** {@inheritDoc} */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    private File getSkinArtifactFile()
+        throws MojoExecutionException
+    {
+        Skin skin = Skin.getDefaultSkin();
+
+        String version = skin.getVersion();
+        Artifact artifact;
+        try
+        {
+            if ( version == null )
+            {
+                version = Artifact.RELEASE_VERSION;
+            }
+            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
+            artifact = factory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar",
+                                                         null, null );
+
+            resolver.resolve( artifact, project.getRemoteArtifactRepositories(), localRepository );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new MojoExecutionException( "The skin version '" + version + "' is not valid: " + e.getMessage() );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Unable to find skin", e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MojoExecutionException( "The skin does not exist: " + e.getMessage() );
+        }
+
+        return artifact.getFile();
     }
 }
