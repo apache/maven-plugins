@@ -54,6 +54,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * @version $Id$
+ * @since 2.1
+ */
 public class DependenciesRenderer
     extends AbstractMavenReportRenderer
 {
@@ -89,6 +93,7 @@ public class DependenciesRenderer
      */
     private Map licenseMap = new HashMap()
     {
+        /** {@inheritDoc} */
         public Object put( Object key, Object value )
         {
             // handle multiple values as a list
@@ -121,16 +126,22 @@ public class DependenciesRenderer
         this.configuration = config;
     }
 
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
     public void setLog( Log log )
     {
         this.log = log;
     }
 
+    /** {@inheritDoc} */
     public String getTitle()
     {
         return getReportString( "report.dependencies.title" );
     }
 
+    /** {@inheritDoc} */
     public void renderBody()
     {
         // Dependencies report
@@ -186,6 +197,10 @@ public class DependenciesRenderer
             renderSectionDependencyRepositoryLocations();
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     private String[] getDependencyTableHeader()
     {

@@ -41,6 +41,7 @@ import java.util.Locale;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal scm
  */
 public class ScmReport
@@ -87,25 +88,23 @@ public class ScmReport
      */
     private String webAccessUrl;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.scm.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.scm.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         ScmRenderer r =
@@ -115,13 +114,15 @@ public class ScmReport
         r.render();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "source-repository";
     }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
 
     private static class ScmRenderer
         extends AbstractMavenReportRenderer
@@ -168,17 +169,13 @@ public class ScmReport
 
         }
 
-        /**
-         * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
-         */
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return i18n.getString( "project-info-report", locale, "report.scm.title" );
         }
 
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
-         */
+        /** {@inheritDoc} */
         public void renderBody()
         {
             Scm scm = model.getScm();

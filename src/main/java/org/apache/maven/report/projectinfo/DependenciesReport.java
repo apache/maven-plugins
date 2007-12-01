@@ -41,6 +41,7 @@ import java.util.Locale;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl </a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal dependencies
  * @requiresDependencyResolution test
  */
@@ -48,33 +49,46 @@ public class DependenciesReport
     extends AbstractProjectInfoReport
 {
     /**
-     * Maven Project Builder.
+     * Maven Project Builder component.
      *
      * @component
      */
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
+     * Artifact metadata source component.
+     *
      * @component
      */
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
+     * Artifact collector component.
+     *
      * @component
      */
     private ArtifactCollector collector;
 
     /**
+     * Wagon manager component.
+     *
+     * @since 2.1
      * @component
      */
     private WagonManager wagonManager;
 
     /**
+     * Dependency tree builder component.
+     *
+     * @since 2.1
      * @component
      */
     private DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
+     * Jar classes analyser component.
+     *
+     * @since 2.1
      * @component
      */
     private JarClassesAnalysis classesAnalyzer;
@@ -82,6 +96,7 @@ public class DependenciesReport
     /**
      * The current user system settings for use in Maven.
      *
+     * @since 2.1
      * @parameter expression="${settings}"
      * @required
      * @readonly
@@ -91,7 +106,8 @@ public class DependenciesReport
     /**
      * Display file details for each dependency, such as: file size, number of
      * classes, number of packages etc.
-     * 
+     *
+     * @since 2.1
      * @parameter expression="${dependency.details.enabled}" default-value="true"
      */
     private boolean dependencyDetailsEnabled;
@@ -99,29 +115,28 @@ public class DependenciesReport
     /**
      * Display the repository locations of the dependencies. Requires Maven 2.0.5+.
      *
+     * @since 2.1
      * @parameter expression="${dependency.locations.enabled}" default-value="false"
      */
     private boolean dependencyLocationsEnabled;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.dependencies.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.dependencies.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         RepositoryUtils repoUtils = new RepositoryUtils( wagonManager, settings, mavenProjectBuilder, factory, resolver,
@@ -143,6 +158,16 @@ public class DependenciesReport
         r.render();
     }
 
+    /** {@inheritDoc} */
+    public String getOutputName()
+    {
+        return "dependencies";
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
     private DependencyTree resolveProject()
     {
         try
@@ -155,13 +180,5 @@ public class DependenciesReport
             getLog().error( "Unable to build dependency tree.", e );
             return null;
         }
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
-    public String getOutputName()
-    {
-        return "dependencies";
     }
 }

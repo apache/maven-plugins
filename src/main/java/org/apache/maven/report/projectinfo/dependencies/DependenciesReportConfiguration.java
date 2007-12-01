@@ -19,6 +19,10 @@ package org.apache.maven.report.projectinfo.dependencies;
  * under the License.
  */
 
+/**
+ * @version $Id$
+ * @since 2.1
+ */
 public class DependenciesReportConfiguration
 {
     private boolean dependencyDetailsEnabled;
@@ -38,7 +42,7 @@ public class DependenciesReportConfiguration
 
     public boolean getDependencyLocationsEnabled()
     {
-        //TODO: 
+        //TODO:
         //   ( !settings.isOffline() && dependencyLocationsEnabled )
         return dependencyLocationsEnabled;
     }

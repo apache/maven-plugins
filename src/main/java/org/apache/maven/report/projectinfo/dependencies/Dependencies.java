@@ -35,6 +35,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @version $Id$
+ * @since 2.1
+ */
 public class Dependencies
 {
     private final List projectDependencies;

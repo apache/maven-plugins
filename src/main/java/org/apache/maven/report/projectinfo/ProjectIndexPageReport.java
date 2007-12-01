@@ -22,7 +22,6 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -31,24 +30,23 @@ import java.util.Locale;
  * @author <a href="mailto:brett@apache.org">Brett Porter </a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal index
  */
 public class ProjectIndexPageReport
     extends AbstractProjectInfoReport
 {
-    private List reports;
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.index.title" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         String desc;
@@ -64,9 +62,7 @@ public class ProjectIndexPageReport
         return desc;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         ProjectIndexRenderer r =
@@ -75,13 +71,15 @@ public class ProjectIndexPageReport
         r.render();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "index";
     }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
 
     private static class ProjectIndexRenderer
         extends AbstractMavenReportRenderer
@@ -103,17 +101,13 @@ public class ProjectIndexPageReport
             this.name = name;
         }
 
-        /**
-         * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
-         */
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return title;
         }
 
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
-         */
+        /** {@inheritDoc} */
         public void renderBody()
         {
             startSection( title.trim() + " " + name );
@@ -123,5 +117,4 @@ public class ProjectIndexPageReport
             endSection();
         }
     }
-
 }
