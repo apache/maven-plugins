@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class DependencyConvergenceStub
     extends ProjectInfoProjectStub
@@ -39,20 +39,15 @@ public class DependencyConvergenceStub
         setExecutionRoot( true );
     }
 
-    /**
-     * @see org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub#getPOM()
-     */
+    /** {@inheritDoc} */
     protected String getPOM()
     {
         return "dependency-convergence-plugin-config.xml";
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getDependencies()
-     */
+    /** {@inheritDoc} */
     public List getDependencies()
     {
         return Collections.EMPTY_LIST;
     }
 }
-

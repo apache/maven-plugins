@@ -31,7 +31,7 @@ import com.meterware.httpunit.WebTable;
 /**
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class DependenciesReportTest
     extends AbstractProjectInfoTestCase
