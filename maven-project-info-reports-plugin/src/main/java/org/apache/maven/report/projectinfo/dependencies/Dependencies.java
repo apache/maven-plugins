@@ -67,29 +67,6 @@ public class Dependencies
         mapArtifactFiles( dependencyTree.getRootNode(), projectMap );
     }
 
-    private void mapArtifactFiles( DependencyNode node, Map projectMap )
-    {
-        List childs = node.getChildren();
-        if ( ( childs == null ) || childs.isEmpty() )
-        {
-            return;
-        }
-
-        Iterator it = childs.iterator();
-        while ( it.hasNext() )
-        {
-            DependencyNode anode = (DependencyNode) it.next();
-            String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
-            Artifact projartifact = (Artifact) projectMap.get( key );
-            if ( projartifact != null )
-            {
-                anode.getArtifact().setFile( projartifact.getFile() );
-            }
-
-            mapArtifactFiles( anode, projectMap );
-        }
-    }
-
     public boolean hasDependencies()
     {
         return ( projectDependencies != null ) && ( !this.projectDependencies.isEmpty() );
@@ -145,5 +122,32 @@ public class Dependencies
         }
 
         return jarAnalyzer.getJarData();
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    private void mapArtifactFiles( DependencyNode node, Map projectMap )
+    {
+        List childs = node.getChildren();
+        if ( ( childs == null ) || childs.isEmpty() )
+        {
+            return;
+        }
+
+        Iterator it = childs.iterator();
+        while ( it.hasNext() )
+        {
+            DependencyNode anode = (DependencyNode) it.next();
+            String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
+            Artifact projartifact = (Artifact) projectMap.get( key );
+            if ( projartifact != null )
+            {
+                anode.getArtifact().setFile( projartifact.getFile() );
+            }
+
+            mapArtifactFiles( anode, projectMap );
+        }
     }
 }
