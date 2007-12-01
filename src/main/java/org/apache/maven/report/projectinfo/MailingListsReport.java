@@ -37,30 +37,29 @@ import java.util.Locale;
  * @author <a href="mailto:brett@apache.org">Brett Porter </a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal mailing-list
  */
 public class MailingListsReport
     extends AbstractProjectInfoReport
 {
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.mailing-lists.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.mailing-lists.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale );
@@ -68,13 +67,15 @@ public class MailingListsReport
         r.render();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "mail-lists";
     }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
 
     private static class MailingListsRenderer
         extends AbstractMavenReportRenderer
@@ -98,17 +99,13 @@ public class MailingListsReport
             this.locale = locale;
         }
 
-        /**
-         * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
-         */
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return i18n.getString( "project-info-report", locale, "report.mailing-lists.title" );
         }
 
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
-         */
+        /** {@inheritDoc} */
         public void renderBody()
         {
             List mailingLists = model.getMailingLists();

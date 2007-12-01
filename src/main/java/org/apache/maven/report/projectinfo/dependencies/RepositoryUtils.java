@@ -46,6 +46,10 @@ import org.apache.maven.wagon.repository.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @version $Id$
+ * @since 2.1
+ */
 public class RepositoryUtils
 {
     private Log log;
