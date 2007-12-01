@@ -544,7 +544,7 @@ public class DependencyConvergenceReport
      *
      * @return A Map of relationships between dependencies and reactor projects
      */
-    public Map getDependencyMap()
+    private Map getDependencyMap()
     {
         Iterator it = reactorProjects.iterator();
 
