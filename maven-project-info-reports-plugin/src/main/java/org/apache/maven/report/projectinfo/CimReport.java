@@ -36,21 +36,29 @@ import java.util.Locale;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal cim
  */
 public class CimReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.cim.name" );
     }
 
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.cim.description" );
     }
 
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), i18n, locale );
@@ -58,13 +66,14 @@ public class CimReport
         r.render();
     }
 
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "integration";
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Private
     // ----------------------------------------------------------------------
 
     private static class CimRenderer
@@ -87,11 +96,13 @@ public class CimReport
             this.locale = locale;
         }
 
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return i18n.getString( "project-info-report", locale, "report.cim.title" );
         }
 
+        /** {@inheritDoc} */
         public void renderBody()
         {
             CiManagement cim = model.getCiManagement();

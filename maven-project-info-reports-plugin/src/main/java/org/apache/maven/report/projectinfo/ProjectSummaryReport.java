@@ -30,41 +30,46 @@ import java.util.Locale;
  * Generates the project information reports summary.
  *
  * @author Edwin Punzalan
+ * @version $Id$
+ * @since 2.0
  * @goal summary
  * @plexus.component
  */
 public class ProjectSummaryReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
         new ProjectSummaryRenderer( getSink(), locale ).render();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.summary.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.summary.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "project-summary";
     }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
 
     private class ProjectSummaryRenderer
         extends AbstractMavenReportRenderer
@@ -78,11 +83,13 @@ public class ProjectSummaryReport
             this.locale = locale;
         }
 
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return getReportString( "report.summary.title" );
         }
 
+        /** {@inheritDoc} */
         protected void renderBody()
         {
             startSection( getTitle() );
