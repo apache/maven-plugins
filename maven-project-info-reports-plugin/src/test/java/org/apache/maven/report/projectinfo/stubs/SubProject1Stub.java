@@ -27,22 +27,18 @@ import org.apache.maven.model.Dependency;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class SubProject1Stub
     extends ProjectInfoProjectStub
 {
-    /**
-     * @see org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub#getPOM()
-     */
+    /** {@inheritDoc} */
     protected String getPOM()
     {
         return "subproject1/pom.xml";
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getDependencies()
-     */
+    /** {@inheritDoc} */
     public List getDependencies()
     {
         Dependency d = new Dependency();

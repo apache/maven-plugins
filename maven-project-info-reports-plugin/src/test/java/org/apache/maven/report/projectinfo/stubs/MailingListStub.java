@@ -21,17 +21,14 @@ package org.apache.maven.report.projectinfo.stubs;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public class MailingListStub
     extends ProjectInfoProjectStub
 {
-    /**
-     * @see org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub#getPOM()
-     */
+    /** {@inheritDoc} */
     protected String getPOM()
     {
         return "mailing-list-plugin-config.xml";
     }
 }
-
