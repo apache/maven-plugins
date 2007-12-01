@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 /**
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public abstract class ProjectInfoProjectStub
     extends MavenProjectStub
@@ -103,49 +103,37 @@ public abstract class ProjectInfoProjectStub
      */
     protected abstract String getPOM();
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getModel()
-     */
+    /** {@inheritDoc} */
     public Model getModel()
     {
         return model;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#setBuild(org.apache.maven.model.Build)
-     */
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/plugin-configs/" );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getArtifacts()
-     */
+    /** {@inheritDoc} */
     public Set getArtifacts()
     {
         return Collections.EMPTY_SET;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getRemoteArtifactRepositories()
-     */
+    /** {@inheritDoc} */
     public List getRemoteArtifactRepositories()
     {
         ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
@@ -154,9 +142,7 @@ public abstract class ProjectInfoProjectStub
         return Collections.singletonList( repository );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getDependencyArtifacts()
-     */
+    /** {@inheritDoc} */
     public Set getDependencyArtifacts()
     {
         return Collections.singleton( new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),

@@ -23,8 +23,10 @@ import org.apache.maven.settings.Settings;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class SettingsStub
     extends Settings
 {
+    // nop
 }
