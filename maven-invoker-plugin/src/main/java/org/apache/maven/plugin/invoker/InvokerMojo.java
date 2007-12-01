@@ -241,9 +241,6 @@ public class InvokerMojo
      * @since 1.1
      */    
     private String invokerTest;
-    
-    // list to store interpolated pom for delete at the end
-    private List/*File*/ interpolatedPomFiles = new ArrayList();
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -310,20 +307,13 @@ public class InvokerMojo
 
         final List failures = new ArrayList();
 
-        try
+        for ( int i = 0; i < includedPoms.length; i++ )
         {
-            for ( int i = 0; i < includedPoms.length; i++ )
-            {
-                final String pom = includedPoms[i];
+            final String pom = includedPoms[i];
 
-                runBuild( projectsDir, pom, failures );
-            }
+            runBuild( projectsDir, pom, failures );
         }
-        finally
-        {
-            // interpolated files cleanup
-            cleanupInterpolatedPomFiles();
-        }
+        
 
         if ( !suppressSummaries )
         {
@@ -955,7 +945,7 @@ public class InvokerMojo
         throws MojoExecutionException
     {
         File interpolatedPomFile = new File( targetDirectory, "interpolated-pom.xml" );
-        interpolatedPomFiles.add( interpolatedPomFile );
+        interpolatedPomFile.deleteOnExit();
         Map composite = new CompositeMap( this.project, this.interpolationsProperties );
 
         try
@@ -1006,23 +996,4 @@ public class InvokerMojo
         }
         return interpolatedPomFile;
     }
-    
-    private void cleanupInterpolatedPomFiles()
-    {
-        for ( Iterator iterator = this.interpolatedPomFiles.iterator(); iterator.hasNext(); )
-        {
-            File file = (File) iterator.next();
-            if ( file.exists() )
-            {
-                try
-                {
-                FileUtils.forceDelete( file );
-                } catch (IOException e)
-                {
-                    getLog().warn( "fail to clean file " + file.getPath() );
-                }
-            }
-        }
-    }
-
 }
