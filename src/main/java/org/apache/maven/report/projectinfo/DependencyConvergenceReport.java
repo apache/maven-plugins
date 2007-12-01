@@ -39,7 +39,8 @@ import java.util.TreeMap;
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
- * @version $Id $
+ * @version $Id$
+ * @since 2.0
  * @goal dependency-convergence
  * @aggregator
  */
@@ -58,33 +59,40 @@ public class DependencyConvergenceReport
      */
     private List reactorProjects;
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputName()
-     */
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "dependency-convergence";
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getI18nString( locale, "name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getI18nString( locale, "description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
+    public boolean canGenerateReport()
+    {
+        // only generate the convergency report if we are running a reactor build
+        return reactorProjects.size() > 1;
+    }
+
+    // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -122,6 +130,10 @@ public class DependencyConvergenceReport
         sink.body_();
         sink.flush();
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Generate the convergenec table for all dependencies
@@ -236,7 +248,7 @@ public class DependencyConvergenceReport
     /**
      * Produce a Map of relationships between dependencies (its version) and
      * reactor projects.
-     * 
+     *
      * This is the structure of the Map:
      * <pre>
      * +--------------------+----------------------------------+
@@ -587,9 +599,7 @@ public class DependencyConvergenceReport
             return project;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         public String toString()
         {
             return project.getId();
@@ -599,9 +609,7 @@ public class DependencyConvergenceReport
     private static class ProjectComparator
         implements Comparator
     {
-        /**
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
+        /** {@inheritDoc} */
         public int compare( Object o1, Object o2 )
         {
             if ( o1 instanceof ReverseDependencyLink && o2 instanceof ReverseDependencyLink )
@@ -613,14 +621,5 @@ public class DependencyConvergenceReport
 
             return 0;
         }
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
-    public boolean canGenerateReport()
-    {
-        // only generate the convergency report if we are running a reactor build
-        return reactorProjects.size() > 1;
     }
 }

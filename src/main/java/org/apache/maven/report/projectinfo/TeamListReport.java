@@ -40,30 +40,29 @@ import java.util.Properties;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
+ * @since 2.0
  * @goal project-team
  */
 public class TeamListReport
     extends AbstractProjectInfoReport
 {
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.team-list.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.team-list.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
         TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale );
@@ -71,13 +70,15 @@ public class TeamListReport
         r.render();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "team-list";
     }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
 
     private static class TeamListRenderer
         extends AbstractMavenReportRenderer
@@ -119,17 +120,13 @@ public class TeamListReport
             this.locale = locale;
         }
 
-        /**
-         * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
-         */
+        /** {@inheritDoc} */
         public String getTitle()
         {
             return i18n.getString( "project-info-report", locale, "report.team-list.title" );
         }
 
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
-         */
+        /** {@inheritDoc} */
         public void renderBody()
         {
             startSection( i18n.getString( "project-info-report", locale, "report.team-list.intro.title" ) );
