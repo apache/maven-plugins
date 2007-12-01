@@ -40,7 +40,7 @@ import java.util.Locale;
  *
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id $
+ * @version $Id$
  */
 public abstract class AbstractProjectInfoTestCase
     extends AbstractMojoTestCase
@@ -60,9 +60,7 @@ public abstract class AbstractProjectInfoTestCase
      */
     private I18N i18n;
 
-    /**
-     * @see org.apache.maven.plugin.testing.AbstractMojoTestCase#setUp()
-     */
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -78,9 +76,7 @@ public abstract class AbstractProjectInfoTestCase
         Locale.setDefault( DEFAULT_LOCALE );
     }
 
-    /**
-     * @see org.codehaus.plexus.PlexusTestCase#getCustomConfiguration()
-     */
+    /** {@inheritDoc} */
     protected InputStream getCustomConfiguration()
         throws Exception
     {
@@ -97,9 +93,7 @@ public abstract class AbstractProjectInfoTestCase
         return null;
     }
 
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
+    /** {@inheritDoc} */
     protected void tearDown()
         throws Exception
     {
