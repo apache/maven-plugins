@@ -110,10 +110,6 @@ public class InterpolationTest
             {
                 fileReader.close();
             }
-            if ( interpolatedPomFile != null )
-            {
-                interpolatedPomFile.delete();
-            }
         }
     }
 }
