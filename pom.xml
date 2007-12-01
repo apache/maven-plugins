@@ -18,35 +18,46 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>10</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-project-info-reports-plugin</artifactId>
+  <version>2.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Project Info Reports Plugin</name>
-  <version>2.1-SNAPSHOT</version>
+  <description>
+    The Maven Project Info Reports Plugin is a plugin that generates standard reports
+    for the specified project.
+  </description>
   <inceptionYear>2005</inceptionYear>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
+
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MPIR</url>
   </issueManagement>
+
   <contributors>
     <contributor>
       <name>Johnny R. Ruiz III</name>
       <email>jruiz@exist.com</email>
     </contributor>
   </contributors>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-project-info-reports-plugin/</url>
   </scm>
+
   <build>
     <plugins>
       <plugin>
@@ -78,7 +89,9 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
+    <!-- Maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
@@ -141,7 +154,7 @@ under the License.
       <version>1.0</version>
     </dependency>
 
-    <!-- wagon -->
+    <!-- Wagon -->
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
@@ -202,7 +215,7 @@ under the License.
       <version>${scm.version}</version>
     </dependency>
 
-    <!-- doxia -->
+    <!-- Doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
@@ -219,7 +232,7 @@ under the License.
       <version>${doxia.version}</version>
     </dependency>
 
-    <!-- doxia-sitetools -->
+    <!-- Doxia-sitetools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
@@ -241,7 +254,7 @@ under the License.
       </exclusions>
     </dependency>
 
-    <!-- plexus -->
+    <!-- Plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
@@ -278,6 +291,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <properties>
     <doxia.version>1.0-alpha-10</doxia.version>
     <doxia-sitetools.version>1.0-alpha-10</doxia-sitetools.version>
