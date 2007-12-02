@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.jar;
 
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
@@ -28,7 +31,7 @@ import java.io.File;
 
 /**
  * Base class for creating a jar from project classes.
- * 
+ *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
@@ -42,21 +45,21 @@ public abstract class AbstractJarMojo
 
     /**
      * List of files to include, fileset pattern.
-     * 
+     *
      * @parameter
      */
     private String[] includes;
 
     /**
      * List of files to exclude, fileset pattern.
-     * 
+     *
      * @parameter
      */
     private String[] excludes;
 
     /**
      * Directory containing the generated JAR.
-     * 
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      */
@@ -64,7 +67,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Name of the generated JAR.
-     * 
+     *
      * @parameter alias="jarName" expression="${project.build.finalName}"
      * @required
      */
@@ -72,7 +75,7 @@ public abstract class AbstractJarMojo
 
     /**
      * The Jar archiver.
-     * 
+     *
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      */
@@ -80,7 +83,7 @@ public abstract class AbstractJarMojo
 
     /**
      * The maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -89,11 +92,11 @@ public abstract class AbstractJarMojo
 
     /**
      * The maven archive configuration to use.
-     * 
+     *
      * See <a
      * href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">the
      * Javadocs for MavenArchiveConfiguration</a>.
-     * 
+     *
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -105,7 +108,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Whether creating the archive should be forced.
-     * 
+     *
      * @parameter expression="${jar.forceCreation}" default-value="false"
      */
     private boolean forceCreation;
@@ -146,7 +149,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     * 
+     *
      * @todo Add license files in META-INF directory.
      */
     public File createArchive()
@@ -187,7 +190,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     * 
+     *
      * @todo Add license files in META-INF directory.
      */
     public void execute()
