@@ -38,6 +38,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.shared.osgi.Maven2OsgiConverter;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -130,6 +131,11 @@ public class InstallPluginsMojo
 
     // calculated below. Value will be ${eclipseDir}/plugins.
     private File pluginsDir;
+
+    /**
+     * @component
+     */
+    private Maven2OsgiConverter maven2OsgiConverter;
 
     public InstallPluginsMojo()
     {
@@ -409,14 +415,8 @@ public class InstallPluginsMojo
      */
     private String formatEclipsePluginName( Artifact artifact, String bundleVersion )
     {
-        if ( bundleVersion == null )
-        {
-            return artifact.getArtifactId() + StringUtils.replace( artifact.getVersion(), "-", "." );
-        }
-        else
-        {
-            return artifact.getArtifactId() + "_" + bundleVersion;
-        }
+        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
+            + maven2OsgiConverter.getVersion( artifact.getVersion() );
     }
 
 }
