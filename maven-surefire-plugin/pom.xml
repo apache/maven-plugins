@@ -30,7 +30,7 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Surefire Plugin</name>
   <prerequisites>
-    <maven>2.1-SNAPSHOT</maven>
+    <maven>2.0.9-SNAPSHOT</maven>
   </prerequisites>
   <mailingLists>
     <!-- duplication from maven-plugins pom - temporary until they inherit properly -->

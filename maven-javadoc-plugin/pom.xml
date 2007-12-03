@@ -43,7 +43,7 @@
   </issueManagement>
 
   <prerequisites>
-    <maven>2.1-SNAPSHOT</maven>
+    <maven>2.0.9-SNAPSHOT</maven>
   </prerequisites>
 
   <build>
