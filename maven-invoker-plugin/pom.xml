@@ -37,6 +37,10 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-invoker-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-invoker-plugin/</url>
   </scm>	
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MINVOKER</url>
+  </issueManagement>
   <build>
     <plugins>
       <plugin>
