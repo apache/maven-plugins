@@ -20,6 +20,7 @@ package org.apache.maven.plugin.invoker;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -112,4 +113,46 @@ public class InterpolationTest
             }
         }
     }
+    
+    public void testProfilesFromFile()
+        throws Exception
+    {
+        InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "profilesFile", "profiles.txt" );
+        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
+            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        List profiles = invokerMojo.getProfiles( new File( dirPath ) );
+        assertEquals( 2, profiles.size() );
+        assertTrue( profiles.contains( "foo" ) );
+    }
+    
+    public void testEmptyProfilesFromFile()
+        throws Exception
+    {
+
+        InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( new String[] { "zloug" } ) );
+        setVariableValueToObject( invokerMojo, "profilesFile", "emptyProfiles.txt" );
+        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
+            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        List profiles = invokerMojo.getProfiles( new File( dirPath ) );
+        assertFalse( profiles.contains( "zloug" ) );
+        assertEquals( 0, profiles.size() );
+
+    }    
+    
+    public void testProfilesWithNoFile()
+        throws Exception
+    {
+
+        InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( new String[] { "zloug" } ) );
+        setVariableValueToObject( invokerMojo, "profilesFile", "zorglubProfiles.txt" );
+        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
+            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        List profiles = invokerMojo.getProfiles( new File( dirPath ) );
+        assertTrue( profiles.contains( "zloug" ) );
+        assertEquals( 1, profiles.size() );
+
+    }     
 }

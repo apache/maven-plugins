@@ -22,6 +22,7 @@ package org.apache.maven.plugin.invoker;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -241,6 +242,14 @@ public class InvokerMojo
      * @since 1.1
      */    
     private String invokerTest;
+    
+    /**
+     * The name of the project-specific file that contains the enumeration of profiles to use for that test.
+     * <b>If the file exists and empty no profiles will be used even if the profiles is set</b>
+     * @parameter expression="${invoker.profilesFile}" default-value="profiles.txt"
+     * @since 1.1
+     */
+    private String profilesFile;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -543,10 +552,8 @@ public class InvokerMojo
             }
 
             request.setPomFile( interpolatedPomFile );
-            if ( profiles != null )
-            {
-                request.setProfiles( profiles );
-            }
+
+            request.setProfiles( getProfiles(basedir) );
 
             try
             {
@@ -995,5 +1002,44 @@ public class InvokerMojo
             throw new MojoExecutionException( "pom file is null after interpolation" );
         }
         return interpolatedPomFile;
+    }
+    
+    protected List getProfiles( File projectDirectory )
+        throws MojoExecutionException
+    {
+        if ( profilesFile == null )
+        {
+            return profiles == null ? Collections.EMPTY_LIST : profiles;
+        }
+        File projectProfilesFile = new File( projectDirectory, profilesFile );
+        if ( !projectProfilesFile.exists() )
+        {
+            return profiles == null ? Collections.EMPTY_LIST : profiles;
+        }
+        BufferedReader reader = null;
+        try
+        {
+            List profilesInFiles = new ArrayList();
+            reader = new BufferedReader( new FileReader( projectProfilesFile ) );
+            String line = null;
+            while ( ( line = reader.readLine() ) != null )
+            {
+                profilesInFiles.addAll( collectListFromCSV( line ) );
+            }
+            return profilesInFiles;
+        }
+        catch ( FileNotFoundException e )
+        {
+            // as we check first if the file it should not happened
+            throw new MojoExecutionException( projectProfilesFile + " not found ", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "error reading profile in file " + projectProfilesFile + " not found ", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 }
