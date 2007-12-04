@@ -30,8 +30,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <!-- Silly  we need to fix this -->
-        <version>2.1-alpha-2-SNAPSHOT</version>
+        <version>@pom.version@</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
