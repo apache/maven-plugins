@@ -30,6 +30,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
+        <version>@pom.version@</version>
         <configuration>
 
         </configuration>
