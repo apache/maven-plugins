@@ -136,18 +136,25 @@ public abstract class AbstractWarPackagingTask
                              String targetFilename )
         throws IOException
     {
+        context.getLog().debug( "sourceId " + sourceId +", copyFile file " + file + ", targetFilename " + targetFilename );
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
         context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
         {
             public void registered( String ownerId, String targetFilename )
                 throws IOException
             {
+                context.getLog().debug(
+                                        "registered copy file " + file.getPath() + " to targetFile "
+                                            + targetFile.getName() );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
 
             public void alreadyRegistered( String ownerId, String targetFilename )
                 throws IOException
             {
+                context.getLog().debug(
+                                        "alreadyRegistered copy onlyIfModified file " + file.getPath()
+                                            + " to targetFile " + targetFile.getName() );
                 copyFile( context, file, targetFile, targetFilename, true );
             }
 
@@ -196,9 +203,11 @@ public abstract class AbstractWarPackagingTask
         throws IOException, MojoExecutionException
     {
 
+        context.getLog().debug( "sourceId " + sourceId + ", filtering file " + file + " to targetFilename " + targetFilename );
         if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
+            context.getLog().debug( "filtering file " + file + " to targetFile " + targetFile );
             // buffer so it isn't reading a byte at a time!
             Reader fileReader = null;
             Writer fileWriter = null;
