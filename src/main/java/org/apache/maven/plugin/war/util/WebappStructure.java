@@ -99,6 +99,7 @@ public class WebappStructure
         throws IOException
     {
 
+        
         // If the file is already in the current structure, rejects it with the current owner
         if ( isRegistered( path ) )
         {

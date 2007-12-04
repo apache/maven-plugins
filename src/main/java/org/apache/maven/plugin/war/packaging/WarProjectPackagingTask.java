@@ -8,8 +8,11 @@ import org.apache.maven.plugin.war.util.PathSet;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
+import sun.security.action.GetLongAction;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Handles the project own resources, that is:
@@ -61,10 +64,15 @@ public class WarProjectPackagingTask
         File metainfDir = new File( context.getWebappDirectory(), META_INF_PATH );
         metainfDir.mkdirs();
 
-        handleWebResources( context );
-
+        handleWebResources( context );        
+        
         handeWebAppSourceDirectory( context );
-
+        PathSet pathSet = context.getWebappStructure().getStructure( "currentBuild" );
+        context.getLog().debug( "currentBuild pathSet content dump" );
+        for ( Iterator iterator = pathSet.iterator(); iterator.hasNext(); )
+        {
+            context.getLog().debug( "pathSet content " + iterator.next() );
+        }
         handleDeploymentDescriptors( context, webinfDir, metainfDir );
 
         handleClassesDirectory( context );
@@ -122,6 +130,7 @@ public class WarProjectPackagingTask
         else
         if ( !context.getWebappSourceDirectory().getAbsolutePath().equals( context.getWebappDirectory().getPath() ) )
         {
+            
             final PathSet sources = getFilesToIncludes( context.getWebappSourceDirectory(),
                                                         context.getWebappSourceIncludes(),
                                                         context.getWebappSourceExcludes() );
@@ -230,11 +239,20 @@ public class WarProjectPackagingTask
         for ( int i = 0; i < fileNames.length; i++ )
         {
             String targetFileName = fileNames[i];
+            context.getLog().debug( "copy targetFileName " + targetFileName );
             if ( resource.getTargetPath() != null )
             {
                 //TODO make sure this thing is 100% safe
-                targetFileName = resource.getTargetPath() + File.separator + targetFileName;
+                // MWAR-129 if targetPath is only a dot <targetPath>.</targetPath> or ./
+                // and the Resource is in a part of the warSourceDirectory the file from sources will override this
+                // that's we don't have to add the targetPath yep not nice but works
+                if ( !StringUtils.equals( ".", resource.getTargetPath() )
+                    && !StringUtils.equals( "./", resource.getTargetPath() ) )
+                {
+                    targetFileName = resource.getTargetPath() + File.separator + targetFileName;
+                }
             }
+            context.getLog().debug( "copy targetFileName with targetPath " + targetFileName );
             if ( resource.isFiltering() )
             {
                 copyFilteredFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
