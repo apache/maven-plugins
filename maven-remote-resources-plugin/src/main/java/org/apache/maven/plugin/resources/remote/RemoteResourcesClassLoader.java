@@ -19,10 +19,8 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
-import java.io.IOException;
 import java.net.URLClassLoader;
 import java.net.URL;
-import java.util.Enumeration;
 
 /**
  * @author Jason van Zyl
@@ -53,14 +51,5 @@ public class RemoteResourcesClassLoader
         }
         return url;
     }
-    public Enumeration getResources( String name ) throws IOException 
-    {
-        Enumeration en = findResources( name );
-        if ( en == null || !en.hasMoreElements() )
-        {
-            en = super.getResources( name );
-        }
-        return en;
-    }
-
+    
 }
