@@ -31,32 +31,26 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
-    File webappDirectory = new File( target, "profile2" );
-    if ( !webappDirectory.exists() || !webappDirectory.isDirectory() )
+    File webAppDirectory = new File ( target, "webAppDirectory" );
+    if ( !webAppDirectory.exists() || !webAppDirectory.isDirectory() )
     {
-        System.err.println( "webappDirectory is missing or not a directory." );
+        System.err.println( "webAppDirectory is missing or a not directory." );
         return false;
     }    
-    
-    File param = new File ( webappDirectory, "param.jsp" );
-    if ( !param.exists() || param.isDirectory() )
+    File devProperties = new File ( webAppDirectory, "dev.properties" );
+    if ( devProperties.exists() )
     {
-        System.err.println( "param.jsp file is missing or a directory." );
-        return false;
-    }    
-    System.out.println (" before reading param " );
-    FileInputStream fis = new FileInputStream ( param );
-    String paramContent = IOUtil.toString ( fis );
-    
-    
-    int indexOf = paramContent.indexOf( "<c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
-    if ( indexOf < 0)
-    {
-    	System.err.println( "param.jsp not contains <c:set var=\"app_version\" value=\"1.0-SNAPSHOT\"/>" );
-    	return false;
+        System.err.println( "dev.properties has not been excluded." );
+        return false;    	
     }
     
+    File testProperties = new File ( webAppDirectory, "test.properties" );
+    if ( testProperties.exists() )
+    {
+        System.err.println( "test.properties has not been excluded." );
+        return false;    	
+    }    
+        
 }
 catch( Throwable e )
 {
