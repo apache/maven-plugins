@@ -315,7 +315,8 @@ public class ProcessRemoteResourcesMojo
             VelocityContext context = new VelocityContext( properties );
             configureVelocityContext( context );
 
-            RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader( this.getClass().getClassLoader() );
+            RemoteResourcesClassLoader classLoader 
+                = new RemoteResourcesClassLoader( null );
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
 
