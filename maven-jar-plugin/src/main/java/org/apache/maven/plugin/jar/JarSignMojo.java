@@ -191,6 +191,7 @@ public class JarSignMojo
         if ( skip )
         {
             getLog().info( "Skipping JAR signing for file: " + getJarFile().getAbsolutePath() );
+            return;
         }
 
         if ( project != null )
