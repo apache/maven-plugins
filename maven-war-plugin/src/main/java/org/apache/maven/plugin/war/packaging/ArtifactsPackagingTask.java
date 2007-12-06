@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war.packaging;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -89,8 +89,8 @@ public class ArtifactsPackagingTask
                     {
                         copyFile( id, context, artifact.getFile(), SERVICES_PATH + targetFileName );
                     }
-                    else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
-                        "test-jar".equals( type ) )
+                    else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
+                        || "test-jar".equals( type ) )
                     {
                         copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
                     }
@@ -102,10 +102,12 @@ public class ArtifactsPackagingTask
                     else if ( "war".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
+                        context.getLog().info( "nothing to do with war dependency as it's handle with overlay" );
                     }
-                    else if ("zip".equals( type ))
+                    else if ( "zip".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
+                        context.getLog().info( "nothing to do with zip dependency as it's handle with overlay" );
                     }
                     else
                     {
