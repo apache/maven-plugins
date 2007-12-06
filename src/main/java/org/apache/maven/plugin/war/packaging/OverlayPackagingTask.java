@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war.packaging;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -55,7 +55,9 @@ public class OverlayPackagingTask
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
-        System.out.print( "OverlayPackagingTask performPackaging overlay.getTargetPath() " + overlay.getTargetPath());
+        context.getLog().debug(
+                                "OverlayPackagingTask performPackaging overlay.getTargetPath() "
+                                    + overlay.getTargetPath() );
         if ( overlay.shouldSkip() )
         {
             context.getLog().info( "Skipping overlay[" + overlay + "]" );
@@ -82,7 +84,7 @@ public class OverlayPackagingTask
                     // overlay.getTargetPath() must ended with /
                     // if not we add it
                     String targetPath = overlay.getTargetPath();
-                    if (!targetPath.endsWith( "/" ))
+                    if ( !targetPath.endsWith( "/" ) )
                     {
                         targetPath = targetPath + "/";
                     }
@@ -113,8 +115,8 @@ public class OverlayPackagingTask
         final File tmpDir = getOverlayTempDirectory( context, overlay );
 
         // TODO: not sure it's good, we should reuse the markers of the dependency plugin
-        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0 ||
-            overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
+        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0
+            || overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
         {
             context.getLog().info( "Unpacking overlay[" + overlay + "]" );
             doUnpack( context, overlay.getArtifact().getFile(), tmpDir );
