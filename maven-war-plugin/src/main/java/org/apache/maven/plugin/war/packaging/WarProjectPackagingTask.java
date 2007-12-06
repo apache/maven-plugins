@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war.packaging;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -246,12 +246,15 @@ public class WarProjectPackagingTask
     {
         if ( !context.getWebappDirectory().exists() )
         {
-            context.getLog().warn( "Not copying webapp webResources[" + resource.getDirectory() +
-                "]: webapp directory[" + context.getWebappDirectory().getAbsolutePath() + "] does not exist!" );
+            context.getLog().warn(
+                                   "Not copying webapp webResources[" + resource.getDirectory()
+                                       + "]: webapp directory[" + context.getWebappDirectory().getAbsolutePath()
+                                       + "] does not exist!" );
         }
 
-        context.getLog().info( "Copy webapp webResources[" + resource.getDirectory() + "] to[" +
-            context.getWebappDirectory().getAbsolutePath() + "]" );
+        context.getLog().info(
+                               "Copy webapp webResources[" + resource.getDirectory() + "] to["
+                                   + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
         for ( int i = 0; i < fileNames.length; i++ )
         {

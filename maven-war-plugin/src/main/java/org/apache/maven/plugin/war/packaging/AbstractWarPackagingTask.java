@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war.packaging;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -136,7 +136,9 @@ public abstract class AbstractWarPackagingTask
                              String targetFilename )
         throws IOException
     {
-        context.getLog().debug( "sourceId " + sourceId +", copyFile file " + file + ", targetFilename " + targetFilename );
+        context.getLog().debug(
+                                "sourceId " + sourceId + ", copyFile file " + file + ", targetFilename "
+                                    + targetFilename );
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
         context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
         {
@@ -161,24 +163,28 @@ public abstract class AbstractWarPackagingTask
             public void refused( String ownerId, String targetFilename, String actualOwnerId )
                 throws IOException
             {
-                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has " +
-                    "already been packaged for overlay[" + actualOwnerId + "]." );
+                context.getLog().debug(
+                                        " - " + targetFilename + " wasn't copied because it has "
+                                            + "already been packaged for overlay[" + actualOwnerId + "]." );
             }
 
             public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
                 throws IOException
             {
-                context.getLog().info( "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId +
-                    "] so it will be overwritten." );
+                context.getLog().info(
+                                       "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId
+                                           + "] so it will be overwritten." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
 
             public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
                 throws IOException
             {
-                context.getLog().warn( "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId +
-                    "] which does not exist anymore in the current project. It is recommended to invoke " +
-                    "clean if the dependencies of the project changed." );
+                context.getLog()
+                    .warn(
+                           "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId
+                               + "] which does not exist anymore in the current project. It is recommended to invoke "
+                               + "clean if the dependencies of the project changed." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
         } );
@@ -203,7 +209,9 @@ public abstract class AbstractWarPackagingTask
         throws IOException, MojoExecutionException
     {
 
-        context.getLog().debug( "sourceId " + sourceId + ", filtering file " + file + " to targetFilename " + targetFilename );
+        context.getLog().debug(
+                                "sourceId " + sourceId + ", filtering file " + file + " to targetFilename "
+                                    + targetFilename );
         if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
@@ -268,18 +276,19 @@ public abstract class AbstractWarPackagingTask
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to[" +
-                unpackDirectory.getAbsolutePath() + "]", e );
+            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to["
+                + unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to[" +
-                unpackDirectory.getAbsolutePath() + "]", e );
+            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to["
+                + unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( NoSuchArchiverException e )
         {
-            context.getLog().warn( "Skip unpacking dependency file[" + file.getAbsolutePath() +
-                " with unknown extension[" + archiveExt + "]" );
+            context.getLog().warn(
+                                   "Skip unpacking dependency file[" + file.getAbsolutePath()
+                                       + " with unknown extension[" + archiveExt + "]" );
         }
     }
 
@@ -383,6 +392,9 @@ public abstract class AbstractWarPackagingTask
 
     }
 
+    /**
+     * @return {@link FilterWrapper[]} which support ${} and @@ interpolation
+     */
     private FilterWrapper[] getFilterWrappers()
     {
         return new FilterWrapper[]{
@@ -401,9 +413,12 @@ public abstract class AbstractWarPackagingTask
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                 }
-            }};
+            } };
     }
 
+    /**
+     * internal interface
+     */
     private interface FilterWrapper
     {
         Reader getReader( Reader fileReader, Map filterProperties );

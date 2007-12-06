@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -51,6 +51,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Contains commons jobs for war mojos
+ * @version $Id$
+ */
 public abstract class AbstractWarMojo
     extends AbstractMojo
 {
@@ -174,7 +178,7 @@ public abstract class AbstractWarMojo
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
      * @required
      */
-    protected ArchiverManager archiverManager;
+    private ArchiverManager archiverManager;
 
     private static final String WEB_INF = "WEB-INF";
 
@@ -230,7 +234,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    protected MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
@@ -424,8 +428,9 @@ public abstract class AbstractWarMojo
         return postPackagingTasks;
     }
 
-    // War packaging implementation
-
+    /**
+     * WarPackagingContext default implementation
+     */
     private class DefaultWarPackagingContext
         implements WarPackagingContext
     {
@@ -548,7 +553,8 @@ public abstract class AbstractWarMojo
                 }
             }
 
-            // can't putAll, as ReflectionProperties doesn't enumerate - so we make a composite map with the project variables as dominant
+            // can't putAll, as ReflectionProperties doesn't enumerate - 
+            // so we make a composite map with the project variables as dominant
             return new CompositeMap(
                 new Map[]{filterProperties, new ReflectionProperties( project ), System.getProperties()} );
         }
@@ -738,5 +744,10 @@ public abstract class AbstractWarMojo
     public void setUseCache( boolean useCache )
     {
         this.useCache = useCache;
+    }
+
+    public MavenArchiveConfiguration getArchive()
+    {
+        return archive;
     }
 }
