@@ -9,7 +9,7 @@ package org.apache.maven.plugin.war.overlay;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -133,8 +133,8 @@ public class OverlayManager
                 it.set( overlay );
             }
             // default includes/excludes - only if the overlay uses the default settings
-            if ( Overlay.DEFAULT_INCLUDES.equals( overlay.getIncludes() ) &&
-                Overlay.DEFAULT_EXCLUDES.equals( overlay.getExcludes() ) )
+            if ( Overlay.DEFAULT_INCLUDES.equals( overlay.getIncludes() )
+                && Overlay.DEFAULT_EXCLUDES.equals( overlay.getExcludes() ) )
             {
                 overlay.setIncludes( defaultIncludes );
                 overlay.setExcludes( defaultExcludes );
@@ -198,7 +198,7 @@ public class OverlayManager
         {
             // Handle classifier dependencies properly (clash management)
             Artifact artifact = (Artifact) iterator.next();
-            if ( compareOverlayWithArtifact(overlay, artifact) )
+            if ( compareOverlayWithArtifact( overlay, artifact ) )
             {
                 return artifact;
             }
@@ -206,12 +206,12 @@ public class OverlayManager
         
         // maybe its a project dependencies zip or an other type
         Set projectArtifacts = this.project.getDependencyArtifacts();
-        if (projectArtifacts != null)
+        if ( projectArtifacts != null )
         {
-            for( Iterator iterator = projectArtifacts.iterator();iterator.hasNext();)
+            for ( Iterator iterator = projectArtifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
-                if ( compareOverlayWithArtifact(overlay, artifact) )
+                if ( compareOverlayWithArtifact( overlay, artifact ) )
                 {
                     return artifact;
                 }
@@ -222,11 +222,18 @@ public class OverlayManager
 
     }
     
-    private boolean compareOverlayWithArtifact(Overlay overlay, Artifact artifact)
+    /**
+     * compare groupId && artifactId && Type && classifier
+     * @param overlay
+     * @param artifact
+     * @return boolean true if equals
+     */
+    private boolean compareOverlayWithArtifact( Overlay overlay, Artifact artifact )
     {
        return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
             && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
-            && StringUtils.equals( overlay.getType(), artifact.getType() ) && ( overlay.getClassifier() == null || ( StringUtils
+            && StringUtils.equals( overlay.getType(), artifact.getType() ) 
+            && ( overlay.getClassifier() == null || ( StringUtils
             .equals( overlay.getClassifier(), artifact.getClassifier() ) ) ) );
     }
     
