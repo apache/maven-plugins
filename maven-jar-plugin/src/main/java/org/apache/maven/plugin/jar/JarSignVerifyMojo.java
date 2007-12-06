@@ -19,26 +19,22 @@ package org.apache.maven.plugin.jar;
  * under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.commons.lang.SystemUtils;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-
-import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
 
 /**
  * Checks the signature of a signed jar using jarsigner.
