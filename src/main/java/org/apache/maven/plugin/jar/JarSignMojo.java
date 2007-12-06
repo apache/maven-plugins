@@ -156,6 +156,13 @@ public class JarSignMojo
     private boolean verify;
 
     /**
+     * Skip attaching the signed artifact. By default the signed artifact is attached.
+     * This is not a Mojo parameter as we shouldn't need this when using this mojo. 
+     * Just needed when reusing the implementation. See MJAR-84 for discussions.
+     */
+    private boolean skipAttachSignedArtifact;
+
+    /**
      * Enable verbose
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
@@ -343,7 +350,7 @@ public class JarSignMojo
         }
 
         // signed in place, no need to attach
-        if ( signedjar == null )
+        if ( signedjar == null || skipAttachSignedArtifact )
         {
             return;
         }
@@ -566,6 +573,11 @@ public class JarSignMojo
     public void setVerbose( boolean verbose )
     {
         this.verbose = verbose;
+    }
+
+    public void setSkipAttachSignedArtifact( boolean skipAttachSignedArtifact )
+    {
+        this.skipAttachSignedArtifact = skipAttachSignedArtifact;
     }
 
     public void setProject( MavenProject project )
