@@ -67,33 +67,37 @@ public class DefaultShader
                 JarEntry entry = (JarEntry) j.nextElement();
 
                 String name = entry.getName();
+                String mappedName = remapper.map( name );
 
                 InputStream is = jarFile.getInputStream( entry );
-
-                if ( entry.isDirectory() )
+                if ( !entry.isDirectory() )
                 {
-                    if ( !resources.contains( name ) )
+                    int idx = mappedName.lastIndexOf('/');
+                    if ( idx != -1 ) 
                     {
-                        addDirectory( resources, jos, name );
+                        //make sure dirs are created
+                        String dir = mappedName.substring(0, idx);
+                        if ( !resources.contains( dir ) )
+                        {
+                            addDirectory( resources, jos, dir );
+                        }
                     }
-                }
-                else
-                {
+                    
                     if ( name.endsWith( ".class" ) )
                     {
                         addRemappedClass( remapper, jos, jar, name, is );
                     }
                     else
                     {
-                        if ( !resourceTransformed( resourceTransformers, name, is ) )
+                        if ( !resourceTransformed( resourceTransformers, mappedName, is ) )
                         {
                             // Avoid duplicates that aren't accounted for by the resource transformers
-                            if ( resources.contains( name ) )
+                            if ( resources.contains( mappedName ) )
                             {
                                 continue;
                             }
 
-                            addResource( resources, jos, name, is );
+                            addResource( resources, jos, mappedName, is );
                         }
                     }
                 }
@@ -118,6 +122,14 @@ public class DefaultShader
     private void addDirectory( Set resources, JarOutputStream jos, String name )
         throws IOException
     {
+        if ( name.lastIndexOf( '/' ) > 0 )
+        {
+            String parent = name.substring( 0, name.lastIndexOf( '/' ) );
+            if ( !resources.contains( parent ) )
+            {
+                addDirectory( resources, jos, parent );
+            }
+        }
         jos.putNextEntry( new JarEntry( name ) );
         resources.add( name );
     }
