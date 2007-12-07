@@ -242,6 +242,15 @@ public class ShadeMojo
         }
 
         artifacts.add( project.getArtifact().getFile() );
+        
+        if ( createSourcesJar ) 
+        {
+            File file = shadedSourcesArtifactFile();
+            if ( file.exists() ) 
+            {
+                artifacts.add( file );
+            }
+        }
 
         File outputJar = shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
