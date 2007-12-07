@@ -27,15 +27,16 @@ under the License.
   <name>Maven</name>
   <packaging>jar</packaging>
   <url>http://maven.apache.org</url>
+  <description>Tests a includes.</description>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2-it-SNAPSHOT</version>
+        <version>@pom.version@</version>
         <configuration>
           <includes>
-               <include>**/service/*</include>
+            <include>**/service/*</include>
           </includes>
         </configuration>
       </plugin>

@@ -23,29 +23,31 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-jar-plugin-test-project-004</artifactId>
+  <artifactId>maven-jar-plugin-test-mjar-80-01</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>jar</packaging>
-  <url>http://maven.apache.org</url>
+  <description>Tests the normal behavior of test-jar-plugin.</description>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2-it-SNAPSHOT</version>
+        <version>@pom.version@</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
-              <goal>jar</goal>
+              <goal>test-jar</goal>
             </goals>
-            <configuration>
-              <classifier>service</classifier>
-              <includes>
-                <include>**/service/*</include>
-              </includes>
-            </configuration>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>
