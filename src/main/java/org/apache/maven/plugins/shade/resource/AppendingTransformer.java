@@ -66,5 +66,6 @@ public class AppendingTransformer
         jos.putNextEntry( new JarEntry( resource ) );
         
         IOUtil.copy(new ByteArrayInputStream(data.toByteArray()), jos);
+        data.reset();
     }
 }

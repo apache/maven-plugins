@@ -122,6 +122,8 @@ public class ComponentsXmlResourceTransformer
         IOUtil.copy( reader, jos );
 
         reader.close();
+        
+        components.clear();
     }
 
     public boolean hasTransformedResource()

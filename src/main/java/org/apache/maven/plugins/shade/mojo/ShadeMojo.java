@@ -27,10 +27,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,6 +48,7 @@ import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -66,6 +74,42 @@ public class ShadeMojo
     /** @component */
     private Shader shader;
 
+    /**
+     * Remote repositories which will be searched for source attachments.
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    protected List remoteArtifactRepositories;
+
+    /**
+     * Local maven repository.
+     * 
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    protected ArtifactRepository localRepository;
+    
+    /**
+     * Artifact factory, needed to download source jars for inclusion in classpath.
+     * 
+     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
+     * @required
+     * @readonly
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * Artifact resolver, needed to download source jars for inclusion in classpath.
+     * 
+     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
+     * @required
+     * @readonly
+     */
+    protected ArtifactResolver artifactResolver;
+    
     /**
      * Artifacts to include/exclude from the final artifact.
      *
@@ -153,14 +197,22 @@ public class ShadeMojo
      * @parameter expression="${shadedClassifierName}" default-value="shaded"
      */
     private String shadedClassifierName;
+    
+    /**
+     * When true, it will attempt to create a sources jar as well
+     * 
+     * @parameter expression="${createSourcesJar}" default-value="false"
+     */
+    private boolean createSourcesJar;
 
+    
     /** @throws MojoExecutionException  */
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = new HashSet();
-
-        Set artifactIds = new HashSet();
+        Set artifacts = new LinkedHashSet();
+        Set artifactIds = new LinkedHashSet();
+        Set sourceArtifacts = new LinkedHashSet();
 
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
@@ -178,12 +230,21 @@ public class ShadeMojo
             artifacts.add( artifact.getFile() );
 
             artifactIds.add( getId( artifact ) );
+            
+            if ( createSourcesJar )
+            {
+                File file = resolveArtifactSources( artifact );
+                if ( file != null ) 
+                {
+                    sourceArtifacts.add( file );
+                }
+            }
         }
 
         artifacts.add( project.getArtifact().getFile() );
 
-
         File outputJar = shadedArtifactFileWithClassifier();
+        File sourcesJar = shadedSourceArtifactFileWithClassifier();
 
         // Now add our extra resources
         try
@@ -193,11 +254,21 @@ public class ShadeMojo
             List resourceTransformers = getResourceTrasformers();
 
             shader.shade( artifacts, outputJar, relocators, resourceTransformers );
+            
+            if (createSourcesJar)
+            {
+                shader.shade( sourceArtifacts, sourcesJar, relocators, resourceTransformers );                
+            }
 
             if ( shadedArtifactAttached )
             {
                 getLog().info( "Attaching shaded artifact." );
                 projectHelper.attachArtifact( getProject(), "jar", shadedClassifierName, outputJar );
+                if ( createSourcesJar )
+                {
+                    projectHelper.attachArtifact( getProject(), "jar",
+                                                  shadedClassifierName + "-sources", sourcesJar );
+                }
             }
 
             else
@@ -205,10 +276,23 @@ public class ShadeMojo
                 getLog().info( "Replacing original artifact with shaded artifact." );
                 File file = shadedArtifactFile();
                 file.renameTo( new File( outputDirectory, "original-" + file.getName() ) );
-
+                
                 if ( !outputJar.renameTo( file ) )
                 {
                     getLog().warn( "Could not replace original artifact with shaded artifact!" );
+                }
+                
+                if ( createSourcesJar ) 
+                {
+                    file = shadedSourcesArtifactFile();
+                    file.renameTo( new File( outputDirectory, "original-" + file.getName() ) );
+                    
+                    if ( !sourcesJar.renameTo( file ) )
+                    {
+                        getLog().warn( "Could not replace original sources artifact with shaded artifact!" );
+                    }
+                    projectHelper.attachArtifact( project, "jar",
+                                                  "sources", file );
                 }
 
                 if ( createDependencyReducedPom )
@@ -221,6 +305,35 @@ public class ShadeMojo
         {
             throw new MojoExecutionException( "Error creating shaded jar.", e );
         }
+    }
+
+    private File resolveArtifactSources(Artifact artifact) {
+        
+        Artifact resolvedArtifact =
+            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
+                                                          artifact.getArtifactId(),
+                                                          artifact.getVersion(),
+                                                          "java-source",
+                                                          "sources");
+
+        try
+        {
+            artifactResolver.resolve( resolvedArtifact, remoteArtifactRepositories, localRepository );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            // ignore, the jar has not been found
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            getLog().warn( "Could not get sources for " + artifact );
+        }
+        
+        if ( resolvedArtifact.isResolved() ) 
+        {
+            return resolvedArtifact.getFile();
+        }
+        return null;
     }
 
     private boolean excludeArtifact( Artifact artifact )
@@ -303,6 +416,13 @@ public class ShadeMojo
             shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "." + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
+    private File shadedSourceArtifactFileWithClassifier()
+    {
+        Artifact artifact = project.getArtifact();
+        final String shadedName =
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-sources." + artifact.getArtifactHandler().getExtension();
+        return new File( outputDirectory, shadedName );
+    }
 
     private File shadedArtifactFile()
     {
@@ -317,6 +437,23 @@ public class ShadeMojo
         else
         {
             shadedName = shadedArtifactId + "-" + artifact.getVersion() + "." + artifact.getArtifactHandler().getExtension();
+        }
+        
+        return new File( outputDirectory, shadedName );
+    }
+    private File shadedSourcesArtifactFile()
+    {
+        Artifact artifact = project.getArtifact();
+        
+        String shadedName;
+        
+        if ( finalName != null )
+        {
+            shadedName = finalName + "-sources." + artifact.getArtifactHandler().getExtension();
+        }
+        else
+        {
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources." + artifact.getArtifactHandler().getExtension();
         }
         
         return new File( outputDirectory, shadedName );
@@ -413,7 +550,7 @@ public class ShadeMojo
 
             w.close();
 
-            getProject().setFile( f );
+            project.setFile( f );
         }
     }
 

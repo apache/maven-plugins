@@ -205,5 +205,7 @@ public class ApacheNoticeResourceTransformer
         }
         
         writer.flush();
+        
+        entries.clear();
     }
 }

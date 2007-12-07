@@ -109,5 +109,7 @@ public class XmlAppendingTransformer
         jos.putNextEntry( new JarEntry( resource ) );
         
         new XMLOutputter(Format.getPrettyFormat()).output(doc, jos);
+        
+        doc = null;
     }
 }
