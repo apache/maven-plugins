@@ -27,6 +27,7 @@
   <version>99.0</version>
   <name>Maven</name>
   <packaging>jar</packaging>
+  <description>Tests excludes.</description>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -40,7 +41,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2-it-SNAPSHOT</version>
+        <version>@pom.version@</version>
         <executions>
           <execution>
             <goals>

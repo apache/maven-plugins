@@ -23,10 +23,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-jar-plugin-test-mjar-30-03</artifactId>
+  <artifactId>maven-jar-plugin-test-mjar-30-01</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>jar</packaging>
+  <url>http://maven.apache.org</url>
+  <description>Tests the normal behavior of jar-plugin.</description>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -40,13 +42,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2-it-SNAPSHOT</version>
-        <configuration>
-          <excludes>
-            <exclude>**/*.class</exclude>
-            <exclude>**/*.txt</exclude>
-          </excludes>
-        </configuration>
+        <version>@pom.version@</version>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
