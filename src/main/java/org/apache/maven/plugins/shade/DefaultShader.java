@@ -104,6 +104,8 @@ public class DefaultShader
 
                 IOUtil.close( is );
             }
+            
+            jarFile.close();
         }
 
         for ( Iterator i = resourceTransformers.iterator(); i.hasNext(); )
