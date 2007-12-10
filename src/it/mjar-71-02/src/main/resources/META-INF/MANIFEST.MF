@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Archiver-Version: foobar-1.23456
+Built-By: jerome
+Build-Jdk: 1.6.0_02-ea
+
