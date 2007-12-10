@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.8</version>
+      <version>1.4.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -218,4 +218,11 @@
       </plugin>
     </plugins>
   </reporting>
+  <repositories>
+    <!-- TODO remove when p-u is released -->
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+    </repository>
+  </repositories>  
 </project>
