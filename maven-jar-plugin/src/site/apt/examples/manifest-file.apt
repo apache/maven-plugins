@@ -54,3 +54,26 @@ Using your own manifest file
   ...
 </project>
 +-----------------+
+
+  If you use the following configuration, the file found in $\{project.build.outputDirectory\}/META-INF/MANIFEST.MF will be used.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        ...
+        <configuration>
+          <useDefaultManifestFile>true</useDefaultManifestFile>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+  
+  

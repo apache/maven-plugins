@@ -102,6 +102,25 @@ public abstract class AbstractJarMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * Path to the default MANIFEST file to use will be use if useDefaultManifestFile is set to true
+     *
+     * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+     * @required
+     * @readonly
+     * @since 2.2
+     */
+    private File defaultManifestFile;
+
+    /**
+     * Set to true to enable the use of the defaultManifestFile
+     *
+     * @parameter expression="${jar.useDefaultManifestFile}" default-value="false"
+     * 
+     * @since 2.2
+     */
+    private boolean useDefaultManifestFile;
+
+    /**
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -147,6 +166,16 @@ public abstract class AbstractJarMojo
         return new File( basedir, finalName + classifier + ".jar" );
     }
 
+    /** 
+     * Default Manifest location. Can point to a non existing file.
+     * Cannot return null.
+     */
+    protected File getDefaultManifestFile()
+    {
+        return defaultManifestFile;
+    }
+
+
     /**
      * Generates the JAR.
      *
@@ -175,6 +204,14 @@ public abstract class AbstractJarMojo
             else
             {
                 archiver.getArchiver().addDirectory( contentDirectory, getIncludes(), getExcludes() );
+            }
+
+            File existingManifest = getDefaultManifestFile();
+
+            if ( useDefaultManifestFile && existingManifest.exists() && archive.getManifestFile() == null )
+            {
+                getLog().info( "Adding existing MANIFEST to archive. Found under: " + existingManifest.getPath() );
+                archive.setManifestFile( existingManifest );
             }
 
             archiver.createArchive( project, archive );
