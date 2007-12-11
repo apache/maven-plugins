@@ -289,7 +289,8 @@ public class ShadeMojo
                 if ( createSourcesJar ) 
                 {
                     file = shadedSourcesArtifactFile();
-                    replaceFile( sourcesJar, file );
+                    
+                    replaceFile( file, sourcesJar );
                     
                     projectHelper.attachArtifact( project, "jar",
                                                   "sources", file );
@@ -309,8 +310,10 @@ public class ShadeMojo
 
     private void replaceFile(File oldFile, File newFile) throws MojoExecutionException
     {
+        getLog().info("Replacing " + oldFile + " with " + newFile);
+        
         File origFile = new File( outputDirectory, "original-" + oldFile.getName() );
-        if ( !oldFile.renameTo( origFile ) )
+        if ( oldFile.exists() && !oldFile.renameTo( origFile ) )
         {
             //try a gc to see if an unclosed stream needs garbage collecting
             System.gc();
