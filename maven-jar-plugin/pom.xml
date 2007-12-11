@@ -223,6 +223,9 @@
     <repository>
       <id>codehaus.snapshots</id>
       <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>  
 </project>
