@@ -288,7 +288,7 @@ public class ShadeMojo
                 
                 if ( !outputJar.renameTo( file ) )
                 {
-                    getLog().warn( "Could not replace original artifact with shaded artifact!" );
+                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!" );
                 }
                 
                 if ( createSourcesJar ) 
@@ -298,7 +298,7 @@ public class ShadeMojo
                     
                     if ( !sourcesJar.renameTo( file ) )
                     {
-                        getLog().warn( "Could not replace original sources artifact with shaded artifact!" );
+                        throw new MojoExecutionException( "Could not replace original sources artifact with shaded artifact!" );
                     }
                     projectHelper.attachArtifact( project, "jar",
                                                   "sources", file );
