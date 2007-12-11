@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,7 +34,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -50,7 +48,6 @@ import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -287,12 +284,12 @@ public class ShadeMojo
             {
                 getLog().info( "Replacing original artifact with shaded artifact." );
                 File file = shadedArtifactFile();
-                renameFile( outputJar, file );
+                replaceFile( file, outputJar );
                 
                 if ( createSourcesJar ) 
                 {
                     file = shadedSourcesArtifactFile();
-                    renameFile( sourcesJar, file );
+                    replaceFile( sourcesJar, file );
                     
                     projectHelper.attachArtifact( project, "jar",
                                                   "sources", file );
@@ -309,23 +306,23 @@ public class ShadeMojo
             throw new MojoExecutionException( "Error creating shaded jar.", e );
         }
     }
-    
-    private void renameFile(File file1, File file2) throws MojoExecutionException
+
+    private void replaceFile(File oldFile, File newFile) throws MojoExecutionException
     {
-        File origFile = new File( outputDirectory, "original-" + file1.getName() );
-        if ( !file1.renameTo( origFile ) )
+        File origFile = new File( outputDirectory, "original-" + oldFile.getName() );
+        if ( !oldFile.renameTo( origFile ) )
         {
             //try a gc to see if an unclosed stream needs garbage collecting
             System.gc();
             System.gc();
         
-            if ( !file1.renameTo( origFile ) )
+            if ( !oldFile.renameTo( origFile ) )
             {
                 // Still didn't work.   We'll do a copy
                 try 
                 {
                     FileOutputStream fout = new FileOutputStream( origFile );
-                    FileInputStream fin = new FileInputStream( file1 );
+                    FileInputStream fin = new FileInputStream( oldFile );
                     try 
                     {
                         IOUtil.copy(fin, fout);
@@ -343,18 +340,18 @@ public class ShadeMojo
                 }
             }
         }
-        if ( !file2.renameTo( file1 ) )
+        if ( !newFile.renameTo( oldFile ) )
         {
             //try a gc to see if an unclosed stream needs garbage collecting
             System.gc();
             System.gc();            
-            if ( !file2.renameTo( file1 ) )
+            if ( !newFile.renameTo( oldFile ) )
             {
                 // Still didn't work.   We'll do a copy
                 try 
                 {
-                    FileOutputStream fout = new FileOutputStream( file1 );
-                    FileInputStream fin = new FileInputStream( file2 );
+                    FileOutputStream fout = new FileOutputStream( oldFile );
+                    FileInputStream fin = new FileInputStream( newFile );
                     try 
                     {
                         IOUtil.copy(fin, fout);
