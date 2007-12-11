@@ -139,6 +139,14 @@ public class DefaultShader
     private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name, InputStream is )
         throws IOException
     {
+        if ( !remapper.hasRelocators() ) 
+        {
+            jos.putNextEntry( new JarEntry( name ) );
+
+            IOUtil.copy( is, jos );
+            return;
+        }
+        
         ClassReader cr = new ClassReader( is );
 
         ClassWriter cw = new ClassWriter( cr, 0 );
@@ -204,6 +212,11 @@ public class DefaultShader
         public RelocatorRemapper( List relocators )
         {
             this.relocators = relocators;
+        }
+        
+        public boolean hasRelocators() 
+        {
+            return !relocators.isEmpty();
         }
 
         public Object mapValue( Object object )

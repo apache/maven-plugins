@@ -19,6 +19,8 @@
 package org.apache.maven.plugins.shade.mojo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -49,6 +51,7 @@ import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -284,22 +287,13 @@ public class ShadeMojo
             {
                 getLog().info( "Replacing original artifact with shaded artifact." );
                 File file = shadedArtifactFile();
-                file.renameTo( new File( outputDirectory, "original-" + file.getName() ) );
-                
-                if ( !outputJar.renameTo( file ) )
-                {
-                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!" );
-                }
+                renameFile( outputJar, file );
                 
                 if ( createSourcesJar ) 
                 {
                     file = shadedSourcesArtifactFile();
-                    file.renameTo( new File( outputDirectory, "original-" + file.getName() ) );
+                    renameFile( sourcesJar, file );
                     
-                    if ( !sourcesJar.renameTo( file ) )
-                    {
-                        throw new MojoExecutionException( "Could not replace original sources artifact with shaded artifact!" );
-                    }
                     projectHelper.attachArtifact( project, "jar",
                                                   "sources", file );
                 }
@@ -313,6 +307,69 @@ public class ShadeMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error creating shaded jar.", e );
+        }
+    }
+    
+    private void renameFile(File file1, File file2) throws MojoExecutionException
+    {
+        File origFile = new File( outputDirectory, "original-" + file1.getName() );
+        if ( !file1.renameTo( origFile ) )
+        {
+            //try a gc to see if an unclosed stream needs garbage collecting
+            System.gc();
+            System.gc();
+        
+            if ( !file1.renameTo( origFile ) )
+            {
+                // Still didn't work.   We'll do a copy
+                try 
+                {
+                    FileOutputStream fout = new FileOutputStream( origFile );
+                    FileInputStream fin = new FileInputStream( file1 );
+                    try 
+                    {
+                        IOUtil.copy(fin, fout);
+                    }
+                    finally
+                    {
+                        IOUtil.close( fin );
+                        IOUtil.close( fout );
+                    }
+                }
+                catch (IOException ex) 
+                {
+                    //kind of ignorable here.   We're just trying to save the original
+                    getLog().warn(ex);
+                }
+            }
+        }
+        if ( !file2.renameTo( file1 ) )
+        {
+            //try a gc to see if an unclosed stream needs garbage collecting
+            System.gc();
+            System.gc();            
+            if ( !file2.renameTo( file1 ) )
+            {
+                // Still didn't work.   We'll do a copy
+                try 
+                {
+                    FileOutputStream fout = new FileOutputStream( file1 );
+                    FileInputStream fin = new FileInputStream( file2 );
+                    try 
+                    {
+                        IOUtil.copy(fin, fout);
+                    }
+                    finally
+                    {
+                        IOUtil.close( fin );
+                        IOUtil.close( fout );
+                    }
+                }
+                catch (IOException ex) 
+                {
+                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!" );
+                }
+            }
         }
     }
 
