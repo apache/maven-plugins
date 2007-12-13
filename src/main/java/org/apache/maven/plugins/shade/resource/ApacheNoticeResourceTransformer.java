@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -110,7 +111,7 @@ public class ApacheNoticeResourceTransformer
                     {
                         //resource-bundle 1.3 mode
                         if ( lineCount == 1 
-                            && sb.toString().contains( "This product includes/uses software(s) developed by" ))
+                            && sb.toString().indexOf( "This product includes/uses software(s) developed by" ) != -1)
                         {
                             currentOrg = (Set) organizationEntries.get( sb.toString().trim() );
                             if ( currentOrg == null )
@@ -133,7 +134,8 @@ public class ApacheNoticeResourceTransformer
                 else
                 {
                     String ent = sb.toString();
-                    if ( ent.startsWith( projectName ) && ent.contains( "Copyright " ) ) 
+                    if ( ent.startsWith( projectName ) 
+                        && ent.indexOf( "Copyright " ) != -1 ) 
                     {
                         copyright = ent;
                     }
@@ -165,7 +167,8 @@ public class ApacheNoticeResourceTransformer
     {
         jos.putNextEntry( new JarEntry( "META-INF/NOTICE" ) );
         
-        OutputStreamWriter writer = new OutputStreamWriter( jos );
+        OutputStreamWriter pow = new OutputStreamWriter( jos );
+        PrintWriter writer = new PrintWriter(pow);
         
         int count = 0;
         for ( Iterator itr = entries.iterator() ; itr.hasNext() ; )
@@ -179,13 +182,13 @@ public class ApacheNoticeResourceTransformer
             
             if ( count == 2 && copyright != null ) 
             {
-                writer.append( copyright );
-                writer.append( '\n' );
+                writer.print( copyright );
+                writer.print( '\n' );
             }
             else
             {
-                writer.append( line );
-                writer.append( '\n' );
+                writer.print( line );
+                writer.print( '\n' );
             }
             if (count == 3) 
             {
@@ -193,13 +196,14 @@ public class ApacheNoticeResourceTransformer
                 for (Iterator oit = organizationEntries.entrySet().iterator() ; oit.hasNext();)
                 {
                     Map.Entry entry = (Map.Entry) oit.next();
-                    writer.append( entry.getKey().toString() ).append( '\n' );
+                    writer.print( entry.getKey().toString() );
+                    writer.print( '\n' );
                     Set entrySet = (Set)entry.getValue();
                     for (Iterator eit = entrySet.iterator() ; eit.hasNext() ;)
                     {
-                        writer.append( eit.next().toString() );                        
+                        writer.print( eit.next().toString() );                        
                     }
-                    writer.append( '\n' );
+                    writer.print( '\n' );
                 }
             }
         }
