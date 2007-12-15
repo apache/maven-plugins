@@ -183,8 +183,17 @@ public class InvokerMojo
      * Common set of test properties to pass in on each IT's command line, via -D parameters.
      *
      * @parameter
+     * @deprecated Use properties parameter instead.
      */
     private Properties testProperties;
+
+	/**
+	 * Common set of properties to pass in on each project's command line, via -D parameters.
+	 *
+	 * @parameter
+	 * @since 1.1
+	 */
+	private Map properties;
 
     /**
      * Whether to show errors in the build output.
@@ -501,6 +510,11 @@ public class InvokerMojo
                 if ( testProperties != null )
                 {
                     collectedTestProperties.putAll( testProperties );
+                }
+
+                if ( properties != null )
+                {
+                    collectedTestProperties.putAll( properties );
                 }
 
                 final Properties loadedProperties = loadTestProperties( basedir );
