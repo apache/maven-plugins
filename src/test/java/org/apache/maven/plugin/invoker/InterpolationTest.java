@@ -104,6 +104,18 @@ public class InterpolationTest
             fileReader = new FileReader( interpolatedPomFile );
             String content = IOUtil.toString( fileReader );
             assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
+            fileReader.close();
+            // recreate it to test delete if exists before creation
+            interpolatedPomFile = invokerMojo.buildInterpolatedPomFile( new File( dirPath, "pom.xml" ),
+                                                                        new File( getBasedir() + File.separatorChar
+                                                                            + "target" ) );
+            fileReader = new FileReader( interpolatedPomFile );
+            content = IOUtil.toString( fileReader );
+            assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
+            fileReader.close();
+        } catch (Exception e)
+        {
+            throw e;
         }
         finally
         {
