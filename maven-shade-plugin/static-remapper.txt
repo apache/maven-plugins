@@ -1,0 +1,62 @@
+    /*
+    ClassVisitor cv = null;
+    Remapper remapper = null;
+
+    RemappingClassAdapter a = new RemappingClassAdapter( cv, remapper )
+    {
+        protected MethodVisitor createRemappingMethodAdapter( int access,
+                                                              String newDesc,
+                                                              MethodVisitor mv )
+        {
+            final MethodVisitor rmv = super.createRemappingMethodAdapter( access, newDesc, mv );
+            return new MethodNode()
+            {
+                public void visitEnd()
+                {
+                    Analyzer an = new Analyzer( new SourceInterpreter() );
+                    try
+                    {
+                        Frame[] frames = an.analyze( className, this );
+                        // Elements of the frames array now contains info for each instruction
+                        // from the analyzed method.
+                        for ( int i = 0; i < frames.length; i++ )
+                        {
+                            Frame frame = frames[i];
+                            AbstractInsnNode insn = instructions.get( i );
+                            if ( insn.getOpcode() == Opcodes.INVOKEVIRTUAL )
+                            {
+                                MethodInsnNode minsn = (MethodInsnNode) insn;
+                                if ( minsn.name.equals( "getResource" ) && minsn.owner.equals( "java/lang/Class" ) )
+                                {
+                                    // now check where params come from (top of the stack)
+                                    SourceValue value = (SourceValue) frames[i].getStack( 0 );
+                                    Set sources = value.insns;  // instructions that produced this value
+                                    for ( Iterator it = sources.iterator(); it.hasNext(); )
+                                    {
+                                        AbstractInsnNode source = (AbstractInsnNode) it.next();
+                                        if ( source.getOpcode() == Opcodes.LDC )
+                                        {
+                                            LdcInsnNode constant = (LdcInsnNode) source;
+                                            // can change constant.cst value here
+                                        }
+                                        else
+                                        {
+                                            // can log something about value that came not from the constant
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // got your mapping. can remap now. replaying recorded method
+                        accept( rmv );
+                    }
+                    catch ( AnalyzerException ex )
+                    {
+                        // TODO Auto-generated catch block
+                        ex.printStackTrace();
+                    }
+                }
+            };
+        }
+    };
+    */
