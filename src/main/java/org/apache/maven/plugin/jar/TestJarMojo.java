@@ -20,6 +20,7 @@ package org.apache.maven.plugin.jar;
  */
 
 import java.io.File;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Build a JAR of the test classes for the current project.
@@ -34,6 +35,15 @@ import java.io.File;
 public class TestJarMojo
     extends AbstractJarMojo
 {
+
+    /**
+     * Set this to 'true' to bypass unit tests entirely.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     *
+     * @parameter expression="${maven.test.skip}"
+     */
+    private boolean skip;
+
     /**
      * Directory containing the test classes.
      *
@@ -61,5 +71,18 @@ public class TestJarMojo
     protected File getClassesDirectory()
     {
         return testClassesDirectory;
+    }
+	
+	public void execute()
+        throws MojoExecutionException
+    {
+        if ( skip )
+        {
+            getLog().info( "Skipping packaging of the test-jar" );
+        }
+        else
+        {
+            super.execute();
+        }
     }
 }
