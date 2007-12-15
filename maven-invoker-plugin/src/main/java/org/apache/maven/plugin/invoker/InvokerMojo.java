@@ -909,7 +909,7 @@ public class InvokerMojo
 
         try
         {
-            Map composite = new CompositeMap(this.project, this.interpolationsProperties);
+            Map composite = new CompositeMap( this.project, this.interpolationsProperties );
             reader = new BufferedReader( new InterpolationFilterReader( new FileReader( projectGoalList ), composite ) );
             /// new BufferedReader( new FileReader( projectGoalList ) );
 
@@ -925,7 +925,7 @@ public class InvokerMojo
         {
             getLog().warn(
                            "Failed to load goal list from file: " + projectGoalList
-                                           + ". Using 'goal' parameter configured on this plugin instead." );
+                               + ". Using 'goal' parameter configured on this plugin instead." );
             getLog().debug( "Error reading goals file: " + projectGoalList, e );
         }
         finally
@@ -966,6 +966,10 @@ public class InvokerMojo
         throws MojoExecutionException
     {
         File interpolatedPomFile = new File( targetDirectory, "interpolated-pom.xml" );
+        if (interpolatedPomFile.exists())
+        {
+            interpolatedPomFile.delete();
+        }
         interpolatedPomFile.deleteOnExit();
         Map composite = new CompositeMap( this.project, this.interpolationsProperties );
 
@@ -997,6 +1001,7 @@ public class InvokerMojo
                 fileWriter.write( line );
             }
             fileWriter.flush();
+            fileWriter.close();
         }
         catch ( IOException e )
         {
