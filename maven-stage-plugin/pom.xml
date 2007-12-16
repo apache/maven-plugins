@@ -30,24 +30,49 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Stage Plugin</name>
   <version>1.0-SNAPSHOT</version>
+  <description>
+    The Maven Stage Plugin copies artifacts from one repository to another.
+  </description>
   <prerequisites>
     <maven>2.0.5</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MREPOSITORY</url>
+    <url>http://jira.codehaus.org/browse/MSTAGE</url>
   </issueManagement>
-
-  <properties>
-    <wagonVersion>1.0-beta-2</wagonVersion>
-    <mavenVersion>2.0.5</mavenVersion>
-  </properties>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-stage-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-stage-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-stage-plugin/</url>
   </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- This test fails in various ways on different platforms - from hanging permanently to erroring out. Temporarily exclude it --> 
+          <excludes>
+            <exclude>**/RepositoryCopierTest.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -105,31 +130,9 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- This test fails in various ways on different platforms - from hanging permanently to erroring out. Temporarily exclude it --> 
-          <excludes>
-            <exclude>**/RepositoryCopierTest.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <properties>
+    <wagonVersion>1.0-beta-2</wagonVersion>
+    <mavenVersion>2.0.5</mavenVersion>
+  </properties>
 
 </project>
