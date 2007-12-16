@@ -30,7 +30,7 @@
 Maven 2 Site Plugin
 
  The Maven 2 Site plugin is used to generate a site for the project. The generated site also includes the project's reports
- that was configured in the <<<\<reporting\>>>> section of the pom.
+ that were configured in the <<<\<reporting\>>>> section of the pom.
 
 * Goals Overview
 
