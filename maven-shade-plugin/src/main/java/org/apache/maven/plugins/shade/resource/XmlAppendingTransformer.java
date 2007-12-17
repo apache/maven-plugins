@@ -100,7 +100,7 @@ public class XmlAppendingTransformer
 
     public boolean hasTransformedResource()
     {
-        return true;
+        return doc != null;
     }
 
     public void modifyOutputStream( JarOutputStream jos )
