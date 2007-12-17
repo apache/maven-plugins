@@ -420,6 +420,7 @@ public class CheckstyleReport
      * Checkstyle
      * 
      * @parameter default-value="${project.build.testSourceDirectory}"
+     * @since 2.2
      */
     private File testSourceDirectory;
 
@@ -427,6 +428,7 @@ public class CheckstyleReport
      * Include or not the test source directory to be used for Checkstyle
      * 
      * @parameter default-value="${false}"
+     * @since 2.2
      */
     private boolean includeTestSourceDirectory;
 
