@@ -26,8 +26,8 @@ under the License.
   </parent>
   <artifactId>maven-invoker-plugin</artifactId>
   <version>1.1-SNAPSHOT</version>
-  <prerequisites>                                                                                                                                                      
-    <maven>2.0</maven>                                                                                                                                                 
+  <prerequisites>
+    <maven>2.0.6</maven>
   </prerequisites>   
   <packaging>maven-plugin</packaging>
   <name>Maven Invoker Plugin</name>
