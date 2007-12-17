@@ -60,8 +60,8 @@ under the License.
         </p>
       </answer>
     </faq>
-    <faq id="Why doesn't the links between parent and child modules work when I run 'mvn site'?">
-      <question>Why doesn't the links between parent and child modules work when I run 'mvn site'?</question>
+    <faq id="Why don't the links between parent and child modules work when I run 'mvn site'?">
+      <question>Why don't the links between parent and child modules work when I run 'mvn site'?</question>
       <answer>
         <p>
           What <code>'mvn site'</code> will do for you, in a multi-project
@@ -71,15 +71,10 @@ under the License.
           the site. 
         </p>
         <p>
-          If you want to test this, prior to deplyment, you can run
-          <code>'mvn site:stage'</code> instead. This will produce the complete
-          site, including the parent and its modules, in the
-          <code>/target/staging/</code> directory of the parent. The site can
-          be found a couple of directory levels down from the there, because
-          the <i>hostname</i> and <i>path</i>, as specified in the
-          <code>&lt;distributionManagement&gt;/&lt;site&gt;/&lt;url&gt;</code>
-          element of your <code>pom.xml</code>, will each get their own
-          directory.
+          If you want to test this, prior to deployment, you can run the
+          <a href="stage-mojo.html"><code>site:stage</code></a> goal as
+          described in the <a href="usage.html">usage documentation</a>
+          instead.
         </p>
       </answer>
     </faq>
