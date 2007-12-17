@@ -24,19 +24,20 @@ under the License.
     <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <prerequisites>
-    <maven>2.0.2</maven>
-  </prerequisites>
   <artifactId>maven-checkstyle-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Checkstyle Plugin</name>
   <version>2.2-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0.2</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
   </issueManagement>
+  <inceptionYear>2005</inceptionYear>
   <mailingLists>
-        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+    <!-- duplication from maven-plugins pom - temporary until they inherit properly
     -->
     <mailingList>
       <name>Maven User List</name>
@@ -63,7 +64,7 @@ under the License.
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
     </mailingList>
-        <!-- duplication from maven-parent pom - temporary until they inherit properly 
+    <!-- duplication from maven-parent pom - temporary until they inherit properly 
     -->
     <mailingList>
       <name>Maven Announcements List</name>
@@ -87,7 +88,6 @@ under the License.
       <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
     </mailingList>
   </mailingLists>
-  <inceptionYear>2005</inceptionYear>
   <contributors>
     <contributor>
       <name>Joakim Erdfelt</name>
@@ -99,6 +99,32 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-checkstyle-plugin/</url>
   </scm>
+  <build>
+    <resources>
+      <!-- Include the apache process LICENSE and NOTICE
+           files.
+      -->
+      <resource>
+        <targetPath>META-INF</targetPath>
+        <filtering>false</filtering>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE</include>
+        </includes>
+      </resource>
+      <!-- Include super-pom defined main/resources
+           Removing this section will break the build.
+           Since we have defined a new build/resources
+           section for the Apache process LICENSE and NOTICE
+           files, this original default section is now
+           required.
+      -->
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -106,14 +132,19 @@ under the License.
       <version>2.0</version>
     </dependency>
     <dependency>
-      <groupId>checkstyle</groupId>
-      <artifactId>checkstyle</artifactId>
-      <version>4.3</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-resources</artifactId>
+      <version>1.0-alpha-4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -127,9 +158,9 @@ under the License.
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
+      <groupId>checkstyle</groupId>
+      <artifactId>checkstyle</artifactId>
+      <version>4.3</version>
     </dependency>
     <dependency>
       <groupId>checkstyle</groupId>
@@ -142,37 +173,5 @@ under the License.
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-resources</artifactId>
-      <version>1.0-alpha-4</version>
-    </dependency>
   </dependencies>
-  <build>
-    <resources>
-            <!-- Include the apache process LICENSE and NOTICE
-           files.
-           
-      -->
-      <resource>
-        <targetPath>META-INF</targetPath>
-        <filtering>false</filtering>
-        <directory>${basedir}</directory>
-        <includes>
-          <include>LICENSE</include>
-          <include>NOTICE</include>
-        </includes>
-      </resource>
-            <!-- Include super-pom defined main/resources
-           Removing this section will break the build.
-           Since we have defined a new build/resources
-           section for the Apache process LICENSE and NOTICE
-           files, this original default section is now
-           required. 
-      -->
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-  </build>
 </project>
