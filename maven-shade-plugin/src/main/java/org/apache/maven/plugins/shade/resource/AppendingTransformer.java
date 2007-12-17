@@ -57,7 +57,7 @@ public class AppendingTransformer
 
     public boolean hasTransformedResource()
     {
-        return true;
+        return data.size() > 0;
     }
 
     public void modifyOutputStream( JarOutputStream jos )
