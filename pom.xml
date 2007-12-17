@@ -22,7 +22,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <prerequisites>
@@ -95,6 +95,11 @@ under the License.
       <email>joakim@erdfelt.com</email>
     </contributor>
   </contributors>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-checkstyle-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
