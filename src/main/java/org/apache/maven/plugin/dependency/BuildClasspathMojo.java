@@ -43,7 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
  * repository to a file or log.
  * 
  * @goal build-classpath
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  * @phase generate-sources
  * @author ankostis
  * @version $Id$
@@ -63,7 +63,7 @@ public class BuildClasspathMojo
     private boolean stripVersion = false;
 
     /**
-     * The prefix to preppend on each dependent artifact. If undefined, the
+     * The prefix to prepend on each dependent artifact. If undefined, the
      * paths refer to the actual files store in the local repository (the
      * stipVersion parameter does nothing then).
      * 
