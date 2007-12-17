@@ -35,7 +35,6 @@ import org.apache.maven.shared.test.plugin.TestToolsException;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.CollectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
