@@ -271,14 +271,4 @@
       </plugin>
     </plugins>
   </reporting>
-  <repositories>
-    <!-- TODO remove when p-u is released -->
-    <repository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>  
 </project>
