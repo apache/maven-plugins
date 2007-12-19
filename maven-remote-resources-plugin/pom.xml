@@ -166,17 +166,21 @@
           </execution>
         </executions>
       </plugin>
-      <!-- to be removed when parent is upgraded -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-7</version>
-      </plugin>
-      <plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- to be removed when parent is upgraded -->
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.0.4</version>
-      </plugin>
-    </plugins>   
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0-beta-7</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.0.4</version>
+        </plugin>
+      </plugins>   
+    </pluginManagement>
   </build>
 </project>
