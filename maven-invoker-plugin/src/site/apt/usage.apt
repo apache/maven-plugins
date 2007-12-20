@@ -20,7 +20,6 @@ Usage
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
         <configuration>
           <debug>true</debug>
           <projectsDirectory>src/it</projectsDirectory>
