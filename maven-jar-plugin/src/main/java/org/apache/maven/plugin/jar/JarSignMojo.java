@@ -133,7 +133,8 @@ public class JarSignMojo
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
+     * The corresponding option in the command line is -storetype
+     * 
      * @parameter expression="${type}"
      */
     private String type;
