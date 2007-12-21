@@ -225,7 +225,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.1</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
@@ -250,13 +250,6 @@
           </plugin>
         </plugins>
       </build>
-      <!-- TODO remove when invoker plugin is released -->
-      <pluginRepositories>
-        <pluginRepository>
-          <id>apache.snapshots</id>
-          <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-        </pluginRepository>
-      </pluginRepositories>
     </profile>
   </profiles>
   <reporting>
