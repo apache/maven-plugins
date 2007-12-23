@@ -135,15 +135,18 @@ public abstract class AbstractWarExplodedMojoTest
     }
 
     /**
-     * Cleans up the webapp directory.
+     * Cleans up a directory.
      *
-     * @param webAppDirectory the directory to remove
-     * @throws java.io.IOException if an error occured while removing the directory
+     * @param directory the directory to remove
+     * @throws IOException if an error occured while removing the directory
      */
-    protected void cleanWebAppDirectory( File webAppDirectory )
+    protected void cleanDirectory( File directory )
         throws IOException
     {
-        FileUtils.deleteDirectory( webAppDirectory );
+        if ( directory != null && directory.isDirectory() && directory.exists() )
+        {
+            FileUtils.deleteDirectory( directory );
+        }
     }
 
     /**
