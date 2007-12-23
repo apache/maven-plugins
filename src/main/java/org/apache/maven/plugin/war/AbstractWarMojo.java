@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.overlay.OverlayManager;
+import org.apache.maven.plugin.war.packaging.DependenciesAnalysisPackagingTask;
 import org.apache.maven.plugin.war.packaging.OverlayPackagingTask;
 import org.apache.maven.plugin.war.packaging.SaveWebappStructurePostPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarPackagingContext;
@@ -210,6 +211,8 @@ public abstract class AbstractWarMojo
      * Default is '**'
      *
      * @parameter
+     *
+     * @deprecated use the includes in the overlay object instead
      */
     private String dependentWarIncludes = "**/**";
 
@@ -218,6 +221,8 @@ public abstract class AbstractWarMojo
      * a war overlay.
      *
      * @parameter
+     *
+     * @deprecated use the excludes in the overlay object instead
      */
     private String dependentWarExcludes = "META-INF/**";
 
@@ -347,11 +352,11 @@ public abstract class AbstractWarMojo
         WebappStructure cache;
         if ( useCache && cacheFile.exists() )
         {
-            cache = new WebappStructure( webappStructureSerialier.fromXml( cacheFile ) );
+            cache = new WebappStructure( project.getDependencies(), webappStructureSerialier.fromXml( cacheFile ) );
         }
         else
         {
-            cache = new WebappStructure( null );
+            cache = new WebappStructure( project.getDependencies(), null );
         }
 
         final long startTime = System.currentTimeMillis();
@@ -393,6 +398,11 @@ public abstract class AbstractWarMojo
         throws MojoExecutionException
     {
         final List packagingTasks = new ArrayList();
+        if ( useCache )
+        {
+            packagingTasks.add( new DependenciesAnalysisPackagingTask() );
+        }
+
         final List resolvedOverlays = overlayManager.getOverlays();
         final Iterator it = resolvedOverlays.iterator();
         while ( it.hasNext() )
