@@ -20,6 +20,7 @@ package org.apache.maven.plugin.war.util;
  */
 
 import com.thoughtworks.xstream.XStream;
+import org.apache.maven.model.Dependency;
 
 import java.io.File;
 import java.io.FileReader;
@@ -46,6 +47,7 @@ public class WebappStructureSerializer
         // Register aliases
         xStream.alias( "webapp-structure", WebappStructure.class );
         xStream.alias( "path-set", PathSet.class );
+        xStream.alias( "dependency", Dependency.class );
     }
 
 
