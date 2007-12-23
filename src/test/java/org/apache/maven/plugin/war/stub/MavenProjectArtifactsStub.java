@@ -19,9 +19,12 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,6 +48,31 @@ public class MavenProjectArtifactsStub
     public Set getArtifacts()
     {
         return artifacts;
+    }
+
+    public List getDependencies()
+    {
+        if ( getArtifacts() == null )
+        {
+            return new ArrayList();
+        }
+        final List dependencies = new ArrayList();
+        final Iterator it = getArtifacts().iterator();
+        while ( it.hasNext() )
+        {
+            Artifact a = (Artifact) it.next();
+            Dependency dependency = new Dependency();
+            dependency.setArtifactId( a.getArtifactId() );
+            dependency.setGroupId( a.getGroupId() );
+            dependency.setVersion( a.getVersion() );
+            dependency.setScope( a.getScope() );
+            dependency.setType( a.getType() );
+            dependency.setClassifier( a.getClassifier() );
+            dependencies.add( dependency );
+
+        }
+        return dependencies;
+
     }
 
     public List getRuntimeClasspathElements()
