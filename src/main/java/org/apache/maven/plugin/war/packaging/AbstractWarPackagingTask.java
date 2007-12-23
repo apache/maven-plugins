@@ -136,44 +136,33 @@ public abstract class AbstractWarPackagingTask
                              String targetFilename )
         throws IOException
     {
-        context.getLog().debug(
-                                "sourceId " + sourceId + ", copyFile file " + file + ", targetFilename "
-                                    + targetFilename );
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
         context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
         {
             public void registered( String ownerId, String targetFilename )
                 throws IOException
             {
-                context.getLog().debug(
-                                        "registered copy file " + file.getPath() + " to targetFile "
-                                            + targetFile.getName() );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
 
             public void alreadyRegistered( String ownerId, String targetFilename )
                 throws IOException
             {
-                context.getLog().debug(
-                                        "alreadyRegistered copy onlyIfModified file " + file.getPath()
-                                            + " to targetFile " + targetFile.getName() );
                 copyFile( context, file, targetFile, targetFilename, true );
             }
 
             public void refused( String ownerId, String targetFilename, String actualOwnerId )
                 throws IOException
             {
-                context.getLog().debug(
-                                        " - " + targetFilename + " wasn't copied because it has "
-                                            + "already been packaged for overlay[" + actualOwnerId + "]." );
+                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has " +
+                    "already been packaged for overlay[" + actualOwnerId + "]." );
             }
 
             public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
                 throws IOException
             {
-                context.getLog().info(
-                                       "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId
-                                           + "] so it will be overwritten." );
+                context.getLog().info( "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId +
+                    "] so it will be overwritten." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
 
@@ -181,10 +170,9 @@ public abstract class AbstractWarPackagingTask
                 throws IOException
             {
                 context.getLog()
-                    .warn(
-                           "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId
-                               + "] which does not exist anymore in the current project. It is recommended to invoke "
-                               + "clean if the dependencies of the project changed." );
+                    .warn( "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId +
+                        "] which does not exist anymore in the current project. It is recommended to invoke " +
+                        "clean if the dependencies of the project changed." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
         } );
@@ -209,13 +197,9 @@ public abstract class AbstractWarPackagingTask
         throws IOException, MojoExecutionException
     {
 
-        context.getLog().debug(
-                                "sourceId " + sourceId + ", filtering file " + file + " to targetFilename "
-                                    + targetFilename );
         if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
-            context.getLog().debug( "filtering file " + file + " to targetFile " + targetFile );
             // buffer so it isn't reading a byte at a time!
             Reader fileReader = null;
             Writer fileWriter = null;
@@ -242,12 +226,13 @@ public abstract class AbstractWarPackagingTask
                 IOUtil.close( fileWriter );
             }
             // Add the file to the protected list
-            context.getLog().debug( " + " + targetFilename + " has been copied." );
+            context.getLog().debug( " + " + targetFilename + " has been copied (filtered)." );
             return true;
         }
         else
         {
-            context.getLog().debug( " - " + targetFilename + " wasn't copied because it has already been packaged." );
+            context.getLog().debug(
+                " - " + targetFilename + " wasn't copied because it has already been packaged (filtered)." );
             return false;
         }
     }
@@ -276,19 +261,18 @@ public abstract class AbstractWarPackagingTask
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to["
-                + unpackDirectory.getAbsolutePath() + "]", e );
+            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to[" +
+                unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to["
-                + unpackDirectory.getAbsolutePath() + "]", e );
+            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to[" +
+                unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( NoSuchArchiverException e )
         {
-            context.getLog().warn(
-                                   "Skip unpacking dependency file[" + file.getAbsolutePath()
-                                       + " with unknown extension[" + archiveExt + "]" );
+            context.getLog().warn( "Skip unpacking dependency file[" + file.getAbsolutePath() +
+                " with unknown extension[" + archiveExt + "]" );
         }
     }
 
@@ -413,7 +397,7 @@ public abstract class AbstractWarPackagingTask
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                 }
-            } };
+            }};
     }
 
     /**
