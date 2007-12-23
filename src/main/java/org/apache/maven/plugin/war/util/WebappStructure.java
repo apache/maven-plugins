@@ -19,9 +19,15 @@ package org.apache.maven.plugin.war.util;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,35 +46,71 @@ public class WebappStructure
 
     private Map registeredFiles;
 
+    private List dependenciesInfo;
+
     private transient PathSet allFiles = new PathSet();
 
     private transient WebappStructure cache;
 
     /**
      * Creates a new empty instance.
+     *
+     * @param dependencies the dependencies of the project
      */
-    public WebappStructure()
+    public WebappStructure( List dependencies )
     {
+        this.dependenciesInfo = createDependenciesInfoList( dependencies );
         this.registeredFiles = new HashMap();
         this.cache = null;
+
     }
 
     /**
      * Creates a new instance with the specified cache.
      *
+     * @param dependencies the dependencies of the project
      * @param cache the cache
      */
-    public WebappStructure( WebappStructure cache )
+    public WebappStructure( List dependencies, WebappStructure cache )
     {
+        this.dependenciesInfo = createDependenciesInfoList( dependencies );
         this.registeredFiles = new HashMap();
         if ( cache == null )
         {
-            this.cache = new WebappStructure();
+            this.cache = new WebappStructure( dependencies );
+
         }
         else
         {
             this.cache = cache;
         }
+    }
+
+    /**
+     * Returns the list of {@link DependencyInfo} for the project.
+     *
+     * @return the dependencies information of the project
+     */
+    public List getDependenciesInfo()
+    {
+        return dependenciesInfo;
+    }
+
+    /**
+     * Returns the dependencies of the project.
+     *
+     * @return the dependencies of the project
+     */
+    public List getDependencies()
+    {
+        final List result = new ArrayList();
+        final Iterator it = dependenciesInfo.iterator();
+        while ( it.hasNext() )
+        {
+            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
+            result.add( dependencyInfo.getDependency() );
+        }
+        return result;
     }
 
 
@@ -118,7 +160,6 @@ public class WebappStructure
         throws IOException
     {
 
-        
         // If the file is already in the current structure, rejects it with the current owner
         if ( isRegistered( path ) )
         {
@@ -223,11 +264,201 @@ public class WebappStructure
         return pathSet;
     }
 
+
+    /**
+     * Analyse the dependencies of the project using the specified callback.
+     *
+     * @param callback the callback to use to report the result of the analysis
+     */
+    public void analyseDependencies( DependenciesAnalysisCallback callback )
+    {
+        if ( callback == null )
+        {
+            throw new NullPointerException( "Callback could not be null." );
+        }
+        if ( cache == null )
+        {
+            // Could not analyse dependencies without a cache
+            return;
+        }
+
+        final List currentDependencies = new ArrayList( getDependencies() );
+        final List previousDependencies = new ArrayList( cache.getDependencies() );
+        final Iterator it = currentDependencies.listIterator();
+        while ( it.hasNext() )
+        {
+            Dependency dependency = (Dependency) it.next();
+            // Check if the dependency is there "as is"
+
+            final Dependency matchingDependency = matchDependency( previousDependencies, dependency );
+            if ( matchingDependency != null )
+            {
+                callback.unchangedDependency( dependency );
+                // Handled so let's remove
+                it.remove();
+                previousDependencies.remove( matchingDependency );
+            }
+            else
+            {
+                // Try to get the dependency
+                final Dependency previousDep = findDependency( dependency, previousDependencies );
+                if ( previousDep == null )
+                {
+                    callback.newDependency( dependency );
+                    it.remove();
+                }
+                else if ( !dependency.getVersion().equals( previousDep.getVersion() ) )
+                {
+                    callback.updatedVersion( dependency, previousDep.getVersion() );
+                    it.remove();
+                    previousDependencies.remove( previousDep );
+                }
+                else if ( !dependency.getScope().equals( previousDep.getScope() ) )
+                {
+                    callback.updatedScope( dependency, previousDep.getScope() );
+                    it.remove();
+                    previousDependencies.remove( previousDep );
+                }
+                else if ( dependency.isOptional() != previousDep.isOptional() )
+                {
+                    callback.updatedOptionalFlag( dependency, previousDep.isOptional() );
+                    it.remove();
+                    previousDependencies.remove( previousDep );
+                }
+                else
+                {
+                    callback.updatedUnknown( dependency, previousDep );
+                    it.remove();
+                    previousDependencies.remove( previousDep );
+                }
+            }
+        }
+        final Iterator previousDepIt = previousDependencies.iterator();
+        while ( previousDepIt.hasNext() )
+        {
+            Dependency dependency = (Dependency) previousDepIt.next();
+            callback.removedDependency( dependency );
+        }
+    }
+
+    /**
+     * Registers the target file name for the specified artifact.
+     *
+     * @param artifact the artifact
+     * @param targetFileName the target file name
+     */
+    public void registerTargetFileName( Artifact artifact, String targetFileName )
+    {
+        final Iterator it = dependenciesInfo.iterator();
+        while ( it.hasNext() )
+        {
+            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
+            if ( WarUtils.isRelated( artifact, dependencyInfo.getDependency() ) )
+            {
+                dependencyInfo.setTargetFileName( targetFileName );
+            }
+        }
+    }
+
+    /**
+     * Returns the cached target file name that matches the specified
+     * dependency, that is the target file name of the previous run.
+     * <p/>
+     * The dependency object may have changed so the comparison is
+     * based on basic attributes of the dependency.
+     *
+     * @param dependency a dependency
+     * @return the target file name of the last run for this dependency
+     */
+    public String getCachedTargetFileName( Dependency dependency )
+    {
+        if ( cache == null )
+        {
+            return null;
+        }
+        final Iterator it = cache.getDependenciesInfo().iterator();
+        while ( it.hasNext() )
+        {
+            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
+            final Dependency dependency2 = dependencyInfo.getDependency();
+            if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() ) &&
+                StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() ) &&
+                StringUtils.equals( dependency.getType(), dependency2.getType() ) &&
+                StringUtils.equals( dependency.getClassifier(), dependency2.getClassifier() ) )
+            {
+
+                return dependencyInfo.getTargetFileName();
+
+            }
+        }
+        return null;
+    }
+
+    // Private helpers
+
     private void doRegister( String id, String path )
     {
         getFullStructure().add( path );
         getStructure( id ).add( path );
     }
+
+    /**
+     * Find a dependency that is similar from the specified dependency.
+     *
+     * @param dependency the dependency to find
+     * @param dependencies a list of dependencies
+     * @return a similar dependency or <tt>null</tt> if no similar dependency is found
+     */
+    private Dependency findDependency( Dependency dependency, List dependencies )
+    {
+        final Iterator it = dependencies.iterator();
+        while ( it.hasNext() )
+        {
+            Dependency dep = (Dependency) it.next();
+            if ( dependency.getGroupId().equals( dep.getGroupId() ) &&
+                dependency.getArtifactId().equals( dep.getArtifactId() ) &&
+                dependency.getType().equals( dep.getType() ) && (
+                ( dependency.getClassifier() == null && dep.getClassifier() == null ) || (
+                    dependency.getClassifier() != null && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
+            {
+                return dep;
+            }
+        }
+        return null;
+    }
+
+    private Dependency matchDependency( List dependencies, Dependency dependency )
+    {
+        final Iterator it = dependencies.iterator();
+        while ( it.hasNext() )
+        {
+            Dependency dep = (Dependency) it.next();
+            if ( WarUtils.dependencyEquals( dep, dependency ) )
+            {
+                return dep;
+            }
+
+        }
+        return null;
+    }
+
+
+    private List createDependenciesInfoList( List dependencies )
+    {
+        if ( dependencies == null )
+        {
+            return null;
+        }
+        final List result = new ArrayList();
+        final Iterator it = dependencies.iterator();
+        while ( it.hasNext() )
+        {
+            Dependency dependency = (Dependency) it.next();
+            result.add( new DependencyInfo( dependency ) );
+        }
+        return result;
+    }
+
 
     private Object readResolve()
     {
@@ -243,7 +474,7 @@ public class WebappStructure
     }
 
     /**
-     * Callback interfce to handle events related to filepath registration in
+     * Callback interface to handle events related to filepath registration in
      * the webapp.
      */
     public interface RegistrationCallback
@@ -327,6 +558,67 @@ public class WebappStructure
          */
         void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
             throws IOException;
+    }
+
+    /**
+     * Callback interface to handle events related to dependencies analysis.
+     */
+    public interface DependenciesAnalysisCallback
+    {
+
+        /**
+         * Called if the dependency has not changed since the last build.
+         *
+         * @param dependency the dependency that hasn't changed
+         */
+        void unchangedDependency( Dependency dependency );
+
+        /**
+         * Called if a new dependency has been added since the last build.
+         *
+         * @param dependency the new dependency
+         */
+        void newDependency( Dependency dependency );
+
+        /**
+         * Called if the dependency has been removed since the last build.
+         *
+         * @param dependency the dependency that has been removed
+         */
+        void removedDependency( Dependency dependency );
+
+        /**
+         * Called if the version of the dependency has changed since the last build.
+         *
+         * @param dependency the dependency
+         * @param previousVersion the previous version of the dependency
+         */
+        void updatedVersion( Dependency dependency, String previousVersion );
+
+        /**
+         * Called if the scope of the dependency has changed since the last build.
+         *
+         * @param dependency the dependency
+         * @param previousScope the previous scope
+         */
+        void updatedScope( Dependency dependency, String previousScope );
+
+        /**
+         * Called if the optional flag of the dependency has changed since the
+         * last build.
+         *
+         * @param dependency the dependency
+         * @param previousOptional the previous optional flag
+         */
+        void updatedOptionalFlag( Dependency dependency, boolean previousOptional );
+
+        /**
+         * Called if the dependency has been updated for unknown reason.
+         *
+         * @param dependency the dependency
+         * @param previousDep the previous dependency
+         */
+        void updatedUnknown( Dependency dependency, Dependency previousDep );
 
     }
 }
