@@ -19,17 +19,18 @@ package org.apache.maven.plugin.war.overlay;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 /**
  * Manages the overlays.
@@ -43,7 +44,7 @@ public class OverlayManager
     private final MavenProject project;
 
     private final List artifactsOverlays;
-    
+
     /**
      * Creates a manager with the specified overlays.
      * <p/>
@@ -68,12 +69,12 @@ public class OverlayManager
         this.project = project;
 
         this.artifactsOverlays = getOverlaysAsArtifacts();
-        
+
         // Initialize
         initialize( defaultIncludes, defaultExcludes );
-        
+
     }
-    
+
 
     /**
      * Returns the resolved overlays.
@@ -133,8 +134,8 @@ public class OverlayManager
                 it.set( overlay );
             }
             // default includes/excludes - only if the overlay uses the default settings
-            if ( Overlay.DEFAULT_INCLUDES.equals( overlay.getIncludes() )
-                && Overlay.DEFAULT_EXCLUDES.equals( overlay.getExcludes() ) )
+            if ( Arrays.equals( Overlay.DEFAULT_INCLUDES, overlay.getIncludes() ) &&
+                Arrays.equals( Overlay.DEFAULT_EXCLUDES, overlay.getExcludes() ) )
             {
                 overlay.setIncludes( defaultIncludes );
                 overlay.setExcludes( defaultExcludes );
@@ -203,7 +204,7 @@ public class OverlayManager
                 return artifact;
             }
         }
-        
+
         // maybe its a project dependencies zip or an other type
         Set projectArtifacts = this.project.getDependencyArtifacts();
         if ( projectArtifacts != null )
@@ -221,28 +222,28 @@ public class OverlayManager
             "overlay[" + overlay + "] is not a dependency of the project." );
 
     }
-    
+
     /**
      * compare groupId && artifactId && Type && classifier
-     * @param overlay
-     * @param artifact
+     * @param overlay the overlay
+     * @param artifact the artifact
      * @return boolean true if equals
      */
     private boolean compareOverlayWithArtifact( Overlay overlay, Artifact artifact )
     {
-       return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
-            && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
-            && StringUtils.equals( overlay.getType(), artifact.getType() ) 
-            && ( overlay.getClassifier() == null || ( StringUtils
-            .equals( overlay.getClassifier(), artifact.getClassifier() ) ) ) );
+        return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() ) &&
+            StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() ) &&
+            StringUtils.equals( overlay.getType(), artifact.getType() ) &&
+            ( overlay.getClassifier() == null || ( StringUtils
+                .equals( overlay.getClassifier(), artifact.getClassifier() ) ) ) );
     }
-    
+
     /**
      * Returns a list of war {@link org.apache.maven.artifact.Artifact} describing
      * the overlays of the current project.
      *
      * @return the overlays as artifacts objects
-     */    
+     */
     private List getOverlaysAsArtifacts()
     {
         ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
