@@ -26,7 +26,17 @@ import java.io.File;
 public class JarArtifactStub
     extends AbstractArtifactStub
 {
+
     protected String groupId;
+
+    protected String artifactId;
+
+    protected String version;
+
+    protected boolean optional = false;
+
+    protected String scope;
+
 
     private ArtifactHandler artifactHandler;
 
@@ -58,9 +68,65 @@ public class JarArtifactStub
         return "jar";
     }
 
+    public void setArtifactId( String artifactId )
+    {
+        this.artifactId = artifactId;
+    }
+
     public String getArtifactId()
     {
-        return "jarartifact";
+        if ( artifactId != null )
+        {
+            return artifactId;
+        }
+        else
+        {
+            return "jarartifact";
+        }
+    }
+
+    public String getVersion()
+    {
+        if ( version != null )
+        {
+            return version;
+        }
+        else
+        {
+            return super.getVersion();
+        }
+    }
+
+    public void setVersion( String version )
+    {
+        this.version = version;
+    }
+
+    public boolean isOptional()
+    {
+        return optional;
+    }
+
+    public void setOptional( boolean optional )
+    {
+        this.optional = optional;
+    }
+
+    public String getScope()
+    {
+        if ( scope != null )
+        {
+            return scope;
+        }
+        else
+        {
+            return super.getScope();
+        }
+    }
+
+    public void setScope( String scope )
+    {
+        this.scope = scope;
     }
 
     public File getFile()

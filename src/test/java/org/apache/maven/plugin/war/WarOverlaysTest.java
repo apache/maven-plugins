@@ -84,7 +84,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -117,7 +117,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -156,7 +156,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -307,7 +307,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -375,7 +375,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -445,7 +445,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
 
     }
@@ -500,7 +500,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
@@ -556,7 +556,7 @@ public class WarOverlaysTest
         }
         finally
         {
-            cleanWebAppDirectory( webAppDirectory );
+            cleanDirectory( webAppDirectory );
         }
     }
 
