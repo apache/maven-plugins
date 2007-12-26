@@ -246,8 +246,8 @@ public abstract class AbstractPmdViolationCheckMojo
     /**
      * Gets the output message
      * 
-     * @param failures
-     * @param warnings
+     * @param failureCount
+     * @param warningCount
      * @param key
      * @param outputFile
      * @return
