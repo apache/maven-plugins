@@ -357,10 +357,10 @@ public abstract class AbstractPmdReport
     }
 
     /**
-     * Convenience method that concatenates the files to be excluded into the appropriate format
+     * Convenience method that concatenates the files to be excluded into the appropriate format.
      *
-     * @param exclude the array of Strings that contains the files to be excluded
-     * @return a String that contains the concatenates file names
+     * @param arr the array of Strings that contains the files to be excluded
+     * @return a String that contains the concatenated file names
      */
     private String getIncludeExcludeString( String[] arr )
     {
