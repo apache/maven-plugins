@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PMDException;
 import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
@@ -229,6 +230,17 @@ public class PmdReport
                         catch ( UnsupportedEncodingException e1 )
                         {
                             throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                        }
+                        catch ( PMDException pe )
+                        {
+                            String msg = pe.getLocalizedMessage();
+                            Exception r = pe.getReason();
+                            if (r != null) {
+                                msg = msg + ": " + r.getLocalizedMessage();
+                            }
+                            getLog().warn( msg );
+                            reportSink.ruleViolationAdded(
+                                new ProcessingErrorRuleViolation( file, msg ) );
                         }
                         catch ( FileNotFoundException e2 )
                         {
