@@ -28,7 +28,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.nio.charset.spi.CharsetProvider;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -156,8 +155,8 @@ public class CpdReport
         try
         {
             targetDirectory.mkdirs();
-            FileOutputStream tStream = new FileOutputStream(new File( targetDirectory, "cpd." + format ));
-            Writer writer = new OutputStreamWriter(tStream, Charset.forName( "UTF-8" ));
+            FileOutputStream tStream = new FileOutputStream( new File( targetDirectory, "cpd." + format ) );
+            Writer writer = new OutputStreamWriter( tStream, Charset.forName( "UTF-8" ) );
             writer.write( buffer, 0, buffer.length() );
             writer.close();
             
@@ -202,7 +201,7 @@ public class CpdReport
         Renderer renderer = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new XMLRenderer("UTF-8");
+            renderer = new XMLRenderer( "UTF-8" );
         }
         else if ( "csv".equals( format ) )
         {
