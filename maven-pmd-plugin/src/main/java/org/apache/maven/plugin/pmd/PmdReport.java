@@ -31,7 +31,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +56,6 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Implement the PMD report.
@@ -223,8 +221,9 @@ public class PmdReport
                         {
                             // PMD closes this Reader even though it did not open it so we have
                             // to open a new one with every call to processFile().
-                            Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
-                                                                                 sourceEncoding ) : new FileReader( file );
+                            Reader reader = hasEncoding
+                                ? new InputStreamReader( new FileInputStream( file ), sourceEncoding )
+                                : new FileReader( file );
                             pmd.processFile( reader, sets[idx], ruleContext );
                         }
                         catch ( UnsupportedEncodingException e1 )
@@ -257,9 +256,9 @@ public class PmdReport
                     
                     try
                     {
-                        r.setWriter(stringwriter);
+                        r.setWriter( stringwriter );
                         r.start();
-                        r.renderFileReport(report);
+                        r.renderFileReport( report );
                         r.end();
                         String buffer = stringwriter.toString();
                         
@@ -323,12 +322,12 @@ public class PmdReport
 
         if ( null != targetJdk )
         {
-            SourceType sourceType = SourceType.getSourceTypeForId("java " + targetJdk);
+            SourceType sourceType = SourceType.getSourceTypeForId( "java " + targetJdk );
             if ( sourceType == null )
             {
                 throw new MavenReportException( "Unsupported targetJdk value '" + targetJdk + "'." );
             }
-            pmd.setJavaVersion(sourceType);
+            pmd.setJavaVersion( sourceType );
         }
 
         return pmd;
