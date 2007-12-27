@@ -19,11 +19,13 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.spi.CharsetProvider;
@@ -68,6 +70,13 @@ public class CpdReport
     private boolean skip;
 
     /**
+     * The file encoding to use when reading the java source.
+     *
+     * @parameter
+     */
+    private String sourceEncoding;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -100,11 +109,22 @@ public class CpdReport
                 Map files = null;
                 try
                 {
+                    if ( sourceEncoding != null )
+                    {
+                        cpd.setEncoding( sourceEncoding );
+
+                        // test encoding as CPD will convert exception into a RuntimeException
+                        new OutputStreamWriter( new ByteArrayOutputStream() , sourceEncoding );
+                    }
                     files = getFilesToProcess( );
                     for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
                     {
                         cpd.add( (File) it.next() );
                     }
+                }
+                catch ( UnsupportedEncodingException e )
+                {
+                    throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e );
                 }
                 catch ( IOException e )
                 {
