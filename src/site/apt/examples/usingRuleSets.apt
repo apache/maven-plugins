@@ -6,28 +6,35 @@
  30 June 2006
  ------
 
-~~ Copyright 2006 The Apache Software Foundation.
-~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
-~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
 
 ~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+~~ http://maven.apache.org/doxia/references/apt-format.html
 
 Using Rule Sets
 
- The PMD plugin uses three default rule sets: basic.xml, unusedcode.xml and imports.xml. These rule sets are bundled in
- the PMD code analysis tool ({{{http://pmd.sourceforge.net/rules/index.html}more info}}). To use other
- rule sets, you can configure the plugin as shown below:
+ The PMD plugin uses three default rule sets: <basic.xml>, <unusedcode.xml> and <imports.xml>. These rule sets are
+ bundled in the PMD code analysis tool ({{{http://pmd.sourceforge.net/rules/index.html}more info}}). To use other
+ rule sets, you can configure it in the plugin as shown below.
+
+ The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool,
+ you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a
+ custom rule set, you need to specify its absolute path.
 
 +-----+
 <project>
@@ -39,9 +46,12 @@ Using Rule Sets
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <rulesets>
+            <!-- Two rule sets that come bundled with PMD -->
             <ruleset>/rulesets/braces.xml</ruleset>
             <ruleset>/rulesets/naming.xml</ruleset>
+            <!-- Custom local file system rule set -->
             <ruleset>d:\rulesets\strings.xml</ruleset>
+            <!-- Custom remote rule set accessed via a URL -->
             <ruleset>http://localhost/design.xml</ruleset>
           </rulesets>
         </configuration>
@@ -51,7 +61,3 @@ Using Rule Sets
   ...
 </project>
 +-----+
-
- The rulesets may reside in the classpath, filesystem or at a URL. For rule sets that are already bundled with the PMD tool,
- you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a
- custom rule set, you need to specify its absolute path.

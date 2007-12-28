@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -19,18 +19,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
-  <body>
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-    <menu name="Examples">
-      <item name="Remove Report" href="examples/removeReport.html"/>
-      <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>
-      <item name="Violation Checking" href="examples/violationChecking.html"/>
-    </menu>
-  </body>
-</project>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="Is there any way to skip the PMD or CPD reports temporarily">
+      <question>
+        The PMD report takes a long time to generate. Is there any way to skip
+        the PMD or CPD reports temporarily?
+      </question>
+      <answer>
+        <p>
+          Yes, each report supports a skip parameter which you can pass on the
+          command line, <code>-Dpmd.skip=true</code> and
+          <code>-Dcpd.skip=true</code> respectively.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

@@ -51,7 +51,7 @@ public class PmdViolationCheckMojo
 
     /**
      * Skip the PMD checks.  Most useful on the command line
-     * via "-Dmaven.pmd.skip=true".
+     * via "-Dpmd.skip=true".
      *
      * @parameter expression="${pmd.skip}" default-value="false"
      */
