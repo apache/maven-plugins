@@ -4,22 +4,22 @@
  06 January 2006
  ------
 
-~~ Copyright 2006 The Apache Software Foundation.
-~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
-~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
-
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
 
 Maven 2 PMD Plugin
 
@@ -27,7 +27,7 @@ Maven 2 PMD Plugin
   on your project's source code and generate a site report with its results. It also supports the separate
   Copy/Paste Detector tool (or CPD) distributed with PMD.
 
-  The plugin accepts configuration parameters that will be used to customize the execution of the PMD tool.
+  The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
 
 
 * Goals Overview
@@ -40,11 +40,11 @@ Maven 2 PMD Plugin
   * {{{cpd-mojo.html}pmd:cpd}} generates a report for PMD's Copy/Paste Detector (CPD) tool.  It can also
     generate a cpd results file in any of these formats: xml, csv or txt.
 
-  * {{{check-mojo.html}pmd:check}} verifies that the PMD report is empty and fail the build if it is not. This goal is executed by
+  * {{{check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not. This goal is executed by
     default when <<<pmd:pmd>>> is executed.
 
-  * {{{cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fail the build if it is not. This goal is also
-    executed by default when <<<pmd:cpd>>>> is executed.
+  * {{{cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not. This goal is
+    executed by default when <<<pmd:cpd>>> is executed.
 
 * Usage
 
