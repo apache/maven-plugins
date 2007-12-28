@@ -42,7 +42,8 @@ import net.sourceforge.pmd.cpd.XMLRenderer;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
- * Report for PMD's CPD tool.  See <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
+ * Creates a report for PMD's CPD tool.  See
+ * <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
  * for more detail.
  *
  * @author Mike Perham
@@ -61,8 +62,8 @@ public class CpdReport
     private int minimumTokens;
 
     /**
-     * Skip the PMD report generation.  Most useful on the command line
-     * via "-Dmaven.cpd.skip=true".
+     * Skip the CPD report generation.  Most useful on the command line
+     * via "-Dcpd.skip=true".
      *
      * @parameter expression="${cpd.skip}" default-value="false"
      */
@@ -72,6 +73,7 @@ public class CpdReport
      * The file encoding to use when reading the java source.
      *
      * @parameter
+     * @since 2.3
      */
     private String sourceEncoding;
 
