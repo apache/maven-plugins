@@ -41,7 +41,7 @@ public class CpdViolationCheckMojo
 
     /**
      * Skip the CPD violation checks.  Most useful on the command line
-     * via "-Dmaven.cpd.skip=true".
+     * via "-Dcpd.skip=true".
      *
      * @parameter expression="${cpd.skip}" default-value="false"
      */
