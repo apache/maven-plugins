@@ -83,7 +83,7 @@ public abstract class AbstractPmdViolationCheckMojo
     protected boolean aggregate;
     
     /**
-     * Print details of check failures to build output
+     * Print details of check failures to build output.
      * 
      * @parameter expression="${pmd.verbose}" default-value="false"
      */

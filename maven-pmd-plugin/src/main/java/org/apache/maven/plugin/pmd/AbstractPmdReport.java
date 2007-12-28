@@ -118,10 +118,10 @@ public abstract class AbstractPmdReport
     
     /**
      * A list of files to include from checking. Can contain ant-style wildcards and double wildcards.  
-     * Defaults to **\/*.java
+     * Defaults to **\/*.java.
      *
-     * @since 2.2
      * @parameter
+     * @since 2.2
      */
     private String[] includes;
 
@@ -129,7 +129,7 @@ public abstract class AbstractPmdReport
     
     
     /**
-     * The source directories containing the sources to be compiled.
+     * The directories containing the sources to be compiled.
      *
      * @parameter expression="${project.compileSourceRoots}"
      * @required
@@ -138,7 +138,7 @@ public abstract class AbstractPmdReport
     private List compileSourceRoots;
     
     /**
-     * The source directories containing the test-sources to be compiled.
+     * The directories containing the test-sources to be compiled.
      *
      * @parameter expression="${project.testCompileSourceRoots}"
      * @required
@@ -149,13 +149,13 @@ public abstract class AbstractPmdReport
     /**
      * The project source directories that should be excluded.
      *
-     * @since 2.2
      * @parameter
+     * @since 2.2
      */
     private List excludeRoots;
     
     /**
-     * Run PMD on the tests
+     * Run PMD on the tests.
      *
      * @parameter default-value="false"
      * @since 2.2

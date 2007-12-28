@@ -59,7 +59,7 @@ import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 
 /**
- * Implement the PMD report.
+ * Creates a PMD report.
  *
  * @author Brett Porter
  * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
@@ -71,8 +71,11 @@ public class PmdReport
 {
     /**
      * The target JDK to analyse based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>.
-     *
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code> and <code>1.6</code>.
+     * <p>
+     * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin.
+     * </p>
+     * 
      * @parameter expression="${targetJdk}"
      */
     private String targetJdk;
@@ -87,7 +90,7 @@ public class PmdReport
 
     /**
      * Skip the PMD report generation.  Most useful on the command line
-     * via "-Dmaven.pmd.skip=true".
+     * via "-Dpmd.skip=true".
      *
      * @parameter expression="${pmd.skip}" default-value="false"
      */
