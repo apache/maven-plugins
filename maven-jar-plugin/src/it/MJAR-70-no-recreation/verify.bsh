@@ -43,17 +43,21 @@ try
     }   
     
     long lastModified = artifact.lastModified();
-    
+    String localRepoPath = basedir.getParentFile().getParentFile().getParentFile().getPath() + "/target/local-repo";
     Commandline commandline = new Commandline();
     commandline.setExecutable( "mvn" );
     commandline.setWorkingDirectory( basedir );
-    commandline.createArg().setLine( "-f interpolated-pom.xml package" );     
+    commandline.createArg().setLine( "-f interpolated-pom.xml -Dmaven.repo.local=" + localRepoPath + "  package" );     
     CommandLineUtils.StringStreamConsumer consumer = new CommandLineUtils.StringStreamConsumer();
-    CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
-    
+    int res = CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
     System.out.println( consumer.getOutput() );
-	artifact = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );     
-	if ( !artifact.exists() || artifact.isDirectory() )
+    if ( res != 0 )
+    {
+        System.err.println( "mvn cli invocation not return 0 but " + res );
+        return false;
+    }
+    artifact = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );     
+    if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file is missing or a directory." );
         return false;
