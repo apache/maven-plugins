@@ -43,11 +43,12 @@ try
     }   
     
     long lastModified = artifact.lastModified();
-    
+    String localRepoPath = basedir.getParentFile().getParentFile().getParentFile().getPath() + "/target/local-repo";
+    System.out.println ( localRepoPath );
     Commandline commandline = new Commandline();
     commandline.setExecutable( "mvn" );
     commandline.setWorkingDirectory( basedir );
-    commandline.createArg().setLine( "-f interpolated-pom.xml package" );     
+    commandline.createArg().setLine( "-f interpolated-pom.xml -Dmaven.repo.local=" + localRepoPath + " package" );     
     CommandLineUtils.StringStreamConsumer consumer = new CommandLineUtils.StringStreamConsumer();
     CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
     
