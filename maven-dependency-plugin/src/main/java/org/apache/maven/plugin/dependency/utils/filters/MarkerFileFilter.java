@@ -31,7 +31,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.filter.collection.AbstractArtifactsFilter;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -65,17 +66,17 @@ public class MarkerFileFilter
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
-    public Set filter( Set artifacts, Log log )
-        throws MojoExecutionException
+    public Set filter( Set artifacts )
+        throws ArtifactFilterException
     {
         Set result = new HashSet();
 
         Iterator iter = artifacts.iterator();
-        // log.debug("Artifacts:"+ artifacts.size());
+       
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( okToProcess( new ArtifactItem( artifact ) ) )
+            if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
             }
@@ -83,8 +84,8 @@ public class MarkerFileFilter
         return result;
     }
 
-    public boolean okToProcess( ArtifactItem item )
-        throws MojoExecutionException
+    public boolean isArtifactIncluded( ArtifactItem item )
+      throws ArtifactFilterException
     {
         Artifact artifact = item.getArtifact();
         boolean overWrite = false;
@@ -97,9 +98,16 @@ public class MarkerFileFilter
 
         handler.setArtifact( artifact );
 
-        if ( overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) ) )
+        try
         {
-            result = true;
+            if ( overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) ) )
+            {
+                result = true;
+            }
+        }
+        catch ( MojoExecutionException e )
+        {
+            throw new ArtifactFilterException (e.getMessage(),e);
         }
 
         return result;
