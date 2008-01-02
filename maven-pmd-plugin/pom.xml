@@ -21,7 +21,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-pmd-plugin</artifactId>
@@ -98,6 +98,11 @@ under the License.
       <name>John Allen</name>
     </contributor>
   </contributors>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -132,12 +137,6 @@ under the License.
   </dependencies>
   <reporting>
     <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jxr-plugin</artifactId>
-      </plugin>
       <plugin>
         <artifactId>maven-changelog-plugin</artifactId>
       </plugin>
