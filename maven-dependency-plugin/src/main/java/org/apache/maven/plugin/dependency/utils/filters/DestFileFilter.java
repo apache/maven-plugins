@@ -29,10 +29,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.filter.collection.AbstractArtifactsFilter;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -91,17 +91,17 @@ public class DestFileFilter
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
-    public Set filter( Set artifacts, Log log )
-        throws MojoExecutionException
+    public Set filter( Set artifacts )
+        throws ArtifactFilterException
     {
         Set result = new HashSet();
 
         Iterator iter = artifacts.iterator();
-        // log.debug("Artifacts:"+ artifacts.size());
+        
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( okToProcess( new ArtifactItem( artifact ) ) )
+            if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
             }
@@ -247,8 +247,7 @@ public class DestFileFilter
         this.useRepositoryLayout = useRepositoryLayout;
     }
 
-    public boolean okToProcess( ArtifactItem item )
-        throws MojoExecutionException
+    public boolean isArtifactIncluded( ArtifactItem item )
     {
         boolean overWrite = false;
         boolean result = false;
