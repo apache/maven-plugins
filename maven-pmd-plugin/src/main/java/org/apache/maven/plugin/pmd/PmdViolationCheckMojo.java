@@ -90,7 +90,7 @@ public class PmdViolationCheckMojo
             buff.append( item.get( "class" ) );
             buff.append( ":" );
         }
-        buff.append( item.get( "line" ) );
+        buff.append( item.get( "beginline" ) );
         buff.append( " Rule:" ).append( item.get( "rule" ) );
         buff.append( " Priority:" ).append( item.get( "priority" ) );
         buff.append( " " ).append( item.get( "text" ) ).append( "." );
