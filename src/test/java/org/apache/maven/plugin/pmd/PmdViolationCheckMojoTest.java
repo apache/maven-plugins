@@ -19,7 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
