@@ -238,7 +238,8 @@ public class PmdReport
                         {
                             String msg = pe.getLocalizedMessage();
                             Exception r = pe.getReason();
-                            if (r != null) {
+                            if ( r != null )
+                            {
                                 msg = msg + ": " + r.getLocalizedMessage();
                             }
                             getLog().warn( msg );
