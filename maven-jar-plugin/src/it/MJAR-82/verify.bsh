@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.jar.*;
 import org.codehaus.plexus.util.*;
 import org.codehaus.plexus.util.cli.*;
+import org.codehaus.plexus.util.FileUtils;
 
 boolean result = true;
 
@@ -43,9 +44,11 @@ try
     }    
         
     String localRepoPath = basedir.getParentFile().getParentFile().getParentFile().getPath() + "/target/local-repo";
+    FileUtils.copyFile( artifact, new File( localRepoPath, "MJAR-82-1.0-SNAPSHOT.jar" ) );
     Commandline commandline = new Commandline();
     commandline.setExecutable( "java" );
     commandline.setWorkingDirectory( localRepoPath );
+    System.out.println(" localRepoPath " + localRepoPath );
     commandline.createArg().setLine( "-jar MJAR-82-1.0-SNAPSHOT.jar" );     
     CommandLineUtils.StringStreamConsumer consumer = new CommandLineUtils.StringStreamConsumer();
     int res = CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
