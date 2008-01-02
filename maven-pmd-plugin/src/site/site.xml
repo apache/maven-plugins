@@ -29,6 +29,7 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Remove Report" href="examples/removeReport.html"/>
+      <item name="Target JDK" href="examples/targetJdk.html"/>
       <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>
       <item name="Violation Checking" href="examples/violationChecking.html"/>
     </menu>
