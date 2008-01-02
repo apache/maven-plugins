@@ -21,24 +21,20 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -152,13 +148,20 @@ public abstract class AbstractFromConfigurationMojo
                                                                                    removeVersion ) );
             }
 
-            artifactItem.setNeedsProcessing( checkIfProcessingNeeded( artifactItem ) );
+            try
+            {
+                artifactItem.setNeedsProcessing( checkIfProcessingNeeded( artifactItem ) );
+            }
+            catch ( ArtifactFilterException e )
+            {
+                throw new MojoExecutionException (e.getMessage(),e);
+            }
         }
         return artifactItems;
     }
 
     private boolean checkIfProcessingNeeded( ArtifactItem item )
-        throws MojoExecutionException
+        throws MojoExecutionException, ArtifactFilterException
     {
         boolean result = false;
         if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "true" ) )
@@ -168,7 +171,7 @@ public abstract class AbstractFromConfigurationMojo
         else
         {
             ArtifactItemFilter filter = getMarkedArtifactFilter( item );
-            result = filter.okToProcess( item );
+            result = filter.isArtifactIncluded( item );
         }
         return result;
     }
@@ -310,7 +313,7 @@ public abstract class AbstractFromConfigurationMojo
         return result;
     }
 
-    private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
+   /* private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
                                          DependencyManagement dependencyManagement )
         throws MojoExecutionException
     {
@@ -342,7 +345,7 @@ public abstract class AbstractFromConfigurationMojo
             map = Collections.EMPTY_MAP;
         }
         return map;
-    }
+    }*/
 
     /**
      * @return Returns the artifactItems.

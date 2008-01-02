@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -274,8 +272,7 @@ public class AnalyzeDepMgt
             Dependency depFromDepMgt = (Dependency) depMgtMap.get( getArtifactManagementKey( dependencyArtifact ) );
             if ( depFromDepMgt != null )
             {
-                ArtifactVersion artifactVersion = new DefaultArtifactVersion( dependencyArtifact.getVersion() );
-
+               
                 //workaround for MNG-2961
                 dependencyArtifact.isSnapshot();
                 

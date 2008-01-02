@@ -26,6 +26,7 @@ package org.apache.maven.plugin.dependency.utils.filters;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -40,10 +41,16 @@ public class ResolveFileFilter
         super( true, true, true, handler );
     }
 
-    public boolean okToProcess( ArtifactItem item )
-        throws MojoExecutionException
+    public boolean isArtifactIncluded( ArtifactItem item ) throws ArtifactFilterException
     {
         handler.setArtifact( item.getArtifact() );
-        return ( !handler.isMarkerSet() );
+        try
+        {
+            return ( !handler.isMarkerSet() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            throw new ArtifactFilterException( e.getMessage(),e);
+        }
     }
 }

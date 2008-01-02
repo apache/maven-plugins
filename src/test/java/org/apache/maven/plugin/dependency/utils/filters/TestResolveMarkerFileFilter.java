@@ -36,6 +36,7 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author brianf
@@ -72,7 +73,7 @@ public class TestResolveMarkerFileFilter
     }
 
     public void testResolveFile()
-        throws MojoExecutionException, IOException
+        throws  IOException, ArtifactFilterException, MojoExecutionException
     {
         SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( outputFolder );
 
@@ -81,9 +82,9 @@ public class TestResolveMarkerFileFilter
 
         ResolveFileFilter filter = new ResolveFileFilter( handler );
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact) );
         handler.setMarker();
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact) );
     }
 
 }

@@ -27,9 +27,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * Goal that unpacks the project dependencies from the repository to a defined

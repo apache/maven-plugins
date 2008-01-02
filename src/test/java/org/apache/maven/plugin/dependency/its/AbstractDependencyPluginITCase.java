@@ -294,7 +294,8 @@ public abstract class AbstractDependencyPluginITCase
 
             try
             {
-                buildLogUrl = buildLog.toURL().toExternalForm();
+                
+                buildLogUrl = buildLog.toURI().toURL().toExternalForm();
             }
             catch ( MalformedURLException e )
             {

@@ -36,6 +36,7 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author brianf
@@ -71,31 +72,31 @@ public class TestMarkerFileFilter
         DependencyTestUtils.removeDirectory( outputFolder );
     }
 
-    public void testMarkerFile()
-        throws MojoExecutionException
+    public void testMarkerFile() throws ArtifactFilterException
+       
     {
         MarkerFileFilter filter = new MarkerFileFilter( true, true, false, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts, log );
+        Set result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
 
         filter.setOverWriteReleases( false );
         filter.setOverWriteSnapshots( false );
-        result = filter.filter( artifacts, log );
+        result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
     }
 
-    public void testMarkerSnapshots()
-        throws MojoExecutionException, IOException
+    public void testMarkerSnapshots() throws ArtifactFilterException, MojoExecutionException, IOException
+       
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getSnapshotArtifact(), outputFolder );
         handler.setMarker();
 
         MarkerFileFilter filter = new MarkerFileFilter( true, false, false, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts, log );
+        Set result = filter.filter( artifacts );
         assertEquals( 1, result.size() );
 
         filter.setOverWriteSnapshots( true );
-        result = filter.filter( artifacts, log );
+        result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
         assertTrue( handler.clearMarker() );
         DependencyTestUtils.removeDirectory( outputFolder );
@@ -103,18 +104,18 @@ public class TestMarkerFileFilter
     }
 
     public void testMarkerRelease()
-        throws MojoExecutionException, IOException
+        throws IOException, ArtifactFilterException, MojoExecutionException
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getReleaseArtifact(), outputFolder );
         handler.setMarker();
 
         MarkerFileFilter filter = new MarkerFileFilter( false, false, false,
                                                         new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( artifacts, log );
+        Set result = filter.filter( artifacts);
         assertEquals( 1, result.size() );
 
         filter.setOverWriteReleases( true );
-        result = filter.filter( artifacts, log );
+        result = filter.filter( artifacts);
         assertEquals( 2, result.size() );
 
         assertTrue( handler.clearMarker() );
@@ -123,7 +124,7 @@ public class TestMarkerFileFilter
     }
 
     public void testMarkerTimestamp()
-        throws MojoExecutionException, IOException
+        throws IOException, MojoExecutionException, ArtifactFilterException
     {
         DependencyArtifactStubFactory fileFact = new DependencyArtifactStubFactory( outputFolder, true );
         Artifact snap = fileFact.getSnapshotArtifact();
@@ -135,12 +136,12 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
         MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
-        Set result = filter.filter( tempArtifacts, log );
+        Set result = filter.filter( tempArtifacts);
         assertEquals( 2, result.size() );
 
         snap.getFile().setLastModified( snap.getFile().lastModified() - 10000 );
 
-        result = filter.filter( tempArtifacts, log );
+        result = filter.filter( tempArtifacts );
         assertEquals( 1, result.size() );
 
         assertTrue( handler.clearMarker() );
