@@ -8,7 +8,7 @@ to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
@@ -16,7 +16,6 @@ software distributed under the License is distributed on an
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
-
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
@@ -29,11 +28,19 @@ under the License.
   <packaging>maven-plugin</packaging>
   <name>Maven PMD Plugin</name>
   <version>2.3-SNAPSHOT</version>
-  <inceptionYear>2005</inceptionYear>
+  <description>
+    A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
+    fragments,
+    as well as being able to fail the build based on these metrics.
+  </description>
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MPMD</url>
   </issueManagement>
+  <inceptionYear>2005</inceptionYear>
   <mailingLists>
         <!-- duplication from maven-plugins pom - temporary until they inherit properly
     -->
@@ -86,14 +93,11 @@ under the License.
       <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
     </mailingList>
   </mailingLists>
-  <description>
-    A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
-    fragments,
-    as well as being able to fail the build based on these metrics.
-  </description>
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
+  <contributors>
+    <contributor>
+      <name>John Allen</name>
+    </contributor>
+  </contributors>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -101,19 +105,9 @@ under the License.
       <version>2.0</version>
     </dependency>
     <dependency>
-      <groupId>pmd</groupId>
-      <artifactId>pmd-jdk14</artifactId>
-      <version>4.1.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -122,16 +116,20 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
       <version>1.0-alpha-4</version>
     </dependency>
+    <dependency>
+      <groupId>pmd</groupId>
+      <artifactId>pmd-jdk14</artifactId>
+      <version>4.1.1</version>
+    </dependency>
   </dependencies>
-  <contributors>
-    <contributor>
-      <name>John Allen</name>
-    </contributor>
-  </contributors>
-
   <reporting>
     <plugins>
       <plugin>
@@ -146,4 +144,3 @@ under the License.
     </plugins>
   </reporting>
 </project>
-
