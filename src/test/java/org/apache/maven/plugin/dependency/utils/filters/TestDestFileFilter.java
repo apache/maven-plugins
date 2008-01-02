@@ -36,6 +36,7 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author brianf
@@ -92,80 +93,80 @@ public class TestDestFileFilter
     }
 
     public void testDestFileRelease()
-        throws MojoExecutionException, IOException
+        throws  IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getReleaseArtifact();
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact );
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact) );
 
         filter.overWriteReleases = true;
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileSnapshot()
-        throws MojoExecutionException, IOException
+        throws  IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact );
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileStripVersion()
-        throws MojoExecutionException, IOException
+        throws  IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
         filter.removeVersion = true;
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact) );
         createFile( artifact, false, false, true );
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileSubPerArtifact()
-        throws MojoExecutionException, IOException
+        throws  IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
         filter.useSubDirectoryPerArtifact = true;
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact, true, false, false );
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileSubPerType()
-        throws MojoExecutionException, IOException
+        throws MojoExecutionException, IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
         filter.useSubDirectoryPerType = true;
 
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact) );
         createFile( artifact, false, true, false );
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileOverwriteIfNewer()
-        throws MojoExecutionException, IOException
+        throws MojoExecutionException, IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
 
@@ -176,19 +177,19 @@ public class TestDestFileFilter
         filter.overWriteIfNewer = true;
 
         // should pass because the file doesn't exist yet.
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact) );
 
         // create the file in the destination
         File destFile = createFile( artifact, false, false, false );
 
         // set the last modified timestamp to be older than the source
         destFile.setLastModified( artifactFile.lastModified() - 1000 );
-        assertTrue( filter.okToProcess( artifact, log ) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
 
         // now set the last modified timestamp to be newer than the source
         destFile.setLastModified( artifactFile.lastModified() + 1000 );
 
-        assertFalse( filter.okToProcess( artifact, log ) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testGettersSetters()

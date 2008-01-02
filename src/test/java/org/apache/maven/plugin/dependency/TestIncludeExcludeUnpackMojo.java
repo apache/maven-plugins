@@ -13,7 +13,6 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
-import org.apache.maven.project.MavenProject;
 
 public class TestIncludeExcludeUnpackMojo 
 	extends AbstractDependencyMojoTestCase
@@ -49,8 +48,7 @@ public class TestIncludeExcludeUnpackMojo
         list.add( item );
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
-        MavenProject project = mojo.getProject();
-
+        
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
