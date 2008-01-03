@@ -109,7 +109,7 @@ public class TestBuildClasspathMojo
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
-        MavenProject project = mojo.getProject();
+
         ArtifactRepository local = new StubArtifactRepository(stubFactory.getWorkingDir().getPath());
         mojo.setLocal( local );
         
