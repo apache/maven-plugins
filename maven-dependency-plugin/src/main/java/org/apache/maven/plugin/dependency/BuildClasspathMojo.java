@@ -35,12 +35,12 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * This goal will output a classpath string of dependencies from the local
- * repository to a file or log.
+ * This goal will output a classpath string of dependencies from the local repository to a file or log.
  * 
  * @goal build-classpath
  * @requiresDependencyResolution test
@@ -63,71 +63,81 @@ public class BuildClasspathMojo
     private boolean stripVersion = false;
 
     /**
-     * The prefix to prepend on each dependent artifact. If undefined, the
-     * paths refer to the actual files store in the local repository (the
-     * stipVersion parameter does nothing then).
+     * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
+     * local repository (the stipVersion parameter does nothing then).
      * 
      * @parameter expression="${mdep.prefix}"
      */
     private String prefix;
 
     /**
-     * The file to write the classpath string. If undefined, it just prints the
-     * classpath as [INFO].
+     * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      * 
      * @parameter expression="${mdep.cpFile}"
      */
     private File cpFile;
 
     /**
-     * If 'true', it skips the up-to-date-check, and always regenerates the
-     * classpath file.
+     * If 'true', it skips the up-to-date-check, and always regenerates the classpath file.
      * 
      * @parameter default-value="false" expression="${mdep.regenerateFile}"
      */
     private boolean regenerateFile;
 
     /**
-     * Override the char used between the paths. This field is initialized to
-     * contain the first character of the value of the system property
-     * file.separator. On UNIX systems the value of this field is '/'; on
-     * Microsoft Windows systems it is '\'. The default is File.separator
+     * Override the char used between the paths. This field is initialized to contain the first character of the value
+     * of the system property file.separator. On UNIX systems the value of this field is '/'; on Microsoft Windows
+     * systems it is '\'. The default is File.separator
+     * 
      * @since 2.0-alpha-5
      * @parameter default-value="" expression="${mdep.fileSeparator}"
      */
     private String fileSeparator;
 
     /**
-     * Override the char used between path folders. The system-dependent
-     * path-separator character. This field is initialized to contain the first
-     * character of the value of the system property path.separator. This
-     * character is used to separate filenames in a sequence of files given as a
-     * path list. On UNIX systems, this character is ':'; on Microsoft Windows
-     * systems it is ';'.
+     * Override the char used between path folders. The system-dependent path-separator character. This field is
+     * initialized to contain the first character of the value of the system property path.separator. This character is
+     * used to separate filenames in a sequence of files given as a path list. On UNIX systems, this character is ':';
+     * on Microsoft Windows systems it is ';'.
+     * 
      * @since 2.0-alpha-5
      * @parameter default-value="" expression="${mdep.pathSeparator}"
      */
     private String pathSeparator;
-    
+
     /**
-     * Replace the absolute path to the local repo with this property. This field is ignored
-     * it prefix is declared.
+     * Replace the absolute path to the local repo with this property. This field is ignored it prefix is declared. The
+     * value will be forced to "${M2_REPO}" if no value is provided AND the attach flag is true.
+     * 
      * @since 2.0-alpha-5
      * @parameter default-value="" expression="${mdep.localRepoProperty}"
      */
     private String localRepoProperty;
+
+    /**
+     * Attach the classpath file to the main artifact so it can be installed and deployed.
+     * 
+     * @since 2.0-alpha-5
+     * @parameter default-value=false
+     */
+    boolean attach;
+
+    /**
+     * Maven ProjectHelper
+     * 
+     * @component
+     * @readonly
+     */
+    private MavenProjectHelper projectHelper;
 
     boolean isFileSepSet = true;
 
     boolean isPathSepSet = true;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * calling copyArtifact.
+     * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
      * 
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     * 
+     * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
@@ -151,6 +161,12 @@ public class BuildClasspathMojo
         else
         {
             isPathSepSet = true;
+        }
+
+        //don't allow them to have absolute paths when they attach.
+        if ( attach && StringUtils.isEmpty( localRepoProperty ) )
+        {
+            localRepoProperty = "${M2_REPO}";
         }
 
         Set artifacts = getResolvedDependencies( true );
@@ -201,13 +217,26 @@ public class BuildClasspathMojo
         {
             if ( regenerateFile || !isUpdToDate( cpString ) )
             {
-                storeClasspathFile( cpString );
+                storeClasspathFile( cpString, cpFile );
             }
             else
             {
-                this.getLog().info( "Skipped writting classpath file '" + cpFile + "'.  No changes found." );
+                this.getLog().info( "Skipped writing classpath file '" + cpFile + "'.  No changes found." );
             }
         }
+        if ( attach )
+        {
+            attachFile( cpString );
+        }
+    }
+
+    protected void attachFile( String cpString )
+        throws MojoExecutionException
+    {
+        File attachedFile = new File( project.getBuild().getDirectory(), "classpath" );
+        storeClasspathFile( cpString, attachedFile );
+
+        projectHelper.attachArtifact( project, attachedFile, "classpath" );
     }
 
     /**
@@ -221,8 +250,8 @@ public class BuildClasspathMojo
         if ( prefix == null )
         {
             String file = art.getFile().getPath();
-            //substitute the property for the local repo path to make the classpath file portable.
-            if (StringUtils.isNotEmpty( localRepoProperty))
+            // substitute the property for the local repo path to make the classpath file portable.
+            if ( StringUtils.isNotEmpty( localRepoProperty ) )
             {
                 file = StringUtils.replace( file, local.getBasedir(), localRepoProperty );
             }
@@ -238,13 +267,11 @@ public class BuildClasspathMojo
     }
 
     /**
-     * Checks that new classpath differs from that found inside the old
-     * classpathFile.
+     * Checks that new classpath differs from that found inside the old classpathFile.
      * 
      * @param cpString
-     * @return true if the specified classpath equals to that found inside the
-     *         file, false otherwise (including when file does not exists but
-     *         new classpath does).
+     * @return true if the specified classpath equals to that found inside the file, false otherwise (including when
+     *         file does not exists but new classpath does).
      */
     private boolean isUpdToDate( String cpString )
     {
@@ -264,27 +291,26 @@ public class BuildClasspathMojo
     /**
      * It stores the specified string into that file.
      * 
-     * @param cpString
-     *            the string to be written into the file.
+     * @param cpString the string to be written into the file.
      * @throws MojoExecutionException
      */
-    private void storeClasspathFile( String cpString )
+    private void storeClasspathFile( String cpString, File out )
         throws MojoExecutionException
     {
         try
         {
-            Writer w = new BufferedWriter( new FileWriter( cpFile ) );
+            Writer w = new BufferedWriter( new FileWriter( out ) );
 
             try
             {
                 w.write( cpString );
 
-                getLog().info( "Wrote classpath file '" + cpFile + "'." );
+                getLog().info( "Wrote classpath file '" + out + "'." );
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( "Error while writting to classpath file '" + cpFile + "': "
-                    + ex.toString(), ex );
+                throw new MojoExecutionException( "Error while writting to classpath file '" + cpFile + "': " +
+                    ex.toString(), ex );
             }
             finally
             {
@@ -293,17 +319,16 @@ public class BuildClasspathMojo
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( "Error while opening/closing classpath file '" + cpFile + "': "
-                + ex.toString(), ex );
+            throw new MojoExecutionException( "Error while opening/closing classpath file '" + cpFile + "': " +
+                ex.toString(), ex );
         }
     }
 
     /**
-     * Reads into a string the file specified by the mojo param 'cpFile'.
-     * Assumes, the instance variable 'cpFile' is not null.
+     * Reads into a string the file specified by the mojo param 'cpFile'. Assumes, the instance variable 'cpFile' is not
+     * null.
      * 
-     * @return the string contained in the classpathFile, if exists, or null
-     *         ortherwise.
+     * @return the string contained in the classpathFile, if exists, or null ortherwise.
      * @throws MojoExecutionException
      */
     protected String readClasspathFile()
@@ -339,18 +364,13 @@ public class BuildClasspathMojo
     }
 
     /**
-     * Compares artifacts lexicographically, using pattern
-     * [group_id][artifact_id][version].
+     * Compares artifacts lexicographically, using pattern [group_id][artifact_id][version].
      * 
-     * @param arg1
-     *            first object
-     * @param arg2
-     *            second object
-     * @return the value <code>0</code> if the argument string is equal to
-     *         this string; a value less than <code>0</code> if this string is
-     *         lexicographically less than the string argument; and a value
-     *         greater than <code>0</code> if this string is lexicographically
-     *         greater than the string argument.
+     * @param arg1 first object
+     * @param arg2 second object
+     * @return the value <code>0</code> if the argument string is equal to this string; a value less than
+     *         <code>0</code> if this string is lexicographically less than the string argument; and a value greater
+     *         than <code>0</code> if this string is lexicographically greater than the string argument.
      */
     public int compare( Object arg1, Object arg2 )
     {
@@ -397,8 +417,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param theCpFile
-     *            the cpFile to set
+     * @param theCpFile the cpFile to set
      */
     public void setCpFile( File theCpFile )
     {
@@ -414,8 +433,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param theFileSeparator
-     *            the fileSeparator to set
+     * @param theFileSeparator the fileSeparator to set
      */
     public void setFileSeparator( String theFileSeparator )
     {
@@ -431,8 +449,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param thePathSeparator
-     *            the pathSeparator to set
+     * @param thePathSeparator the pathSeparator to set
      */
     public void setPathSeparator( String thePathSeparator )
     {
@@ -448,8 +465,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param thePrefix
-     *            the prefix to set
+     * @param thePrefix the prefix to set
      */
     public void setPrefix( String thePrefix )
     {
@@ -465,8 +481,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param theRegenerateFile
-     *            the regenerateFile to set
+     * @param theRegenerateFile the regenerateFile to set
      */
     public void setRegenerateFile( boolean theRegenerateFile )
     {
@@ -482,8 +497,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param theStripVersion
-     *            the stripVersion to set
+     * @param theStripVersion the stripVersion to set
      */
     public void setStripVersion( boolean theStripVersion )
     {
