@@ -57,5 +57,4 @@ extends ArtifactStubFactory
         }
         return list;
     }
-
  }
