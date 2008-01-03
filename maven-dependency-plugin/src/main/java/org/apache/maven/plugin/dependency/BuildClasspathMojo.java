@@ -72,11 +72,19 @@ public class BuildClasspathMojo
 
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
-     * 
+     * This parameter is deprecated. Use outputFile instead.
      * @parameter expression="${mdep.cpFile}"
+     * @deprecated use outputFile instead
+     * @since 2.0-alpha-5
      */
     private File cpFile;
 
+    /**
+     * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
+     * @parameter expression="${mdep.outputFile}"
+     */
+    private File outputFile;
+    
     /**
      * If 'true', it skips the up-to-date-check, and always regenerates the classpath file.
      * 
@@ -152,6 +160,13 @@ public class BuildClasspathMojo
     public void execute()
         throws MojoExecutionException
     {
+        
+        if (cpFile != null)
+        {
+            getLog().warn( "The parameter cpFile is deprecated. Use outputFile instead." );
+            this.outputFile = cpFile;
+        }
+        
         // initialize the separators.
         if ( StringUtils.isEmpty( fileSeparator ) )
         {
@@ -223,7 +238,7 @@ public class BuildClasspathMojo
             cpString = "classpath="+ cpString;
         }
         
-        if ( cpFile == null )
+        if ( outputFile == null )
         {
             getLog().info( "Dependencies classpath:\n" + cpString );
         }
@@ -231,11 +246,11 @@ public class BuildClasspathMojo
         {
             if ( regenerateFile || !isUpdToDate( cpString ) )
             {
-                storeClasspathFile( cpString, cpFile );
+                storeClasspathFile( cpString, outputFile );
             }
             else
             {
-                this.getLog().info( "Skipped writing classpath file '" + cpFile + "'.  No changes found." );
+                this.getLog().info( "Skipped writing classpath file '" + outputFile + "'.  No changes found." );
             }
         }
         if ( attach )
@@ -296,7 +311,7 @@ public class BuildClasspathMojo
         }
         catch ( Exception ex )
         {
-            this.getLog().warn( "Error while reading old classpath file '" + cpFile + "' for up-to-date check: " + ex );
+            this.getLog().warn( "Error while reading old classpath file '" + outputFile + "' for up-to-date check: " + ex );
 
             return false;
         }
@@ -345,7 +360,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * Reads into a string the file specified by the mojo param 'cpFile'. Assumes, the instance variable 'cpFile' is not
+     * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable 'outputFile' is not
      * null.
      * 
      * @return the string contained in the classpathFile, if exists, or null ortherwise.
@@ -354,18 +369,18 @@ public class BuildClasspathMojo
     protected String readClasspathFile()
         throws IOException
     {
-        if ( cpFile == null )
+        if ( outputFile == null )
         {
             throw new IllegalArgumentException(
-                                                "The cpFile parameter cannot be null if the file is intended to be read." );
+                                                "The outputFile parameter cannot be null if the file is intended to be read." );
         }
 
-        if ( !cpFile.isFile() )
+        if ( !outputFile.isFile() )
         {
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        BufferedReader r = new BufferedReader( new FileReader( cpFile ) );
+        BufferedReader r = new BufferedReader( new FileReader( outputFile ) );
 
         try
         {
@@ -429,19 +444,19 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @return the cpFile
+     * @return the outputFile
      */
     public File getCpFile()
     {
-        return this.cpFile;
+        return this.outputFile;
     }
 
     /**
-     * @param theCpFile the cpFile to set
+     * @param theCpFile the outputFile to set
      */
     public void setCpFile( File theCpFile )
     {
-        this.cpFile = theCpFile;
+        this.outputFile = theCpFile;
     }
 
     /**

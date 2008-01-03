@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.testing.SilentLog;
 
 public class TestDependencyStatusSets
     extends AbstractDependencyMojoTestCase
@@ -41,41 +39,21 @@ public class TestDependencyStatusSets
     public void testDependencyStatusSettersGetters()
     {
         /*
-         * DependencyStatusSets dss = new DependencyStatusSets();
-         * 
-         * Set set = new HashSet();
-         * 
-         * dss.setResolvedDependencies( set ); assertSame( set,
-         * dss.getResolvedDependencies() );
-         * 
-         * set = new HashSet();
-         * 
-         * dss.setUnResolvedDependencies( set ); assertSame( set,
-         * dss.getUnResolvedDependencies() );
-         * 
-         * set = new HashSet();
-         * 
-         * dss.setSkippedDependencies( set ); assertSame( set,
-         * dss.getSkippedDependencies() );
-         * 
-         * assertNotSame( dss.getResolvedDependencies(),
-         * dss.getSkippedDependencies() ); assertNotSame(
-         * dss.getResolvedDependencies(), dss.getUnResolvedDependencies() );
-         * assertNotSame( dss.getSkippedDependencies(),
-         * dss.getUnResolvedDependencies() );
+         * DependencyStatusSets dss = new DependencyStatusSets(); Set set = new HashSet(); dss.setResolvedDependencies(
+         * set ); assertSame( set, dss.getResolvedDependencies() ); set = new HashSet(); dss.setUnResolvedDependencies(
+         * set ); assertSame( set, dss.getUnResolvedDependencies() ); set = new HashSet(); dss.setSkippedDependencies(
+         * set ); assertSame( set, dss.getSkippedDependencies() ); assertNotSame( dss.getResolvedDependencies(),
+         * dss.getSkippedDependencies() ); assertNotSame( dss.getResolvedDependencies(), dss.getUnResolvedDependencies() );
+         * assertNotSame( dss.getSkippedDependencies(), dss.getUnResolvedDependencies() );
          */
     }
 
     public void testDependencyStatusConstructor()
     {
         /*
-         * Set r = new HashSet(); Set u = new HashSet(); Set s = new HashSet();
-         * 
-         * DependencyStatusSets dss = new DependencyStatusSets( r, u, s );
-         * 
-         * assertSame( r, dss.getResolvedDependencies() ); assertSame( u,
-         * dss.getUnResolvedDependencies() ); assertSame( s,
-         * dss.getSkippedDependencies() );
+         * Set r = new HashSet(); Set u = new HashSet(); Set s = new HashSet(); DependencyStatusSets dss = new
+         * DependencyStatusSets( r, u, s ); assertSame( r, dss.getResolvedDependencies() ); assertSame( u,
+         * dss.getUnResolvedDependencies() ); assertSame( s, dss.getSkippedDependencies() );
          */
     }
 
@@ -103,43 +81,42 @@ public class TestDependencyStatusSets
     {
         // TODO: implement logger to check correct output
         // this test is just looking for unexpected exceptions.
-        Log log = new SilentLog();
 
         DependencyStatusSets dss = new DependencyStatusSets();
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( artifacts, null, null );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( null, artifacts, null );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( null, null, artifacts );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( artifacts, artifacts, null );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( null, artifacts, artifacts );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( artifacts, null, artifacts );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
+        dss.getOutput( false );
+        dss.getOutput( true );
 
         dss = new DependencyStatusSets( artifacts, artifacts, artifacts );
-        dss.logStatus( log, false );
-        dss.logStatus( log, true );
-        dss.logStatus( log, false, true );
-        dss.logStatus( log, true, true );
-        dss.logStatus( log, false, false );
-        dss.logStatus( log, true, false );
+        dss.getOutput( false );
+        dss.getOutput( true );
+        dss.getOutput( false, true );
+        dss.getOutput( true, true );
+        dss.getOutput( false, false );
+        dss.getOutput( true, false );
 
     }
 }

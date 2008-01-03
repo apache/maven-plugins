@@ -29,7 +29,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -137,18 +136,19 @@ public class DependencyStatusSets
         }
     }
 
-    public void logStatus( Log log, boolean outputAbsoluteArtifactFilename )
+    public String getOutput(boolean outputAbsoluteArtifactFilename )
     {
-        logStatus( log, outputAbsoluteArtifactFilename, true );
+        return getOutput(outputAbsoluteArtifactFilename, true );
     }
 
-    public void logStatus( Log log, boolean outputAbsoluteArtifactFilename, boolean outputScope )
+    public String getOutput(boolean outputAbsoluteArtifactFilename, boolean outputScope )
     {
-        log.info( "" );
-        log.info( "The following files have been resolved: " );
+        StringBuffer sb = new StringBuffer();
+        sb.append( "\n" );
+        sb.append( "The following files have been resolved:\n" );
         if ( this.resolvedDependencies == null || this.resolvedDependencies.isEmpty() )
         {
-            log.info( "   none" );
+            sb.append( "   none\n" );
         }
         else
         {
@@ -172,34 +172,35 @@ public class DependencyStatusSets
                 
                 String id = outputScope ? artifact.toString() : artifact.getId();
                 
-                log.info( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) );
+                sb.append( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) +"\n");
             }
         }
 
         if ( this.skippedDependencies != null && !this.skippedDependencies.isEmpty() )
         {
-            log.info( "" );
-            log.info( "The following files where skipped: " );
+            sb.append( "\n" );
+            sb.append( "The following files where skipped:\n" );
             SortedSet sortedSkippedDependencies = new TreeSet();
             sortedSkippedDependencies.addAll( this.skippedDependencies );
             for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )
             {
-                log.info( "   " + ( (Artifact) i.next() ).getId() );
+                sb.append( "   " + ( (Artifact) i.next() ).getId()+"\n" );
             }
         }
 
         if ( this.unResolvedDependencies != null && !this.unResolvedDependencies.isEmpty() )
         {
-            log.info( "" );
-            log.info( "The following files have NOT been resolved: " );
+            sb.append( "\n" );
+            sb.append( "The following files have NOT been resolved:\n" );
             SortedSet sortedUnResolvedDependencies = new TreeSet();
             sortedUnResolvedDependencies.addAll( this.unResolvedDependencies );
             for ( Iterator i = sortedUnResolvedDependencies.iterator(); i.hasNext(); )
             {
-                log.info( "   " + ( (Artifact) i.next() ).getId() );
+                sb.append( "   " + ( (Artifact) i.next() ).getId()+"\n" );
             }
         }
-        log.info( "" );
+        sb.append("\n");
 
+        return sb.toString();
     }
 }
