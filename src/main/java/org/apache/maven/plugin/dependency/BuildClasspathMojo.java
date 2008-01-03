@@ -121,6 +121,14 @@ public class BuildClasspathMojo
      * @parameter default-value=false
      */
     boolean attach;
+    
+    /**
+     * Write out the classpath in a format compatible with filtering (classpath=xxxxx)
+     * 
+     * @since 2.0-alpha-5
+     * @parameter default-value=false expression="${mdep.outputFilterFile}"
+     */
+    boolean outputFilterFile;
 
     /**
      * Maven ProjectHelper
@@ -209,6 +217,12 @@ public class BuildClasspathMojo
             cpString = cpString.replaceAll( separator, fileSeparator );
         }
 
+        //make the string valid for filtering
+        if (outputFilterFile)
+        {
+            cpString = "classpath="+ cpString;
+        }
+        
         if ( cpFile == null )
         {
             getLog().info( "Dependencies classpath:\n" + cpString );
@@ -297,9 +311,13 @@ public class BuildClasspathMojo
     private void storeClasspathFile( String cpString, File out )
         throws MojoExecutionException
     {
+        
+        //make sure the parent path exists.
+        out.getParentFile().mkdirs();
+        
         try
         {
-            out.mkdirs();
+           
             
             Writer w = new BufferedWriter( new FileWriter( out ) );
 
