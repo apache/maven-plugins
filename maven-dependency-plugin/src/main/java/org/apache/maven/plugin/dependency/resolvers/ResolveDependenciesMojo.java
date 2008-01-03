@@ -19,9 +19,12 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.    
  */
 
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -54,12 +57,9 @@ public class ResolveDependenciesMojo
     DependencyStatusSets results;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      * 
-     * @throws MojoExecutionException
-     *             with a message if an error occurs.
-     * 
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     public void execute()
         throws MojoExecutionException
@@ -67,7 +67,22 @@ public class ResolveDependenciesMojo
         // get sets of dependencies
         results = this.getDependencySets( false );
 
-        results.logStatus( getLog(), outputAbsoluteArtifactFilename, outputScope );
+        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope );
+        try
+        {
+            if ( outputFile == null )
+            {
+                DependencyUtil.log( output, getLog() );
+            }
+            else
+            {
+                DependencyUtil.write( output, outputFile, getLog() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException(e.getMessage(),e);
+        }
     }
 
     /**

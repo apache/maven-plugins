@@ -19,12 +19,14 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.    
  */
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -88,7 +90,22 @@ public class ResolveDependencySourcesMojo
             handler.setMarker();
         }
 
-        results.logStatus( getLog(), outputAbsoluteArtifactFilename, false );
+        String output = results.getOutput( outputAbsoluteArtifactFilename, false );
+        try
+        {
+            if ( outputFile == null )
+            {
+                DependencyUtil.log( output, getLog() );
+            }
+            else
+            {
+                DependencyUtil.write( output, outputFile, getLog() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException(e.getMessage(),e);
+        }
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()

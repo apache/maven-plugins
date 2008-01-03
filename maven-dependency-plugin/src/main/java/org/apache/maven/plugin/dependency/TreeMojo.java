@@ -19,11 +19,8 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +35,7 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
@@ -126,16 +124,24 @@ public class TreeMojo extends AbstractMojo
     /**
      * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
      * writing to the console.
-     * 
+     * @deprecated use outputFile instead.
      * @parameter expression="${output}"
      */
     private File output;
 
     /**
+     * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
+     * writing to the console.
+     * @parameter expression="${outputFile}"
+     * @since 2.0-alpha-5
+     */
+    private File outputFile;
+    
+    /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes. Note that this feature does not currently work due to MNG-3236.
      * 
-     * @since 2.0-alpha-6
+     * @since 2.0-alpha-5
      * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
      * 
      * @parameter expression="${scope}"
@@ -197,6 +203,12 @@ public class TreeMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        if (output != null)
+        {
+            getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
+            this.outputFile = output;
+        }
+        
         ArtifactFilter artifactFilter = createResolvingArtifactFilter();
 
         try
@@ -209,15 +221,15 @@ public class TreeMojo extends AbstractMojo
 
             String dependencyTreeString = serialiseDependencyTree( rootNode );
 
-            if ( output != null )
+            if ( outputFile != null )
             {
-                write( dependencyTreeString, output );
+                DependencyUtil.write( dependencyTreeString, outputFile, getLog() );
 
-                getLog().info( "Wrote dependency tree to: " + output );
+                getLog().info( "Wrote dependency tree to: " + outputFile );
             }
             else
             {
-                log( dependencyTreeString );
+                DependencyUtil.log( dependencyTreeString, getLog() );
             }
         }
         catch ( DependencyTreeBuilderException exception )
@@ -385,63 +397,5 @@ public class TreeMojo extends AbstractMojo
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
-    /**
-     * Writes the specified string to the specified file.
-     * 
-     * @param string
-     *            the string to write
-     * @param file
-     *            the file to write to
-     * @throws IOException
-     *             if an I/O error occurs
-     */
-    private void write( String string, File file ) throws IOException
-    {
-        file.getParentFile().mkdirs();
 
-        FileWriter writer = null;
-
-        try
-        {
-            writer = new FileWriter( file );
-
-            writer.write( string );
-        }
-        finally
-        {
-            if ( writer != null )
-            {
-                try
-                {
-                    writer.close();
-                }
-                catch ( IOException exception )
-                {
-                    getLog().error( "Cannot close file", exception );
-                }
-            }
-        }
-    }
-
-    /**
-     * Writes the specified string to the log at info level.
-     * 
-     * @param string
-     *            the string to write
-     * @throws IOException
-     *             if an I/O error occurs
-     */
-    private void log( String string ) throws IOException
-    {
-        BufferedReader reader = new BufferedReader( new StringReader( string ) );
-
-        String line;
-
-        while ( ( line = reader.readLine() ) != null )
-        {
-            getLog().info( line );
-        }
-
-        reader.close();
-    }
 }
