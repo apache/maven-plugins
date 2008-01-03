@@ -299,6 +299,8 @@ public class BuildClasspathMojo
     {
         try
         {
+            out.mkdirs();
+            
             Writer w = new BufferedWriter( new FileWriter( out ) );
 
             try
@@ -309,7 +311,7 @@ public class BuildClasspathMojo
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( "Error while writting to classpath file '" + cpFile + "': " +
+                throw new MojoExecutionException( "Error while writting to classpath file '" + out + "': " +
                     ex.toString(), ex );
             }
             finally
@@ -319,7 +321,7 @@ public class BuildClasspathMojo
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( "Error while opening/closing classpath file '" + cpFile + "': " +
+            throw new MojoExecutionException( "Error while opening/closing classpath file '" + out + "': " +
                 ex.toString(), ex );
         }
     }
