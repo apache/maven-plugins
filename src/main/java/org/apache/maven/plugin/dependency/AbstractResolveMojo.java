@@ -19,6 +19,7 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -47,7 +48,14 @@ public abstract class AbstractResolveMojo
      * @readonly
      */
     protected MavenProjectBuilder mavenProjectBuilder;
-
+    /**
+     * If specified, this parameter will cause the dependencies to be written to the path specified, instead of writing
+     * to the console.
+     * 
+     * @parameter expression="${outputFile}"
+     * @since 2.0-alpha-5
+     */
+    protected File outputFile;
     /**
      * This method resolves the dependency artifacts from the project.
      * 

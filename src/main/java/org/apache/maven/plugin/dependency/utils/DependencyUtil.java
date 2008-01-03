@@ -19,9 +19,14 @@ package org.apache.maven.plugin.dependency.utils;
  * under the License.    
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -160,5 +165,65 @@ public final class DependencyUtil
             }
         }
         return sb.toString();
+    }
+    
+    /**
+     * Writes the specified string to the specified file.
+     * 
+     * @param string
+     *            the string to write
+     * @param file
+     *            the file to write to
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public synchronized static void write( String string, File file, Log log ) throws IOException
+    {
+        file.getParentFile().mkdirs();
+
+        FileWriter writer = null;
+
+        try
+        {
+            writer = new FileWriter( file );
+
+            writer.write( string );
+        }
+        finally
+        {
+            if ( writer != null )
+            {
+                try
+                {
+                    writer.close();
+                }
+                catch ( IOException exception )
+                {
+                    log.error( "Cannot close file", exception );
+                }
+            }
+        }
+    }
+    
+    /**
+     * Writes the specified string to the log at info level.
+     * 
+     * @param string
+     *            the string to write
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public synchronized static void log( String string, Log log ) throws IOException
+    {
+        BufferedReader reader = new BufferedReader( new StringReader( string ) );
+
+        String line;
+
+        while ( ( line = reader.readLine() ) != null )
+        {
+            log.info( line );
+        }
+
+        reader.close();
     }
 }

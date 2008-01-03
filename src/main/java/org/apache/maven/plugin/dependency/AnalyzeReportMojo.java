@@ -22,6 +22,8 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -29,7 +31,6 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
-import org.apache.maven.doxia.sink.Sink;
 
 /**
  * Analyzes the dependencies of this project and produces a report that summarises which are: used and declared; used
