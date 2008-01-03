@@ -108,6 +108,14 @@ public class BuildClasspathMojo
      * @parameter default-value="" expression="${mdep.pathSeparator}"
      */
     private String pathSeparator;
+    
+    /**
+     * Replace the absolute path to the local repo with this property. This field is ignored
+     * it prefix is declared.
+     * @since 2.0-alpha-5
+     * @parameter default-value="" expression="${mdep.localRepoProperty}"
+     */
+    private String localRepoProperty;
 
     boolean isFileSepSet = true;
 
@@ -212,14 +220,19 @@ public class BuildClasspathMojo
     {
         if ( prefix == null )
         {
-
-            sb.append( art.getFile() );
+            String file = art.getFile().getPath();
+            //substitute the property for the local repo path to make the classpath file portable.
+            if (StringUtils.isNotEmpty( localRepoProperty))
+            {
+                file = StringUtils.replace( file, local.getBasedir(), localRepoProperty );
+            }
+            sb.append( file );
         }
         else
         {
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
-            sb.append( ( isFileSepSet ) ? this.fileSeparator : File.separator );
+            sb.append( File.separator );
             sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion ) );
         }
     }
@@ -475,5 +488,35 @@ public class BuildClasspathMojo
     public void setStripVersion( boolean theStripVersion )
     {
         this.stripVersion = theStripVersion;
+    }
+
+    public String getLocalRepoProperty()
+    {
+        return localRepoProperty;
+    }
+
+    public void setLocalRepoProperty( String localRepoProperty )
+    {
+        this.localRepoProperty = localRepoProperty;
+    }
+
+    public boolean isFileSepSet()
+    {
+        return isFileSepSet;
+    }
+
+    public void setFileSepSet( boolean isFileSepSet )
+    {
+        this.isFileSepSet = isFileSepSet;
+    }
+
+    public boolean isPathSepSet()
+    {
+        return isPathSepSet;
+    }
+
+    public void setPathSepSet( boolean isPathSepSet )
+    {
+        this.isPathSepSet = isPathSepSet;
     }
 }
