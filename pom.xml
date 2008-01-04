@@ -27,7 +27,7 @@ under the License.
   <artifactId>maven-pmd-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven PMD Plugin</name>
-  <version>2.4-SNAPSHOT</version>
+  <version>2.3-SNAPSHOT</version>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
     fragments,
@@ -103,6 +103,15 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/</url>
   </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.0.4</version>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
