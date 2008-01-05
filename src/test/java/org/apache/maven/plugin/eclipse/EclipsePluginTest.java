@@ -426,6 +426,15 @@ public class EclipsePluginTest
         testProject( "project-37" );
     }
 
+    /**
+     * MECLIPSE-56 : problem with encoding of non-ascii characters in pom.xml 
+     */
+    public void testMECLIPSE_56_encoding()
+        throws Exception
+    {
+        testProject( "MECLIPSE-56_encoding" );
+    }
+
     public void testProject38()
         throws Exception
     {
