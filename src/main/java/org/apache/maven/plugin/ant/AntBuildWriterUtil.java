@@ -569,7 +569,7 @@ public class AntBuildWriterUtil
         }
         addWrapAttribute( writer, "jar", "basedir", "${maven.build.outputDir}", 3 );
         addWrapAttribute( writer, "jar", "excludes", "**/package.html", 3 );
-        if ( getMavenJarPluginBasicOption( project, "archive//manifest", null ) != null )
+        if ( getMavenPluginOption( project, "maven-jar-plugin", "archive//manifest", null ) != null )
         {
             writer.startElement( "manifest" );
             writer.startElement( "attribute" );
