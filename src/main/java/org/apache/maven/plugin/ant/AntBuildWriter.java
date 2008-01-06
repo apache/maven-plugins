@@ -1130,7 +1130,8 @@ public class AntBuildWriter
                 if ( parentDirs != null )
                 {
                     writer.startElement( "mkdir" );
-                    writer.addAttribute( "dir", "${maven.repo.local}/" + parentDirs.getPath() );
+                    // Replace \ with / in the parent dir path
+                    writer.addAttribute( "dir", "${maven.repo.local}/" + parentDirs.getPath().replace( '\\', '/' ) );
                     writer.endElement(); // mkdir
                 }
 
