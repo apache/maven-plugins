@@ -204,7 +204,7 @@ public class AntBuildWriter
 
         addProperty( properties, "maven.settings.offline", String.valueOf( settings.isOffline() ) );
         addProperty( properties, "maven.settings.interactiveMode", String.valueOf( settings.isInteractiveMode() ) );
-        addProperty( properties, "maven.repo.local", localRepository.getAbsolutePath() );
+        addProperty( properties, "maven.repo.local", getLocalRepositoryPath() );
 
         // ----------------------------------------------------------------------
         // Project properties
@@ -500,7 +500,7 @@ public class AntBuildWriter
 
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.repo.local" );
-        writer.addAttribute( "value", localRepository.getAbsolutePath() );
+        writer.addAttribute( "value", getLocalRepositoryPath() );
         writer.endElement(); // property
 
         writer.startElement( "property" );
@@ -514,6 +514,26 @@ public class AntBuildWriter
         writer.endElement(); // property
 
         AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    /**
+     * Check if the local repository is in the default location:
+     * <code>${user.home}/.m2/repository</code>. If that is the case then return
+     * the path with the system property "user.home" in it. If not then just
+     * return the absolute path to the local repository.
+     */
+    private String getLocalRepositoryPath() {
+        String userHome = System.getProperty( "user.home" );
+        String defaultPath = ( userHome + "/.m2/repository" ).replace( '\\', '/' );
+        String actualPath = localRepository.getAbsolutePath().replace( '\\', '/' );
+        if( actualPath.equals( defaultPath ) )
+        {
+            return "${user.home}/.m2/repository";
+        }
+        else
+        {
+            return localRepository.getAbsolutePath();
+        }
     }
 
     /**
