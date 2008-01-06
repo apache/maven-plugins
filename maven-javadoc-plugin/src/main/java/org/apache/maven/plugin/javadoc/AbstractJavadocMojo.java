@@ -2490,10 +2490,17 @@ public abstract class AbstractJavadocMojo
 
                 if ( p.getUrl() != null )
                 {
-                    OfflineLink ol = new OfflineLink();
-                    ol.setUrl( p.getUrl() + "/apidocs" );
-                    ol.setLocation( p.getBasedir().getAbsolutePath() + "/" + javadocDirRelative );
-                    offlineLinksList.add( ol );
+                    String url = p.getUrl() + "/apidocs";
+                    File location = new File( p.getBasedir(), javadocDirRelative );
+
+                    if ( location.exists() )
+                    {
+                        OfflineLink ol = new OfflineLink();
+                        ol.setUrl( url );
+                        ol.setLocation( location.getAbsolutePath() );
+
+                        offlineLinksList.add( ol );
+                    }
                 }
             }
         }
