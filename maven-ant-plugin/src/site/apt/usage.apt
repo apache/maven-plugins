@@ -31,7 +31,7 @@ Usage
 
 * Generate Ant build files
 
- To generate files, you should execute the ant goal of the Ant Plugin, i.e.:
+ To generate files, you execute the <<<ant>>> goal of the Ant Plugin, i.e.:
 
 +-----+
 mvn ant:ant
@@ -41,14 +41,15 @@ mvn ant:ant
 
 +-----+
 yourProjectBaseDir
-  |-- build.xml
-  `-- maven-build.xml
-  `-- maven-build.properties
+|-- build.xml
+|-- maven-build.xml
+`-- maven-build.properties
 +-----+
 
 ** build.xml
 
- The <<<build.xml>>> is a generic Ant build file. It could be updated by the user. Here is the out-of-box <<<build.xml>>>:
+ The <<<build.xml>>> file is a generic Ant build file. It can be updated by the user.
+ Here is the out-of-box <<<build.xml>>>:
 
 +-----+
 <?xml version="1.0" encoding="UTF-8"?>
@@ -75,8 +76,9 @@ yourProjectBaseDir
 </project>
 +-----+
 
- <<Note>>: By default, the <<<build.xml>>> is not overwrited when calling <<<mvn ant:ant>>>. If you want to overwrite it,
- you should execute the ant goal with the <<<overwrite>>> parameter, i.e.:
+ <<Note>>: By default, the <<<build.xml>>> file is not overwritten when calling <<<mvn ant:ant>>>.
+ If you want to overwrite it,
+ you should execute the <<<ant>>> goal with the <<<overwrite>>> parameter, i.e.:
 
 +-----+
 mvn ant:ant -Doverwrite=true
@@ -84,13 +86,17 @@ mvn ant:ant -Doverwrite=true
 
 ** maven-build.xml
 
- The <<<maven-build.xml>>> is an Ant build file for the Maven project. It contains several targets to clean, compile,
- test, packaging the Ant project and the associated javadoc.
+ The <<<maven-build.xml>>> file is an Ant build file for your project. It contains several targets to clean, compile,
+ test and package your project and also to create javadoc. To see which Ant targets are available execute this command:
 
- <<Note>>: <<DO NOT EDIT maven-build.xml!>> It could be overwrite when calling <<<mvn ant:ant>>>.
++-----+
+ant -projecthelp
++-----+
+
+ <<Note>>: <<DO NOT EDIT maven-build.xml!>> It will be overwritten when calling <<<mvn ant:ant>>>.
 
 ** maven-build.properties
 
- The <<<maven-build.properties>>> contains several properties used by the <<<maven-build.xml>>> build file.
+ The <<<maven-build.properties>>> file contains several properties used by the <<<maven-build.xml>>> build file.
 
- <<Note>>: <<DO NOT EDIT maven-build.properties!>> It could be overwrite when calling <<<mvn ant:ant>>>.
+ <<Note>>: <<DO NOT EDIT maven-build.properties!>> It will be overwritten when calling <<<mvn ant:ant>>>.

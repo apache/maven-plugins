@@ -26,10 +26,10 @@
 
 Using generated Ant build files
 
- <<Note>>: You should update the <<<build.xml>>> and <<NOT>> the <<<maven-build.xml>>>.
+ <<Note>>: If you want to add your own Ant targets, you should add them to <<<build.xml>>> and <<NOT>> <<<maven-build.xml>>>.
 
- The <<<build.xml>>> uses the {{{http://ant.apache.org/manual/CoreTasks/import.html}import task}} of Ant.
- So, you could overwrite generated targets in the <<<build.xml>>>. For instance:
+ The <<<build.xml>>> file uses the {{{http://ant.apache.org/manual/CoreTasks/import.html}import task}} of Ant.
+ So, you can override the generated targets in the <<<build.xml>>> file. For instance:
 
 +-----+
 <?xml version="1.0" encoding="UTF-8"?>
@@ -55,7 +55,7 @@ Using generated Ant build files
   </target>
 
   <!-- ====================================================================== -->
-  <!-- Overwrite the jar target from maven-build.xml                          -->
+  <!-- Override the jar target from maven-build.xml                           -->
   <!-- ====================================================================== -->
 
   <target name="jar">

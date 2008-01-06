@@ -51,21 +51,21 @@ public class AntMojo
     private MavenProject project;
 
     /**
-     * Used for resolving artifacts
+     * Used for resolving artifacts.
      *
      * @component
      */
     private ArtifactResolver resolver;
 
     /**
-     * Factory for creating artifact objects
+     * Factory for creating artifact objects.
      *
      * @component
      */
     private ArtifactFactory factory;
 
     /**
-     * The local repository where the artifacts are located
+     * The local repository where the artifacts are located.
      *
      * @parameter expression="${localRepository}"
      * @required
@@ -73,7 +73,7 @@ public class AntMojo
     private ArtifactRepository localRepository;
 
     /**
-     * The remote repositories where artifacts are located
+     * The remote repositories where artifacts are located.
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
@@ -89,7 +89,7 @@ public class AntMojo
     private Settings settings;
 
     /**
-     * Overwrite or not the <code>build.xml</code>
+     * Whether or not to overwrite the <code>build.xml</code> file.
      *
      * @parameter expression="${overwrite}" default-value="false"
      */
