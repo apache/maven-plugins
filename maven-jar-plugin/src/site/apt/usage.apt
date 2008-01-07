@@ -30,8 +30,8 @@
 Usage
 
  Some brief examples on how to use this plugin. If you want to use advanced
- configurations you should have a look at the Javadocs for
- {{{http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}MavenArchiveConfiguration}}.
+ configurations you should have a look at the documentation for
+ {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver}}.
 
 * How to build a jar file
 
