@@ -1,12 +1,12 @@
   ----
-  Maven 2 Deploy Plugin - Configurations
+  Deploy an artifact with a customized pom
   ------
   Allan Ramirez
   ------
   June 2006
   ------
 
-Deploy an artifact with a customed pom
+Deploy an artifact with a customized pom
 
   If there is already an existing pom and want it to be deployed together with the 3rd party artifact,
   set the <<pomFile>> parameter to the path of the pom.xml.

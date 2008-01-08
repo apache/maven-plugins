@@ -1,5 +1,5 @@
  ------
- Maven 2 Deploy Plugin
+ Deployment of artifacts in an external SSH command
  ------
  Jason van Zyl
  ------
