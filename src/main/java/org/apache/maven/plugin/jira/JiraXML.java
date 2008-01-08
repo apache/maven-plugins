@@ -94,9 +94,17 @@ public class JiraXML
         {
             issue.setSummary( currentElement );
         }
+        else if ( qName.equals( "type" ) )
+        {
+            issue.setType( currentElement );
+        }
         else if ( qName.equals( "link" ) && currentParent.equals( "item" ) )
         {
             issue.setLink( currentElement );
+        }
+        else if ( qName.equals( "priority" ) )
+        {
+            issue.setPriority( currentElement );
         }
         else if ( qName.equals( "status" ) )
         {
@@ -109,6 +117,22 @@ public class JiraXML
         else if ( qName.equals( "assignee" ) )
         {
             issue.setAssignee( currentElement );
+        }
+        else if ( qName.equals( "reporter" ) )
+        {
+            issue.setReporter( currentElement );
+        }
+        else if ( qName.equals( "version" ) )
+        {
+            issue.setVersion( currentElement );
+        }
+        else if ( qName.equals( "fixVersion" ) )
+        {
+            issue.setFixVersion( currentElement );
+        }
+        else if ( qName.equals( "component" ) )
+        {
+            issue.setComponent( currentElement );
         }
 
         currentElement = "";

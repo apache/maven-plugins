@@ -41,7 +41,7 @@ public class JiraMojo
 {
     /**
      * Output directory where the report will be placed.
-     * 
+     *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      * @readonly
@@ -50,7 +50,7 @@ public class JiraMojo
 
     /**
      * Path to the JIRA XML file, which will be parsed.
-     * 
+     *
      * @parameter expression="${project.build.directory}/jira-results.xml "
      * @required
      * @readonly
@@ -59,7 +59,7 @@ public class JiraMojo
 
     /**
      * Doxia Site Renderer.
-     * 
+     *
      * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
      * @required
      * @readonly
@@ -68,7 +68,7 @@ public class JiraMojo
 
     /**
      * The Maven Project.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -77,7 +77,7 @@ public class JiraMojo
 
     /**
      * Settings XML configuration.
-     * 
+     *
      * @parameter expression="${settings}"
      * @required
      * @readonly
@@ -86,7 +86,7 @@ public class JiraMojo
 
     /**
      * Maximum number of entries to be displayed by the JIRA Report.
-     * 
+     *
      * @parameter default-value=100
      *
      */
@@ -100,6 +100,16 @@ public class JiraMojo
      * @parameter default-value=""
      */
     private String filter;
+
+    /**
+     * Sets the fix version id(s) that you want to limit your report to include.
+     * These are JIRA's internal version ids, NOT the human readable display ones.
+     * Multiple fix versions can be separated by commas.
+     * If this is set to empty - that means all fix versions.
+     *
+     * @parameter default-value=""
+     */
+    private String fixVersionIds;
 
     /**
      * Sets the status(es) that you want to limit your report to include.
@@ -138,6 +148,17 @@ public class JiraMojo
     private String component;
 
     /**
+     * Sets the types(s) that you want to limit your report to include.
+     * Valid types are: <code>Bug</code>, <code>New Feature</code>,
+     * <code>Task</code>, <code>Improvement</code>, <code>Wish</code>,
+     * <code>Test</code> and <code>Sub-task</code>. Multiple
+     * values can be separated by commas.
+     *
+     * @parameter default-value=""
+     */
+    private String typeIds;
+
+    /**
      * Defines the JIRA username for authentication into a private JIRA installation.
      *
      * @parameter default-value=""
@@ -160,7 +181,7 @@ public class JiraMojo
 
     /**
      * Defines the http password for basic authentication into the JIRA webserver.
-     * 
+     *
      * @parameter default-value=""
      */
     private String webPassword;
@@ -252,6 +273,8 @@ public class JiraMojo
 
         jira.setComponent( component );
 
+        jira.setFixVersionIds( fixVersionIds );
+
         jira.setStatusIds( statusIds );
 
         jira.setResolutionIds( resolutionIds );
@@ -263,6 +286,8 @@ public class JiraMojo
         jira.setJiraUser( jiraUser );
 
         jira.setJiraPassword( jiraPassword );
+
+        jira.setTypeIds( typeIds );
 
         jira.setWebUser( webUser );
 
