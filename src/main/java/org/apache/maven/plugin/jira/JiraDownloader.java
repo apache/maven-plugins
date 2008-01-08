@@ -48,5 +48,13 @@ public final class JiraDownloader extends AbstractJiraDownloader
         priorityMap.put( "Major", "3" );
         priorityMap.put( "Minor", "4" );
         priorityMap.put( "Trivial", "5" );
+
+        typeMap.put( "Bug", "1" );
+        typeMap.put( "New Feature", "2" );
+        typeMap.put( "Task", "3" );
+        typeMap.put( "Improvement", "4" );
+        typeMap.put( "Wish", "5" );
+        typeMap.put( "Test", "6" );
+        typeMap.put( "Sub-task", "7" );
     }
 }
