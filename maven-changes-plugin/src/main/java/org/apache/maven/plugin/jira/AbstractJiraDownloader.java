@@ -63,6 +63,8 @@ public abstract class AbstractJiraDownloader
     private int nbEntriesMax;
     /** The filter to apply to query to JIRA. */
     private String filter;
+    /** Ids of fix versions to show, as comma separated string. */
+    private String fixVersionIds;
     /** Ids of status to show, as comma separated string. */
     private String statusIds;
     /** Ids of resolution to show, as comma separated string. */
@@ -71,6 +73,8 @@ public abstract class AbstractJiraDownloader
     private String priorityIds;
     /** The component to show. */
     private String component;
+    /** Ids of types to show, as comma separated string. */
+    private String typeIds;
     /** The username to log into JIRA. */
     private String jiraUser;
     /** The password to log into JIRA. */
@@ -89,6 +93,8 @@ public abstract class AbstractJiraDownloader
     protected Map resolutionMap = new HashMap();
     /** Mapping containing all allowed JIRA priority values. */
     protected Map priorityMap = new HashMap();
+    /** Mapping containing all allowed JIRA type values. */
+    protected Map typeMap = new HashMap();
 
     /**
      * Creates a filter given the parameters and some defaults.
@@ -104,6 +110,20 @@ public abstract class AbstractJiraDownloader
         }
 
         StringBuffer localFilter = new StringBuffer();
+
+        // add fix versions
+        if ( fixVersionIds != null )
+        {
+            String[] fixVersions = fixVersionIds.split( "," );
+
+            for ( int i = 0; i < fixVersions.length; i++ )
+            {
+                if ( fixVersions[i].length() > 0 )
+                {
+                    localFilter.append( "&fixfor=" + fixVersions[i].trim() );
+                }
+            }
+        }
 
         // get the Status Ids
         if ( statusIds != null )
@@ -163,6 +183,22 @@ public abstract class AbstractJiraDownloader
                 if ( components[i].length() > 0 )
                 {
                     localFilter.append( "&component=" + components[i] );
+                }
+            }
+        }
+
+        // get the Type Ids
+        if ( typeIds != null )
+        {
+            String[] types = typeIds.split( "," );
+
+            for ( int i = 0; i < types.length; i++ )
+            {
+                String typeParam = (String) typeMap.get( types[i].trim() );
+
+                if ( typeParam != null )
+                {
+                    localFilter.append( "&type=" + typeParam);
                 }
             }
         }
@@ -686,6 +722,26 @@ public abstract class AbstractJiraDownloader
     public void setComponent( String theseComponents )
     {
         this.component = theseComponents;
+    }
+
+    /**
+     * Sets the fix version id(s) to apply to query JIRA.
+     *
+     * @param theseFixVersionIds The id(s) of fix versions to show, as comma separated string
+     */
+    public void setFixVersionIds( String theseFixVersionIds )
+    {
+        this.fixVersionIds = theseFixVersionIds;
+    }
+
+    /**
+     * Sets the typeIds.
+     *
+     * @param theseTypeIds  The id(s) of the types to show, as comma separated string
+     */
+    public void setTypeIds( String theseTypeIds )
+    {
+        typeIds = theseTypeIds;
     }
 
     public void setLog( Log log )
