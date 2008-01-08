@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.logging.Log;
@@ -183,6 +184,10 @@ public abstract class AbstractJiraDownloader
         try
         {
             HttpClient client = new HttpClient();
+
+            // MCHANGES-89 Allow circular redirects
+            HttpClientParams clientParams = client.getParams();
+            clientParams.setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
 
             HttpState state = new HttpState();
 
