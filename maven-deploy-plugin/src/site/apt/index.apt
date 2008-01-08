@@ -1,5 +1,5 @@
   ------
-  Maven 2 Deploy Plugin
+  Introduction
   ------
   Jerome Lacoste
   ------
@@ -7,7 +7,7 @@
   ------
 
 Maven Deploy Plugin
-  
+
   The deploy plugin is primarily used during the deploy phase, to add your
   artifact(s) to a remote repository for sharing with other developers and
   projects. This is usually done in an integration or release environment. It can
@@ -22,7 +22,7 @@ Maven Deploy Plugin
   To work, the deployment will require:
 
   * information about the repository: its location, the transport method used to
-    access it (FTP, SCP, SFTP...) and the optional user specific required 
+    access it (FTP, SCP, SFTP...) and the optional user specific required
     account information
 
   * information about the artifact(s): the group, artifact, version, packaging,
@@ -49,8 +49,8 @@ Maven Deploy Plugin
     in the project's pom.
 
   * {{{deploy-file-mojo.html}deploy:deploy-file}} is used to install a single artifact
-    along with its pom. In that case the artifact information can be taken from 
-    an optionally specified pomFile, but can be completed/overriden using the 
+    along with its pom. In that case the artifact information can be taken from
+    an optionally specified pomFile, but can be completed/overriden using the
     command line.
 
 * How To Use
