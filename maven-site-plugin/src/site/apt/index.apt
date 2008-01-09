@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 13 July 2006
+ January 2008
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -34,14 +34,16 @@ Maven 2 Site Plugin
 
 * Goals Overview
 
-   The Site Plugin has six goals:
+   The Site Plugin has seven goals:
 
    * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to the site
      specified in the <<<\<distributionManagement\>>>> section of the pom.
 
    * {{{attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor to the list of files to be
-     installed/deployed. For more references of the site descriptor, 
+     installed/deployed. For more references of the site descriptor,
      {{{examples/sitedescriptor.html}here's a link}}.
+
+   * {{{site-jar.html}site:jar}} is used to bundle the site output into a jar.
 
    * {{{site-mojo.html}site:site}} is used generate a site for the project.
 
