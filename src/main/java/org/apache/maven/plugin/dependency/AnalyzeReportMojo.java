@@ -139,7 +139,7 @@ public class AnalyzeReportMojo
      */
     public String getName( Locale locale )
     {
-        return "Dependency Analysis";
+        return getBundle( locale ).getString( "analyze.report.name" );
     }
 
     /*
@@ -147,7 +147,7 @@ public class AnalyzeReportMojo
      */
     public String getDescription( Locale locale )
     {
-        return "Dependency Analysis of the project (used declared, used undeclared, unused declared)";
+        return getBundle( locale ).getString( "analyze.report.description" );
     }
     
     // AbstractMavenReport methods --------------------------------------------
