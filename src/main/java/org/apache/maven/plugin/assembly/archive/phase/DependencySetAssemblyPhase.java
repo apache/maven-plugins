@@ -1,5 +1,24 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -13,6 +32,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
 /**
+ * @version $Id$
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
  *                   role-hint="dependency-sets"
  */
@@ -25,22 +45,22 @@ public class DependencySetAssemblyPhase
      * @plexus.requirement
      */
     private MavenProjectBuilder projectBuilder;
-    
+
     /**
      * @plexus.requirement
      */
     private DependencyResolver dependencyResolver;
-    
+
     public DependencySetAssemblyPhase()
     {
         // used for plexus init
     }
-    
+
     public DependencySetAssemblyPhase( MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver, Logger logger )
     {
         this.projectBuilder = projectBuilder;
         this.dependencyResolver = dependencyResolver;
-        
+
         enableLogging( logger );
     }
 
@@ -50,7 +70,7 @@ public class DependencySetAssemblyPhase
         AddDependencySetsTask task =
             new AddDependencySetsTask( assembly.getDependencySets(), configSource.getProject(), projectBuilder,
                                        dependencyResolver, getLogger() );
-        
+
         task.execute( archiver, configSource );
     }
 }
