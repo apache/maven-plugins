@@ -135,32 +135,6 @@
           </execution>
         </executions>
       </plugin>      
-      <!-- Need to install IT snapshot of maven-jar-plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.2</version>
-        <executions>
-          <execution>
-            <id>it-test</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>
-                ${basedir}/target/maven-jar-plugin-2.2-SNAPSHOT.jar
-              </file>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <version>2.2-it-SNAPSHOT</version>
-              <!-- IT SNAPSHOT -->
-              <packaging>maven-plugin</packaging>
-              <pomFile>${basedir}/pom.xml</pomFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <!-- Testing the result of the it pom.xml -->
       <plugin>
