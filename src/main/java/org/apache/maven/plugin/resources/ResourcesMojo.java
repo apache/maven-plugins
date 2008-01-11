@@ -118,6 +118,10 @@ public class ResourcesMojo
             String targetPath = resource.getTargetPath();
 
             File resourceDirectory = new File( resource.getDirectory() );
+            if ( !resourceDirectory.isAbsolute() )
+            {
+                resourceDirectory = new File( project.getBasedir(), resourceDirectory.getPath() );
+            }
 
             if ( !resourceDirectory.exists() )
             {
@@ -138,7 +142,7 @@ public class ResourcesMojo
 
             DirectoryScanner scanner = new DirectoryScanner();
 
-            scanner.setBasedir( resource.getDirectory() );
+            scanner.setBasedir( resourceDirectory );
             if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
             {
                 scanner.setIncludes( (String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ) );
@@ -173,7 +177,7 @@ public class ResourcesMojo
                     destination = targetPath + "/" + name;
                 }
 
-                File source = new File( resource.getDirectory(), name );
+                File source = new File( resourceDirectory, name );
 
                 File destinationFile = new File( outputDirectory, destination );
 
