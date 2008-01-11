@@ -36,20 +36,20 @@ Usage
 * How to build a jar file
 
   If the packaging of your project is set to 'jar', this plugin is executed
-  whenever it passes the "package" phase. Have it executed
-  using the command below from your project:
+  whenever it passes the "package" phase. You can execute it
+  using the command below:
 
 +-----------------+
-  mvn package
+mvn package
 +-----------------+
 
-  In your project's target directory you'll able to see the generated jar file.
+  In your project's <<<target>>> directory you'll able to see the generated jar file.
 
 
 * How to sign a jar file
 
-  If you need to sign a jar, when using the 'jar' packaging, you just need to configure
-  the sign goal appropriately in your <<<pom.xml>>> for the signing to occur
+  If you need to sign your jar, you just need to configure
+  the sign goal appropriately in your <<<pom.xml>>>, for the signing to occur
   automatically during the package phase.
 
   Note that you can automatically verify a jar after signing it.
@@ -66,18 +66,18 @@ Usage
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
-           <execution>
-              <goals>
-                 <goal>sign</goal>
-              </goals>
-           </execution>
+          <execution>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
         </executions>
         <configuration>
-           <keystore>/path/to/your/keystore</keystore>
-           <alias>youralias</alias>
-           <storepass>yourstorepassword</storepass>
-           <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
-           <verify>true</verify>
+          <keystore>/path/to/your/keystore</keystore>
+          <alias>youralias</alias>
+          <storepass>yourstorepassword</storepass>
+          <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
+          <verify>true</verify>
         </configuration>
       </plugin>
       ...
@@ -87,31 +87,32 @@ Usage
 </project>
 +-----------------+
 
-  If you do not specify the \<signedjar\> file, your jar will be signed in-place.
+  If you do not specify the <<<\<signedjar\>>>> file, your jar will be signed in-place.
   If you do specify it, the plugin will attempt to create the resulting containing directory.
 
 * How to sign a jar file specifying parameters on the command line
 
 +-----------------+
-  mvn jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
+mvn jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
 +-----------------+
 
 * How to verify a signed jar file specifying parameters on the command line
 
 +-----------------+
-  mvn jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
+mvn jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
 +-----------------+
 
 * How to disable jar signing
 
 +-----------------+
-  mvn ... -Dmaven.jar.skip.sign=true
+mvn ... -Dmaven.jar.skip.sign=true
 +-----------------+
 
 * How to include/exclude content from jar artifact
 
   Specify a list of fileset patterns to be included or excluded by adding
-  includes/include or excludes/exclude in your <<<pom.xml>>>.
+  <<<\<includes\>>>>/<<<\<include\>>>> or <<<\<excludes\>>>>/<<<\<exclude\>>>>
+  in your <<<pom.xml>>>.
 
 +-----------------+
 <project>
@@ -123,7 +124,7 @@ Usage
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-         <includes>
+          <includes>
             <include>**/service/*</include>
           </includes>
         </configuration>
@@ -135,15 +136,15 @@ Usage
 </project>
 +-----------------+
 
-* How to create an additional attached jar artifact from project
+* How to create an additional attached jar artifact from the project
 
   Specify a list of fileset patterns to be included or excluded by adding
-  includes/include or excludes/exclude and add a classifier in your
-  <<<pom.xml>>>.
+  <<<\<includes\>>>>/<<<\<include\>>>> or <<<\<excludes\>>>>/<<<\<exclude\>>>>
+  and add a <<<classifier>>> in your <<<pom.xml>>>.
 
-  Note that the jar-plugin must be defined in a new execution, otherwise it
+  <<Note:>> the jar-plugin must be defined in a new execution, otherwise it
   will replace the default use of the jar-plugin instead of adding a second
-  artifact. The classifier is also required to create more than one artifact.
+  artifact. The <<<classifier>>> is also required to create more than one artifact.
 
 +-----------------+
 <project>
@@ -157,15 +158,15 @@ Usage
         <executions>
           <execution>
             <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-              <configuration>
-                <classifier>client</classifier>
-                <includes>
-                  <include>**/service/*</include>
-                </includes>
-              </configuration>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>client</classifier>
+              <includes>
+                <include>**/service/*</include>
+              </includes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
