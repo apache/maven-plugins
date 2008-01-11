@@ -1,9 +1,9 @@
  ------
- Using your own manifest file
+ Using a Default Manifest File
  ------
  Dennis Lundberg
  ------
- 12 July 2006
+ 2008-01-12
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,36 +26,11 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Using your own manifest file
+Using a Default Manifest File
 
-  It is sometimes useful to use your own hand crafted manifest file. You can
-  do this with this plugin. To use the manifest file
-  <<<src/main/resources/META-INF/MANIFEST.MF>>> put this configuration in your
-  <<<pom.xml>>>:
-
-+-----------------+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        ...
-        <configuration>
-          <archive>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
-        </configuration>
-        ...
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+-----------------+
-
-  If you use the following configuration, the file found in $\{project.build.outputDirectory\}/META-INF/MANIFEST.MF will be used.
+  If you use the following configuration, the file found in
+  <<<$\{project.build.outputDirectory\}/META-INF/MANIFEST.MF>>> will be used as
+  the manifest file in the jar.
 
 +-----------------+
 <project>
@@ -75,5 +50,5 @@ Using your own manifest file
   </build>
   ...
 </project>
-+-----------------+  
-  
++-----------------+
+
