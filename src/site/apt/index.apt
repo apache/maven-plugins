@@ -46,23 +46,20 @@ Maven 2 Jar Plugin
 
   Instructions on how to use the Jar Plugin can be found {{{usage.html}here}}.
 
-  You might also want to consult the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide
-  to Working with Manifests}}.
-
 * Archiver Configuration
 
-  The plugin use the Maven Archiver to handle jar content and manifest configuration. 
+  The plugin use Maven Archiver to handle jar content and manifest configuration.
 
-  You must have a look at the {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver Documentation}} to understand how to setup this.
+  You can have a look at the {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver Documentation}} to understand how to setup this.
 
+  You might also want to consult the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide
+  to Working with Manifests}}.
 
 * Examples
 
   To provide you with better understanding of some usages of the Jar Plugin,
   you can take a look at the following examples:
 
-  * {{{examples/executable-jar.html}Creating an executable jar file}}
+  * {{{examples/manifest-customization.html}Manifest Customization}}
 
-  * {{{examples/manifest-customization.html}Manifest customization}}
-
-  * {{{examples/manifest-file.html}Using your own manifest file}}
+  * {{{examples/default-manifest-file.html}Using a Default Manifest File}}

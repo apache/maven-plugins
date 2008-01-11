@@ -133,8 +133,8 @@ public class JarSignMojo
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     * The corresponding option in the command line is -storetype
-     * 
+     * The corresponding option in the command line is -storetype.
+     *
      * @parameter expression="${type}"
      */
     private String type;
@@ -158,13 +158,13 @@ public class JarSignMojo
 
     /**
      * Skip attaching the signed artifact. By default the signed artifact is attached.
-     * This is not a Mojo parameter as we shouldn't need this when using this mojo. 
+     * This is not a Mojo parameter as we shouldn't need this when using this mojo.
      * Just needed when reusing the implementation. See MJAR-84 for discussions.
      */
     private boolean skipAttachSignedArtifact;
 
     /**
-     * Enable verbose
+     * Enable verbose.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${verbose}" default-value="false"
@@ -177,7 +177,7 @@ public class JarSignMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The maven project.
+     * The Maven project.
      *
      * @parameter expression="${project}"
      * @required
