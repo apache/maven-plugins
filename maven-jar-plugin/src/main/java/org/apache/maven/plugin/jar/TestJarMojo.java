@@ -37,8 +37,8 @@ public class TestJarMojo
 {
 
     /**
-     * Set this to 'true' to bypass unit tests entirely.
-     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * Set this to <code>true</code> to bypass unit tests entirely.
+     * Its use is <b>NOT RECOMMENDED</b>, but quite convenient on occasion.
      *
      * @parameter expression="${maven.test.skip}"
      */
@@ -72,7 +72,7 @@ public class TestJarMojo
     {
         return testClassesDirectory;
     }
-	
+
 	public void execute()
         throws MojoExecutionException
     {

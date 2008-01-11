@@ -20,17 +20,17 @@
 -->
 
 <faqs id="FAQ" title="Frequently Asked Questions">
- <part id="General">
-   <faq id="question1">
-     <question>Why is there no documentation for the archive parameter?</question>
-     <answer>
-       <p>
-        The archive parameter is a class that resides outside of this plugin,
-        in the Maven Archiver component to be exact. The best we can do at this
-        time is to provide you with a link to the documentation for the
-        <a href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">MavenArchiveConfiguration class</a>.
-       </p>
-     </answer>
-   </faq>
- </part>
+  <part id="General">
+    <faq id="question1">
+      <question>Why is there no documentation for the archive parameter?</question>
+      <answer>
+        <p>
+          The archive parameter is a class that resides outside of this plugin,
+          in the Maven Archiver component. You can find the documentation for
+          Maven Archiver
+          <a href="http://maven.apache.org/shared/maven-archiver/index.html">here</a>.
+        </p>
+      </answer>
+    </faq>
+  </part>
 </faqs>

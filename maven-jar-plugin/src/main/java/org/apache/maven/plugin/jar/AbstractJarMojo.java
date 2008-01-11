@@ -44,14 +44,14 @@ public abstract class AbstractJarMojo
     private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
     /**
-     * List of files to include, fileset pattern.
+     * List of files to include. Specified as fileset patterns.
      *
      * @parameter
      */
     private String[] includes;
 
     /**
-     * List of files to exclude, fileset pattern.
+     * List of files to exclude. Specified as fileset patterns.
      *
      * @parameter
      */
@@ -82,7 +82,7 @@ public abstract class AbstractJarMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The maven project.
+     * The Maven project.
      *
      * @parameter expression="${project}"
      * @required
@@ -91,18 +91,19 @@ public abstract class AbstractJarMojo
     private MavenProject project;
 
     /**
-     * The maven archive configuration to use.
+     * The archive configuration to use.
      *
      * See <a
-     * href="http://maven.apache.org/ref/2.0.4/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">the
-     * Javadocs for MavenArchiveConfiguration</a>.
+     * href="http://maven.apache.org/shared/maven-archiver/index.html">the
+     * documentation for Maven Archiver</a>.
      *
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * Path to the default MANIFEST file to use will be use if useDefaultManifestFile is set to true
+     * Path to the default MANIFEST file to use. It will be used if
+     * <code>useDefaultManifestFile</code> is set to <code>true</code>.
      *
      * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
      * @required
@@ -112,10 +113,10 @@ public abstract class AbstractJarMojo
     private File defaultManifestFile;
 
     /**
-     * Set to true to enable the use of the defaultManifestFile
+     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
      *
      * @parameter expression="${jar.useDefaultManifestFile}" default-value="false"
-     * 
+     *
      * @since 2.2
      */
     private boolean useDefaultManifestFile;
@@ -143,7 +144,7 @@ public abstract class AbstractJarMojo
     }
 
     /**
-     * Overload this to produce a test-jar, for example.
+     * Overload this to produce a jar with another classifier, for example a test-jar.
      */
     protected abstract String getClassifier();
 
@@ -166,7 +167,7 @@ public abstract class AbstractJarMojo
         return new File( basedir, finalName + classifier + ".jar" );
     }
 
-    /** 
+    /**
      * Default Manifest location. Can point to a non existing file.
      * Cannot return null.
      */
