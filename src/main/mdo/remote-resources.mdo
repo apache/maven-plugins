@@ -21,8 +21,8 @@ under the License.
   <id>remoteResourcesBundle</id>
   <name>RemoteResourcesBundle</name>
   <description><![CDATA[
-    Project-local overrides to the build process based on detected or user-provided environmental parameters.
-    This is the model specification for ${basedir}/profiles.xml.
+    A bundle of remote resources.
+    This is the model specification for remote-resources.xml.
   ]]></description>
   <defaults>
     <default>

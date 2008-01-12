@@ -36,7 +36,7 @@ under the License.
         <field xml.listStyle="flat">
           <name>supplement</name>
           <version>1.0.0</version>
-          <description>Snippits of POM xml files used to supplement the data model.</description>
+          <description>Snippets of POM xml files used to supplement the data model.</description>
           <association>
             <type>Supplement</type>
             <multiplicity>*</multiplicity>
@@ -52,10 +52,10 @@ under the License.
         <field>
           <name>project</name>
           <version>1.0.0</version>
-          <description>Snippits of POM xml files used to supplement the data model.</description>
+          <description>Snippets of POM xml files used to supplement the data model.</description>
           <type>DOM</type>
         </field>
-      </fields>    	
+      </fields>
     </class>
   </classes>
 </model>
