@@ -28,7 +28,7 @@ under the License.
           a large set of projects, or an entire organization. Any project can specify the use of a
           remote resource bundle and have the resources incorporated into their packaging. This means
           that you can create standard settings in a parent POM somewhere in the project hierarchy and
-          have all projects use package common resources in a standard way like licenses, other legal
+          have all projects use packaged common resources in a standard way like licenses, other legal
           notices and disclaimers, or anything else that may be common.
         </p>
       </answer>
@@ -42,7 +42,7 @@ under the License.
           <ol>
             <li>
               File bugs with the projects that produced those artifacts to get them to fix them.  Also,
-              file bugs with the 
+              file bugs with the
               <a href="http://jira.codehaus.org/browse/MEV">Maven Evangelism</a>
               project to have the Maven people enhance the metadata in the repository.
             </li>
@@ -70,7 +70,8 @@ under the License.
                   </supplement>
                 </supplementalDataModels>
               </source>
-              That location for that file can then be configured into the supplementalModels configuration for the process mojo.  The 
+              That location for that file can then be configured in the
+              <code>supplementalModels</code> configuration element for the process mojo.  The
               supplemental information is merged into the information provided from the repository.
             </li>
           </ol>
