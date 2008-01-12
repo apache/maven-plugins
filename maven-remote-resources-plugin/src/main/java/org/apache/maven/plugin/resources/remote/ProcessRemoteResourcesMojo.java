@@ -78,8 +78,10 @@ import java.util.TreeMap;
 
 /**
  * <p>
- * Pull down resourceBundles containing remote resources and process the resources contained
- * inside the artifact.
+ * Pull down resourceBundles containing remote resources and process the
+ * resources contained inside. When that is done the resources are injected
+ * into the current (in-memory) Maven project, making them available to the
+ * process-resources phase.
  * </p>
  * <p>
  * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is
@@ -315,7 +317,7 @@ public class ProcessRemoteResourcesMojo
             VelocityContext context = new VelocityContext( properties );
             configureVelocityContext( context );
 
-            RemoteResourcesClassLoader classLoader 
+            RemoteResourcesClassLoader classLoader
                 = new RemoteResourcesClassLoader( null );
             initalizeClassloader( classLoader, resourceBundleArtifacts );
             Thread.currentThread().setContextClassLoader( classLoader );
@@ -863,7 +865,7 @@ public class ProcessRemoteResourcesMojo
         {
             return compare(o1, o2) == 0;
         }
-        
+
         private int compareStrings( String s1, String s2 ) {
             if ( s1 == null && s2 == null )
             {
@@ -877,7 +879,7 @@ public class ProcessRemoteResourcesMojo
             {
                 return -1;
             }
-            
+
             return s1.compareToIgnoreCase( s2 );
         }
     }
@@ -889,10 +891,10 @@ public class ProcessRemoteResourcesMojo
         {
             MavenProject p1 = (MavenProject) o1;
             MavenProject p2 = (MavenProject) o2;
-                        
+
             return p1.getArtifact().compareTo( p2.getArtifact() );
         }
-    
+
         public boolean equals( Object o1, Object o2 )
         {
             MavenProject p1 = (MavenProject) o1;

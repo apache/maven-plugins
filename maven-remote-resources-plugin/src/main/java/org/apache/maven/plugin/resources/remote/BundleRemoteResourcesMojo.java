@@ -35,7 +35,7 @@ import java.io.Writer;
 import java.io.FileWriter;
 
 /**
- * Bundle up the resources that should be considered as a remote-resource
+ * Bundle up resources that should be considered as a remote-resource.
  *
  * @goal bundle
  * @phase generate-resources
@@ -44,7 +44,7 @@ public class BundleRemoteResourcesMojo
     extends AbstractMojo
 {
     public static final String RESOURCES_MANIFEST = "META-INF/maven/remote-resources.xml";
-    
+
     private static final String[] DEFAULT_INCLUDES = new String [] {
                                                               "**/*.txt",
                                                               "**/*.vm",
@@ -60,39 +60,38 @@ public class BundleRemoteResourcesMojo
 
     /**
      * The directory where you want the resource bundle manifest written to.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}"
      */
     private File outputDirectory;
-    
-    
+
     /**
      * A list of files to include. Can contain ant-style wildcards and double wildcards.
      * The default includes are
      * <code>**&#47;*.txt   **&#47;*.vm</code>
-     * 
+     *
      * @parameter
      * @since 1.0-alpha-5
      */
     private String[] includes;
 
     /**
-     * A list of files to exclude. Can contain ant-style wildcards and double wildcards.  
+     * A list of files to exclude. Can contain ant-style wildcards and double wildcards.
      *
      * @parameter
      * @since 1.0-alpha-5
      */
     private String[] excludes;
-    
+
     public void execute()
         throws MojoExecutionException
     {
         if ( !resourcesDirectory.exists() )
         {
             return;
-        }        
-        
-        // Look at the content of ${basedir}/src/main/resources and create a manifest of the files
+        }
+
+        // Look at the content of the resourcesDirectory and create a manifest of the files
         // so that velocity can easily process any resources inside the JAR that need to be processed.
 
         RemoteResourcesBundle remoteResourcesBundle = new RemoteResourcesBundle();
@@ -126,7 +125,7 @@ public class BundleRemoteResourcesMojo
             remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
         }
 
-        
+
         RemoteResourcesBundleXpp3Writer w = new RemoteResourcesBundleXpp3Writer();
 
         try
