@@ -731,7 +731,7 @@ public class XmlReader extends Reader
             if ( bytesRead > 0 )
             {
                 is.reset();
-                BufferedReader bReader = new BufferedReader( new StringReader( xmlProlog ) );
+                BufferedReader bReader = new BufferedReader( new StringReader( xmlProlog.substring( 0, firstGT ) ) );
                 StringBuffer prolog = new StringBuffer();
                 String line = bReader.readLine();
                 while ( line != null )
