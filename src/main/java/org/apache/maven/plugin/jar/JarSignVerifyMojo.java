@@ -76,7 +76,7 @@ public class JarSignVerifyMojo
     private String finalName;
 
     /**
-     * Path of the jar to sign. When specified, the finalName is ignored.
+     * Path of the signed jar. When specified, the finalName is ignored.
      *
      * @parameter expression="${jarpath}"
      */
@@ -98,9 +98,11 @@ public class JarSignVerifyMojo
      */
     private boolean verbose;
 
-    /** When true will make the execute() operation fail, throwing an exception, when verifying a non signed jar
+    /** When <code>true</code> this will make the execute() operation fail,
+     * throwing an exception, when verifying a non signed jar.
      * Primarily to keep backwards compatibility with existing code, and allow reusing the
-     * bean in unattended operations when set to false.
+     * bean in unattended operations when set to <code>false</code>.
+     *
      * @parameter expression="${errorWhenNotSigned}" default-value="true"
      **/
     private boolean errorWhenNotSigned = true;
