@@ -32,6 +32,8 @@ public class WarArtifactStub
 
     private String artifactId;
 
+    private String classifier;
+
     private File file;
 
     public WarArtifactStub( String _basedir )
@@ -96,5 +98,18 @@ public class WarArtifactStub
         file = _file;
     }
 
+    public String getClassifier()
+    {
+        return classifier;
+    }
 
+    public void setClassifier( String classifier )
+    {
+        this.classifier = classifier;
+    }
+
+    public boolean hasClassifier()
+    {
+        return classifier != null;
+    }
 }
