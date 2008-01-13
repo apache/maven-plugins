@@ -58,7 +58,7 @@ public class Release
 
     public List getAction()
     {
-        if (action == null)
+        if ( action == null )
         {
             action = new ArrayList();
         }

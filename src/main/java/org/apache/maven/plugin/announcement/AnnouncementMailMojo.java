@@ -311,8 +311,8 @@ public class AnnouncementMailMojo
         else if ( from == null || from.isEmpty() )
         {
             throw new MojoExecutionException(
-                "<developers> section in your pom could not be empty: add a <developer> entry or set the " +
-                    "mailSender parameter." );
+                "<developers> section in your pom could not be empty: add a <developer> entry or set the "
+                    + "mailSender parameter." );
         }
         else if ( fromDeveloperId == null )
         {

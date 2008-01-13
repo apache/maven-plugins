@@ -198,7 +198,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( typeParam != null )
                 {
-                    localFilter.append( "&type=" + typeParam);
+                    localFilter.append( "&type=" + typeParam );
                 }
             }
         }
@@ -244,24 +244,25 @@ public abstract class AbstractJiraDownloader
             prepareBasicAuthentication( client );
 
             boolean jiraAuthenticationSuccessful = false;
-            if( isJiraAuthenticationConfigured() ) {
+            if ( isJiraAuthenticationConfigured() )
+            {
                 jiraAuthenticationSuccessful = doJiraAuthentication( client, jiraUrl );
             }
 
-            if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful ) ||
-                !isJiraAuthenticationConfigured() )
+            if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful )
+                || !isJiraAuthenticationConfigured() )
             {
                 if ( jiraId == null || jiraId.length() == 0 )
                 {
-                    log.info( "The JIRA URL " + project.getIssueManagement().getUrl() +
-                        " doesn't include a pid, trying to extract it from JIRA." );
+                    log.info( "The JIRA URL " + project.getIssueManagement().getUrl()
+                        + " doesn't include a pid, trying to extract it from JIRA." );
                     jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
                 }
 
                 if ( jiraId == null )
                 {
-                    getLog().error( "The issue management URL in the POM does not include a pid," +
-                        " and it was not possible to extract it from the page at that URL." );
+                    getLog().error( "The issue management URL in the POM does not include a pid,"
+                        + " and it was not possible to extract it from the page at that URL." );
                 }
                 else
                 {
@@ -570,7 +571,8 @@ public abstract class AbstractJiraDownloader
 
                 getLog().info( "Downloading from JIRA was successful" );
             }
-            else {
+            else
+            {
                 getLog().warn( "Downloading from JIRA failed. Received: [" + gm.getStatusCode() + "]" );
             }
         }

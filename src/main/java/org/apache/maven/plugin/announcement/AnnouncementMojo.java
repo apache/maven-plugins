@@ -106,7 +106,7 @@ public class AnnouncementMojo
     /**
      * URL where the artifact can be downloaded. If not specified,
      * no URL is used.
-     * 
+     *
      * @parameter
      */
     private String urlDownload;
@@ -373,7 +373,7 @@ public class AnnouncementMojo
         {
             pomVersion = pomVersion.substring( 0, pomVersion.length() - SNAPSHOT_SUFFIX.length() );
         }
-        getLog().debug( "Found " + releases.size() + " releases.");
+        getLog().debug( "Found " + releases.size() + " releases." );
 
         for ( int i = 0; i < releases.size(); i++ )
         {
@@ -381,7 +381,7 @@ public class AnnouncementMojo
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getAction().size() + " actions.");
+                    + " has " + release.getAction().size() + " actions." );
             }
 
             if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
