@@ -271,7 +271,9 @@ public class JiraReportGenerator
     {
         sink.head();
 
+        sink.title();
         sink.text( bundle.getString( "report.jira.header" ) );
+        sink.title_();
 
         sink.head_();
 
