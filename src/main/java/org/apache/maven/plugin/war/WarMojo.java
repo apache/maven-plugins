@@ -29,9 +29,11 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Build a war/webapp.
@@ -67,6 +69,15 @@ public class WarMojo
      * @parameter
      */
     private String classifier;
+
+    /**
+     * The comma separated list of tokens to exclude from the WAR before
+     * packaging. This option may be used to implement the skinny war use
+     * case.
+     *
+     * @parameter alias="packagingExcludes"
+     */
+    private String packagingExcludes;
 
     /**
      * The Jar archiver.
@@ -175,7 +186,9 @@ public class WarMojo
 
         archiver.setOutputFile( warFile );
 
-        warArchiver.addDirectory( getWebappDirectory() );
+        getLog().debug(
+            "Excluding " + Arrays.toString( getPackagingExcludes() ) + " for the generated webapp archive." );
+        warArchiver.addDirectory( getWebappDirectory(), new String[]{"**"}, getPackagingExcludes() );
 
         final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
         if ( webXmlFile.exists() )
@@ -262,6 +275,24 @@ public class WarMojo
     public void setClassifier( String classifier )
     {
         this.classifier = classifier;
+    }
+
+    public String[] getPackagingExcludes()
+    {
+        if ( StringUtils.isEmpty( packagingExcludes ) )
+        {
+            return new String[0];
+        }
+        else
+        {
+            return StringUtils.split( packagingExcludes, "," );
+        }
+
+    }
+
+    public void setPackagingExcludes( String packagingExcludes )
+    {
+        this.packagingExcludes = packagingExcludes;
     }
 
     public String getOutputDirectory()
