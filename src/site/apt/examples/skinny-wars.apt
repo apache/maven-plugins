@@ -43,8 +43,8 @@ Creating Skinny WARs
       <plugin>
          <artifactId>maven-war-plugin</artifactId>
          <configuration>
-           <!-- This is broken in maven-war-plugin 2.0, works in 2.0.1 -->
-           <warSourceExcludes>WEB-INF/lib/*.jar</warSourceExcludes>
+           <!-- In version 2.x, this was incorrectly named warSourceExcludes -->
+           <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
            <archive>
              <manifest>
                <addClasspath>true</addClasspath>
