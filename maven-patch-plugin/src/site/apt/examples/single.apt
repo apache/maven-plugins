@@ -1,5 +1,5 @@
  ------
- Delete Additional Files Not Exposed to Maven
+ Patch a Single File
  ------
  John Casey
  Jesse McConnell
@@ -32,9 +32,11 @@ Patch a Single File
   The <<<maven-patch-plugin>>> can be configured to apply a single patch to a file as specified:
 
 +--------
-<build>
+<project>
   [...]
-
+  <build>
+    [...]
+    <plugins>
       <plugin>
         <artifactId>maven-patch-plugin</artifactId>
         <configuration>
@@ -52,6 +54,9 @@ Patch a Single File
           </execution>
         </executions>
       </plugin>
+    </plugins>
+    [...]
+  </build>
   [...]
-</build>
+</project>
 +---------
