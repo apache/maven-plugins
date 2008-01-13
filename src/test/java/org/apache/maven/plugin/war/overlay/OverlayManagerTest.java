@@ -163,12 +163,54 @@ public class OverlayManagerTest
         }
     }
 
+    public void testOverlaysWithSameArtifactAndGroupId()
+        throws Exception
+    {
+
+        final MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        final ArtifactStub first = newWarArtifact( "test", "test-webapp" );
+        final ArtifactStub second = newWarArtifact( "test", "test-webapp", "my-classifier" );
+
+        project.addArtifact( first );
+        project.addArtifact( second );
+
+        final List overlays = new ArrayList();
+        overlays.add( new DefaultOverlay( first ) );
+        overlays.add( new DefaultOverlay( second ) );
+
+        try
+        {
+            OverlayManager manager = new OverlayManager( overlays, project, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            assertNotNull( manager.getOverlays() );
+            assertEquals( 3, manager.getOverlays().size() );
+            assertEquals( Overlay.currentProjectInstance(), manager.getOverlays().get( 0 ) );
+            assertEquals( overlays.get( 0 ), manager.getOverlays().get( 1 ) );
+            assertEquals( overlays.get( 1 ), manager.getOverlays().get( 2 ) );
+
+        }
+        catch ( InvalidOverlayConfigurationException e )
+        {
+            e.printStackTrace();
+            fail( "Should not have failed to validate a valid overlay config " + e.getMessage() );
+        }
+    }
+
+
+    protected ArtifactStub newWarArtifact( String groupId, String artifactId, String classifier )
+    {
+        final WarArtifactStub a = new WarArtifactStub( getBasedir() );
+        a.setGroupId( groupId );
+        a.setArtifactId( artifactId );
+        if ( classifier != null )
+        {
+            a.setClassifier( classifier );
+        }
+        return a;
+    }
 
     protected ArtifactStub newWarArtifact( String groupId, String artifactId )
     {
-        final ArtifactStub a = new WarArtifactStub( getBasedir() );
-        a.setGroupId( groupId );
-        a.setArtifactId( artifactId );
-        return a;
+        return newWarArtifact( groupId, artifactId, null );
+
     }
 }
