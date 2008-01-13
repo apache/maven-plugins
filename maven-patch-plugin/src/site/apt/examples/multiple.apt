@@ -1,5 +1,5 @@
  ------
- Delete Additional Files Not Exposed to Maven
+ Patch Multiple Files from Multiple Directories
  ------
  John Casey
  Jesse McConnell
@@ -29,56 +29,57 @@
 
 Patch Multiple Files from Multiple Directories
 
-  The <<<maven-patch-plugin>>> can be configured apply sets of patches from multiple directories.
-  In the example below, the plugin is setup to apply all the patches in a bugfix directory with 
-  optimization (will not reapply the same patch) and also from an enhancements directory.  This 
+  The <<<maven-patch-plugin>>> can be configured to apply sets of patches from multiple directories.
+  In the example below, the plugin is setup to apply all the patches in a <<<bugfix>>> directory with 
+  optimization (will not reapply the same patch) and also from an <<<enhancement>>> directory.  This 
   scenario might crop up if you don't have commit access to a projects source yet need to apply 
   bugfix and enhancement patches.  The two different patch source directories are shown purely as 
   an example of what can be configured.
 
 +--------
-<build>
+<project>
   [...]
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-patch-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-patch-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <patchTargetDir>${moduleDirectory}</patchTargetDir>
+          <skipApplication>false</skipApplication>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bugfix-patches</id>
             <configuration>
-               <patchTargetDir>${moduleDirectory}</patchTargetDir>
-               <skipApplication>false</skipApplication>
+              <patchDirectory>src/main/patches/bugfix</patchDirectory>
+              <patchTrackingFile>${project.build.directory}/optimization-files/bugfix/patches-applied.txt</patchTrackingFile>
+              <naturalOrderProcessing>true</naturalOrderProcessing>
             </configuration>
-            <executions>
-               <execution>
-                  <id>bugfix-patches</id>
-                  <configuration>
-                     <patchDirectory>src/main/patches/bugfix</patchDirecto
-ry>
-                     <patchTrackingFile>${project.build.directory}/optimization-
-files/bugfix/patches-applied.txt</patchTrackingFile>
-                     <naturalOrderProcessing>true</naturalOrderProcessing>
-                  </configuration>
-                  <phase>process-sources</phase>
-                  <goals>
-                     <goal>apply</goal>
-                  </goals>
-               </execution>
-               <execution>
-                  <id>enhancement-patches</id>
-                  <configuration>
-                     <patchDirectory>src/main/patches/enhancement</patchDirector
-y>
-                     <patchTrackingFile>${project.build.directory}/optimization-
-files/enhancement/patches-applied.txt</patchTrackingFile>
-                     <naturalOrderProcessing>true</naturalOrderProcessing>
-                  </configuration>
-                  <phase>process-sources</phase>
-                  <goals>
-                     <goal>apply</goal>
-                  </goals>
-               </execution>
-            </executions>
-          </plugin>
-    
+            <phase>process-sources</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>enhancement-patches</id>
+            <configuration>
+              <patchDirectory>src/main/patches/enhancement</patchDirectory>
+              <patchTrackingFile>${project.build.directory}/optimization-files/enhancement/patches-applied.txt</patchTrackingFile>
+              <naturalOrderProcessing>true</naturalOrderProcessing>
+            </configuration>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    [...]
+  </build>
   [...]
-</build>
+</project>
 +---------
