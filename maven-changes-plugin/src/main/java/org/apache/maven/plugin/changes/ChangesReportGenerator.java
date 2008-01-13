@@ -245,7 +245,9 @@ public class ChangesReportGenerator
     {
         sink.head();
 
+        sink.title();
         sink.text( bundle.getString( "report.changes.header" ) );
+        sink.title_();
 
         sink.head_();
 
