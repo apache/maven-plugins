@@ -103,12 +103,12 @@ public class ArtifactsPackagingTask
                     else if ( "war".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().info( "nothing to do with war dependency as it's handle with overlay" );
+                        context.getLog().debug( "war artifacts are handled as overlays, ignoring[" + artifact + "]" );
                     }
                     else if ( "zip".equals( type ) )
                     {
                         // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().info( "nothing to do with zip dependency as it's handle with overlay" );
+                        context.getLog().debug( "zip artifacts are handled as overlays, ignoring[" + artifact + "]" );
                     }
                     else
                     {
