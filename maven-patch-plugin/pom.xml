@@ -27,13 +27,13 @@
   <artifactId>maven-patch-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>maven-patch-plugin Maven Mojo</name>
-  <url>http://maven.apache.org/plugins/maven-patch-plugin</url>
+  <name>Maven Patch Plugin</name>
+  <url>http://maven.apache.org/plugins/maven-patch-plugin/</url>
  
   <scm>
-     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin</connection>
-     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin</developerConnection>
-     <url>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</url>
   </scm>
 
   <prerequisites>
