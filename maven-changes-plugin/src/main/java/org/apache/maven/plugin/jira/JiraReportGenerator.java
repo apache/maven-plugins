@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generates a JIRA report.
@@ -31,6 +32,34 @@ import org.apache.maven.doxia.sink.Sink;
  */
 public class JiraReportGenerator
 {
+    private static final int COLUMN_KEY = 0;
+    private static final int COLUMN_SUMMARY = 1;
+    private static final int COLUMN_STATUS = 2;
+    private static final int COLUMN_RESOLUTION = 3;
+    private static final int COLUMN_ASSIGNEE = 4;
+    private static final int COLUMN_REPORTER = 5;
+    private static final int COLUMN_TYPE = 6;
+    private static final int COLUMN_PRIORITY = 7;
+    private static final int COLUMN_VERSION = 8;
+    private static final int COLUMN_FIX_VERSION = 9;
+    private static final int COLUMN_COMPONENT = 10;
+
+    private static final String[] JIRA_COLUMNS = new String[] {
+        /* 0  */ "Key",
+        /* 1  */ "Summary",
+        /* 2  */ "Status",
+        /* 3  */ "Resolution",
+        /* 4  */ "Assignee",
+        /* 5  */ "Reporter",
+        /* 6  */ "Type",
+        /* 7  */ "Priority",
+        /* 8  */ "Version",
+        /* 9  */ "Fix Version",
+        /* 10 */ "Component"
+    };
+
+    private int[] columnOrder;
+
     private JiraXML jira;
 
     public JiraReportGenerator()
@@ -38,9 +67,36 @@ public class JiraReportGenerator
 
     }
 
-    public JiraReportGenerator( String xmlPath )
+    public JiraReportGenerator( String xmlPath, String columnNames )
+        throws MavenReportException
     {
         jira = new JiraXML( xmlPath );
+
+        String[] columnNamesArray = columnNames.split( "," );
+        int validColumnNames = 0;
+        columnOrder = new int[columnNamesArray.length];
+        for ( int i = 0; i < columnOrder.length; i++ )
+        {
+            // Default to -1, indicating that the column should not be included in the report
+            columnOrder[i] = -1;
+            for ( int columnIndex = 0; columnIndex < JIRA_COLUMNS.length; columnIndex++ )
+            {
+                String columnName = columnNamesArray[i].trim();
+                if ( JIRA_COLUMNS[columnIndex].equalsIgnoreCase( columnName ) )
+                {
+                    // Found a valid column name - add it
+                    columnOrder[i] = columnIndex;
+                    validColumnNames++;
+                    break;
+                }
+            }
+        }
+        if ( validColumnNames == 0 )
+        {
+            // This can happen if the user has configured column names and they are all invalid
+            throw new MavenReportException(
+                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+        }
     }
 
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
@@ -76,15 +132,60 @@ public class JiraReportGenerator
 
         sink.tableRow();
 
-        sinkHeader( sink, bundle.getString( "report.jira.label.key" ) );
+        for ( int columnIndex = 0; columnIndex < columnOrder.length; columnIndex++ )
+        {
+            switch ( columnOrder[columnIndex] )
+            {
+                case COLUMN_KEY:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.key" ) );
+                    break;
 
-        sinkHeader( sink, bundle.getString( "report.jira.label.summary" ) );
+                case COLUMN_SUMMARY:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.summary" ) );
+                    break;
 
-        sinkHeader( sink, bundle.getString( "report.jira.label.status" ) );
+                case COLUMN_STATUS:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.status" ) );
+                    break;
 
-        sinkHeader( sink, bundle.getString( "report.jira.label.resolution" ) );
+                case COLUMN_RESOLUTION:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.resolution" ) );
+                    break;
 
-        sinkHeader( sink, bundle.getString( "report.jira.label.by" ) );
+                case COLUMN_ASSIGNEE:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.by" ) );
+                    break;
+
+                case COLUMN_REPORTER:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.reporter" ) );
+                    break;
+
+                case COLUMN_TYPE:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.type" ) );
+                    break;
+
+                case COLUMN_PRIORITY:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.priority" ) );
+                    break;
+
+                case COLUMN_VERSION:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.version" ) );
+                    break;
+
+                case COLUMN_FIX_VERSION:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.fixVersion" ) );
+                    break;
+
+                case COLUMN_COMPONENT:
+                    sinkHeader( sink, bundle.getString( "report.jira.label.component" ) );
+                    break;
+
+                default:
+                    // Do not add a header for this column
+                    break;
+            }
+
+        }
 
         sink.tableRow_();
     }
@@ -102,23 +203,63 @@ public class JiraReportGenerator
 
             sink.tableRow();
 
-            sink.tableCell();
+            for ( int columnIndex = 0; columnIndex < columnOrder.length; columnIndex++ )
+            {
+                switch ( columnOrder[columnIndex] )
+                {
+                    case COLUMN_KEY:
+                        sink.tableCell();
+                        sink.link( issue.getLink() );
+                        sink.text( issue.getKey() );
+                        sink.link_();
+                        sink.tableCell_();
+                        break;
 
-            sink.link( issue.getLink() );
+                    case COLUMN_SUMMARY:
+                        sinkCell( sink, issue.getSummary() );
+                        break;
 
-            sink.text( issue.getKey() );
+                    case COLUMN_STATUS:
+                        sinkCell( sink, issue.getStatus() );
+                        break;
 
-            sink.link_();
+                    case COLUMN_RESOLUTION:
+                        sinkCell( sink, issue.getResolution() );
+                        break;
 
-            sink.tableCell_();
+                    case COLUMN_ASSIGNEE:
+                        sinkCell( sink, issue.getAssignee() );
+                        break;
 
-            sinkCell( sink, issue.getSummary() );
+                    case COLUMN_REPORTER:
+                        sinkCell( sink, issue.getReporter() );
+                        break;
 
-            sinkCell( sink, issue.getStatus() );
+                    case COLUMN_TYPE:
+                        sinkCell( sink, issue.getType() );
+                        break;
 
-            sinkCell( sink, issue.getResolution() );
+                    case COLUMN_PRIORITY:
+                        sinkCell( sink, issue.getPriority() );
+                        break;
 
-            sinkCell( sink, issue.getAssignee() );
+                    case COLUMN_VERSION:
+                        sinkCell( sink, issue.getVersion() );
+                        break;
+
+                    case COLUMN_FIX_VERSION:
+                        sinkCell( sink, issue.getFixVersion() );
+                        break;
+
+                    case COLUMN_COMPONENT:
+                        sinkCell( sink, issue.getComponent() );
+                        break;
+
+                    default:
+                        // Do not add a cell for this column
+                        break;
+                }
+            }
 
             sink.tableRow_();
         }
