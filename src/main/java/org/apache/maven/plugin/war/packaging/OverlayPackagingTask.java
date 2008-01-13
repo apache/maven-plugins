@@ -56,8 +56,7 @@ public class OverlayPackagingTask
         throws MojoExecutionException
     {
         context.getLog().debug(
-                                "OverlayPackagingTask performPackaging overlay.getTargetPath() "
-                                    + overlay.getTargetPath() );
+            "OverlayPackagingTask performPackaging overlay.getTargetPath() " + overlay.getTargetPath() );
         if ( overlay.shouldSkip() )
         {
             context.getLog().info( "Skipping overlay[" + overlay + "]" );
@@ -73,7 +72,7 @@ public class OverlayPackagingTask
 
                 // Step2: setup
                 final PathSet includes = getFilesToIncludes( tmpDir, overlay.getIncludes(), overlay.getExcludes() );
-                
+
                 // Copy
                 if ( null == overlay.getTargetPath() )
                 {
@@ -115,10 +114,9 @@ public class OverlayPackagingTask
         final File tmpDir = getOverlayTempDirectory( context, overlay );
 
         // TODO: not sure it's good, we should reuse the markers of the dependency plugin
-        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0
-            || overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
+        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0 ||
+            overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
         {
-            context.getLog().info( "Unpacking overlay[" + overlay + "]" );
             doUnpack( context, overlay.getArtifact().getFile(), tmpDir );
         }
         else
@@ -142,7 +140,12 @@ public class OverlayPackagingTask
         {
             groupIdDir.mkdir();
         }
-        final File result = new File( groupIdDir, overlay.getArtifactId() );
+        String directoryName = overlay.getArtifactId();
+        if ( overlay.getClassifier() != null )
+        {
+            directoryName = directoryName + "-" + overlay.getClassifier();
+        }
+        final File result = new File( groupIdDir, directoryName );
         if ( !result.exists() )
         {
             result.mkdirs();
