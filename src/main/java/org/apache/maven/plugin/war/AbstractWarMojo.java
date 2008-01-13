@@ -191,15 +191,16 @@ public abstract class AbstractWarMojo
     public static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
 
     /**
-     * The comma separated list of tokens to include in the WAR.
-     * Default is '**'.
+     * The comma separated list of tokens to include when copying content
+     * of the warSourceDirectory. Default is '**'.
      *
      * @parameter alias="includes"
      */
     private String warSourceIncludes = "**";
 
     /**
-     * The comma separated list of tokens to exclude from the WAR.
+     * The comma separated list of tokens to exclude when copying content
+     * of the warSourceDirectory.
      *
      * @parameter alias="excludes"
      */
@@ -247,7 +248,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Returns a string array of the excludes to be used
-     * when assembling/copying the war.
+     * when copying the content of the war source directory.
      *
      * @return an array of tokens to exclude
      */
