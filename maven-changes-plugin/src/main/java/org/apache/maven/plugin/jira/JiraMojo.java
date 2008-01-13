@@ -103,11 +103,12 @@ public class JiraMojo
 
     /**
      * Sets the fix version id(s) that you want to limit your report to include.
-     * These are JIRA's internal version ids, NOT the human readable display ones.
+     * These are JIRA's internal version ids, <b>NOT</b> the human readable display ones.
      * Multiple fix versions can be separated by commas.
-     * If this is set to empty - that means all fix versions.
+     * If this is set to empty - that means all fix versions will be included.
      *
      * @parameter default-value=""
+     * @since 2.0-beta-4
      */
     private String fixVersionIds;
 
@@ -155,8 +156,26 @@ public class JiraMojo
      * values can be separated by commas.
      *
      * @parameter default-value=""
+     * @since 2.0-beta-4
      */
     private String typeIds;
+
+    /**
+     * Sets the column names that you want to show in the report. The columns
+     * will appear in the report in the same order as you specify them here.
+     * Multiple values can be separated by commas.
+     * <p>
+     * Valid columns are: <code>Key</code>, <code>Summary</code>,
+     * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
+     * <code>Reporter</code>, <code>Type</code>, <code>Priority</code>,
+     * <code>Version</code>, <code>Fix Version</code> and
+     * <code>Component</code>.
+     * </p>
+     *
+     * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
+     * @since 2.0-beta-4
+     */
+    private String columnNames;
 
     /**
      * Defines the JIRA username for authentication into a private JIRA installation.
@@ -209,7 +228,7 @@ public class JiraMojo
 
             if ( new File( jiraXmlPath ).exists() )
             {
-                report = new JiraReportGenerator( jiraXmlPath );
+                report = new JiraReportGenerator( jiraXmlPath, columnNames );
 
                 report.doGenerateReport( getBundle( locale ), getSink() );
             }
@@ -219,6 +238,12 @@ public class JiraMojo
 
                 report.doGenerateEmptyReport( getBundle( locale ), getSink() );
             }
+        }
+        catch ( MavenReportException mre )
+        {
+            // Rethrow this error from JiraReportGenerator( String, String )
+            // so that the build fails
+            throw mre;
         }
         catch ( Exception e )
         {
