@@ -60,7 +60,7 @@ public class ResourcesMojo
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The list of resources we want to transfer.
@@ -97,7 +97,7 @@ public class ResourcesMojo
         copyResources( resources, outputDirectory );
     }
 
-    protected void copyResources( List resources, String outputDirectory )
+    protected void copyResources( List resources, File outputDirectory )
         throws MojoExecutionException
     {
         initializeFiltering();
@@ -131,12 +131,11 @@ public class ResourcesMojo
 
             // this part is required in case the user specified "../something" as destination
             // see MNG-1345
-            File outputDir = new File( outputDirectory );
-            if ( !outputDir.exists() )
+            if ( !outputDirectory.exists() )
             {
-                if ( !outputDir.mkdirs() )
+                if ( !outputDirectory.mkdirs() )
                 {
-                    throw new MojoExecutionException( "Cannot create resource output directory: " + outputDir );
+                    throw new MojoExecutionException( "Cannot create resource output directory: " + outputDirectory );
                 }
             }
 
