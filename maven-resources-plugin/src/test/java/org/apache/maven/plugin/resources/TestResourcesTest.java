@@ -76,7 +76,7 @@ public class TestResourcesTest
 
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getTestOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getTestOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
