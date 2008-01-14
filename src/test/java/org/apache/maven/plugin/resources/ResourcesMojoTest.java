@@ -68,7 +68,7 @@ public class ResourcesMojoTest
 
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
@@ -102,7 +102,7 @@ public class ResourcesMojoTest
         project.addFile( "notpackage/test/file2.txt" );
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
@@ -137,7 +137,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "encoding", "UTF-8" );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
@@ -182,7 +182,7 @@ public class ResourcesMojoTest
         project.addInclude( "**/test/file*" );
         project.addInclude( "**/package/*.include" );
 
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
@@ -235,7 +235,7 @@ public class ResourcesMojoTest
         project.addExclude( "**/notpackage*" );
         project.addExclude( "**/notpackage*/**" );
 
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
@@ -272,7 +272,7 @@ public class ResourcesMojoTest
         project.addFile( "notpackage/test/file2.txt" );
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
@@ -307,7 +307,7 @@ public class ResourcesMojoTest
         //setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
@@ -338,7 +338,7 @@ public class ResourcesMojoTest
         //setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
@@ -372,7 +372,7 @@ public class ResourcesMojoTest
         //setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
@@ -405,7 +405,7 @@ public class ResourcesMojoTest
         //setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", filterList );
         mojo.execute();
 
@@ -443,7 +443,7 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject(mojo, "project", project);
         setVariableValueToObject(mojo, "resources", resources);
-        setVariableValueToObject(mojo, "outputDirectory", project.getBuild().getOutputDirectory());
+        setVariableValueToObject(mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject(mojo, "filters", filterList);
         mojo.execute();
         final String resourcesDir = project.getOutputDirectory();
