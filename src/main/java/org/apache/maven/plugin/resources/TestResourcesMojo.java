@@ -20,6 +20,8 @@ import java.util.List;
  * limitations under the License.
  */
 
+import java.io.File;
+
 /**
  * Copy resources for the test source code to the test output directory.
  * 
@@ -38,7 +40,7 @@ public class TestResourcesMojo
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The list of resources we want to transfer.
