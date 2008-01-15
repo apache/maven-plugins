@@ -132,7 +132,8 @@ public class DefaultShader
                 addDirectory( resources, jos, parent );
             }
         }
-        jos.putNextEntry( new JarEntry( name ) );
+        //directory entries must end in "/"
+        jos.putNextEntry( new JarEntry( name + "/" ) );
         resources.add( name );
     }
 
