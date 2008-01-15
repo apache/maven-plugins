@@ -26,7 +26,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:dbradicich@comcast.net">Damian Bradicich</a>
- * @version $Id: UnpackFileMarkerHandler.java 552528 2007-07-02 16:12:47 +0000 (Mon, 02 Jul 2007) markh $
+ * @version $Id$
  */
 public class UnpackFileMarkerHandler extends DefaultFileMarkerHandler 
 {

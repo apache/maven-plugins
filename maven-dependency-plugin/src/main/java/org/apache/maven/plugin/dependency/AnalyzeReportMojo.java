@@ -36,7 +36,7 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerExce
  * Analyzes the dependencies of this project and produces a report that summarises which are: used and declared; used
  * and undeclared; unused and declared.
  * 
- * @version $Id: AnalyzeReportMojo.java 2007-07-19 16:12:47Z $
+ * @version $Id$
  * @since 2.0-alpha-5
  * 
  * @goal analyze-report
