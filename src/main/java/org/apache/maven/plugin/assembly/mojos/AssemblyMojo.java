@@ -31,7 +31,7 @@ import org.apache.maven.project.MavenProject;
  *
  * @goal assembly
  * @execute phase="package"
-  * @aggregator
+ * @aggregator
  */
 public class AssemblyMojo
     extends AbstractAssemblyMojo
