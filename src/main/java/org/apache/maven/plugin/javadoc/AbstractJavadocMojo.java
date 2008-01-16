@@ -347,8 +347,10 @@ public abstract class AbstractJavadocMojo
      * Specifies the encoding name of the source files.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
+     * <br/>
+     * <b>Note</b>: Since 2.4, the default value is locked to <code>ISO-8859-1</code> to better reproducing build.
      *
-     * @parameter expression="${encoding}"
+     * @parameter expression="${encoding}" default-value="ISO-8859-1"
      */
     private String encoding;
 
