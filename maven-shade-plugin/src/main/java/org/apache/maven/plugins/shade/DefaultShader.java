@@ -75,6 +75,14 @@ public class DefaultShader
                 JarEntry entry = (JarEntry) j.nextElement();
 
                 String name = entry.getName();
+                if ( "META-INF/INDEX.LIST".equals( name ) ) 
+                {
+                    //we cannot allow the jar indexes to be copied over or the 
+                    //jar is useless.   Ideally, we could create a new one
+                    //later
+                    continue;
+                }
+                
                 String mappedName = remapper.map( name );
 
                 InputStream is = jarFile.getInputStream( entry );
