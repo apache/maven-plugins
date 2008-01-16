@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -44,6 +46,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.Shader;
+import org.apache.maven.plugins.shade.filter.SimpleFilter;
 import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
@@ -56,6 +59,7 @@ import org.codehaus.plexus.util.IOUtil;
  *
  * @author Jason van Zyl
  * @author Mauro Talevi
+ * @author David Blevins
  * @goal shade
  * @phase package
  * @requiresDependencyResolution runtime
@@ -131,6 +135,18 @@ public class ShadeMojo
      * @parameter
      */
     private ResourceTransformer[] transformers;
+
+    /**
+     * Archive Filters to be used.  Allows you to specify an artifact in the form of
+     * groupId:artifactId and a set of include/exclude file patterns for filtering which
+     * contents of the archive are added to the shaded jar.  From a logical perspective,
+     * includes are processed before excludes, thus it's possible to use an include to
+     * collect a set of files from the archive then use excludes to further reduce the set.
+     * By default, all files are included and no files are excluded.
+     *
+     * @parameter
+     */
+    private ArchiveFilter[] filters;
 
     /** @parameter expression="${project.build.directory}" */
     private File outputDirectory;
@@ -259,15 +275,17 @@ public class ShadeMojo
         // Now add our extra resources
         try
         {
+            List filters = getFilters();
+
             List relocators = getRelocators();
 
             List resourceTransformers = getResourceTrasformers();
 
-            shader.shade( artifacts, outputJar, relocators, resourceTransformers );
+            shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
 
             if (createSourcesJar)
             {
-                shader.shade( sourceArtifacts, sourcesJar, relocators, resourceTransformers );
+                shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
             }
 
             if ( shadedArtifactAttached )
@@ -474,6 +492,46 @@ public class ShadeMojo
         }
 
         return Arrays.asList( transformers );
+    }
+
+    private List getFilters()
+    {
+        List filters = new ArrayList();
+
+        if ( this.filters == null )
+        {
+            return filters;
+        }
+
+        Map artifacts = new HashMap();
+
+        artifacts.put( getId( project.getArtifact() ), project.getArtifact().getFile() );
+
+        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            artifacts.put( getId( artifact ), artifact.getFile() );
+        }
+
+        for ( int i = 0; i < this.filters.length; i++ )
+        {
+            ArchiveFilter f = this.filters[i];
+
+            File jar = (File) artifacts.get( f.getArtifact() );
+
+            if ( jar == null )
+            {
+                getLog().info( "No artifact matching filter " + f.getArtifact() );
+
+                continue;
+            }
+
+            filters.add( new SimpleFilter( jar, f.getIncludes(), f.getExcludes() ) );
+
+        }
+
+        return filters;
     }
 
     private File shadedArtifactFileWithClassifier()
