@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.mojo;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade.mojo;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +32,8 @@ import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
 import org.codehaus.plexus.PlexusTestCase;
 
 
-/** 
- * @author Jason van Zyl 
+/**
+ * @author Jason van Zyl
  * @author Mauro Talevi
  */
 public class ShadeMojoTest
@@ -44,13 +44,13 @@ public class ShadeMojoTest
     {
         shaderWithPattern(null, new File( "target/foo-default.jar" ));
     }
-       
+
     public void testShaderWithCustomShadedPattern()
         throws Exception
     {
         shaderWithPattern("org/shaded/plexus/util", new File( "target/foo-custom.jar" ));
     }
-    
+
     public void shaderWithPattern(String shadedPattern, File jar)
         throws Exception
     {
@@ -73,5 +73,5 @@ public class ShadeMojoTest
 
         s.shade( set, jar, relocators, resourceTransformers );
     }
-    
+
 }

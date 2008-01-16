@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade.resource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ public class ApacheLicenseResourceTransformer
     implements ResourceTransformer
 {
     Set entries = new HashSet();
-    
+
     public boolean canTransformResource( String resource )
     {
         String s = resource.toLowerCase();
@@ -49,7 +49,7 @@ public class ApacheLicenseResourceTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-       
+
     }
 
     public boolean hasTransformedResource()

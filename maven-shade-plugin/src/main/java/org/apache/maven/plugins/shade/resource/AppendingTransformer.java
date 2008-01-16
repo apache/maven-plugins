@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade.resource;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class AppendingTransformer
 {
     String resource;
     ByteArrayOutputStream data = new ByteArrayOutputStream();
-    
+
     public boolean canTransformResource( String r )
     {
         r = r.toLowerCase();
@@ -51,7 +51,7 @@ public class AppendingTransformer
     {
         IOUtil.copy(is, data);
         data.write('\n');
-        
+
         is.close();
     }
 
@@ -64,7 +64,7 @@ public class AppendingTransformer
         throws IOException
     {
         jos.putNextEntry( new JarEntry( resource ) );
-        
+
         IOUtil.copy(new ByteArrayInputStream(data.toByteArray()), jos);
         data.reset();
     }

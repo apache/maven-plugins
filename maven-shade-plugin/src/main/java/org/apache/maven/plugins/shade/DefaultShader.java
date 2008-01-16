@@ -1,19 +1,23 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
- * agreements. See the NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You may obtain a
- * copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package org.apache.maven.plugins.shade;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -73,7 +77,7 @@ public class DefaultShader
                 if ( !entry.isDirectory() )
                 {
                     int idx = mappedName.lastIndexOf('/');
-                    if ( idx != -1 ) 
+                    if ( idx != -1 )
                     {
                         //make sure dirs are created
                         String dir = mappedName.substring(0, idx);
@@ -82,7 +86,7 @@ public class DefaultShader
                             addDirectory( resources, jos, dir );
                         }
                     }
-                    
+
                     if ( name.endsWith( ".class" ) )
                     {
                         addRemappedClass( remapper, jos, jar, name, is );
@@ -104,7 +108,7 @@ public class DefaultShader
 
                 IOUtil.close( is );
             }
-            
+
             jarFile.close();
         }
 
@@ -139,21 +143,21 @@ public class DefaultShader
         entry.setCompressedSize(0);
         entry.setCrc(0);
         jos.putNextEntry( entry );
-        
+
         resources.add( name );
     }
 
     private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name, InputStream is )
         throws IOException
     {
-        if ( !remapper.hasRelocators() ) 
+        if ( !remapper.hasRelocators() )
         {
             jos.putNextEntry( new JarEntry( name ) );
 
             IOUtil.copy( is, jos );
             return;
         }
-        
+
         ClassReader cr = new ClassReader( is );
 
         ClassWriter cw = new ClassWriter( cr, 0 );
@@ -164,7 +168,7 @@ public class DefaultShader
 
         byte[] renamedClass = cw.toByteArray();
 
-        // Need to take the .class off for remapping evaluation                        
+        // Need to take the .class off for remapping evaluation
         String mappedName = remapper.map( name.substring( 0, name.indexOf( '.' ) ) );
 
         try
@@ -220,8 +224,8 @@ public class DefaultShader
         {
             this.relocators = relocators;
         }
-        
-        public boolean hasRelocators() 
+
+        public boolean hasRelocators()
         {
             return !relocators.isEmpty();
         }

@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade.resource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarOutputStream;
@@ -30,7 +30,7 @@ public interface ResourceTransformer
 
     void processResource( InputStream is )
         throws IOException;
-    
+
     boolean hasTransformedResource();
 
     void modifyOutputStream( JarOutputStream os )

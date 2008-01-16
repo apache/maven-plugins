@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.shade.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,7 +64,7 @@ public class ComponentsXmlResourceTransformer
         File f = File.createTempFile( "maven-shade-plugin", "tmp" );
 
         f.deleteOnExit();
-        
+
         String n = f.getAbsolutePath();
 
         OutputStream os = new FileOutputStream( f );
@@ -89,13 +89,13 @@ public class ComponentsXmlResourceTransformer
         {
             throw new IOException( "Error parsing components.xml in " + is );
         }
-        
+
         // Only try to merge in components if there are some elements in the component-set
         if ( newDom.getChild( "components" ) == null )
         {
             return;
         }
-        
+
         Xpp3Dom[] children = newDom.getChild( "components" ).getChildren( "component" );
 
         for ( int i = 0; i < children.length; i++ )
@@ -122,7 +122,7 @@ public class ComponentsXmlResourceTransformer
         IOUtil.copy( reader, jos );
 
         reader.close();
-        
+
         components.clear();
     }
 
