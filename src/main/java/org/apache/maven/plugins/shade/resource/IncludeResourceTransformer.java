@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.shade.resource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +39,7 @@ public class IncludeResourceTransformer
 {
     File file;
     String resource;
-    
+
     public boolean canTransformResource( String r )
     {
         return false;
@@ -48,7 +48,7 @@ public class IncludeResourceTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-       
+
     }
 
     public boolean hasTransformedResource()
@@ -60,8 +60,8 @@ public class IncludeResourceTransformer
         throws IOException
     {
         jos.putNextEntry( new JarEntry( resource ) );
-        
-        InputStream in = new FileInputStream( file ); 
+
+        InputStream in = new FileInputStream( file );
         IOUtil.copy( in, jos );
         in.close();
     }
