@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.shade.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +38,10 @@ public class XmlAppendingTransformer
     implements ResourceTransformer
 {
     public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
-    
+
     String resource;
     Document doc;
-    
+
     public boolean canTransformResource( String r )
     {
         r = r.toLowerCase();
@@ -58,41 +58,41 @@ public class XmlAppendingTransformer
         throws IOException
     {
         Document r;
-        try 
+        try
         {
             r = new SAXBuilder().build(is);
-        } 
-        catch (JDOMException e) 
+        }
+        catch (JDOMException e)
         {
             throw new RuntimeException(e);
         }
-        
-        if (doc == null) 
+
+        if (doc == null)
         {
             doc = r;
-        } 
-        else 
+        }
+        else
         {
             Element root = r.getRootElement();
-            
+
             for (Iterator itr = root.getAttributes().iterator(); itr.hasNext();)
             {
                 Attribute a = (Attribute) itr.next();
                 itr.remove();
-                
+
                 Element mergedEl = doc.getRootElement();
                 Attribute mergedAtt = mergedEl.getAttribute(a.getName(), a.getNamespace());
-                if (mergedAtt == null) 
+                if (mergedAtt == null)
                 {
                     mergedEl.setAttribute(a);
                 }
             }
-            
+
             for (Iterator itr = root.getChildren().iterator(); itr.hasNext();)
             {
                 Content n = (Content) itr.next();
                 itr.remove();
-                
+
                 doc.getRootElement().addContent(n);
             }
         }
@@ -107,9 +107,9 @@ public class XmlAppendingTransformer
         throws IOException
     {
         jos.putNextEntry( new JarEntry( resource ) );
-        
+
         new XMLOutputter(Format.getPrettyFormat()).output(doc, jos);
-        
+
         doc = null;
     }
 }

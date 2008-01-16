@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.relocation;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,42 +19,40 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.shade.relocation;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/** 
- * @author Jason van Zyl 
+/**
+ * @author Jason van Zyl
  * @author Mauro Talevi
  */
 public class SimpleRelocator
     implements Relocator
 {
     private String pattern;
-    
+
     private String shadedPattern;
 
     private List excludes;
 
-    public SimpleRelocator(String patt, String shadedPattern, List excludes) 
+    public SimpleRelocator(String patt, String shadedPattern, List excludes)
     {
         this.pattern = patt.replace('.', '/');
 
         if ( shadedPattern != null )
         {
-            this.shadedPattern = shadedPattern.replace('.', '/');            
-        } else 
+            this.shadedPattern = shadedPattern.replace('.', '/');
+        } else
         {
             this.shadedPattern = "hidden/" + this.pattern;
         }
 
-        if (excludes != null) 
+        if (excludes != null)
         {
             this.excludes = new ArrayList();
 
-            for (Iterator i = excludes.iterator(); i.hasNext();) 
+            for (Iterator i = excludes.iterator(); i.hasNext();)
             {
                 String e = (String) i.next();
 
@@ -60,7 +60,7 @@ public class SimpleRelocator
             }
         }
     }
-    
+
     public boolean canRelocate( String clazz )
     {
         if ( excludes != null )

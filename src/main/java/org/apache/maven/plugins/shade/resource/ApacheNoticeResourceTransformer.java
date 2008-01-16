@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.resource;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.shade.resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,26 +41,26 @@ public class ApacheNoticeResourceTransformer
 {
     Set entries = new LinkedHashSet();
     Map organizationEntries = new LinkedHashMap();
-    
+
     String projectName;
-    
-    String preamble1 = 
+
+    String preamble1 =
           "// ------------------------------------------------------------------\n"
         + "// NOTICE file corresponding to the section 4d of The Apache License,\n"
         + "// Version 2.0, in this case for ";
-    
+
     String preamble2 = "\n// ------------------------------------------------------------------\n";
-        
+
     String preamble3 = "This product includes software developed at\n";
-    
+
     //defaults overridable via config in pom
     String organizationName = "The Apache Software Foundation";
     String organizationURL = "http://www.apache.org/";
     String inceptionYear = "2006";
-    
+
     String copyright;
 
-        
+
     public boolean canTransformResource( String resource )
     {
         String s = resource.toLowerCase();
@@ -76,25 +76,25 @@ public class ApacheNoticeResourceTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-        if ( entries.isEmpty() ) 
+        if ( entries.isEmpty() )
         {
             String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
-            if ( !inceptionYear.equals( year ) ) 
+            if ( !inceptionYear.equals( year ) )
             {
                 year = inceptionYear + "-" + year;
             }
-            
-            
+
+
             //add headers
             entries.add( preamble1 + projectName + preamble2 );
             //fake second entry, we'll look for a real one later
             entries.add( projectName + "\nCopyright " + year + " " + organizationName + "\n" );
             entries.add( preamble3 + organizationName + " ("+ organizationURL +").\n" );
         }
-        
-        
+
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        
+
         String line = reader.readLine();
         StringBuffer sb = new StringBuffer();
         Set currentOrg = null;
@@ -102,7 +102,7 @@ public class ApacheNoticeResourceTransformer
         while ( line != null )
         {
             String trimedLine = line.trim();
-            
+
             if ( !trimedLine.startsWith( "//" ) )
             {
                 if ( trimedLine.length() > 0 )
@@ -110,7 +110,7 @@ public class ApacheNoticeResourceTransformer
                     if ( trimedLine.startsWith( "- " ) )
                     {
                         //resource-bundle 1.3 mode
-                        if ( lineCount == 1 
+                        if ( lineCount == 1
                             && sb.toString().indexOf( "This product includes/uses software(s) developed by" ) != -1)
                         {
                             currentOrg = (Set) organizationEntries.get( sb.toString().trim() );
@@ -120,13 +120,13 @@ public class ApacheNoticeResourceTransformer
                                 organizationEntries.put( sb.toString().trim(), currentOrg );
                             }
                             sb = new StringBuffer();
-                        } 
+                        }
                         else if ( sb.length() > 0 && currentOrg != null )
                         {
                             currentOrg.add( sb.toString() );
                             sb = new StringBuffer();
                         }
-                        
+
                     }
                     sb.append( line ).append( "\n" );
                     lineCount++;
@@ -134,14 +134,14 @@ public class ApacheNoticeResourceTransformer
                 else
                 {
                     String ent = sb.toString();
-                    if ( ent.startsWith( projectName ) 
-                        && ent.indexOf( "Copyright " ) != -1 ) 
+                    if ( ent.startsWith( projectName )
+                        && ent.indexOf( "Copyright " ) != -1 )
                     {
                         copyright = ent;
                     }
                     if ( currentOrg == null )
                     {
-                        entries.add( ent );                        
+                        entries.add( ent );
                     }
                     else
                     {
@@ -152,7 +152,7 @@ public class ApacheNoticeResourceTransformer
                     currentOrg = null;
                 }
             }
-            
+
             line = reader.readLine();
         }
     }
@@ -166,10 +166,10 @@ public class ApacheNoticeResourceTransformer
         throws IOException
     {
         jos.putNextEntry( new JarEntry( "META-INF/NOTICE" ) );
-        
+
         OutputStreamWriter pow = new OutputStreamWriter( jos );
         PrintWriter writer = new PrintWriter(pow);
-        
+
         int count = 0;
         for ( Iterator itr = entries.iterator() ; itr.hasNext() ; )
         {
@@ -179,8 +179,8 @@ public class ApacheNoticeResourceTransformer
             {
                 continue;
             }
-            
-            if ( count == 2 && copyright != null ) 
+
+            if ( count == 2 && copyright != null )
             {
                 writer.print( copyright );
                 writer.print( '\n' );
@@ -190,7 +190,7 @@ public class ApacheNoticeResourceTransformer
                 writer.print( line );
                 writer.print( '\n' );
             }
-            if (count == 3) 
+            if (count == 3)
             {
                 //do org stuff
                 for (Iterator oit = organizationEntries.entrySet().iterator() ; oit.hasNext();)
@@ -201,15 +201,15 @@ public class ApacheNoticeResourceTransformer
                     Set entrySet = (Set)entry.getValue();
                     for (Iterator eit = entrySet.iterator() ; eit.hasNext() ;)
                     {
-                        writer.print( eit.next().toString() );                        
+                        writer.print( eit.next().toString() );
                     }
                     writer.print( '\n' );
                 }
             }
         }
-        
+
         writer.flush();
-        
+
         entries.clear();
     }
 }
