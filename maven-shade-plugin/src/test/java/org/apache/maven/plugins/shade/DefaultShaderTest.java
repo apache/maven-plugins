@@ -80,7 +80,9 @@ public class DefaultShaderTest
 
         resourceTransformers.add( new ComponentsXmlResourceTransformer() );
 
-        s.shade( set, jar, relocators, resourceTransformers );
+        List filters = new ArrayList();
+
+        s.shade( set, jar, filters, relocators, resourceTransformers );
     }
 
 }

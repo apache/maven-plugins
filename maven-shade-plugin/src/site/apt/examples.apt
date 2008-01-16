@@ -204,3 +204,118 @@
   ...
 </project>
 +-----
+
+ * Shade Plugin with artifact filtering using includes
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+            <filters>
+              <filter>
+                <artifact>junit:junit</artifact>
+                <includes>
+                  <include>junit/framework/**</include>
+                  <include>org/junit/**</include>
+                </includes>
+              </filter>
+            </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+ * Shade Plugin with artifact filtering using includes and excludes
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+            <filters>
+              <filter>
+                <artifact>junit:junit</artifact>
+                <includes>
+                  <include>junit/framework/**</include>
+                  <include>org/junit/**</include>
+                </includes>
+                <excludes>
+                  <exclude>org/junit/experimental/**</include>
+                  <exclude>org/junit/runners/**</include>
+                </excludes>
+              </filter>
+            </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+ * Shade Plugin with artifact filtering using excludes only
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+            <filters>
+              <filter>
+                <artifact>junit:junit</artifact>
+                <excludes>
+                  <exclude>junit/textui/**</include>
+                  <exclude>junit/runner/**</include>
+                  <exclude>junit/extensions/**</include>
+                  <exclude>org/junit/experimental/**</include>
+                  <exclude>org/junit/runners/**</include>
+                </excludes>
+              </filter>
+            </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
