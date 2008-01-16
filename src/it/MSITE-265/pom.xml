@@ -27,6 +27,6 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <name>MSITE-265 It</name>
   <properties>
-    <currentVersion>2.0-beta-7-SNAPSHOT</currentVersion>
+    <currentVersion>2.0.7</currentVersion>
   </properties>
 </project>

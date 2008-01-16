@@ -70,6 +70,7 @@ try
     if ( indexOf < 0)
     {
     	System.err.println( "download.html doesn't contains Download Maven 2.0.7" );
+        return false;
     }
            
 }
