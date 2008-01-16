@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -35,6 +36,7 @@ import java.util.zip.ZipException;
 
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.apache.maven.plugins.shade.filter.Filter;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 import org.objectweb.asm.ClassReader;
@@ -51,8 +53,8 @@ public class DefaultShader
     extends AbstractLogEnabled
     implements Shader
 {
-    public void shade( Set jars, File uberJar, List relocators, List resourceTransformers )
-        throws IOException
+    public void shade( Set jars, File uberJar, List filters, List relocators, List resourceTransformers )
+    throws IOException
     {
         Set resources = new HashSet();
 
@@ -64,6 +66,8 @@ public class DefaultShader
         {
             File jar = (File) i.next();
 
+            List jarFilters = getFilters( jar, filters );
+
             JarFile jarFile = new JarFile( jar );
 
             for ( Enumeration j = jarFile.entries(); j.hasMoreElements(); )
@@ -74,7 +78,7 @@ public class DefaultShader
                 String mappedName = remapper.map( name );
 
                 InputStream is = jarFile.getInputStream( entry );
-                if ( !entry.isDirectory() )
+                if ( !entry.isDirectory() && !isFiltered( jarFilters, name ) )
                 {
                     int idx = mappedName.lastIndexOf('/');
                     if ( idx != -1 )
@@ -123,6 +127,24 @@ public class DefaultShader
         }
 
         IOUtil.close( jos );
+    }
+
+    private List getFilters(File jar, List filters)
+    {
+        List list = new ArrayList();
+
+        for ( int i = 0; i < filters.size(); i++ )
+        {
+            Filter filter = (Filter) filters.get( i );
+
+            if ( filter.canFilter( jar ) )
+            {
+                list.add( filter );
+            }
+
+        }
+
+        return list;
     }
 
     private void addDirectory( Set resources, JarOutputStream jos, String name )
@@ -182,6 +204,21 @@ public class DefaultShader
         {
             getLogger().warn( "We have a duplicate " + mappedName + " in " + jar );
         }
+    }
+
+    private boolean isFiltered( List filters, String name )
+    {
+        for ( int i = 0; i < filters.size(); i++ )
+        {
+            Filter filter = (Filter) filters.get( i );
+
+            if ( filter.isFiltered( name ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean resourceTransformed( List resourceTransformers, String name, InputStream is )
