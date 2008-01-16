@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.pom;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.shade.pom;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -73,5 +73,5 @@ public class PomWriter
         Format format = Format.getPrettyFormat().setEncoding( encoding );
 
         writer.write( newModel, doc, w, format );
-    }    
+    }
 }

@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.shade.mojo;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,12 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.shade.mojo;
 
 import java.util.List;
 
-/** 
- * @author Jason van Zyl 
+/**
+ * @author Jason van Zyl
  * @author Mauro Talevi
  */
 public class PackageRelocation
