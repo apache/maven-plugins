@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -21,6 +21,22 @@ under the License.
 
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
+    <faq id="What is the difference between mvn site and mvn site:site">
+      <question>What is the difference between <i>mvn site</i> and <i>mvn site:site</i>?</question>
+      <answer>
+        <p>
+          <dl>
+            <dt>mvn site</dt>
+            <dd>
+              Calls the <i>site</i> lifecycle with the associate phases (i.e. pre-site, site, post-site, site-deploy).
+              See <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
+            <dt>mvn site:site</dt>
+            <dd>Calls the <i>site</i> goal from the site plugin.
+              See <a href="site-mojo.html">site:site</a>.</dd>
+          </dl>
+        </p>
+      </answer>
+    </faq>
     <faq id="How do I integrate static (x)html pages into my Maven site">
       <question>How do I integrate static (x)html pages into my Maven site?</question>
       <answer>
@@ -68,7 +84,7 @@ under the License.
           build, is to run <code>'mvn site'</code> for the parent and all its
           modules <b>individually</b>. The links between parent and child will
           <b>not</b> work here. They <b>will</b> however work when you deploy
-          the site. 
+          the site.
         </p>
         <p>
           If you want to test this, prior to deployment, you can run the
