@@ -42,6 +42,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -624,6 +625,15 @@ public abstract class AbstractSiteRenderingMojo
         throws IOException, RendererException
     {
         Map documents = siteRenderer.locateDocumentFiles( context );
+
+        // TODO: temporary solution for MSITE-289. We need to upgrade doxia sit tools
+        Map tmp = new HashMap();
+        for ( Iterator it = documents.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            tmp.put( StringUtils.replace( key, "\\", "/" ), documents.get( key ) );
+        }
+        documents = tmp;
 
         Map reportsByOutputName = locateReports( reports, documents, locale );
 
