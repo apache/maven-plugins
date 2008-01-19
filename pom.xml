@@ -19,13 +19,16 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>8</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-resources-plugin</artifactId>
+  <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Resources Plugin</name>
   <description>
@@ -36,20 +39,23 @@
     This, thus, allows the separation of resources of the main code (what your plugin actually does) and its unit
     tests.
   </description>
-  <version>2.3-SNAPSHOT</version>
+  <inceptionYear>2001</inceptionYear>
+
   <issueManagement>
     <system> jira </system>
     <url>http://jira.codehaus.org/browse/MRESOURCES</url>
   </issueManagement>
-  <inceptionYear>2001</inceptionYear>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-resources-plugin</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-resources-plugin</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-resources-plugin</url>
   </scm>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -66,6 +72,7 @@
       <artifactId>plexus-utils</artifactId>
       <version>1.4.1</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
@@ -74,4 +81,3 @@
     </dependency>
   </dependencies>
 </project>
-
