@@ -6,21 +6,40 @@
  July 2006
  ------
 
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 Filtering
 
- Variables can be included in your resources. These variables, denoted by the 
- $\{...\} delimiters, can come from the System properties, your project 
- properties, from your filter resources and from the command lines. 
- 
+ Variables can be included in your resources. These variables, denoted by the
+ $\{...\} delimiters, can come from the System properties, your project
+ properties, from your filter resources and from the command lines.
+
  For example, if we have a resource src/main/resources/hello.txt containing
- 
+
 +-----+
 Hello ${name}
 +-----+
 
  And a pom like this
- 
+
 +-----+
 <project>
   [...]
@@ -40,14 +59,14 @@ Hello ${name}
   [...]
 </project>
 +-----+
- 
+
  Upon calling
- 
+
 +-----+
 mvn resources:resources
 +-----+
 
- This will create a resource output in target/class/hello.txt which contains 
+ This will create a resource output in target/class/hello.txt which contains
  exactly the same.
 
 +-----+
@@ -55,7 +74,7 @@ Hello ${name}
 +-----+
 
  However, if we add a filtering tag to our pom and set it to true such as this
- 
+
 +-----+
       [...]
       <resource>
@@ -65,41 +84,41 @@ Hello ${name}
       [...]
 +-----+
 
- Our target/class/hello.txt after calling 
- 
+ Our target/class/hello.txt after calling
+
 +-----+
-mvn resources:resources 
+mvn resources:resources
 +-----+
- 
+
  would be
- 
+
 +-----+
 Hello My Resources Plugin Practice Project
 +-----+
 
- That's because the name variable was replaced by the value of the project's 
+ That's because the name variable was replaced by the value of the project's
  name (which was specified
  in the pom).
- 
- Moreover, we can also assign values through the command line using the "-D" 
- tag. For example, to change the value for the variable name to "world", we can 
+
+ Moreover, we can also assign values through the command line using the "-D"
+ tag. For example, to change the value for the variable name to "world", we can
  simply invoke this command
- 
+
 +-----+
 mvn resources:resources -Dname="world"
 +-----+
 
- And the output in target/class/hello.txt would be 
- 
+ And the output in target/class/hello.txt would be
+
 +-----+
 Hello world
 +-----+
- 
- Furthermore, we are not limited to use pre-defined project variables. We can 
- specify our own variables and their values under the properties tag. For 
- example, if we want to change the variable from "name" to "your.name", we can 
+
+ Furthermore, we are not limited to use pre-defined project variables. We can
+ specify our own variables and their values under the properties tag. For
+ example, if we want to change the variable from "name" to "your.name", we can
  do so by adding a "your.name" tag under the "properties" tag.
- 
+
 +-----+
 <project>
   [...]
@@ -110,11 +129,11 @@ Hello world
 </project>
 +-----+
 
- But to organize your project, you may want to put all your variables and their 
+ But to organize your project, you may want to put all your variables and their
  values on a separate file so that you will not have to rewrite your pom, or set
- their values all the time with every build. This can be done by adding a 
+ their values all the time with every build. This can be done by adding a
  filter.
- 
+
 +-----+
 <project>
   [...]
@@ -131,16 +150,16 @@ Hello world
   [...]
 </project>
 +-----+
- 
- For example, we can separate "your.name" from pom by specifying a filter, "my 
+
+ For example, we can separate "your.name" from pom by specifying a filter, "my
  filter values.properties" containing
- 
+
 +-----+
 your.name = world
 +-----+
 
  and adding that to our pom
- 
+
 +-----+
     [...]
     <filters>
