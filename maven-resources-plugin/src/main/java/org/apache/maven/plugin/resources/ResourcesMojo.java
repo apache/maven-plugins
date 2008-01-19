@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.resources;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.model.Resource;
@@ -46,14 +49,14 @@ import java.util.Properties;
 public class ResourcesMojo
     extends AbstractMojo
 {
-    
+
     /**
      * The character encoding scheme to be applied.
-     * 
+     *
      * @parameter
      */
     private String encoding;
-    
+
     /**
      * The output directory into which to copy the resources.
      *
@@ -84,9 +87,9 @@ public class ResourcesMojo
     private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
     /**
-     * The list of additional key-value pairs aside from that of the System, 
-     * and that of the project, which would be used for the filtering. 
-     * 
+     * The list of additional key-value pairs aside from that of the System,
+     * and that of the project, which would be used for the filtering.
+     *
      * @parameter expression="${project.build.filters}"
      */
     private List filters;
@@ -110,7 +113,7 @@ public class ResourcesMojo
         {
             getLog().info( "Using '" + encoding + "' to copy filtered resources." );
         }
-        
+
         for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
             Resource resource = (Resource) i.next();
@@ -201,26 +204,26 @@ public class ResourcesMojo
         throws MojoExecutionException
     {
         filterProperties = new Properties();
-        
+
         // System properties
         filterProperties.putAll( System.getProperties() );
-        
+
         // Project properties
         filterProperties.putAll( project.getProperties() );
-        
-        // Take a copy of filterProperties to ensure that evaluated filterTokens are not propagated 
-        // to subsequent filter files. NB this replicates current behaviour and seems to make sense. 
+
+        // Take a copy of filterProperties to ensure that evaluated filterTokens are not propagated
+        // to subsequent filter files. NB this replicates current behaviour and seems to make sense.
         final Properties baseProps = new Properties();
         baseProps.putAll( this.filterProperties );
-        
+
         for ( Iterator i = filters.iterator(); i.hasNext(); )
         {
             String filtersfile = (String) i.next();
-            
+
             try
             {
                 Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), baseProps );
-                
+
                 filterProperties.putAll( properties );
             }
             catch ( IOException e )
