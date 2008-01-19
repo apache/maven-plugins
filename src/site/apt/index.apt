@@ -6,35 +6,54 @@
  12 July 2006
  ------
 
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 Maven 2 Resources Plugin
 
- The Resources Plugin handles the copying of project resources to the output 
- directory. Resources come in two: main resources and test resources. The 
- difference is that the main resources are the resources associated to the main 
- source code while the test resources are that for the test code. 
- 
- Thus, this allows the separation of resources for the main source code and its 
+ The Resources Plugin handles the copying of project resources to the output
+ directory. Resources come in two: main resources and test resources. The
+ difference is that the main resources are the resources associated to the main
+ source code while the test resources are that for the test code.
+
+ Thus, this allows the separation of resources for the main source code and its
  unit tests.
 
 * Goals Overview
 
    The Resources Plugin has two goals:
 
-   * {{{resources-mojo.html}resources:resources}} copies the 
+   * {{{resources-mojo.html}resources:resources}} copies the
      resources for the main source code to the main output directory.
 
-   * {{{testResources-mojo.html}resources:testResources}} copies the 
+   * {{{testResources-mojo.html}resources:testResources}} copies the
      resources for the test source code to the test output directory.
 
 * Usage
 
-   Instructions on how to use the Resources Plugin can be found 
+   Instructions on how to use the Resources Plugin can be found
    {{{usage.html}here}}.
 
 * Examples
 
-   The following examples show how to use the Resources Plugin in more advanced 
+   The following examples show how to use the Resources Plugin in more advanced
    usecases:
 
    * {{{examples/encoding.html}Specifying a character encoding scheme}}
@@ -42,9 +61,9 @@ Maven 2 Resources Plugin
    * {{{examples/resource-directory.html}Specifying resource directories}}
 
    * {{{examples/filter.html}Filtering}}
-   
-   * {{{examples/include-exclude.html}Including and excluding files and 
+
+   * {{{examples/include-exclude.html}Including and excluding files and
       directories}}
-   
-   
+
+
 

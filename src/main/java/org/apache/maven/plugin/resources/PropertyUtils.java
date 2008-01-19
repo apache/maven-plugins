@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.resources;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.codehaus.plexus.util.IOUtil;
@@ -44,7 +47,7 @@ public final class PropertyUtils
      * The properties are resolved iteratively, so if the value of property A refers to property B, then after resolution
      * the value of property B will contain the value of property B.
      * </p>
-     * 
+     *
      * @param propFile The property file to load.
      * @param baseProps Properties containing the initial values to subsitute into the properties file.
      * @return Properties object containing the properties in the file with their values fully resolved.
@@ -76,7 +79,7 @@ public final class PropertyUtils
         // The algorithm iterates only over the fileProps which is all that is required to resolve
         // the properties defined within the file. This is slighlty different to current, however
         // I suspect that this was the actual original intent.
-        // 
+        //
         // The difference is that #loadPropertyFile(File, boolean, boolean) also resolves System properties
         // whose values contain expressions. I believe this is unexpected and is not validated by the test cases,
         // as can be verified by replacing the implementation of #loadPropertyFile(File, boolean, boolean)
@@ -103,27 +106,27 @@ public final class PropertyUtils
     public static Properties loadPropertyFile( File propfile, boolean fail, boolean useSystemProps )
         throws IOException
     {
-        
+
         final Properties baseProps = new Properties();
 
-        if (useSystemProps) 
+        if (useSystemProps)
         {
             baseProps.putAll(System.getProperties());
         }
 
         final Properties resolvedProps = new Properties();
-        try 
+        try
         {
             resolvedProps.putAll(loadPropertyFile(propfile, baseProps));
         } catch (FileNotFoundException e)
         {
-            if (fail) 
+            if (fail)
             {
                 throw new FileNotFoundException(propfile.toString());
             }
         }
 
-        if (useSystemProps) 
+        if (useSystemProps)
         {
             resolvedProps.putAll(baseProps);
         }
