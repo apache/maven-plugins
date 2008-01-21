@@ -45,7 +45,7 @@ public class ChangesXML
 
     private Release release;
 
-    private String currentElement;
+    private StringBuffer currentElement = new StringBuffer( 1024 );
 
     private String currentName;
 
@@ -116,12 +116,7 @@ public class ChangesXML
     public void characters( char[] buf, int offset, int len )
         throws SAXException
     {
-        String s = new String( buf, offset, len );
-
-        if ( !s.trim().equals( "" ) )
-        {
-            currentElement = currentElement + s.trim() + "\n";
-        }
+        currentElement.append( buf, offset, len );
     }
 
     public void endElement( String namespaceURI, String sName, String qName )
@@ -129,15 +124,15 @@ public class ChangesXML
     {
         if ( qName.equals( "title" ) )
         {
-            this.title = currentElement;
+            this.title = currentElement.toString().trim();
         }
         else if ( qName.equals( "author" ) )
         {
-            this.title = currentElement;
+            this.title = currentElement.toString().trim();
         }
         else if ( qName.equals( "action" ) )
         {
-            action.setAction( currentElement.trim() );
+            action.setAction( currentElement.toString().trim() );
 
             actionList.add( action );
         }
@@ -148,7 +143,7 @@ public class ChangesXML
             releaseList.add( release );
         }
 
-        currentElement = "";
+        currentElement.setLength( 0 );
     }
 
     public void startElement( String namespaceURI, String sName, String qName, Attributes attrs )
