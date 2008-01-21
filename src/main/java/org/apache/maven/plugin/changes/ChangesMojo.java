@@ -81,7 +81,7 @@ public class ChangesMojo
      * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called
      * <code>link_template</code>.
      * </p>
-     * 
+     *
      * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
      *
      */
@@ -132,7 +132,8 @@ public class ChangesMojo
 
         if ( ( url == null ) || ( url.trim().equals( "" ) ) )
         {
-            getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
+            getLog().warn(
+                "No Issue Management/URL defined in pom.xml.  Links to your issues will not work correctly." );
         }
 
         report.setIssueLink( issueLinkTemplate );
