@@ -178,6 +178,27 @@ public class JiraMojo
     private String columnNames;
 
     /**
+     * Sets the column names that you want to sort the report by. Add
+     * <code>DESC</code> following the column name
+     * to specify <i>descending</i> sequence. For
+     * example <code>Fix Version DESC, Type</code> sorts first by
+     * the Fix Version in descending order and then by Type in
+     * ascending order.
+     * <p>
+     * Valid columns are: <code>Key</code>, <code>Summary</code>,
+     * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
+     * <code>Reporter</code>, <code>Type</code>, <code>Priority</code>,
+     * <code>Version</code>, <code>Fix Version</code>,
+     * <code>Component</code>, <code>Created</code> and
+     * <code>Updated</code>.
+     * </p>
+     *
+     * @parameter default-value="Priority DESC, Created DESC"
+     * @since 2.0-beta-4
+     */
+    private String sortColumnNames;
+
+    /**
      * Defines the JIRA username for authentication into a private JIRA installation.
      *
      * @parameter default-value=""
@@ -305,6 +326,8 @@ public class JiraMojo
         jira.setResolutionIds( resolutionIds );
 
         jira.setPriorityIds( priorityIds );
+
+        jira.setSortColumnNames( sortColumnNames );
 
         jira.setFilter( filter );
 
