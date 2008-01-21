@@ -75,6 +75,8 @@ public abstract class AbstractJiraDownloader
     private String component;
     /** Ids of types to show, as comma separated string. */
     private String typeIds;
+    /** Column names to sort by, as comma separated string. */
+    private String sortColumnNames;
     /** The username to log into JIRA. */
     private String jiraUser;
     /** The password to log into JIRA. */
@@ -203,10 +205,100 @@ public abstract class AbstractJiraDownloader
             }
         }
 
-        // add default sorting (by priority and then creation date)
-        String sort = "&sorter/field=created&sorter/order=DESC" + "&sorter/field=priority&sorter/order=DESC";
+        // get the Sort order
+        int validSortColumnNames = 0;
+        if ( sortColumnNames != null )
+        {
+            String[] sortColumnNamesArray = sortColumnNames.split( "," );
+            // N.B. Add in reverse order (it's the way JIRA likes it!!)
+            for ( int i = sortColumnNamesArray.length - 1; i >= 0; i-- )
+            {
+                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase();
+                boolean descending = false;
+                String fieldName = null;
+                if ( lowerColumnName.endsWith( "desc" ) )
+                {
+                    descending = true;
+                    lowerColumnName = lowerColumnName.substring(0, lowerColumnName.length() - 4).trim();
+                }
 
-        return localFilter + sort;
+                if ( "key".equals( lowerColumnName ) )
+                {
+                    fieldName = "issuekey";
+                }
+                else if ("summary".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("status".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("resolution".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("assignee".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("reporter".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("type".equals( lowerColumnName ) )
+                {
+                    fieldName = "issuetype";
+                }
+                else if ("priority".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("version".equals( lowerColumnName ) )
+                {
+                    fieldName = "versions";
+                }
+                else if ("fix version".equals( lowerColumnName ) )
+                {
+                    fieldName = "fixVersions";
+                }
+                else if ("component".equals( lowerColumnName ) )
+                {
+                    fieldName = "components";
+                }
+                else if ("created".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                else if ("updated".equals( lowerColumnName ) )
+                {
+                    fieldName = lowerColumnName;
+                }
+                if ( fieldName != null )
+                {
+                    localFilter.append( "&sorter/field=" );
+                    localFilter.append( fieldName );
+                    localFilter.append( "&sorter/order=" );
+                    localFilter.append( descending ? "DESC" : "ASC" );
+                    validSortColumnNames++;
+                }
+                else {
+                    // Error in the configuration
+                    getLog().error(
+                        "maven-changes-plugin: The configured value '" + lowerColumnName
+                            + "' for sortColumnNames is not correct." );
+                }
+            }
+        }
+        if ( validSortColumnNames == 0 )
+        {
+            // Error in the configuration
+            getLog().error(
+                "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames + "' are correct." );
+        }
+
+
+        return localFilter.toString();
     }
 
     /**
@@ -664,6 +756,16 @@ public abstract class AbstractJiraDownloader
     public void setResolutionIds( String thisResolutionIds )
     {
         resolutionIds = thisResolutionIds;
+    }
+
+    /**
+     * Sets the sort column names.
+     *
+     * @param thisSortColumnNames The column names to sort by
+     */
+    public void setSortColumnNames( String thisSortColumnNames )
+    {
+        sortColumnNames = thisSortColumnNames;
     }
 
     /**
