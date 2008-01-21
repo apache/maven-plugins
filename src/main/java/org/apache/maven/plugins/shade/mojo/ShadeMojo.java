@@ -265,7 +265,7 @@ public class ShadeMojo
             File file = shadedSourcesArtifactFile();
             if ( file.exists() )
             {
-                artifacts.add( file );
+                sourceArtifacts.add( file );
             }
         }
 
@@ -285,7 +285,7 @@ public class ShadeMojo
 
             if (createSourcesJar)
             {
-                shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
+                shader.shade( sourceArtifacts, sourcesJar, filters, relocators, resourceTransformers );
             }
 
             if ( shadedArtifactAttached )
@@ -386,7 +386,7 @@ public class ShadeMojo
                 }
                 catch (IOException ex)
                 {
-                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!" );
+                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!", ex);
                 }
             }
         }
