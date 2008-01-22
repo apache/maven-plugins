@@ -184,7 +184,7 @@ public class AnnouncementMojo
      * @required
      * @readonly
      */
-    private Settings setting;
+    private Settings settings;
 
     /**
      * Flag to determine if the plugin will generate a JIRA announcement.
@@ -196,17 +196,25 @@ public class AnnouncementMojo
 
     /**
      * Only closed issues are needed.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
+     * called "statusId".
+     * </p>
      *
      * @parameter default-value="Closed"
      */
-    private String statusId;
+    private String statusIds;
 
     /**
      * Only fixed issues are needed.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
+     * called "resolutionId".
+     * </p>
      *
      * @parameter default-value="Fixed"
      */
-    private String resolutionId;
+    private String resolutionIds;
 
     /**
      * The path of the XML file of JIRA-announcements to be parsed.
@@ -219,11 +227,15 @@ public class AnnouncementMojo
 
     /**
      * The maximum number of issues to include.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
+     * called "nbEntries".
+     * </p>
      *
      * @parameter default-value="25"
      * @required
      */
-    private int nbEntries;
+    private int maxEntries;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -241,7 +253,9 @@ public class AnnouncementMojo
         {
             setXml( new ChangesXML( getXmlPath(), getLog() ) );
 
-            doGenerate( getXml() );
+            getLog().info( "Creating announcement file from changes.xml..." );
+
+            doGenerate( getXml().getReleaseList() );
         }
         else
         {
@@ -252,67 +266,15 @@ public class AnnouncementMojo
     /**
      * Add the parameters to velocity context
      *
-     * @param xml parsed changes.xml
+     * @param releases A <code>List</code> of <code>Release</code>s
      * @throws MojoExecutionException
      */
-    public void doGenerate( ChangesXML xml )
-        throws MojoExecutionException
-    {
-        try
-        {
-            Context context = new VelocityContext();
-
-            List releaseList = xml.getReleaseList();
-
-            getLog().info( "Creating announcement file from changes.xml..." );
-
-            if ( getIntroduction() == null || getIntroduction().equals( "" ) )
-            {
-                setIntroduction( getUrl() );
-            }
-
-            context.put( "releases", releaseList );
-
-            context.put( "groupId", getGroupId() );
-
-            context.put( "artifactId", getArtifactId() );
-
-            context.put( "version", getVersion() );
-
-            context.put( "packaging", getPackaging() );
-
-            context.put( "url", getUrl() );
-
-            context.put( "release", getLatestRelease( releaseList ) );
-
-            context.put( "introduction", getIntroduction() );
-
-            context.put( "developmentTeam", getDevelopmentTeam() );
-
-            context.put( "finalName", getFinalName() );
-
-            context.put( "urlDownload", getUrlDownload() );
-
-            processTemplate( context, getOutputDirectory(), template );
-        }
-        catch ( ResourceNotFoundException rnfe )
-        {
-            throw new MojoExecutionException( "resource not found." );
-        }
-        catch ( VelocityException ve )
-        {
-            throw new MojoExecutionException( ve.toString() );
-        }
-    }
-
     public void doGenerate( List releases )
         throws MojoExecutionException
     {
         try
         {
             Context context = new VelocityContext();
-
-            getLog().info( "Creating announcement file from JIRA releases..." );
 
             if ( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
@@ -345,11 +307,11 @@ public class AnnouncementMojo
         }
         catch ( ResourceNotFoundException rnfe )
         {
-            throw new MojoExecutionException( "resource not found." );
+            throw new MojoExecutionException( "Resource not found.", rnfe );
         }
         catch ( VelocityException ve )
         {
-            throw new MojoExecutionException( ve.toString() );
+            throw new MojoExecutionException( ve.toString(), ve );
         }
     }
 
@@ -358,6 +320,7 @@ public class AnnouncementMojo
      * with the version from the pom.
      *
      * @param releases list of releases
+     * @return A <code>Release</code> that matches the next release of the current project
      * @throws MojoExecutionException
      */
     public Release getLatestRelease( List releases )
@@ -480,15 +443,15 @@ public class AnnouncementMojo
 
         jiraDownloader.setOutput( jiraXMLFile );
 
-        jiraDownloader.setStatusIds( statusId );
+        jiraDownloader.setStatusIds( statusIds );
 
-        jiraDownloader.setResolutionIds( resolutionId );
+        jiraDownloader.setResolutionIds( resolutionIds );
 
         jiraDownloader.setMavenProject( project );
 
-        jiraDownloader.setSettings( setting );
+        jiraDownloader.setSettings( settings );
 
-        jiraDownloader.setNbEntries( nbEntries );
+        jiraDownloader.setNbEntries( maxEntries );
 
         try
         {
@@ -501,6 +464,8 @@ public class AnnouncementMojo
                 List issues = jiraParser.getIssues();
 
                 List releases = jiraParser.getReleases( issues );
+
+                getLog().info( "Creating announcement file from JIRA releases..." );
 
                 doGenerate( releases );
             }
