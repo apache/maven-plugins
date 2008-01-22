@@ -25,18 +25,19 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
-import org.apache.maven.plugin.dependency.utils.filters.ArtifactIdFilter;
-import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
-import org.apache.maven.plugin.dependency.utils.filters.ClassifierFilter;
-import org.apache.maven.plugin.dependency.utils.filters.FilterArtifacts;
-import org.apache.maven.plugin.dependency.utils.filters.GroupIdFilter;
-import org.apache.maven.plugin.dependency.utils.filters.ScopeFilter;
-import org.apache.maven.plugin.dependency.utils.filters.TransitivityFilter;
-import org.apache.maven.plugin.dependency.utils.filters.TypeFilter;
 import org.apache.maven.plugin.dependency.utils.resolvers.ArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugin.dependency.utils.translators.ArtifactTranslator;
 import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTranslator;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
+import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -215,11 +216,10 @@ public abstract class AbstractDependencyFilterMojo
      * Retrieves dependencies, either direct only or all including transitive.
      * 
      * @return A HashSet of artifacts
-     * @throws MojoExecutionException
-     *             if an error occured.
+     * @throws MojoExecutionException 
      */
-    protected Set getResolvedDependencies( boolean stopOnFailure )
-        throws MojoExecutionException
+    protected Set getResolvedDependencies( boolean stopOnFailure )throws MojoExecutionException
+
     {
         DependencyStatusSets status = getDependencySets( stopOnFailure );
 
@@ -235,7 +235,7 @@ public abstract class AbstractDependencyFilterMojo
      * @param stopOnFailure
      * @return DependencyStatusSets - Bean of TreeSets that contains information
      *         on the projects dependencies
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException 
      */
     protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
         throws MojoExecutionException
@@ -254,7 +254,14 @@ public abstract class AbstractDependencyFilterMojo
         Set artifacts = project.getArtifacts();
 
         // perform filtering
-        artifacts = filter.filter( artifacts, getLog() );
+        try
+        {
+            artifacts = filter.filter( artifacts );
+        }
+        catch ( ArtifactFilterException e )
+        {
+            throw new MojoExecutionException(e.getMessage(),e);
+        }
 
         // transform artifacts if classifier is set
         DependencyStatusSets status = null;
@@ -332,7 +339,15 @@ public abstract class AbstractDependencyFilterMojo
         filter.clearFilters();
         filter.addFilter( getMarkedArtifactFilter() );
 
-        Set unMarkedArtifacts = filter.filter( artifacts, getLog() );
+        Set unMarkedArtifacts;
+        try
+        {
+            unMarkedArtifacts = filter.filter( artifacts );
+        }
+        catch ( ArtifactFilterException e )
+        {
+            throw new MojoExecutionException(e.getMessage(),e);
+        }
 
         // calculate the skipped artifacts
         Set skippedArtifacts = new HashSet();

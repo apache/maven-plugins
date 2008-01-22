@@ -69,7 +69,8 @@ Maven Dependency Plugin
   and optionally re-resolve them.
 
   *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
-  Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp
+  Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp. The
+  classpath file may also be attached and installed/deployed along with the main artifact.
 
   *{{{analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused and declared.
   

@@ -23,8 +23,8 @@ package org.apache.maven.plugin.dependency.utils.filters;
  * 
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -33,6 +33,6 @@ import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 public interface ArtifactItemFilter
 {
 
-    boolean okToProcess( ArtifactItem item )
-        throws MojoExecutionException;
+    boolean isArtifactIncluded( ArtifactItem item )
+        throws ArtifactFilterException;
 }
