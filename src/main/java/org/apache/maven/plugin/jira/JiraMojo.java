@@ -85,7 +85,7 @@ public class JiraMojo
     private Settings settings;
 
     /**
-     * Maximum number of entries to be displayed by the JIRA Report.
+     * Maximum number of entries to be fetched from JIRA.
      *
      * @parameter default-value=100
      *
@@ -94,7 +94,7 @@ public class JiraMojo
 
     /**
      * Defines the filter parameters to restrict which issues are retrieved
-     * from JIRA. The filter parameter must use the same format of url
+     * from JIRA. The filter parameter uses the same format of url
      * parameters that is used in a JIRA search.
      *
      * @parameter default-value=""
@@ -113,27 +113,40 @@ public class JiraMojo
     private String fixVersionIds;
 
     /**
-     * Sets the status(es) that you want to limit your report to include.
-     * Valid statuses are: Open, In Progress, Reopened, Resolved and Closed.
+     * Sets the status(es) that you want to fetch from JIRA.
+     * Valid statuses are: <code>Open</code>, <code>In Progress</code>,
+     * <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>.
      * Multiple values can be separated by commas.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
+     * default value.
+     * </p>
      *
-     * @parameter default-value=""
+     * @parameter default-value="Closed"
      */
     private String statusIds;
 
     /**
-     * Sets the resolution(s) that you want to limit your report to include.
-     * Valid statuses are: Unresolved, Fixed, Won't Fix, Duplicate, Incomplete,
-     * Cannot Reproduce. Multiple values can be separated by commas.
+     * Sets the resolution(s) that you want to fetch from JIRA.
+     * Valid resolutions are: <code>Unresolved</code>, <code>Fixed</code>,
+     * <code>Won't Fix</code>, <code>Duplicate</code>, <code>Incomplete</code>
+     * and <code>Cannot Reproduce</code>.
+     * Multiple values can be separated by commas.
+     * <p>
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
+     * default value.
+     * </p>
      *
-     * @parameter default-value=""
+     * @parameter default-value="Fixed"
      */
     private String resolutionIds;
 
     /**
      * Sets the priority(s) that you want to limit your report to include.
-     * Valid statuses are: Blocker, Critical, Major, Minor, Trivial. Multiple
-     * values can be separated by commas.
+     * Valid statuses are <code>Blocker</code>, <code>Critical</code>,
+     * <code>Major</code>, <code>Minor</code> and <code>Trivial</code>.
+     * Multiple values can be separated by commas.
+     * If this is set to empty - that means all priorities will be included.
      *
      * @parameter default-value=""
      */
@@ -141,8 +154,8 @@ public class JiraMojo
 
     /**
      * Sets the component(s) that you want to limit your report to include.
-     * Multiple components can be separated by commas (such as 10011,10012).
-     * If this is set to empty - that means all components.
+     * Multiple values can be separated by commas (such as 10011,10012).
+     * If this is set to empty - that means all components will be included.
      *
      * @parameter default-value=""
      */
@@ -152,8 +165,9 @@ public class JiraMojo
      * Sets the types(s) that you want to limit your report to include.
      * Valid types are: <code>Bug</code>, <code>New Feature</code>,
      * <code>Task</code>, <code>Improvement</code>, <code>Wish</code>,
-     * <code>Test</code> and <code>Sub-task</code>. Multiple
-     * values can be separated by commas.
+     * <code>Test</code> and <code>Sub-task</code>.
+     * Multiple values can be separated by commas.
+     * If this is set to empty - that means all types will be included.
      *
      * @parameter default-value=""
      * @since 2.0-beta-4
