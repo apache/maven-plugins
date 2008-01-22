@@ -21,7 +21,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-changes-plugin</artifactId>
@@ -88,6 +88,30 @@ under the License.
     </mailingList>
   </mailingLists>
 
+  <developers>
+    <developer>
+      <id>jruiz</id>
+      <name>Johnny Ruiz III</name>
+      <email>jruiz@apache.org</email>
+    </developer>
+    <developer>
+      <id>aramirez</id>
+      <name>Allan Ramirez</name>
+      <email>aramirez@exist.com</email>
+    </developer>
+    <developer>
+      <id>dennisl</id>
+      <name>Dennis Lundberg</name>
+      <email>dennisl@apache.org</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-changes-plugin/</url>
+  </scm>
+
   <build>
     <plugins>
       <plugin>
@@ -115,24 +139,6 @@ under the License.
       </plugin>
     </plugins>
   </build>
-
-  <developers>
-    <developer>
-      <id>jruiz</id>
-      <name>Johnny Ruiz III</name>
-      <email>jruiz@apache.org</email>
-    </developer>
-    <developer>
-      <id>aramirez</id>
-      <name>Allan Ramirez</name>
-      <email>aramirez@exist.com</email>
-    </developer>
-    <developer>
-      <id>dennisl</id>
-      <name>Dennis Lundberg</name>
-      <email>dennisl@apache.org</email>
-    </developer>
-  </developers>
 
   <dependencies>
     <!-- maven -->
@@ -290,6 +296,7 @@ under the License.
       <version>1.5</version>
     </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
       <plugin>
@@ -316,6 +323,7 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
+
   <properties>
     <doxiaVersion>1.0-alpha-9</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-alpha-9</doxiaSitetoolsVersion>
