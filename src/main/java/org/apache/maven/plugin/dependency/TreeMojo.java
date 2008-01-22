@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -32,6 +33,11 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.Restriction;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -192,6 +198,13 @@ public class TreeMojo extends AbstractMojo
     private String excludes;
 
     /**
+     * Runtime Information used to check the Maven version
+     * @since 2.0
+     * @component role="org.apache.maven.execution.RuntimeInformation"
+     */
+    private RuntimeInformation rti;
+    
+    /**
      * The computed dependency tree root node of the Maven project.
      */
     private DependencyNode rootNode;
@@ -203,6 +216,24 @@ public class TreeMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+        
+        ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
+        VersionRange vr;
+        try
+        {
+            vr = VersionRange.createFromVersionSpec( "[2.0.8,)" );
+            if ( !containsVersion( vr, detectedMavenVersion ) )
+            {
+                getLog().warn(
+                               "The tree mojo requires at least Maven 2.0.8 to function properly. You may get eroneous results on earlier versions" );
+            }
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new MojoExecutionException(e.getLocalizedMessage());
+        }
+
+        
         if (output != null)
         {
             getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
@@ -397,5 +428,43 @@ public class TreeMojo extends AbstractMojo
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
+    //following is required because the version handling in maven code 
+    //doesn't work properly. I ripped it out of the enforcer rules.
+    
+
+
+    /**
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
+     * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
+     * "[2.0.4,)"
+     * 
+     * @param allowedRange range of allowed versions.
+     * @param theVersion the version to be checked.
+     * @return true if the version is contained by the range.
+     */
+    public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
+    {
+        boolean matched = false;
+        ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
+        if ( recommendedVersion == null )
+        {
+
+            for ( Iterator i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
+            {
+                Restriction restriction = (Restriction) i.next();
+                if ( restriction.containsVersion( theVersion ) )
+                {
+                    matched = true;
+                }
+            }
+        }
+        else
+        {
+            // only singular versions ever have a recommendedVersion
+            int compareTo = recommendedVersion.compareTo( theVersion );
+            matched = ( compareTo <= 0 );
+        }
+        return matched;
+    }
 
 }
