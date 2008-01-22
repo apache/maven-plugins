@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Mar 2007
+  Jan 2008
   ------
 
 Usage
@@ -497,7 +497,7 @@ mvn dependency:purge-local-repository -DresolutionFuzziness=artifactId
 
    Since: 2.0-alpha-2
    
-   This goal will output a classpath string of dependencies from the local repository to a file or log. For instance, the file would contain a classpath string like this:
+   This goal will output a classpath string of dependencies from the local repository to a file or log and optionally attach and deploy the file. For instance, the file would contain a classpath string like this:
 
 +---+
 /home/foo/.m2/repository/org/java/utils/util/util-1.0.jar:/home/foo/.m2/ ....
