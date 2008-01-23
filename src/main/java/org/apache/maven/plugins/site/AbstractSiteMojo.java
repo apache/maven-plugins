@@ -74,7 +74,7 @@ public abstract class AbstractSiteMojo
     private String locales;
 
     /**
-     * Internationalization.
+     * SiteTool.
      *
      * @component
      */
