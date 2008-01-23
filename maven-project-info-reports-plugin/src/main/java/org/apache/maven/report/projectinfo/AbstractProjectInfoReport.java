@@ -35,6 +35,8 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -60,6 +62,13 @@ import java.util.Map;
 public abstract class AbstractProjectInfoReport
     extends AbstractMavenReport
 {
+    /**
+     * SiteTool.
+     *
+     * @component
+     */
+    protected SiteTool siteTool;
+
     /**
      * Report output directory.
      *
@@ -132,7 +141,8 @@ public abstract class AbstractProjectInfoReport
             attributes.put( "outputEncoding", "UTF-8" );
             attributes.put( "project", project );
             Locale locale = Locale.getDefault();
-            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifactFile(), attributes,
+            Artifact defaultSkin = siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories()  );
+            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes,
                                                                                   model, getName( locale ), locale );
 
             RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
@@ -155,6 +165,11 @@ public abstract class AbstractProjectInfoReport
                 "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
         }
         catch ( IOException e )
+        {
+            throw new MojoExecutionException(
+                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+        }
+        catch ( SiteToolException e )
         {
             throw new MojoExecutionException(
                 "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
@@ -192,44 +207,5 @@ public abstract class AbstractProjectInfoReport
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
-    }
-
-    // ----------------------------------------------------------------------
-    // Private methods
-    // ----------------------------------------------------------------------
-
-    private File getSkinArtifactFile()
-        throws MojoExecutionException
-    {
-        Skin skin = Skin.getDefaultSkin();
-
-        String version = skin.getVersion();
-        Artifact artifact;
-        try
-        {
-            if ( version == null )
-            {
-                version = Artifact.RELEASE_VERSION;
-            }
-            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
-            artifact = factory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar",
-                                                         null, null );
-
-            resolver.resolve( artifact, project.getRemoteArtifactRepositories(), localRepository );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new MojoExecutionException( "The skin version '" + version + "' is not valid: " + e.getMessage() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Unable to find skin", e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "The skin does not exist: " + e.getMessage() );
-        }
-
-        return artifact.getFile();
     }
 }
