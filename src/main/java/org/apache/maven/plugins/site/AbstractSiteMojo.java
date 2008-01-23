@@ -23,6 +23,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -71,6 +72,13 @@ public abstract class AbstractSiteMojo
      * @parameter expression="${locales}"
      */
     private String locales;
+
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    protected SiteTool siteTool;
 
     /**
      * Internationalization.
@@ -256,7 +264,7 @@ public abstract class AbstractSiteMojo
      */
     protected File getSiteDescriptorFile( File basedir, Locale locale )
     {
-        String relativePath = getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
+        String relativePath = siteTool.getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
 
         File siteDescriptor = new File( relativePath, "site_" + locale.getLanguage() + ".xml" );
 
@@ -388,7 +396,7 @@ public abstract class AbstractSiteMojo
         String baseUrl = project.getUrl();
         if ( baseUrl != null )
         {
-            selectedHref = getRelativePath( selectedHref, baseUrl );
+            selectedHref = siteTool.getRelativePath( selectedHref, baseUrl );
         }
 
         if ( selectedHref.endsWith( "/" ) )
@@ -512,204 +520,6 @@ public abstract class AbstractSiteMojo
         return list == null || list.isEmpty();
     }
 
-    protected String getRelativePath( String to, String from )
-    {
-        URL toUrl = null;
-        URL fromUrl = null;
-
-        String toPath = to;
-        String fromPath = from;
-
-        try
-        {
-            toUrl = new URL( to );
-        }
-        catch ( MalformedURLException e )
-        {
-            try
-            {
-                toUrl = new File( to ).toURL();
-            }
-            catch ( MalformedURLException e1 )
-            {
-                getLog().warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
-            }
-        }
-
-        try
-        {
-            fromUrl = new URL( from );
-        }
-        catch ( MalformedURLException e )
-        {
-            try
-            {
-                fromUrl = new File( from ).toURL();
-            }
-            catch ( MalformedURLException e1 )
-            {
-                getLog().warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
-            }
-        }
-
-        if ( toUrl != null && fromUrl != null )
-        {
-            // URLs, determine if they share protocol and domain info
-
-            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) )
-                && ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) )
-                && ( toUrl.getPort() == fromUrl.getPort() ) )
-            {
-                // shared URL domain details, use URI to determine relative path
-
-                toPath = toUrl.getFile();
-                fromPath = fromUrl.getFile();
-            }
-            else
-            {
-                // dont share basic URL infomation, no relative available
-
-                return to;
-            }
-        }
-        else if ( ( toUrl != null && fromUrl == null ) || ( toUrl == null && fromUrl != null ) )
-        {
-            // one is a URL and the other isnt, no relative available.
-
-            return to;
-        }
-
-        // either the two locations are not URLs or if they are they
-        // share the common protocol and domain info and we are left
-        // with their URI information
-
-        // normalise the path delimters
-
-        toPath = new File( toPath ).getPath();
-        fromPath = new File( fromPath ).getPath();
-
-        // strip any leading slashes if its a windows path
-        if ( toPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            toPath = toPath.substring( 1 );
-        }
-        if ( fromPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            fromPath = fromPath.substring( 1 );
-        }
-
-        // lowercase windows drive letters.
-
-        if ( toPath.startsWith( ":", 1 ) )
-        {
-            toPath = toPath.substring( 0, 1 ).toLowerCase() + toPath.substring( 1 );
-        }
-        if ( fromPath.startsWith( ":", 1 ) )
-        {
-            fromPath = fromPath.substring( 0, 1 ).toLowerCase() + fromPath.substring( 1 );
-        }
-
-        // check for the presence of windows drives. No relative way of
-        // traversing from one to the other.
-
-        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) )
-            && ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
-        {
-            // they both have drive path element but they dont match, no
-            // relative path
-
-            return to;
-        }
-
-        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) )
-            || ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
-        {
-
-            // one has a drive path element and the other doesnt, no relative
-            // path.
-
-            return to;
-
-        }
-
-        // use tokeniser to traverse paths and for lazy checking
-        StringTokenizer toTokeniser = new StringTokenizer( toPath, File.separator );
-        StringTokenizer fromTokeniser = new StringTokenizer( fromPath, File.separator );
-
-        int count = 0;
-
-        // walk along the to path looking for divergence from the from path
-        while ( toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens() )
-        {
-            if ( File.separatorChar == '\\' )
-            {
-                if ( !fromTokeniser.nextToken().equalsIgnoreCase( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if ( !fromTokeniser.nextToken().equals( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-
-            count++;
-        }
-
-        // reinitialise the tokenisers to count positions to retrieve the
-        // gobbled token
-
-        toTokeniser = new StringTokenizer( toPath, File.separator );
-        fromTokeniser = new StringTokenizer( fromPath, File.separator );
-
-        while ( count-- > 0 )
-        {
-            fromTokeniser.nextToken();
-            toTokeniser.nextToken();
-        }
-
-        String relativePath = "";
-
-        // add back refs for the rest of from location.
-        while ( fromTokeniser.hasMoreTokens() )
-        {
-            fromTokeniser.nextToken();
-
-            relativePath += "..";
-
-            if ( fromTokeniser.hasMoreTokens() )
-            {
-                relativePath += File.separatorChar;
-            }
-        }
-
-        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
-        {
-            relativePath += File.separatorChar;
-        }
-
-        // add fwd fills for whatevers left of to.
-        while ( toTokeniser.hasMoreTokens() )
-        {
-            relativePath += toTokeniser.nextToken();
-
-            if ( toTokeniser.hasMoreTokens() )
-            {
-                relativePath += File.separatorChar;
-            }
-        }
-
-        if ( !relativePath.equals( to ) )
-        {
-            getLog().debug( "Mapped url: " + to + " to relative path: " + relativePath );
-        }
-
-        return relativePath;
-    }
-
     protected void populateProjectParentMenu( DecorationModel decorationModel, Locale locale,
                                               MavenProject parentProject, boolean keepInheritedRefs )
     {
@@ -732,7 +542,7 @@ public abstract class AbstractSiteMojo
                         parentUrl += "/index.html";
                     }
 
-                    parentUrl = getRelativePath( parentUrl, project.getUrl() );
+                    parentUrl = siteTool.getRelativePath( parentUrl, project.getUrl() );
 
                     if ( menu.getName() == null )
                     {

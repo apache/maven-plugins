@@ -36,6 +36,7 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -193,13 +194,13 @@ public abstract class AbstractSiteRenderingMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException(
-                    "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
+                throw new MojoExecutionException( "The site descriptor cannot be resolved from the repository: "
+                    + e.getMessage(), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                    "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
+                throw new MojoExecutionException( "The site descriptor cannot be resolved from the repository: "
+                    + e.getMessage(), e );
             }
         }
         else
@@ -231,9 +232,8 @@ public abstract class AbstractSiteRenderingMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(),
-                                                 e );
+                throw new MojoExecutionException( "The site descriptor cannot interpolate properties: "
+                    + e.getMessage(), e );
             }
 
             decoration = readDecorationModel( siteDescriptorContent );
@@ -252,7 +252,8 @@ public abstract class AbstractSiteRenderingMojo
             else
             {
                 assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
-                                                    parentProject.getUrl() == null ? project.getUrl() : parentProject.getUrl() );
+                                                    parentProject.getUrl() == null ? project.getUrl() : parentProject
+                                                        .getUrl() );
             }
             if ( decoration != null )
             {
@@ -309,9 +310,10 @@ public abstract class AbstractSiteRenderingMojo
         File result;
 
         // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
-                                                                          project.getVersion(), "xml",
-                                                                          "site_" + locale.getLanguage() );
+        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                          project.getArtifactId(),
+                                                                          project.getVersion(), "xml", "site_"
+                                                                              + locale.getLanguage() );
 
         boolean found = false;
         try
@@ -370,46 +372,6 @@ public abstract class AbstractSiteRenderingMojo
         return result;
     }
 
-    private File getSkinArtifactFile( DecorationModel decoration )
-        throws MojoFailureException, MojoExecutionException
-    {
-        Skin skin = decoration.getSkin();
-
-        if ( skin == null )
-        {
-            skin = Skin.getDefaultSkin();
-        }
-
-        String version = skin.getVersion();
-        Artifact artifact;
-        try
-        {
-            if ( version == null )
-            {
-                version = Artifact.RELEASE_VERSION;
-            }
-            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
-            artifact = artifactFactory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec,
-                                                                 "jar", null, null );
-
-            artifactResolver.resolve( artifact, repositories, localRepository );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new MojoFailureException( "The skin version '" + version + "' is not valid: " + e.getMessage() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Unable to find skin", e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoFailureException( "The skin does not exist: " + e.getMessage() );
-        }
-
-        return artifact.getFile();
-    }
-
     protected List filterReports( List reports )
     {
         List filteredReports = new ArrayList( reports.size() );
@@ -430,8 +392,9 @@ public abstract class AbstractSiteRenderingMojo
                 // plugins with an earlier version to fail (most of the org.codehaus mojo now fails)
                 // be nice with them, output a warning and don't let them break anything
 
-                getLog().warn( "Error loading report " + report.getClass().getName()
-                    + " - AbstractMethodError: canGenerateReport()" );
+                getLog().warn(
+                               "Error loading report " + report.getClass().getName()
+                                   + " - AbstractMethodError: canGenerateReport()" );
                 filteredReports.add( report );
             }
         }
@@ -477,7 +440,16 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
 
-        File skinFile = getSkinArtifactFile( decorationModel );
+        File skinFile;
+        try
+        {
+            skinFile = siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel )
+                .getFile();
+        }
+        catch ( SiteToolException e )
+        {
+            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
+        }
         SiteRenderingContext context;
         if ( templateFile != null )
         {
@@ -490,8 +462,8 @@ public abstract class AbstractSiteRenderingMojo
         }
         else
         {
-            context =
-                siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(), locale );
+            context = siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
+                                                         locale );
         }
 
         // Generate static site
@@ -547,9 +519,8 @@ public abstract class AbstractSiteRenderingMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(),
-                                                 e );
+                throw new MojoExecutionException( "The site descriptor cannot interpolate properties: "
+                    + e.getMessage(), e );
             }
 
             decorationModel = readDecorationModel( siteDescriptorContent );
@@ -588,8 +559,9 @@ public abstract class AbstractSiteRenderingMojo
             {
                 String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
-                    + "\" already exists for the " + displayLanguage + " version." );
+                getLog().info(
+                               "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
+                                   + "\" already exists for the " + displayLanguage + " version." );
                 i.remove();
             }
             else
@@ -651,8 +623,8 @@ public abstract class AbstractSiteRenderingMojo
             String title = i18n.getString( "site-plugin", locale, "report.information.title" );
             String desc1 = i18n.getString( "site-plugin", locale, "report.information.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.information.description2" );
-            DocumentRenderer renderer =
-                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
+            DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
+                                                                             i18n, categoryReports );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
@@ -671,8 +643,8 @@ public abstract class AbstractSiteRenderingMojo
             String title = i18n.getString( "site-plugin", locale, "report.project.title" );
             String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.project.description2" );
-            DocumentRenderer renderer =
-                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
+            DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
+                                                                             i18n, categoryReports );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
@@ -686,5 +658,3 @@ public abstract class AbstractSiteRenderingMojo
         return documents;
     }
 }
-
-
