@@ -173,6 +173,11 @@ under the License.
       <artifactId>maven-settings</artifactId>
       <version>2.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0.4</version>
+    </dependency>
 
     <!-- Doxia -->
     <dependency>
@@ -219,9 +224,9 @@ under the License.
     </dependency>
 
     <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.4</version>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-doxia-tools</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <!-- Wagon -->
