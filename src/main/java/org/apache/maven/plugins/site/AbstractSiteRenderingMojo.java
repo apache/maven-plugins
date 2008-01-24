@@ -19,10 +19,7 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.Banner;
@@ -187,14 +184,9 @@ public abstract class AbstractSiteRenderingMojo
             // POM is in the repository, look there for site descriptor
             try
             {
-                siteDescriptor = getSiteDescriptorFromRepository( project, locale );
+                siteDescriptor = siteTool.getSiteDescriptorFromRepository( project, localRepository, repositories, locale );
             }
-            catch ( ArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( "The site descriptor cannot be resolved from the repository: "
-                    + e.getMessage(), e );
-            }
-            catch ( IOException e )
+            catch ( SiteToolException e )
             {
                 throw new MojoExecutionException( "The site descriptor cannot be resolved from the repository: "
                     + e.getMessage(), e );
@@ -202,7 +194,7 @@ public abstract class AbstractSiteRenderingMojo
         }
         else
         {
-            siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
+            siteDescriptor = siteTool.getSiteDescriptorFromBasedir( siteDirectory, project.getBasedir(), locale );
         }
 
         String siteDescriptorContent = null;
@@ -282,91 +274,6 @@ public abstract class AbstractSiteRenderingMojo
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
         return decoration;
-    }
-
-    private File getSiteDescriptorFromRepository( MavenProject project, Locale locale )
-        throws ArtifactResolutionException, IOException
-    {
-        File result = null;
-
-        try
-        {
-            result = resolveSiteDescriptor( project, locale );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            getLog().debug( "Unable to locate site descriptor: " + e );
-        }
-
-        return result;
-    }
-
-    private File resolveSiteDescriptor( MavenProject project, Locale locale )
-        throws IOException, ArtifactResolutionException, ArtifactNotFoundException
-    {
-        File result;
-
-        // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
-                                                                          project.getArtifactId(),
-                                                                          project.getVersion(), "xml", "site_"
-                                                                              + locale.getLanguage() );
-
-        boolean found = false;
-        try
-        {
-            artifactResolver.resolve( artifact, repositories, localRepository );
-
-            result = artifact.getFile();
-
-            // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() > 0 )
-            {
-                found = true;
-            }
-            else
-            {
-                getLog().debug( "Skipped locale's site descriptor" );
-            }
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            getLog().debug( "Unable to locate locale's site descriptor: " + e );
-
-            // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
-            // repository, because the parent was already released (and snapshots are updated automatically if changed)
-            result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-            result.createNewFile();
-        }
-
-        if ( !found )
-        {
-            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
-                                                                     project.getVersion(), "xml", "site" );
-            try
-            {
-                artifactResolver.resolve( artifact, repositories, localRepository );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                // see above regarding this zero length file
-                result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-                result.createNewFile();
-
-                throw e;
-            }
-
-            result = artifact.getFile();
-
-            // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() == 0 )
-            {
-                getLog().debug( "Skipped remote site descriptor check" );
-                result = null;
-            }
-        }
-
-        return result;
     }
 
     protected List filterReports( List reports )
