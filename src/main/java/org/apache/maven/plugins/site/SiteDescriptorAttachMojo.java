@@ -70,7 +70,7 @@ public class SiteDescriptorAttachMojo
         {
             Locale locale = (Locale) iterator.next();
 
-            File descriptorFile = getSiteDescriptorFile( basedir, locale );
+            File descriptorFile = siteTool.getSiteDescriptorFromBasedir( siteDirectory, basedir, locale );
 
             if ( descriptorFile.exists() )
             {
