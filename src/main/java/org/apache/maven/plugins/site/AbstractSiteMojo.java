@@ -253,26 +253,6 @@ public abstract class AbstractSiteMojo
         return new Locale( language, country, variant );
     }
 
-    /**
-     * Get the path of the site descriptor for a given locale.
-     *
-     * @param basedir the base dir
-     * @param locale the locale
-     * @return the site descriptor path
-     */
-    protected File getSiteDescriptorFile( File basedir, Locale locale )
-    {
-        String relativePath = siteTool.getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
-
-        File siteDescriptor = new File( relativePath, "site_" + locale.getLanguage() + ".xml" );
-
-        if ( !siteDescriptor.exists() )
-        {
-            siteDescriptor = new File( relativePath, "site.xml" );
-        }
-        return siteDescriptor;
-    }
-
     protected void populateModules( DecorationModel decorationModel, Locale locale, boolean keepInheritedRefs )
         throws MojoExecutionException
     {
