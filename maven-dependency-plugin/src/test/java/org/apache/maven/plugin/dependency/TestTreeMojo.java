@@ -32,7 +32,7 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
- * @since 2.0-alpha-5
+ * @since 2.0
  */
 public class TestTreeMojo
     extends AbstractDependencyMojoTestCase
