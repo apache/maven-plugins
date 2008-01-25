@@ -75,7 +75,7 @@ public class BuildClasspathMojo
      * This parameter is deprecated. Use outputFile instead.
      * @parameter expression="${mdep.cpFile}"
      * @deprecated use outputFile instead
-     * @since 2.0-alpha-5
+     * @since 2.0
      */
     private File cpFile;
 
@@ -97,7 +97,7 @@ public class BuildClasspathMojo
      * of the system property file.separator. On UNIX systems the value of this field is '/'; on Microsoft Windows
      * systems it is '\'. The default is File.separator
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter default-value="" expression="${mdep.fileSeparator}"
      */
     private String fileSeparator;
@@ -108,7 +108,7 @@ public class BuildClasspathMojo
      * used to separate filenames in a sequence of files given as a path list. On UNIX systems, this character is ':';
      * on Microsoft Windows systems it is ';'.
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter default-value="" expression="${mdep.pathSeparator}"
      */
     private String pathSeparator;
@@ -117,7 +117,7 @@ public class BuildClasspathMojo
      * Replace the absolute path to the local repo with this property. This field is ignored it prefix is declared. The
      * value will be forced to "${M2_REPO}" if no value is provided AND the attach flag is true.
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter default-value="" expression="${mdep.localRepoProperty}"
      */
     private String localRepoProperty;
@@ -125,7 +125,7 @@ public class BuildClasspathMojo
     /**
      * Attach the classpath file to the main artifact so it can be installed and deployed.
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter default-value=false
      */
     boolean attach;
@@ -133,7 +133,7 @@ public class BuildClasspathMojo
     /**
      * Write out the classpath in a format compatible with filtering (classpath=xxxxx)
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter default-value=false expression="${mdep.outputFilterFile}"
      */
     boolean outputFilterFile;

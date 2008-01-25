@@ -27,7 +27,7 @@ package org.apache.maven.plugin.dependency;
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
- * @since 2.0-alpha-5
+ * @since 2.0
  * @see AnalyzeMojo
  * 
  * @goal analyze-only

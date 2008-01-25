@@ -50,7 +50,7 @@ public class UnpackDependenciesMojo
 	/**
      * A comma separated list of file patterns to include when unpacking the
      * artifact.  i.e.  **\/*.xml,**\/*.properties
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter expression="${mdep.unpack.includes}"
      */
     private String includes;
@@ -58,7 +58,7 @@ public class UnpackDependenciesMojo
     /**
      * A comma separated list of file patterns to exclude when unpacking the
      * artifact.  i.e.  **\/*.xml,**\/*.properties
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter expression="${mdep.unpack.excludes}"
      */
     private String excludes;
