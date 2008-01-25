@@ -53,7 +53,7 @@ public abstract class AbstractResolveMojo
      * to the console.
      * 
      * @parameter expression="${outputFile}"
-     * @since 2.0-alpha-5
+     * @since 2.0
      */
     protected File outputFile;
     /**

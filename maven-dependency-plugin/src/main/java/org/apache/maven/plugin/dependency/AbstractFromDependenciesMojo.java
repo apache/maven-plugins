@@ -63,7 +63,7 @@ public abstract class AbstractFromDependenciesMojo
     /**
      * Also copy the pom of each artifact.
      * 
-     * @since 2.0-alpha-5
+     * @since 2.0
      * @parameter expression="${mdep.copyPom}"
      *            default-value="false"
      * @optional
@@ -74,7 +74,7 @@ public abstract class AbstractFromDependenciesMojo
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
      * 
-     * @since 2.0
+     * @since 2.0-alpha-1
      * @parameter expression="${mdep.useSubDirectoryPerType}" default-value="false"
      * @optional
      */
@@ -84,7 +84,7 @@ public abstract class AbstractFromDependenciesMojo
      * Place each file in a separate subdirectory. (example
      * /outputDirectory/junit-3.8.1-jar)
      * 
-     * @since 2.0
+     * @since 2.0-alpha-1
      * @parameter expression="${mdep.useSubDirectoryPerArtifact}"
      *            default-value="false"
      * @optional
