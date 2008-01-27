@@ -22,10 +22,8 @@ package org.apache.maven.plugins.site;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.apache.maven.doxia.site.decoration.Banner;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -33,17 +31,11 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -173,109 +165,6 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected File generatedSiteDirectory;
 
-    protected DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
-        throws MojoExecutionException
-    {
-        Map props = new HashMap( origProps );
-
-        File siteDescriptor;
-        if ( project.getBasedir() == null )
-        {
-            // POM is in the repository, look there for site descriptor
-            try
-            {
-                siteDescriptor = siteTool.getSiteDescriptorFromRepository( project, localRepository, repositories, locale );
-            }
-            catch ( SiteToolException e )
-            {
-                throw new MojoExecutionException( "The site descriptor cannot be resolved from the repository: "
-                    + e.getMessage(), e );
-            }
-        }
-        else
-        {
-            siteDescriptor = siteTool.getSiteDescriptorFromBasedir( siteDirectory, project.getBasedir(), locale );
-        }
-
-        String siteDescriptorContent = null;
-        try
-        {
-            if ( siteDescriptor != null && siteDescriptor.exists() )
-            {
-                getLog().debug( "Reading site descriptor from " + siteDescriptor );
-                Reader siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
-                siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "The site descriptor cannot be read!", e );
-        }
-
-        DecorationModel decoration = null;
-        if ( siteDescriptorContent != null )
-        {
-            try
-            {
-                siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "The site descriptor cannot interpolate properties: "
-                    + e.getMessage(), e );
-            }
-
-            decoration = readDecorationModel( siteDescriptorContent );
-        }
-
-        MavenProject parentProject = getParentProject( project );
-        if ( parentProject != null )
-        {
-            getLog().debug( "Parent project loaded ..." );
-            DecorationModel parent = getDecorationModel( parentProject, locale, props );
-
-            if ( decoration == null )
-            {
-                decoration = parent;
-            }
-            else
-            {
-                assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
-                                                    parentProject.getUrl() == null ? project.getUrl() : parentProject
-                                                        .getUrl() );
-            }
-            if ( decoration != null )
-            {
-                populateProjectParentMenu( decoration, locale, parentProject, true );
-            }
-        }
-        if ( decoration != null && decoration.getSkin() != null )
-        {
-            getLog().debug( "Skin used: " + decoration.getSkin() );
-        }
-
-        return decoration;
-    }
-
-    private DecorationModel readDecorationModel( String siteDescriptorContent )
-        throws MojoExecutionException
-    {
-        DecorationModel decoration;
-        try
-        {
-            decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException( "Error parsing site descriptor", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error reading site descriptor", e );
-        }
-        return decoration;
-    }
-
     protected List filterReports( List reports )
     {
         List filteredReports = new ArrayList( reports.size() );
@@ -331,7 +220,15 @@ public abstract class AbstractSiteRenderingMojo
         // Put any of the properties in directly into the Velocity context
         attributes.putAll( project.getProperties() );
 
-        DecorationModel decorationModel = getDecorationModel( locale );
+        DecorationModel decorationModel;
+        try
+        {
+            decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories, siteDirectory, locale, inputEncoding, outputEncoding );
+        }
+        catch ( SiteToolException e )
+        {
+            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
+        }
         if ( template != null )
         {
             if ( templateFile != null )
@@ -390,65 +287,6 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         return context;
-    }
-
-    private DecorationModel getDecorationModel( Locale locale )
-        throws MojoExecutionException
-    {
-        Map props = new HashMap();
-
-        // This is to support the deprecated ${reports} and ${modules} tags.
-        props.put( "reports", "<menu ref=\"reports\"/>\n" );
-        props.put( "modules", "<menu ref=\"modules\"/>\n" );
-
-        DecorationModel decorationModel = getDecorationModel( project, locale, props );
-
-        if ( decorationModel == null )
-        {
-            String siteDescriptorContent;
-
-            try
-            {
-                // Note the default is not a super class - it is used when nothing else is found
-                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error reading default site descriptor: " + e.getMessage(), e );
-            }
-
-            try
-            {
-                siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "The site descriptor cannot interpolate properties: "
-                    + e.getMessage(), e );
-            }
-
-            decorationModel = readDecorationModel( siteDescriptorContent );
-        }
-        populateModules( decorationModel, locale, true );
-
-        if ( decorationModel.getBannerLeft() == null )
-        {
-            // extra default to set
-            Banner banner = new Banner();
-            banner.setName( project.getName() );
-            decorationModel.setBannerLeft( banner );
-        }
-
-        if ( project.getUrl() != null )
-        {
-            assembler.resolvePaths( decorationModel, project.getUrl() );
-        }
-        else
-        {
-            getLog().warn( "No URL defined for the project - decoration links will not be resolved" );
-        }
-
-        return decorationModel;
     }
 
     protected Map locateReports( List reports, Map documents, Locale locale )
@@ -516,7 +354,7 @@ public abstract class AbstractSiteRenderingMojo
         // TODO: I want to get rid of categories eventually. There's no way to add your own in a fully i18n manner
         Map categories = categoriseReports( reportsByOutputName.values() );
 
-        populateReportsMenu( context.getDecoration(), locale, categories );
+        siteTool.populateReportsMenu( context.getDecoration(), locale, categories );
         populateReportItems( context.getDecoration(), locale, reportsByOutputName );
 
         if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) )
