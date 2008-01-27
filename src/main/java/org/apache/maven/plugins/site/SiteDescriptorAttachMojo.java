@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
@@ -84,7 +85,7 @@ public class SiteDescriptorAttachMojo
                     String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
 
                     siteDescriptorContent =
-                        getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent, inputEncoding, outputEncoding );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
@@ -96,13 +97,24 @@ public class SiteDescriptorAttachMojo
                 {
                     throw new MojoExecutionException( "Error reading site descriptor", e );
                 }
+                catch ( SiteToolException e )
+                {
+                    throw new MojoExecutionException( "Error when interpoling site descriptor", e );
+                }
 
-                MavenProject parentProject = getParentProject( project );
+                MavenProject parentProject = siteTool.getParentProject( project, reactorProjects, localRepository );
                 if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
                 {
-                    populateProjectParentMenu( decoration, locale, parentProject, true );
+                    siteTool.populateProjectParentMenu( decoration, locale, project, parentProject, true );
                 }
-                populateModules( decoration, locale, true );
+                try
+                {
+                    siteTool.populateModules( project, reactorProjects, localRepository, decoration, locale, true );
+                }
+                catch ( SiteToolException e )
+                {
+                    throw new MojoExecutionException( "Error when populating modules", e );
+                }
 
                 artifact.addMetadata( new SiteDescriptorArtifactMetadata( artifact, decoration, descriptorFile ) );
             }
