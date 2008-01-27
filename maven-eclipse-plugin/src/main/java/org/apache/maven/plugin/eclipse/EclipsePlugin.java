@@ -237,7 +237,7 @@ public class EclipsePlugin
     /**
      * Eclipse workspace directory.
      * 
-     * @parameter expression="${eclipse.workspace}" alias="outputDir"
+     * @parameter expression="${eclipse.projectDir}" alias="outputDir"
      */
     private File eclipseProjectDir;
 
