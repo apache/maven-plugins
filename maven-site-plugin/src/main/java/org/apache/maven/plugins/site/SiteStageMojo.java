@@ -75,7 +75,7 @@ public class SiteStageMojo
             outputDirectory, "dummy.html" ).getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
-        MavenProject parent = getParentProject( project );
+        MavenProject parent = siteTool.getParentProject( project, reactorProjects, localRepository );
         if ( parent != null )
         {
             String structureParentProject = getStructure( parent, true );
