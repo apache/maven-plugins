@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.util.HashMap;
 
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -55,8 +56,9 @@ public class SiteMojoTest
         assertNotNull( siteDescriptorContent );
         assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) != -1 );
 
-        siteDescriptorContent = siteMojo.getInterpolatedSiteDescriptorContent( new HashMap(), siteMojo.project,
-                                                                               siteDescriptorContent );
+        SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
+        siteDescriptorContent = siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), siteMojo.project,
+                                                                               siteDescriptorContent, "UTF-8", "UTF-8" );
         assertNotNull( siteDescriptorContent );
         assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) == -1 );
     }
