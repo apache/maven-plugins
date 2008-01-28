@@ -46,6 +46,10 @@ public class EclipseWtpFacetsWriter
     extends AbstractWtpResourceWriter
 {
 
+    private static final String FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR = "com.ibm.websphere.coexistence.ear"; //$NON-NLS-1$
+
+    private static final String FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR = "com.ibm.websphere.extended.ear"; //$NON-NLS-1$
+
     private static final String FACET_JST_EAR = "jst.ear"; //$NON-NLS-1$
 
     private static final String FACET_JST_UTILITY = "jst.utility"; //$NON-NLS-1$
@@ -140,6 +144,23 @@ public class EclipseWtpFacetsWriter
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
+            if ( this.config.getWorkspaceConfiguration().getWebsphereVersion() != null )
+            {
+                writer.startElement( "runtime" );
+                writer.addAttribute( "name", config.getWorkspaceConfiguration().getDefaultDeployServerName() );
+                writer.endElement(); // runtime
+
+                writer.startElement( ELT_INSTALLED );
+                writer.addAttribute( ATTR_FACET, FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR );
+                writer.addAttribute( ATTR_VERSION, this.config.getWorkspaceConfiguration().getWebsphereVersion() );
+                writer.endElement(); // installed
+
+                writer.startElement( ELT_INSTALLED );
+                writer.addAttribute( ATTR_FACET, FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR );
+                writer.addAttribute( ATTR_VERSION, this.config.getWorkspaceConfiguration().getWebsphereVersion() );
+                writer.endElement(); // installed
+
+            }
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
             writer.endElement(); // fixed
@@ -147,6 +168,7 @@ public class EclipseWtpFacetsWriter
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
             writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getProject() ) );
             writer.endElement(); // installed
+
         }
         else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
