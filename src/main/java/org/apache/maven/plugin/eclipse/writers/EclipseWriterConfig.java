@@ -151,7 +151,7 @@ public class EclipseWriterConfig
      */
     public IdeDependency[] getDeps()
     {
-        return this.deps;
+        return deps;
     }
 
     /**
@@ -171,8 +171,32 @@ public class EclipseWriterConfig
             {
                 public int compare( Object o1, Object o2 )
                 {
-                    return ( (IdeDependency) o1 ).getArtifactId().compareToIgnoreCase(
-                                                                                       ( (IdeDependency) o2 ).getArtifactId() );
+                    int result =
+                        ( (IdeDependency) o1 ).getArtifactId().compareToIgnoreCase(
+                                                                                    ( (IdeDependency) o2 ).getArtifactId() );
+                    if ( result != 0 )
+                    {
+                        return result;
+                    }
+                    if ( ( (IdeDependency) o1 ).getClassifier() != null &&
+                        ( (IdeDependency) o2 ).getClassifier() != null )
+                    {
+                        result =
+                            ( (IdeDependency) o1 ).getClassifier().compareToIgnoreCase(
+                                                                                        ( (IdeDependency) o2 ).getClassifier() );
+                        if ( result != 0 )
+                        {
+                            return result;
+                        }
+                    }
+                    result = ( (IdeDependency) o1 ).getType().compareToIgnoreCase( ( (IdeDependency) o2 ).getType() );
+                    if ( result != 0 )
+                    {
+                        return result;
+                    }
+                    result =
+                        ( (IdeDependency) o1 ).getGroupId().compareToIgnoreCase( ( (IdeDependency) o2 ).getGroupId() );
+                    return result;
                 }
             };
 
@@ -189,7 +213,7 @@ public class EclipseWriterConfig
      */
     public File getEclipseProjectDirectory()
     {
-        return this.eclipseProjectDirectory;
+        return eclipseProjectDirectory;
     }
 
     /**
@@ -199,7 +223,7 @@ public class EclipseWriterConfig
      */
     public void setEclipseProjectDirectory( File eclipseProjectDir )
     {
-        this.eclipseProjectDirectory = eclipseProjectDir;
+        eclipseProjectDirectory = eclipseProjectDir;
     }
 
     /**
@@ -229,7 +253,7 @@ public class EclipseWriterConfig
      */
     public MavenProject getProject()
     {
-        return this.project;
+        return project;
     }
 
     /**
@@ -249,7 +273,7 @@ public class EclipseWriterConfig
      */
     public EclipseSourceDir[] getSourceDirs()
     {
-        return this.sourceDirs;
+        return sourceDirs;
     }
 
     /**
@@ -269,7 +293,7 @@ public class EclipseWriterConfig
      */
     public File getBuildOutputDirectory()
     {
-        return this.buildOutputDirectory;
+        return buildOutputDirectory;
     }
 
     /**
@@ -289,7 +313,7 @@ public class EclipseWriterConfig
      */
     public ArtifactRepository getLocalRepository()
     {
-        return this.localRepository;
+        return localRepository;
     }
 
     /**
@@ -309,7 +333,7 @@ public class EclipseWriterConfig
      */
     public File getManifestFile()
     {
-        return this.manifestFile;
+        return manifestFile;
     }
 
     /**
@@ -329,7 +353,7 @@ public class EclipseWriterConfig
      */
     public List getClasspathContainers()
     {
-        return this.classpathContainers;
+        return classpathContainers;
     }
 
     /**
@@ -349,7 +373,7 @@ public class EclipseWriterConfig
      */
     public boolean isPde()
     {
-        return this.pde;
+        return pde;
     }
 
     /**
@@ -369,7 +393,7 @@ public class EclipseWriterConfig
      */
     public List getBuildCommands()
     {
-        return this.buildCommands;
+        return buildCommands;
     }
 
     /**
@@ -389,7 +413,7 @@ public class EclipseWriterConfig
      */
     public List getProjectnatures()
     {
-        return this.projectnatures;
+        return projectnatures;
     }
 
     /**
@@ -429,7 +453,7 @@ public class EclipseWriterConfig
      */
     public File getProjectBaseDir()
     {
-        return this.projectBaseDir;
+        return projectBaseDir;
     }
 
     /**
@@ -474,12 +498,12 @@ public class EclipseWriterConfig
 
     public String getContextName()
     {
-        return this.contextName;
+        return contextName;
     }
 
     public void setContextName( String deployName )
     {
-        this.contextName = deployName;
+        contextName = deployName;
     }
 
     /**
@@ -487,7 +511,7 @@ public class EclipseWriterConfig
      */
     public String getPackaging()
     {
-        return this.packaging;
+        return packaging;
     }
 
     /**
@@ -505,7 +529,7 @@ public class EclipseWriterConfig
      */
     public boolean getWtpapplicationxml()
     {
-        return this.wtpapplicationxml;
+        return wtpapplicationxml;
     }
 
     /**
