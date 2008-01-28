@@ -373,7 +373,7 @@ public class ReadWorkspaceLocations
             }
             catch ( Exception e )
             {
-                logger.error( "Could not read workspace wtp server runtimes preferences", e );
+                logger.error( "Could not read workspace wtp server runtimes preferences : " + e.getMessage() );
             }
 
             if ( runtimesElement != null )
