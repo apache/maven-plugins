@@ -67,7 +67,9 @@ public class TempEclipseWorkspace
                                 "org.eclipse.jdt.launching.PREF_VM_XML",
                                 properties.getProperty( "org.eclipse.jdt.launching.PREF_VM_XML" ).replaceAll(
                                                                                                               "__replace_with_test_dir__",
-                                                                                                              jdkLocation.getCanonicalPath() ) );
+                                                                                                              jdkLocation.getCanonicalPath().replace(
+                                                                                                                                                      '\\',
+                                                                                                                                                      '/' ) ) );
         properties.store( new FileOutputStream( propertyfile ), "" );
     }
 
