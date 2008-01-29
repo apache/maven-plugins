@@ -65,7 +65,9 @@ public abstract class AbstractProjectInfoReport
     protected SiteTool siteTool;
 
     /**
-     * Report output directory.
+     * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
+     * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
+     * the Maven Site Plugin is used instead.
      *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
