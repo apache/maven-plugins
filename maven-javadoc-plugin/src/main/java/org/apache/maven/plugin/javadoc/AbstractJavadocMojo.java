@@ -69,6 +69,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -90,11 +91,6 @@ public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
     
-    /**
-     *
-     * @component
-     */
-    private ToolchainManager toolchainManager;
     
     /**
      * The current build session instance. This is used for
@@ -1732,6 +1728,28 @@ public abstract class AbstractJavadocMojo
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
+    
+    //TODO remove the part with ToolchainManager lookup once we depend on
+    //3.0.9 (have it as prerequisite). Define as regular component field then.
+    private Toolchain getToolchain() 
+    {
+        Toolchain tc = null;
+        try 
+        {
+            if (session != null) //session is null in tests..
+            {
+                ToolchainManager toolchainManager = (ToolchainManager) session.getContainer().lookup(ToolchainManager.ROLE);
+                if (toolchainManager != null) 
+                {
+                    tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
+                }
+            }
+        } catch (ComponentLookupException componentLookupException) {
+            //just ignore, could happen in pre-3.0.9 builds..
+        }
+        return tc;
+    }
+
     /**
      * Method to put the artifacts in the hashmap.
      *
@@ -2063,8 +2081,8 @@ public abstract class AbstractJavadocMojo
     private String getJavadocExecutable()
         throws IOException
     {
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext( "jdk", //NOI18N
-                                session );
+        Toolchain tc = getToolchain();
+        
         if ( tc != null )
         {
             getLog().info( "Toolchain in javadoc-plugin: " + tc );

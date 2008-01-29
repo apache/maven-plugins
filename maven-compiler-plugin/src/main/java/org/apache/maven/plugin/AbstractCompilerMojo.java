@@ -44,6 +44,7 @@ import java.util.Set;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * TODO: At least one step could be optimized, currently the plugin will do two
@@ -243,12 +244,6 @@ public abstract class AbstractCompilerMojo
     private CompilerManager compilerManager;
     
     /**
-     *
-     * @component
-     */
-    private ToolchainManager toolchainManager;
-    
-    /**
      * The current build session instance. This is used for
      * toolchain manager API calls.
      *
@@ -290,10 +285,10 @@ public abstract class AbstractCompilerMojo
         {
             throw new MojoExecutionException( "No such compiler '" + e.getCompilerId() + "'." );
         }
-
+        
+        //-----------toolchains start here ----------------------------------
         //use the compilerId as identifier for toolchains as well.
-        Toolchain tc = toolchainManager.getToolchainFromBuildContext( compilerId,  
-                                session );
+        Toolchain tc = getToolchain();
         if ( tc != null ) 
         {
             getLog().info( "Toolchain in compiler-plugin: " + tc );
@@ -581,6 +576,27 @@ public abstract class AbstractCompilerMojo
             }
         }
         return value;
+    }
+
+    //TODO remove the part with ToolchainManager lookup once we depend on
+    //3.0.9 (have it as prerequisite). Define as regular component field then.
+    private Toolchain getToolchain() 
+    {
+        Toolchain tc = null;
+        try 
+        {
+            if (session != null) //session is null in tests..
+            {
+                ToolchainManager toolchainManager = (ToolchainManager) session.getContainer().lookup(ToolchainManager.ROLE);
+                if (toolchainManager != null) 
+                {
+                    tc = toolchainManager.getToolchainFromBuildContext(compilerId, session);
+                }
+            }
+        } catch (ComponentLookupException componentLookupException) {
+            //just ignore, could happen in pre-3.0.9 builds..
+        }
+        return tc;
     }
 
     private boolean isDigits( String string )
