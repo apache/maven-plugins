@@ -34,6 +34,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.doxia.linkcheck.DefaultLinkCheck;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
@@ -70,6 +71,38 @@ public class LinkcheckReport
     extends AbstractMavenReport
 {
     // ----------------------------------------------------------------------
+    // Report Components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    protected I18N i18n;
+
+    /**
+     * Doxia Site Renderer.
+     *
+     * @component
+     */
+    protected Renderer siteRenderer;
+
+    /**
+     * SiteTool component.
+     *
+     * @component
+     */
+    protected SiteTool siteTool;
+
+    /**
+     * SiteTool component.
+     *
+     * @component
+     */
+    protected LinkCheck linkCheck;
+
+    // ----------------------------------------------------------------------
     // Report Parameters
     // ----------------------------------------------------------------------
 
@@ -92,20 +125,6 @@ public class LinkcheckReport
     protected List reactorProjects;
 
     /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    protected Renderer siteRenderer;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    protected I18N i18n;
-
-    /**
      * Local Repository.
      *
      * @parameter expression="${localRepository}"
@@ -120,13 +139,6 @@ public class LinkcheckReport
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
     protected List repositories;
-
-    /**
-     * SiteTool component.
-     *
-     * @component
-     */
-    protected SiteTool siteTool;
 
     /**
      * Report output directory.
@@ -189,13 +201,6 @@ public class LinkcheckReport
      * @required
      */
     protected String linkcheckOutput;
-
-    /**
-     * The current report level. Defaults to {@link LinkcheckFileResult#WARNING_LEVEL}.
-     *
-     * @parameter default-value="2"
-     */
-    protected int reportLevel;
 
     /**
      * The HTTP method to use. Currently supported are "GET" and "HEAD".
@@ -373,9 +378,9 @@ public class LinkcheckReport
     {
         try
         {
-            LinkCheck lc = executeLinkCheck( locale );
+            LinkcheckModel result = executeLinkCheck( locale );
 
-            generateReport( locale, lc );
+            generateReport( locale, result );
         }
         catch ( Exception e )
         {
@@ -390,18 +395,17 @@ public class LinkcheckReport
     /**
      * Execute the <code>Linkcheck</code> tool.
      */
-    private LinkCheck executeLinkCheck( Locale locale )
+    private LinkcheckModel executeLinkCheck( Locale locale )
         throws Exception
     {
         // Wrap linkcheck
-        LinkCheck lc = new LinkCheck();
+        LinkCheck lc = new DefaultLinkCheck();
         lc.setOnline( !offline );
         lc.setBasedir( outputDirectory );
         lc.setReportOutput( new File( linkcheckOutput ) );
         lc.setLinkCheckCache( new File( linkcheckCache ) );
         lc.setExcludedLinks( getExcludedLinks( locale ) );
         lc.setExcludedPages( getExcludedPages() );
-        lc.setReportLevel( reportLevel );
         lc.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
         lc.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
 
@@ -419,9 +423,7 @@ public class LinkcheckReport
         }
         lc.setHttp( bean );
 
-        lc.doExecute();
-
-        return lc;
+        return lc.execute();
     }
 
     private String[] getExcludedLinks( Locale locale )
@@ -481,12 +483,10 @@ public class LinkcheckReport
      * Generate the Linkcheck report.
      *
      * @param locale the wanted locale
-     * @param lc the lc object used
+     * @param linkcheckModel the result of the analysis
      */
-    private void generateReport( Locale locale, LinkCheck lc )
+    private void generateReport( Locale locale, LinkcheckModel linkcheckModel )
     {
-        LinkcheckModel linkcheckModel = lc.getModel();
-
         getSink().head();
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.name" ) );
         getSink().head_();
@@ -528,7 +528,7 @@ public class LinkcheckReport
         //Statistics
         generateSummarySection( locale, linkcheckModel );
 
-        //Statistics
+        //Details
         generateDetailsSection( locale, linkcheckModel );
 
         getSink().body_();
