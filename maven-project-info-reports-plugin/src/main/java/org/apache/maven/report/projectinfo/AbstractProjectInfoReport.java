@@ -60,6 +60,7 @@ public abstract class AbstractProjectInfoReport
     /**
      * SiteTool.
      *
+     * @since 2.1
      * @component
      */
     protected SiteTool siteTool;
