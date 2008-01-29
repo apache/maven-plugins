@@ -909,7 +909,7 @@ public class LinkcheckReport
             return "";
         }
 
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
         buf.append( a[0] );
 
         for ( int i = 1; i < a.length; i++ )
