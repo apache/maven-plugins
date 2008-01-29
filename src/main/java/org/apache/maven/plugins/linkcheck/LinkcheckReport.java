@@ -209,14 +209,14 @@ public class LinkcheckReport
      * <dt>HTTP GET</dt>
      * <dd>
      * The HTTP GET method is defined in section 9.3 of
-     * <a HREF="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
+     * <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
      * The GET method means retrieve whatever information (in the form of an
      * entity) is identified by the Request-URI.
      * </dd>
      * <dt>HTTP HEAD</dt>
      * <dd>
      * The HTTP HEAD method is defined in section 9.4 of
-     * <a HREF="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
+     * <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
      * The HEAD method is identical to GET except that the server MUST NOT
      * return a message-body in the response.
      * </dd>
