@@ -41,6 +41,8 @@ import java.util.Map;
  */
 public class Dependencies
 {
+    private final MavenProject project;
+
     private final List projectDependencies;
 
     private final DependencyTree dependencyTree;
@@ -49,6 +51,7 @@ public class Dependencies
 
     public Dependencies( MavenProject project, DependencyTree dependencyTree, JarClassesAnalysis classesAnalyzer )
     {
+        this.project = project;
         this.dependencyTree = dependencyTree;
         this.projectDependencies = dependencyTree.getRootNode().getChildren();
         this.classesAnalyzer = classesAnalyzer;
@@ -65,6 +68,16 @@ public class Dependencies
         }
 
         mapArtifactFiles( dependencyTree.getRootNode(), projectMap );
+    }
+
+    /**
+     * Getter for the project
+     *
+     * @return the project
+     */
+    public MavenProject getProject()
+    {
+        return project;
     }
 
     public boolean hasDependencies()
