@@ -187,7 +187,8 @@ public class WarMojo
         archiver.setOutputFile( warFile );
 
         getLog().debug(
-            "Excluding " + Arrays.toString( getPackagingExcludes() ) + " for the generated webapp archive." );
+            "Excluding " + Arrays.asList( getPackagingExcludes() ) + " for the generated webapp archive." );
+        
         warArchiver.addDirectory( getWebappDirectory(), new String[]{"**"}, getPackagingExcludes() );
 
         final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
