@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 24 September 2007
+ January 2008
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -32,9 +32,11 @@ Overview
 
 * Goals Overview
 
-  The Linkcheck Plugin only has one goal.
+  The Linkcheck Plugin only has two goals.
 
   * {{{./linkcheck-mojo.html}linkcheck:linkcheck}} Generates a Linkcheck report.
+
+  * {{{./clean-mojo.html}linkcheck:clean}} Delete Linkcheck files.
 
 * Usage
 

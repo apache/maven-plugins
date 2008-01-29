@@ -20,35 +20,59 @@ package org.apache.maven.plugins.linkcheck;
  */
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
-import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.site.decoration.Body;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.doxia.tools.SiteToolException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Generates a link check report.
+ * Generates a <code>Linkcheck</code> report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @since 1.0
  * @goal linkcheck
  */
 public class LinkcheckReport
     extends AbstractMavenReport
 {
+    // ----------------------------------------------------------------------
+    // Report Parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The Maven Project.
      *
@@ -59,13 +83,79 @@ public class LinkcheckReport
     protected MavenProject project;
 
     /**
+     * The reactor projects.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List reactorProjects;
+
+    /**
+     * Doxia Site Renderer.
+     *
+     * @component
+     */
+    protected Renderer siteRenderer;
+
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    protected I18N i18n;
+
+    /**
+     * Local Repository.
+     *
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    protected List repositories;
+
+    /**
+     * SiteTool component.
+     *
+     * @component
+     */
+    protected SiteTool siteTool;
+
+    /**
+     * Report output directory.
+     *
+     * @parameter expression="${project.reporting.outputDirectory}"
+     * @required
+     */
+    protected File outputDirectory;
+
+    /**
      * The Maven Settings.
      *
      * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
-    private Settings settings;
+    protected Settings settings;
+
+    /**
+     * Directory containing the <code>site.xml</code> file.
+     *
+     * @parameter expression="${basedir}/src/site"
+     * @required
+     */
+    protected File siteDirectory;
+
+    // ----------------------------------------------------------------------
+    // Linkcheck parameters
+    // ----------------------------------------------------------------------
 
     /**
      * The settings offline paramater.
@@ -85,20 +175,12 @@ public class LinkcheckReport
     protected boolean httpFollowRedirect;
 
     /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    protected File outputDirectory;
-
-    /**
      * The location of the linkcheck cache.
      *
      * @parameter expression="${project.build.directory}/linkcheck/linkcheck.cache"
      * @required
      */
-    private String linkcheckCache;
+    protected String linkcheckCache;
 
     /**
      * The location of the linkcheck report.
@@ -106,10 +188,10 @@ public class LinkcheckReport
      * @parameter expression="${project.build.directory}/linkcheck/linkcheck.xml"
      * @required
      */
-    private String linkcheckOutput;
+    protected String linkcheckOutput;
 
     /**
-     * The current report level. Defaults to {@link LinkCheckResult#WARNING}.
+     * The current report level. Defaults to {@link LinkcheckFileResult#WARNING_LEVEL}.
      *
      * @parameter default-value="2"
      */
@@ -122,19 +204,15 @@ public class LinkcheckReport
      * <dd>
      * The HTTP GET method is defined in section 9.3 of
      * <a HREF="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
-     * <blockquote>
      * The GET method means retrieve whatever information (in the form of an
      * entity) is identified by the Request-URI.
-     * </blockquote>
      * </dd>
      * <dt>HTTP HEAD</dt>
      * <dd>
      * The HTTP HEAD method is defined in section 9.4 of
      * <a HREF="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
-     * <blockquote>
      * The HEAD method is identical to GET except that the server MUST NOT
      * return a message-body in the response.
-     * </blockquote>
      * </dd>
      * </dl>
      *
@@ -143,101 +221,189 @@ public class LinkcheckReport
     protected String httpMethod;
 
     /**
+     * The list of HTTP errors to ignored.
+     *
+     * @parameter
+     * @see {@link HttpStatus} for all defined values.
+     */
+    protected int[] excludedHttpStatusErrors;
+
+    /**
+     * The list of HTTP warnings to ignored.
+     *
+     * @parameter
+     * @see {@link HttpStatus} for all defined values.
+     */
+    protected int[] excludedHttpStatusWarnings;
+
+    /**
+     * The list of pages to exclude.
+     *
+     * @parameter
+     */
+    protected String[] excludedPages;
+
+    /**
      * The list of links to exclude.
      *
      * @parameter
      */
-    protected String[] exludedLinks;
+    protected String[] excludedLinks;
 
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    protected Renderer siteRenderer;
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    protected I18N i18n;
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "linkcheck-report", locale, "report.linkcheck.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "linkcheck-report", locale, "report.linkcheck.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "linkcheck";
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        return outputDirectory.exists();
+        boolean can = outputDirectory.exists();
+
+        if ( !can )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Linkcheck report skipped. You need to call 'mvn site' before." );
+            }
+        }
+
+        return can;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
-    protected void executeReport( Locale locale )
-        throws MavenReportException
+    /** {@inheritDoc} */
+    public void execute()
+        throws MojoExecutionException
     {
         if ( !canGenerateReport() )
         {
             return;
         }
 
+        try
+        {
+            DecorationModel model = new DecorationModel();
+            model.setBody( new Body() );
+            Map attributes = new HashMap();
+            attributes.put( "outputEncoding", "UTF-8" );
+            attributes.put( "project", project );
+            Locale locale = Locale.getDefault();
+            Artifact skinArtifact = siteTool.getDefaultSkinArtifact( localRepository, repositories );
+            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( skinArtifact.getFile(), attributes,
+                                                                                  model, getName( locale ), locale );
+
+            RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
+
+            SiteRendererSink sink = new SiteRendererSink( context );
+            generate( sink, locale );
+
+            outputDirectory.mkdirs();
+
+            Writer writer = new FileWriter( new File( outputDirectory, getOutputName() + ".html" ) );
+
+            siteRenderer.generateDocument( writer, sink, siteContext );
+
+            siteRenderer.copyResources( siteContext, new File( project.getBasedir(), "src/site/resources" ),
+                                        outputDirectory );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
+        }
+        catch ( SiteToolException e )
+        {
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
+        }
+        catch ( RendererException e )
+        {
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
+        }
+        catch ( MavenReportException e )
+        {
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
+    protected String getOutputDirectory()
+    {
+        return outputDirectory.getAbsolutePath();
+    }
+
+    /** {@inheritDoc} */
+    protected MavenProject getProject()
+    {
+        return project;
+    }
+
+    /** {@inheritDoc} */
+    protected Renderer getSiteRenderer()
+    {
+        return siteRenderer;
+    }
+
+    /** {@inheritDoc} */
+    protected void executeReport( Locale locale )
+        throws MavenReportException
+    {
+        try
+        {
+            LinkCheck lc = executeLinkCheck( locale );
+
+            generateReport( locale, lc );
+        }
+        catch ( Exception e )
+        {
+            throw new MavenReportException( "IOException: " + e.getMessage(), e );
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Execute the <code>Linkcheck</code> tool.
+     */
+    private LinkCheck executeLinkCheck( Locale locale )
+        throws Exception
+    {
         // Wrap linkcheck
         LinkCheck lc = new LinkCheck();
         lc.setOnline( !offline );
         lc.setBasedir( outputDirectory );
         lc.setReportOutput( new File( linkcheckOutput ) );
         lc.setLinkCheckCache( new File( linkcheckCache ) );
-        lc.setExcludedLinks( exludedLinks );
+        lc.setExcludedLinks( getExcludedLinks( locale ) );
+        lc.setExcludedPages( getExcludedPages() );
         lc.setReportLevel( reportLevel );
+        lc.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
+        lc.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
 
         HttpBean bean = new HttpBean();
         bean.setMethod( httpMethod );
@@ -255,300 +421,375 @@ public class LinkcheckReport
 
         lc.doExecute();
 
-        // Render report
-        LinkcheckRenderer r = new LinkcheckRenderer( getSink(), i18n, locale, lc.getModel() );
-        r.render();
+        return lc;
     }
 
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    private static class LinkcheckRenderer
-        extends AbstractMavenReportRenderer
+    private String[] getExcludedLinks( Locale locale )
+        throws Exception
     {
-        private I18N i18n;
+        List linksToExclude = ( excludedLinks != null ? new ArrayList( Arrays.asList( excludedLinks ) ) : new ArrayList() );
 
-        private Locale locale;
-
-        private LinkcheckModel linkcheckModel;
-
-        LinkcheckRenderer( Sink sink, I18N i18n, Locale locale, LinkcheckModel linkcheckModel )
+        if ( project.getUrl() != null )
         {
-            super( sink );
+            // Using interpolated references in the decoration model
+            DecorationModel site = siteTool.getDecorationModel( project, reactorProjects, localRepository,
+                                                                repositories, siteDirectory, locale, "ISO-8859-1",
+                                                                "ISO-8859-1" );
 
-            this.i18n = i18n;
-
-            this.locale = locale;
-
-            this.linkcheckModel = linkcheckModel;
-        }
-
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#getTitle()
-         */
-        public String getTitle()
-        {
-            return i18n.getString( "linkcheck-report", locale, "report.linkcheck.title" );
-        }
-
-        /**
-         * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
-         */
-        public void renderBody()
-        {
-            if ( linkcheckModel == null )
+            String baseUrl = project.getUrl();
+            if ( site.getBannerLeft() != null && StringUtils.isNotEmpty( site.getBannerLeft().getHref() ) )
             {
-                startSection( getTitle() );
-
-                paragraph( i18n.getString( "linkcheck-report", locale, "report.linkcheck.empty" ) );
-
-                endSection();
-
-                return;
+                linksToExclude.add( siteTool.getRelativePath( site.getBannerLeft().getHref(), baseUrl ) );
             }
-
-            // Overview
-            startSection( getTitle() );
-
-            paragraph(  i18n.getString( "linkcheck-report", locale, "report.linkcheck.overview" ) );
-
-            //Statistics
-            generateSummarySection();
-
-            //Statistics
-            generateDetailsSection();
-
-            endSection();
-        }
-
-        private void generateSummarySection()
-        {
-            // Calculus
-            List linkcheckFiles = linkcheckModel.getFiles();
-
-            int totalFiles = linkcheckFiles.size();
-
-            int totalLinks = 0;
-            int totalValidLinks = 0;
-            int totalErrorLinks = 0;
-            int totalWarningLinks = 0;
-            for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
+            if ( site.getBannerRight() != null && StringUtils.isNotEmpty( site.getBannerRight().getHref() ) )
             {
-                LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
-
-                totalLinks += linkcheckFile.getNumberOfLinks();
-                totalValidLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL );
-                totalErrorLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL );
-                totalWarningLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL );
+                linksToExclude.add( siteTool.getRelativePath( site.getBannerRight().getHref(), baseUrl ) );
             }
-
-            startSection( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary" ) );
-
-            paragraph(  i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.overview" ) );
-
-            startTable();
-
-            //Header
-            generateTableHeader( false );
-
-            //Content
-            sink.tableRow();
-
-            sink.tableCell();
-            sink.bold();
-            sink.text( totalFiles + "" );
-            sink.bold_();
-            sink.tableCell_();
-            sink.tableCell();
-            sink.bold();
-            sink.text( totalLinks + "" );
-            sink.bold_();
-            sink.tableCell_();
-            sink.tableCell();
-            sink.bold();
-            sink.text( String.valueOf( totalValidLinks ) );
-            sink.bold_();
-            sink.tableCell_();
-            sink.tableCell();
-            sink.bold();
-            sink.text( String.valueOf( totalWarningLinks ) );
-            sink.bold_();
-            sink.tableCell_();
-            sink.tableCell();
-            sink.bold();
-            sink.text( String.valueOf( totalErrorLinks ) );
-            sink.bold_();
-            sink.tableCell_();
-
-            sink.tableRow_();
-
-            endTable();
-
-            endSection();
+            if ( site.getBody() != null && site.getBody().getLinks() != null )
+            {
+                for ( Iterator it = site.getBody().getLinks().iterator(); it.hasNext(); )
+                {
+                    LinkItem link = (LinkItem) it.next();
+                    linksToExclude.add( siteTool.getRelativePath( link.getHref(), baseUrl ) );
+                }
+            }
         }
 
-        private void generateDetailsSection()
+        return (String[]) linksToExclude.toArray( new String[0] );
+    }
+
+    private String[] getExcludedPages()
+    {
+        List linksToExclude;
+
+        if ( excludedPages != null )
         {
-            startSection( i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail" ) );
+            linksToExclude = Arrays.asList( excludedPages );
+        }
+        else
+        {
+            linksToExclude = new ArrayList();
+        }
 
-            paragraph(  i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail.overview" ) );
+        // Exclude this report
+        linksToExclude.add( getOutputName() + ".html" );
 
-            startTable();
+        return (String[]) linksToExclude.toArray( new String[0] );
+    }
 
-            //Header
-            generateTableHeader( true );
+    /**
+     * Generate the Linkcheck report.
+     *
+     * @param locale the wanted locale
+     * @param lc the lc object used
+     */
+    private void generateReport( Locale locale, LinkCheck lc )
+    {
+        LinkcheckModel linkcheckModel = lc.getModel();
 
-            // Content
-            List linkcheckFiles = linkcheckModel.getFiles();
-            for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
+        getSink().head();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.name" ) );
+        getSink().head_();
+
+        getSink().body();
+
+        if ( linkcheckModel == null )
+        {
+            getSink().section1();
+            getSink().sectionTitle1();
+            getSink().text( getName( locale ) );
+            getSink().sectionTitle1_();
+
+            getSink().paragraph();
+            getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.empty" ) );
+            getSink().paragraph_();
+
+            getSink().section1_();
+
+            getSink().body_();
+            getSink().flush();
+            getSink().close();
+
+            return;
+        }
+
+        // Overview
+        getSink().section1();
+        getSink().sectionTitle1();
+        getSink().text( getName( locale ) );
+        getSink().sectionTitle1_();
+
+        getSink().paragraph();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.overview" ) );
+        getSink().paragraph_();
+
+        getSink().section1_();
+
+        //Statistics
+        generateSummarySection( locale, linkcheckModel );
+
+        //Statistics
+        generateDetailsSection( locale, linkcheckModel );
+
+        getSink().body_();
+        getSink().flush();
+        getSink().close();
+    }
+
+    private void generateSummarySection( Locale locale, LinkcheckModel linkcheckModel )
+    {
+        // Calculus
+        List linkcheckFiles = linkcheckModel.getFiles();
+
+        int totalFiles = linkcheckFiles.size();
+
+        int totalLinks = 0;
+        int totalValidLinks = 0;
+        int totalErrorLinks = 0;
+        int totalWarningLinks = 0;
+        for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
+        {
+            LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
+
+            totalLinks += linkcheckFile.getNumberOfLinks();
+            totalValidLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL );
+            totalErrorLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL );
+            totalWarningLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL );
+        }
+
+        getSink().section1();
+        getSink().sectionTitle1();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary" ) );
+        getSink().sectionTitle1_();
+
+        getSink().paragraph();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.overview" ) );
+        getSink().paragraph_();
+
+        getSink().table();
+
+        //Header
+        generateTableHeader( locale, false );
+
+        //Content
+        getSink().tableRow();
+
+        getSink().tableCell();
+        getSink().bold();
+        getSink().text( totalFiles + "" );
+        getSink().bold_();
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().bold();
+        getSink().text( totalLinks + "" );
+        getSink().bold_();
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().bold();
+        getSink().text( String.valueOf( totalValidLinks ) );
+        getSink().bold_();
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().bold();
+        getSink().text( String.valueOf( totalWarningLinks ) );
+        getSink().bold_();
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().bold();
+        getSink().text( String.valueOf( totalErrorLinks ) );
+        getSink().bold_();
+        getSink().tableCell_();
+
+        getSink().tableRow_();
+
+        getSink().table_();
+
+        getSink().section1_();
+    }
+
+    private void generateDetailsSection( Locale locale, LinkcheckModel linkcheckModel )
+    {
+        getSink().section1();
+        getSink().sectionTitle1();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail" ) );
+        getSink().sectionTitle1_();
+
+        getSink().paragraph();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail.overview" ) );
+        getSink().paragraph_();
+
+        getSink().table();
+
+        //Header
+        generateTableHeader( locale, true );
+
+        // Content
+        List linkcheckFiles = linkcheckModel.getFiles();
+        for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
+        {
+            LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
+
+            getSink().tableRow();
+
+            getSink().tableCell();
+            if ( linkcheckFile.getUnsuccessful() == 0 )
             {
-                LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
+                iconValid( locale );
+            }
+            else
+            {
+                iconError( locale );
+            }
+            getSink().tableCell_();
 
-                sink.tableRow();
+            //            tableCell( createLinkPatternedText( linkcheckFile.getRelativePath(), "./"
+            //                + linkcheckFile.getRelativePath() ) );
+            getSink().tableCell();
+            getSink().link( linkcheckFile.getRelativePath() );
+            getSink().text( linkcheckFile.getRelativePath() );
+            getSink().link_();
+            getSink().tableCell_();
+            getSink().tableCell();
+            getSink().text( String.valueOf( linkcheckFile.getNumberOfLinks() ) );
+            getSink().tableCell_();
+            getSink().tableCell();
+            getSink().text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL ) ) );
+            getSink().tableCell_();
+            getSink().tableCell();
+            getSink().text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL ) ) );
+            getSink().tableCell_();
+            getSink().tableCell();
+            getSink().text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL ) ) );
+            getSink().tableCell_();
 
-                sink.tableCell();
-                if ( linkcheckFile.getUnsuccessful() == 0 )
+            getSink().tableRow_();
+
+            // Detail error
+            if ( linkcheckFile.getUnsuccessful() != 0 )
+            {
+                getSink().tableRow();
+
+                getSink().tableCell();
+                getSink().text( "" );
+                getSink().tableCell_();
+
+                // TODO it is due to DOXIA-78
+                getSink().rawText( "<td colspan=\"5\">" );
+
+                getSink().table();
+
+                for ( Iterator it2 = linkcheckFile.getResults().iterator(); it2.hasNext(); )
                 {
-                    iconValid();
-                }
-                else
-                {
-                    iconError();
-                }
-                sink.tableCell_();
+                    LinkcheckFileResult linkcheckFileResult = (LinkcheckFileResult) it2.next();
 
-                tableCell( createLinkPatternedText( linkcheckFile.getRelativePath(), "./"
-                    + linkcheckFile.getRelativePath() ) );
-                tableCell( String.valueOf( linkcheckFile.getNumberOfLinks() ) );
-                tableCell( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL ) ) );
-                tableCell( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL ) ) );
-                tableCell( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL ) ) );
-
-                sink.tableRow_();
-
-                // Detail error
-                if ( linkcheckFile.getUnsuccessful() != 0 )
-                {
-                    sink.tableRow();
-
-                    sink.tableCell();
-                    sink.text( "" );
-                    sink.tableCell_();
-
-                    sink.tableCell( "5" );
-
-                    startTable();
-
-                    for ( Iterator it2 = linkcheckFile.getResults().iterator(); it2.hasNext(); )
+                    if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.VALID_LEVEL )
                     {
-                        LinkcheckFileResult linkcheckFileResult = (LinkcheckFileResult) it2.next();
-
-                        if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.VALID_LEVEL )
-                        {
-                            continue;
-                        }
-
-                        sink.tableRow();
-
-                        sink.tableCell();
-                        if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.WARNING_LEVEL )
-                        {
-                            iconWarning();
-                        }
-                        else if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.ERROR_LEVEL )
-                        {
-                            iconError();
-                        }
-                        sink.tableCell_();
-
-                        sink.tableCell();
-                        sink.italic();
-                        sink.link( linkcheckFileResult.getTarget() );
-                        sink.text( linkcheckFileResult.getTarget() );
-                        sink.link_();
-                        sink.text( ": " );
-                        sink.text( linkcheckFileResult.getErrorMessage() );
-                        sink.italic_();
-                        sink.tableCell_();
-
-                        sink.tableRow_();
+                        continue;
                     }
 
-                    endTable();
+                    getSink().tableRow();
 
-                    sink.tableCell_();
+                    getSink().tableCell();
+                    if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.WARNING_LEVEL )
+                    {
+                        iconWarning( locale );
+                    }
+                    else if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.ERROR_LEVEL )
+                    {
+                        iconError( locale );
+                    }
+                    getSink().tableCell_();
 
-                    sink.tableRow_();
+                    getSink().tableCell();
+                    getSink().italic();
+                    getSink().link( linkcheckFileResult.getTarget() );
+                    getSink().text( linkcheckFileResult.getTarget() );
+                    getSink().link_();
+                    getSink().text( ": " );
+                    getSink().text( linkcheckFileResult.getErrorMessage() );
+                    getSink().italic_();
+                    getSink().tableCell_();
+
+                    getSink().tableRow_();
                 }
+
+                getSink().table_();
+
+                getSink().tableCell_();
+
+                getSink().tableRow_();
             }
-
-            sink.tableRow();
-
-            endTable();
-
-            endSection();
         }
 
-        private void generateTableHeader( boolean withImage )
+        getSink().tableRow();
+
+        getSink().table_();
+
+        getSink().section1_();
+    }
+
+    private void generateTableHeader( Locale locale, boolean detail )
+    {
+        getSink().tableRow();
+        if ( detail )
         {
-            sink.tableRow();
-            if ( withImage )
-            {
-                sink.rawText( "<th rowspan=\"2\">" );
-                sink.text( "" );
-                sink.tableHeaderCell_();
-            }
-            sink.rawText( "<th rowspan=\"2\">" );
-            sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.documents" ) );
-            sink.tableHeaderCell_();
-            sink.tableHeaderCell( "4" );
-            sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.links" ) );
-            sink.tableHeaderCell_();
-            sink.tableRow_();
-
-            sink.tableRow();
-            tableHeaderCell( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.totalLinks" ) );
-            sink.tableHeaderCell();
-            iconValid();
-            sink.tableHeaderCell_();
-            sink.tableHeaderCell();
-            iconWarning();
-            sink.tableHeaderCell_();
-            sink.tableHeaderCell();
-            iconError();
-            sink.tableHeaderCell_();
-            sink.tableRow_();
+            getSink().rawText( "<th rowspan=\"2\">" );
+            getSink().text( "" );
+            getSink().tableHeaderCell_();
         }
+        getSink().rawText( "<th rowspan=\"2\">" );
+        getSink().text( detail ? i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail.table.documents" ) : i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.documents" ) );
+        getSink().tableHeaderCell_();
+        // TODO it is due to DOXIA-78
+        getSink().rawText( "<th colspan=\"4\" center>" );
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.links" ) );
+        getSink().tableHeaderCell_();
+        getSink().rawText( "</th>" );
+        getSink().tableRow_();
 
-        private void iconError()
-        {
-            sink.figure();
-            sink.figureCaption();
-            sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.error" ) );
-            sink.figureCaption_();
-            sink.figureGraphics( "images/icon_error_sml.gif" );
-            sink.figure_();
-        }
+        getSink().tableRow();
+        getSink().tableHeaderCell();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.totalLinks" ) );
+        getSink().tableHeaderCell_();
+        getSink().tableHeaderCell();
+        iconValid( locale );
+        getSink().tableHeaderCell_();
+        getSink().tableHeaderCell();
+        iconWarning( locale );
+        getSink().tableHeaderCell_();
+        getSink().tableHeaderCell();
+        iconError( locale );
+        getSink().tableHeaderCell_();
+        getSink().tableRow_();
+    }
 
-        private void iconValid()
-        {
-            sink.figure();
-            sink.figureCaption();
-            sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.valid" ) );
-            sink.figureCaption_();
-            sink.figureGraphics( "images/icon_success_sml.gif" );
-            sink.figure_();
-        }
+    private void iconError( Locale locale )
+    {
+        getSink().figure();
+        getSink().figureCaption();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.error" ) );
+        getSink().figureCaption_();
+        getSink().figureGraphics( "images/icon_error_sml.gif" );
+        getSink().figure_();
+    }
 
-        private void iconWarning()
-        {
-            sink.figure();
-            sink.figureCaption();
-            sink.text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.warning" ) );
-            sink.figureCaption_();
-            sink.figureGraphics( "images/icon_warning_sml.gif" );
-            sink.figure_();
-        }
+    private void iconValid( Locale locale )
+    {
+        getSink().figure();
+        getSink().figureCaption();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.valid" ) );
+        getSink().figureCaption_();
+        getSink().figureGraphics( "images/icon_success_sml.gif" );
+        getSink().figure_();
+    }
+
+    private void iconWarning( Locale locale )
+    {
+        getSink().figure();
+        getSink().figureCaption();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.warning" ) );
+        getSink().figureCaption_();
+        getSink().figureGraphics( "images/icon_warning_sml.gif" );
+        getSink().figure_();
     }
 }

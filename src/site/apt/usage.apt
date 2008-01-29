@@ -51,8 +51,11 @@ Using the Linkcheck plugin
 </project>
 +-----
 
+  The Linkcheck plugin needs to call the <<<site>>> phase twice:
+
 +-----
-  mvn site
+  mvn site (to generate the site phase, i.e. the documentation)
+  mvn site (to analyze the result of the generated documentation)
 +-----
 
  Here is a simple report:
