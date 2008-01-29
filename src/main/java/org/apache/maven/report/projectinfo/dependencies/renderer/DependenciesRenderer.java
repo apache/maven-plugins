@@ -345,7 +345,17 @@ public class DependenciesRenderer
                     }
                     catch ( ArtifactNotFoundException e )
                     {
-                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                        if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
+                            && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
+                            && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                        {
+                            log.warn( "The artifact of this project has never been deployed." );
+                        }
+                        else
+                        {
+                            log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                        }
+
                         continue;
                     }
                 }
