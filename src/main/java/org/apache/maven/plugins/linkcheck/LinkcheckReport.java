@@ -137,6 +137,7 @@ public class LinkcheckReport
      * Remote repositories used for the project.
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
      */
     protected List repositories;
 
@@ -562,8 +563,116 @@ public class LinkcheckReport
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary" ) );
         getSink().sectionTitle1_();
 
+        // Summary of the analysis parameters
         getSink().paragraph();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.overview" ) );
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.overview1" ) );
+        getSink().paragraph_();
+
+        getSink().table();
+
+        getSink().tableRow();
+        getSink().tableHeaderCell();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.parameter" ) );
+        getSink().tableHeaderCell_();
+        getSink().tableHeaderCell();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.value" ) );
+        getSink().tableHeaderCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpFollowRedirect" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        getSink().text( String.valueOf( httpFollowRedirect ) );
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpMethod" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        if ( StringUtils.isEmpty( httpMethod ) )
+        {
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+        }
+        else
+        {
+            getSink().text( httpMethod );
+        }
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedPages" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        if ( excludedPages == null || excludedPages.length == 0 )
+        {
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+        }
+        else
+        {
+            getSink().text( StringUtils.join( excludedPages, "," ) );
+        }
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedLinks" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        if ( excludedLinks == null || excludedLinks.length == 0 )
+        {
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+        }
+        else
+        {
+            getSink().text( StringUtils.join( excludedLinks, "," ) );
+        }
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedHttpStatusErrors" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        if ( excludedHttpStatusErrors == null || excludedHttpStatusErrors.length == 0 )
+        {
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+        }
+        else
+        {
+            getSink().text( toString( excludedHttpStatusErrors ) );
+        }
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().tableRow();
+        getSink().tableCell();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedHttpStatusWarnings" ) );
+        getSink().tableCell_();
+        getSink().tableCell();
+        if ( excludedHttpStatusWarnings == null || excludedHttpStatusWarnings.length == 0 )
+        {
+            getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
+        }
+        else
+        {
+            getSink().text( toString( excludedHttpStatusWarnings ) );
+        }
+        getSink().tableCell_();
+        getSink().tableRow_();
+
+        getSink().table_();
+
+        // Summary of the checked files
+        getSink().paragraph();
+        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.summary.overview2" ) );
         getSink().paragraph_();
 
         getSink().table();
@@ -791,5 +900,24 @@ public class LinkcheckReport
         getSink().figureCaption_();
         getSink().figureGraphics( "images/icon_warning_sml.gif" );
         getSink().figure_();
+    }
+
+    private String toString( int[] a )
+    {
+        if ( a == null || a.length == 0 )
+        {
+            return "";
+        }
+
+        StringBuilder buf = new StringBuilder();
+        buf.append( a[0] );
+
+        for ( int i = 1; i < a.length; i++ )
+        {
+            buf.append( ", " );
+            buf.append( a[i] );
+        }
+
+        return buf.toString();
     }
 }
