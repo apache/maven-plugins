@@ -4,7 +4,7 @@
  Johnny R. Ruiz III
  <jruiz@exist.com>
  ------
- September 22, 2005
+ January 2008
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,7 +33,7 @@ Maven Project Info Reports Plugin
 
 * Goals Overview
 
- The Project Info Reports Plugin has ten goals:
+ The Project Info Reports Plugin has twelve goals:
 
    * {{{cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
    System report.
@@ -43,6 +43,12 @@ Maven Project Info Reports Plugin
 
    * {{{dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
    Project Dependency Convergence report for reactor builds.
+
+   * {{{dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
+   Project DependencyManagement report.
+
+   * {{{plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
+   Project PluginManagement report.
 
    * {{{issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
    Tracking report.
@@ -83,4 +89,5 @@ Maven Project Info Reports Plugin
   * {{{http://maven.apache.org/plugins/maven-site-plugin/i18n.html}Internationalization}}
 
   * {{{http://maven.apache.org/plugins/maven-site-plugin/examples/creatingskins.html}Skinning}}
+
 
