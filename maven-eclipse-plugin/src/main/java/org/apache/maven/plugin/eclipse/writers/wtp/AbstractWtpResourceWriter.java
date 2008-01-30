@@ -208,10 +208,20 @@ public abstract class AbstractWtpResourceWriter
             else
             {
                 File localRepositoryFile = new File( localRepository.getBasedir() );
+                String relativePath = IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
 
-                handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                    +
-                    IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
+                if ( !new File( relativePath ).isAbsolute() )
+                {
+                    handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
+                        +
+                        relativePath;
+                }
+                else
+                {
+                    handle = "module:/classpath/lib/" //$NON-NLS-1$
+                        +
+                        IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
+                }
             }
             if ( Constants.PROJECT_PACKAGING_EAR.equals( this.config.getPackaging() ) && !"/".equals( deployPath ) )
             {

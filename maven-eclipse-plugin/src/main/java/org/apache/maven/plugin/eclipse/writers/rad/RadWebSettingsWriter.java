@@ -183,7 +183,7 @@ public class RadWebSettingsWriter
                     log.debug( "RadWebSettingsWriter: dependency " + dependency.toString() +
                         " selected for inclusion as lib-module" );
 
-                    String depName = IdeUtils.getProjectName( config.getProjectNameTemplate(), dependency );
+                    String depName = dependency.getEclipseProjectName();
                     String depJar = dependency.getArtifactId() + ".jar";
 
                     writer.startElement( WEBSETTINGS_LIBMODULE );

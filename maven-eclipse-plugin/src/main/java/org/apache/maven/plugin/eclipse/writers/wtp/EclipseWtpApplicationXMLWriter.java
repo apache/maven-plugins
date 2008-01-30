@@ -88,6 +88,8 @@ public class EclipseWtpApplicationXMLWriter
 
     private static final String XMLNS_SCHEMA_LOCATION = "xmlns:schemaLocation";
 
+    private static final String XSI_SCHEMA_LOCATION = "xsi:schemaLocation";
+
     private static final String XMLNS_XMI = "xmlns:xmi";
 
     private static final String XMLNS_XSI = "xmlns:xsi";
@@ -244,7 +246,18 @@ public class EclipseWtpApplicationXMLWriter
         result.setAttribute( EclipseWtpApplicationXMLWriter.VERSION, "1.4" );
         result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS, "http://java.sun.com/xml/ns/j2ee" );
         result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS_XSI, "http://www.w3.org/2001/XMLSchema-instance" );
-        result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS_SCHEMA_LOCATION,
+
+        // special case for development websphere's ....
+        String locationAttribute;
+        if ( this.config.getWorkspaceConfiguration().getWebsphereVersion() != null )
+        {
+            locationAttribute = EclipseWtpApplicationXMLWriter.XSI_SCHEMA_LOCATION;
+        }
+        else
+        {
+            locationAttribute = EclipseWtpApplicationXMLWriter.XMLNS_SCHEMA_LOCATION;
+        }
+        result.setAttribute( locationAttribute,
                              "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" );
         result.addChild( new Xpp3Dom( EclipseWtpApplicationXMLWriter.APPLICATION_XML_DESCRIPTION ) );
         Xpp3Dom name = new Xpp3Dom( EclipseWtpApplicationXMLWriter.APPLICATION_XML_DISPLAY_NAME );

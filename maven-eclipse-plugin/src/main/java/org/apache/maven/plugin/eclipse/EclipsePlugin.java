@@ -35,6 +35,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.reader.ReadWorkspaceLocations;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
@@ -363,6 +364,15 @@ public class EclipsePlugin
      * @parameter expression="${eclipse.wtpapplicationxml}" default-value="false"
      */
     private boolean wtpapplicationxml;
+
+    /**
+     * What WTP defined server to use for deployment informations.
+     * 
+     * @parameter expression="${eclipse.wtpdefaultserver}"
+     */
+    private String wtpdefaultserver;
+
+    private WorkspaceConfiguration workspaceConfiguration;
 
     protected boolean isJavaProject()
     {
@@ -710,7 +720,8 @@ public class EclipsePlugin
     protected void verifyClasspathContainerListIsComplete()
     {
         boolean containsJREContainer = false;
-        // Check if classpathContainer contains a JRE (default, alternate or Execution Environment)
+        // Check if classpathContainer contains a JRE (default, alternate or
+        // Execution Environment)
         for ( Iterator iter = classpathContainers.iterator(); iter.hasNext(); )
         {
             Object classPathContainer = iter.next();
@@ -906,6 +917,8 @@ public class EclipsePlugin
 
         EclipseWriterConfig config = new EclipseWriterConfig();
 
+        config.setWorkspaceConfiguration( getWorkspaceConfiguration() );
+
         config.setProjectNameTemplate( calculateProjectNameTemplate() );
 
         String projectName = IdeUtils.getProjectName( config.getProjectNameTemplate(), project );
@@ -1075,8 +1088,14 @@ public class EclipsePlugin
     protected void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
-        classpathContainers.add( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
 
+        if ( getWorkspaceConfiguration().getDefaultClasspathContainer() != null )
+        {
+            getLog().info(
+                           "Adding default classpath contaigner: " +
+                               getWorkspaceConfiguration().getDefaultClasspathContainer() );
+            classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
+        }
         if ( pde )
         {
             classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
@@ -1287,6 +1306,43 @@ public class EclipsePlugin
      */
     public String getProjectNameForArifact( Artifact artifact )
     {
+        IdeDependency[] workspaceArtefacts = getWorkspaceArtefacts();
+        for ( int index = 0; workspaceArtefacts != null && index < workspaceArtefacts.length; index++ )
+        {
+            IdeDependency workspaceArtefact = workspaceArtefacts[index];
+            if ( workspaceArtefact.isAddedToClasspath() &&
+                workspaceArtefact.getGroupId().equals( artifact.getGroupId() ) &&
+                workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
+            {
+                if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
+                {
+                    return workspaceArtefact.getEclipseProjectName();
+                }
+            }
+        }
         return IdeUtils.getProjectName( calculateProjectNameTemplate(), artifact );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected IdeDependency[] getWorkspaceArtefacts()
+    {
+        return getWorkspaceConfiguration().getWorkspaceArtefacts();
+    }
+
+    public WorkspaceConfiguration getWorkspaceConfiguration()
+    {
+        if ( workspaceConfiguration == null )
+        {
+            workspaceConfiguration = new WorkspaceConfiguration();
+            if ( this.workspace != null )
+            {
+                workspaceConfiguration.setWorkspaceDirectory( new File( this.workspace ) );
+            }
+            new ReadWorkspaceLocations().init( getLog(), this.workspaceConfiguration, this.project,
+                                               this.wtpdefaultserver );
+        }
+        return workspaceConfiguration;
     }
 }
