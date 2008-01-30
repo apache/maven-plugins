@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
+import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
 
@@ -143,6 +144,18 @@ public class EclipseWriterConfig
      * @see EclipsePlugin#getWtpversion()
      */
     private float wtpVersion;
+
+    private WorkspaceConfiguration workspaceConfiguration;
+
+    public WorkspaceConfiguration getWorkspaceConfiguration()
+    {
+        return workspaceConfiguration;
+    }
+
+    public void setWorkspaceConfiguration( WorkspaceConfiguration workspaceConfiguration )
+    {
+        this.workspaceConfiguration = workspaceConfiguration;
+    }
 
     /**
      * Getter for <code>deps</code>.

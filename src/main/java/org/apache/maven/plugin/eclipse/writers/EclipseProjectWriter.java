@@ -194,7 +194,7 @@ public class EclipseProjectWriter
                 if ( dep.isReferencedProject() )
                 {
                     writer.startElement( "project" ); //$NON-NLS-1$
-                    writer.writeText( IdeUtils.getProjectName( config.getProjectNameTemplate(), dep ) );
+                    writer.writeText( dep.getEclipseProjectName() );
                     writer.endElement();
                 }
             }
