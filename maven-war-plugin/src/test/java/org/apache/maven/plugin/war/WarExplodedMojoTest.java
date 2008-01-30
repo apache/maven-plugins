@@ -1038,7 +1038,7 @@ public class WarExplodedMojoTest
 
         // configure mojo
         project.addArtifact( jarArtifact );
-        mojo.setOutputFileNameMapping( "${artifactId}.${extension}" );
+        mojo.setOutputFileNameMapping( "@{artifactId}@.@{extension}@" );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         mojo.execute();
 
@@ -1082,7 +1082,7 @@ public class WarExplodedMojoTest
         ejbArtifactDup.setGroupId( "org.dup.ejb" );
         project.addArtifact( ejbArtifact );
         project.addArtifact( ejbArtifactDup );
-        mojo.setOutputFileNameMapping( "${artifactId}.${extension}" );
+        mojo.setOutputFileNameMapping( "@{artifactId}@.@{extension}@" );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
         mojo.execute();
 
