@@ -20,7 +20,6 @@ package org.apache.maven.plugins.help;
  */
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
@@ -49,10 +48,12 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Describes the attributes of a plugin and/or plugin mojo.
  *
+ * @since 2.0
  * @goal describe
  * @requiresProject false
  * @aggregator
@@ -60,7 +61,6 @@ import org.codehaus.plexus.component.repository.ComponentRequirement;
 public class DescribeMojo
     extends AbstractMojo
 {
-
     /**
      * The plugin/mojo to describe. This must be specified in one of three ways:
      * <br/>
@@ -188,9 +188,7 @@ public class DescribeMojo
      */
     private boolean medium;
 
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -242,9 +240,11 @@ public class DescribeMojo
             {
                 output.getParentFile().mkdirs();
 
-                out = new FileWriter( output );
+                out = WriterFactory.newPlatformWriter( output );
 
                 out.write( descriptionBuffer.toString() );
+
+                out.flush();
             }
             catch ( IOException e )
             {
@@ -260,16 +260,25 @@ public class DescribeMojo
                     }
                     catch ( IOException e )
                     {
-                        getLog().debug( "Error closing file output.", e );
+                        if ( getLog().isDebugEnabled() )
+                        {
+                            getLog().debug( "Error closing file output.", e );
+                        }
                     }
                 }
             }
 
-            getLog().info( "Wrote descriptions to: " + output );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Wrote descriptions to: " + output );
+            }
         }
         else
         {
-            getLog().info( descriptionBuffer.toString() );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( descriptionBuffer.toString() );
+            }
         }
     }
 
@@ -352,12 +361,18 @@ public class DescribeMojo
             }
             catch ( PluginNotFoundException e )
             {
-                getLog().debug( "Unable to find plugin", e );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Unable to find plugin", e );
+                }
                 throw new MojoFailureException( "Plugin does not exist: " + e.getMessage() );
             }
             catch ( PluginVersionNotFoundException e )
             {
-                getLog().debug( "Unable to find plugin version", e );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Unable to find plugin version", e );
+                }
                 throw new MojoFailureException( e.getMessage() );
             }
         }
