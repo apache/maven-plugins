@@ -33,7 +33,9 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -41,6 +43,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 /**
  * @author Edwin Punzalan
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @author Nick Stolwijk
  * @version $Id$
  */
 public abstract class ProjectInfoProjectStub
@@ -149,4 +152,25 @@ public abstract class ProjectInfoProjectStub
                                                            Artifact.SCOPE_TEST, "jar", null,
                                                            new DefaultArtifactHandler( "jar" ), false ) );
     }
+
+    /** {@inheritDoc} */
+    public DependencyManagement getDependencyManagement()
+    {
+        return model.getDependencyManagement();
+    }
+
+    /** {@inheritDoc} */
+    public PluginManagement getPluginManagement()
+    {
+        PluginManagement pluginMgmt = null;
+
+        Build build = model.getBuild();
+        if ( build != null )
+        {
+            pluginMgmt = build.getPluginManagement();
+        }
+
+        return pluginMgmt;
+    }
+
 }
