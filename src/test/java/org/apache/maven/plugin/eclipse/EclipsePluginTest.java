@@ -82,14 +82,12 @@ public class EclipsePluginTest
     }
 
     /**
-     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-     *       wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-     *       file-comparing step which at the moment just does line by line comparison
      * @throws Exception
      */
     public void testProject07()
         throws Exception
     {
+        // Fails because of MECLIPSE-367
         // testProject( "project-07" );
     }
 
@@ -168,27 +166,29 @@ public class EclipsePluginTest
         testProject( "project-15", props, "clean", "eclipse" );
     }
 
-    // Commented out: failing due to MNG-2025
-    // /**
-    // * UTF8 encoding - MECLIPSE-56
-    // * @throws Exception any exception thrown during test
-    // */
-    // public void testProject16()
-    // throws Exception
-    // {
-    // testProject( "project-16" );
-    // }
+    /**
+     * UTF8 encoding - MECLIPSE-56
+     * 
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject16()
+        throws Exception
+    {
+        // failing with maven < 2.0.8 due to MNG-2025
+        testProject( "project-16" );
+    }
 
-    // Commented out: failing on Continuum, due to MNG-2025 too?
-    // /**
-    // * ISO-8859-15 encoding - MECLIPSE-56
-    // * @throws Exception any exception thrown during test
-    // */
-    // public void testProject17()
-    // throws Exception
-    // {
-    // testProject( "project-17" );
-    // }
+    /**
+     * ISO-8859-15 encoding - MECLIPSE-56
+     * 
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject17()
+        throws Exception
+    {
+        // failing with maven < 2.0.8 due to MNG-2025
+        testProject( "project-17" );
+    }
 
     /**
      * relative location of system dependencies - MECLIPSE-89
@@ -368,15 +368,12 @@ public class EclipsePluginTest
     /**
      * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
      * 
-     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-     *       wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-     *       file-comparing step which at the moment just does line by line comparison project 7 is affected by this as
-     *       well.
      * @throws Exception any exception thrown during test
      */
     public void testProject33()
         throws Exception
     {
+        // Fails because of MECLIPSE-367
         // testProject( "project-33" );
     }
 
