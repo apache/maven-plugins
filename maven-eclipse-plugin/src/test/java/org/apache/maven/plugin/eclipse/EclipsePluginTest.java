@@ -81,15 +81,17 @@ public class EclipsePluginTest
         testProject( "project-06" );
     }
 
-    // @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-    // wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-    // file-comparing
-    // step which at the moment just does line by line comparison
-    // public void testProject07()
-    // throws Exception
-    // {
-    // testProject( "project-07" );
-    // }
+    /**
+     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
+     *       wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
+     *       file-comparing step which at the moment just does line by line comparison
+     * @throws Exception
+     */
+    public void testProject07()
+        throws Exception
+    {
+        // testProject( "project-07" );
+    }
 
     public void testProject08()
         throws Exception
@@ -363,6 +365,21 @@ public class EclipsePluginTest
         testProject( "project-32" );
     }
 
+    /**
+     * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
+     * 
+     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
+     *       wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
+     *       file-comparing step which at the moment just does line by line comparison project 7 is affected by this as
+     *       well.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject33()
+        throws Exception
+    {
+        // testProject( "project-33" );
+    }
+
     public void testProject34()
         throws Exception
     {
@@ -427,7 +444,7 @@ public class EclipsePluginTest
     }
 
     /**
-     * MECLIPSE-56 : problem with encoding of non-ascii characters in pom.xml 
+     * MECLIPSE-56 : problem with encoding of non-ascii characters in pom.xml
      */
     public void testMECLIPSE_56_encoding()
         throws Exception
@@ -439,6 +456,52 @@ public class EclipsePluginTest
         throws Exception
     {
         testProject( "project-38" );
+    }
+
+    public void testProject39()
+        throws Exception
+    {
+        // AHE : Failing for me with expected:<[]> but was:<[J2SE-1.3]>
+        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
+                                              "", null );
+        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
+                                              "J2SE-1.3", null );
+        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "rad7WithDefault14", false ),
+                                              "J2SE-1.3", null );
+    }
+
+    public void testProject40()
+        throws Exception
+    {
+        String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
+        // AHE : Failing for me with expected:<[JVM 1.3.1]> but was:<[]>
+        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
+                                              "JVM 1.3.1", jre131 );
+        // AHE : Failing for me with expected:<[JVM 1.3.1]> but was:<[]>
+        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
+                                              "JVM 1.3.1", jre131 );
+        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "rad7WithDefault14", false ), "",
+                                              jre131 );
+    }
+
+    public void testProject41()
+        throws Exception
+    {
+        TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
+        Properties properties = new Properties();
+        properties.setProperty( "eclipse.workspaceToConnect", rad7.workspaceLocation.getCanonicalPath() );
+        testProject( "project-41", properties, "clean", "eclipse" );
+
+    }
+
+    public void testProject42()
+        throws Exception
+    {
+        TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
+        Properties properties = new Properties();
+        properties.setProperty( "eclipse.workspaceToConnect", rad7.workspaceLocation.getCanonicalPath() );
+        testProject( "project-42", properties, "clean", "eclipse" );
+
     }
 
     public void testJeeSimple()
@@ -489,17 +552,42 @@ public class EclipsePluginTest
             }
         }
     }
-    /**
-     * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    /*
-     * @TODO temporarily disabled, since it randomly fails due to a different order for dependencies in classpath and
-     * wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the
-     * file-comparing step which at the moment just does line by line comparison project 7 is affected by this as well.
-     * public void testProject33() throws Exception { testProject( "project-33" ); }
-     */
+
+    private void checkJRESettingsWithEclipseWorkspace( String project, TempEclipseWorkspace workspace,
+                                                       String expectedJRE, String jreExec )
+        throws Exception
+    {
+        Properties properties = new Properties();
+        properties.setProperty( "eclipse.workspaceToConnect", workspace.workspaceLocation.getCanonicalPath() );
+        if ( jreExec != null )
+        {
+            properties.setProperty( "maven.compiler.executable", jreExec );
+        }
+        testProject( project, properties, "clean", "eclipse" );
+
+        Xpp3Dom classpath =
+            Xpp3DomBuilder.build( new FileReader( getTestFile( "target/test-classes/projects/" + project +
+                "/.classpath" ) ) );
+
+        boolean foundDirectCompileAsProject = false;
+        String foundJRE = "";
+
+        Xpp3Dom[] classpathentries = classpath.getChildren( "classpathentry" );
+        for ( int index = 0; index < classpathentries.length; index++ )
+        {
+            if ( "/direct-compile".equals( classpathentries[index].getAttribute( "path" ) ) )
+            {
+                foundDirectCompileAsProject = true;
+            }
+            String path = classpathentries[index].getAttribute( "path" );
+            if ( "con".equals( classpathentries[index].getAttribute( "kind" ) ) && path.lastIndexOf( '/' ) > 0 )
+            {
+                foundJRE = path.substring( path.lastIndexOf( '/' ) + 1 );
+            }
+        }
+        assertTrue( foundDirectCompileAsProject );
+        assertEquals( expectedJRE, foundJRE );
+    }
 
     /*
      * TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc path.

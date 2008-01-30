@@ -266,7 +266,10 @@ public class IdeUtils
         return (Xpp3Dom[]) configurationDomList.toArray( new Xpp3Dom[configurationDomList.size()] );
     }
 
-    public static String getProjectName( String template, IdeDependency dep )
+    /**
+     * Use {@link IdeDependency#getEclipseProjectName()} instead.
+     */
+    protected static String getProjectName( String template, IdeDependency dep )
     {
         return getProjectName( template, dep.getGroupId(), dep.getArtifactId(), dep.getVersion() );
     }
@@ -288,7 +291,7 @@ public class IdeUtils
         return getProjectName( template, project.getGroupId(), project.getArtifactId(), project.getVersion() );
     }
 
-    public static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
+    private static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
     {
         return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
                         : PROJECT_NAME_DEFAULT_TEMPLATE, dep );
