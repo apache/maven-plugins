@@ -22,11 +22,10 @@ package org.apache.maven.plugins.help;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
@@ -35,85 +34,88 @@ import java.util.List;
 
 /**
  * Lists the profiles which are currently active for this build.
- * 
+ *
+ * @since 2.0
  * @goal active-profiles
  * @aggregator
  */
 public class ActiveProfilesMojo extends AbstractMojo
 {
-    
     /**
      * This is the list of projects currently slated to be built by Maven.
-     * 
+     *
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
      */
     private List projects;
-    
+
     /**
      * This is an optional parameter for a file destination for the output
-     * of this mojo...the listing of active profiles per project.
-     * 
+     * of this mojo.
+     *
      * @parameter expression="${output}"
      */
     private File output;
 
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
         StringBuffer message = new StringBuffer();
-        
+
         for ( Iterator it = projects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
-            
+
             getActiveProfileStatement( project, message );
-            
+
             message.append( "\n\n" );
         }
-        
+
         if ( output != null )
         {
             writeFile( message );
         }
         else
         {
-            Log log = getLog();
-            log.info( message );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( message );
+            }
         }
     }
-    
+
     /**
      * Method for writing the output file of the active profiles information.
      *
      * @param message   the output to be written to the file
      * @throws MojoExecutionException
      */
-    private void writeFile( StringBuffer message ) 
+    private void writeFile( StringBuffer message )
         throws MojoExecutionException
     {
         Writer writer = null;
         try
         {
             File dir = output.getParentFile();
-            
+
             if ( !dir.exists() )
             {
                 dir.mkdirs();
             }
-            
-            writer = new FileWriter( output );
-            
+
+            writer = WriterFactory.newPlatformWriter( output );
+
             writer.write( "Created by: " + getClass().getName() + "\n" );
             writer.write( "Created on: " + new Date() + "\n\n" );
             writer.write( message.toString() );
             writer.flush();
-            
-            getLog().info( "Active profile report written to: " + output );
+
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Active profile report written to: " + output );
+            }
         }
         catch ( IOException e )
         {
@@ -129,7 +131,10 @@ public class ActiveProfilesMojo extends AbstractMojo
                 }
                 catch ( IOException e )
                 {
-                    getLog().debug( "Failed to close output file writer.", e );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( "Failed to close output file writer.", e );
+                    }
                 }
             }
         }
@@ -144,11 +149,11 @@ public class ActiveProfilesMojo extends AbstractMojo
     private void getActiveProfileStatement( MavenProject project, StringBuffer message )
     {
         List profiles = collectActiveProfiles( project );
-        
+
         message.append( "\n" );
-        
+
         message.append( "Active Profiles for Project \'" + project.getId() + "\': \n\n" );
-        
+
         if ( profiles == null || profiles.isEmpty() )
         {
             message.append( "There are no active profiles." );
@@ -156,19 +161,19 @@ public class ActiveProfilesMojo extends AbstractMojo
         else
         {
             message.append( "The following profiles are active:\n" );
-            
+
             for ( Iterator it = profiles.iterator(); it.hasNext(); )
             {
                 Profile profile = (Profile) it.next();
-                
+
                 message.append( "\n - " )
                        .append( profile.getId() )
                        .append( " (source: " )
                        .append( profile.getSource() ).append( ")" );
             }
-            
+
         }
-        
+
         message.append( "\n" );
     }
 
@@ -200,5 +205,4 @@ public class ActiveProfilesMojo extends AbstractMojo
     {
         this.projects = projects;
     }
-
 }
