@@ -24,18 +24,20 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Display the effective POM for this build, with the active profiles factored in.
- * 
+ *
+ * @since 2.0
  * @goal effective-pom
  * @aggregator
  */
@@ -43,6 +45,9 @@ public class EffectivePomMojo
     extends AbstractMojo
 {
     /**
+     * The Maven project.
+     *
+     * @since 2.0.2
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -52,7 +57,7 @@ public class EffectivePomMojo
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
-     * 
+     *
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -61,14 +66,12 @@ public class EffectivePomMojo
 
     /**
      * If specified, write the output to this path.
-     * 
+     *
      * @parameter expression="${output}"
      */
     private File output;
 
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -81,9 +84,9 @@ public class EffectivePomMojo
             for ( Iterator it = projects.iterator(); it.hasNext(); )
             {
                 MavenProject project = (MavenProject) it.next();
-                
+
                 getEffectivePom( project, message );
-                
+
                 message.append( "\n\n" );
             }
         }
@@ -92,10 +95,10 @@ public class EffectivePomMojo
             getEffectivePom( project, message );
             message.append( "\n\n" );
         }
-        
+
         if ( output != null )
         {
-            FileWriter fWriter = null;
+            Writer fWriter = null;
             try
             {
                 File dir = output.getParentFile();
@@ -105,14 +108,18 @@ public class EffectivePomMojo
                     dir.mkdirs();
                 }
 
-                getLog().info( "Writing effective-POM to: " + output );
-
-                fWriter = new FileWriter( output );
+                fWriter = WriterFactory.newPlatformWriter( output );
 
                 fWriter.write( "Created by: " + getClass().getName() + "\n" );
                 fWriter.write( "Created on: " + new Date() + "\n\n" );
-                
                 fWriter.write( message.toString() );
+
+                fWriter.flush();
+
+                if ( getLog().isInfoEnabled() )
+                {
+                    getLog().info( "Effective-POM written to: " + output );
+                }
             }
             catch ( IOException e )
             {
@@ -128,7 +135,10 @@ public class EffectivePomMojo
                     }
                     catch ( IOException e )
                     {
-                        getLog().debug( "Cannot close FileWriter to output location: " + output, e );
+                        if ( getLog().isDebugEnabled() )
+                        {
+                            getLog().debug( "Cannot close FileWriter to output location: " + output, e );
+                        }
                     }
                 }
             }
@@ -141,7 +151,10 @@ public class EffectivePomMojo
             formatted.append( message.toString() );
             formatted.append( "\n" );
 
-            getLog().info( message );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( message );
+            }
         }
     }
 
@@ -152,7 +165,7 @@ public class EffectivePomMojo
      * @param message   the information to be displayed
      * @throws MojoExecutionException
      */
-    private void getEffectivePom( MavenProject project, StringBuffer message ) 
+    private void getEffectivePom( MavenProject project, StringBuffer message )
         throws MojoExecutionException
     {
         Model pom = project.getModel();
@@ -164,7 +177,7 @@ public class EffectivePomMojo
         try
         {
             pomWriter.write( sWriter, pom );
-            
+
             message.append( "\n************************************************************************************" );
             message.append( "\nEffective POM for project \'" + project.getId() + "\'" );
             message.append( "\n************************************************************************************" );
@@ -188,5 +201,4 @@ public class EffectivePomMojo
     {
         this.projects = projects;
     }
-
 }
