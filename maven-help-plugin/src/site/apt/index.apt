@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 7 July 2006
+ January 2008
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -25,7 +25,7 @@
 
 Maven 2 Help Plugin
 
- The Maven 2 Help Plugin is used to get relative information about a project. It can be used to get a description
+ The Maven 2 Help Plugin is used to get relative information about a project or the system. It can be used to get a description
  of a particular plugin, including the plugin's mojos with their parameters and component requirements, the effective pom
  and effective settings of the current build, and the profiles applied to the current project being built.
 
@@ -44,6 +44,8 @@ Maven 2 Help Plugin
   * {{{effective-settings-mojo.html}help:effective-settings}} prints out the calculated settings for the project, given any
     profile enhancement and the inheritance of the global settings into the user-level settings.
 
+  * {{{system-mojo.html}help:system}} displays the platform details like system properties and environment variables.
+
 * Usage
 
    Instructions on how to use the Help Plugin can be found {{{usage.html}here}}.
@@ -54,6 +56,3 @@ Maven 2 Help Plugin
    following example(s):
 
    * {{{examples/describe-configuration.html}Configuring Describe Mojo}}
-
-
-
