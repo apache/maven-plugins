@@ -376,7 +376,7 @@ public class EclipseClasspathWriter
 
         if ( dep.isReferencedProject() && !config.isPde() )
         {
-            path = "/" + IdeUtils.getProjectName( config.getProjectNameTemplate(), dep ); //$NON-NLS-1$
+            path = "/" + dep.getEclipseProjectName(); //$NON-NLS-1$
             kind = ATTR_SRC;
         }
         else if ( dep.isReferencedProject() && config.isPde() )
@@ -428,11 +428,20 @@ public class EclipseClasspathWriter
                 else
                 {
                     String fullPath = artifactPath.getPath();
+                    String relativePath =
+                        IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
-                    path = M2_REPO + "/" //$NON-NLS-1$
-                        + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
-
-                    kind = ATTR_VAR; //$NON-NLS-1$
+                    if ( !new File( relativePath ).isAbsolute() )
+                    {
+                        path = M2_REPO + "/" //$NON-NLS-1$
+                            + relativePath;
+                        kind = ATTR_VAR; //$NON-NLS-1$
+                    }
+                    else
+                    {
+                        path = relativePath;
+                        kind = ATTR_LIB;
+                    }
                 }
 
                 if ( dep.getSourceAttachment() != null )
