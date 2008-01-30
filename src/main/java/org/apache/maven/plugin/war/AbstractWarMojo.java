@@ -186,9 +186,9 @@ public abstract class AbstractWarMojo
     private static final String META_INF = "META-INF";
 
     public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
-        "${artifactId}-${version}-${classifier}.${extension}";
+        "@{artifactId}@-@{version}@-@{classifier}@.@{extension}@";
 
-    public static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
+    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{version}@.@{extension}@";
 
     /**
      * The comma separated list of tokens to include when copying content

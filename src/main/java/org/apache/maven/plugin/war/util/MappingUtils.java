@@ -34,8 +34,8 @@ import java.util.Properties;
  * The expression might use any fied of the {@link Artifact} interface. Some
  * examples might be:
  * <ul>
- * <li>${artifactId}-${version}.${extension}</li>
- * <li>${artifactId}.${extension}</li>
+ * <li>@{artifactId}@-@{version}@.@{extension}@</li>
+ * <li>@{artifactId}@.@{extension}@</li>
  * </ul>
  *
  * @author Stephane Nicoll
@@ -58,8 +58,7 @@ public class MappingUtils
         // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
         artifact.isSnapshot();
 
-        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator("\\@\\{(", ")?([^}]+)\\}@");
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
 
