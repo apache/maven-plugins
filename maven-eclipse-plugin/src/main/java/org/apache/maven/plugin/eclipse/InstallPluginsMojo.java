@@ -45,7 +45,6 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Install plugins resolved from the Maven repository system into an Eclipse instance.
@@ -150,7 +149,7 @@ public class InstallPluginsMojo
     {
         this.eclipseDir = eclipseDir;
         this.overwrite = overwrite;
-        this.artifacts = dependencyArtifacts;
+        artifacts = dependencyArtifacts;
         this.pluginDependencyTypes = pluginDependencyTypes;
         this.localRepository = localRepository;
         this.projectBuilder = projectBuilder;
@@ -415,8 +414,8 @@ public class InstallPluginsMojo
      */
     private String formatEclipsePluginName( Artifact artifact, String bundleVersion )
     {
-        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
-            + maven2OsgiConverter.getVersion( artifact.getVersion() );
+        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_" +
+            maven2OsgiConverter.getVersion( artifact.getVersion() );
     }
 
 }
