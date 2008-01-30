@@ -40,7 +40,7 @@ public class MappingUtilsTest
         jar.setArtifactId( "maven-test-lib" );
         jar.setVersion( "1.0" );
         assertEquals( "maven-test-lib-1.0.jar",
-                      MappingUtils.evaluateFileNameMapping( "${artifactId}-${version}.${extension}", jar ) );
+                      MappingUtils.evaluateFileNameMapping( "@{artifactId}@-@{version}@.@{extension}@", jar ) );
 
     }
 
@@ -51,7 +51,7 @@ public class MappingUtilsTest
         jar.setGroupId( "org.apache.sample" );
         jar.setArtifactId( "maven-test-lib" );
         jar.setVersion( "1.0" );
-        assertEquals( "maven-test-lib.jar", MappingUtils.evaluateFileNameMapping( "${artifactId}.${extension}", jar ) );
+        assertEquals( "maven-test-lib.jar", MappingUtils.evaluateFileNameMapping( "@{artifactId}@.@{extension}@", jar ) );
 
     }
 
@@ -63,7 +63,7 @@ public class MappingUtilsTest
         jar.setArtifactId( "maven-test-lib" );
         jar.setVersion( "1.0" );
         assertEquals( "org.apache.sample-maven-test-lib-1.0.jar",
-                      MappingUtils.evaluateFileNameMapping( "${groupId}-${artifactId}-${version}.${extension}", jar ) );
+                      MappingUtils.evaluateFileNameMapping( "@{groupId}@-@{artifactId}@-@{version}@.@{extension}@", jar ) );
 
     }
 
