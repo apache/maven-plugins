@@ -3,7 +3,7 @@
  ------
  Stephane Nicoll
  ------
- 11 March 2007
+ 31 Jan 2008
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -25,12 +25,12 @@
 Using the file name mapping
 
  It might be necessary to customize the file name of libraries and TLD. By default, those resources are stored
- using the following pattern: <<<$\{artifactId\}-$\{version\}.$\{extension\}>>> (if the artifact has
- a classifier it is <<<$\{artifactId\}-$\{version\}-$\{classifier\}.$\{extension\}>>> of course).
+ using the following pattern: <<<@\{artifactId\}@-@\{version\}@.@\{extension\}@>>> (if the artifact has
+ a classifier it is <<<@\{artifactId\}@-@\{version\}@-@\{classifier\}@.@\{extension\}@>>> of course).
 
  The <<<outputFileNameMapping>>> parameter allows you to give a custom pattern. Each token defined in the
  pattern will be replaced with the value for the current Artifact. You can use any property of Artifact and
  ArtifactHandler as a token.
 
  For instance, to store the libraries and TLDs with no versionning, use the following pattern:
- <<<$\{artifactId\}.$\{extension\}>>>.
+ <<<@\{artifactId\}@.@\{extension\}@>>>.
