@@ -4,7 +4,7 @@
  John Casey
  Maria Odea Ching
  ------
- 10 July 2006
+ January 2008
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -60,7 +60,7 @@ mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0
 mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
 +-----+
 
- Here is an example with the <<<mojo>>> parameter specified: 
+ Here is an example with the <<<mojo>>> parameter specified:
 
 +-----+
 mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin -Dmojo=describe
@@ -93,6 +93,15 @@ mvn help:effective-pom
 mvn help:effective-settings
 +-----+
 
+* The <<<help:system>>> Mojo
+
+  The <<<system>>> mojo is used to view the system informations like system properties and environment variables.
+
+  The mojo can be executed using the following command:
+
++-----+
+mvn help:system
++-----+
 
 * Redirecting output to a file
 
