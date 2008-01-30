@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Generates documentation for the <code>Java code</code> in the project using the standard
@@ -82,7 +83,7 @@ public class JavadocReport
      * The name of the Javadoc report.
      *
      * @since 2.1
-     * @parameter expression="${name}" default-value="JavaDocs"
+     * @parameter expression="${name}"
      */
     private String name;
 
@@ -90,7 +91,7 @@ public class JavadocReport
      * The description of the Javadoc report.
      *
      * @since 2.1
-     * @parameter expression="${description}" default-value="JavaDoc API documentation."
+     * @parameter expression="${description}"
      */
     private String description;
 
@@ -105,7 +106,7 @@ public class JavadocReport
     {
         if ( StringUtils.isEmpty( name ) )
         {
-            return "JavaDocs";
+            return getBundle( locale ).getString( "report.javadoc.name" );
         }
 
         return name;
@@ -118,7 +119,7 @@ public class JavadocReport
     {
         if ( StringUtils.isEmpty( description ) )
         {
-            return "JavaDoc API documentation.";
+            return getBundle( locale ).getString( "report.javadoc.description" );
         }
 
         return description;
@@ -237,5 +238,16 @@ public class JavadocReport
             throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
                 + " report generation:" + e.getMessage(), e );
         }
+    }
+
+    /**
+     * Gets the resource bundle for the specified locale.
+     * 
+     * @param locale The locale of the currently generated report.
+     * @return The resource bundle for the requested locale.
+     */
+    private ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "javadoc-report", locale, getClass().getClassLoader() );
     }
 }

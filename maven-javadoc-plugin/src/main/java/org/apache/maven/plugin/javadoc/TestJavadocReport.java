@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -105,14 +106,14 @@ public class TestJavadocReport
     /**
      * The name of the test Javadoc report.
      *
-     * @parameter expression="${name}" default-value="Test JavaDocs"
+     * @parameter expression="${name}"
      */
     private String name;
 
     /**
      * The description of the test Javadoc report.
      *
-     * @parameter expression="${description}" default-value="Test JavaDoc API documentation."
+     * @parameter expression="${description}"
      */
     private String description;
 
@@ -127,7 +128,7 @@ public class TestJavadocReport
     {
         if ( StringUtils.isEmpty( name ) )
         {
-            return "Test JavaDocs";
+            return getBundle( locale ).getString( "report.test-javadoc.name" );
         }
 
         return name;
@@ -140,7 +141,7 @@ public class TestJavadocReport
     {
         if ( StringUtils.isEmpty( description ) )
         {
-            return "Test JavaDoc API documentation.";
+            return getBundle( locale ).getString( "report.test-javadoc.description" );
         }
 
         return description;
@@ -264,5 +265,16 @@ public class TestJavadocReport
     protected String getWindowtitle()
     {
         return windowtitle;
+    }
+
+    /**
+     * Gets the resource bundle for the specified locale.
+     * 
+     * @param locale The locale of the currently generated report.
+     * @return The resource bundle for the requested locale.
+     */
+    private ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "test-javadoc-report", locale, getClass().getClassLoader() );
     }
 }
