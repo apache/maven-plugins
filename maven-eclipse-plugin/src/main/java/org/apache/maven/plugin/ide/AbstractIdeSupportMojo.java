@@ -209,6 +209,7 @@ public abstract class AbstractIdeSupportMojo
      * settings as the reactor projects, but the project name template my differ. The pom's in the workspace projects
      * may not contain variables in the artefactId, groupId and version tags.
      * 
+     * @since 2.5
      * @parameter expression="${eclipse.workspaceToConnect}"
      */
     protected String workspace;
@@ -827,7 +828,7 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * @return an array with all dependencies avaliable in the workspace, to be implemented by the subclasses.
+     * @return an array with all dependencies avalaible in the workspace, to be implemented by the subclasses.
      */
     protected IdeDependency[] getWorkspaceArtefacts()
     {
