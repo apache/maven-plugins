@@ -34,9 +34,6 @@ Maven Eclipse Plugin
 
   * {{{m2eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
   files that are already configured for {{{http://m2eclipse.codehaus.org}M2eclipse}}.
-
-  * {{{m2eclipse-mojo.html}eclipse:m2eclipse}} generates the Eclipse configuration
-  files compatible with the usage of the {{{http://m2eclipse.codehaus.org/}M2Eclipse plugin for eclipse}}.
     
 
 *** Specific goals for PDE developments
