@@ -161,7 +161,7 @@ public class IdeDependency
      */
     public File getJavadocAttachment()
     {
-        return this.javadocAttachment;
+        return javadocAttachment;
     }
 
     /**
@@ -181,7 +181,7 @@ public class IdeDependency
      */
     public String getArtifactId()
     {
-        return this.artifactId;
+        return artifactId;
     }
 
     /**
@@ -201,7 +201,7 @@ public class IdeDependency
      */
     public String getGroupId()
     {
-        return this.groupId;
+        return groupId;
     }
 
     /**
@@ -221,7 +221,7 @@ public class IdeDependency
      */
     public String getVersion()
     {
-        return this.version;
+        return version;
     }
 
     /**
@@ -241,7 +241,7 @@ public class IdeDependency
      */
     public String getClassifier()
     {
-        return this.classifier;
+        return classifier;
     }
 
     /**
@@ -261,7 +261,7 @@ public class IdeDependency
      */
     public boolean isReferencedProject()
     {
-        return this.referencedProject;
+        return referencedProject;
     }
 
     /**
@@ -271,7 +271,7 @@ public class IdeDependency
      */
     public boolean isOsgiBundle()
     {
-        return this.osgiBundle;
+        return osgiBundle;
     }
 
     /**
@@ -291,7 +291,7 @@ public class IdeDependency
      */
     public File getSourceAttachment()
     {
-        return this.sourceAttachment;
+        return sourceAttachment;
     }
 
     /**
@@ -311,7 +311,7 @@ public class IdeDependency
      */
     public boolean isSystemScoped()
     {
-        return this.systemScoped;
+        return systemScoped;
     }
 
     /**
@@ -331,7 +331,7 @@ public class IdeDependency
      */
     public boolean isTestDependency()
     {
-        return this.testDependency;
+        return testDependency;
     }
 
     /**
@@ -351,7 +351,7 @@ public class IdeDependency
      */
     public File getFile()
     {
-        return this.file;
+        return file;
     }
 
     /**
@@ -371,7 +371,7 @@ public class IdeDependency
      */
     public String getId()
     {
-        return this.groupId + ':' + this.artifactId + ':' + this.version;
+        return groupId + ':' + artifactId + ':' + version;
     }
 
     /**
@@ -381,7 +381,7 @@ public class IdeDependency
      */
     public String getType()
     {
-        return this.type;
+        return type;
     }
 
     /**
@@ -401,7 +401,7 @@ public class IdeDependency
      */
     public boolean isAddedToClasspath()
     {
-        return this.addedToClasspath;
+        return addedToClasspath;
     }
 
     /**
@@ -421,7 +421,7 @@ public class IdeDependency
      */
     public boolean isProvided()
     {
-        return this.provided;
+        return provided;
     }
 
     /**
@@ -441,7 +441,7 @@ public class IdeDependency
      */
     public String getEclipseProjectName()
     {
-        return this.eclipseProjectName;
+        return eclipseProjectName;
     }
 
     /**
@@ -463,7 +463,7 @@ public class IdeDependency
     }
 
     /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object) Compare using groupId+artifactId+type Strings
+     * @see java.lang.Comparable#compareTo(java.lang.Object) Compare using groupId+artifactId+type+classifier Strings
      */
     public int compareTo( Object o )
     {
@@ -484,6 +484,22 @@ public class IdeDependency
             return equals;
         }
         equals = this.getType().compareTo( dep.getType() );
+        if ( equals != 0 )
+        {
+            return equals;
+        }
+        if ( this.getClassifier() != null && dep.getClassifier() != null )
+        {
+            equals = this.getClassifier().compareTo( dep.getClassifier() );
+        }
+        else if ( this.getClassifier() != null && dep.getClassifier() == null )
+        {
+            return 1;
+        }
+        else if ( this.getClassifier() == null && dep.getClassifier() != null )
+        {
+            return -1;
+        }
         if ( equals != 0 )
         {
             return equals;
@@ -526,7 +542,16 @@ public class IdeDependency
         }
         else
         {
-            return this.getGroupId().hashCode() ^ this.getArtifactId().hashCode() ^ this.getType().hashCode();
+            int hashCode = this.getGroupId().hashCode() ^ this.getArtifactId().hashCode() ^ this.getType().hashCode();
+            if ( this.getClassifier() == null )
+            {
+                return hashCode;
+            }
+            else
+            {
+                return hashCode ^ this.getClassifier().hashCode();
+            }
+
         }
     }
 }

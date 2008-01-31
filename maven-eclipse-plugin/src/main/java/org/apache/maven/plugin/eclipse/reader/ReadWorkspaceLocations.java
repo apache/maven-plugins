@@ -340,12 +340,12 @@ public class ReadWorkspaceLocations
             String version =
                 getValue( pom, ReadWorkspaceLocations.VERSION, getValue( pom, ReadWorkspaceLocations.PARENT_VERSION,
                                                                          null ) );
-            String packageing = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
+            String packaging = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
 
-            logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packageing +
+            logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging +
                 " (" + eclipseProjectName + ")" + " -> " + projectLocation );
-            return new IdeDependency( group, artifact, version, packageing, true, false, false, false, false, null,
-                                      packageing, false, null, 0, eclipseProjectName );
+            return new IdeDependency( group, artifact, version, packaging, true, false, false, false, false, null,
+                                      packaging, false, null, 0, eclipseProjectName );
         }
         else
         {
