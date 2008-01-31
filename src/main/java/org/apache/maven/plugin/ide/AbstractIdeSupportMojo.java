@@ -210,7 +210,7 @@ public abstract class AbstractIdeSupportMojo
      * may not contain variables in the artefactId, groupId and version tags.
      * 
      * @since 2.5
-     * @parameter expression="${eclipse.workspaceToConnect}"
+     * @parameter expression="${eclipse.workspace}"
      */
     protected String workspace;
 
