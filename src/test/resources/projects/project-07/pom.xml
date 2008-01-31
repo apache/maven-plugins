@@ -28,6 +28,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <downloadSources>true</downloadSources>
           <wtpversion>R7</wtpversion>
           <projectnatures>
             <projectnature>org.eclipse.jdt.core.javanature</projectnature>
