@@ -215,8 +215,8 @@ public abstract class AbstractIdeSupportMojo
     protected String workspace;
 
     /**
-     * Limit the use of project references to the current workspaceToConnect. No project references will be created to
-     * projects in the reactor when they are not available in the workspace.
+     * Limit the use of project references to the current workspace. No project references will be created to projects
+     * in the reactor when they are not available in the workspace.
      * 
      * @parameter expression="${eclipse.limitProjectReferencesToWorkspace}" default-value="false"
      */
