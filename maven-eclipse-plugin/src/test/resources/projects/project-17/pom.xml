@@ -6,5 +6,5 @@
   <artifactId>maven-eclipse-plugin-test-project-17</artifactId>
   <version>17</version>
   <name>maven-eclipse-plugin-test-project-17</name>
-  <description>Test of special characters like ö ä ü ß ISO-8859-15 encoded</description>
+  <description>Test of special characters like ??O-8859-15 encoded</description>
 </project>
