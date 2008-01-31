@@ -88,7 +88,7 @@ public class EclipsePluginTest
         throws Exception
     {
         // Fails because of MECLIPSE-367
-        // testProject( "project-07" );
+        testProject( "project-07" );
     }
 
     public void testProject08()
@@ -366,15 +366,15 @@ public class EclipsePluginTest
     }
 
     /**
-     * MECLIPSE-287 : dependencies with and without classifiers MECLIPSE-151 : test jar source attachments
+     * MECLIPSE-287 : dependencies with and without classifiers. MECLIPSE-151 : test jar source attachments.
+     * MECLIPSE-367 : Dependency to artifact with classifier tests not distinguished from the regular artifact
      * 
      * @throws Exception any exception thrown during test
      */
     public void testProject33()
         throws Exception
     {
-        // Fails because of MECLIPSE-367
-        // testProject( "project-33" );
+        testProject( "project-33" );
     }
 
     public void testProject34()

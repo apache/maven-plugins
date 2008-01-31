@@ -228,7 +228,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public ArtifactMetadataSource getArtifactMetadataSource()
     {
-        return this.artifactMetadataSource;
+        return artifactMetadataSource;
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public MavenProject getProject()
     {
-        return this.project;
+        return project;
     }
 
     /**
@@ -268,7 +268,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public List getReactorProjects()
     {
-        return this.reactorProjects;
+        return reactorProjects;
     }
 
     /**
@@ -288,7 +288,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public List getRemoteArtifactRepositories()
     {
-        return this.remoteArtifactRepositories;
+        return remoteArtifactRepositories;
     }
 
     /**
@@ -308,7 +308,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public ArtifactFactory getArtifactFactory()
     {
-        return this.artifactFactory;
+        return artifactFactory;
     }
 
     /**
@@ -328,7 +328,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public ArtifactResolver getArtifactResolver()
     {
-        return this.artifactResolver;
+        return artifactResolver;
     }
 
     /**
@@ -348,7 +348,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public MavenProject getExecutedProject()
     {
-        return this.executedProject;
+        return executedProject;
     }
 
     /**
@@ -368,7 +368,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public ArtifactRepository getLocalRepository()
     {
-        return this.localRepository;
+        return localRepository;
     }
 
     /**
@@ -388,7 +388,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public boolean getDownloadJavadocs()
     {
-        return this.downloadJavadocs;
+        return downloadJavadocs;
     }
 
     /**
@@ -398,7 +398,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public void setDownloadJavadocs( boolean downloadJavadoc )
     {
-        this.downloadJavadocs = downloadJavadoc;
+        downloadJavadocs = downloadJavadoc;
     }
 
     /**
@@ -408,7 +408,7 @@ public abstract class AbstractIdeSupportMojo
      */
     public boolean getDownloadSources()
     {
-        return this.downloadSources;
+        return downloadSources;
     }
 
     /**
@@ -755,7 +755,7 @@ public abstract class AbstractIdeSupportMojo
             String type = dependency.getType();
             if ( type == null )
             {
-                type = Constants.PROJECT_PACKAGING_JAR; //$NON-NLS-1$
+                type = Constants.PROJECT_PACKAGING_JAR;
             }
             String classifier = dependency.getClassifier();
             boolean optional = dependency.isOptional();
@@ -1034,17 +1034,15 @@ public abstract class AbstractIdeSupportMojo
                                 "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier() +
                                     " at " + dependency.getId() + ":" + classifier );
             }
-
             if ( !unavailableArtifactsCache.containsKey( dependency.getId() + ":" + classifier ) )
             {
                 Artifact artifact =
                     IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
                                                             dependency.getVersion(), classifier, localRepository,
-                                                            artifactResolver, //$NON-NLS-1$
-                                                            artifactFactory, remoteRepos, getLog() );
+                                                            artifactResolver, artifactFactory, remoteRepos, getLog() );
                 if ( artifact.isResolved() )
                 {
-                    if ( "sources".equals( classifier ) )
+                    if ( "sources".equals( classifier ) || "test-sources".equals( classifier ) )
                     {
                         dependency.setSourceAttachment( artifact.getFile() );
                     }
@@ -1114,6 +1112,6 @@ public abstract class AbstractIdeSupportMojo
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
-        getLog().info( msg ); //$NON-NLS-1$
+        getLog().info( msg );
     }
 }
