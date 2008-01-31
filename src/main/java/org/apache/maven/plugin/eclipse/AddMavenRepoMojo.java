@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 
 /**
- * Adds the classpath variable M2_REPO to Eclipse.
+ * Adds the classpath variable M2_REPO to Eclipse. DEPRECATED. Replaced by eclipse:configure-workspace.
  * 
  * @goal add-maven-repo
  * @requiresProject false
