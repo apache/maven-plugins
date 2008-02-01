@@ -23,6 +23,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.WarOverlayStub;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -64,6 +65,7 @@ public abstract class AbstractWarMojoTest
     {
         setVariableValueToObject( mojo, "filters", filters );
         setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
+        setVariableValueToObject( mojo, "mavenFileFilter", lookup( MavenFileFilter.class.getName() ) );
         mojo.setClassesDirectory( classesDir );
         mojo.setWarSourceDirectory( webAppSource );
         mojo.setWebappDirectory( webAppDir );
