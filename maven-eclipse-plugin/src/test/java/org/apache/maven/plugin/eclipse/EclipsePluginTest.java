@@ -99,7 +99,7 @@ public class EclipsePluginTest
 
     /**
      * Tests with <code>outputDirectory</code> and <code>outputDir</code>
-     * 
+     *
      * @throws Exception
      */
     public void testProject09()
@@ -122,7 +122,7 @@ public class EclipsePluginTest
 
     /**
      * Ear packaging
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject12()
@@ -133,7 +133,7 @@ public class EclipsePluginTest
 
     /**
      * Dependency range - MECLIPSE-96
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject13()
@@ -144,7 +144,7 @@ public class EclipsePluginTest
 
     /**
      * Additional natures and builders - MECLIPSE-64
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject14()
@@ -155,7 +155,7 @@ public class EclipsePluginTest
 
     /**
      * <code>outputDirectory</code> parameter - MECLIPSE-11
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject15()
@@ -168,7 +168,7 @@ public class EclipsePluginTest
 
     /**
      * UTF8 encoding - MECLIPSE-56
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject16()
@@ -180,7 +180,7 @@ public class EclipsePluginTest
 
     /**
      * ISO-8859-15 encoding - MECLIPSE-56
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject17()
@@ -192,7 +192,7 @@ public class EclipsePluginTest
 
     /**
      * relative location of system dependencies - MECLIPSE-89
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject18()
@@ -203,7 +203,7 @@ public class EclipsePluginTest
 
     /**
      * Resource targetPath is relative to the project's output directory - MECLIPSE-77
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject19()
@@ -214,7 +214,7 @@ public class EclipsePluginTest
 
     /**
      * WTP 1.5 changes in wtpmodules.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject20()
@@ -225,7 +225,7 @@ public class EclipsePluginTest
 
     /**
      * PDE support.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject21()
@@ -236,7 +236,7 @@ public class EclipsePluginTest
 
     /**
      * PDE support using eclipse-plugin packaging.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject22()
@@ -247,7 +247,7 @@ public class EclipsePluginTest
 
     /**
      * Additional config files using "additionalConfig" property.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject23()
@@ -258,7 +258,7 @@ public class EclipsePluginTest
 
     /**
      * Test rewriting of OSGI manifest files.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject24()
@@ -269,7 +269,7 @@ public class EclipsePluginTest
 
     /**
      * Test source exclude/include.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject25()
@@ -280,7 +280,7 @@ public class EclipsePluginTest
 
     /**
      * Test different compiler settings for test sources.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject26()
@@ -291,7 +291,7 @@ public class EclipsePluginTest
 
     /**
      * Test additional project facets specified.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject27()
@@ -302,7 +302,7 @@ public class EclipsePluginTest
 
     /**
      * MECLIPSE-241 : Compiler settings from parent project aren't used in wtp facet.
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject28()
@@ -313,7 +313,7 @@ public class EclipsePluginTest
 
     /**
      * MECLIPSE-198 : EJB version is not resloved
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject29()
@@ -324,7 +324,7 @@ public class EclipsePluginTest
 
     /**
      * MECLIPSE-108 : .wtpmodules with version 2.4 for javax.servlet:servlet-api:2.3
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject30()
@@ -335,7 +335,7 @@ public class EclipsePluginTest
 
     /**
      * MECLIPSE-185 : plugin doesn't fail when dependencies are missing
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject31()
@@ -356,7 +356,7 @@ public class EclipsePluginTest
 
     /**
      * MECLIPSE-109 : .component wb-resource source path incorrect for ear packaging
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject32()
@@ -368,7 +368,7 @@ public class EclipsePluginTest
     /**
      * MECLIPSE-287 : dependencies with and without classifiers. MECLIPSE-151 : test jar source attachments.
      * MECLIPSE-367 : Dependency to artifact with classifier tests not distinguished from the regular artifact
-     * 
+     *
      * @throws Exception any exception thrown during test
      */
     public void testProject33()
@@ -496,6 +496,16 @@ public class EclipsePluginTest
         properties.setProperty( "eclipse.workspace", rad7.workspaceLocation.getCanonicalPath() );
         testProject( "project-42", properties, "clean", "eclipse" );
 
+    }
+
+    /**
+     * [MECLIPSE-79]
+     * @throws Exception
+     */
+    public void testProject43()
+    throws Exception
+    {
+        testProject( "project-43" );
     }
 
     public void testJeeSimple()
