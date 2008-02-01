@@ -19,7 +19,10 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -52,7 +55,11 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -383,6 +390,15 @@ public class EclipsePlugin
 
     private WorkspaceConfiguration workspaceConfiguration;
 
+    /**
+     * ResourceManager for getting additonalConfig files from resources
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ResourceManager locator;
+
     protected boolean isJavaProject()
     {
         return isJavaProject;
@@ -400,7 +416,7 @@ public class EclipsePlugin
      */
     public List getBuildcommands()
     {
-        return this.buildcommands;
+        return buildcommands;
     }
 
     /**
@@ -420,7 +436,7 @@ public class EclipsePlugin
      */
     public File getBuildOutputDirectory()
     {
-        return this.buildOutputDirectory;
+        return buildOutputDirectory;
     }
 
     /**
@@ -440,7 +456,7 @@ public class EclipsePlugin
      */
     public List getClasspathContainers()
     {
-        return this.classpathContainers;
+        return classpathContainers;
     }
 
     /**
@@ -460,7 +476,7 @@ public class EclipsePlugin
      */
     public File getEclipseProjectDir()
     {
-        return this.eclipseProjectDir;
+        return eclipseProjectDir;
     }
 
     /**
@@ -480,7 +496,7 @@ public class EclipsePlugin
      */
     public List getProjectnatures()
     {
-        return this.projectnatures;
+        return projectnatures;
     }
 
     /**
@@ -500,7 +516,7 @@ public class EclipsePlugin
      */
     public boolean getUseProjectReferences()
     {
-        return this.useProjectReferences;
+        return useProjectReferences;
     }
 
     /**
@@ -520,7 +536,7 @@ public class EclipsePlugin
      */
     public String getWtpversion()
     {
-        return this.wtpversion;
+        return wtpversion;
     }
 
     /**
@@ -540,7 +556,7 @@ public class EclipsePlugin
      */
     public List getAdditionalBuildcommands()
     {
-        return this.additionalBuildcommands;
+        return additionalBuildcommands;
     }
 
     /**
@@ -560,7 +576,7 @@ public class EclipsePlugin
      */
     public List getAdditionalProjectnatures()
     {
-        return this.additionalProjectnatures;
+        return additionalProjectnatures;
     }
 
     /**
@@ -628,7 +644,7 @@ public class EclipsePlugin
         ready = validate();
 
         // TODO: Why are we using project in some places, and executedProject in others??
-        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
 
         // ear projects don't contain java sources
         // pde projects are always java projects
@@ -674,6 +690,8 @@ public class EclipsePlugin
         {
             verifyClasspathContainerListIsComplete();
         }
+        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
         // ready to start
         return ready;
@@ -760,8 +778,8 @@ public class EclipsePlugin
                                                                       StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
         }
 
-        assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
-        assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
+        assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID );
+        assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID );
 
         if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
         {
@@ -890,7 +908,7 @@ public class EclipsePlugin
             for ( int j = 0; j < additionalConfig.length; j++ )
             {
                 EclipseConfigFile file = additionalConfig[j];
-                File projectRelativeFile = new File( this.eclipseProjectDir, file.getName() );
+                File projectRelativeFile = new File( eclipseProjectDir, file.getName() );
                 if ( projectRelativeFile.isDirectory() )
                 {
                     // just ignore?
@@ -901,13 +919,44 @@ public class EclipsePlugin
                 try
                 {
                     projectRelativeFile.getParentFile().mkdirs();
-                    FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
+                    if ( file.getContent() == null )
+                    {
+                        InputStream inStream;
+                        if ( file.getLocation() != null )
+                        {
+                            inStream = locator.getResourceAsInputStream( file.getLocation() );
+                        }
+                        else
+                        {
+                            inStream = file.getURL().openConnection().getInputStream();
+                        }
+                        OutputStream outStream = new FileOutputStream( projectRelativeFile );
+                        try
+                        {
+                            IOUtil.copy( inStream, outStream );
+                        }
+                        finally
+                        {
+                            inStream.close();
+                            outStream.close();
+                        }
+                    }
+                    else
+                    {
+                        FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
+                    }
                 }
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile", //$NON-NLS-1$
                                                                           projectRelativeFile.getAbsolutePath() ) );
                 }
+                catch ( ResourceNotFoundException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantfindresource", //$NON-NLS-1$
+                                                                          file.getLocation() ) );
+                }
+
             }
         }
 
@@ -936,7 +985,7 @@ public class EclipsePlugin
 
         config.setWtpapplicationxml( wtpapplicationxml );
 
-        config.setWtpVersion( this.wtpVersionFloat );
+        config.setWtpVersion( wtpVersionFloat );
 
         Set convertedBuildCommands = new LinkedHashSet();
 
@@ -948,7 +997,7 @@ public class EclipsePlugin
 
                 if ( cmd instanceof BuildCommand )
                 {
-                    convertedBuildCommands.add( (BuildCommand) cmd );
+                    convertedBuildCommands.add( cmd );
                 }
                 else
                 {
@@ -972,7 +1021,7 @@ public class EclipsePlugin
         config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
-        config.setPackaging( this.packaging );
+        config.setPackaging( packaging );
 
         collectWarContextRootsFromReactorEarConfiguration( config );
 
@@ -987,8 +1036,8 @@ public class EclipsePlugin
      */
     private void collectWarContextRootsFromReactorEarConfiguration( EclipseWriterConfig config )
     {
-        if ( reactorProjects != null && this.wtpContextName == null &&
-            Constants.PROJECT_PACKAGING_WAR.equals( this.project.getPackaging() ) )
+        if ( reactorProjects != null && wtpContextName == null &&
+            Constants.PROJECT_PACKAGING_WAR.equals( project.getPackaging() ) )
         {
             for ( Iterator iter = reactorProjects.iterator(); iter.hasNext(); )
             {
@@ -1011,8 +1060,8 @@ public class EclipsePlugin
                             getLog().info(
                                            "Found context root definition for " + groupId.getValue() + ":" +
                                                artifactId.getValue() + " " + contextRoot.getValue() );
-                            if ( this.project.getArtifactId().equals( artifactId.getValue() ) &&
-                                this.project.getGroupId().equals( groupId.getValue() ) )
+                            if ( project.getArtifactId().equals( artifactId.getValue() ) &&
+                                project.getGroupId().equals( groupId.getValue() ) )
                             {
                                 config.setContextName( contextRoot.getValue() );
                             }
@@ -1028,15 +1077,15 @@ public class EclipsePlugin
                 }
             }
         }
-        if ( config.getContextName() == null && Constants.PROJECT_PACKAGING_WAR.equals( this.project.getPackaging() ) )
+        if ( config.getContextName() == null && Constants.PROJECT_PACKAGING_WAR.equals( project.getPackaging() ) )
         {
-            if ( this.wtpContextName == null )
+            if ( wtpContextName == null )
             {
-                config.setContextName( this.project.getArtifactId() );
+                config.setContextName( project.getArtifactId() );
             }
             else
             {
-                config.setContextName( this.wtpContextName );
+                config.setContextName( wtpContextName );
             }
         }
     }
@@ -1345,12 +1394,11 @@ public class EclipsePlugin
         if ( workspaceConfiguration == null )
         {
             workspaceConfiguration = new WorkspaceConfiguration();
-            if ( this.workspace != null )
+            if ( workspace != null )
             {
-                workspaceConfiguration.setWorkspaceDirectory( new File( this.workspace ) );
+                workspaceConfiguration.setWorkspaceDirectory( new File( workspace ) );
             }
-            new ReadWorkspaceLocations().init( getLog(), this.workspaceConfiguration, this.project,
-                                               this.wtpdefaultserver );
+            new ReadWorkspaceLocations().init( getLog(), workspaceConfiguration, project, wtpdefaultserver );
         }
         return workspaceConfiguration;
     }
