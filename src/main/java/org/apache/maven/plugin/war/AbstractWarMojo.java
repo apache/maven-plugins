@@ -19,6 +19,13 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,24 +40,13 @@ import org.apache.maven.plugin.war.packaging.WarPackagingContext;
 import org.apache.maven.plugin.war.packaging.WarPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarPostPackagingTask;
 import org.apache.maven.plugin.war.packaging.WarProjectPackagingTask;
-import org.apache.maven.plugin.war.util.CompositeMap;
-import org.apache.maven.plugin.war.util.PropertyUtils;
-import org.apache.maven.plugin.war.util.ReflectionProperties;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Contains commons jobs for war mojos
@@ -180,6 +176,14 @@ public abstract class AbstractWarMojo
      * @required
      */
     private ArchiverManager archiverManager;
+    
+    /**
+     * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
+     *
+     * @parameter expression="${component.org.apache.maven.shared.filtering.MavenFileFilter}"
+     * @required
+     */
+    private MavenFileFilter mavenFileFilter;    
 
     private static final String WEB_INF = "WEB-INF";
 
@@ -540,36 +544,6 @@ public abstract class AbstractWarMojo
             return filters;
         }
 
-        public Map getFilterProperties()
-            throws MojoExecutionException
-        {
-            Map filterProperties = new Properties();
-
-            // Project properties
-            filterProperties.putAll( project.getProperties() );
-
-            for ( Iterator i = filters.iterator(); i.hasNext(); )
-            {
-                String filtersfile = (String) i.next();
-
-                try
-                {
-                    Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
-
-                    filterProperties.putAll( properties );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
-                }
-            }
-
-            // can't putAll, as ReflectionProperties doesn't enumerate - 
-            // so we make a composite map with the project variables as dominant
-            return new CompositeMap(
-                new Map[]{filterProperties, new ReflectionProperties( project ), System.getProperties()} );
-        }
-
         public WebappStructure getWebappStructure()
         {
             return webappStructure;
@@ -579,6 +553,13 @@ public abstract class AbstractWarMojo
         {
             return overlayManager.getOverlayIds();
         }
+
+        public MavenFileFilter getMavenFileFilter()
+        {
+            return mavenFileFilter;
+        }
+        
+        
     }
 
     public MavenProject getProject()
