@@ -19,19 +19,23 @@ under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
     <version>8-SNAPSHOT</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
   <packaging>pom</packaging>
   <version>11-SNAPSHOT</version>
+
   <name>Maven Plugins</name>
   <description>Maven Plugins</description>
   <url>http://maven.apache.org/plugins/</url>
+
   <mailingLists>
     <mailingList>
       <name>Maven User List</name>
@@ -81,12 +85,14 @@ under the License.
       <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
     </mailingList>
   </mailingLists>
+
   <distributionManagement>
     <site>
       <id>apache.website</id>
       <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
     </site>
   </distributionManagement>
+
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
@@ -123,11 +129,13 @@ under the License.
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
   </modules>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
     <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/</url>
   </scm>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -144,9 +152,15 @@ under the License.
             <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/plugins/${artifactId}-${version}</stagingSiteURL>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4-SNAPSHOT</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
+
   <profiles>
     <profile>
       <id>ciProfile</id>
@@ -173,6 +187,7 @@ under the License.
       </build>
     </profile>
   </profiles>
+
   <reporting>
     <plugins>
       <plugin>
