@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import java.net.URL;
+
 /**
  * Represents a generic configuration file, with a name and a content.
  * 
@@ -37,13 +39,27 @@ public class EclipseConfigFile
     private String content;
 
     /**
+     * The file location
+     * 
+     * @since 2.5
+     */
+    private String location;
+
+    /**
+     * The file URL
+     * 
+     * @since 2.5
+     */
+    private URL url;
+
+    /**
      * Getter for <code>content</code>.
      * 
      * @return Returns the content.
      */
     public String getContent()
     {
-        return this.content;
+        return content;
     }
 
     /**
@@ -63,7 +79,7 @@ public class EclipseConfigFile
      */
     public String getName()
     {
-        return this.name;
+        return name;
     }
 
     /**
@@ -74,5 +90,45 @@ public class EclipseConfigFile
     public void setName( String name )
     {
         this.name = name;
+    }
+
+    /**
+     * Getter for <code>location</code>.
+     * 
+     * @return Returns the location.
+     */
+    public String getLocation()
+    {
+        return location;
+    }
+
+    /**
+     * Setter for <code>location</code>.
+     * 
+     * @param location The location to set.
+     */
+    public void setLocation( String location )
+    {
+        this.location = location;
+    }
+
+    /**
+     * Getter for <code>url</code>.
+     * 
+     * @return Returns the url.
+     */
+    public URL getURL()
+    {
+        return url;
+    }
+
+    /**
+     * Setter for <code>url</code>.
+     * 
+     * @param location The url to set.
+     */
+    public void setURL( URL url )
+    {
+        this.url = url;
     }
 }
