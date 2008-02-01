@@ -139,6 +139,7 @@ public class EclipsePlugin
      * List of artifact to exclude from eclipse classpath, beeing provided by some
      * eclipse classPathContainer [MECLIPSE-79]
      *
+	 * @since 2.5
      * @parameter
      */
     private List excludes;
