@@ -458,7 +458,6 @@ public class EclipsePluginTest
     public void testProject39()
         throws Exception
     {
-        // AHE : Failing for me with expected:<[]> but was:<[J2SE-1.3]>
         checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
                                               "", null );
         checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
@@ -471,10 +470,8 @@ public class EclipsePluginTest
         throws Exception
     {
         String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
-        // AHE : Failing for me with expected:<[JVM 1.3.1]> but was:<[]>
         checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
                                               "JVM 1.3.1", jre131 );
-        // AHE : Failing for me with expected:<[JVM 1.3.1]> but was:<[]>
         checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
                                               "JVM 1.3.1", jre131 );
         checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "rad7WithDefault14", false ), "",
@@ -486,7 +483,7 @@ public class EclipsePluginTest
     {
         TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
         Properties properties = new Properties();
-        properties.setProperty( "eclipse.workspaceToConnect", rad7.workspaceLocation.getCanonicalPath() );
+        properties.setProperty( "eclipse.workspace", rad7.workspaceLocation.getCanonicalPath() );
         testProject( "project-41", properties, "clean", "eclipse" );
 
     }
@@ -496,7 +493,7 @@ public class EclipsePluginTest
     {
         TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
         Properties properties = new Properties();
-        properties.setProperty( "eclipse.workspaceToConnect", rad7.workspaceLocation.getCanonicalPath() );
+        properties.setProperty( "eclipse.workspace", rad7.workspaceLocation.getCanonicalPath() );
         testProject( "project-42", properties, "clean", "eclipse" );
 
     }
@@ -555,7 +552,7 @@ public class EclipsePluginTest
         throws Exception
     {
         Properties properties = new Properties();
-        properties.setProperty( "eclipse.workspaceToConnect", workspace.workspaceLocation.getCanonicalPath() );
+        properties.setProperty( "eclipse.workspace", workspace.workspaceLocation.getCanonicalPath() );
         if ( jreExec != null )
         {
             properties.setProperty( "maven.compiler.executable", jreExec );
