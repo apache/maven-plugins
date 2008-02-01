@@ -19,17 +19,16 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The packaging context.
@@ -141,17 +140,6 @@ public interface WarPackagingContext
     List getFilters();
 
     /**
-     * Returns the filter properties to use to filter resources.
-     * <p/>
-     * TODO: this needs to be refactored to use the resource plugin somehow.
-     *
-     * @return a map of filter properties
-     * @throws MojoExecutionException if an error occured while reading a filter file
-     */
-    Map getFilterProperties()
-        throws MojoExecutionException;
-
-    /**
      * Returns the {@link WebappStructure}.
      *
      * @return the webapp structure
@@ -167,5 +155,11 @@ public interface WarPackagingContext
      * @return the list of registered overlays, including the current project
      */
     List getOwnerIds();
+    
+    /**
+     * @return {@link MavenFileFilter}
+     * @since 2.1-alpha-2
+     */
+    MavenFileFilter getMavenFileFilter();
 
 }
