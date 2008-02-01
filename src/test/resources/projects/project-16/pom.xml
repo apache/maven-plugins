@@ -7,4 +7,7 @@
   <version>16</version>
   <name>maven-eclipse-plugin-test-project-16</name>
   <description>Test of special characters like ö ä ü ß UTF-8 encoded</description>
+  <prerequisites>
+    <maven>2.0.8</maven>
+  </prerequisites>
 </project>
