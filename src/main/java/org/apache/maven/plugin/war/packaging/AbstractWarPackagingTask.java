@@ -19,29 +19,30 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.AbstractWarMojo;
 import org.apache.maven.plugin.war.util.MappingUtils;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.plugin.war.util.WebappStructure;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.ReflectionProperties;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author Stephane Nicoll
@@ -193,37 +194,42 @@ public abstract class AbstractWarPackagingTask
      * @throws IOException            if an error occured while copying
      * @throws MojoExecutionException if an error occured while retrieving the filter properties
      */
-    protected boolean copyFilteredFile( String sourceId, WarPackagingContext context, File file, String targetFilename )
+    protected boolean copyFilteredFile( String sourceId, final WarPackagingContext context, File file, String targetFilename )
         throws IOException, MojoExecutionException
     {
 
         if ( context.getWebappStructure().registerFile( sourceId, targetFilename ) )
         {
             final File targetFile = new File( context.getWebappDirectory(), targetFilename );
-            // buffer so it isn't reading a byte at a time!
-            Reader fileReader = null;
-            Writer fileWriter = null;
             try
             {
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
 
-                fileReader = new BufferedReader( new FileReader( file ) );
-                fileWriter = new FileWriter( targetFile );
+                List defaultFilterWrappers = context.getMavenFileFilter().getDefaultFilterWrappers(
+                                                                                                    context
+                                                                                                        .getProject(),
+                                                                                                    context
+                                                                                                        .getFilters(),
+                                                                                                    true );
 
-                Reader reader = fileReader;
-                for ( int i = 0; i < getFilterWrappers().length; i++ )
+                List filterWrappers = new ArrayList( defaultFilterWrappers );
+                FileUtils.FilterWrapper filterWrapper = new FileUtils.FilterWrapper()
                 {
-                    FilterWrapper wrapper = getFilterWrappers()[i];
-                    reader = wrapper.getReader( reader, context.getFilterProperties() );
-                }
+                    public Reader getReader( Reader reader )
+                    {
+                        ReflectionProperties reflectionProperties = new ReflectionProperties( context.getProject(),
+                                                                                              true );
+                        return new InterpolationFilterReader( reader, reflectionProperties, "@", "@" );
+                    }
+                };
+                filterWrappers.add( filterWrapper );
 
-                IOUtil.copy( reader, fileWriter );
+                context.getMavenFileFilter().copyFile( file, targetFile, true, filterWrappers, null );
             }
-            finally
+            catch ( MavenFilteringException e )
             {
-                IOUtil.close( fileReader );
-                IOUtil.close( fileWriter );
+                throw new MojoExecutionException( e.getMessage(), e );
             }
             // Add the file to the protected list
             context.getLog().debug( " + " + targetFilename + " has been copied (filtered)." );
@@ -374,30 +380,6 @@ public abstract class AbstractWarPackagingTask
             return MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING, artifact );
         }
 
-    }
-
-    /**
-     * @return {@link FilterWrapper[]} which support ${} and @@ interpolation
-     */
-    private FilterWrapper[] getFilterWrappers()
-    {
-        return new FilterWrapper[]{
-            // support ${token}
-            new FilterWrapper()
-            {
-                public Reader getReader( Reader fileReader, Map filterProperties )
-                {
-                    return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
-                }
-            },
-            // support @token@
-            new FilterWrapper()
-            {
-                public Reader getReader( Reader fileReader, Map filterProperties )
-                {
-                    return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
-                }
-            }};
     }
 
     /**
