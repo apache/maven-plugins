@@ -73,7 +73,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * </ul>
  * If this goal is run on a multiproject root, dependencies between modules will be configured as direct project
  * dependencies in Eclipse (unless <code>useProjectReferences</code> is set to <code>false</code>).
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
@@ -130,49 +130,49 @@ public class EclipsePlugin
     /**
      * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature plus the
      * needed WTP natures are added. Natures added using this property <strong>replace</strong> the default list.
-     *
+     * 
      * <pre>
      * &lt;projectnatures&gt;
      *    &lt;projectnature&gt;org.eclipse.jdt.core.javanature&lt;/projectnature&gt;
      *    &lt;projectnature&gt;org.eclipse.wst.common.modulecore.ModuleCoreNature&lt;/projectnature&gt;
      * &lt;/projectnatures&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List projectnatures;
 
     /**
-     * List of artifact to exclude from eclipse classpath, beeing provided by some
-     * eclipse classPathContainer [MECLIPSE-79]
-     *
-	 * @since 2.5
+     * List of artifact to exclude from eclipse classpath, beeing provided by some eclipse classPathContainer
+     * [MECLIPSE-79]
+     * 
+     * @since 2.5
      * @parameter
      */
     private List excludes;
 
     /**
      * List of eclipse project natures to be added to the default ones.
-     *
+     * 
      * <pre>
      * &lt;additionalProjectnatures&gt;
      *    &lt;projectnature&gt;org.springframework.ide.eclipse.core.springnature&lt;/projectnature&gt;
      * &lt;/additionalProjectnatures&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List additionalProjectnatures;
 
     /**
      * List of eclipse project facets to be added to the default ones.
-     *
+     * 
      * <pre>
      * &lt;additionalProjectFacets&gt;
      *    &lt;jst.jsf&gt;1.1&lt;jst.jsf/&gt;
      * &lt;/additionalProjectFacets&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private Map additionalProjectFacets;
@@ -182,7 +182,7 @@ public class EclipsePlugin
      * needed WTP builders are added. If you specify any configuration for this parameter, only those buildcommands
      * specified will be used; the defaults won't be added. Use the <code>additionalBuildCommands</code> parameter for
      * that. Configuration example: Old style:
-     *
+     * 
      * <pre>
      * &lt;buildcommands&gt;
      *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/buildcommand&gt;
@@ -190,24 +190,24 @@ public class EclipsePlugin
      *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/buildcommand&gt;
      * &lt;/buildcommands&gt;
      * </pre>
-     *
+     * 
      * For new style, see <code>additionalBuildCommands</code>.
-     *
+     * 
      * @parameter
      */
     private List buildcommands;
 
     /**
      * List of eclipse build commands to be added to the default ones. Old style:
-     *
+     * 
      * <pre>
      * &lt;additionalBuildcommands&gt;
      *    &lt;buildcommand&gt;org.springframework.ide.eclipse.core.springbuilder&lt;/buildcommand&gt;
      * &lt;/additionalBuildcommands&gt;
      * </pre>
-     *
+     * 
      * New style:
-     *
+     * 
      * <pre>
      * &lt;additionalBuildcommands&gt;
      *    &lt;buildCommand&gt;
@@ -219,10 +219,10 @@ public class EclipsePlugin
      *    &lt;/buildCommand&gt;
      * &lt;/additionalBuildcommands&gt;
      * </pre>
-     *
+     * 
      * Note the difference between <code>build<strong>c</strong>ommand</code> and
      * <code>build<strong>C</strong>ommand</code>. You can mix and match old and new-style configuration entries.
-     *
+     * 
      * @parameter
      */
     private List additionalBuildcommands;
@@ -230,7 +230,7 @@ public class EclipsePlugin
     /**
      * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code>
      * classpath container is added. Configuration example:
-     *
+     * 
      * <pre>
      * &lt;classpathContainers&gt;
      *    &lt;classpathContainer&gt;org.eclipse.jdt.launching.JRE_CONTAINER&lt;/classpathContainer&gt;
@@ -238,14 +238,14 @@ public class EclipsePlugin
      *    &lt;classpathContainer&gt;org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/classpathContainer&gt;
      * &lt;/classpathContainers&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List classpathContainers;
 
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. DEPRECATED - use downloadSources
-     *
+     * 
      * @parameter expression="${eclipse.downloadSources}"
      * @deprecated use downloadSources
      */
@@ -253,7 +253,7 @@ public class EclipsePlugin
 
     /**
      * Eclipse workspace directory.
-     *
+     * 
      * @parameter expression="${eclipse.projectDir}" alias="outputDir"
      */
     private File eclipseProjectDir;
@@ -261,7 +261,7 @@ public class EclipsePlugin
     /**
      * When set to false, the plugin will not create sub-projects and instead reference those sub-projects using the
      * installed package in the local repository
-     *
+     * 
      * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
      * @required
      */
@@ -269,7 +269,7 @@ public class EclipsePlugin
 
     /**
      * The default output directory
-     *
+     * 
      * @parameter expression="${outputDirectory}" alias="outputDirectory"
      *            default-value="${project.build.outputDirectory}"
      * @required
@@ -279,14 +279,14 @@ public class EclipsePlugin
     /**
      * The version of WTP for which configuration files will be generated. The default value is "none" (don't generate
      * WTP configuration), supported versions are "R7", "1.0", and "1.5"
-     *
+     * 
      * @parameter expression="${wtpversion}" default-value="none"
      */
     private String wtpversion;
 
     /**
      * JEE context name of the WTP module. ( ex. WEB context name ).
-     *
+     * 
      * @parameter expression="${wtpContextName}"
      */
     private String wtpContextName;
@@ -296,14 +296,14 @@ public class EclipsePlugin
      * Additionally it copies all libraries to a project local directory and references them instead of referencing the
      * files in the local Maven repository. It also ensured that the "Bundle-Classpath" in META-INF/MANIFEST.MF is
      * synchronized.
-     *
+     * 
      * @parameter expression="${eclipse.pde}" default-value="false"
      */
     private boolean pde;
 
     /**
      * The relative path of the manifest file
-     *
+     * 
      * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
      */
     private File manifest;
@@ -311,9 +311,13 @@ public class EclipsePlugin
     /**
      * Allow to configure additional generic configuration files for eclipse that will be written out to disk when
      * running eclipse:eclipse. FOr each file you can specify the name and the text content.
-     *
+     * 
      * <pre>
-     * &lt;additionalConfig&gt;
+     * &lt;plugin&gt;
+     *  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *  &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     *  &lt;configuration&gt;
+     *   &lt;additionalConfig&gt;
      *    &lt;file&gt;
      *      &lt;name&gt;.checkstyle&lt;/name&gt;
      *      &lt;content&gt;
@@ -325,9 +329,52 @@ public class EclipsePlugin
      *        &lt;/fileset-config&gt;]]&gt;
      *      &lt;/content&gt;
      *    &lt;/file&gt;
-     * &lt;/additionalConfig&gt;
+     *   &lt;/additionalConfig&gt;
+     *  &lt;/configuration&gt;
+     * &lt;/plugin&gt;
      * </pre>
-     *
+     * 
+     * Instead of the content you can also define (from version 2.5) an url to download the file :
+     * 
+     * <pre>
+     * &lt;plugin&gt;
+     *  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *  &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     *  &lt;configuration&gt;
+     *   &lt;additionalConfig&gt;
+     *    &lt;file&gt;
+     *      &lt;name&gt;.checkstyle&lt;/name&gt;
+     *      &lt;url&gt;http://some.place.org/path/to/file&lt;/url&gt;
+     *    &lt;/file&gt;
+     *   &lt;/additionalConfig&gt;
+     *  &lt;/configuration&gt;
+     * </pre>
+     * 
+     * or a location :
+     * 
+     * <pre>
+     * &lt;plugin&gt;
+     *  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *  &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     *  &lt;configuration&gt;
+     *   &lt;additionalConfig&gt;
+     *    &lt;file&gt;
+     *     &lt;name&gt;.checkstyle&lt;/name&gt;
+     *     &lt;location&gt;/checkstyle-config.xml&lt;/location&gt;
+     *    &lt;/file&gt;
+     *   &lt;/additionalConfig&gt;
+     *  &lt;/configuration&gt;
+     *  &lt;dependencies&gt;
+     *   &lt;!-- The file defined in the location is stored in this dependency --&gt;
+     *   &lt;dependency&gt;
+     *    &lt;groupId&gt;eclipsetest&lt;/groupId&gt;
+     *    &lt;artifactId&gt;checkstyle-config&lt;/artifactId&gt;
+     *    &lt;version&gt;1.0&lt;/version&gt;
+     *   &lt;/dependency&gt;
+     *  &lt;/dependencies&gt;
+     * &lt;/plugin&gt;
+     * </pre>
+     * 
      * @parameter
      */
     private EclipseConfigFile[] additionalConfig;
@@ -335,7 +382,7 @@ public class EclipsePlugin
     /**
      * If set to <code>true</code>, the version number of the artifact is appended to the name of the generated
      * Eclipse project. See projectNameTemplate for other options.
-     *
+     * 
      * @parameter expression="${eclipse.addVersionToProjectName}" default-value="false"
      */
     private boolean addVersionToProjectName;
@@ -343,7 +390,7 @@ public class EclipsePlugin
     /**
      * If set to <code>true</code>, the groupId of the artifact is appended to the name of the generated Eclipse
      * project. See projectNameTemplate for other options.
-     *
+     * 
      * @parameter expression="${eclipse.addGroupIdToProjectName}" default-value="false"
      */
     private boolean addGroupIdToProjectName;
@@ -352,7 +399,7 @@ public class EclipsePlugin
      * Allows configuring the name of the eclipse projects. This property if set wins over addVersionToProjectName and
      * addGroupIdToProjectName You can use <code>[groupId]</code>, <code>[artifactId]</code> and
      * <code>[version]</code> variables. eg. <code>[groupId].[artifactId]-[version]</code>
-     *
+     * 
      * @parameter expression="${eclipse.projectNameTemplate}"
      */
     private String projectNameTemplate;
@@ -369,21 +416,21 @@ public class EclipsePlugin
 
     /**
      * Must the manifest files be written for java projects so that that the jee classpath for wtp is correct.
-     *
+     * 
      * @parameter expression="${eclipse.wtpmanifest}" default-value="false"
      */
     private boolean wtpmanifest;
 
     /**
      * Must the application files be written for ear projects in a separate directory.
-     *
+     * 
      * @parameter expression="${eclipse.wtpapplicationxml}" default-value="false"
      */
     private boolean wtpapplicationxml;
 
     /**
      * What WTP defined server to use for deployment informations.
-     *
+     * 
      * @parameter expression="${eclipse.wtpdefaultserver}"
      */
     private String wtpdefaultserver;
@@ -411,7 +458,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>buildcommands</code>.
-     *
+     * 
      * @return Returns the buildcommands.
      */
     public List getBuildcommands()
@@ -421,7 +468,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>buildcommands</code>.
-     *
+     * 
      * @param buildcommands The buildcommands to set.
      */
     public void setBuildcommands( List buildcommands )
@@ -431,7 +478,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>buildOutputDirectory</code>.
-     *
+     * 
      * @return Returns the buildOutputDirectory.
      */
     public File getBuildOutputDirectory()
@@ -441,7 +488,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>buildOutputDirectory</code>.
-     *
+     * 
      * @param buildOutputDirectory The buildOutputDirectory to set.
      */
     public void setBuildOutputDirectory( File buildOutputDirectory )
@@ -451,7 +498,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>classpathContainers</code>.
-     *
+     * 
      * @return Returns the classpathContainers.
      */
     public List getClasspathContainers()
@@ -461,7 +508,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>classpathContainers</code>.
-     *
+     * 
      * @param classpathContainers The classpathContainers to set.
      */
     public void setClasspathContainers( List classpathContainers )
@@ -471,7 +518,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>eclipseProjectDir</code>.
-     *
+     * 
      * @return Returns the eclipseProjectDir.
      */
     public File getEclipseProjectDir()
@@ -481,7 +528,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>eclipseProjectDir</code>.
-     *
+     * 
      * @param eclipseProjectDir The eclipseProjectDir to set.
      */
     public void setEclipseProjectDir( File eclipseProjectDir )
@@ -491,7 +538,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>projectnatures</code>.
-     *
+     * 
      * @return Returns the projectnatures.
      */
     public List getProjectnatures()
@@ -501,7 +548,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>projectnatures</code>.
-     *
+     * 
      * @param projectnatures The projectnatures to set.
      */
     public void setProjectnatures( List projectnatures )
@@ -511,7 +558,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>useProjectReferences</code>.
-     *
+     * 
      * @return Returns the useProjectReferences.
      */
     public boolean getUseProjectReferences()
@@ -521,7 +568,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>useProjectReferences</code>.
-     *
+     * 
      * @param useProjectReferences The useProjectReferences to set.
      */
     public void setUseProjectReferences( boolean useProjectReferences )
@@ -531,7 +578,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>wtpversion</code>.
-     *
+     * 
      * @return Returns the wtpversion.
      */
     public String getWtpversion()
@@ -541,7 +588,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>wtpversion</code>.
-     *
+     * 
      * @param wtpversion The wtpversion to set.
      */
     public void setWtpversion( String wtpversion )
@@ -551,7 +598,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>additionalBuildcommands</code>.
-     *
+     * 
      * @return Returns the additionalBuildcommands.
      */
     public List getAdditionalBuildcommands()
@@ -561,7 +608,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>additionalBuildcommands</code>.
-     *
+     * 
      * @param additionalBuildcommands The additionalBuildcommands to set.
      */
     public void setAdditionalBuildcommands( List additionalBuildcommands )
@@ -571,7 +618,7 @@ public class EclipsePlugin
 
     /**
      * Getter for <code>additionalProjectnatures</code>.
-     *
+     * 
      * @return Returns the additionalProjectnatures.
      */
     public List getAdditionalProjectnatures()
@@ -581,7 +628,7 @@ public class EclipsePlugin
 
     /**
      * Setter for <code>additionalProjectnatures</code>.
-     *
+     * 
      * @param additionalProjectnatures The additionalProjectnatures to set.
      */
     public void setAdditionalProjectnatures( List additionalProjectnatures )
@@ -1031,7 +1078,7 @@ public class EclipsePlugin
     /**
      * If this is a war module peek into the reactor an search for an ear module that defines the context root of this
      * module.
-     *
+     * 
      * @param config config to save the context root.
      */
     private void collectWarContextRootsFromReactorEarConfiguration( EclipseWriterConfig config )
@@ -1093,7 +1140,7 @@ public class EclipsePlugin
     /**
      * Write any extra configuration information for the Eclipse project. This is an extension point, called before the
      * main configurations are written. <br/> <b> NOTE: This could change the config! </b>
-     *
+     * 
      * @param config
      * @throws MojoExecutionException
      */
@@ -1329,7 +1376,7 @@ public class EclipsePlugin
     /**
      * Calculate the project name template from the fields {@link #projectNameTemplate},
      * {@link #addVersionToProjectName} and {@link #addGroupIdToProjectName}
-     *
+     * 
      * @return the project name template that should be used after considering the plugin configuration
      */
     private String calculateProjectNameTemplate()
