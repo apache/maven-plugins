@@ -500,6 +500,7 @@ public class EclipsePluginTest
 
     /**
      * [MECLIPSE-79]
+	 * @since 2.5
      * @throws Exception
      */
     public void testProject43()

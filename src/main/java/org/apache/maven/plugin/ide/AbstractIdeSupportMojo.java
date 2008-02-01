@@ -1130,6 +1130,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * @return List of dependencies to exclude from eclipse classpath.
+	 * @since 2.5
      */
     public abstract List getExcludes();
 }
