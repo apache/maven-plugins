@@ -50,7 +50,7 @@ public final class TypeConversionUtils
     {
         String[] result = null;
 
-        if ( list != null && !list.isEmpty() )
+        if ( ( list != null ) && !list.isEmpty() )
         {
             result = (String[]) list.toArray( new String[0] );
         }
@@ -61,6 +61,11 @@ public final class TypeConversionUtils
     public static int modeToInt( String mode, Logger logger )
         throws AssemblyFormattingException
     {
+        if ( mode == null )
+        {
+            return -1;
+        }
+
         try
         {
             int value = Integer.parseInt( mode, 8 );
@@ -87,19 +92,19 @@ public final class TypeConversionUtils
         boolean warn = false;
 
         // read-access checks.
-        if ( ( mode & U_R ) == 0 && ( mode & G_R ) == G_R )
+        if ( ( ( mode & U_R ) == 0 ) && ( ( mode & G_R ) == G_R ) )
         {
             messages.append( "\n- Group has read access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & U_R ) == 0 && ( mode & W_R ) == W_R )
+        if ( ( ( mode & U_R ) == 0 ) && ( ( mode & W_R ) == W_R ) )
         {
             messages.append( "\n- World has read access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & G_R ) == 0 && ( mode & W_R ) == W_R )
+        if ( ( ( mode & G_R ) == 0 ) && ( ( mode & W_R ) == W_R ) )
         {
             messages.append( "\n- World has read access, but group does not." );
             warn = true;
@@ -107,19 +112,19 @@ public final class TypeConversionUtils
         // end read-access checks.
 
         // write-access checks.
-        if ( ( mode & U_W ) == 0 && ( mode & G_W ) == G_W )
+        if ( ( ( mode & U_W ) == 0 ) && ( ( mode & G_W ) == G_W ) )
         {
             messages.append( "\n- Group has write access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & U_W ) == 0 && ( mode & W_W ) == W_W )
+        if ( ( ( mode & U_W ) == 0 ) && ( ( mode & W_W ) == W_W ) )
         {
             messages.append( "\n- World has write access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & G_W ) == 0 && ( mode & W_W ) == W_W )
+        if ( ( ( mode & G_W ) == 0 ) && ( ( mode & W_W ) == W_W ) )
         {
             messages.append( "\n- World has write access, but group does not." );
             warn = true;
@@ -127,19 +132,19 @@ public final class TypeConversionUtils
         // end write-access checks.
 
         // execute-/list-access checks.
-        if ( ( mode & U_X ) == 0 && ( mode & G_X ) == G_X )
+        if ( ( ( mode & U_X ) == 0 ) && ( ( mode & G_X ) == G_X ) )
         {
             messages.append( "\n- Group has execute/list access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & U_X ) == 0 && ( mode & W_X ) == W_X )
+        if ( ( ( mode & U_X ) == 0 ) && ( ( mode & W_X ) == W_X ) )
         {
             messages.append( "\n- World has execute/list access, but user does not." );
             warn = true;
         }
 
-        if ( ( mode & G_X ) == 0 && ( mode & W_X ) == W_X )
+        if ( ( ( mode & G_X ) == 0 ) && ( ( mode & W_X ) == W_X ) )
         {
             messages.append( "\n- World has execute/list access, but group does not." );
             warn = true;

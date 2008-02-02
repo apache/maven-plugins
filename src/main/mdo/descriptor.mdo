@@ -319,12 +319,14 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
+          <!-- 
           <defaultValue>0644</defaultValue>
+          -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the file mode of the files included.
             Format: (User)(Group)(Other) where each component is a sum of Read = 4,
-            Write = 2, and Execute = 1.  For example, the default value of 0644
+            Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
@@ -334,12 +336,14 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
+          <!-- 
           <defaultValue>0755</defaultValue>
+          -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
             included. Format: (User)(Group)(Other) where each component is a sum of
-            Read = 4, Write = 2, and Execute = 1.  For example, the default value of
+            Read = 4, Write = 2, and Execute = 1.  For example, the value
             0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
@@ -438,12 +442,14 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
+          <!-- 
           <defaultValue>0644</defaultValue>
+          -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the file mode of the files included.
             Format: (User)(Group)(Other) where each component is a sum of Read = 4,
-            Write = 2, and Execute = 1.  For example, the default value of 0644
+            Write = 2, and Execute = 1.  For example, the value 0644
             translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
