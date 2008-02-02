@@ -75,7 +75,7 @@ import java.util.ResourceBundle;
 
 /**
  * Perform checkstyle analysis, and generate report on violations.
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -105,7 +105,7 @@ public class CheckstyleReport
 
     /**
      * Skip entire check.
-     * 
+     *
      * @parameter expression="${checkstyle.skip}" default-value="false"
      * @since 2.2
      */
@@ -113,7 +113,7 @@ public class CheckstyleReport
 
     /**
      * Specifies the directory where the report will be generated
-     * 
+     *
      * @parameter default-value="${project.reporting.outputDirectory}"
      * @required
      */
@@ -121,7 +121,7 @@ public class CheckstyleReport
 
     /**
      * Specifies if the Rules summary should be enabled or not.
-     * 
+     *
      * @parameter expression="${checkstyle.enable.rules.summary}"
      *            default-value="true"
      */
@@ -129,7 +129,7 @@ public class CheckstyleReport
 
     /**
      * Specifies if the Severity summary should be enabled or not.
-     * 
+     *
      * @parameter expression="${checkstyle.enable.severity.summary}"
      *            default-value="true"
      */
@@ -137,7 +137,7 @@ public class CheckstyleReport
 
     /**
      * Specifies if the Files summary should be enabled or not.
-     * 
+     *
      * @parameter expression="${checkstyle.enable.files.summary}"
      *            default-value="true"
      */
@@ -145,14 +145,14 @@ public class CheckstyleReport
 
     /**
      * Specifies if the RSS should be enabled or not.
-     * 
+     *
      * @parameter expression="${checkstyle.enable.rss}" default-value="true"
      */
     private boolean enableRSS;
 
     /**
      * Specifies the names filter of the source files to be used for checkstyle
-     * 
+     *
      * @parameter expression="${checkstyle.includes}" default-value="**\/*.java"
      * @required
      */
@@ -161,7 +161,7 @@ public class CheckstyleReport
     /**
      * Specifies the names filter of the source files to be excluded for
      * checkstyle
-     * 
+     *
      * @parameter expression="${checkstyle.excludes}"
      */
     private String excludes;
@@ -170,7 +170,7 @@ public class CheckstyleReport
      * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
-     * 
+     *
      * <p>
      * Potential values are a filesystem path, a URL, or a classpath resource.
      * This parameter expects that the contents of the location conform to the
@@ -178,25 +178,25 @@ public class CheckstyleReport
      * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
      * module</a>) configuration of rulesets.
      * </p>
-     * 
+     *
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to checkstyle as a configuration.
      * </p>
-     * 
+     *
      * <p>
      * There are 4 predefined rulesets.
      * </p>
-     * 
+     *
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
      * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
-     * 
+     *
      * @parameter expression="${checkstyle.config.location}"
      *            default-value="config/sun_checks.xml"
      */
@@ -205,7 +205,7 @@ public class CheckstyleReport
     /**
      * Specifies what predefined check set to use. Available sets are "sun" (for
      * the Sun coding conventions), "turbine", and "avalon". Default is sun.
-     * 
+     *
      * @parameter default-value="sun"
      * @deprecated Use configLocation instead.
      */
@@ -215,21 +215,21 @@ public class CheckstyleReport
      * <p>
      * Specifies the location of the properties file.
      * </p>
-     * 
+     *
      * <p>
      * This parameter is resolved as URL, File, then resource. If successfully
      * resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to checkstyle for loading.
      * </p>
-     * 
+     *
      * <p>
      * The contents of the <code>propertiesLocation</code> will be made
      * available to checkstyle for specifying values for parameters within the
      * xml configuration (specified in the <code>configLocation</code>
      * parameter).
      * </p>
-     * 
+     *
      * @parameter expression="${checkstyle.properties.location}"
      * @since 2.0-beta-2
      */
@@ -238,7 +238,7 @@ public class CheckstyleReport
     /**
      * Specifies the location of the checkstyle properties that will be used to
      * check the source.
-     * 
+     *
      * @parameter
      * @deprecated Use propertiesLocation instead.
      */
@@ -247,7 +247,7 @@ public class CheckstyleReport
     /**
      * Specifies the URL of the checkstyle properties that will be used to check
      * the source.
-     * 
+     *
      * @parameter
      * @deprecated Use propertiesLocation instead.
      */
@@ -255,7 +255,7 @@ public class CheckstyleReport
 
     /**
      * Allows for specifying raw property expansion information.
-     * 
+     *
      * @parameter
      */
     private String propertyExpansion;
@@ -280,7 +280,7 @@ public class CheckstyleReport
      * &lt;/module>
      * </code>
      * </p>
-     * 
+     *
      * @parameter expression="${checkstyle.header.file}"
      *            default-value="LICENSE.txt"
      * @since 2.0-beta-2
@@ -291,7 +291,7 @@ public class CheckstyleReport
      * Specifies the location of the License file (a.k.a. the header file) that
      * is used by Checkstyle to verify that source code has the correct
      * copyright.
-     * 
+     *
      * @parameter expression="${basedir}/LICENSE.txt"
      * @deprecated Use headerLocation instead.
      */
@@ -299,7 +299,7 @@ public class CheckstyleReport
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
-     * 
+     *
      * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
     private String cacheFile;
@@ -307,7 +307,7 @@ public class CheckstyleReport
     /**
      * If null, the checkstyle task will display violations on stdout.
      * Otherwise, the text file will be created with the violations.
-     * 
+     *
      * @parameter
      */
     private File useFile;
@@ -316,19 +316,19 @@ public class CheckstyleReport
      * <p>
      * Specifies the location of the suppressions XML file to use.
      * </p>
-     * 
+     *
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
      * before being passed to Checkstyle for loading.
      * </p>
-     * 
+     *
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
      * be made available to your checkstyle configuration.
      * </p>
-     * 
+     *
      * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
@@ -336,7 +336,7 @@ public class CheckstyleReport
 
     /**
      * The key to be used in the properties for the suppressions file.
-     * 
+     *
      * @parameter expression="${checkstyle.suppression.expression}"
      *            default-value="checkstyle.suppressions.file"
      * @since 2.1
@@ -349,7 +349,7 @@ public class CheckstyleReport
      * <code>checkstyle.suppressions.file</code> with the value of this
      * property. This allows using the Checkstyle property in your own custom
      * checkstyle configuration file when specifying a suppressions file.
-     * 
+     *
      * @parameter
      * @deprecated Use suppressionsLocation instead.
      */
@@ -358,7 +358,7 @@ public class CheckstyleReport
     /**
      * Specifies the path and filename to save the checkstyle output. The format
      * of the output file is determined by the <code>outputFileFormat</code>
-     * 
+     *
      * @parameter expression="${checkstyle.output.file}"
      *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
@@ -367,7 +367,7 @@ public class CheckstyleReport
     /**
      * Specifies the format of the output to be used when writing to the output
      * file. Valid values are "plain" and "xml"
-     * 
+     *
      * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
     private String outputFileFormat;
@@ -378,14 +378,14 @@ public class CheckstyleReport
      * the Checkstyle <a
      * href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
      * </p>
-     * 
+     *
      * <p>
      * This parameter is resolved as resource, URL, then file. If resolved to a
      * resource, or a URL, the contents of the package names XML is copied into
      * the <code>${project.build.directory}/checkstyle-packagenames.xml</code>
      * file before being passed to checkstyle for loading.
      * </p>
-     * 
+     *
      * @parameter
      * @since 2.0-beta-2
      */
@@ -394,7 +394,7 @@ public class CheckstyleReport
     /**
      * Specifies the location of the package names XML to be used to configure
      * Checkstyle
-     * 
+     *
      * @parameter
      * @deprecated Use packageNamesLocation instead.
      */
@@ -402,14 +402,14 @@ public class CheckstyleReport
 
     /**
      * Specifies if the build should fail upon a violation.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean failsOnError;
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle
-     * 
+     *
      * @parameter default-value="${project.build.sourceDirectory}"
      * @required
      */
@@ -418,7 +418,7 @@ public class CheckstyleReport
     /**
      * Specifies the location of the test source directory to be used for
      * Checkstyle
-     * 
+     *
      * @parameter default-value="${project.build.testSourceDirectory}"
      * @since 2.2
      */
@@ -426,7 +426,7 @@ public class CheckstyleReport
 
     /**
      * Include or not the test source directory to be used for Checkstyle
-     * 
+     *
      * @parameter default-value="${false}"
      * @since 2.2
      */
@@ -434,7 +434,7 @@ public class CheckstyleReport
 
     /**
      * The Maven Project Object
-     * 
+     *
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -443,7 +443,7 @@ public class CheckstyleReport
 
     /**
      * Output errors to console.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean consoleOutput;
@@ -451,7 +451,7 @@ public class CheckstyleReport
     /**
      * Link the violation line numbers to the source xref. Defaults to true and
      * will link automatically if jxr plugin is being used.
-     * 
+     *
      * @parameter expression="${linkXRef}" default-value="true"
      * @since 2.1
      */
@@ -459,7 +459,7 @@ public class CheckstyleReport
 
     /**
      * Location of the Xrefs to link to.
-     * 
+     *
      * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
     private File xrefLocation;
@@ -473,7 +473,7 @@ public class CheckstyleReport
 
     /**
      * Velocity Component
-     * 
+     *
      * @component role="org.codehaus.plexus.velocity.VelocityComponent"
      * @required
      */
@@ -726,7 +726,7 @@ public class CheckstyleReport
     /**
      * Merge in the deprecated parameters to the new ones, unless the new
      * parameters have values.
-     * 
+     *
      * @deprecated Remove when deprecated params are removed.
      */
     private void mergeDeprecatedInfo()
@@ -985,6 +985,8 @@ public class CheckstyleReport
 
             if ( StringUtils.isNotEmpty( propertyExpansion ) )
             {
+                // Convert \ to \\, so that p.load will convert it back properly
+                propertyExpansion = StringUtils.replace( propertyExpansion, "\\", "\\\\" );
                 p.load( new StringInputStream( propertyExpansion ) );
             }
 
