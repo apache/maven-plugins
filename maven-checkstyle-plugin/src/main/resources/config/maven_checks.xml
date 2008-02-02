@@ -143,6 +143,8 @@ under the License.
         <module name="EqualsHashCode"/>
         <module name="HiddenField">
           <property name="severity" value="warning"/>
+          <property name="ignoreSetter" value="true"/>
+          <property name="ignoreConstructorParameter" value="true"/>
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
