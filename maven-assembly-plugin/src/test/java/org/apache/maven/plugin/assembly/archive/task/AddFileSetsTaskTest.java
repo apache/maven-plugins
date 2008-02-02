@@ -137,9 +137,9 @@ public class AddFileSetsTaskTest
         File srcDir = new File( macTask.archiveBaseDir, dirname );
         srcDir.mkdirs();
 
-        int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
+        int[] modes = { -1, -1, -1, -1 };
 
-        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
+        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 1, true, false );
 
         macTask.expectGetProject( null );
 
@@ -172,9 +172,9 @@ public class AddFileSetsTaskTest
         File srcDir = new File( archiveBaseDir, dirname );
         srcDir.mkdirs();
 
-        int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
+        int[] modes = { -1, -1, -1, -1 };
 
-        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
+        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 1, true, false );
 
         macTask.expectGetProject( null );
 
