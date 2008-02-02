@@ -26,10 +26,13 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.FinalizerEnabled;
+import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.util.DefaultArchivedFileSet;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
@@ -792,6 +795,26 @@ public class AssemblyProxyArchiver
             return inputFile.isFile();
         }
 
+    }
+
+    public void addResource( PlexusIoResource resource,
+                             String destFileName,
+                             int permissions )
+        throws ArchiverException
+    {
+        delegate.addResource( resource, destFileName, permissions );
+    }
+
+    public void addResources( PlexusIoResourceCollection resources )
+        throws ArchiverException
+    {
+        delegate.addResources( resources );
+    }
+
+    public ResourceIterator getResources()
+        throws ArchiverException
+    {
+        return delegate.getResources();
     }
 
 }
