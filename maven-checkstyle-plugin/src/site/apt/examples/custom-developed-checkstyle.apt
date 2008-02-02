@@ -30,7 +30,7 @@ Using Custom Developed Checkstyle Check Modules
    {{{http://checkstyle.sourceforge.net/config.html#Packages}package names definition}} required to
    reference your custom check modules.
 
-   TIP: Create a maven project that produces a jar file of your custom checks, and then include it in your
+   <<TIP:>> Create a maven project that produces a jar file of your custom checks, and then include it in your
    projects using the maven build extension in the pom.xml to avoid them being included in the compile or
    package phases of your project.
 
@@ -74,7 +74,7 @@ mycompany-checkstyle-checks-1.0.jar
 
 +-----+
 <project>
-   ...
+  ...
   <reporting>
     <plugins>
       <plugin>
@@ -84,18 +84,16 @@ mycompany-checkstyle-checks-1.0.jar
           <configLocation>checkstyle.xml</configLocation>
           <packageNamesLocation>com/mycompany/checkstyle/packagenames.xml</packageNamesLocation>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.mycompany</groupId>
+            <artifactId>mycompany-checkstyle-checks</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </reporting>
-   ...
-  <build>
-    <extensions>
-      <extension>
-        <groupId>com.mycompany</groupId>
-        <artifactId>mycompany-checkstyle-checks</artifactId>
-        <version>1.0</version>
-      </extension>
-    </extensions>
-  </build>
+  ...
 </project>
 +-----+
