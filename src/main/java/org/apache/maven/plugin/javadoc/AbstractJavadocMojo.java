@@ -50,6 +50,8 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
@@ -1839,7 +1841,8 @@ public abstract class AbstractJavadocMojo
                                 {
                                     String key = it.next().toString();
 
-                                    sb.append( compileArtifactMap.get( key ) ).append( '\n' );
+                                    Artifact a = (Artifact) compileArtifactMap.get( key );
+                                    sb.append( a.getFile() ).append( '\n' );
                                 }
 
                                 getLog().debug( sb.toString() );
@@ -1858,7 +1861,13 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        classpathElements.addAll( compileArtifactMap.values() );
+        for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+        {
+            String key = it.next().toString();
+
+            Artifact a = (Artifact) compileArtifactMap.get( key );
+            classpathElements.add( a.getFile() );
+        }
 
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
@@ -1877,17 +1886,32 @@ public abstract class AbstractJavadocMojo
         {
             for ( Iterator i = artifactList.iterator(); i.hasNext(); )
             {
-                Artifact a = (Artifact) i.next();
+                Artifact newArtifact = (Artifact) i.next();
 
-                File file = a.getFile();
+                File file = newArtifact.getFile();
 
                 if ( file == null )
                 {
                     throw new MavenReportException( "Error in plugin descriptor - "
-                        + "dependency was not resolved for artifact: " + a.getGroupId() + ":" + a.getArtifactId() + ":"
-                        + a.getVersion() );
+                        + "dependency was not resolved for artifact: " + newArtifact.getGroupId() + ":"
+                        + newArtifact.getArtifactId() + ":" + newArtifact.getVersion() );
                 }
-                compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
+
+                if ( compileArtifactMap.get( newArtifact.getDependencyConflictId() ) != null )
+                {
+                    Artifact oldArtifact = (Artifact) compileArtifactMap.get( newArtifact.getDependencyConflictId() );
+
+                    ArtifactVersion oldVersion = new DefaultArtifactVersion( oldArtifact.getVersion() );
+                    ArtifactVersion newVersion = new DefaultArtifactVersion( newArtifact.getVersion() );
+                    if ( newVersion.compareTo( oldVersion ) > 1 )
+                    {
+                        compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
+                    }
+                }
+                else
+                {
+                    compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
+                }
             }
         }
     }
