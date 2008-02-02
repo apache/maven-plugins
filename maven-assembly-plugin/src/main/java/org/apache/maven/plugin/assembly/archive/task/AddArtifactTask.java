@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -39,6 +40,8 @@ import java.util.List;
 public class AddArtifactTask
     implements ArchiverTask
 {
+
+    public static final String[] DEFAULT_INCLUDES_ARRAY = { "**/*" };
 
     private String directoryMode;
 
@@ -85,6 +88,10 @@ public class AddArtifactTask
             }
 
             String[] includesArray = TypeConversionUtils.toStringArray( includes );
+            if ( includesArray == null )
+            {
+                includesArray = DEFAULT_INCLUDES_ARRAY;
+            }
             String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
             int oldDirMode = archiver.getDefaultDirectoryMode();
@@ -117,6 +124,8 @@ public class AddArtifactTask
                 else
                 {
                     logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
+                    logger.debug( "includes:\n" + StringUtils.join( includesArray, "\n" ) + "\n" );
+                    logger.debug( "excludes:\n" + (excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) ) + "\n" );
                     archiver.addArchivedFileSet( artifactFile, outputLocation, includesArray, excludesArray );
                 }
             }
