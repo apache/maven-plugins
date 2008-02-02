@@ -19,6 +19,25 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
+import org.codehaus.plexus.archiver.ResourceIterator;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.Text;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,22 +54,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import junit.framework.TestCase;
-
-import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.codehaus.plexus.archiver.ArchivedFileSet;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.Text;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
 
 public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
@@ -521,6 +524,26 @@ public class ComponentsXmlArchiverFileFilterTest
         }
 
         public void addFileSet( FileSet fileSet )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addResource( PlexusIoResource resource,
+                                 String destFileName,
+                                 int permissions )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addResources( PlexusIoResourceCollection resources )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public ResourceIterator getResources()
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );

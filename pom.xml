@@ -298,12 +298,12 @@
                   <debug>true</debug>
 
                  <!-- Useful config for debugging one IT -->
-                  <!--
+                 <!--
                   <pomIncludes>
-                    <pomInclude>**/container-descriptors/**/pom.xml</pomInclude>
+                    <pomInclude>**/dependency-sets/including*/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>true</streamLogs>
-                   -->
+                 -->
                   <!-- END single-IT debugging block. -->
 
                   <pomIncludes>
@@ -366,7 +366,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-9</version>
+      <version>1.0-alpha-10-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -398,7 +398,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-2-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>

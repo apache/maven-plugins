@@ -290,7 +290,15 @@ public class AddDependencySetsTask
 
         try
         {
-            archiver.addFile( source, target, TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger ) );
+            int mode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
+            if ( mode > -1 )
+            {
+                archiver.addFile( source, target, mode );
+            }
+            else
+            {
+                archiver.addFile( source, target );
+            }
         }
         catch ( ArchiverException e )
         {
