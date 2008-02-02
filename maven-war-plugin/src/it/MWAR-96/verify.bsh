@@ -48,11 +48,11 @@ try
     FileInputStream fis = new FileInputStream ( param );
     String paramContent = IOUtil.toString ( fis );
     
-    
-    int indexOf = paramContent.indexOf( "<td>java version : 1.0-SNAPSHOT</td>" );
-    if ( indexOf >= 0)
+    String javaVersion = System.getProperty("java.version");
+    int indexOf = paramContent.indexOf( "<td>java version : " + javaVersion + "</td>" );
+    if ( indexOf < 0)
     {
-    	System.err.println( "index.jsp contains <td>java version : 1.0-SNAPSHOT</td>" );
+    	System.err.println( "index.jsp not contains <td>java version : " + javaVersion + "</td>" );
     	return false;
     }
     
