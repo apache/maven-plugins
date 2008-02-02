@@ -27,6 +27,12 @@
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
     </component>
+    <component>
+      <role>org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection</role>
+      <role-hint>sar</role-hint>
+      <implementation>org.codehaus.plexus.components.io.resources.PlexusIoZipFileResourceCollection</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+    </component>
 
     <component>
       <role>org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler</role>

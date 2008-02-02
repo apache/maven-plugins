@@ -138,7 +138,7 @@ public class AddArtifactTaskTest
 
         try
         {
-            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, null, null );
+            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
         }
         catch ( ArchiverException e )
         {
@@ -172,7 +172,7 @@ public class AddArtifactTaskTest
 
         try
         {
-            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, null, null );
+            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
         }
         catch ( ArchiverException e )
         {
