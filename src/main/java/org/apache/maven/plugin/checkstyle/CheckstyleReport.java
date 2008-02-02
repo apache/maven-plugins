@@ -990,6 +990,16 @@ public class CheckstyleReport
                 p.load( new StringInputStream( propertyExpansion ) );
             }
 
+            // Workaround for MCHECKSTYLE-48
+            // Make sure that "config/maven-header.txt" is the default value
+            // for headerLocation, if configLocation="config/maven_checks.xml"
+            if ( "config/maven_checks.xml".equals( configLocation ) )
+            {
+                if ( "LICENSE.txt".equals( headerLocation ) )
+                {
+                    headerLocation = "config/maven-header.txt";
+                }
+            }
             if ( StringUtils.isNotEmpty( headerLocation ) )
             {
                 try
