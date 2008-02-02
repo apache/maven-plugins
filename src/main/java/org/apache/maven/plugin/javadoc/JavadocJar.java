@@ -101,7 +101,10 @@ public class JavadocJar
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
-            getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
+            }
         }
         else
         {
@@ -115,8 +118,10 @@ public class JavadocJar
 
                     if ( !attach )
                     {
-                        getLog().info( "NOT adding javadoc to attached artifacts list." );
-
+                        if ( getLog().isInfoEnabled() )
+                        {
+                            getLog().info( "NOT adding javadoc to attached artifacts list." );
+                        }
                     }
                     else
                     {
