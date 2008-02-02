@@ -217,16 +217,43 @@ public class CheckstyleReportGenerator
         sink.figure_();
     }
 
-    private String getConfigAttribute( Configuration config, String attname, String defvalue )
+    /**
+     * Get the value of the specified attribute from the Checkstyle configuration.
+     * If parentConfigurations is non-null and non-empty, the parent
+     * configurations are searched if the attribute cannot be found in the
+     * current configuration. If the attribute is still not found, the
+     * specified default value will be returned.
+     *
+     * @param config The current Checkstyle configuration
+     * @param parentConfigurations The configurations for the parents of the current configuration
+     * @param attributeName The name of the attribute
+     * @param defaultValue The default value to use if the attribute cannot be found in any configuration
+     * @return The value of the specified attribute
+     */
+    private String getConfigAttribute( Configuration config, List parentConfigurations, String attributeName,
+                                       String defaultValue )
     {
         String ret;
         try
         {
-            ret = config.getAttribute( attname );
+            ret = config.getAttribute( attributeName );
         }
         catch ( CheckstyleException e )
         {
-            ret = defvalue;
+            // Try to find the attribute in a parent, if there are any
+            if ( parentConfigurations != null && !parentConfigurations.isEmpty() )
+            {
+                Configuration parentConfiguration =
+                    (Configuration) parentConfigurations.get( parentConfigurations.size() - 1 );
+                List newParentConfigurations = new ArrayList( parentConfigurations );
+                // Remove the last parent
+                newParentConfigurations.remove( parentConfiguration );
+                ret = getConfigAttribute( parentConfiguration, newParentConfigurations, attributeName, defaultValue );
+            }
+            else
+            {
+                ret = defaultValue;
+            }
         }
         return ret;
     }
@@ -267,7 +294,7 @@ public class CheckstyleReportGenerator
         // Top level should be the checker.
         if ( "checker".equalsIgnoreCase( checkstyleConfig.getName() ) )
         {
-            doRuleChildren( checkstyleConfig.getChildren(), results );
+            doRuleChildren( checkstyleConfig, null, results );
         }
         else
         {
@@ -286,11 +313,41 @@ public class CheckstyleReportGenerator
     /**
      * Create a summary for each Checkstyle rule.
      *
-     * @param configChildren Configurations for each Checkstyle rule
+     * @param configuration The Checkstyle configuration
+     * @param parentConfigurations A List of configurations for the chain of parents to the current configuration
      * @param results The results to summarize
      */
-    private void doRuleChildren( Configuration configChildren[], CheckstyleResults results )
+    private void doRuleChildren( Configuration configuration, List parentConfigurations, CheckstyleResults results )
     {
+        // Remember the chain of parent configurations
+        if ( parentConfigurations == null )
+        {
+            parentConfigurations = new ArrayList();
+        }
+        // The "oldest" parent will be first in the list
+        parentConfigurations.add( configuration );
+
+        if ( getLog().isDebugEnabled() )
+        {
+            // Log the parent configuration path
+            StringBuffer parentPath = new StringBuffer();
+            Iterator iterator = parentConfigurations.iterator();
+            while ( iterator.hasNext() )
+            {
+                Configuration parentConfiguration = (Configuration) iterator.next();
+                parentPath.append( parentConfiguration.getName() );
+                if ( iterator.hasNext() )
+                {
+                    parentPath.append( " --> " );
+                }
+            }
+            if ( parentPath.length() > 0 )
+            {
+                getLog().debug( "Parent Configuration Path: " + parentPath.toString() );
+            }
+        }
+
+        Configuration configChildren[] = configuration.getChildren();
         for ( int cci = 0; cci < configChildren.length; cci++ )
         {
             String ruleName = configChildren[cci].getName();
@@ -298,11 +355,11 @@ public class CheckstyleReportGenerator
             if ( "TreeWalker".equals( ruleName ) )
             {
                 // special sub-case
-                doRuleChildren( configChildren[cci].getChildren(), results );
+                doRuleChildren( configChildren[cci], parentConfigurations, results );
             }
             else
             {
-                doRuleRow( configChildren[cci], ruleName, results );
+                doRuleRow( configChildren[cci], parentConfigurations, ruleName, results );
             }
         }
     }
@@ -311,10 +368,12 @@ public class CheckstyleReportGenerator
      * Create a summary for one Checkstyle rule.
      *
      * @param checkerConfig Configuration for the Checkstyle rule
+     * @param parentConfigurations Configurations for the parents of this rule
      * @param ruleName The name of the rule, for example "JavadocMethod"
      * @param results The results to summarize
      */
-    private void doRuleRow( Configuration checkerConfig, String ruleName, CheckstyleResults results )
+    private void doRuleRow( Configuration checkerConfig, List parentConfigurations, String ruleName,
+                            CheckstyleResults results )
     {
         sink.tableRow();
         sink.tableCell();
@@ -334,7 +393,7 @@ public class CheckstyleReportGenerator
                 sink.text( name );
                 sink.bold_();
 
-                String value = getConfigAttribute( checkerConfig, name, "" );
+                String value = getConfigAttribute( checkerConfig, null, name, "" );
                 // special case, Header.header and RegexpHeader.header
                 if ( "header".equals( name ) && ( "Header".equals( ruleName ) || "RegexpHeader".equals( ruleName ) ) )
                 {
@@ -372,16 +431,17 @@ public class CheckstyleReportGenerator
         sink.tableCell_();
 
         sink.tableCell();
-        String fixedmessage = getConfigAttribute( checkerConfig, "message", null );
+        String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
         // Grab the severity from the rule configuration, use null as default value
-        String configSeverity = getConfigAttribute( checkerConfig, "severity", null );
+        String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
         sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage,
                                        configSeverity ) );
         sink.tableCell_();
 
         sink.tableCell();
-        // Grab the severity again from the rule configuration, this time use error as default value
-        configSeverity = getConfigAttribute( checkerConfig, "severity", "error" );
+        // Grab the severity from the rule configuration, this time use error as default value
+        // Also pass along all parent configurations, so that we can try to find the severity there
+        configSeverity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
         iconSeverity( configSeverity );
         sink.nonBreakingSpace();
         sink.text( StringUtils.capitalise( configSeverity ) );
