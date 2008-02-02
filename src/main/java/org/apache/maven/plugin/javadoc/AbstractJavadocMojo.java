@@ -1171,20 +1171,29 @@ public abstract class AbstractJavadocMojo
         }
         catch ( IOException e )
         {
-            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-            getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
             jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
         catch ( CommandLineException e )
         {
-            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-            getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
             jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
         catch ( IllegalArgumentException e )
         {
-            getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-            getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
             jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
 
@@ -1201,7 +1210,10 @@ public abstract class AbstractJavadocMojo
 
             if ( fJavadocVersion != jVersion )
             {
-                getLog().warn( "Are you sure about the <javadocVersion/> parameter? It seems to be " + jVersion );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "Are you sure about the <javadocVersion/> parameter? It seems to be " + jVersion );
+                }
             }
         }
         else
@@ -1301,7 +1313,10 @@ public abstract class AbstractJavadocMojo
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
-            getLog().warn( "Javadoc 1.4+ doesn't support the -1.1 switch anymore. Ignore this option." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Javadoc 1.4+ doesn't support the -1.1 switch anymore. Ignore this option." );
+            }
         }
         else
         {
@@ -1358,7 +1373,10 @@ public abstract class AbstractJavadocMojo
                     if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
                         || StringUtils.isEmpty( groups[i].getPackages() ) )
                     {
-                        getLog().warn( "A group option is empty. Ignore this option." );
+                        if ( getLog().isWarnEnabled() )
+                        {
+                            getLog().warn( "A group option is empty. Ignore this option." );
+                        }
                     }
                     else
                     {
@@ -1415,7 +1433,10 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
                     {
-                        getLog().warn( "A taglet option is empty. Ignore this option." );
+                        if ( getLog().isWarnEnabled() )
+                        {
+                            getLog().warn( "A taglet option is empty. Ignore this option." );
+                        }
                     }
                     else
                     {
@@ -1432,7 +1453,10 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( StringUtils.isEmpty( tags[i].getName() ) )
                     {
-                        getLog().warn( "A tag name is empty. Ignore this option." );
+                        if ( getLog().isWarnEnabled() )
+                        {
+                            getLog().warn( "A tag name is empty. Ignore this option." );
+                        }
                     }
                     else
                     {
@@ -1499,7 +1523,10 @@ public abstract class AbstractJavadocMojo
         // Execute command line
         // ----------------------------------------------------------------------
 
-        getLog().debug( Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted arguments
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted arguments
+        }
 
         if ( debug )
         {
@@ -1516,7 +1543,10 @@ public abstract class AbstractJavadocMojo
             }
             catch ( IOException e )
             {
-                getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
+                }
             }
         }
 
@@ -1547,14 +1577,17 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isNotEmpty( err.getOutput() ) )
         {
-            getLog().info( "Javadoc Warnings" );
-
-            StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
-            while ( token.hasMoreTokens() )
+            if ( getLog().isWarnEnabled() )
             {
-                String current = token.nextToken().trim();
+                getLog().warn( "Javadoc Warnings" );
 
-                getLog().warn( current );
+                StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
+                while ( token.hasMoreTokens() )
+                {
+                    String current = token.nextToken().trim();
+
+                    getLog().warn( current );
+                }
             }
         }
     }
@@ -1793,6 +1826,24 @@ public abstract class AbstractJavadocMojo
                                 .resolveTransitively( dependencyArtifacts, subProject.getArtifact(), subProject
                                     .getRemoteArtifactRepositories(), localRepository, artifactMetadataSource );
                             populateCompileArtifactMap( compileArtifactMap, JavadocUtil.getCompileArtifacts( result.getArtifacts() ) );
+
+                            if ( getLog().isDebugEnabled() )
+                            {
+                                StringBuffer sb = new StringBuffer();
+
+                                sb.append( "Compiled artifacts for " );
+                                sb.append( subProject.getGroupId() ).append( ":" );
+                                sb.append( subProject.getArtifactId() ).append( ":" );
+                                sb.append( subProject.getVersion() ).append( '\n' );
+                                for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+                                {
+                                    String key = it.next().toString();
+
+                                    sb.append( compileArtifactMap.get( key ) ).append( '\n' );
+                                }
+
+                                getLog().debug( sb.toString() );
+                            }
                         }
                     }
                 }
@@ -1939,7 +1990,10 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().error( "Unrecognized access level to show '" + show + "'. Defaulting to protected." );
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error( "Unrecognized access level to show '" + show + "'. Defaulting to protected." );
+            }
             accessLevel = "-protected";
         }
 
@@ -1988,9 +2042,12 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( path.toString() ) )
         {
-            getLog().warn(
-                           "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
-                               + " or <doclets/>." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn(
+                               "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
+                                   + " or <doclets/>." );
+            }
         }
 
         return path.toString();
@@ -2127,7 +2184,10 @@ public abstract class AbstractJavadocMojo
             }
             catch ( IllegalArgumentException e )
             {
-                getLog().error( "Malformed memory pattern for '" + arg + memory + "'. Ignore this option." );
+                if ( getLog().isErrorEnabled() )
+                {
+                    getLog().error( "Malformed memory pattern for '" + arg + memory + "'. Ignore this option." );
+                }
             }
         }
     }
@@ -2142,12 +2202,20 @@ public abstract class AbstractJavadocMojo
         // backward compatible
         if ( StringUtils.isNotEmpty( proxyHost ) )
         {
-            getLog().warn( "The Javadoc plugin parameter 'proxyHost' is deprecated since 2.4. Please configure an active proxy in your settings.xml." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "The Javadoc plugin parameter 'proxyHost' is deprecated since 2.4. " +
+                        "Please configure an active proxy in your settings.xml." );
+            }
             cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
 
             if ( proxyPort > 0 )
             {
-                getLog().warn( "The Javadoc plugin parameter 'proxyPort' is deprecated since 2.4. Please configure an active proxy in your settings.xml." );
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "The Javadoc plugin parameter 'proxyPort' is deprecated since 2.4. " +
+                        "Please configure an active proxy in your settings.xml." );
+                }
                 cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
             }
         }
@@ -2318,7 +2386,11 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion + ". Ignore this option." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion
+                               + ". Ignore this option." );
+            }
         }
     }
 
@@ -2361,7 +2433,11 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion + ". Ignore this option." );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion
+                               + ". Ignore this option." );
+            }
         }
     }
 
@@ -2463,7 +2539,10 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+            }
         }
     }
 
@@ -2557,11 +2636,17 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    getLog().error( "Malformed link: " + link + "/package-list. Ignored it." );
+                    if ( getLog().isErrorEnabled() )
+                    {
+                        getLog().error( "Malformed link: " + link + "/package-list. Ignored it." );
+                    }
                 }
                 catch ( IOException e )
                 {
-                    getLog().error( "Error fetching link: " + link + "/package-list. Ignored it." );
+                    if ( getLog().isErrorEnabled() )
+                    {
+                        getLog().error( "Error fetching link: " + link + "/package-list. Ignored it." );
+                    }
                 }
             }
         }
