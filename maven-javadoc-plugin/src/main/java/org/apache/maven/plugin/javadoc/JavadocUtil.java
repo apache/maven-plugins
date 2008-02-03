@@ -215,7 +215,8 @@ public class JavadocUtil
     {
         if ( javadocDir.exists() && javadocDir.isDirectory() )
         {
-            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", null, false, true );
+            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( FileUtils
+                .getDefaultExcludes(), "," ), false, true );
             for ( Iterator it = docFiles.iterator(); it.hasNext(); )
             {
                 String docFile = (String) it.next();
