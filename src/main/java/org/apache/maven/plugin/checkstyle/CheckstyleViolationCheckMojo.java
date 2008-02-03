@@ -37,11 +37,12 @@ import java.io.Reader;
  * Perform a violation check against the last Checkstyle run to see if there are
  * any violations. It reads the Checkstyle output file, counts the number of
  * violations found and displays it on the console.
- * 
+ *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @goal check
  * @phase verify
  * @execute goal="checkstyle"
+ * @requiresDependencyResolution compile
  */
 public class CheckstyleViolationCheckMojo
     extends AbstractMojo
@@ -49,7 +50,7 @@ public class CheckstyleViolationCheckMojo
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
      * of the output file is determined by the <code>outputFileFormat</code>
-     * 
+     *
      * @parameter expression="${checkstyle.output.file}"
      *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
@@ -58,14 +59,14 @@ public class CheckstyleViolationCheckMojo
     /**
      * Specifies the format of the output to be used when writing to the output
      * file. Valid values are "plain" and "xml"
-     * 
+     *
      * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
     private String outputFileFormat;
 
     /**
      * Do we fail the build on a violation?
-     * 
+     *
      * @parameter expression="${checkstyle.failOnViolation}"
      *            default-value="true"
      */
@@ -73,7 +74,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Skip entire check.
-     * 
+     *
      * @parameter expression="${checkstyle.skip}" default-value="false"
      * @since 2.2
      */
