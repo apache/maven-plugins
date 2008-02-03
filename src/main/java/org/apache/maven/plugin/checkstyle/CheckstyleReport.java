@@ -792,14 +792,17 @@ public class CheckstyleReport
         // setup classloader, needed to avoid "Unable to get class information
         // for ..." errors
         List classPathStrings;
+        List outputDirectories = new ArrayList();
         try
         {
             classPathStrings = this.project.getCompileClasspathElements();
+            outputDirectories.add( this.project.getBuild().getOutputDirectory() );
 
             if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
                 && ( testSourceDirectory.isDirectory() ) )
             {
                 classPathStrings = this.project.getTestClasspathElements();
+                outputDirectories.add( this.project.getBuild().getTestOutputDirectory() );
             }
         }
         catch ( DependencyResolutionRequiredException e )
@@ -817,6 +820,34 @@ public class CheckstyleReport
                 urls.add( new File( ( (String) iter.next() ) ).toURL() );
             }
             catch ( MalformedURLException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+        }
+
+        Iterator iterator = outputDirectories.iterator();
+        while ( iterator.hasNext() )
+        {
+            try
+            {
+                String outputDirectoryString = (String) iterator.next();
+                if ( outputDirectoryString != null )
+                {
+                    File outputDirectoryFile = new File( outputDirectoryString );
+                    if ( outputDirectoryFile.exists() )
+                    {
+                        URL outputDirectoryUrl = outputDirectoryFile.toURL();
+                        getLog().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString() +
+                            " to the Checkstyle class path" );
+                        urls.add( outputDirectoryUrl );
+                    }
+                }
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+            catch ( IOException e )
             {
                 throw new MavenReportException( e.getMessage(), e );
             }
