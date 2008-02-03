@@ -28,8 +28,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -45,11 +47,11 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.AbstractMojo;
@@ -1835,9 +1837,39 @@ public abstract class AbstractJavadocMojo
                         Set dependencyArtifacts = subProject.createArtifacts( factory, null, null );
                         if ( !dependencyArtifacts.isEmpty() )
                         {
-                            ArtifactResolutionResult result = resolver
-                                .resolveTransitively( dependencyArtifacts, subProject.getArtifact(), subProject
-                                    .getRemoteArtifactRepositories(), localRepository, artifactMetadataSource );
+                            ArtifactResolutionResult result = null;
+                            try
+                            {
+                                result = resolver.resolveTransitively( dependencyArtifacts, subProject.getArtifact(),
+                                                                       subProject.getRemoteArtifactRepositories(),
+                                                                       localRepository, artifactMetadataSource );
+                            }
+                            catch ( MultipleArtifactsNotFoundException e )
+                            {
+                                if ( checkMissingArtifactsInReactor( dependencyArtifacts, e.getMissingArtifacts() ) )
+                                {
+                                    getLog().warn( "IGNORED to add some artifacts in the classpath. See above." );
+                                }
+                                else
+                                {
+                                    //we can't find all the artifacts in the reactor so bubble the exception up.
+                                    throw new MavenReportException( e.getMessage(), e );
+                                }
+                            }
+                            catch ( ArtifactNotFoundException e )
+                            {
+                                throw new MavenReportException( e.getMessage(), e );
+                            }
+                            catch ( ArtifactResolutionException e )
+                            {
+                                throw new MavenReportException( e.getMessage(), e );
+                            }
+
+                            if ( result == null )
+                            {
+                                continue;
+                            }
+
                             populateCompileArtifactMap( compileArtifactMap, JavadocUtil.getCompileArtifacts( result.getArtifacts() ) );
 
                             if ( getLog().isDebugEnabled() )
@@ -1861,10 +1893,6 @@ public abstract class AbstractJavadocMojo
                         }
                     }
                 }
-            }
-            catch ( AbstractArtifactResolutionException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
             }
             catch ( InvalidDependencyVersionException e )
             {
@@ -3034,5 +3062,48 @@ public abstract class AbstractJavadocMojo
         {
             throw new MavenReportException( "Option <noindex/> conflicts with <splitindex/>" );
         }
+    }
+
+    /**
+     * This method is checking to see if the artifacts that can't be resolved are all
+     * part of this reactor. This is done to prevent a chicken or egg scenario with
+     * fresh projects. See MJAVADOC-116 for more info.
+     *
+     * @param dependencyArtifacts the sibling projects in the reactor
+     * @param missing the artifacts that can't be found
+     * @return true if ALL missing artifacts are found in the reactor.
+     * @see DefaultPluginManager#checkRequiredMavenVersion( plugin, localRepository, remoteRepositories )
+     */
+    private boolean checkMissingArtifactsInReactor( Collection dependencyArtifacts, Collection missing )
+    {
+        Set foundInReactor = new HashSet();
+        Iterator iter = missing.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact mArtifact = (Artifact) iter.next();
+            Iterator pIter = reactorProjects.iterator();
+            while ( pIter.hasNext() )
+            {
+                MavenProject p = (MavenProject) pIter.next();
+                if ( p.getArtifactId().equals( mArtifact.getArtifactId() )
+                    && p.getGroupId().equals( mArtifact.getGroupId() )
+                    && p.getVersion().equals( mArtifact.getVersion() ) )
+                {
+                    getLog()
+                        .warn(
+                               "The dependency: [" + p.getId()
+                                   + "} can't be resolved but has been found in the reactor (probably snapshots).\n"
+                                   + "This dependency has been excluded from the Javadoc classpath. "
+                                   + "You should rerun javadoc after executing mvn install." );
+
+                    //found it, move on.
+                    foundInReactor.add( p );
+                    break;
+                }
+            }
+        }
+
+        //if all of them have been found, we can continue.
+        return foundInReactor.size() == missing.size();
     }
 }
