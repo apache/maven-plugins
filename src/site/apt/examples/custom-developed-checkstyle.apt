@@ -27,17 +27,17 @@
 
 Using Custom Developed Checkstyle Check Modules
 
- For the really adventurous, custom Checkstyle checks can be used with the Maven 2 Checkstyle Plugin.
+ For the really adventurous, custom Checkstyle checks can be used with the Checkstyle plugin.
 
    The plugin provides the ability to define the
    {{{http://checkstyle.sourceforge.net/config.html#Packages}package names definition}} required to
    reference your custom check modules.
 
-   <<TIP:>> Create a maven project that produces a jar file of your custom checks, and then include it in your
+   <<TIP:>> Create a Maven project that produces a jar file of your custom checks, and then include it in your
    projects using the maven build extension in the pom.xml to avoid them being included in the compile or
    package phases of your project.
 
-   Example: <<mycompany-checkstyle-checks-1.0.jar>>.
+   Example: <<<mycompany-checkstyle-checks-1.0.jar>>>.
 
 +-----+
 mycompany-checkstyle-checks-1.0.jar
@@ -56,7 +56,7 @@ mycompany-checkstyle-checks-1.0.jar
             `-- PurityCheck.class
 +-----+
 
-   Example: <<checkstyle.xml>>
+   Example: <<<checkstyle.xml>>>
 
 +-----+
 <?xml version="1.0" ?>
@@ -73,7 +73,7 @@ mycompany-checkstyle-checks-1.0.jar
 +-----+
 
 
-   Example: <<pom.xml>>
+   Example: <<<pom.xml>>>
 
 +-----+
 <project>
