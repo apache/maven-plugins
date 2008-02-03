@@ -112,7 +112,10 @@ public class CheckstyleReport
     private boolean skip;
 
     /**
-     * Specifies the directory where the report will be generated
+     * The output directory for the report. Note that this parameter is only
+     * evaluated if the goal is run directly from the command line. If the goal
+     * is run indirectly as part of a site generation, the output directory
+     * configured in Maven Site Plugin is used instead.
      *
      * @parameter default-value="${project.reporting.outputDirectory}"
      * @required
