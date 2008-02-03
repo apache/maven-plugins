@@ -195,8 +195,14 @@ public class TestJavadocReport
     protected List getProjectBuildOutputDirs( MavenProject p )
     {
         List dirs = new ArrayList();
-        dirs.add( p.getBuild().getOutputDirectory() );
-        dirs.add( p.getBuild().getTestOutputDirectory() );
+        if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
+        {
+            dirs.add( p.getBuild().getOutputDirectory() );
+        }
+        if ( StringUtils.isNotEmpty( p.getBuild().getTestOutputDirectory() ) )
+        {
+            dirs.add( p.getBuild().getTestOutputDirectory() );
+        }
 
         return dirs;
     }
@@ -269,7 +275,7 @@ public class TestJavadocReport
 
     /**
      * Gets the resource bundle for the specified locale.
-     * 
+     *
      * @param locale The locale of the currently generated report.
      * @return The resource bundle for the requested locale.
      */
