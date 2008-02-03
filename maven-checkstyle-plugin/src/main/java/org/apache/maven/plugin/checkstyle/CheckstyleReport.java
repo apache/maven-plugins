@@ -837,8 +837,8 @@ public class CheckstyleReport
                     if ( outputDirectoryFile.exists() )
                     {
                         URL outputDirectoryUrl = outputDirectoryFile.toURL();
-                        getLog().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString() +
-                            " to the Checkstyle class path" );
+                        getLog().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString()
+                            + " to the Checkstyle class path" );
                         urls.add( outputDirectoryUrl );
                     }
                 }
