@@ -1053,6 +1053,11 @@ public abstract class AbstractJavadocMojo
      */
     protected List getProjectBuildOutputDirs( MavenProject p )
     {
+        if ( StringUtils.isEmpty( p.getBuild().getOutputDirectory() ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         return Collections.singletonList( p.getBuild().getOutputDirectory() );
     }
 
@@ -1487,7 +1492,7 @@ public abstract class AbstractJavadocMojo
         // Write options file and include it in the command line
         // ----------------------------------------------------------------------
 
-        if ( options.length() > 0 )
+        if ( options.length() > 0 || arguments.size() > 0 )
         {
             addCommandLineOptions( cmd, options, arguments, javadocOutputDirectory );
         }
@@ -1903,7 +1908,7 @@ public abstract class AbstractJavadocMojo
 
                     ArtifactVersion oldVersion = new DefaultArtifactVersion( oldArtifact.getVersion() );
                     ArtifactVersion newVersion = new DefaultArtifactVersion( newArtifact.getVersion() );
-                    if ( newVersion.compareTo( oldVersion ) > 1 )
+                    if ( newVersion.compareTo( oldVersion ) > 0 )
                     {
                         compileArtifactMap.put( newArtifact.getDependencyConflictId(), newArtifact );
                     }
