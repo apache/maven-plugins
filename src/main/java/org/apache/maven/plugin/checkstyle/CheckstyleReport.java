@@ -80,6 +80,7 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  * @goal checkstyle
+ * @requiresDependencyResolution compile
  */
 public class CheckstyleReport
     extends AbstractMavenReport
