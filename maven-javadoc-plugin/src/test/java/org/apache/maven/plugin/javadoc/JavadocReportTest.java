@@ -158,11 +158,17 @@ public class JavadocReportTest
         String str = "", strTmp = "";
         BufferedReader in = new BufferedReader( new FileReader( file ) );
 
-        while ( ( strTmp = in.readLine() ) != null )
+        try
         {
-            str = str + LINE_SEPARATOR + strTmp;
+            while ( ( strTmp = in.readLine() ) != null )
+            {
+                str = str + LINE_SEPARATOR + strTmp;
+            }
         }
-        in.close();
+        finally
+        {
+            in.close();
+        }
 
         return str;
     }
