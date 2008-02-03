@@ -150,7 +150,7 @@ public class CheckstyleReportTest
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/" + pluginXml );
-        ResourceBundle bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.getDefault(), this.getClassLoader() );
+        ResourceBundle bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.ENGLISH, this.getClassLoader() );
 
         Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
 
