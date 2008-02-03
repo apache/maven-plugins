@@ -1256,13 +1256,16 @@ public abstract class AbstractJavadocMojo
         // Copy javadoc resources
         // ----------------------------------------------------------------------
 
-        try
+        if ( docfilessubdirs )
         {
-            copyJavadocResources( javadocOutputDirectory );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
+            try
+            {
+                copyJavadocResources( javadocOutputDirectory );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
+            }
         }
 
         // ----------------------------------------------------------------------
@@ -1370,8 +1373,11 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( docencoding ) );
             addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false, false );
-            addArgIfNotEmpty( arguments, "-excludedocfilessubdir", JavadocUtil.quotedPathArgument( excludedocfilessubdir ),
-                              SINCE_JAVADOC_1_4 );
+            if ( docfilessubdirs )
+            {
+                addArgIfNotEmpty( arguments, "-excludedocfilessubdir", JavadocUtil
+                    .quotedPathArgument( excludedocfilessubdir ), SINCE_JAVADOC_1_4 );
+            }
             addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
             if ( groups != null )
             {
