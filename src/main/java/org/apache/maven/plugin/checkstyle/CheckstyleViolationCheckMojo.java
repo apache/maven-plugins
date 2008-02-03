@@ -50,6 +50,7 @@ public class CheckstyleViolationCheckMojo
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
      * of the output file is determined by the <code>outputFileFormat</code>
+     * parameter.
      *
      * @parameter expression="${checkstyle.output.file}"
      *            default-value="${project.build.directory}/checkstyle-result.xml"
@@ -58,7 +59,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Specifies the format of the output to be used when writing to the output
-     * file. Valid values are "plain" and "xml"
+     * file. Valid values are "plain" and "xml".
      *
      * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
