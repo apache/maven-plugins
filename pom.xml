@@ -212,6 +212,7 @@
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/MJAVADOC-110/pom.xml</pomInclude>
+                <pomInclude>**/MJAVADOC-172/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
