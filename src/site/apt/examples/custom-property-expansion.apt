@@ -34,7 +34,7 @@ Using Custom Checkstyle Property Expansion Definitions
   Checker configuration.  Using property expansion alone is an insufficient means to customize the checks
   performed by Checkstyle.
 
-  Example: <<checkstyle.xml>> - only checks the package name in use to ensure that it conforms to the
+  Example: <<<checkstyle.xml>>> - only checks the package name in use to ensure that it conforms to the
   desired scheme, but allows for users of this Checker to specify their own projectname.
 
 +-----+
@@ -54,12 +54,12 @@ Using Custom Checkstyle Property Expansion Definitions
 </module>
 +-----+
 
-  Example: <<pom.xml>> - Specifies the <<projectname>> property expansion that Checkstyle will use when
+  Example: <<<pom.xml>>> - Specifies the <<projectname>> property expansion that Checkstyle will use when
   encountering such a variable in the above Checker configuration.
 
 +-----+
 <project>
-   ...
+  ...
   <reporting>
     <plugins>
       <plugin>
@@ -72,16 +72,16 @@ Using Custom Checkstyle Property Expansion Definitions
       </plugin>
     </plugins>
   </reporting>
-   ...
+  ...
 </project>
 +-----+
 
-  The property expansion information can also come from a location using the <<propertiesLocation>>
-  parameter as shown below. The <<propertiesLocation>> can point to a URL, File, or build classpath resource reference.
+  The property expansion information can also come from a location using the <<<propertiesLocation>>>
+  parameter as shown below. The <<<propertiesLocation>>> can point to a URL, File or build classpath resource reference.
 
 +-----+
 <project>
-   ...
+  ...
   <reporting>
     <plugins>
       <plugin>
@@ -94,8 +94,6 @@ Using Custom Checkstyle Property Expansion Definitions
       </plugin>
     </plugins>
   </reporting>
-   ...
+  ...
 </project>
 +-----+
-
-
