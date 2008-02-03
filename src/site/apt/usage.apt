@@ -33,8 +33,9 @@ Usage
 
 * Generate Checkstyle Report As Part of the Project Reports
 
-  To generate the Checkstyle report as part of the Project Reports, add the Checkstyle plugin in the \<reporting\> section
-  of your project pom.
+  To generate the Checkstyle report as part of the Project Reports, add the
+  Checkstyle plugin in the <<<\<reporting\>>>> section
+  of your <<<pom.xml>>>.
 
 +-----+
 <project>
@@ -54,19 +55,21 @@ Usage
   Then, execute the site plugin to generate the report.
 
 +-----+
-  mvn site
+mvn site
 +-----+
 
 * Generate Checkstyle Report As Standalone
 
-  You can also generate the Checkstyle report by implicitly executing the <<<checkstyle:checkstyle>>> goal from the
-  command line. It is not required to set the Checkstyle plugin in your pom unless you want to set specific configuration.
+  You can also generate the Checkstyle report by explicitly executing the <<<checkstyle:checkstyle>>> goal from the
+  command line. It is not required to specify the Checkstyle plugin in your
+  <<<pom.xml>>> unless you want to use a specific configuration.
 
 +-----+
-  mvn checkstyle:checkstyle
+mvn checkstyle:checkstyle
 +-----+
 
- To specifically configure the Checkstyle plugin, you need to the add it in the \<build\> section of your project pom as
+ To specifically configure the Checkstyle plugin, you need to the add it in the
+ <<<\<build\>>>> section of your <<<pom.xml>>> as
  shown in the sample below.
 
 +-----+

@@ -50,11 +50,11 @@ Using a Custom Checkstyle Checker Configuration
 </project>
 +-----+
 
-  This example causes the Maven 2 Checkstyle plugin to check for a File named <<checkstyle.xml>> or a
-  resource named <<checkstyle.xml>> within the compile scope of the dependencies or build extensions
+  This example causes the Checkstyle plugin to check for a File named <<<checkstyle.xml>>> or a
+  resource named <<<checkstyle.xml>>> within the compile scope of the dependencies or build extensions
   classpath.
 
-  There are 4 predefined Checkstyle configuration definitions that ship with the Maven 2 Checkstyle Plugin,
+  There are 4 predefined Checkstyle configuration definitions that ship with the Checkstyle plugin,
   the Sun Microsystems Definition is selected by default.
 
   * <<config/sun_checks.xml>> - Sun Microsystems Definition (default).

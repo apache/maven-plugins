@@ -33,7 +33,7 @@ Maven 2 Checkstyle Plugin
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}
 
   The plugin can be configured in the project's pom. Predefined rulesets are included with the plugin, these are:
-  sun_checks.xml, turbine_checks.xml, avalon_checks.xml and maven_checks.xml. You can also use a custom ruleset by
+  <<<sun_checks.xml>>>, <<<turbine_checks.xml>>>, <<<avalon_checks.xml>>> and <<<maven_checks.xml>>>. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview
