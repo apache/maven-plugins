@@ -73,6 +73,15 @@ public class CheckstyleViolationCheckMojo
     private boolean failOnViolation;
 
     /**
+     * The lowest severity level that is considered a violation.
+     * Valid values are "error", "warning" and "info".
+     *
+     * @parameter expression="${checkstyle.violationSeverity}" default-value="error"
+     * @since 2.2
+     */
+    private String violationSeverity = "error";
+
+    /**
      * Skip entire check.
      *
      * @parameter expression="${checkstyle.skip}" default-value="false"
@@ -144,7 +153,7 @@ public class CheckstyleViolationCheckMojo
         while ( eventType != XmlPullParser.END_DOCUMENT )
         {
             if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() )
-                && "error".equals( xpp.getAttributeValue( "", "severity" ) ) )
+                && isViolation( xpp.getAttributeValue( "", "severity" ) ) )
             {
                 count++;
             }
@@ -152,5 +161,32 @@ public class CheckstyleViolationCheckMojo
         }
 
         return count;
+    }
+
+    /**
+     * Checks if the given severity is considered a violation.
+     *
+     * @param severity The severity to check
+     * @return <code>true</code> if the given severity is a violation, otherwise <code>false</code>
+     */
+    private boolean isViolation( String severity )
+    {
+        if ( "error".equals( severity ) )
+        {
+            return "error".equals( violationSeverity ) || "warning".equals( violationSeverity )
+                || "info".equals( violationSeverity );
+        }
+        else if ( "warning".equals( severity ) )
+        {
+            return "warning".equals( violationSeverity ) || "info".equals( violationSeverity );
+        }
+        else if ( "info".equals( severity ) )
+        {
+            return "info".equals( violationSeverity );
+        }
+        else
+        {
+            return false;
+        }
     }
 }
