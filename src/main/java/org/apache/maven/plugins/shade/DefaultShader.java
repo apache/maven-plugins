@@ -166,12 +166,9 @@ public class DefaultShader
                 addDirectory( resources, jos, parent );
             }
         }
+
         //directory entries must end in "/"
         JarEntry entry = new JarEntry( name + "/" );
-        entry.setMethod( JarEntry.STORED );
-        entry.setSize(0);
-        entry.setCompressedSize(0);
-        entry.setCrc(0);
         jos.putNextEntry( entry );
 
         resources.add( name );
