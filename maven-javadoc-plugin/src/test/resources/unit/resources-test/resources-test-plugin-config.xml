@@ -39,6 +39,7 @@ under the License.
           <javadocDirectory>${basedir}/src/test/resources/unit/resources-test/src/main/javadoc</javadocDirectory>
           <quiet>true</quiet>
           <debug>true</debug>
+          <docfilessubdirs>true</docfilessubdirs>
         </configuration>
       </plugin>
     </plugins>
