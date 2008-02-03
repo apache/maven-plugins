@@ -29,7 +29,7 @@ Multimodule Configuration
 
   Configuring the Checkstyle plugin for use within large multimodule projects can be done, but will require a little setup.
 
-  Example will use a mysterious project called 'whizbang'.
+  This example will use a mysterious project called 'whizbang'.
 
 +-----+
 whizbang
@@ -43,7 +43,7 @@ whizbang
 `-- src
 +-----+
 
-  First: setup a sub project to house your build tools.
+  First, setup a sub project to house your build tools.
 
 +-----+
 whizbang
@@ -80,15 +80,12 @@ whizbang
 `-- src
 +-----+
 
-  TIP: put the resources into a subdirectory that you can ensure will be unique, and not conflict with anyone else.
+  <<TIP:>> put the resources into a subdirectory that you can ensure will be unique, and not conflict with anyone else.
 
-  Now, include the Checkstyle configuration in the top level pom.xml
+  Now, include the Checkstyle configuration in the top level <<<pom.xml>>>:
 
 +-----+
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example.whizbang</groupId>
   <artifactId>whizbang-parent</artifactId>
@@ -125,7 +122,7 @@ whizbang
 </project>
 +-----+
 
-  Once you are done with that, ensure that you do not include the maven-checkstyle-plugin in your sub modules, as their definition
+  Once you are done with that, ensure that you do not include maven-checkstyle-plugin in your sub modules, as their definition
   and configuration, will override the top level parent pom's definition.
 
   Based on the Checkstyle plugin configuration above, the values of <<<configLocation>>> and <<<headerLocation>>> will be resolved
