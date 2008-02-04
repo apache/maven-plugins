@@ -297,6 +297,8 @@ public class RadPluginTest
 
         compareDirectoryContent( basedir, projectOutputDir, "WebContent/WEB-INF/lib/" );
         compareDirectoryContent( basedir, projectOutputDir, "WebContent/META-INF/" );
+        assertFalse( "Default path should not exist because it is overridden!",
+                     new File( basedir + "/src/main/webapp" ).exists() );
 
     }
 
