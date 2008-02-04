@@ -200,8 +200,8 @@ public class EclipseToMavenMojo
             File file = files[j];
 
             getLog().info( "Processing file " + file.getAbsolutePath() );
-            
-            processFile(file, plugins, models);
+
+            processFile( file, plugins, models );
         }
 
         int i = 1;
@@ -248,7 +248,7 @@ public class EclipseToMavenMojo
         return model.getGroupId() + "." + model.getArtifactId();
     }
 
-    private String getKey(Dependency dependency)
+    private String getKey( Dependency dependency )
     {
         return dependency.getGroupId() + "." + dependency.getArtifactId();
     }
@@ -400,7 +400,7 @@ public class EclipseToMavenMojo
 
         return model;
     }
-    
+
     /**
      * Writes the artifact to the repo
      * 

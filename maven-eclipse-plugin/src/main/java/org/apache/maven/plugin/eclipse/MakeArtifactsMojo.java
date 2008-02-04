@@ -130,8 +130,8 @@ public class MakeArtifactsMojo
     {
         if ( this.resolveVersionRanges && plugins.containsKey( getKey( model ) ) )
         {
-            throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: "
-                + getKey( model ) );
+            throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: " +
+                getKey( model ) );
         }
 
         super.processPlugin( plugin, model, plugins, models );
