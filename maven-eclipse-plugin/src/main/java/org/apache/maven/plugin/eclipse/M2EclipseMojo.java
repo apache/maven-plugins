@@ -8,6 +8,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Creates an eclipse project that is ready to use with the M2Elipse plugin.
+ * 
  * @goal m2eclipse
  * @execute phase="generate-resources"
  * @since 2.4
