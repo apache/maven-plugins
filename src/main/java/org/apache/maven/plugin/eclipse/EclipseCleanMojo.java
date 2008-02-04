@@ -94,13 +94,14 @@ public class EclipseCleanMojo
      * @parameter expression="${eclipse.skip}" default-value="false"
      */
     private boolean skip;
-	
-	/**
-	 * additional generic configuration files for eclipse
-	 * @parameter
+
+    /**
+     * additional generic configuration files for eclipse
+     * 
+     * @parameter
      */
-    private EclipseConfigFile[] additionalConfig;	
-	
+    private EclipseConfigFile[] additionalConfig;
+
     /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
@@ -131,14 +132,14 @@ public class EclipseCleanMojo
         {
             delete( settingsDir );
         }
-		
-		if (additionalConfig != null )
-		{
-			for ( int i = 0; i < additionalConfig.length; i++)
-			{
-				delete( new File( basedir, additionalConfig[i].getName() ) );
-			}
-		}
+
+        if ( additionalConfig != null )
+        {
+            for ( int i = 0; i < additionalConfig.length; i++ )
+            {
+                delete( new File( basedir, additionalConfig[i].getName() ) );
+            }
+        }
 
         cleanExtras();
     }
