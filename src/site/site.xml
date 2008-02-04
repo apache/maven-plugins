@@ -31,7 +31,7 @@ under the License.
       <item name="Using a Custom Checkstyle Checker Configuration" href="/examples/custom-checker-config.html"/>
       <item name="Using Custom Checkstyle Property Expansion Definitions" href="/examples/custom-property-expansion.html"/>
       <item name="Using a Suppressions Filter" href="/examples/suppressions-filter.html"/>
-      <item name="Using Custom Developed Checkstyle Check Modules" href="/examples/custom-developed-checkstyle.html"/>
+      <item name="Using Custom Developed Checkstyle Checks" href="/examples/custom-developed-checkstyle.html"/>
       <item name="Multimodule Configuration" href="/examples/multi-module-config.html"/>
     </menu>
   </body>
