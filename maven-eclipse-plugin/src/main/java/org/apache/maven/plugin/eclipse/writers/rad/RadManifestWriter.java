@@ -78,7 +78,7 @@ public class RadManifestWriter
             File warSourceDirectory =
                 new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                      "warSourceDirectory", //$NON-NLS-1$
-                                                     config.getProject().getBasedir() + DEFAULT_WEBAPP_RESOURCE_DIR ) ); //$NON-NLS-1$
+                                                     DEFAULT_WEBAPP_RESOURCE_DIR ) ); //$NON-NLS-1$
 
             String webContentDir =
                 IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
