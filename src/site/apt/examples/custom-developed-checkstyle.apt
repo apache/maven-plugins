@@ -216,9 +216,12 @@ mycompany-checkstyle-checks-1.0.jar
  Checkstyle checks. In the <<<pom.xml>>> of that project, add the following
  configuration.
 
- <<Note:>> You have to specify this configuration in the <<<\<build\>>>>
- element of your <<<pom.xml>>>. It will not work inside the <<<\<reporting\>>>>
- element, because <<<\<reporting\>>>> does not support plugin dependencies.
+ <<Note:>> You have to specify a plugin dependency on
+ <mycompany-checkstyle-checks> in the <<<\<build\>>>> element of your
+ <<<pom.xml>>>. It will not work inside the <<<\<reporting\>>>> element,
+ because <<<\<reporting\>>>> does not support plugin dependencies. The rest of
+ the configuration is done in the normal way in the <<<\<reporting\>>>>
+ element.
 
 +-----+
 <project>
@@ -228,10 +231,6 @@ mycompany-checkstyle-checks-1.0.jar
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>checkstyle.xml</configLocation>
-          <packageNamesLocation>com/mycompany/checks/packagenames.xml</packageNamesLocation>
-        </configuration>
         <dependencies>
           <dependency>
             <groupId>com.mycompany</groupId>
@@ -242,6 +241,18 @@ mycompany-checkstyle-checks-1.0.jar
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <packageNamesLocation>com/mycompany/checks/packagenames.xml</packageNamesLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   ...
 </project>
 +-----+
