@@ -22,12 +22,9 @@ package org.apache.maven.plugin.war.packaging;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -381,13 +378,4 @@ public abstract class AbstractWarPackagingTask
         }
 
     }
-
-    /**
-     * internal interface
-     */
-    private interface FilterWrapper
-    {
-        Reader getReader( Reader fileReader, Map filterProperties );
-    }
-
 }
