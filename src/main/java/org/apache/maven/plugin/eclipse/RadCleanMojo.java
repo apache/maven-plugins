@@ -84,6 +84,7 @@ public class RadCleanMojo
     {
         File targetDir = this.project.getBasedir();
         deleteJarArtifactsInDirectory( targetDir );
+        deleteWarArtifactsInDirectory( targetDir );
     }
 
     /**
@@ -141,14 +142,46 @@ public class RadCleanMojo
     protected void deleteJarArtifactsInDirectory( File directory )
         throws MojoExecutionException
     {
-        String[] oldFiles =
-            FileUtils.getFilesFromExtension( directory.getAbsolutePath(),
-                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
-        for ( int index = 0; index < oldFiles.length; index++ )
-        {
-            File f = new File( oldFiles[index] );
+        deleteArtifactsInDirectory( directory, Constants.PROJECT_PACKAGING_JAR );
+    }
 
-            delete( f );
+    /**
+     * delete all War artifacts in the specified directory (cleaning up EAR's for example).
+     * 
+     * @param directory to delete the wars from
+     * @throws MojoExecutionException only if a file exists and can't be deleted
+     */
+    protected void deleteWarArtifactsInDirectory( File directory )
+        throws MojoExecutionException
+    {
+        deleteArtifactsInDirectory( directory, Constants.PROJECT_PACKAGING_WAR );
+    }
+
+    /**
+     * Deletes all artifacts of specified packaging type in the specified directory
+     * 
+     * @param directory - to delete the jars from
+     * @param packagingType - packaging type (file extensions in fact - can be dangerous)
+     * @see Constants#PROJECT_PACKAGING_JAR
+     * @see Constants#PROJECT_PACKAGING_WAR
+     * @throws MojoExecutionException if a file exists and can't be deleted
+     */
+    private void deleteArtifactsInDirectory( File directory, String packagingType )
+        throws MojoExecutionException
+    {
+
+        // sanity check, only support cleanup of 2 types - jar and war
+        if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packagingType ) ||
+            Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packagingType ) )
+        {
+            String[] oldFiles =
+                FileUtils.getFilesFromExtension( directory.getAbsolutePath(), new String[] { packagingType } );
+            for ( int index = 0; index < oldFiles.length; index++ )
+            {
+                File f = new File( oldFiles[index] );
+
+                delete( f );
+            }
         }
     }
 }

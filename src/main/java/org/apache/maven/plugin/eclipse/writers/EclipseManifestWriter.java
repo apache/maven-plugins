@@ -31,6 +31,8 @@ import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -57,19 +59,46 @@ public class EclipseManifestWriter
         "src" + File.separatorChar + "main" + File.separatorChar + "webapp";
 
     /**
+     * Returns absolute path to the web content directory based on configuration of the war plugin or default one
+     * otherwise.
+     * 
+     * @param project
+     * @return absolute directory path as String
+     * @throws MojoExecutionException
+     */
+    private static String getWebContentBaseDirectory( EclipseWriterConfig config )
+        throws MojoExecutionException
+    {
+        // getting true location of web source dir from config
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", WEBAPP_RESOURCE_DIR ) );
+        // getting real and correct path to the web source dir
+        String webContentDir =
+            IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
+
+        // getting the path to meta-inf base dir
+        String result = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + webContentDir;
+
+        return result;
+    }
+
+    /**
      * Search the project for the existing META-INF directory where the manifest should be located.
      * 
      * @return the apsolute path to the META-INF directory
+     * @throws MojoExecutionException
      */
     public String getMetaInfBaseDirectory( MavenProject project )
+        throws MojoExecutionException
     {
         String metaInfBaseDirectory = null;
 
         if ( this.config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            metaInfBaseDirectory =
-                this.config.getProject().getBasedir().getAbsolutePath() + File.separatorChar +
-                    EclipseManifestWriter.WEBAPP_RESOURCE_DIR;
+
+            // getting the path to meta-inf base dir
+            metaInfBaseDirectory = getWebContentBaseDirectory( this.config );
 
             this.log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
 
@@ -239,8 +268,7 @@ public class EclipseManifestWriter
 
         if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
         {
-            new File( config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + "src" +
-                File.separatorChar + "main" + File.separatorChar + "webapp" + File.separatorChar + "META-INF" ).mkdirs();
+            new File( getWebContentBaseDirectory( config ) + File.separatorChar + "META-INF" ).mkdirs();
         }
 
         // special case must be done first because it can add stuff to the

@@ -34,6 +34,8 @@ import org.apache.maven.plugin.eclipse.writers.rad.RadManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.rad.RadWebSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.rad.RadWebsiteConfigWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -187,9 +189,33 @@ public class RadPlugin
 
         if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
         {
-            new File( this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar +
-                "main" + File.separatorChar + "webapp" + File.separatorChar + "META-INF" ).mkdirs();
+            new File( getWebContentBaseDirectory( config ) + File.separatorChar + "META-INF" ).mkdirs();
         }
+    }
+
+    /**
+     * Returns absolute path to the web content directory based on configuration of the war plugin or default one
+     * otherwise.
+     * 
+     * @param project
+     * @return absolute directory path as String
+     * @throws MojoExecutionException
+     */
+    private static String getWebContentBaseDirectory( EclipseWriterConfig config )
+        throws MojoExecutionException
+    {
+        // getting true location of web source dir from config
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", "src/main/webapp" ) );
+        // getting real and correct path to the web source dir
+        String webContentDir =
+            IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
+
+        // getting the path to meta-inf base dir
+        String result = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + webContentDir;
+
+        return result;
     }
 
     /**
