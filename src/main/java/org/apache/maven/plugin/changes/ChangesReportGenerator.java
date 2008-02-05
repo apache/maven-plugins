@@ -19,14 +19,14 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.util.List;
-import java.util.ResourceBundle;
-
-import org.apache.maven.doxia.util.HtmlTools;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.logging.Log;
 
-import org.apache.commons.lang.StringUtils;
+import java.io.File;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Generates a changes report.
@@ -45,7 +45,7 @@ public class ChangesReportGenerator
     {
     }
 
-    public ChangesReportGenerator( String xmlPath, Log log )
+    public ChangesReportGenerator( File xmlPath, Log log )
     {
         report = new ChangesXML( xmlPath, log );
     }

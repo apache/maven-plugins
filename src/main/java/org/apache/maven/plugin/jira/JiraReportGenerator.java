@@ -19,11 +19,12 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import java.util.List;
-import java.util.ResourceBundle;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
+
+import java.io.File;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Generates a JIRA report.
@@ -67,7 +68,7 @@ public class JiraReportGenerator
 
     }
 
-    public JiraReportGenerator( String xmlPath, String columnNames )
+    public JiraReportGenerator( File xmlPath, String columnNames )
         throws MavenReportException
     {
         jira = new JiraXML( xmlPath );

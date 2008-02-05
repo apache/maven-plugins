@@ -19,17 +19,17 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -48,7 +48,7 @@ public class ChangesMojo
      * @required
      * @readonly
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
@@ -70,7 +70,7 @@ public class ChangesMojo
      * @parameter expression="${basedir}/src/changes/changes.xml"
      * @required
      */
-    private String xmlPath;
+    private File xmlPath;
 
     /**
      * Template string that is used to discover the URL to use to display an issue report.
@@ -95,8 +95,7 @@ public class ChangesMojo
 
     public boolean canGenerateReport()
     {
-        File xmlFile = new File( xmlPath );
-        return xmlFile.exists();
+        return xmlPath.isFile();
     }
 
     private void copyStaticResources()
@@ -171,7 +170,7 @@ public class ChangesMojo
 
     protected String getOutputDirectory()
     {
-        return outputDirectory;
+        return outputDirectory.getAbsolutePath();
     }
 
     private ResourceBundle getBundle( Locale locale )

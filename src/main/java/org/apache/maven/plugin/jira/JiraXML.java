@@ -19,16 +19,15 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * XML parser for <code>JiraIssue</code>s. This works on an XML file downloaded
@@ -48,7 +47,7 @@ public class JiraXML
 
     private JiraIssue issue;
 
-    public JiraXML( String xmlPath )
+    public JiraXML( File xmlPath )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
@@ -58,7 +57,7 @@ public class JiraXML
         {
             SAXParser saxParser = factory.newSAXParser();
 
-            saxParser.parse( new File( xmlPath ), this );
+            saxParser.parse( xmlPath, this );
         }
         catch ( Throwable t )
         {
