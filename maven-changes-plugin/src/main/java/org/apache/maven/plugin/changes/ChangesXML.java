@@ -19,17 +19,16 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * XML Parser for changes.xml files.
@@ -57,7 +56,7 @@ public class ChangesXML
 
     private String title;
 
-    public ChangesXML( String xmlPath, Log log )
+    public ChangesXML( File xmlPath, Log log )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
@@ -65,7 +64,7 @@ public class ChangesXML
         {
             SAXParser saxParser = factory.newSAXParser();
 
-            saxParser.parse( new File( xmlPath ), this );
+            saxParser.parse( xmlPath, this );
         }
         catch ( Throwable t )
         {
