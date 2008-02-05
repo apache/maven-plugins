@@ -41,7 +41,7 @@ public class JiraXML
 {
     private List issueList;
 
-    private String currentElement;
+    private StringBuffer currentElement = new StringBuffer( 1024 );
 
     private String currentParent = "";
 
@@ -87,65 +87,60 @@ public class JiraXML
         }
         else if ( qName.equals( "key" ) )
         {
-            issue.setKey( currentElement );
+            issue.setKey( currentElement.toString().trim() );
         }
         else if ( qName.equals( "summary" ) )
         {
-            issue.setSummary( currentElement );
+            issue.setSummary( currentElement.toString().trim() );
         }
         else if ( qName.equals( "type" ) )
         {
-            issue.setType( currentElement );
+            issue.setType( currentElement.toString().trim() );
         }
         else if ( qName.equals( "link" ) && currentParent.equals( "item" ) )
         {
-            issue.setLink( currentElement );
+            issue.setLink( currentElement.toString().trim() );
         }
         else if ( qName.equals( "priority" ) )
         {
-            issue.setPriority( currentElement );
+            issue.setPriority( currentElement.toString().trim() );
         }
         else if ( qName.equals( "status" ) )
         {
-            issue.setStatus( currentElement );
+            issue.setStatus( currentElement.toString().trim() );
         }
         else if ( qName.equals( "resolution" ) )
         {
-            issue.setResolution( currentElement );
+            issue.setResolution( currentElement.toString().trim() );
         }
         else if ( qName.equals( "assignee" ) )
         {
-            issue.setAssignee( currentElement );
+            issue.setAssignee( currentElement.toString().trim() );
         }
         else if ( qName.equals( "reporter" ) )
         {
-            issue.setReporter( currentElement );
+            issue.setReporter( currentElement.toString().trim() );
         }
         else if ( qName.equals( "version" ) )
         {
-            issue.setVersion( currentElement );
+            issue.setVersion( currentElement.toString().trim() );
         }
         else if ( qName.equals( "fixVersion" ) )
         {
-            issue.setFixVersion( currentElement );
+            issue.setFixVersion( currentElement.toString().trim() );
         }
         else if ( qName.equals( "component" ) )
         {
-            issue.setComponent( currentElement );
+            issue.setComponent( currentElement.toString().trim() );
         }
 
-        currentElement = "";
+        currentElement.setLength( 0 );
     }
 
     public void characters( char[] buf, int offset, int len )
         throws SAXException
     {
-        String s = new String( buf, offset, len );
-
-        if ( !s.trim().equals( "" ) )
-        {
-            currentElement = currentElement + s.trim() + "\n";
-        }
+        currentElement.append( buf, offset, len );
     }
 
     public List getIssueList()
