@@ -253,7 +253,7 @@ public class AnnouncementMojo
         {
             setXml( new ChangesXML( getXmlPath(), getLog() ) );
 
-            getLog().info( "Creating announcement file from changes.xml..." );
+            getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
 
             doGenerate( getXml().getReleaseList() );
         }
@@ -410,7 +410,7 @@ public class AnnouncementMojo
 
             writer.close();
 
-            getLog().info( "File created..." );
+            getLog().info( "Created template " + f );
         }
 
         catch ( ResourceNotFoundException rnfe )
