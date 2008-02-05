@@ -27,8 +27,16 @@ Changes in this version include:
 New features:
 #foreach($actionItem in $release.getActions('add'))
 #set($action=$actionItem.getAction())
+#if ($actionItem.getIssue())
 #set($issue=$actionItem.getIssue())
+#else
+#set($issue="")
+#end
+#if ($actionItem.getDueTo())
 #set($dueto=$actionItem.getDueTo())
+#else
+#set($dueto="")
+#end
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -40,8 +48,16 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 Fixed Bugs:
 #foreach($actionItem in $release.getActions('fix'))
 #set($action=$actionItem.getAction())
+#if ($actionItem.getIssue())
 #set($issue=$actionItem.getIssue())
+#else
+#set($issue="")
+#end
+#if ($actionItem.getDueTo())
 #set($dueto=$actionItem.getDueTo())
+#else
+#set($dueto="")
+#end
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -53,8 +69,16 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 Changes:
 #foreach($actionItem in $release.getActions('update'))
 #set($action=$actionItem.getAction())
+#if ($actionItem.getIssue())
 #set($issue=$actionItem.getIssue())
+#else
+#set($issue="")
+#end
+#if ($actionItem.getDueTo())
 #set($dueto=$actionItem.getDueTo())
+#else
+#set($dueto="")
+#end
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -66,8 +90,16 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 Removed:
 #foreach($actionItem in $release.getActions('remove'))
 #set($action=$actionItem.getAction())
+#if ($actionItem.getIssue())
 #set($issue=$actionItem.getIssue())
+#else
+#set($issue="")
+#end
+#if ($actionItem.getDueTo())
 #set($dueto=$actionItem.getDueTo())
+#else
+#set($dueto="")
+#end
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
