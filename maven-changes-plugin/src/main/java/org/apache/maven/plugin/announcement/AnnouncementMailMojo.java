@@ -143,7 +143,7 @@ public class AnnouncementMailMojo
      * @parameter expression="${project.build.directory}/announcement"
      * @required
      */
-    private String templateOutputDirectory;
+    private File templateOutputDirectory;
 
     /**
      * The Velocity template used to format the announcement.
@@ -158,7 +158,7 @@ public class AnnouncementMailMojo
     public void execute()
         throws MojoExecutionException
     {
-        template = templateOutputDirectory + "/" + template;
+        File templateFile = new File( templateOutputDirectory, template );
 
         ConsoleLogger logger = new ConsoleLogger( 0, "base" );
 
@@ -186,7 +186,7 @@ public class AnnouncementMailMojo
             getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
         }
 
-        if ( isTextFileExisting( template ) )
+        if ( templateFile.isFile() )
         {
             getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
 
@@ -194,23 +194,7 @@ public class AnnouncementMailMojo
         }
         else
         {
-            if ( template != null )
-            {
-                if ( isTextFileExisting( template ) )
-                {
-                    getLog().info( "Connecting to Host: " + getSmtpHost() + " : " + getSmtpPort() );
-
-                    sendMessage();
-                }
-                else
-                {
-                    throw new MojoExecutionException( "Announcement template " + template + " not found..." );
-                }
-            }
-            else
-            {
-                throw new MojoExecutionException( "Announcement template " + template + " not found..." );
-            }
+            throw new MojoExecutionException( "Announcement template " + templateFile + " not found..." );
         }
     }
 
@@ -222,6 +206,7 @@ public class AnnouncementMailMojo
     protected void sendMessage()
         throws MojoExecutionException
     {
+        File templateFile = new File( templateOutputDirectory, template );
         String email = "";
         final MailSender ms = getActualMailSender();
         final String fromName = ms.getName();
@@ -238,7 +223,7 @@ public class AnnouncementMailMojo
             {
                 email = it.next().toString();
                 getLog().info( "Sending mail to " + email + "..." );
-                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ), email, "", fromAddress,
+                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( templateFile ) ), email, "", fromAddress,
                              fromName );
                 getLog().info( "Sent..." );
             }
@@ -253,38 +238,24 @@ public class AnnouncementMailMojo
         }
     }
 
-    protected boolean isTextFileExisting( String fileName )
-    {
-        boolean found = false;
-
-        File f = new File( fileName );
-
-        if ( f.exists() )
-        {
-            found = true;
-        }
-        return found;
-    }
-
     /**
      * Read the announcement generated file.
      *
-     * @param fileName the filename to be read
+     * @param file the file to be read
      * @return fileReader Return the FileReader
      * @throws MojoExecutionException if the file could not be found
      */
-    protected FileReader readAnnouncement( String fileName )
+    protected FileReader readAnnouncement( File file )
         throws MojoExecutionException
     {
         FileReader fileReader;
         try
         {
-            File file = new File( fileName );
             fileReader = new FileReader( file );
         }
         catch ( FileNotFoundException fnfe )
         {
-            throw new MojoExecutionException( "File not found. " + fileName );
+            throw new MojoExecutionException( "File not found. " + file );
         }
         return fileReader;
     }
@@ -451,12 +422,12 @@ public class AnnouncementMailMojo
         this.mailSender = mailSender;
     }
 
-    public String getTemplateOutputDirectory()
+    public File getTemplateOutputDirectory()
     {
         return templateOutputDirectory;
     }
 
-    public void setTemplateOutputDirectory( String templateOutputDirectory )
+    public void setTemplateOutputDirectory( File templateOutputDirectory )
     {
         this.templateOutputDirectory = templateOutputDirectory;
     }

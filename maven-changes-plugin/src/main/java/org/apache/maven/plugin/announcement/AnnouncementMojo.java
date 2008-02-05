@@ -19,12 +19,6 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.Action;
@@ -37,6 +31,12 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.plexus.velocity.VelocityComponent;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Goal which generate the template for an announcement.
@@ -57,7 +57,7 @@ public class AnnouncementMojo
      * @parameter expression="${project.build.directory}/announcement"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * @parameter expression="${project.groupId}"
@@ -117,7 +117,7 @@ public class AnnouncementMojo
      * @parameter expression="${basedir}/src/changes/changes.xml"
      * @required
      */
-    private String xmlPath;
+    private File xmlPath;
 
     /**
      * Name of the team that develops the artifact.
@@ -223,7 +223,7 @@ public class AnnouncementMojo
      * @required
      * @readonly
      */
-    private String jiraXML;
+    private File jiraXML;
 
     /**
      * The maximum number of issues to include.
@@ -388,7 +388,7 @@ public class AnnouncementMojo
      * @param template velocity template which will the context be merged
      * @throws ResourceNotFoundException, VelocityException, IOException
      */
-    public void processTemplate( Context context, String outputDirectory, String template )
+    public void processTemplate( Context context, File outputDirectory, String template )
         throws ResourceNotFoundException, VelocityException, MojoExecutionException
     {
         File f;
@@ -437,7 +437,7 @@ public class AnnouncementMojo
     {
         JiraDownloader jiraDownloader = new JiraDownloader();
 
-        File jiraXMLFile = new File( jiraXML );
+        File jiraXMLFile = jiraXML;
 
         jiraDownloader.setLog( getLog() );
 
@@ -480,22 +480,22 @@ public class AnnouncementMojo
      * accessors
      */
 
-    public String getXmlPath()
+    public File getXmlPath()
     {
         return xmlPath;
     }
 
-    public void setXmlPath( String xmlPath )
+    public void setXmlPath( File xmlPath )
     {
         this.xmlPath = xmlPath;
     }
 
-    public String getOutputDirectory()
+    public File getOutputDirectory()
     {
         return outputDirectory;
     }
 
-    public void setOutputDirectory( String outputDirectory )
+    public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
