@@ -116,6 +116,7 @@ under the License.
     <module>maven-invoker-plugin</module>
     <module>maven-jar-plugin</module>
     <module>maven-javadoc-plugin</module>
+    <module>maven-linkcheck-plugin</module>
     <module>maven-one-plugin</module>
     <module>maven-pmd-plugin</module>
     <module>maven-project-info-reports-plugin</module>
