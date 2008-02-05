@@ -19,15 +19,15 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
+
+import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.
@@ -46,7 +46,7 @@ public class JiraMojo
      * @required
      * @readonly
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * Path to the JIRA XML file, which will be parsed.
@@ -55,7 +55,7 @@ public class JiraMojo
      * @required
      * @readonly
      */
-    private String jiraXmlPath;
+    private File jiraXmlPath;
 
     /**
      * Doxia Site Renderer.
@@ -261,7 +261,7 @@ public class JiraMojo
         {
             jiraDownloader.doExecute();
 
-            if ( new File( jiraXmlPath ).exists() )
+            if ( jiraXmlPath.isFile() )
             {
                 report = new JiraReportGenerator( jiraXmlPath, columnNames );
 
@@ -313,7 +313,7 @@ public class JiraMojo
 
     protected String getOutputDirectory()
     {
-        return outputDirectory;
+        return outputDirectory.getAbsolutePath();
     }
 
     private ResourceBundle getBundle( Locale locale )
@@ -327,7 +327,7 @@ public class JiraMojo
 
         jira.setMavenProject( project );
 
-        jira.setOutput( new File( jiraXmlPath ) );
+        jira.setOutput( jiraXmlPath );
 
         jira.setNbEntries( maxEntries );
 
