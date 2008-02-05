@@ -133,11 +133,11 @@ public class DefaultAssemblyArchiver
         }
         catch ( ArchiverException e )
         {
-            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
+            throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
+            throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": " + e.getMessage(), e );
         }
         catch ( NoSuchArchiverException e )
         {
