@@ -1012,7 +1012,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Includes one "Use" page for each documented class and package.
      * <br/>
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldoldocs/windows/javadoc.html#use">use</a>.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#use">use</a>.
      *
      * @parameter expression="${use}" default-value="true"
      */
