@@ -1,0 +1,4 @@
+<foo>
+	<text>${foo.url}</text>
+	<text> hallo @@ hallo</text>
+</foo>
