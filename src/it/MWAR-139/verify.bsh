@@ -45,16 +45,23 @@ try
         System.err.println( "filterme.xml file is missing or a directory." );
         return false;
     }
-    /* TODO - Uncomment to reproduce  
+
     FileInputStream fis = new FileInputStream ( param );
     String paramContent = IOUtil.toString ( fis );
     
-    int indexOf = paramContent.indexOf( "@@" );
+    int indexOf = paramContent.indexOf( "<text>hallo @@ hallo</text>" );
     if ( indexOf < 0)
     {
-    	System.err.println( "filterme.xml does not contains @@" );
+    	System.err.println( "filterme.xml does not contains <text>hallo @@ hallo</text>" );
     	return false;
-    }*/
+    }
+    
+	indexOf = paramContent.indexOf( "<text2>start-${}-end</text2>" );
+    if ( indexOf < 0)
+    {
+    	System.err.println( "filterme.xml does not contains <text2>start-${}-end</text2>" );
+    	return false;
+    }    
     
 }
 catch( Throwable e )
