@@ -99,7 +99,7 @@ public class AnnouncementMojo
     /**
      * The name of the artifact to be used in the announcement.
      *
-     * @parameter expression="${project.build.finalName}.${project.packaging}"
+     * @parameter expression="${project.build.finalName}"
      * @required
      */
     private String finalName;
@@ -123,7 +123,7 @@ public class AnnouncementMojo
     /**
      * Name of the team that develops the artifact.
      *
-     * @parameter default-value="${project.artifactId}-team"
+     * @parameter default-value="${project.name} team"
      * @required
      */
     private String developmentTeam;
