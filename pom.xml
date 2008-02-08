@@ -304,6 +304,8 @@ under the License.
         <artifactId>maven-changes-plugin</artifactId>
         <version>${pom.version}</version>
         <configuration>
+          <!-- For Announcement -->
+          <generateJiraAnnouncement>true</generateJiraAnnouncement>
           <!-- For Changes-report -->
           <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
           <!-- For JIRA-report -->
