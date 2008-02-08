@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.Action;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.Release;
+import org.apache.maven.plugin.jira.JiraXML;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.velocity.VelocityContext;
@@ -459,11 +460,11 @@ public class AnnouncementMojo
 
             if ( jiraXMLFile.exists() )
             {
-                JiraAnnouncementParser jiraParser = new JiraAnnouncementParser( jiraXMLFile );
+                JiraXML jiraParser = new JiraXML( jiraXMLFile );
 
-                List issues = jiraParser.getIssues();
+                List issues = jiraParser.getIssueList();
 
-                List releases = jiraParser.getReleases( issues );
+                List releases = JiraXML.getReleases( issues );
 
                 getLog().info( "Creating announcement file from JIRA releases..." );
 
