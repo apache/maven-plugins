@@ -19,6 +19,9 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A JIRA issue.
  *
@@ -49,6 +52,10 @@ public class JiraIssue
     private String resolution;
 
     private String assignee;
+
+    private List comments;
+
+    private String title;
 
     public JiraIssue()
     {
@@ -172,5 +179,29 @@ public class JiraIssue
     public void setVersion( String version )
     {
         this.version = version;
+    }
+
+    public void addComment( String comment )
+    {
+        if ( comments == null )
+        {
+            comments = new ArrayList();
+        }
+        comments.add( comment );
+    }
+
+    public List getComments()
+    {
+        return comments;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle( String title )
+    {
+        this.title = title;
     }
 }

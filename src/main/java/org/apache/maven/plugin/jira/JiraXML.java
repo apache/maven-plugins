@@ -19,6 +19,8 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import org.apache.maven.plugin.changes.Action;
+import org.apache.maven.plugin.changes.Release;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,7 +29,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * XML parser for <code>JiraIssue</code>s. This works on an XML file downloaded
@@ -133,6 +138,14 @@ public class JiraXML
         {
             issue.setComponent( currentElement.toString().trim() );
         }
+        else if ( qName.equals( "comment" ) )
+        {
+            issue.addComment( currentElement.toString().trim() );
+        }
+        else if ( qName.equals( "title" ) && currentParent.equals( "item" ) )
+        {
+            issue.setTitle( currentElement.toString().trim() );
+        }
 
         currentElement.setLength( 0 );
     }
@@ -146,5 +159,80 @@ public class JiraXML
     public List getIssueList()
     {
         return this.issueList;
+    }
+
+    public static List getReleases( List issues )
+    {
+        // A Map of releases keyed by fixVersion
+        Map releasesMap = new HashMap();
+
+        // Loop through all issues looking for fixVersions
+        for ( int i = 0; i < issues.size(); i++ )
+        {
+            JiraIssue issue = (JiraIssue) issues.get( i );
+            // Do NOT create a release for issues that lack a fixVersion
+            if ( issue.getFixVersion() != null )
+            {
+                // Try to get a matching Release from the map
+                Release release = (Release) releasesMap.get( issue.getFixVersion() );
+                if ( release == null )
+                {
+                    // Add a new Release to the Map if it wasn't there
+                    release = new Release();
+                    release.setVersion( issue.getFixVersion() );
+                    releasesMap.put( issue.getFixVersion(), release );
+                }
+
+                // Add this issue as an Action to this release
+                Action action = createAction( issue );
+                release.addAction( action );
+            }
+        }
+
+        // Extract the releases from the Map to a List
+        List releasesList = new ArrayList();
+        for ( Iterator iterator = releasesMap.entrySet().iterator(); iterator.hasNext(); )
+        {
+            Release o = (Release) ( (Map.Entry) iterator.next() ).getValue();
+            releasesList.add( o );
+        }
+        return releasesList;
+    }
+
+    /**
+     * Create an <code>Action</code> from a JIRA issue.
+     *
+     * @param issue The issue to extract the information from
+     * @return An <code>Action</code>
+     */
+    private static Action createAction( JiraIssue issue )
+    {
+        Action action = new Action();
+
+        action.setIssue( issue.getKey() );
+
+        String type = "";
+        if ( issue.getType().equals( "Bug" ) )
+        {
+            type = "fix";
+        }
+        else if ( issue.getType().equals( "New Feature" ) )
+        {
+            type = "add";
+        }
+        else if ( issue.getType().equals( "Improvement" ) )
+        {
+            type = "update";
+        }
+        action.setType( type );
+
+        action.setDev( issue.getAssignee() );
+
+        // Set dueTo to the empty String instead of null to make Velocity happy
+        action.setDueTo( "" );
+        //action.setDueTo( issue.getReporter() );
+
+        action.setAction( issue.getSummary() );
+        return action;
     }
 }
