@@ -195,9 +195,7 @@ public class PdfMojo
             return docRenderer.readDocumentModel( docDescriptor );
         }
 
-        File tmp = generateDefaultDocDescriptor( project );
-
-        return docRenderer.readDocumentModel( tmp );
+        return generateDefaultDocDescriptor();
     }
 
     /**
@@ -219,11 +217,10 @@ public class PdfMojo
     }
 
     /**
-     * @param project not null
      * @return Generate a default document descriptor from the Maven project
      * @throws IOException if any
      */
-    private static File generateDefaultDocDescriptor( MavenProject project )
+    private DocumentModel generateDefaultDocDescriptor()
         throws IOException
     {
         File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
@@ -235,9 +232,6 @@ public class PdfMojo
         {
             outputDir.mkdirs();
         }
-
-        File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
-        doc.deleteOnExit();
 
         DocumentMeta meta = new DocumentMeta(); // TODO Improve metadata
         meta.setAuthor( ( project.getOrganization() != null
@@ -252,18 +246,25 @@ public class PdfMojo
         docModel.setOutputName( project.getArtifactId() + "-doc" );
         docModel.setMeta( meta );
 
-        DocumentXpp3Writer xpp3 = new DocumentXpp3Writer();
-        Writer w = null;
-        try
+        if ( getLog().isDebugEnabled() )
         {
-            w = WriterFactory.newPlatformWriter( doc );
-            xpp3.write( w, docModel );
-        }
-        finally
-        {
-            IOUtil.close( w );
+            File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
+
+            getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
+
+            DocumentXpp3Writer xpp3 = new DocumentXpp3Writer();
+            Writer w = null;
+            try
+            {
+                w = WriterFactory.newPlatformWriter( doc );
+                xpp3.write( w, docModel );
+            }
+            finally
+            {
+                IOUtil.close( w );
+            }
         }
 
-        return doc;
+        return docModel;
     }
 }
