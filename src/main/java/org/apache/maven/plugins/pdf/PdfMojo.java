@@ -21,19 +21,29 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 
 
 /**
+ * Generates a PDF document for a project.
+ *
  * @author ltheussl
  * @version $Id$
  *
@@ -42,6 +52,19 @@ import org.apache.maven.plugin.MojoFailureException;
 public class PdfMojo
     extends AbstractPdfMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo Parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * The Maven Project Object.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
     /**
      * Directory containing source for apt, fml and xdoc docs.
      *
@@ -62,8 +85,6 @@ public class PdfMojo
      * File that contains the DocumentModel of the PDF to generate.
      *
      * @parameter expression="src/site/pdf.xml"
-     * @required
-     * @todo shouldn't be required, construct info from pom
      */
     private File docDescriptor;
 
@@ -74,6 +95,10 @@ public class PdfMojo
      * @required
      */
     private String implementation = "fo";
+
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
 
     /**
      * FO Document Renderer.
@@ -89,11 +114,14 @@ public class PdfMojo
      */
     private DocumentRenderer itextRenderer;
 
-
     /**
      * Document Renderer.
      */
     private DocumentRenderer docRenderer;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -147,6 +175,10 @@ public class PdfMojo
         }
     }
 
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
     /**
      * Constructs a DocumentModel for the current project. The model is either read from
      * a descriptor file, if it exists, or constructed from information in the pom and site.xml.
@@ -158,8 +190,14 @@ public class PdfMojo
     private DocumentModel getDocumentModel()
         throws DocumentRendererException, IOException
     {
-        // TODO: check if exists, construct from pom if not
-        return docRenderer.readDocumentModel( docDescriptor );
+        if ( docDescriptor.exists() )
+        {
+            return docRenderer.readDocumentModel( docDescriptor );
+        }
+
+        File tmp = generateDefaultDocDescriptor( project );
+
+        return docRenderer.readDocumentModel( tmp );
     }
 
     /**
@@ -172,18 +210,60 @@ public class PdfMojo
      */
     private File getOutputDirectory( Locale locale, Locale defaultLocale )
     {
-        File file;
-
         if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
-            file = outputDirectory;
-        }
-        else
-        {
-            file = new File( outputDirectory, locale.getLanguage() );
+            return outputDirectory;
         }
 
-        return file;
+        return new File( outputDirectory, locale.getLanguage() );
     }
 
+    /**
+     * @param project not null
+     * @return Generate a default document descriptor from the Maven project
+     * @throws IOException if any
+     */
+    private static File generateDefaultDocDescriptor( MavenProject project )
+        throws IOException
+    {
+        File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
+        if ( outputDir.exists() && outputDir.isFile() )
+        {
+            throw new IOException( "The file '" + outputDir + "' should be a dir." );
+        }
+        if ( !outputDir.exists() )
+        {
+            outputDir.mkdirs();
+        }
+
+        File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
+        doc.deleteOnExit();
+
+        DocumentMeta meta = new DocumentMeta(); // TODO Improve metadata
+        meta.setAuthor( ( project.getOrganization() != null
+            && StringUtils.isNotEmpty( project.getOrganization().getName() ) ? project.getOrganization().getName()
+                                                                            : System.getProperty( "user.name" ) ) );
+        meta.setTitle( ( StringUtils.isEmpty( project.getName() ) ? project.getGroupId() + ":"
+            + project.getArtifactId() : project.getName() ) );
+
+        DocumentModel docModel = new DocumentModel();
+        docModel.setModelEncoding( ( StringUtils.isEmpty( project.getModel().getModelEncoding() ) ? "UTF-8" : project
+            .getModel().getModelEncoding() ) );
+        docModel.setOutputName( project.getArtifactId() + "-doc" );
+        docModel.setMeta( meta );
+
+        DocumentXpp3Writer xpp3 = new DocumentXpp3Writer();
+        Writer w = null;
+        try
+        {
+            w = WriterFactory.newPlatformWriter( doc );
+            xpp3.write( w, docModel );
+        }
+        finally
+        {
+            IOUtil.close( w );
+        }
+
+        return doc;
+    }
 }
