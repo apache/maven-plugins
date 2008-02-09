@@ -21,10 +21,7 @@ package org.apache.maven.plugin.war.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,16 +30,15 @@ import org.apache.maven.plugin.war.util.MappingUtils;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.shared.filtering.MavenFilteringException;
-import org.apache.maven.shared.filtering.ReflectionProperties;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 
 /**
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public abstract class AbstractWarPackagingTask
     implements WarPackagingTask
@@ -202,27 +198,7 @@ public abstract class AbstractWarPackagingTask
             {
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
-
-                List defaultFilterWrappers = context.getMavenFileFilter().getDefaultFilterWrappers(
-                                                                                                    context
-                                                                                                        .getProject(),
-                                                                                                    context
-                                                                                                        .getFilters(),
-                                                                                                    true );
-
-                List filterWrappers = new ArrayList( defaultFilterWrappers );
-                FileUtils.FilterWrapper filterWrapper = new FileUtils.FilterWrapper()
-                {
-                    public Reader getReader( Reader reader )
-                    {
-                        ReflectionProperties reflectionProperties = new ReflectionProperties( context.getProject(),
-                                                                                              true );
-                        return new InterpolationFilterReader( reader, reflectionProperties, "@", "@" );
-                    }
-                };
-                filterWrappers.add( filterWrapper );
-
-                context.getMavenFileFilter().copyFile( file, targetFile, true, filterWrappers, null );
+                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), null );
             }
             catch ( MavenFilteringException e )
             {
