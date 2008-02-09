@@ -29,11 +29,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.util.FileUtils.FilterWrapper;
 
 /**
  * The packaging context.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public interface WarPackagingContext
 {
@@ -161,5 +163,11 @@ public interface WarPackagingContext
      * @since 2.1-alpha-2
      */
     MavenFileFilter getMavenFileFilter();
+    
+    /**
+     * @return {@link List} of {@link FilterWrapper}
+     * @since 2.1-alpha-2
+     */
+    List getFilterWrappers();
 
 }
