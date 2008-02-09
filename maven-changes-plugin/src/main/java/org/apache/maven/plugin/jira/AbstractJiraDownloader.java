@@ -219,58 +219,58 @@ public abstract class AbstractJiraDownloader
                 if ( lowerColumnName.endsWith( "desc" ) )
                 {
                     descending = true;
-                    lowerColumnName = lowerColumnName.substring(0, lowerColumnName.length() - 4).trim();
+                    lowerColumnName = lowerColumnName.substring( 0, lowerColumnName.length() - 4 ).trim();
                 }
 
                 if ( "key".equals( lowerColumnName ) )
                 {
                     fieldName = "issuekey";
                 }
-                else if ("summary".equals( lowerColumnName ) )
+                else if ( "summary".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("status".equals( lowerColumnName ) )
+                else if ( "status".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("resolution".equals( lowerColumnName ) )
+                else if ( "resolution".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("assignee".equals( lowerColumnName ) )
+                else if ( "assignee".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("reporter".equals( lowerColumnName ) )
+                else if ( "reporter".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("type".equals( lowerColumnName ) )
+                else if ( "type".equals( lowerColumnName ) )
                 {
                     fieldName = "issuetype";
                 }
-                else if ("priority".equals( lowerColumnName ) )
+                else if ( "priority".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("version".equals( lowerColumnName ) )
+                else if ( "version".equals( lowerColumnName ) )
                 {
                     fieldName = "versions";
                 }
-                else if ("fix version".equals( lowerColumnName ) )
+                else if ( "fix version".equals( lowerColumnName ) )
                 {
                     fieldName = "fixVersions";
                 }
-                else if ("component".equals( lowerColumnName ) )
+                else if ( "component".equals( lowerColumnName ) )
                 {
                     fieldName = "components";
                 }
-                else if ("created".equals( lowerColumnName ) )
+                else if ( "created".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
-                else if ("updated".equals( lowerColumnName ) )
+                else if ( "updated".equals( lowerColumnName ) )
                 {
                     fieldName = lowerColumnName;
                 }
@@ -282,7 +282,8 @@ public abstract class AbstractJiraDownloader
                     localFilter.append( descending ? "DESC" : "ASC" );
                     validSortColumnNames++;
                 }
-                else {
+                else
+                {
                     // Error in the configuration
                     getLog().error(
                         "maven-changes-plugin: The configured value '" + lowerColumnName
