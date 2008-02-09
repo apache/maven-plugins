@@ -21,6 +21,7 @@ package org.apache.maven.plugin.war;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,8 +45,12 @@ import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.ReflectionProperties;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -370,7 +375,29 @@ public abstract class AbstractWarMojo
         final OverlayManager overlayManager =
             new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes );
         final List packagingTasks = getPackagingTasks( overlayManager );
-        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager );
+        List filterWrappers = new ArrayList( );
+        try
+        {
+            List defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, true );
+
+            filterWrappers.addAll( defaultFilterWrappers );
+            FileUtils.FilterWrapper filterWrapper = new FileUtils.FilterWrapper()
+            {
+                public Reader getReader( Reader reader )
+                {
+                    ReflectionProperties reflectionProperties = new ReflectionProperties( getProject(), true );
+                    return new InterpolationFilterReader( reader, reflectionProperties, "@", "@" );
+                }
+            };
+            filterWrappers.add( filterWrapper );
+        }
+        catch ( MavenFilteringException e )
+        {
+            getLog().error( "fail to build filering wrappers " + e.getMessage() );
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        
+        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager, filterWrappers );
         final Iterator it = packagingTasks.iterator();
         while ( it.hasNext() )
         {
@@ -456,13 +483,16 @@ public abstract class AbstractWarMojo
         private final File webappDirectory;
 
         private final OverlayManager overlayManager;
+        
+        private final List filterWrappers;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
-                                           final OverlayManager overlayManager )
+                                           final OverlayManager overlayManager, List filterWrappers )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
             this.overlayManager = overlayManager;
+            this.filterWrappers = filterWrappers;
 
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase
@@ -557,6 +587,11 @@ public abstract class AbstractWarMojo
         public MavenFileFilter getMavenFileFilter()
         {
             return mavenFileFilter;
+        }
+
+        public List getFilterWrappers()
+        {
+            return filterWrappers;
         }
         
         
