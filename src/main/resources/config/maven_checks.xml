@@ -131,7 +131,9 @@ under the License.
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
+        <module name="EmptyBlock">
+          <property name="option" value="text"/>
+        </module>
         <module name="NeedBraces"/>
 
 
@@ -160,8 +162,9 @@ under the License.
         <!-- module name="FinalClass"/ -->
         <!-- module name="HideUtilityClassConstructor"/ -->
         <module name="InterfaceIsType"/>
-        <module name="VisibilityModifier"/>
-
+        <module name="VisibilityModifier">
+          <property name="protectedAllowed" value="true"/>
+        </module>
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
