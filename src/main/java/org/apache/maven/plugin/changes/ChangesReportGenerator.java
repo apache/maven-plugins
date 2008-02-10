@@ -249,6 +249,13 @@ public class ChangesReportGenerator
         sink.text( bundle.getString( "report.changes.header" ) );
         sink.title_();
 
+        if ( StringUtils.isNotEmpty( report.getAuthor() ) )
+        {
+            sink.author();
+            sink.text( report.getAuthor() );
+            sink.author_();
+        }
+
         sink.head_();
 
         sink.body();
