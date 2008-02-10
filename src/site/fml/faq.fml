@@ -29,5 +29,35 @@ under the License.
        </p>
      </answer>
    </faq>
+
+   <faq id="question2">
+     <question>I get a <code>org.xml.sax.SAXParseException</code>, when generating the JIRA Report. What can do about it?</question>
+     <answer>
+       <p>
+         If you have a lot of entities in the xml file returned from your JIRA
+         installation, you might get an error like this one, when you run the
+         JIRA Report:
+
+         <source>
+org.xml.sax.SAXParseException: Parser has reached the entity expansion limit "64,000" set by the Application.
+         </source>
+
+         If that happens you need to tell the xml parser to use a higher limit.
+         This can be accomplished by adding a command line parameter. In the
+         following example we have set it to double the original value:
+
+         <source>
+mvn -DentityExpansionLimit=128000 ...
+         </source>
+       </p>
+       <p>
+         Unfortunately we have not been able to set this in Java. If someone
+         knows how to do this, then please reopen
+         <a href="http://jira.codehaus.org/browse/MCHANGES-75">MCHANGES-75</a>,
+         and tell us how. It would be nicer is this could be set using a
+         parameter in the pom.
+       </p>
+     </answer>
+   </faq>
  </part>
 </faqs>
