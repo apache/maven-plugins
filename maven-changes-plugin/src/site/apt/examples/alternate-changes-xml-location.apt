@@ -24,18 +24,22 @@
  ~~ under the License.
 
  ~~ NOTE: For help with the syntax of this file, see:
- ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Alternate Location for the changes.xml File
+Alternate Location for the <<<changes.xml>>> File
 
  <<Note:>> This feature was introduced in version <2.0-beta-2> of the Changes
  plugin.
 
- If you want to have your <<<changes.xml>>> in another location than the
- default <<<${basedir}/src/changes/changes.xml>>> you can do this by
- configuring your <<<pom.xml>>>. In this example we want to use the file
- <<<${basedir}/src/site/changes.xml>>>:
+ <<Note:>> Unless you have a specific reason to have your <<<changes.xml>>>
+ file in a different location, we advice you to put it in the default location
+ <<<$\{basedir\}/src/changes/changes.xml>>>. If nothing else, it saves you from
+ having to configure it.
+
+ If you <really> want to have your <<<changes.xml>>> in another location than
+ the default location, you can do this by configuring your <<<pom.xml>>>. In
+ this example we want to use the file <<<$\{basedir\}/src/site/changes.xml>>>:
 
 +-----------------+
 <project>
