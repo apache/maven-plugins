@@ -1,5 +1,5 @@
  ------
- Specifying the mail sender
+ Specifying the Mail Sender
  ------
  Stephane Nicoll
  ------
@@ -24,18 +24,18 @@
  ~~ under the License.
 
  ~~ NOTE: For help with the syntax of this file, see:
- ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Specifying the mail sender
+Specifying the Mail Sender
 
- The identify used to send announcement mail can be customized. It can be either a
- member of the <<<developers>>> section of the pom or it can be specified explicitely
- with the <<<mailSender>>> configuration of the plugin
+ The identify used to send the announcement mail can be customized. It can be
+ either a member of the <<<\<developers\>>>> section of the pom or it can be
+ specified explicitly with the <<<\<mailSender\>>>> parameter of the plugin.
 
 * Specifying the developer to use
 
- To specify the developer to use to send the announcement, simply specify the <<<id>>> of
+ To specify which developer is used to send the announcement, simply specify the <<<id>>> of
  the developer as in the example below:
 
 +-----------------+
@@ -46,7 +46,9 @@ Specifying the mail sender
       <id>jsmith</id>
       <name>John Smith</name>
       <email>jsmith@foo.bar</email>
-  </developer>
+    </developer>
+    ...
+  </developers>
   ...
   <reporting>
     <plugins>
@@ -63,12 +65,20 @@ Specifying the mail sender
 </project>
 +-----------------+
 
-  If no developer id is specified, the first developer in the list will be used.
+ If no developer <<<id>>> is specified, the first <<<\<developer\>>>> in the list will be used.
 
-* Specifying the sender explicitely
+ You can also do this from the command line, if the person doing the release
+ changes between releases.
 
- If you want to specify the sender explicitely and not rely on the <<<developers>>> section of your pom,
- define the <<<mailSender>>> attribute of the plugin.
++-----------------+
+mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
++-----------------+
+
+
+* Specifying the sender explicitly
+
+ If you want to specify the sender explicitly and not rely on the <<<developers>>> section of your pom,
+ define the <<<mailSender>>> parameter of the plugin.
 
 +-----------------+
 <project>
