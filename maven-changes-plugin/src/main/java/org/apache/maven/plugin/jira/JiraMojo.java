@@ -246,6 +246,7 @@ public class JiraMojo
      * any "-SNAPSHOT" suffix.
      *
      * @parameter default-value="false"
+     * @since 2.0-beta-4
      */
     private boolean onlyCurrentVersion;
 
