@@ -24,7 +24,7 @@
  ~~ under the License.
 
  ~~ NOTE: For help with the syntax of this file, see:
- ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
 Maven 2 Changes Plugin
@@ -44,7 +44,7 @@ Maven 2 Changes Plugin
 
   * {{{changes-report-mojo.html}changes:changes-report}} create a report showing what has changed between different releases of the project.
 
-  * {{{jira-report-mojo.html}changes:jira-report}} creates a report on issues downloaded from JIRA.
+  * {{{jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from JIRA.
 
   []
 
