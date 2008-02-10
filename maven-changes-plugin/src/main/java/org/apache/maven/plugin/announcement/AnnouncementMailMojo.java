@@ -96,7 +96,7 @@ public class AnnouncementMailMojo
     /**
      * Subject for the email.
      *
-     * @parameter default-value="[ANNOUNCEMENT] - ${project.artifactId} ${project.version} release!"
+     * @parameter default-value="[ANNOUNCEMENT] - ${project.name} ${project.version} released"
      * @required
      */
     private String subject;
@@ -282,7 +282,7 @@ public class AnnouncementMailMojo
         else if ( from == null || from.isEmpty() )
         {
             throw new MojoExecutionException(
-                "<developers> section in your pom could not be empty: add a <developer> entry or set the "
+                "The <developers> section in your pom should not be empty. Add a <developer> entry or set the "
                     + "mailSender parameter." );
         }
         else if ( fromDeveloperId == null )
