@@ -110,6 +110,9 @@ public class JavadocUtilTest
         {
             assertTrue( true );
         }
+
+        version = "SCO-UNIX-J2SE-1.5.0_09*FCS-UW714-OSR6*_20061114";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
     }
 
     /**
