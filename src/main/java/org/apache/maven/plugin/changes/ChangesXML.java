@@ -127,7 +127,7 @@ public class ChangesXML
         }
         else if ( qName.equals( "author" ) )
         {
-            this.title = currentElement.toString().trim();
+            this.author = currentElement.toString().trim();
         }
         else if ( qName.equals( "action" ) )
         {
