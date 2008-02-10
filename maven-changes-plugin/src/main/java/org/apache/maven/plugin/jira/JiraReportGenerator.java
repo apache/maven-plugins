@@ -20,9 +20,12 @@ package org.apache.maven.plugin.jira;
  */
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,19 +62,36 @@ public class JiraReportGenerator
         /* 10 */ "Component"
     };
 
+    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
     private int[] columnOrder;
 
+    private String currentVersion = null;
+
     private JiraXML jira;
+
+    private boolean onlyCurrentVersion = false;
 
     public JiraReportGenerator()
     {
 
     }
 
-    public JiraReportGenerator( File xmlPath, String columnNames )
+    /**
+     *
+     * @param xmlFile An xml file containing issues from JIRA
+     * @param columnNames The names of the columns to include in the report
+     * @param currentVersion The current version of the project
+     * @param onlyCurrentVersion If only issues for the current version will be included in the report
+     */
+    public JiraReportGenerator( File xmlFile, String columnNames, String currentVersion,
+                                boolean onlyCurrentVersion)
         throws MavenReportException
     {
-        jira = new JiraXML( xmlPath );
+        this.currentVersion = currentVersion;
+        this.onlyCurrentVersion = onlyCurrentVersion;
+
+        jira = new JiraXML( xmlFile );
 
         String[] columnNamesArray = columnNames.split( "," );
         int validColumnNames = 0;
@@ -109,9 +129,16 @@ public class JiraReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, Log log )
+        throws MojoExecutionException
     {
         List issueList = jira.getIssueList();
+
+        if ( onlyCurrentVersion )
+        {
+            issueList = getIssuesForCurrentRelease( issueList );
+            log.info( "The JIRA Report will contain issues only for the current version." );
+        }
 
         sinkBeginReport( sink, bundle );
 
@@ -334,5 +361,49 @@ public class JiraReportGenerator
         sink.text( text );
 
         sink.sectionTitle1_();
+    }
+
+    /**
+     * Find the issues for only the current release, by matching the "Fix for"
+     * version in the supplied list of issues with the current version from the
+     * pom. If the current version is a SNAPSHOT, then that part of the version
+     * will be removed prior to the matching.
+     *
+     * @param allIssues A list of all issues from JIRA
+     * @return A <code>List</code> of issues for the current release of the current project
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          If no issues could be found for the current release
+     */
+    public List getIssuesForCurrentRelease( List allIssues )
+        throws MojoExecutionException
+    {
+        List currentReleaseIssues = new ArrayList();
+        boolean isFound = false;
+        JiraIssue issue = null;
+        String releaseVersion = currentVersion;
+
+        // Remove "-SNAPSHOT" from the end of the version, if it's there
+        if ( currentVersion != null && currentVersion.endsWith( SNAPSHOT_SUFFIX ) )
+        {
+            releaseVersion = currentVersion.substring( 0, currentVersion.length() - SNAPSHOT_SUFFIX.length() );
+        }
+
+        for ( int i = 0; i < allIssues.size(); i++ )
+        {
+            issue = (JiraIssue) allIssues.get( i );
+
+            if ( issue.getFixVersion() != null && issue.getFixVersion().equals( releaseVersion ) )
+            {
+                isFound = true;
+                currentReleaseIssues.add( issue );
+            }
+        }
+
+        if ( !isFound )
+        {
+            throw new MojoExecutionException(
+                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues." );
+        }
+        return currentReleaseIssues;
     }
 }
