@@ -24,12 +24,12 @@
  ~~ under the License.
 
  ~~ NOTE: For help with the syntax of this file, see:
- ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
 Using a Custom Announcement Template
 
- The announcement Mojo uses a {{{http://velocity.apache.org/}Velocity}}
+ The announcement goal uses a {{{http://velocity.apache.org/}Velocity}}
  template to create an announcement. If you want to, you can create your own
  custom template.
 
@@ -37,10 +37,10 @@ Using a Custom Announcement Template
 
  First you must configure the plugin and tell it where your template is. In
  this example we want to use the template
- <<<${basedir}/src/main/resources/our-announcements/my-announcement.vm>>>.
+ <<<$\{basedir\}/src/main/resources/our-announcements/my-announcement.vm>>>.
 
- <<Note:>> The <<<templateDirectory>>> must be a subdirectory of
- <<<${basedir}/src/main/resources/>>>.
+ <<Note:>> The <<<\<templateDirectory\>>>> must be a subdirectory of
+ <<<$\{basedir\}/src/main/resources/>>>.
 
 +-----------------+
 <project>
@@ -61,6 +61,7 @@ Using a Custom Announcement Template
 </project>
 +-----------------+
 
+
 * Creating Your Template
 
  Next you want to create your own template. A wise thing is to start with the
@@ -69,6 +70,7 @@ Using a Custom Announcement Template
  {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/src/main/resources/org/apache/maven/plugin/announcement/announcement.vm}here}}.
  It will provide you with examples on how to iterate over the actions of a
  release among other things.
+
 
 * Available Variables
 
@@ -117,7 +119,7 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 <Variables marked with * are read-only.>
 
- Finally each <<<Action>>> has its own set of variables:
+ Finally each <<<Action>>> has the following variables:
 
 *-----------------+----------+-------------+
 | <<Variable>>    | <<Type>> | <<Contents>>
@@ -136,6 +138,6 @@ Using a Custom Announcement Template
 *-----------------+----------+-------------+
 <Variables marked with * are read-only.>
 
- For more information on how to access variables in your template and more,
+ For information on how to access variables in your template and more,
  please see the
  {{{http://velocity.apache.org/engine/releases/velocity-1.4/user-guide.html}Velocity user guide}}.

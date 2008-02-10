@@ -1,0 +1,84 @@
+ ------
+ Changes Reference
+ ------
+ Dennis Lundberg
+ ------
+ 2008-02-10
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Changes Reference
+
+  This is the reference documentation for the <<<changes.xml>>> file. Here you
+  can find out more about the different attributes that are available for the
+  <<<\<release\>>>> and <<<\<action\>>>> elements.
+
++-----------------+
+<document>
+  <properties>
+    <title/>
+    <author email=.../>
+  </properties>
+  <body>
+    <release date=... version=... description=...>
+      <action dev=... type=... due-to=... due-to-email=... issue=.../>
+    </release>
+  </body>
+</document>
++-----------------+
+
+
+* release
+
+  The following attributes are supported for the <<<\<release\>>>> element:
+
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+<<Attribute>>        | <<Optional>> | <<Description>>
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+date                 | Required     |  Date at which the version was released. You can use a free form comment such as "in SVN" for unreleased versions.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+version              | Required     |  Name of the version in which the changes occur. For each change, add a nested <<<\<action\>>>> element as described below.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+description          | Optional     |  An optional description of the release. This is used in the overview table of releases. <<Note:>> In releases prior to 2.0-beta-2 this was called <<<desc>>>. It was changed to improve compatibility with the Maven 1 changes plugin.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+
+
+* action
+
+  The following attributes are supported for the <<<\<action\>>>> element:
+
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+<<Attribute>>        | <<Optional>> | <<Description>>
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+dev                  | Required     |  Name of developer who committed the change. This must be the name of the developer as described in the developers section of the <<<pom.xml>>> file.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+type                 | Required     |  Type of change. There are four valid values: <add>, <fix>, <remove>, <update>.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+due-to               | Optional     |  Name of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+due-to-email         | Optional     |  Email of the person to be credited for this change.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+issue                | Optional     |  Id of the issue related to this change. This is the id in your issue tracking system.
+                     |              |  The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the <<<issueLinkTemplate>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+
