@@ -81,7 +81,7 @@ public class JiraMojo
      * If this is set to empty - that means all fix versions will be included.
      *
      * @parameter default-value=""
-     * @since 2.0-beta-4
+     * @since 2.0
      */
     private String fixVersionIds;
 
@@ -143,7 +143,7 @@ public class JiraMojo
      * If this is set to empty - that means all types will be included.
      *
      * @parameter default-value=""
-     * @since 2.0-beta-4
+     * @since 2.0
      */
     private String typeIds;
 
@@ -160,7 +160,7 @@ public class JiraMojo
      * </p>
      *
      * @parameter default-value="Key,Summary,Status,Resolution,Assignee"
-     * @since 2.0-beta-4
+     * @since 2.0
      */
     private String columnNames;
 
@@ -181,7 +181,7 @@ public class JiraMojo
      * </p>
      *
      * @parameter default-value="Priority DESC, Created DESC"
-     * @since 2.0-beta-4
+     * @since 2.0
      */
     private String sortColumnNames;
 
@@ -219,7 +219,7 @@ public class JiraMojo
      * any "-SNAPSHOT" suffix.
      *
      * @parameter default-value="false"
-     * @since 2.0-beta-4
+     * @since 2.0
      */
     private boolean onlyCurrentVersion;
 
