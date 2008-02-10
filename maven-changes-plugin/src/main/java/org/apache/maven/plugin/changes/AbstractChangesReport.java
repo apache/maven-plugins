@@ -52,7 +52,8 @@ import java.util.Map;
 /**
  * Base class with the things that should be in AbstractMavenReport anyway.
  *
- * Note: this file was copied from maven-project-info-reports.
+ * Note: This file was copied from r415312 of AbstractProjectInfoReport in
+ * maven-project-info-reports, as a work-around to MCHANGES-88.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  *
