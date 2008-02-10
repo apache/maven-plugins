@@ -20,8 +20,8 @@ package org.apache.maven.plugin.jira;
  */
 
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
@@ -37,17 +37,8 @@ import java.util.ResourceBundle;
  * @version $Id$
  */
 public class JiraMojo
-    extends AbstractMavenReport
+    extends AbstractChangesReport
 {
-    /**
-     * Output directory where the report will be placed.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     * @readonly
-     */
-    private File outputDirectory;
-
     /**
      * Path to the JIRA XML file, which will be parsed.
      *
@@ -56,24 +47,6 @@ public class JiraMojo
      * @readonly
      */
     private File jiraXmlPath;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
-     * @required
-     * @readonly
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
 
     /**
      * Settings XML configuration.
@@ -307,24 +280,9 @@ public class JiraMojo
         return getBundle( locale ).getString( "report.jira.description" );
     }
 
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
     public String getOutputName()
     {
         return "jira-report";
-    }
-
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
     }
 
     private ResourceBundle getBundle( Locale locale )

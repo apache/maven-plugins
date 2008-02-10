@@ -21,7 +21,6 @@ package org.apache.maven.plugin.changes;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -39,31 +38,8 @@ import java.util.ResourceBundle;
  * @version $Id$
  */
 public class ChangesMojo
-    extends AbstractMavenReport
+    extends AbstractChangesReport
 {
-    /**
-     * Directory where reports will go.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     * @readonly
-     */
-    private File outputDirectory;
-
-    /**
-     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
-     * @required
-     * @readonly
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
     /**
      * The path of the changes.xml file that will be converted into an html report.
      *
@@ -153,24 +129,9 @@ public class ChangesMojo
         return getBundle( locale ).getString( "report.changes.description" );
     }
 
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
     public String getOutputName()
     {
         return "changes-report";
-    }
-
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
     }
 
     private ResourceBundle getBundle( Locale locale )
