@@ -1,0 +1,203 @@
+ ------
+ Customizing the JIRA Report
+ ------
+ Dennis Lundberg
+ ------
+ 2008-02-10
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Customizing the JIRA Report
+
+ <<Note:>> Most of the features used in this document was introduced in version
+ <<2.0>> of the Changes Plugin. See the
+ {{{../jira-report-mojo.html}goal documentation}} for detailed info on which
+ feature was added in which version.
+
+
+* Selecting version(s)
+
+ We'll start off by creating a JIRA Report for one or more versions of your
+ project. There are two ways to do this.
+
+** Using fix version id(s)
+
+ This is the manual way of doing it. You specify one or more fix version ids,
+ separated by commas. The version ids are usually five digit numbers, but that
+ depends on your JIRA installation.
+
+ The good thing about this method is that you can specify exactly which
+ versions you want, but you have to remember to update your configuration for
+ every new release that you want to include in the report.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <fixVersionIds>13722,12515</fixVersionIds>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+** Using the current version
+
+ If you are lazy and only ever want the latest release in you JIRA Report, you
+ can use the <<<\<onlyCurrentVersion\>>>> configuration parameter. It will take
+ the version from your project's POM and try to match it against the "Fix for"
+ version of the JIRA issues.
+
+ Once you have configured this, you can forget about it, as it updates itself
+ when you change the version number in your POM.
+
+ <<Note:>> The names of your versions in JIRA must match the ones you use in
+ your POM. The <-SNAPSHOT> part of the version in your POM is handled
+ automatically by the plugin, so you don't need to include <-SNAPSHOT> in the
+ names of your versions in JIRA.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <onlyCurrentVersion>true</onlyCurrentVersion>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+
+* Selecting columns
+
+ If you are a fan of the Issue Navigator in JIRA, you are going to love this.
+ You can select which columns to include in the report and also specify in
+ which way the issues are sorted.
+
+ In this example we have selected a couple of extra columns, that are not
+ included by default. We want the issues sorted by <<<Type>>> first and by
+ <<<Key>>> secondly. The keys will be sorted in descending order thanks to the
+ <<<DESC>>> marker. Normally they are sorted in ascending order.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+          <sortColumnNames>Type,Key DESC</sortColumnNames>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+
+* Filtering issues
+
+ Is your report filled with issues that you don't want to publicise? Does it
+ contain duplicate issues and stuff that you decided not to fix? Then this part
+ is for you.
+
+** Using Maven syntax
+
+ In the following example we are only including issues that have <Closed> as
+ their resolution. The status must be either <Resolved> or <Closed>. Only
+ issues with one of the types <Bug>, <New Feature>, <Improvement> or <Wish> are
+ included in the report.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <resolutionIds>Closed</resolutionIds>
+          <statusIds>Resolved, Closed</statusIds>
+          <typeIds>Bug, New Feature, Improvement, Wish</typeIds>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
+
+ You can also filter by <<<\<component\>>>> and <<<\<priorityIds\>>>>. See the
+ {{{../jira-report-mojo.html}goal documentation}} for info on how to use them.
+
+** Using JIRA syntax
+
+  Another way to filter and sort issues is to configure the plugin using a JIRA
+  syntaxed filter. You can grab this from the URL if you filter and sort issues
+  in the Issue Navigator in JIRA. Just remember that you have to excape the
+  ampersand (&) characters, when you put them into the xml based POM.
+
+  In this example we are filtering out issues with <Fixed> as resolution and
+  sorting them by <type>, in ascending order.
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <filter>resolution=1&amp;sorter/field=issuetype&amp;sorter/order=ASC</filter>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+

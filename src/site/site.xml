@@ -25,14 +25,18 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    <menu name="Reference">
+      <item name="changes.xml" href="changes.html"/>
+    </menu>
     <menu name="Samples">
       <item name="Sample Changes Report" href="changes-report.html"/>
       <item name="Live JIRA Report" href="jira-report.html"/>
     </menu>
-
     <menu name="Examples">
       <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
+      <item name="Customizing the JIRA Report" href="examples/customizing-jira-report.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
+      <item name="Specifying the Mail Sender" href="examples/specifying-mail-sender.html"/>
       <item name="Using a Custom Announcement Template" href="examples/using-a-custom-announcement-template.html"/>
     </menu>
   </body>
