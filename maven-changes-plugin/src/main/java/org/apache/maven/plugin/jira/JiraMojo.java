@@ -241,6 +241,15 @@ public class JiraMojo
     private String webPassword;
 
     /**
+     * If you only want to show issues for the current version in the report.
+     * The current version being used is <code>${project.version}</code> minus
+     * any "-SNAPSHOT" suffix.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean onlyCurrentVersion;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
      */
     public boolean canGenerateReport()
@@ -263,9 +272,10 @@ public class JiraMojo
 
             if ( jiraXmlPath.isFile() )
             {
-                report = new JiraReportGenerator( jiraXmlPath, columnNames );
+                report = new JiraReportGenerator( jiraXmlPath, columnNames, project.getVersion(),
+                                                  onlyCurrentVersion );
 
-                report.doGenerateReport( getBundle( locale ), getSink() );
+                report.doGenerateReport( getBundle( locale ), getSink(), getLog() );
             }
             else
             {
