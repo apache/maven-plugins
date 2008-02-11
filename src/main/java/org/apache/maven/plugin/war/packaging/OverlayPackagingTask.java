@@ -76,7 +76,7 @@ public class OverlayPackagingTask
                 // Copy
                 if ( null == overlay.getTargetPath() )
                 {
-                    copyFiles( overlay.getId(), context, tmpDir, includes );
+                    copyFiles( overlay.getId(), context, tmpDir, includes, overlay.isFiltered() );
                 }
                 else
                 {
@@ -87,7 +87,7 @@ public class OverlayPackagingTask
                     {
                         targetPath = targetPath + "/";
                     }
-                    copyFiles( overlay.getId(), context, tmpDir, includes, targetPath );
+                    copyFiles( overlay.getId(), context, tmpDir, includes, targetPath, overlay.isFiltered() );
                 }
             }
             catch ( IOException e )

@@ -73,8 +73,8 @@ public abstract class AbstractWarPackagingTask
      * @throws IOException if an error occured while copying the files
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
-                              String targetPrefix )
-        throws IOException
+                              String targetPrefix, boolean filtered )
+        throws IOException, MojoExecutionException
     {
         for ( Iterator iter = sourceFilesSet.iterator(); iter.hasNext(); )
         {
@@ -90,8 +90,16 @@ public abstract class AbstractWarPackagingTask
             {
                 destinationFileName = targetPrefix + fileToCopyName;
             }
+            
 
-            copyFile( sourceId, context, sourceFile, destinationFileName );
+            if ( filtered )
+            {
+                copyFilteredFile( sourceId, context, sourceFile, destinationFileName );
+            }
+            else
+            {
+                copyFile( sourceId, context, sourceFile, destinationFileName );
+            }
         }
     }
 
@@ -108,10 +116,10 @@ public abstract class AbstractWarPackagingTask
      * @param sourceFilesSet the files to be copied
      * @throws IOException if an error occured while copying the files
      */
-    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet )
-        throws IOException
+    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet, boolean filtered )
+        throws IOException, MojoExecutionException
     {
-        copyFiles( sourceId, context, sourceBaseDir, sourceFilesSet, null );
+        copyFiles( sourceId, context, sourceBaseDir, sourceFilesSet, null, filtered );
     }
 
     /**
