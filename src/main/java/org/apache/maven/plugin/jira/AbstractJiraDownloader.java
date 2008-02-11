@@ -655,6 +655,11 @@ public abstract class AbstractJiraDownloader
             {
                 final String strGetResponseBody = gm.getResponseBodyAsString();
 
+                if ( !output.getParentFile().exists() )
+                {
+                    output.getParentFile().mkdirs();
+                }
+
                 // write the reponse to file
                 PrintWriter pw = new PrintWriter( new FileWriter( output ) );
 
