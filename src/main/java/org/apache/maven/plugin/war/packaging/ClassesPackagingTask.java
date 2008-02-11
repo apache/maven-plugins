@@ -62,7 +62,7 @@ public class ClassesPackagingTask
                 try
                 {
                     copyFiles( Overlay.currentProjectInstance().getId(), context, context.getClassesDirectory(),
-                               sources, CLASSES_PATH );
+                               sources, CLASSES_PATH, false );
                 }
                 catch ( IOException e )
                 {
