@@ -154,7 +154,7 @@ public class WarProjectPackagingTask
 
             try
             {
-                copyFiles( id, context, context.getWebappSourceDirectory(), sources );
+                copyFiles( id, context, context.getWebappSourceDirectory(), sources, false );
             }
             catch ( IOException e )
             {
