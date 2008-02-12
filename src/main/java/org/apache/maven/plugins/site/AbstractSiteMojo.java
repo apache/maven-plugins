@@ -285,4 +285,30 @@ public abstract class AbstractSiteMojo
             populateItemRefs( item.getItems(), locale, reportsByOutputName );
         }
     }
+
+    /**
+     * TODO should be removed see PLXUTILS-61
+     *
+     * @param basedir
+     * @param absolutePath
+     * @return
+     */
+    protected static String toRelative( File basedir, String absolutePath )
+    {
+        String relative;
+
+        absolutePath = absolutePath.replace( '\\', '/' );
+        String basedirPath = basedir.getAbsolutePath().replace( '\\', '/' );
+
+        if ( absolutePath.startsWith( basedirPath ) )
+        {
+            relative = absolutePath.substring( basedirPath.length() + 1 );
+        }
+        else
+        {
+            relative = absolutePath;
+        }
+
+        return relative;
+    }
 }
