@@ -78,6 +78,12 @@ public class MockAndControlForAddArtifactTask
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
     }
 
+    public void expectGetDestFile( File destFile )
+    {
+        archiver.getDestFile();
+        archiverCtl.setReturnValue( destFile, MockControl.ZERO_OR_MORE );
+    }
+
     public void expectAddArchivedFileSet( File artifactFile, String outputLocation, String[] includes, String[] excludes )
     {
         try
