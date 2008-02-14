@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
@@ -187,6 +188,24 @@ public class AssemblyInterpolatorTest
         Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         assertEquals( "assembly.${unresolved}", result.getId() );
+    }
+
+    public void testShouldInterpolateMultiDotProjectExpression()
+        throws AssemblyInterpolationException
+    {
+        Build build = new Build();
+        build.setFinalName( "final-name" );
+
+        Model model = new Model();
+        model.setBuild( build );
+
+        Assembly assembly = new Assembly();
+
+        assembly.setId( "assembly.${project.build.finalName}" );
+
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+
+        assertEquals( "assembly.final-name", result.getId() );
     }
 
 }
