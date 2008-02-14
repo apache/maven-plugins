@@ -184,11 +184,11 @@ public class EclipseManifestWriter
             new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY +
                 File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME );
 
-        System.out.println( "MANIFEST LOCATION: " + manifestFile );
+        log.info( "MANIFEST LOCATION: " + manifestFile );
 
         if ( shouldNewManifestFileBeWritten( manifest, manifestFile ) )
         {
-            System.out.println( "Writing manifest..." );
+            log.info( "Writing manifest..." );
 
             manifestFile.getParentFile().mkdirs();
 
