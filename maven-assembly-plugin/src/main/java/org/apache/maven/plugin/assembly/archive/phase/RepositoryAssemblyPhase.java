@@ -93,7 +93,11 @@ public class RepositoryAssemblyPhase
 
             resolveDependencies(repository, configSource);
 
-            File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
+            String outputDirectory =
+                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
+                                                        null, configSource.getFinalName() );
+
+            File repositoryDirectory = new File( tempRoot, outputDirectory );
 
             if ( !repositoryDirectory.exists() )
             {
@@ -110,10 +114,6 @@ public class RepositoryAssemblyPhase
             {
                 throw new ArchiveCreationException( "Failed to assemble repository: " + e.getMessage(), e );
             }
-
-            String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
-                                                        null, configSource.getFinalName() );
 
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
 
