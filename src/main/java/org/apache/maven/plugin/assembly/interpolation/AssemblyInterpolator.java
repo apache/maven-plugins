@@ -180,7 +180,7 @@ public class AssemblyInterpolator
             {
                 try
                 {
-                    value = ReflectionValueExtractor.evaluate( realExpr, project );
+                    value = ReflectionValueExtractor.evaluate( realExpr, project, false );
                 }
                 catch ( Exception e )
                 {
