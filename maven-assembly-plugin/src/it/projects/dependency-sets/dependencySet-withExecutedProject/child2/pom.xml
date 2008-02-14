@@ -32,7 +32,7 @@
               </descriptors>
             </configuration>
             <goals>
-              <goal>directory</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
