@@ -1,4 +1,5 @@
-<?xml version="1.0"?><project>
+<?xml version='1.0'?>
+<project>
   <parent>
     <artifactId>include-provided</artifactId>
     <groupId>test</groupId>
@@ -27,7 +28,8 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId><version>testing</version>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>testing</version>
         <executions>
           <execution>
             <id>attach-binary-assembly</id>
@@ -38,7 +40,7 @@
               </descriptors>
             </configuration>
             <goals>
-              <goal>attached</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
@@ -46,3 +48,4 @@
     </plugins>
   </build>
 </project>
+
