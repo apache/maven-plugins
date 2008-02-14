@@ -88,7 +88,7 @@ public class ToolchainMojo
                     boolean matched = false;
                     for ( int i = 0; i < tcs.length; i++ )
                     {
-                        if ( toolchainMatchesRequirements( tcs[i], params ) )
+                        if ( tcs[i].matchesRequirements( params ) )
                         {
                             getLog(  ).info( "Toolchain (" + type + ") matched:" + tcs[i] );
                             toolchainManager.storeToolchainToBuildContext( tcs[i],
@@ -140,26 +140,4 @@ public class ToolchainMojo
         }
     }
 
-    private boolean toolchainMatchesRequirements( ToolchainPrivate toolchain,
-                                                  Map params )
-    {
-        Map matchers = toolchain.getRequirementMatchers();
-        Iterator it = params.keySet().iterator();
-        while ( it.hasNext() )
-        {
-            String key = (String) it.next();
-            RequirementMatcher matcher = (RequirementMatcher) matchers.get(key);
-            if ( matcher == null )
-            {
-                getLog().debug( "Toolchain "  + toolchain + " is missing required property: "  + key );
-                return false;
-            }
-            if ( !matcher.matches( (String) params.get(key) ) )
-            {
-                getLog().debug( "Toolchain "  + toolchain + " doesn't match required property: "  + key );
-                return false;
-            }
-        }
-        return true;
-    }
 }
