@@ -29,9 +29,11 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -74,6 +76,29 @@ public class AddArtifactTask
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
+        // MASSEMBLY-282: We should support adding a project's standard output file as part of an assembly that replaces it.
+        if ( ( ( artifact.getFile() != null )  &&  ( archiver.getDestFile() != null ) )
+                        && artifact.getFile().equals( archiver.getDestFile() ) )
+        {
+            File tempRoot = configSource.getTemporaryRootDirectory();
+            File tempArtifactFile = new File( tempRoot, artifact.getFile().getName() );
+
+            logger.warn( "Artifact: "
+                         + artifact.getId()
+                         + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
+            try
+            {
+                FileUtils.copyFile( artifact.getFile(), tempArtifactFile );
+            }
+            catch ( IOException e )
+            {
+                throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile() + "' to temporary location: " + tempArtifactFile + ". Reason: "
+                                                    + e.getMessage(), e );
+            }
+
+            artifact.setFile( tempArtifactFile );
+        }
+
         String destDirectory = outputDirectory;
 
         destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
