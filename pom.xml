@@ -298,17 +298,17 @@
                   <debug>true</debug>
 
                  <!-- Useful config for debugging one IT -->
+                 <!--
                   <pomIncludes>
                     <pomInclude>mojo-configuration/no-appendAssemblyId-no-classifier/pom.xml</pomInclude>
                   </pomIncludes>
+                    <streamLogs>true</streamLogs>
+                  -->
                   <!-- END single-IT debugging block. -->
 
-                  <!--
                   <pomIncludes>
                     <pomInclude>**/pom.xml</pomInclude>
                   </pomIncludes>
-                  <streamLogs>true</streamLogs>
-                -->
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
 
