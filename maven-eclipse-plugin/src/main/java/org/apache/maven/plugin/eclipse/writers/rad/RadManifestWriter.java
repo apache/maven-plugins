@@ -78,7 +78,7 @@ public class RadManifestWriter
             File warSourceDirectory =
                 new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                      "warSourceDirectory", //$NON-NLS-1$
-                                                     DEFAULT_WEBAPP_RESOURCE_DIR ) ); //$NON-NLS-1$
+                                                     DEFAULT_WEBAPP_RESOURCE_DIR ) );
 
             String webContentDir =
                 IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
@@ -144,11 +144,11 @@ public class RadManifestWriter
             new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar +
                 MANIFEST_MF_FILENAME );
 
-        System.out.println( "MANIFEST LOCATION: " + manifestFile );
+        log.info( "MANIFEST LOCATION: " + manifestFile );
 
         if ( shouldNewManifestFileBeWritten( manifest, manifestFile ) )
         {
-            System.out.println( "Writing manifest..." );
+            log.info( "Writing manifest..." );
 
             manifestFile.getParentFile().mkdirs();
 
