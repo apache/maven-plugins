@@ -73,6 +73,7 @@ public class AddArtifactTaskTest
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
+        mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( artifactFile, outputLocation );
 
         mockManager.replayAll();
@@ -97,6 +98,7 @@ public class AddArtifactTaskTest
         File file = mock.setNewFile();
         mock.setExtension( ext );
 
+        mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( file, outputDir + artifactId + "-" + version + "." + ext );
 
         mockManager.replayAll();
@@ -136,6 +138,7 @@ public class AddArtifactTaskTest
 
         String outputLocation = "";
 
+        mac.expectGetDestFile( new File( "junk" ) );
         try
         {
             mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
@@ -170,6 +173,7 @@ public class AddArtifactTaskTest
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
+        mac.expectGetDestFile( new File( "junk" ) );
         try
         {
             mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
@@ -205,6 +209,7 @@ public class AddArtifactTaskTest
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
+        mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddArchivedFileSet( artifactFile, outputLocation, includes, excludes );
 
         mockManager.replayAll();
