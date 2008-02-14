@@ -97,6 +97,7 @@ public class AddDependencySetsTaskTest
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( depArtifactMock.getArtifact() ) );
 
+        macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
 
         mockManager.replayAll();
@@ -180,6 +181,7 @@ public class AddDependencySetsTaskTest
             macTask.expectAddFile( artifactFile, outputLocation + "/artifact", 10 );
         }
 
+        macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectCSGetFinalName( "final-name" );
 
         MavenProject depProject = new MavenProject( new Model() );
