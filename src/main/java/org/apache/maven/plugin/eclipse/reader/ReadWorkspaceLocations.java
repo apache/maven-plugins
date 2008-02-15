@@ -420,6 +420,10 @@ public class ReadWorkspaceLocations
             File prefs =
                 new File( workspaceLocation,
                           ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_LAUNCHING_PREFS );
+            if ( !prefs.exists() )
+            {
+                return jreMap;
+            }
             Properties properties = new Properties();
             properties.load( new FileInputStream( prefs ) );
             vms =
