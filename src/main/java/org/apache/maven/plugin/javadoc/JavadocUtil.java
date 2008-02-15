@@ -367,7 +367,7 @@ public class JavadocUtil
     /**
      * Call the Javadoc tool and parse its output to find its version, i.e.:
      * <pre>
-     * javadoc.exe(or .sh) -J-fullversion
+     * javadoc.exe(or .sh) -J-version
      * </pre>
      *
      * @param javadocExe not null file
@@ -389,7 +389,7 @@ public class JavadocUtil
         Commandline cmd = new Commandline();
         cmd.setExecutable( javadocExe.getAbsolutePath() );
         cmd.setWorkingDirectory( javadocExe.getParentFile() );
-        cmd.createArgument().setValue( "-J-fullversion" );
+        cmd.createArgument().setValue( "-J-version" );
 
         CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
@@ -413,17 +413,17 @@ public class JavadocUtil
             return parseJavadocVersion( out.getOutput() );
         }
 
-        throw new IllegalArgumentException( "No output found from the command line 'javadoc -J-fullversion'" );
+        throw new IllegalArgumentException( "No output found from the command line 'javadoc -J-version'" );
     }
 
     /**
-     * Parse the output for 'javadoc -J-fullversion' and return the javadoc version recognized.
+     * Parse the output for 'javadoc -J-version' and return the javadoc version recognized.
      * <br/>
-     * Here are some output for 'javadoc -J-fullversion' depending the JDK used:
+     * Here are some output for 'javadoc -J-version' depending the JDK used:
      * <table>
      * <tr>
      *   <th>JDK</th>
-     *   <th>Output for 'javadoc -J-fullversion'</th>
+     *   <th>Output for 'javadoc -J-version'</th>
      * </tr>
      * <tr>
      *   <td>Sun 1.4</td>
@@ -451,7 +451,7 @@ public class JavadocUtil
      * </tr>
      * </table>
      *
-     * @param output for 'javadoc -J-fullversion'
+     * @param output for 'javadoc -J-version'
      * @return the version of the javadoc for the output.
      * @throws PatternSyntaxException if the output doesn't match with the output pattern <tt>(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*</tt>.
      * @throws IllegalArgumentException if the output is null
