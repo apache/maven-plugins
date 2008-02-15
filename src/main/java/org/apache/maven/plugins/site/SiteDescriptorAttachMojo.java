@@ -65,7 +65,7 @@ public class SiteDescriptorAttachMojo
     public void execute()
         throws MojoExecutionException
     {
-        List localesList = getAvailableLocales();
+        List localesList = siteTool.getAvailableLocales( locales );
 
         for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
         {
