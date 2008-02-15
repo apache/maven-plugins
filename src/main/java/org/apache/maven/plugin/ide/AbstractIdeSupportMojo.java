@@ -201,26 +201,7 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Plexus logger needed for debugging manual artifact resolution.
      */
-    private Logger logger;
-
-    /**
-     * This eclipse workspace is read and all artifacts detected there will be connected as eclipse projects and will
-     * not be linked to the jars in the local repository. Requirement is that it was created with the similar wtp
-     * settings as the reactor projects, but the project name template my differ. The pom's in the workspace projects
-     * may not contain variables in the artefactId, groupId and version tags.
-     * 
-     * @since 2.5
-     * @parameter expression="${eclipse.workspace}"
-     */
-    protected String workspace;
-
-    /**
-     * Limit the use of project references to the current workspace. No project references will be created to projects
-     * in the reactor when they are not available in the workspace.
-     * 
-     * @parameter expression="${eclipse.limitProjectReferencesToWorkspace}" default-value="false"
-     */
-    protected boolean limitProjectReferencesToWorkspace;
+    protected Logger logger;
 
     /**
      * Getter for <code>artifactMetadataSource</code>.
@@ -588,10 +569,8 @@ public abstract class AbstractIdeSupportMojo
                         ResolutionNode node = (ResolutionNode) i.next();
                         int dependencyDepth = node.getDepth();
                         Artifact art = node.getArtifact();
-                        boolean isReactorProject = getUseProjectReferences() && isAvailableAsAReactorProject( art );
-                        boolean isWorkspaceProject = getUseProjectReferences() && isAvailableAsAWorkspaceProject( art );
                         // don't resolve jars for reactor projects
-                        if ( !isReactorProject || ( limitProjectReferencesToWorkspace && !isWorkspaceProject ) )
+                        if ( hasToResolveJar( art ) )
                         {
                             try
                             {
@@ -627,8 +606,8 @@ public abstract class AbstractIdeSupportMojo
                         }
 
                         if ( includeArtifact &&
-                            ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' +
-                                art.getArtifactId() ) ) )
+                            ( !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) ) || emittedReactorProjectId.add( art.getGroupId() +
+                                '-' + art.getArtifactId() ) ) )
                         {
 
                             // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar"
@@ -684,13 +663,9 @@ public abstract class AbstractIdeSupportMojo
 
                             isOsgiBundle = osgiSymbolicName != null;
 
-                            boolean useProjectReference = ( isReactorProject && !limitProjectReferencesToWorkspace ) || // default
-                                ( limitProjectReferencesToWorkspace && isWorkspaceProject ) || // limitProjectReferencesToWorkspace
-                                ( !isReactorProject && isWorkspaceProject ); // default + workspace projects
-
                             IdeDependency dep =
                                 new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                   art.getClassifier(), useProjectReference,
+                                                   art.getClassifier(), useProjectReference( art ),
                                                    Artifact.SCOPE_TEST.equals( art.getScope() ),
                                                    Artifact.SCOPE_SYSTEM.equals( art.getScope() ),
                                                    Artifact.SCOPE_PROVIDED.equals( art.getScope() ),
@@ -810,7 +785,7 @@ public abstract class AbstractIdeSupportMojo
      * @param artifact the artifact a project should produce.
      * @return <code>true</code> if the artifact is produced by a reactor projectart.
      */
-    private boolean isAvailableAsAReactorProject( Artifact artifact )
+    protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
         if ( reactorProjects != null )
         {
@@ -845,40 +820,6 @@ public abstract class AbstractIdeSupportMojo
     protected IdeDependency[] getWorkspaceArtefacts()
     {
         return new IdeDependency[0];
-    }
-
-    /**
-     * Utility method that locates a project in the workspace for the given artifact.
-     * 
-     * @param artifact the artifact a project should produce.
-     * @return <code>true</code> if the artifact is produced by a reactor projectart.
-     */
-    private boolean isAvailableAsAWorkspaceProject( Artifact artifact )
-    {
-        IdeDependency[] workspaceArtefacts = getWorkspaceArtefacts();
-        for ( int index = 0; workspaceArtefacts != null && index < workspaceArtefacts.length; index++ )
-        {
-            IdeDependency workspaceArtefact = workspaceArtefacts[index];
-            if ( workspaceArtefact.getGroupId().equals( artifact.getGroupId() ) &&
-                workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
-            {
-                if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
-                {
-                    workspaceArtefact.setAddedToClasspath( true );
-                    logger.debug( "Using workspace project: " + workspaceArtefact.getEclipseProjectName() );
-                    return true;
-                }
-                else
-                {
-                    getLog().info(
-                                   "Artifact " +
-                                       artifact.getId() +
-                                       " already available as a workspace project, but with different version. Expected: " +
-                                       artifact.getVersion() + ", found: " + workspaceArtefact.getVersion() );
-                }
-            }
-        }
-        return false;
     }
 
     private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
@@ -1133,4 +1074,26 @@ public abstract class AbstractIdeSupportMojo
      * @since 2.5
      */
     public abstract List getExcludes();
+
+    /**
+     * Checks if jar has to be resolved for the given artifact
+     * 
+     * @param art the artifact to check
+     * @return true if resolution should happen
+     */
+    protected boolean hasToResolveJar( Artifact art )
+    {
+        return !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) );
+    }
+
+    /**
+     * Checks if a projects reference has to be used for the given artifact
+     * 
+     * @param art the artifact to check
+     * @return true if a project reference has to be used.
+     */
+    protected boolean useProjectReference( Artifact art )
+    {
+        return getUseProjectReferences() && isAvailableAsAReactorProject( art );
+    }
 }
