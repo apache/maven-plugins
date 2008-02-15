@@ -950,6 +950,15 @@ public class EclipsePlugin
         // So the .project file must be written AFTER those have run!
         new EclipseProjectWriter().init( getLog(), config ).write();
 
+        writeAdditionalConfig();
+
+        getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
+                                           config.getEclipseProjectName(), eclipseProjectDir.getAbsolutePath() } ) );
+    }
+
+    protected void writeAdditionalConfig()
+        throws MojoExecutionException
+    {
         if ( additionalConfig != null )
         {
             for ( int j = 0; j < additionalConfig.length; j++ )
@@ -1006,9 +1015,6 @@ public class EclipsePlugin
 
             }
         }
-
-        getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
-                                           config.getEclipseProjectName(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
     protected EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )

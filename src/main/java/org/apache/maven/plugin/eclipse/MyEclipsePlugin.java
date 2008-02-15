@@ -139,6 +139,8 @@ public class MyEclipsePlugin
 
         new EclipseProjectWriter().init( getLog(), config ).write();
 
+        writeAdditionalConfig();
+
         // the MyEclipse part ...
 
         new MyEclipseMetadataWriter().init( getLog(), config ).write();
