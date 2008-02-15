@@ -52,6 +52,17 @@ public class MyEclipsePluginTest
         testMyEclipseProject( "project-myeclipse-04" );
     }
 
+    /**
+     * Simple project with additionalConfig
+     *
+     * @throws Exception
+     */
+    public void testMyEclipseProject05()
+        throws Exception
+    {
+        testMyEclipseProject( "project-myeclipse-05" );
+    }
+
     private void testMyEclipseProject( String project )
         throws Exception
     {
