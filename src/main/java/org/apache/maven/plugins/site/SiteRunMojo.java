@@ -158,7 +158,7 @@ public class SiteRunMojo
 
         List filteredReports = filterReports( reports );
 
-        List localesList = getAvailableLocales();
+        List localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
 
         // Default is first in the list
