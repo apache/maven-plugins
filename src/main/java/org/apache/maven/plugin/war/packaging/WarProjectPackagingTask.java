@@ -273,7 +273,7 @@ public class WarProjectPackagingTask
                 }
             }
             context.getLog().debug( "copy targetFileName with targetPath " + targetFileName );
-            if ( resource.isFiltering() )
+            if ( resource.isFiltering() && !context.isNonFilteredExtension( fileNames[i] ) )
             {
                 copyFilteredFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
             }

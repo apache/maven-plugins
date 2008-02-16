@@ -39,6 +39,12 @@ under the License.
                 <Class-Path>properties</Class-Path>
               </manifestEntries>
             </archive>
+            <webResources>
+              <resource>
+                <directory>src/main/images</directory>
+                <filtering>true</filtering>
+              </resource>
+            </webResources>
           </configuration>
         </plugin>
     </plugins>
