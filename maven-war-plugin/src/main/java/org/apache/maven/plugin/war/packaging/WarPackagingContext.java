@@ -159,7 +159,9 @@ public interface WarPackagingContext
     List getOwnerIds();
     
     /**
-     * @return {@link MavenFileFilter}
+     * Returns the {@link MavenFileFilter} instance to use.
+     *
+     * @return the maven file filter to use
      * @since 2.1-alpha-2
      */
     MavenFileFilter getMavenFileFilter();
@@ -171,8 +173,12 @@ public interface WarPackagingContext
     List getFilterWrappers();
     
     /**
-     * @param fileName
-     * @return @since 2.1-alpha-2
+     * Specify if the given <tt>fileName</tt> belongs to the list of extensions
+     * that must not be filtered
+     *
+     * @param fileName the name of file
+     * @return <tt>true</tt> if it should not be filtered, <tt>false</tt> otherwise
+     * @since 2.1-alpha-2
      */
     boolean isNonFilteredExtension( String fileName );
 }
