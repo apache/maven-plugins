@@ -222,6 +222,11 @@ public abstract class AbstractJiraDownloader
                     descending = true;
                     lowerColumnName = lowerColumnName.substring( 0, lowerColumnName.length() - 4 ).trim();
                 }
+                else if ( lowerColumnName.endsWith( "asc" ) )
+                {
+                    descending = false;
+                    lowerColumnName = lowerColumnName.substring( 0, lowerColumnName.length() - 3 ).trim();
+                }
 
                 if ( "key".equals( lowerColumnName ) )
                 {

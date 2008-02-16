@@ -170,7 +170,9 @@ public class JiraMojo
      * to specify <i>descending</i> sequence. For
      * example <code>Fix Version DESC, Type</code> sorts first by
      * the Fix Version in descending order and then by Type in
-     * ascending order.
+     * ascending order. By default sorting is done in ascending order, but is
+     * possible to specify <code>ASC</code> for consistency. The previous
+     * example would then become <code>Fix Version DESC, Type ASC</code>. 
      * <p>
      * Valid columns are: <code>Key</code>, <code>Summary</code>,
      * <code>Status</code>, <code>Resolution</code>, <code>Assignee</code>,
