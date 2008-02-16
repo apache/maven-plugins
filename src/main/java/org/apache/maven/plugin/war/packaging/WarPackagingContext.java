@@ -169,5 +169,10 @@ public interface WarPackagingContext
      * @since 2.1-alpha-2
      */
     List getFilterWrappers();
-
+    
+    /**
+     * @param fileName
+     * @return @since 2.1-alpha-2
+     */
+    boolean isNonFilteredExtension( String fileName );
 }
