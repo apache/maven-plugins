@@ -147,6 +147,9 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   * <<artifactId>> - sets the artifactId of the overlay artifact you want to
   configure.
 
+  * <<type>> - sets the type of the overlay artifact you want to
+  configure. By default, war.
+
   * <<classifier>> - sets the classifier of the overlay artifact you want to
   configure if multiple artifacts matches the groupId/artifact.
 
@@ -358,6 +361,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
             <overlay>
               <groupId>zipGroupId</groupId>
               <artifactId>zipArtifactId</artifactId>
+              <type>zip</type>
               <targetPath>scripts</targetPath>
             </overlay>
           </overlays>
