@@ -612,11 +612,8 @@ public abstract class AbstractWarMojo
 
         public boolean isNonFilteredExtension( String fileName )
         {
-            if (StringUtils.isEmpty( fileName ))
-            {
-                return false;
-            }
-            return nonFilteredFileExtensions.contains( FileUtils.extension( fileName ) );
+            return !StringUtils.isEmpty( fileName ) &&
+                nonFilteredFileExtensions.contains( FileUtils.extension( fileName ) );
         }
         
     }
