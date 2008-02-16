@@ -348,7 +348,7 @@ public abstract class AbstractJiraDownloader
             {
                 if ( jiraId == null || jiraId.length() == 0 )
                 {
-                    log.info( "The JIRA URL " + project.getIssueManagement().getUrl()
+                    log.debug( "The JIRA URL " + project.getIssueManagement().getUrl()
                         + " doesn't include a pid, trying to extract it from JIRA." );
                     jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
                 }
@@ -428,7 +428,7 @@ public abstract class AbstractJiraDownloader
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
-        getLog().info( "JIRA lives at: " + jiraUrl );
+        getLog().debug( "JIRA lives at: " + jiraUrl );
 
         urlMap.put( "url", jiraUrl );
 
@@ -450,7 +450,7 @@ public abstract class AbstractJiraDownloader
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
 
-            getLog().info( "Using username: " + webUser + " for Basic Authentication." );
+            getLog().debug( "Using username: " + webUser + " for Basic Authentication." );
 
             client.getState().setCredentials( new AuthScope( null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME ),
                                               defaultcreds );
@@ -482,7 +482,7 @@ public abstract class AbstractJiraDownloader
         {
             password = StringUtils.repeat( "*", jiraPassword.length() );
         }
-        getLog().info( "Login URL: " + loginLink + "&os_password=" + password );
+        getLog().debug( "Login URL: " + loginLink + "&os_password=" + password );
 
         loginLink.append( "&os_password=" ).append( jiraPassword );
 
@@ -497,7 +497,7 @@ public abstract class AbstractJiraDownloader
 
             if ( loginSucceeded( loginGet ) )
             {
-                getLog().info( "Successfully logged in into JIRA." );
+                getLog().debug( "Successfully logged in into JIRA." );
                 return true;
             }
             else
@@ -585,18 +585,18 @@ public abstract class AbstractJiraDownloader
 
             proxyPass = settings.getActiveProxy().getPassword();
 
-            getLog().info( proxyPass );
+            getLog().debug( proxyPass );
         }
 
         if ( proxyHost != null )
         {
             client.getHostConfiguration().setProxy( proxyHost, proxyPort );
 
-            getLog().info( "Using proxy: " + proxyHost + " at port " + proxyPort );
+            getLog().debug( "Using proxy: " + proxyHost + " at port " + proxyPort );
 
             if ( proxyUser != null )
             {
-                getLog().info( "Using proxy user: " + proxyUser );
+                getLog().debug( "Using proxy user: " + proxyUser );
 
                 client.getState().setProxyCredentials(
                                                        new AuthScope( null, AuthScope.ANY_PORT, null,
@@ -628,7 +628,7 @@ public abstract class AbstractJiraDownloader
 
             if ( sl == null )
             {
-                getLog().info( "Unknown error validating link: " + link );
+                getLog().error( "Unknown error validating link: " + link );
 
                 return;
             }
@@ -640,7 +640,7 @@ public abstract class AbstractJiraDownloader
 
                 if ( locationHeader == null )
                 {
-                    getLog().info( "Site sent redirect, but did not set Location header" );
+                    getLog().warn( "Site sent redirect, but did not set Location header" );
                 }
                 else
                 {
@@ -668,7 +668,7 @@ public abstract class AbstractJiraDownloader
 
                 pw.close();
 
-                getLog().info( "Downloading from JIRA was successful" );
+                getLog().debug( "Downloading from JIRA was successful" );
             }
             else
             {

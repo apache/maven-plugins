@@ -53,7 +53,7 @@ public class JiraHelper
         try
         {
             client.executeMethod( gm );
-            log.info( "Successfully reached JIRA." );
+            log.debug( "Successfully reached JIRA." );
             projectPage = gm.getResponseBodyAsString();
         }
         catch ( Exception e )
