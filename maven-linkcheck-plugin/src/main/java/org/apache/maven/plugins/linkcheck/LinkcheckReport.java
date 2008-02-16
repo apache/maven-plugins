@@ -161,10 +161,10 @@ public class LinkcheckReport
     /**
      * Directory containing the <code>site.xml</code> file.
      *
-     * @parameter expression="${basedir}/src/site"
+     * @parameter expression="src/site"
      * @required
      */
-    protected File siteDirectory;
+    protected String siteDirectory;
 
     // ----------------------------------------------------------------------
     // Linkcheck parameters
