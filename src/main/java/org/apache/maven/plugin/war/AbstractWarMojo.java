@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -243,6 +244,15 @@ public abstract class AbstractWarMojo
      * @since 2.1
      */
     private List overlays = new ArrayList();
+    
+    /**
+     * A list of file extensions to not filtering.
+     * <b>will be used for webResources and overlay filtering</b>
+     * 
+     * @parameter 
+     * @since 2.1-alpha-2
+     */
+    private List nonFilteredFileExtensions;
 
     /**
      * The maven archive configuration to use.
@@ -397,7 +407,9 @@ public abstract class AbstractWarMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
         
-        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager, filterWrappers );
+        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager,
+                                                                            filterWrappers,
+                                                                            getNonFilteredFileExtensions() );
         final Iterator it = packagingTasks.iterator();
         while ( it.hasNext() )
         {
@@ -485,15 +497,19 @@ public abstract class AbstractWarMojo
         private final OverlayManager overlayManager;
         
         private final List filterWrappers;
+        
+        private List nonFilteredFileExtensions;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
-                                           final OverlayManager overlayManager, List filterWrappers )
+                                           final OverlayManager overlayManager, List filterWrappers,
+                                           List nonFilteredFileExtensions )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
             this.overlayManager = overlayManager;
             this.filterWrappers = filterWrappers;
-
+            this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.EMPTY_LIST
+                                                                              : nonFilteredFileExtensions;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase
             final Iterator it = overlayManager.getOverlayIds().iterator();
@@ -593,7 +609,15 @@ public abstract class AbstractWarMojo
         {
             return filterWrappers;
         }
-        
+
+        public boolean isNonFilteredExtension( String fileName )
+        {
+            if (StringUtils.isEmpty( fileName ))
+            {
+                return false;
+            }
+            return nonFilteredFileExtensions.contains( FileUtils.extension( fileName ) );
+        }
         
     }
 
@@ -776,5 +800,15 @@ public abstract class AbstractWarMojo
     public MavenArchiveConfiguration getArchive()
     {
         return archive;
+    }
+
+    public List getNonFilteredFileExtensions()
+    {
+        return nonFilteredFileExtensions;
+    }
+
+    public void setNonFilteredFileExtensions( List nonFilteredFileExtensions )
+    {
+        this.nonFilteredFileExtensions = nonFilteredFileExtensions;
     }
 }
