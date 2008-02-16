@@ -42,6 +42,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -213,7 +214,7 @@ public abstract class AbstractJiraDownloader
             // N.B. Add in reverse order (it's the way JIRA likes it!!)
             for ( int i = sortColumnNamesArray.length - 1; i >= 0; i-- )
             {
-                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase();
+                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase(Locale.ENGLISH);
                 boolean descending = false;
                 String fieldName = null;
                 if ( lowerColumnName.endsWith( "desc" ) )
