@@ -92,7 +92,8 @@ public abstract class AbstractWarPackagingTask
             }
             
 
-            if ( filtered )
+            if ( filtered
+                && !context.isNonFilteredExtension( sourceFile.getName() ) ) 
             {
                 copyFilteredFile( sourceId, context, sourceFile, destinationFileName );
             }
