@@ -122,8 +122,8 @@ public abstract class AbstractWarMojo
 
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
-     *
-     * @parameter expression="${project.build.filters}"
+
+     * @parameter 
      */
     private List filters;
 
