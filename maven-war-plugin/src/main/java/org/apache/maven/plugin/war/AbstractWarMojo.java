@@ -47,6 +47,7 @@ import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.apache.maven.shared.filtering.ReflectionProperties;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -184,12 +185,20 @@ public abstract class AbstractWarMojo
     private ArchiverManager archiverManager;
     
     /**
-     * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
+     * 
      *
      * @parameter expression="${component.org.apache.maven.shared.filtering.MavenFileFilter}"
      * @required
      */
-    private MavenFileFilter mavenFileFilter;    
+    private MavenFileFilter mavenFileFilter; 
+    
+    /**
+     * 
+     *
+     * @parameter expression="${component.org.apache.maven.shared.filtering.MavenResourcesFiltering}"
+     * @required
+     */    
+    private MavenResourcesFiltering mavenResourcesFiltering;
 
     private static final String WEB_INF = "WEB-INF";
 
@@ -612,8 +621,7 @@ public abstract class AbstractWarMojo
 
         public boolean isNonFilteredExtension( String fileName )
         {
-            return !StringUtils.isEmpty( fileName ) &&
-                nonFilteredFileExtensions.contains( FileUtils.extension( fileName ) );
+            return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
         }
         
     }
