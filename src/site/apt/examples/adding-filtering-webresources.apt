@@ -247,7 +247,9 @@ documentedproject-1.0-SNAPSHOT.war
 +----------+    
 
 ***with the following in our pom.xml :
- 
+  
+  To prevent corrupting your binaries files where filtering is enabled, you can configure a list of file extensions to not filtering.
+  
 +----------+    
  [...]
     <configuration>
@@ -256,6 +258,10 @@ documentedproject-1.0-SNAPSHOT.war
        <filters>
          <filter>properties/config.prop</filter>
        </filters>
+       <nonFilteredFileExtensions>
+         <nonFilteredFileExtension>pdf</nonFilteredFileExtensions>
+         <!-- default value contains jpg,jpeg,gif,bmp,png -->
+       </nonFilteredFileExtensions>
        <webResources>
          <resource>
            <directory>resource2</directory>
