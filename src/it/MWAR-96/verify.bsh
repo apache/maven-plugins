@@ -56,6 +56,13 @@ try
     	return false;
     }
     
+    indexOf = paramContent.indexOf("<td>okitworks</td>");
+    if ( indexOf < 0)
+    {
+    	System.err.println( "index.jsp not contains <td>okitworks</td>" );
+    	return false;
+    }
+    
 }
 catch( Throwable e )
 {

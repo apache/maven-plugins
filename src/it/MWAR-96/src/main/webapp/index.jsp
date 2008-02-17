@@ -19,3 +19,4 @@ under the License.
 <tr><td>java version</td><td>java version : ${java.version}</td></tr>
 <tr><td>Project</td><td>${pom.name}</td></tr>
 <tr><td>Version</td><td>${pom.version}</td></tr>
+<tr><td>custom filter</td><td>${warPluginFilterConfigurationProperty}</td></tr>
