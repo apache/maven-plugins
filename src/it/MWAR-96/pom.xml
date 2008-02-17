@@ -23,7 +23,7 @@ under the License.
   <artifactId>MWAR-96</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>MWAR-96 Maven Webapp</name>
+  <name>MWAR-96 MWAR-144 Tests</name>
   <url>http://maven.apache.org</url>
  <build>
     <plugins>
@@ -32,6 +32,9 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <warSourceDirectory>src/main/webapp</warSourceDirectory>
+          <filters>
+            <filter>src/main/filters/filter.properties</filter>
+          </filters>
           <webResources>
             <resource>
               <filtering>true</filtering>
