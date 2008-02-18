@@ -80,4 +80,5 @@ public interface AssemblerConfigurationSource
 
     boolean isIgnoreDirFormatExtensions();
 
+    boolean isIgnoreMissingDescriptor();
 }
