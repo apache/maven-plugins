@@ -935,6 +935,57 @@ public class DefaultAssemblyReaderTest
         assertEquals( assembly.getId(), result.getId() );
     }
 
+    public void testReadAssemblies_ShouldFailWhenSingleDescriptorFileMissing()
+        throws IOException, InvalidAssemblerConfigurationException
+    {
+        File basedir = fileManager.createTempDir();
+
+        File assemblyFile = new File( basedir, "test.xml" );
+        assemblyFile.delete();
+
+        try
+        {
+            performReadAssemblies( basedir,
+                                   assemblyFile.getAbsolutePath(),
+                                   null,
+                                   null,
+                                   null,
+                                   null,
+                                   false );
+
+            fail( "Should fail when descriptor file is missing and ignoreDescriptors == false" );
+        }
+        catch ( AssemblyReadException e )
+        {
+            // expected.
+        }
+    }
+
+    public void testReadAssemblies_ShouldIgnoreMissingSingleDescriptorFileWhenIgnoreIsConfigured()
+        throws IOException, InvalidAssemblerConfigurationException
+    {
+        File basedir = fileManager.createTempDir();
+
+        File assemblyFile = new File( basedir, "test.xml" );
+        assemblyFile.delete();
+
+        try
+        {
+            performReadAssemblies( basedir,
+                                   assemblyFile.getAbsolutePath(),
+                                   null,
+                                   null,
+                                   null,
+                                   null,
+                                   true );
+        }
+        catch ( AssemblyReadException e )
+        {
+            e.printStackTrace();
+            fail( "Setting ignoreMissingDescriptor == true (true flag in performReadAssemblies, above) should NOT produce an exception." );
+        }
+    }
+
     public void testReadAssemblies_ShouldGetAssemblyDescriptorFromSingleRef()
         throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
     {
@@ -1056,7 +1107,9 @@ public class DefaultAssemblyReaderTest
 
         writeAssembliesToFile( assemblies, basedir );
 
-        fileManager.createFile( basedir, "readme.txt", "This is just a readme file, not a descriptor." );
+        fileManager.createFile( basedir,
+                                "readme.txt",
+                                "This is just a readme file, not a descriptor." );
 
         List results = performReadAssemblies( basedir, null, null, null, null, basedir );
 
@@ -1109,6 +1162,24 @@ public class DefaultAssemblyReaderTest
                                         File descriptorDir )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
+        return performReadAssemblies( basedir,
+                                      descriptor,
+                                      descriptorRef,
+                                      descriptors,
+                                      descriptorRefs,
+                                      descriptorDir,
+                                      false );
+    }
+
+    private List performReadAssemblies( File basedir,
+                                        String descriptor,
+                                        String descriptorRef,
+                                        String[] descriptors,
+                                        String[] descriptorRefs,
+                                        File descriptorDir,
+                                        boolean ignoreMissing )
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
+    {
         configSource.getDescriptor();
         configSourceControl.setReturnValue( descriptor );
 
@@ -1133,6 +1204,9 @@ public class DefaultAssemblyReaderTest
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+
+        configSource.isIgnoreMissingDescriptor();
+        configSourceControl.setReturnValue( ignoreMissing, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
