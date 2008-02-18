@@ -156,7 +156,8 @@ public class DefaultAssemblyReader
 
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( descriptorSourceDirectory );
-            scanner.setIncludes( new String[]{ "**/*" } );
+            scanner.setIncludes( new String[]{ "**/*.xml" } );
+            scanner.addDefaultExcludes();
 
             try
             {
