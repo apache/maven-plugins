@@ -91,8 +91,8 @@ public abstract class AbstractWarMojo
 
     /**
      * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * 
+     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
      * @required
      */
     private JarArchiver jarArchiver;
@@ -175,27 +175,25 @@ public abstract class AbstractWarMojo
      * @since 2.1
      */
     private boolean useCache = true;
-
+   
     /**
      * To look up Archiver/UnArchiver implementations
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
+     * @component role="org.codehaus.plexus.archiver.manager.ArchiverManager"
      * @required
      */
     private ArchiverManager archiverManager;
     
     /**
      * 
-     *
-     * @parameter expression="${component.org.apache.maven.shared.filtering.MavenFileFilter}"
+     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
      * @required
      */
     private MavenFileFilter mavenFileFilter; 
     
     /**
      * 
-     *
-     * @parameter expression="${component.org.apache.maven.shared.filtering.MavenResourcesFiltering}"
+     * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
      * @required
      */    
     private MavenResourcesFiltering mavenResourcesFiltering;
