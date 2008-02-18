@@ -27,9 +27,10 @@
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="pdf-mojo.html"/>
+      <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="Limitations" href="limitations.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
 
   </body>

@@ -30,5 +30,16 @@ under the License.
         </p>
       </answer>
     </faq>
+
+    <faq id="graphics_formats">
+      <question>What graphics formats are supported?</question>
+      <answer>
+        <p>
+          You can use the same graphics formats as are supported by the chosen implementation, eg see
+          <a href="http://xmlgraphics.apache.org/fop/0.94/graphics.html">Apache FOP Graphics Formats</a>
+          and <a href="http://itextdocs.lowagie.com/tutorial/objects/images/index.php">iText Images</a>.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>

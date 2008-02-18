@@ -224,26 +224,25 @@ public class PdfMojo
         throws IOException
     {
         File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
-        if ( outputDir.exists() && outputDir.isFile() )
+
+        if ( outputDir.isFile() )
         {
-            throw new IOException( "The file '" + outputDir + "' should be a dir." );
+            throw new IOException( outputDir + " is not a directory!" );
         }
+
         if ( !outputDir.exists() )
         {
             outputDir.mkdirs();
         }
 
-        DocumentMeta meta = new DocumentMeta(); // TODO Improve metadata
-        meta.setAuthor( ( project.getOrganization() != null
-            && StringUtils.isNotEmpty( project.getOrganization().getName() ) ? project.getOrganization().getName()
-                                                                            : System.getProperty( "user.name" ) ) );
-        meta.setTitle( ( StringUtils.isEmpty( project.getName() ) ? project.getGroupId() + ":"
-            + project.getArtifactId() : project.getName() ) );
+        // TODO Improve metadata
+        DocumentMeta meta = new DocumentMeta();
+        meta.setAuthor( documentAuthor() );
+        meta.setTitle( documentTitle() );
 
         DocumentModel docModel = new DocumentModel();
-        docModel.setModelEncoding( ( StringUtils.isEmpty( project.getModel().getModelEncoding() ) ? "UTF-8" : project
-            .getModel().getModelEncoding() ) );
-        docModel.setOutputName( project.getArtifactId() + "-doc" );
+        docModel.setModelEncoding( modelEncoding() );
+        docModel.setOutputName( project.getArtifactId() );
         docModel.setMeta( meta );
 
         if ( getLog().isDebugEnabled() )
@@ -266,5 +265,27 @@ public class PdfMojo
         }
 
         return docModel;
+    }
+
+    private String documentAuthor()
+    {
+        return ( project.getOrganization() != null
+            && StringUtils.isNotEmpty( project.getOrganization().getName() )
+                ? project.getOrganization().getName()
+                : System.getProperty( "user.name" ) );
+    }
+
+    private String documentTitle()
+    {
+        return ( StringUtils.isEmpty( project.getName() )
+                ? project.getGroupId() + ":" + project.getArtifactId()
+                : project.getName() );
+    }
+
+    private String modelEncoding()
+    {
+        return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
+                ? "UTF-8"
+                : project.getModel().getModelEncoding() );
     }
 }

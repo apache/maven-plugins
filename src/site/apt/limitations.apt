@@ -34,27 +34,30 @@ Known Bugs and Limitations
 
   * Works only with Maven \>\= 2.0.9 using doxia-1.0-beta-1.
 
-  * Xdoc tables don't work due to a bug in the xdoc parser.
-
-  * Xdoc parsing fails if two identical section/subsection titles are found in one
-    source document (Doxia xdoc parser issue).
-
   * Maven generated pages (reports) are ignored.
+
+  * Xdoc tables don't work due to a bug in the xdoc parser.
 
   * Links to other source documents have to start with "./" or "../".
 
-  * Table widths are always uniformly distributed (Apache FOP issue).
-
-  * Identical id attributes (eg anchors) within one document will lead to a build failure.
-
-  * Menu sub-items are not supported (every source document starts a new chapter).
-
-  * Cover page not configurable (apart from title and author).
-
 * Missing features
 
-  * Only .png graphics format is supported (currently a FO sink limitation)
+  * Cover page not configurable (only title and author).
+
+  * Menu sub-items are not supported in TOC (every source document starts a new chapter).
 
 * Known bugs
 
   None.
+
+* Implementation specific issues
+
+  These are not limitations of the plugin itself, but are listed here for completeness.
+
+  * Apache FOP issues
+
+    * Table widths are always uniformly distributed.
+
+    * Identical id attributes (eg anchors) within one document will lead to a build failure.
+
+  * iText issues
