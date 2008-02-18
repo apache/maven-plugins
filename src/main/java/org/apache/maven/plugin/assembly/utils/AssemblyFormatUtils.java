@@ -88,8 +88,9 @@ public final class AssemblyFormatUtils
      *    A. MavenProject instance from current build
      * 5. no prefix, using main project instance
      *    A. MavenProject instance from current build
-     * 6. System properties
-     * 7. environment variables.
+     * 6. properties of the main project
+     * 7. System properties
+     * 8. environment variables.
      *
      */
     public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
@@ -147,14 +148,17 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
+
+            // 6
+            interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
         }
 
-        // 6
+        // 7
         interpolator.addValueSource( new PropertiesInterpolationValueSource( System.getProperties() ) );
 
         try
         {
-            // 7
+            // 8
             interpolator.addValueSource( new PropertiesInterpolationValueSource( CommandLineUtils.getSystemEnvVars( false ) ) );
         }
         catch ( IOException e )
@@ -199,8 +203,9 @@ public final class AssemblyFormatUtils
      * 4. no prefix, using main project instance
      *    A. MavenProject instance from current build
      * 5. Support for special expressions, like ${dashClassifier?}
-     * 6. System properties
-     * 7. environment variables.
+     * 6. properties from main project
+     * 7. System properties
+     * 8. environment variables.
      *
      */
     public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject, MavenProject artifactProject, String artifactProjectRefName )
@@ -280,12 +285,18 @@ public final class AssemblyFormatUtils
         // 5
         interpolator.addValueSource( new PropertiesInterpolationValueSource( specialRules ) );
 
-        // 6
+        if ( mainProject != null )
+        {
+            // 6
+            interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
+        }
+
+        // 7
         interpolator.addValueSource( new PropertiesInterpolationValueSource( System.getProperties() ) );
 
         try
         {
-            // 7
+            // 8
             interpolator.addValueSource( new PropertiesInterpolationValueSource( CommandLineUtils.getSystemEnvVars( false ) ) );
         }
         catch ( IOException e )
