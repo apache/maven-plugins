@@ -77,7 +77,7 @@ public class MailingListsReport
     // Private
     // ----------------------------------------------------------------------
 
-    private static class MailingListsRenderer
+    protected static class MailingListsRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -271,7 +271,13 @@ public class MailingListsReport
             {
                 fromIndex = 0;
             }
+
             int from = uri.indexOf( "/", fromIndex );
+
+            if ( from == -1 )
+            {
+                return uri.substring( at + 2 );
+            }
 
             return uri.substring( at + 2, from );
         }
