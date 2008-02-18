@@ -26,16 +26,16 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.interpolation.MapBasedValueSource;
-import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -93,7 +93,7 @@ public class FileFormatter
 
             if ( filter )
             {
-                contents = filter( contents );
+                contents = filter( contents, source );
             }
 
             contentIsChanged = !contents.equals( rawContents );
@@ -182,27 +182,40 @@ public class FileFormatter
         return fileWritten;
     }
 
-    private String filter( String rawContents )
-        throws AssemblyFormattingException
+    private String filter( String rawContents, File source )
+        throws IOException, AssemblyFormattingException
     {
         initializeFiltering();
 
-        String contents = rawContents;
+        Reader reader  = new BufferedReader(new StringReader(rawContents));
 
         // support ${token}
-        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-        interpolator.addValueSource( new MapBasedValueSource( filterProperties ) );
-        interpolator.addValueSource( new ObjectBasedValueSource( configSource.getProject() ) );
+        reader = new InterpolationFilterReader( reader, filterProperties, "${", "}" );
 
-        contents = interpolator.interpolate( contents, "project" );
+        // support @token@
+        reader = new InterpolationFilterReader( reader, filterProperties, "@", "@" );
 
-        return contents;
+        boolean isPropertiesFile = false;
+
+        if ( source.isFile() && source.getName().endsWith( ".properties" ) )
+        {
+            isPropertiesFile = true;
+        }
+
+        reader = new InterpolationFilterReader( reader, new ReflectionProperties( configSource.getProject(), isPropertiesFile ), "${", "}" );
+
+        StringWriter sw = new StringWriter();
+        IOUtil.copy( reader, new BufferedWriter(sw));
+
+        return sw.getBuffer().toString();
+
+
     }
 
     private void initializeFiltering()
         throws AssemblyFormattingException
     {
-        logger.info( "Initializing assembly filters..." );
+        logger.debug( "Initializing assembly filters..." );
 
         if ( filterProperties == null )
         {
@@ -215,7 +228,7 @@ public class FileFormatter
 
             List filters = configSource.getFilters();
 
-            if ( filters != null && !filters.isEmpty() )
+            if ( ( filters != null ) && !filters.isEmpty() )
             {
                 for ( Iterator i = filters.iterator(); i.hasNext(); )
                 {
