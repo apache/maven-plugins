@@ -950,7 +950,7 @@ public abstract class AbstractIdeSupportMojo
      * artifacts (depending on the <code>classifier</code>) are attached to the dependency.
      * 
      * @param deps resolved dependencies
-     * @param classifier the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
+     * @param inClassifier the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
      * @param includeRemoteRepositories flag whether we should search remote repositories for the artifacts or not
      * @param unavailableArtifactsCache cache of unavailable artifacts
      * @return the list of dependencies for which the required artifact was not found
@@ -975,39 +975,38 @@ public abstract class AbstractIdeSupportMojo
                 continue;
             }
 
-            // MECLIPSE-151 - if the dependency is a test, get the correct classifier for it. (ignore for javadocs)
-            String classifier = inClassifier;
-            if ( "sources".equals( classifier ) && "tests".equals( dependency.getClassifier() ) )
-            {
-                classifier = "test-sources";
-            }
-
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug(
                                 "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier() +
-                                    " at " + dependency.getId() + ":" + classifier );
+                                    " at " + dependency.getId() + ":" + inClassifier );
             }
-            if ( !unavailableArtifactsCache.containsKey( dependency.getId() + ":" + classifier ) )
+
+            String key =
+                dependency.getClassifier() == null ? dependency.getId() + ":" + inClassifier : dependency.getId() +
+                    ":" + inClassifier + ":" + dependency.getClassifier();
+
+            if ( !unavailableArtifactsCache.containsKey( key ) )
             {
                 Artifact artifact =
                     IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                            dependency.getVersion(), classifier, localRepository,
-                                                            artifactResolver, artifactFactory, remoteRepos, getLog() );
+                                                            dependency.getVersion(), dependency.getClassifier(),
+                                                            inClassifier, localRepository, artifactResolver,
+                                                            artifactFactory, remoteRepos, getLog() );
                 if ( artifact.isResolved() )
                 {
-                    if ( "sources".equals( classifier ) || "test-sources".equals( classifier ) )
+                    if ( "sources".equals( inClassifier ) )
                     {
                         dependency.setSourceAttachment( artifact.getFile() );
                     }
-                    else if ( "javadoc".equals( classifier ) )
+                    else if ( "javadoc".equals( inClassifier ) )
                     {
                         dependency.setJavadocAttachment( artifact.getFile() );
                     }
                 }
                 else
                 {
-                    unavailableArtifactsCache.put( dependency.getId() + ":" + classifier, Boolean.TRUE.toString() );
+                    unavailableArtifactsCache.put( key, Boolean.TRUE.toString() );
                     // add the dependencies to the list
                     // of those lacking the required
                     // artifact
