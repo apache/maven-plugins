@@ -29,6 +29,8 @@ import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.easymock.MockControl;
 
+import java.util.Properties;
+
 import junit.framework.TestCase;
 
 
@@ -180,6 +182,14 @@ public class AssemblyFormatUtilsTest
         verifyOutputDir( null, null, null, null, null, "" );
     }
 
+    public void testGetOutputDir_ShouldResolveProjectProperty() throws AssemblyFormattingException
+    {
+        Properties props = new Properties();
+        props.setProperty( "myProperty", "value" );
+
+        verifyOutputDir( "file.${myProperty}", null, null, null, null, null, "file.value/", null, true, props );
+    }
+
     public void testEvalFileNameMapping_ShouldResolveArtifactIdAndBaseVersionInOutDir_UseArtifactInfo_WithValidMainProject()
     throws AssemblyFormattingException
     {
@@ -313,6 +323,19 @@ public class AssemblyFormatUtilsTest
         verifyEvalFileNameMapping( "file.${artifact.extension}", null, null, null, null, "ext", "file.ext" );
     }
 
+    public void testEvalFileNameMapping_ShouldResolveProjectProperty() throws AssemblyFormattingException
+    {
+        Properties props = new Properties();
+        props.setProperty( "myProperty", "value" );
+
+        verifyEvalFileNameMapping( "file.${myProperty}", null, null, null, null, null, "file.value", null, true, props );
+    }
+
+    public void testEvalFileNameMapping_ShouldResolveSystemPropertyWithoutMainProjectPresent() throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( "file.${java.version}", null, null, null, null, null, "file." + System.getProperty( "java.version" ), "artifact.", false );
+    }
+
     private void verifyEvalFileNameMapping( String expression, String classifier, String groupId, String artifactId,
                                             String version, String extension, String checkValue )
         throws AssemblyFormattingException
@@ -329,6 +352,23 @@ public class AssemblyFormatUtilsTest
 
     private void verifyEvalFileNameMapping( String expression, String classifier, String groupId, String artifactId,
                                             String version, String extension, String checkValue, String prefix, boolean usingMainProject )
+        throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( expression,
+                                   classifier,
+                                   groupId,
+                                   artifactId,
+                                   version,
+                                   extension,
+                                   checkValue,
+                                   prefix,
+                                   usingMainProject,
+                                   new Properties() );
+    }
+
+    private void verifyEvalFileNameMapping( String expression, String classifier, String groupId, String artifactId,
+                                            String version, String extension, String checkValue, String prefix, boolean usingMainProject,
+                                            Properties projectProperties )
         throws AssemblyFormattingException
     {
         if ( artifactId == null )
@@ -356,6 +396,8 @@ public class AssemblyFormatUtilsTest
         model.setGroupId( groupId );
         model.setArtifactId( artifactId );
         model.setVersion( version );
+
+        model.setProperties( projectProperties );
 
         project = new MavenProject( model );
 
@@ -412,13 +454,24 @@ public class AssemblyFormatUtilsTest
                                   String projectFinalName, String checkValue, String prefix, boolean usingMainProject )
         throws AssemblyFormattingException
     {
+        verifyOutputDir( outDir, finalName, groupId, artifactId, version, projectFinalName, checkValue, prefix, usingMainProject, new Properties() );
+    }
+
+    private void verifyOutputDir( String outDir, String finalName, String groupId, String artifactId, String version,
+                                  String projectFinalName, String checkValue, String prefix, boolean usingMainProject,
+                                  Properties projectProperties )
+        throws AssemblyFormattingException
+    {
         MavenProject project = null;
-        if ( ( groupId != null ) || ( artifactId != null ) || ( version != null ) || ( projectFinalName != null ) )
+        if ( ( groupId != null ) || ( artifactId != null ) || ( version != null )
+             || ( projectFinalName != null ) || ( projectProperties != null ) )
         {
             Model model = new Model();
             model.setGroupId( groupId );
             model.setArtifactId( artifactId );
             model.setVersion( version );
+
+            model.setProperties( projectProperties );
 
             if ( projectFinalName != null )
             {
