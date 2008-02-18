@@ -122,13 +122,13 @@ public class DefaultAssemblyReader
         if ( descriptor != null )
         {
             locator.setStrategies( strategies );
-            assemblies.add( getAssemblyFromDescriptor( descriptor, locator, configSource ) );
+            addAssemblyFromDescriptor( descriptor, locator, configSource, assemblies );
         }
 
         if ( descriptorId != null )
         {
             locator.setStrategies( refStrategies );
-            assemblies.add( getAssemblyForDescriptorReference( descriptorId, configSource ) );
+            addAssemblyForDescriptorReference( descriptorId, configSource, assemblies );
         }
 
         if ( ( descriptors != null ) && ( descriptors.length > 0 ) )
@@ -137,7 +137,7 @@ public class DefaultAssemblyReader
             for ( int i = 0; i < descriptors.length; i++ )
             {
                 getLogger().info( "Reading assembly descriptor: " + descriptors[i] );
-                assemblies.add( getAssemblyFromDescriptor( descriptors[i], locator, configSource ) );
+                addAssemblyFromDescriptor( descriptors[i], locator, configSource, assemblies );
             }
         }
 
@@ -146,7 +146,7 @@ public class DefaultAssemblyReader
             locator.setStrategies( refStrategies );
             for ( int i = 0; i < descriptorRefs.length; i++ )
             {
-                assemblies.add( getAssemblyForDescriptorReference( descriptorRefs[i], configSource ) );
+                addAssemblyForDescriptorReference( descriptorRefs[i], configSource, assemblies );
             }
         }
 
@@ -190,14 +190,21 @@ public class DefaultAssemblyReader
             {
                 for ( int i = 0; i < paths.length; i++ )
                 {
-                    assemblies.add( getAssemblyFromDescriptor( paths[i], locator, configSource ) );
+                    addAssemblyFromDescriptor( paths[i], locator, configSource, assemblies );
                 }
             }
         }
 
         if ( assemblies.isEmpty() )
         {
-            throw new AssemblyReadException( "No assembly descriptors found." );
+            if ( configSource.isIgnoreMissingDescriptor() )
+            {
+                getLogger().debug( "Ignoring missing assembly descriptors per configuration. See messages above for specifics." );
+            }
+            else
+            {
+                throw new AssemblyReadException( "No assembly descriptors found." );
+            }
         }
 
         // check unique IDs
@@ -217,17 +224,40 @@ public class DefaultAssemblyReader
     public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
+        return addAssemblyForDescriptorReference( ref, configSource, new ArrayList( 1 ) );
+    }
+
+    public Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        return addAssemblyFromDescriptorFile( file, configSource, new ArrayList( 1 ) );
+    }
+
+    private Assembly addAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource, List assemblies )
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
+    {
         InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
 
         if ( resourceAsStream == null )
         {
-            throw new AssemblyReadException( "Descriptor with ID '" + ref + "' not found" );
+            if ( configSource.isIgnoreMissingDescriptor() )
+            {
+                getLogger().debug( "Ignoring missing assembly descriptor with ID '" + ref + "' per configuration." );
+                return null;
+            }
+            else
+            {
+                throw new AssemblyReadException( "Descriptor with ID '" + ref + "' not found" );
+            }
         }
 
         try
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            return readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
+            Assembly assembly = readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, configSource );
+
+            assemblies.add( assembly );
+            return assembly;
         }
         catch ( UnsupportedEncodingException e )
         {
@@ -236,15 +266,32 @@ public class DefaultAssemblyReader
         }
     }
 
-    public Assembly getAssemblyFromDescriptorFile( File descriptor, AssemblerConfigurationSource configSource )
+    private Assembly addAssemblyFromDescriptorFile( File descriptor, AssemblerConfigurationSource configSource, List assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
+        if ( !descriptor.exists() )
+        {
+            if ( configSource.isIgnoreMissingDescriptor() )
+            {
+                getLogger().debug( "Ignoring missing assembly descriptor: '" + descriptor + "' per configuration." );
+                return null;
+            }
+            else
+            {
+                throw new AssemblyReadException( "Descriptor: '" + descriptor + "' not found" );
+            }
+        }
+
         Reader r = null;
         try
         {
             // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( new FileInputStream( descriptor ), "UTF-8" );
-            return readAssembly( r, descriptor.getAbsolutePath(), configSource );
+            Assembly assembly = readAssembly( r, descriptor.getAbsolutePath(), configSource );
+
+            assemblies.add( assembly );
+
+            return assembly;
         }
         catch ( IOException e )
         {
@@ -256,14 +303,25 @@ public class DefaultAssemblyReader
         }
     }
 
-    public Assembly getAssemblyFromDescriptor( String spec, Locator locator, AssemblerConfigurationSource configSource )
+    private Assembly addAssemblyFromDescriptor( String spec, Locator locator, AssemblerConfigurationSource configSource, List assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Location location = locator.resolve( spec );
 
         if ( location == null )
         {
-            throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n" + locator.getMessageHolder().render() );
+            if ( configSource.isIgnoreMissingDescriptor() )
+            {
+                getLogger().debug( "Ignoring missing assembly descriptor with ID '" + spec
+                                   + "' per configuration.\nLocator output was:\n\n"
+                                   + locator.getMessageHolder().render() );
+                return null;
+            }
+            else
+            {
+                throw new AssemblyReadException( "Error locating assembly descriptor: " + spec
+                                                 + "\n\n" + locator.getMessageHolder().render() );
+            }
         }
 
         Reader r = null;
@@ -271,7 +329,11 @@ public class DefaultAssemblyReader
         {
          // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
             r = new InputStreamReader( location.getInputStream(), "UTF-8" );
-            return readAssembly( r, spec, configSource );
+            Assembly assembly = readAssembly( r, spec, configSource );
+
+            assemblies.add( assembly );
+
+            return assembly;
         }
         catch ( IOException e )
         {
