@@ -238,6 +238,12 @@ public abstract class AbstractAssemblyMojo
     protected boolean appendAssemblyId;
 
     /**
+     * Set to true in order to not fail when a descriptor is missing.
+     * @parameter expression="${ignoreMissingDescriptor}" default-value="false"
+     */
+    protected boolean ignoreMissingDescriptor;
+
+    /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
      * specify a Manifest file for the jar, in addition to other options.
      *
@@ -625,4 +631,11 @@ public abstract class AbstractAssemblyMojo
         return ignoreDirFormatExtensions;
     }
 
+    public boolean isIgnoreMissingDescriptor() {
+        return ignoreMissingDescriptor;
+    }
+
+    public void setIgnoreMissingDescriptor(boolean ignoreMissingDescriptor) {
+        this.ignoreMissingDescriptor = ignoreMissingDescriptor;
+    }
 }
