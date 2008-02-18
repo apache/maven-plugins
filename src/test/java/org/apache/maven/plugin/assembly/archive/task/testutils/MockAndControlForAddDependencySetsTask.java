@@ -191,11 +191,25 @@ public class MockAndControlForAddDependencySetsTask
         configSourceCtl.setReturnValue( remoteRepos, MockControl.ONE_OR_MORE );
     }
 
+    public void expectBuildFromRepository( ProjectBuildingException error )
+    {
+        try
+        {
+            projectBuilder.buildFromRepository( null, null, null );
+            projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
+            projectBuilderCtl.setThrowable( error, MockControl.ONE_OR_MORE );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            Assert.fail( "should never happen" );
+        }
+    }
+
     public void expectBuildFromRepository( MavenProject project )
     {
         try
         {
-            projectBuilder.buildFromRepository( null, null, null, true );
+            projectBuilder.buildFromRepository( null, null, null );
             projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
             projectBuilderCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
         }

@@ -135,7 +135,7 @@ public class ArtifactMock
 
     public void setFile( File destination )
     {
-        if ( ( file != null ) && ( file == null ) )
+        if ( ( destination != null ) && ( file == null ) )
         {
             artifact.getFile();
             artifactCtl.setReturnValue( destination, MockControl.ZERO_OR_MORE );
