@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -140,12 +141,14 @@ public class AddDependencySetsTask
             try
             {
                 depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                                 configSource.getLocalRepository(), true );
+                                                                 configSource.getLocalRepository() );
             }
             catch ( ProjectBuildingException e )
             {
-                throw new ArchiveCreationException( "Error retrieving POM of module-dependency: " + depArtifact.getId()
-                    + "; Reason: " + e.getMessage(), e );
+                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId()
+                    + "; Reason: " + e.getMessage() + "\n\nBuilding stub project instance." );
+
+                depProject = buildProjectStub( depArtifact );
             }
 
             if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
@@ -174,6 +177,19 @@ public class AddDependencySetsTask
                 task.execute( archiver, configSource );
             }
         }
+    }
+
+    private MavenProject buildProjectStub( Artifact depArtifact )
+    {
+        Model model = new Model();
+        model.setGroupId( depArtifact.getGroupId() );
+        model.setArtifactId( depArtifact.getArtifactId() );
+        model.setVersion( depArtifact.getBaseVersion() );
+        model.setPackaging( depArtifact.getType() );
+
+        model.setDescription( "Stub for " + depArtifact.getId() );
+
+        return new MavenProject( model );
     }
 
     protected Set resolveDependencyArtifacts( DependencySet dependencySet, AssemblerConfigurationSource configSource )
