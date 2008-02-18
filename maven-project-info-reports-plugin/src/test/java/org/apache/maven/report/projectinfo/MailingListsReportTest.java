@@ -22,6 +22,10 @@ package org.apache.maven.report.projectinfo;
 import java.net.URL;
 import java.util.Locale;
 
+import org.apache.maven.report.projectinfo.MailingListsReport.MailingListsRenderer;
+
+import junitx.util.PrivateAccessor;
+
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.TextBlock;
 import com.meterware.httpunit.WebConversation;
@@ -94,5 +98,41 @@ public class MailingListsReportTest
         {
             Locale.setDefault( oldLocale );
         }
+    }
+
+    /**
+     * @throws Exception if any
+     * @throws Throwable if any
+     */
+    public void testGetArchiveServer()
+        throws Exception, Throwable
+    {
+        String server = "http://mail-archives.apache.org/mod_mbox/maven-announce/";
+        assertEquals( "mail-archives.apache.org", invokeGetArchiveServer( server ) );
+
+        server = "http://mail-archives.apache.org/mod_mbox/maven-announce";
+        assertEquals( "mail-archives.apache.org", invokeGetArchiveServer( server ) );
+
+        server = "http://www.mail-archive.com/announce@maven.apache.org";
+        assertEquals( "www.mail-archive.com", invokeGetArchiveServer( server ) );
+
+        server = "http://www.nabble.com/Maven-Announcements-f15617.html";
+        assertEquals( "www.nabble.com", invokeGetArchiveServer( server ) );
+
+        server = "http://maven.announce.markmail.org/";
+        assertEquals( "maven.announce.markmail.org", invokeGetArchiveServer( server ) );
+
+        server = "http://maven.announce.markmail.org";
+        assertEquals( "maven.announce.markmail.org", invokeGetArchiveServer( server ) );
+    }
+
+    /**
+     * @throws Throwable if any
+     */
+    private static String invokeGetArchiveServer( String s )
+        throws Throwable
+    {
+        return (String)PrivateAccessor.invoke( MailingListsRenderer.class, "getArchiveServer",
+                                new Class[] { String.class }, new Object[] { s } );
     }
 }
