@@ -30,6 +30,7 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
@@ -48,7 +49,8 @@ public class AddDependencySetsTaskTest
     private MockManager mockManager = new MockManager();
 
     public void testAddDependencySet_ShouldInterpolateDefaultOutputFileNameMapping()
-        throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException, IOException
+        throws AssemblyFormattingException, ArchiveCreationException,
+        InvalidAssemblerConfigurationException, IOException
     {
         String outDir = "tmp/";
         String mainAid = "main";
@@ -71,7 +73,8 @@ public class AddDependencySetsTaskTest
 
         MavenProject mainProject = new MavenProject( mainModel );
 
-        ArtifactMock mainArtifactMock = new ArtifactMock( mockManager, mainGid, mainAid, mainVer, "jar", false );
+        ArtifactMock mainArtifactMock = new ArtifactMock( mockManager, mainGid, mainAid, mainVer,
+                                                          "jar", false );
 
         mainProject.setArtifact( mainArtifactMock.getArtifact() );
 
@@ -83,13 +86,16 @@ public class AddDependencySetsTaskTest
 
         MavenProject depProject = new MavenProject( depModel );
 
-        ArtifactMock depArtifactMock = new ArtifactMock( mockManager, depGid, depAid, depVer, depExt, false );
+        ArtifactMock depArtifactMock = new ArtifactMock( mockManager, depGid, depAid, depVer,
+                                                         depExt, false );
 
         File newFile = depArtifactMock.setNewFile();
 
         depProject.setArtifact( depArtifactMock.getArtifact() );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager, mainProject );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager,
+                                                                                                     mainProject );
 
         macTask.expectBuildFromRepository( depProject );
         macTask.expectCSGetFinalName( mainAid + "-" + mainVer );
@@ -104,7 +110,8 @@ public class AddDependencySetsTaskTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), depProject, macTask.projectBuilder,
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
+                                                                depProject, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, macTask.archiver, macTask.configSource );
@@ -113,11 +120,13 @@ public class AddDependencySetsTaskTest
     }
 
     public void testAddDependencySet_ShouldNotAddDependenciesWhenProjectHasNone()
-        throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException,
+        InvalidAssemblerConfigurationException
     {
         MavenProject project = new MavenProject( new Model() );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
 
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.EMPTY_SET );
@@ -129,7 +138,8 @@ public class AddDependencySetsTaskTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project, macTask.projectBuilder,
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
+                                                                project, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, null, macTask.configSource );
@@ -137,20 +147,72 @@ public class AddDependencySetsTaskTest
         mockManager.verifyAll();
     }
 
+    // TODO: Find a better way of testing the project-stubbing behavior when a ProjectBuildingException takes place.
+    public void testAddDependencySet_ShouldNotAddDependenciesWhenProjectIsStubbed()
+        throws AssemblyFormattingException, ArchiveCreationException,
+        InvalidAssemblerConfigurationException, IOException
+    {
+        MavenProject project = new MavenProject( new Model() );
+
+        ProjectBuildingException pbe = new ProjectBuildingException( "test", "Test error." );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
+
+        String gid = "org.test";
+        String aid = "test-dep";
+        String version = "2.0-SNAPSHOT";
+        String type = "jar";
+
+        File file = new File( "dep-artifact.jar" );
+
+        ArtifactMock depMock = new ArtifactMock( mockManager, gid, aid, version, type, true );
+        depMock.setBaseVersion( version );
+        depMock.setFile( file );
+
+        File destFile = new File( "assembly-dep-set.zip" );
+
+        macTask.expectGetDestFile( destFile );
+        macTask.expectBuildFromRepository( pbe );
+        macTask.expectCSGetRepositories( null, null );
+        macTask.expectCSGetFinalName( "final-name" );
+        macTask.expectResolveDependencies( Collections.singleton( depMock.getArtifact() ) );
+        macTask.expectAddFile( file, "out/" + aid + "-" + version + "." + type );
+
+        DependencySet ds = new DependencySet();
+        ds.setOutputDirectory( "/out" );
+
+        mockManager.replayAll();
+
+        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
+                                                                project, macTask.projectBuilder,
+                                                                macTask.dependencyResolver, logger );
+
+        task.addDependencySet( ds, macTask.archiver, macTask.configSource );
+
+        mockManager.verifyAll();
+    }
+
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectWithoutUnpacking()
-        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException, IOException,
+        InvalidAssemblerConfigurationException
     {
         verifyOneDependencyAdded( "out", false );
     }
 
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectUnpacked()
-        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException, IOException,
+        InvalidAssemblerConfigurationException
     {
         verifyOneDependencyAdded( "out", true );
     }
 
-    private void verifyOneDependencyAdded( String outputLocation, boolean unpack )
-        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
+    private void verifyOneDependencyAdded( String outputLocation,
+                                           boolean unpack )
+        throws AssemblyFormattingException, ArchiveCreationException, IOException,
+        InvalidAssemblerConfigurationException
     {
         MavenProject project = new MavenProject( new Model() );
 
@@ -163,9 +225,11 @@ public class AddDependencySetsTaskTest
         ds.setDirectoryMode( Integer.toString( 10, 8 ) );
         ds.setFileMode( Integer.toString( 10, 8 ) );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
 
-        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version",
+                                                      "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
         macTask.expectCSGetRepositories( null, null );
@@ -173,7 +237,10 @@ public class AddDependencySetsTaskTest
 
         if ( unpack )
         {
-            macTask.expectAddArchivedFileSet( artifactFile, outputLocation + "/", AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
+            macTask.expectAddArchivedFileSet( artifactFile,
+                                              outputLocation + "/",
+                                              AddArtifactTask.DEFAULT_INCLUDES_ARRAY,
+                                              null );
             macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else
@@ -190,7 +257,8 @@ public class AddDependencySetsTaskTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project, macTask.projectBuilder,
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
+                                                                project, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         mockManager.replayAll();
@@ -205,9 +273,11 @@ public class AddDependencySetsTaskTest
     {
         MavenProject project = new MavenProject( new Model() );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
 
-        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version",
+                                                      "jar", false );
 
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( artifactMock.getArtifact() ) );
@@ -220,8 +290,10 @@ public class AddDependencySetsTaskTest
 
         mockManager.replayAll();
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project,
-                                                                macTask.projectBuilder, macTask.dependencyResolver, logger );
+        AddDependencySetsTask task = new AddDependencySetsTask(
+                                                                Collections.singletonList( dependencySet ),
+                                                                project, macTask.projectBuilder,
+                                                                macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
 
@@ -237,7 +309,8 @@ public class AddDependencySetsTaskTest
     {
         MavenProject project = new MavenProject( new Model() );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
 
         Set artifacts = new HashSet();
 
@@ -272,7 +345,9 @@ public class AddDependencySetsTaskTest
 
         mockManager.replayAll();
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project, null,
+        AddDependencySetsTask task = new AddDependencySetsTask(
+                                                                Collections.singletonList( dependencySet ),
+                                                                project, null,
                                                                 macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
@@ -289,7 +364,8 @@ public class AddDependencySetsTaskTest
     {
         MavenProject project = new MavenProject( new Model() );
 
-        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
+                                                                                                     mockManager );
 
         Set artifacts = new HashSet();
 
@@ -323,7 +399,9 @@ public class AddDependencySetsTaskTest
 
         mockManager.replayAll();
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project, null,
+        AddDependencySetsTask task = new AddDependencySetsTask(
+                                                                Collections.singletonList( dependencySet ),
+                                                                project, null,
                                                                 macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
