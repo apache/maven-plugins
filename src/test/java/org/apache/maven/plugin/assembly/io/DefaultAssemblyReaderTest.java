@@ -328,9 +328,9 @@ public class DefaultAssemblyReaderTest
         assertNotNull( depSets );
         assertEquals( 3, depSets.size() );
 
-        assertEquals( Artifact.SCOPE_RUNTIME, ((DependencySet) depSets.get( 0 )).getScope() );
-        assertEquals( Artifact.SCOPE_COMPILE, ((DependencySet) depSets.get( 1 )).getScope() );
-        assertEquals( Artifact.SCOPE_SYSTEM, ((DependencySet) depSets.get( 2 )).getScope() );
+        assertEquals( Artifact.SCOPE_RUNTIME, ( (DependencySet) depSets.get( 0 ) ).getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, ( (DependencySet) depSets.get( 1 ) ).getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, ( (DependencySet) depSets.get( 2 ) ).getScope() );
     }
 
     public void testMergeComponentWithAssembly_ShouldAddOneRepositoryToExistingListOfTwo()
@@ -361,9 +361,9 @@ public class DefaultAssemblyReaderTest
         assertNotNull( depSets );
         assertEquals( 3, depSets.size() );
 
-        assertEquals( Artifact.SCOPE_RUNTIME, ((Repository) depSets.get( 0 )).getScope() );
-        assertEquals( Artifact.SCOPE_COMPILE, ((Repository) depSets.get( 1 )).getScope() );
-        assertEquals( Artifact.SCOPE_SYSTEM, ((Repository) depSets.get( 2 )).getScope() );
+        assertEquals( Artifact.SCOPE_RUNTIME, ( (Repository) depSets.get( 0 ) ).getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, ( (Repository) depSets.get( 1 ) ).getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, ( (Repository) depSets.get( 2 ) ).getScope() );
     }
 
     public void testMergeComponentWithAssembly_ShouldAddOneContainerDescriptorHandlerToExistingListOfTwo()
@@ -395,9 +395,9 @@ public class DefaultAssemblyReaderTest
         assertEquals( 3, result.size() );
 
         Iterator it = result.iterator();
-        assertEquals( "one", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
-        assertEquals( "two", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
-        assertEquals( "three", ((ContainerDescriptorHandlerConfig) it.next()).getHandlerName() );
+        assertEquals( "one", ( (ContainerDescriptorHandlerConfig) it.next() ).getHandlerName() );
+        assertEquals( "two", ( (ContainerDescriptorHandlerConfig) it.next() ).getHandlerName() );
+        assertEquals( "three", ( (ContainerDescriptorHandlerConfig) it.next() ).getHandlerName() );
     }
 
     // FIXME: Deep merging should take place...
@@ -534,7 +534,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -581,7 +583,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -589,7 +593,7 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/site", ((FileSet) fileSets.get( 0 )).getOutputDirectory() );
+        assertEquals( "/site", ( (FileSet) fileSets.get( 0 ) ).getOutputDirectory() );
 
         mockManager.verifyAll();
     }
@@ -632,7 +636,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -640,7 +646,7 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/site", ((FileSet) fileSets.get( 0 )).getOutputDirectory() );
+        assertEquals( "/site", ( (FileSet) fileSets.get( 0 ) ).getOutputDirectory() );
 
         mockManager.verifyAll();
     }
@@ -702,7 +708,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -710,7 +718,7 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/dir", ((FileSet) fileSets.get( 0 )).getDirectory() );
+        assertEquals( "/dir", ( (FileSet) fileSets.get( 0 ) ).getDirectory() );
 
         mockManager.verifyAll();
     }
@@ -772,7 +780,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -818,7 +828,9 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", configSource );
+        Assembly result = new DefaultAssemblyReader().readAssembly( sr,
+                                                                    "testLocation",
+                                                                    configSource );
 
         assertEquals( "group-assembly", result.getId() );
 
@@ -844,7 +856,8 @@ public class DefaultAssemblyReaderTest
         configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ),
+                                            MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
@@ -862,7 +875,8 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().getAssemblyFromDescriptorFile( assemblyFile, configSource );
+        Assembly result = new DefaultAssemblyReader().getAssemblyFromDescriptorFile( assemblyFile,
+                                                                                     configSource );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -878,14 +892,16 @@ public class DefaultAssemblyReaderTest
         configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ),
+                                            MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
-        Assembly result = new DefaultAssemblyReader().getAssemblyForDescriptorReference( "bin", configSource );
+        Assembly result = new DefaultAssemblyReader().getAssemblyForDescriptorReference( "bin",
+                                                                                         configSource );
 
         assertEquals( "bin", result.getId() );
 
@@ -907,7 +923,7 @@ public class DefaultAssemblyReaderTest
 
         List files = writeAssembliesToFile( Collections.singletonList( assembly ), basedir );
 
-        String assemblyFile = ( String ) files.get( 0 );
+        String assemblyFile = (String) files.get( 0 );
 
         List assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null, null );
 
@@ -951,7 +967,12 @@ public class DefaultAssemblyReaderTest
 
         List files = writeAssembliesToFile( assemblies, basedir );
 
-        List results = performReadAssemblies( basedir, null, null, (String[]) files.toArray( new String[0] ), null, null );
+        List results = performReadAssemblies( basedir,
+                                              null,
+                                              null,
+                                              (String[]) files.toArray( new String[0] ),
+                                              null,
+                                              null );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -970,7 +991,10 @@ public class DefaultAssemblyReaderTest
     {
         File basedir = fileManager.createTempDir();
 
-        List assemblies = performReadAssemblies( basedir, null, null, null, new String[] { "bin", "src" }, null );
+        List assemblies = performReadAssemblies( basedir, null, null, null, new String[] {
+            "bin",
+            "src"
+        }, null );
 
         assertNotNull( assemblies );
         assertEquals( 2, assemblies.size() );
@@ -1015,7 +1039,41 @@ public class DefaultAssemblyReaderTest
         assertEquals( assembly2.getId(), result2.getId() );
     }
 
-    private List writeAssembliesToFile( List assemblies, File dir )
+    public void testReadAssemblies_ShouldGetTwoAssemblyDescriptorsFromDirectoryWithThreeFiles()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        Assembly assembly1 = new Assembly();
+        assembly1.setId( "test" );
+
+        Assembly assembly2 = new Assembly();
+        assembly2.setId( "test2" );
+
+        List assemblies = new ArrayList();
+        assemblies.add( assembly1 );
+        assemblies.add( assembly2 );
+
+        File basedir = fileManager.createTempDir();
+
+        writeAssembliesToFile( assemblies, basedir );
+
+        fileManager.createFile( basedir, "readme.txt", "This is just a readme file, not a descriptor." );
+
+        List results = performReadAssemblies( basedir, null, null, null, null, basedir );
+
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+
+        Assembly result1 = (Assembly) assemblies.get( 0 );
+
+        assertEquals( assembly1.getId(), result1.getId() );
+
+        Assembly result2 = (Assembly) assemblies.get( 1 );
+
+        assertEquals( assembly2.getId(), result2.getId() );
+    }
+
+    private List writeAssembliesToFile( List assemblies,
+                                        File dir )
         throws IOException
     {
         List files = new ArrayList();
@@ -1043,8 +1101,12 @@ public class DefaultAssemblyReaderTest
         return files;
     }
 
-    private List performReadAssemblies( File basedir, String descriptor, String descriptorRef, String[] descriptors,
-                                        String[] descriptorRefs, File descriptorDir )
+    private List performReadAssemblies( File basedir,
+                                        String descriptor,
+                                        String descriptorRef,
+                                        String[] descriptors,
+                                        String[] descriptorRefs,
+                                        File descriptorDir )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         configSource.getDescriptor();
@@ -1066,7 +1128,8 @@ public class DefaultAssemblyReaderTest
         configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
 
         configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        configSourceControl.setReturnValue( new MavenProject( new Model() ),
+                                            MockControl.ZERO_OR_MORE );
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
