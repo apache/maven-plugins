@@ -157,7 +157,9 @@ public class AddDependencySetsTaskTest
         ProjectBuildingException pbe = new ProjectBuildingException( "test", "Test error." );
 
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
-                                                                                                     mockManager );
+                                                                                                     mockManager,
+                                                                                                     new MavenProject(
+                                                                                                                       new Model() ) );
 
         String gid = "org.test";
         String aid = "test-dep";
@@ -226,7 +228,7 @@ public class AddDependencySetsTaskTest
         ds.setFileMode( Integer.toString( 10, 8 ) );
 
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask(
-                                                                                                     mockManager );
+                                                                                                     mockManager, new MavenProject( new Model() ) );
 
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version",
                                                       "jar", false );

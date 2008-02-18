@@ -39,7 +39,7 @@ public class PropertiesInterpolationValueSource
 
     public Object getValue( String key )
     {
-        return properties.getProperty( key );
+        return properties == null ? null : properties.getProperty( key );
     }
 
 }
