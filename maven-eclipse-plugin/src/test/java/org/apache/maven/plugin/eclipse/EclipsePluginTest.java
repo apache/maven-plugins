@@ -522,6 +522,18 @@ public class EclipsePluginTest
         testProject( "project-44" );
     }
 
+    /**
+     * [MECLIPSE-379] When downloading sources and javadocs dependency classifier is not respected.
+     * 
+     * @since 2.5
+     * @throws Exception
+     */
+    public void testProject45()
+        throws Exception
+    {
+        testProject( "project-45" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {

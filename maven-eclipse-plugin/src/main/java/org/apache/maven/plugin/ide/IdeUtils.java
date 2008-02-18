@@ -304,21 +304,41 @@ public class IdeUtils
     }
 
     public static Artifact resolveArtifactWithClassifier( String groupId, String artifactId, String version,
-                                                          String classifier, ArtifactRepository localRepository,
+                                                          String depClassifier, String inClassifier,
+                                                          ArtifactRepository localRepository,
                                                           ArtifactResolver artifactResolver,
                                                           ArtifactFactory artifactFactory, List remoteRepos, Log log )
 
     {
-        String type = classifier;
+        String type = null;
 
         // the "sources" classifier maps to the "java-source" type
-        if ( "sources".equals( type ) || "test-sources".equals( type ) ) //$NON-NLS-1$
+        if ( "sources".equals( inClassifier ) )
         {
-            type = "java-source"; //$NON-NLS-1$
+            type = "java-source";
+        }
+        else
+        {
+            type = inClassifier;
+        }
+
+        String finalClassifier = null;
+        if ( depClassifier == null )
+        {
+            finalClassifier = inClassifier;
+        }
+        else if ( "sources".equals( inClassifier ) && "tests".equals( depClassifier ) )
+        {
+            // MECLIPSE-151 - if the dependency is a test, get the correct classifier for it. (ignore for javadocs)
+            finalClassifier = "test-sources";
+        }
+        else
+        {
+            finalClassifier = depClassifier + "-" + inClassifier;
         }
 
         Artifact resolvedArtifact =
-            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, finalClassifier );
 
         try
         {
@@ -330,8 +350,9 @@ public class IdeUtils
         }
         catch ( ArtifactResolutionException e )
         {
-            String message = Messages.getString( "errorresolving", new Object[] { //$NON-NLS-1$
-                                                 classifier, resolvedArtifact.getId(), e.getMessage() } );
+            String message =
+                Messages.getString( "errorresolving", new Object[] { finalClassifier, resolvedArtifact.getId(),
+                    e.getMessage() } );
 
             log.warn( message );
         }
@@ -347,11 +368,11 @@ public class IdeUtils
             version = IdeUtils.getCompilerSourceVersion( project );
         }
 
-        if ( "1.5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        if ( "1.5".equals( version ) ) //$NON-NLS-1$ 
         {
-            version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version //$NON-NLS-1$
+            version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version
         }
-        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ 
         {
             version = IdeUtils.JAVA_6_0;
         }
@@ -360,7 +381,7 @@ public class IdeUtils
             version = version + ".0";// 5->5.0 6->6.0 7->7.0 //$NON-NLS-1$
         }
 
-        return version == null ? IdeUtils.JAVA_1_4 : version; //$NON-NLS-1$
+        return version == null ? IdeUtils.JAVA_1_4 : version;
     }
 
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
