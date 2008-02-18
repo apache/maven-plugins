@@ -61,9 +61,9 @@ public class PdfMojoTest
 
         mojo.execute();
 
-        assertTrue( "Pdf file not created!", pdfFile.exists() );
+        assertTrue( "FO: Pdf file not created!", pdfFile.exists() );
 
-        assertTrue( "Pdf file has no content!", pdfFile.length() > 0 );
+        assertTrue( "FO: Pdf file has no content!", pdfFile.length() > 0 );
     }
 
     /**
@@ -81,23 +81,18 @@ public class PdfMojoTest
 
         assertNotNull( "pdf mojo not found!", mojo );
 
-        // TODO
-/*
-         File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/index.pdf" );
 
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
         }
- */
 
         mojo.execute();
 
-/*
-        assertTrue( "Pdf file not created!", pdfFile.exists() );
+        assertTrue( "iText: Pdf file not created!", pdfFile.exists() );
 
-        assertTrue( "Pdf file has no content!", pdfFile.length() > 0 );
- */
+        assertTrue( "iText: Pdf file has no content!", pdfFile.length() > 0 );
      }
 
 
