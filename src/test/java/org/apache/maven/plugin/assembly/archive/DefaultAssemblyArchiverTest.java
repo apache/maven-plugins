@@ -74,6 +74,7 @@ public class DefaultAssemblyArchiverTest
         MockAndControlForAssemblyArchiver macMgr = new MockAndControlForAssemblyArchiver( mm );
 
         macMgr.expectGetArchiver( "zip", Archiver.class );
+        macMgr.expectGetDestFile( new File( "test" ) );
 
         MockControl phaseControl = MockControl.createControl( AssemblyArchiverPhase.class );
         mm.add( phaseControl );
@@ -490,6 +491,12 @@ public class DefaultAssemblyArchiverTest
             mm.add( collectionManagerControl );
 
             collectionManager = (ActiveCollectionManager) collectionManagerControl.getMock();
+        }
+
+        void expectGetDestFile( File file )
+        {
+            archiver.getDestFile();
+            archiverControl.setReturnValue( file, MockControl.ZERO_OR_MORE );
         }
 
         void createArchiver( Class archiverClass )
