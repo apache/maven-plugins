@@ -21,6 +21,8 @@ package org.apache.maven.plugin.invoker;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
+import java.util.Properties;
+
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 22 nov. 07
@@ -30,6 +32,7 @@ public class ExtendedMavenProjectStub
     extends MavenProjectStub
 {
     private Scm scm;
+    private Properties properties;
 
     public Scm getScm()
     {
@@ -39,5 +42,15 @@ public class ExtendedMavenProjectStub
     public void setScm( Scm scm )
     {
         this.scm = scm;
+    }
+
+    public Properties getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties( Properties properties )
+    {
+        this.properties= properties;
     }
 }
