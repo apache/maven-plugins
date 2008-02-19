@@ -22,7 +22,9 @@ Advance Usage
     
   * values from the project pom (you must use @pom.groupId@ notation in your pom file)
   
-  * In the plugin configuration you can add some properties in a interpolationsProperties element    
+  * In the plugin configuration you can add some properties in a interpolationsProperties element
+  
+  * properties from pom.properties      
 
 * Running only some tests
 
