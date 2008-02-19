@@ -148,6 +148,7 @@
               <exclude>**/AllTests*</exclude>
               <exclude>**/testutils/*</exclude>
             </excludes>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
           </configuration>
         </plugin>
       </plugins>
