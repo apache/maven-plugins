@@ -56,6 +56,10 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
   </issueManagement>
+  
+  <properties>
+    <mdoVersion>1.1.0</mdoVersion>
+  </properties>
 
   <build>
     <plugins>
@@ -95,10 +99,13 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-14</version>
+        <version>1.0-alpha-18</version>
+        <configuration>
+          <version>${mdoVersion}</version>
+        </configuration>
         <executions>
           <execution>
-            <id>descriptor</id>
+            <id>mdo</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>xpp3-reader</goal>
@@ -107,46 +114,24 @@
               <goal>xsd</goal>
             </goals>
             <configuration>
-              <model>src/main/mdo/descriptor.mdo</model>
-              <version>1.1.0</version>
+              <models>
+                <model>src/main/mdo/descriptor.mdo</model>
+                <model>src/main/mdo/component.mdo</model>
+              </models>
             </configuration>
           </execution>
           <execution>
-            <id>component</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>xpp3-reader</goal>
-              <goal>xpp3-writer</goal>
-              <goal>java</goal>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <model>src/main/mdo/component.mdo</model>
-              <version>1.1.0</version>
-            </configuration>
-          </execution>
-          <execution>
-            <id>descriptor-site</id>
+            <id>mdo-site</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
             <configuration>
-              <model>src/main/mdo/descriptor.mdo</model>
-              <version>1.1.0</version>
-            </configuration>
-          </execution>
-          <execution>
-            <id>component-site</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>xdoc</goal>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <model>src/main/mdo/component.mdo</model>
-              <version>1.1.0</version>
+              <models>
+                <model>src/main/mdo/descriptor.mdo</model>
+                <model>src/main/mdo/component.mdo</model>
+              </models>
             </configuration>
           </execution>
         </executions>
