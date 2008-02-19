@@ -37,19 +37,22 @@ import org.codehaus.plexus.util.IOUtil;
 public class InterpolationTest
     extends AbstractMojoTestCase
 {
-    
+
     protected MavenProjectStub buildMavenProjectStub()
     {
         ExtendedMavenProjectStub project = new ExtendedMavenProjectStub();
         project.setVersion( "1.0-SNAPSHOT" );
         project.setArtifactId( "foo" );
         project.setGroupId( "bar" );
+        Properties properties = new Properties();
+        properties.put( "fooOnProject", "barOnProject" );
+        project.setProperties( properties );
         Scm scm = new Scm();
         scm.setConnection( "http://blabla" );
         project.setScm( scm );
         return project;
     }
-    
+
     public void testCompositeMap()
         throws Exception
     {
@@ -62,8 +65,9 @@ public class InterpolationTest
         assertEquals( "bar", compositeMap.get( "foo" ) );
         assertEquals( "bar", compositeMap.get( "pom.groupId" ) );
         assertEquals( "http://blabla", compositeMap.get( "pom.scm.connection" ) );
+        assertEquals( "barOnProject", compositeMap.get( "fooOnProject" ) );
     }
-    
+
     public void testInterpolationGoalsFile()
         throws Exception
     {
@@ -81,7 +85,7 @@ public class InterpolationTest
         assertEquals( "clean", goals.get( 0 ) );
         assertEquals( "bar:foo:1.0-SNAPSHOT:mygoal", goals.get( 1 ) );
     }
-    
+
     public void testPomInterpolation()
         throws Exception
     {
@@ -125,7 +129,7 @@ public class InterpolationTest
             }
         }
     }
-    
+
     public void testProfilesFromFile()
         throws Exception
     {
@@ -137,7 +141,7 @@ public class InterpolationTest
         assertEquals( 2, profiles.size() );
         assertTrue( profiles.contains( "foo" ) );
     }
-    
+
     public void testEmptyProfilesFromFile()
         throws Exception
     {
@@ -151,8 +155,8 @@ public class InterpolationTest
         assertFalse( profiles.contains( "zloug" ) );
         assertEquals( 0, profiles.size() );
 
-    }    
-    
+    }
+
     public void testProfilesWithNoFile()
         throws Exception
     {
@@ -166,5 +170,5 @@ public class InterpolationTest
         assertTrue( profiles.contains( "zloug" ) );
         assertEquals( 1, profiles.size() );
 
-    }     
+    }
 }
