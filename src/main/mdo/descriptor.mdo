@@ -23,7 +23,9 @@
   to "component.mdo".
 -->
 
-<model>
+<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+       xsd.target-namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0">
+       
   <id>assembly</id>
   <name>Assembly</name>
   <description>
