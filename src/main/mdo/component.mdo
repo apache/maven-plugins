@@ -21,7 +21,9 @@
      Modello currently does not have capability to share files
 -->
 
-<model>
+<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0" 
+       xsd.target-namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0">
+       
   <id>component</id>
   <name>Component</name>
   <description>
