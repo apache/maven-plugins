@@ -29,7 +29,7 @@
   <artifactId>maven-stage-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Stage Plugin</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-alpha-1</version>
   <description>
     The Maven Stage Plugin copies artifacts from one repository to another.
   </description>
@@ -42,9 +42,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-stage-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-stage-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-stage-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-stage-plugin-1.0-alpha-1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-stage-plugin-1.0-alpha-1</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-stage-plugin-1.0-alpha-1</url>
   </scm>
 
   <build>
