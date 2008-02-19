@@ -97,12 +97,12 @@ public class AddFileSetsTask
 
         FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
 
-        File basedir = project.getBasedir();
-
         if ( project == null )
         {
             project = configSource.getProject();
         }
+
+        File basedir = project.getBasedir();
 
         String destDirectory = fileSet.getOutputDirectory();
 
