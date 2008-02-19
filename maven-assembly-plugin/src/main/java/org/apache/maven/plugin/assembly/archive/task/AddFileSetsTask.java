@@ -30,7 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,36 +140,18 @@ public class AddFileSetsTask
 
             logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath() + "'\nassembly output directory is: \'" + destDirectory + "\'" );
 
-            try
-            {
-                AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
+            AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
-                task.setDirectoryMode( TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger ) );
-                task.setFileMode( TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger ) );
-                task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
-                List excludes = fileSet.getExcludes();
-                excludes.add( "**/*.filtered" );
-                task.setExcludes( excludes );
-                task.setIncludes( fileSet.getIncludes() );
-                task.setOutputDirectory( destDirectory );
+            task.setDirectoryMode( TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger ) );
+            task.setFileMode( TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger ) );
+            task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
+            List excludes = fileSet.getExcludes();
+            excludes.add( "**/*.filtered" );
+            task.setExcludes( excludes );
+            task.setIncludes( fileSet.getIncludes() );
+            task.setOutputDirectory( destDirectory );
 
-                task.execute( archiver, configSource );
-            }
-            finally
-            {
-                try
-                {
-                    if ( !fileSetDir.equals( origFileSetDir ) )
-                    {
-                        FileUtils.deleteDirectory( fileSetDir );
-                    }
-                }
-                catch ( IOException e )
-                {
-                    // ignore - we've just left something in the temporary directory
-                    logger.warn( "Unable to delete temporary directory: " + fileSetDir + ": " + e.getMessage() );
-                }
-            }
+            task.execute( archiver, configSource );
         }
     }
 
