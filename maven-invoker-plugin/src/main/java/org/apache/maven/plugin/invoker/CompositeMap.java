@@ -34,18 +34,18 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 class CompositeMap
     implements Map
 {
-    
+
     private MavenProject mavenProject;
-    
+
     private Properties properties;
-    
+
     protected CompositeMap(MavenProject mavenProject, Properties properties)
     {
         this.mavenProject = mavenProject;
         this.properties = properties == null ? new Properties() : properties;
     }
 
-    /** 
+    /**
      * @see java.util.Map#clear()
      */
     public void clear()
@@ -54,7 +54,7 @@ class CompositeMap
 
     }
 
-    /** 
+    /**
      * @see java.util.Map#containsKey(java.lang.Object)
      */
     public boolean containsKey( Object key )
@@ -70,12 +70,13 @@ class CompositeMap
         }
         catch ( Exception e )
         {
-            // uhm do we have to throw a RuntimeException here ? 
+            // uhm do we have to throw a RuntimeException here ?
         }
-        return properties.containsKey( key );
+
+        return ( mavenProject.getProperties().containsKey( key ) || properties.containsKey( key ) );
     }
 
-    /** 
+    /**
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue( Object value )
@@ -83,7 +84,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#entrySet()
      */
     public Set entrySet()
@@ -91,7 +92,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#get(java.lang.Object)
      */
     public Object get( Object key )
@@ -110,20 +111,24 @@ class CompositeMap
         }
         catch ( Exception e )
         {
-            // uhm do we have to throw a RuntimeException here ? 
+            // uhm do we have to throw a RuntimeException here ?
         }
-        return properties.get( key );
+
+        Object value = properties.get( key );
+
+        return ( value != null ? value : this.mavenProject.getProperties().get( key ) );
+
     }
 
-    /** 
+    /**
      * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty()
     {
-        return this.mavenProject == null && this.properties.isEmpty();
+        return this.mavenProject == null && this.mavenProject.getProperties().isEmpty() && this.properties.isEmpty();
     }
 
-    /** 
+    /**
      * @see java.util.Map#keySet()
      */
     public Set keySet()
@@ -131,7 +136,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     public Object put( Object key, Object value )
@@ -139,7 +144,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#putAll(java.util.Map)
      */
     public void putAll( Map t )
@@ -147,7 +152,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#remove(java.lang.Object)
      */
     public Object remove( Object key )
@@ -155,7 +160,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#size()
      */
     public int size()
@@ -163,7 +168,7 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    /** 
+    /**
      * @see java.util.Map#values()
      */
     public Collection values()
@@ -171,6 +176,6 @@ class CompositeMap
         throw new UnsupportedOperationException();
     }
 
-    
-    
+
+
 }
