@@ -77,6 +77,11 @@ public class FileFormatter
     public File format( File source, boolean filter, String lineEnding, File tempRoot )
         throws AssemblyFormattingException
     {
+        if ( !filter && ( AssemblyFileUtils.getLineEndingCharacters( lineEnding ) == null ) )
+        {
+            return source;
+        }
+
         File result = source;
 
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
