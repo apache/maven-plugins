@@ -29,6 +29,81 @@ Advanced Assembly-Descriptor Topics
 
   <<<excludes>>> take priority over <<<includes>>>.
 
+* Archive file resolution
+
+  If two or more elements (e.g., file, fileSet) select different sources for
+  the same file for archiving, only one of the source files will be archived.
+  The assembly plugin decides which source will be archived according to the
+  following behavior (as per 2.2-SNAPSHOT).
+
+  * Case 1: Two fileSets each select a different source for the same archived
+    file.
+
+
+
+  For example, one fileSet selects <<<sourceDir1/config.xml>>> and
+  another selects <<<sourceDir2/config.xml>>> to be archived as
+  <<<config/config.xml>>>.  In this case, assembly plugin archives the source
+  file selected in the latter fileSet.
+
+  Given these two fileSets, the plugin will archive the config.xml file from
+  source2Dir.
+
+
+---
+<fileSets>
+ <fileSet>
+  <directory>source1Dir</directory>
+  <outputDirectory>config</outputDirectory>
+  <includes>
+   <include>**/config.xml</include>
+  </includes>
+ </fileSet>
+
+ <fileSet>
+  <directory>source2Dir</directory>
+  <outputDirectory>config</outputDirectory>
+  <includes>
+    <include>**/config.xml</include>
+  </includes>
+ </fileSet>
+</fileSets>
+---
+
+  * Case 2: A fileSet and a file element each select a different source file
+    for the same archived file.
+
+    For example, the fileSet selects <<<sourceDir1/config.xml>>> and
+    the file selects <<<sourceDir2/config.xml>>>; both to be archived as
+    <<<config/config.xml>>>.
+
+    In this case, the assembly plugin archives the item selected in the
+    fileSet, not the file element.  This rule is true despite the order in
+    which the files and fileSets elements appear.
+
+    For example, given these the following fileSet and file elemetns, the plugin
+    will archive the config.xml file from source1Dir.
+
+---
+<fileSets>
+ <fileSet>
+  <directory>source1Dir</directory>
+  <outputDirectory>config</outputDirectory>
+  <includes>
+   <include>**/config.xml</include>
+  </includes>
+ </fileSet>
+</fileSets>
+
+<files>
+ <file>
+  <source>source2Dir/config.xml</source>
+  <outputDirectory>config</outputDirectory>
+ </file>
+</files>
+---
+
+  
 * Advanced Artifact-Matching in <<<includes>>> and <<<excludes>>>
 
   When using <<<dependencySet>>> or <<<moduleSet>>>, the <<<\<includes/\>>>> and
