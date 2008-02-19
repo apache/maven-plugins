@@ -190,6 +190,14 @@ public class AssemblyFormatUtilsTest
         verifyOutputDir( "file.${myProperty}", null, null, null, null, null, "file.value/", null, true, props );
     }
 
+    public void testGetOutputDir_ShouldResolveProjectPropertyAltExpr() throws AssemblyFormattingException
+    {
+        Properties props = new Properties();
+        props.setProperty( "myProperty", "value" );
+
+        verifyOutputDir( "file.${pom.properties.myProperty}", null, null, null, null, null, "file.value/", null, true, props );
+    }
+
     public void testEvalFileNameMapping_ShouldResolveArtifactIdAndBaseVersionInOutDir_UseArtifactInfo_WithValidMainProject()
     throws AssemblyFormattingException
     {
@@ -329,6 +337,14 @@ public class AssemblyFormatUtilsTest
         props.setProperty( "myProperty", "value" );
 
         verifyEvalFileNameMapping( "file.${myProperty}", null, null, null, null, null, "file.value", null, true, props );
+    }
+
+    public void testEvalFileNameMapping_ShouldResolveProjectPropertyAltExpr() throws AssemblyFormattingException
+    {
+        Properties props = new Properties();
+        props.setProperty( "myProperty", "value" );
+
+        verifyEvalFileNameMapping( "file.${pom.properties.myProperty}", null, null, null, null, null, "file.value", null, true, props );
     }
 
     public void testEvalFileNameMapping_ShouldResolveSystemPropertyWithoutMainProjectPresent() throws AssemblyFormattingException

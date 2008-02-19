@@ -151,6 +151,7 @@ public final class AssemblyFormatUtils
 
             // 6
             interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "pom.properties.", mainProject.getProperties() ) );
         }
 
         // 7
@@ -289,6 +290,7 @@ public final class AssemblyFormatUtils
         {
             // 6
             interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "pom.properties.", mainProject.getProperties() ) );
         }
 
         // 7
