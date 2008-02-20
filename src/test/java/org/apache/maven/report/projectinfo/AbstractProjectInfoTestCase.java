@@ -97,7 +97,7 @@ public abstract class AbstractProjectInfoTestCase
     protected void tearDown()
         throws Exception
     {
-        // nop
+        super.tearDown();
     }
 
     /**
