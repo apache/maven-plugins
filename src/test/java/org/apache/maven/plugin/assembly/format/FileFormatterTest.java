@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
@@ -160,17 +161,67 @@ public class FileFormatterTest
 
         enableBasicFilteringConfiguration( basedir, Collections.EMPTY_LIST );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${artifactId}." );
+        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${artifactId} @artifactId@." );
 
         mockManager.replayAll();
 
         File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals( "This is a test for project: artifact.", fileManager.getFileContents( result ) );
+        assertEquals( "This is a test for project: artifact @artifactId@.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
+    public void testShouldFilterExpressionInPropertiesFileWithWindowsEscapes()
+      throws IOException, AssemblyFormattingException
+    {
+
+       File sourceDir = fileManager.createTempDir();
+       MavenProject project = createBasicMavenProject();
+       Build build = new Build();
+       
+       // project.build.outputDirectory = C:\out\deeper
+       build.setOutputDirectory( "C:\\out\\deeper" );
+       project.setBuild(build);
+       
+       enableBasicFilteringConfiguration(project, sourceDir, Collections.EMPTY_LIST);
+
+       File file = fileManager.createFile(sourceDir, "one.properties", "out=${project.build.outputDirectory}");
+
+       mockManager.replayAll();
+
+       File result = new FileFormatter(configSource, logger).format(file, true, null);
+
+       // expect: C\:\\out\\deeper
+       assertEquals("out=C\\:\\\\out\\\\deeper",fileManager.getFileContents(result));
+
+       mockManager.verifyAll();
+   }
+
+    public void testShouldFilterExpressionInPropertiesFileWithoutWindowsEscapes()
+      throws IOException, AssemblyFormattingException
+    {
+
+       File sourceDir = fileManager.createTempDir();
+       MavenProject project = createBasicMavenProject();
+       Build build = new Build();
+       build.setOutputDirectory( "C:\\out\\deeper" );
+       project.setBuild(build);
+     
+       enableBasicFilteringConfiguration(project, sourceDir, Collections.EMPTY_LIST);
+
+       File file = fileManager.createFile(sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}");
+
+       mockManager.replayAll();
+
+       File result = new FileFormatter(configSource, logger).format(file, true, null);
+
+       assertEquals("project.basedirA=C:\\out\\deeper",fileManager.getFileContents(result));
+
+       mockManager.verifyAll();
+    }
+
+    
     public void testShouldFilterExpressionFromFiltersFileInFile()
         throws IOException, AssemblyFormattingException
     {
@@ -180,15 +231,35 @@ public class FileFormatterTest
 
         enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
 
-        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property}." );
+        File file = fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@." );
 
         mockManager.replayAll();
 
         File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals( "This is a test for project: Test.", fileManager.getFileContents( result ) );
+        assertEquals( "This is a test for project: Test Test.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
+    }
+    
+    public void testShouldFilterExpressionFromFiltersFileInPropertiesFileWithoutWindowsEscapes()
+       throws IOException, AssemblyFormattingException
+    {
+       File basedir = fileManager.createTempDir();
+
+       File filterProps = fileManager.createFile( basedir, "filter.properties", "property=C:\\\\Test" );
+
+       enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ) );
+
+       File file = fileManager.createFile( basedir, "one.properties", "This is a test for project: ${property} @property@." );
+
+       mockManager.replayAll();
+
+       File result = new FileFormatter( configSource, logger ).format( file, true, null );
+
+       assertEquals( "This is a test for project: C:\\Test C:\\Test.", fileManager.getFileContents( result ) );
+
+       mockManager.verifyAll();
     }
 
     public void testShouldFilterExpressionsFromTwoFiltersFilesInFile()
@@ -206,13 +277,13 @@ public class FileFormatterTest
         enableBasicFilteringConfiguration( basedir, filters );
 
         File file = fileManager.createFile( basedir, "one.txt",
-                                            "property: ${property}  otherProperty: ${otherProperty}." );
+                                            "property: ${property} @property@ otherProperty: ${otherProperty} @otherProperty@." );
 
         mockManager.replayAll();
 
         File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals( "property: Test  otherProperty: OtherValue.", fileManager.getFileContents( result ) );
+        assertEquals( "property: Test Test otherProperty: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
@@ -231,13 +302,13 @@ public class FileFormatterTest
 
         enableBasicFilteringConfiguration( basedir, filters );
 
-        File file = fileManager.createFile( basedir, "one.txt", "property: ${property}." );
+        File file = fileManager.createFile( basedir, "one.txt", "property: ${property} @property@." );
 
         mockManager.replayAll();
 
         File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals( "property: OtherValue.", fileManager.getFileContents( result ) );
+        assertEquals( "property: OtherValue OtherValue.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
@@ -254,35 +325,44 @@ public class FileFormatterTest
 
         enableBasicFilteringConfiguration( basedir, filters );
 
-        File file = fileManager.createFile( basedir, "one.txt", "project artifact-id: ${artifactId}." );
+        File file = fileManager.createFile( basedir, "one.txt", "project artifact-id: ${artifactId} @artifactId@." );
 
         mockManager.replayAll();
 
         File result = new FileFormatter( configSource, logger ).format( file, true, null );
 
-        assertEquals( "project artifact-id: Test.", fileManager.getFileContents( result ) );
+        assertEquals( "project artifact-id: Test Test.", fileManager.getFileContents( result ) );
 
         mockManager.verifyAll();
     }
 
-    private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
-    {
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
-
+    private MavenProject createBasicMavenProject() {
         Model model = new Model();
         model.setArtifactId( "artifact" );
         model.setGroupId( "group" );
         model.setVersion( "version" );
 
-        MavenProject project = new MavenProject( model );
+        return new MavenProject( model );
+    }
+    
+    private void enableBasicFilteringConfiguration(MavenProject project, File basedir, List filterFilenames)
+    {
+       configSource.getTemporaryRootDirectory();
+       configSourceControl.setReturnValue( basedir );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+       configSource.getProject();
+       configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
-        // list of filenames that contain filter definitions.
-        configSource.getFilters();
-        configSourceControl.setReturnValue( filterFilenames );
+       // list of filenames that contain filter definitions.
+       configSource.getFilters();
+       configSourceControl.setReturnValue( filterFilenames );
+      
+    }
+    
+    private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
+    {
+        MavenProject project = createBasicMavenProject();
+        enableBasicFilteringConfiguration( project, basedir, filterFilenames );
     }
 
 }

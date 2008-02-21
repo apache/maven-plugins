@@ -47,7 +47,8 @@ public class ManifestCreationFinalizerTest
 
     private TestFileManager fileManager = new TestFileManager( "manifest-finalizer.test.", ".jar" );
 
-    public void tearDown() throws IOException
+    public void tearDown()
+        throws IOException
     {
         fileManager.cleanUp();
     }
@@ -89,7 +90,9 @@ public class ManifestCreationFinalizerTest
 
         JarArchiver archiver = new JarArchiver();
 
-        archiver.setArchiveFinalizers( Collections.singletonList( new ManifestCreationFinalizer( project, config ) ) );
+        archiver.setArchiveFinalizers( Collections.singletonList( new ManifestCreationFinalizer(
+                                                                                                 project,
+                                                                                                 config ) ) );
 
         File file = fileManager.createTempFile();
 
@@ -108,7 +111,46 @@ public class ManifestCreationFinalizerTest
         assertTrue( writer.toString().indexOf( "Main-Class: Stuff" ) > -1 );
 
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
-        ((JarURLConnection)resource.openConnection()).getJarFile().close();
+        ( (JarURLConnection) resource.openConnection() ).getJarFile().close();
+    }
+
+    public void testShouldAddManifestEntriesWhenArchiverIsJarArchiver()
+        throws ArchiverException, IOException
+    {
+        MavenProject project = new MavenProject( new Model() );
+        MavenArchiveConfiguration config = new MavenArchiveConfiguration();
+
+        String testKey = "Test-Key";
+        String testValue = "test-value";
+
+        config.addManifestEntry( testKey, testValue );
+
+        JarArchiver archiver = new JarArchiver();
+
+        archiver.setArchiveFinalizers( Collections.singletonList( new ManifestCreationFinalizer(
+                                                                                                 project,
+                                                                                                 config ) ) );
+
+        File file = fileManager.createTempFile();
+
+        archiver.setDestFile( file );
+
+        archiver.createArchive();
+
+        URL resource = new URL( "jar:file:" + file.getAbsolutePath() + "!/META-INF/MANIFEST.MF" );
+
+        BufferedReader reader = new BufferedReader( new InputStreamReader( resource.openStream() ) );
+
+        StringWriter writer = new StringWriter();
+
+        IOUtil.copy( reader, writer );
+
+        System.out.println( "Test Manifest:\n\n" + writer );
+
+        assertTrue( writer.toString().indexOf( testKey + ": " + testValue ) > -1 );
+
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
+        ( (JarURLConnection) resource.openConnection() ).getJarFile().close();
     }
 
     private final class MockAndControlForArchiver
@@ -122,7 +164,7 @@ public class ManifestCreationFinalizerTest
             control = MockControl.createControl( Archiver.class );
             mm.add( control );
 
-            archiver = ( Archiver ) control.getMock();
+            archiver = (Archiver) control.getMock();
         }
     }
 

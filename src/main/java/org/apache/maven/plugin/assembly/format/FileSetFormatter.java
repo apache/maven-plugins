@@ -115,8 +115,8 @@ public class FileSetFormatter
     private static void deleteDirectory( File formattedDir )
     {
         try
-                        {
-                            FileUtils.deleteDirectory( formattedDir );
+        {
+            FileUtils.deleteDirectory( formattedDir );
         }
         catch ( IOException e1 )
         {

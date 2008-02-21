@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>maven-assembly-plugin</artifactId>
-  <version>2.2-beta-2-SNAPSHOT</version>
+  <version>2.2-beta-2</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Assembly Plugin</name>
 
@@ -56,6 +56,10 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
   </issueManagement>
+  
+  <properties>
+    <mdoVersion>1.1.0</mdoVersion>
+  </properties>
 
   <build>
     <plugins>
@@ -95,10 +99,13 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-14</version>
+        <version>1.0-alpha-18</version>
+        <configuration>
+          <version>${mdoVersion}</version>
+        </configuration>
         <executions>
           <execution>
-            <id>descriptor</id>
+            <id>mdo</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>xpp3-reader</goal>
@@ -107,46 +114,24 @@
               <goal>xsd</goal>
             </goals>
             <configuration>
-              <model>src/main/mdo/descriptor.mdo</model>
-              <version>1.1.0</version>
+              <models>
+                <model>src/main/mdo/descriptor.mdo</model>
+                <model>src/main/mdo/component.mdo</model>
+              </models>
             </configuration>
           </execution>
           <execution>
-            <id>component</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>xpp3-reader</goal>
-              <goal>xpp3-writer</goal>
-              <goal>java</goal>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <model>src/main/mdo/component.mdo</model>
-              <version>1.1.0</version>
-            </configuration>
-          </execution>
-          <execution>
-            <id>descriptor-site</id>
+            <id>mdo-site</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
             <configuration>
-              <model>src/main/mdo/descriptor.mdo</model>
-              <version>1.1.0</version>
-            </configuration>
-          </execution>
-          <execution>
-            <id>component-site</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>xdoc</goal>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <model>src/main/mdo/component.mdo</model>
-              <version>1.1.0</version>
+              <models>
+                <model>src/main/mdo/descriptor.mdo</model>
+                <model>src/main/mdo/component.mdo</model>
+              </models>
             </configuration>
           </execution>
         </executions>
@@ -163,6 +148,7 @@
               <exclude>**/AllTests*</exclude>
               <exclude>**/testutils/*</exclude>
             </excludes>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
           </configuration>
         </plugin>
       </plugins>
@@ -191,6 +177,8 @@
 
       <properties>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
+        <it.pomIncludes>**/pom.xml</it.pomIncludes>
+        <it.streamLogs>false</it.streamLogs>
       </properties>
 
       <build>
@@ -297,18 +285,10 @@
                   <testPropertiesFile>test.properties</testPropertiesFile>
                   <debug>true</debug>
 
-                 <!-- Useful config for debugging one IT -->
-                 <!--
                   <pomIncludes>
-                    <pomInclude>mojo-configuration/no-appendAssemblyId-no-classifier/pom.xml</pomInclude>
+                    <pomInclude>${it.pomIncludes}</pomInclude>
                   </pomIncludes>
-                    <streamLogs>true</streamLogs>
-                  -->
-                  <!-- END single-IT debugging block. -->
-
-                  <pomIncludes>
-                    <pomInclude>**/pom.xml</pomInclude>
-                  </pomIncludes>
+                  <streamLogs>${it.streamLogs}</streamLogs>
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
 
@@ -366,7 +346,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-10-SNAPSHOT</version>
+      <version>1.0-alpha-10</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -387,7 +367,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-active-collections</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
+      <version>1.0-beta-2</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -398,7 +378,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -439,7 +419,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.9</version>
+      <version>1.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -454,7 +434,7 @@
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-repository-builder</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -515,4 +495,10 @@
       <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
     </repository>
   </distributionManagement>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-assembly-plugin-2.2-beta-2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-assembly-plugin-2.2-beta-2</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/tags/maven-assembly-plugin-2.2-beta-2</url>
+  </scm>
 </project>

@@ -75,7 +75,7 @@ Configuration and Usage
   single invocation.
   
   Alternatively, we've created a custom assembly descriptor called
-  <<<src.xml>>> in the <<<src/assembly>>> directory (see the
+  <<<src.xml>>> in the <<<src/main/assembly>>> directory (see the
   {{{#Resources}Resources}} section for more information), we can tell the
   Assembly Plugin to use it instead:
   
@@ -89,7 +89,7 @@ Configuration and Usage
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
-            <descriptor>src/assembly/src.xml</descriptor>
+            <descriptor>src/main/assembly/src.xml</descriptor>
           </descriptors>
         </configuration>
         [...]

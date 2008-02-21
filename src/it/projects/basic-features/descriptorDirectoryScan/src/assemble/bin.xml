@@ -1,0 +1,16 @@
+
+<assembly>
+  <id>bindir</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>commons-logging:commons-logging</include>
+      </includes>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+    </dependencySet>
+  </dependencySets>
+</assembly>

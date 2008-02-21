@@ -19,27 +19,37 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import org.codehaus.plexus.util.interpolation.ValueSource;
-
 import java.util.Properties;
 
 /**
  * @version $Id$
  */
-public class PropertiesInterpolationValueSource
-    implements ValueSource
+public class PrefixedPropertiesInterpolationValueSource
+    extends PropertiesInterpolationValueSource
 {
 
-    private final Properties properties;
+    private final String prefix;
 
-    public PropertiesInterpolationValueSource( Properties properties )
+    public PrefixedPropertiesInterpolationValueSource( String prefix, Properties properties )
     {
-        this.properties = properties;
+        super( properties );
+        this.prefix = prefix;
     }
 
-    public Object getValue( String key )
+    public Object getValue( String expression )
     {
-        return properties == null ? null : properties.getProperty( key );
+        if ( ( expression == null ) || !expression.startsWith( prefix ) )
+        {
+            return null;
+        }
+
+        String realExpr = expression.substring( prefix.length() );
+        if ( realExpr.startsWith( "." ) )
+        {
+            realExpr = realExpr.substring( 1 );
+        }
+
+        return super.getValue( realExpr );
     }
 
 }
