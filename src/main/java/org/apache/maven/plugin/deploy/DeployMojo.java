@@ -112,10 +112,25 @@ public class DeployMojo
      * Contextualized.
      */
     private PlexusContainer container;
+    
+    /**
+     * Set this to 'true' to bypass artifact deploy
+     *       
+     * @parameter expression="${maven.deploy.skip}" default-value="false"
+     * @since 2.4
+     */
+    private boolean skip;     
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        
+        if ( skip )
+        {
+            getLog().info( " skipping artifact deployement " );
+            return;
+        }
+        
         ArtifactRepository repo = getDeploymentRepository();
 
         String protocol = repo.getProtocol();
