@@ -135,7 +135,9 @@ public class InstallMojo
 
                 installer.install( attached.getFile(), attached, localRepository );
 
-                if ( createChecksum )
+                boolean signatureFile = attached.getFile().getName().endsWith( ".asc" );
+
+                if ( createChecksum && !signatureFile )
                 {
                     installCheckSum( attached.getFile(), attached, false );
                 }
