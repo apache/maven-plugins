@@ -123,4 +123,11 @@ public class DeployArtifactStub
     {
         this.release = release;
     }
+
+    /*
+    public boolean isSnapshot()
+    {
+        return false;
+    }
+    */
 }
