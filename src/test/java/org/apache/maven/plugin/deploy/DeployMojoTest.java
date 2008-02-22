@@ -139,7 +139,9 @@ public class DeployMojoTest
         expectedFiles.add( "maven-metadata-deploy-test.xml" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.jar" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom" );
-
+        // as we are in SNAPSHOT the file is here twice
+        expectedFiles.add( "maven-metadata-deploy-test.xml" );
+        
         File localRepo = new File( LOCAL_REPO, "" );
         
         File[] files = localRepo.listFiles();
@@ -172,6 +174,10 @@ public class DeployMojoTest
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.md5" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.sha1" );
+        // as we are in SNAPSHOT the file is here twice
+        expectedFiles.add( "maven-metadata.xml" );
+        expectedFiles.add( "maven-metadata.xml.md5" );
+        expectedFiles.add( "maven-metadata.xml.sha1" );
         
         remoteRepo = new File( remoteRepo, "basic-deploy-test" );
         
@@ -226,7 +232,10 @@ public class DeployMojoTest
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.md5" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.sha1" );
-  
+        // as we are in SNAPSHOT the file is here twice
+        expectedFiles.add( "maven-metadata.xml" );
+        expectedFiles.add( "maven-metadata.xml.md5" );
+        expectedFiles.add( "maven-metadata.xml.sha1" ); 
         remoteRepo = new File( remoteRepo, "basic-deploy-pom" );
         
         File[] files = remoteRepo.listFiles();
@@ -356,6 +365,10 @@ public class DeployMojoTest
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.md5" );
         expectedFiles.add( "maven-deploy-test-1.0-SNAPSHOT.pom.sha1" );
+        // as we are in SNAPSHOT the file is here twice
+        expectedFiles.add( "maven-metadata.xml" );
+        expectedFiles.add( "maven-metadata.xml.md5" );
+        expectedFiles.add( "maven-metadata.xml.sha1" );         
         expectedFiles.add( "attached-artifact-test-0" );
         expectedFiles.add( "1.0-SNAPSHOT" );
         expectedFiles.add( "maven-metadata.xml" );
@@ -363,7 +376,11 @@ public class DeployMojoTest
         expectedFiles.add( "maven-metadata.xml.sha1" );
         expectedFiles.add( "attached-artifact-test-0-1.0-SNAPSHOT.jar" );
         expectedFiles.add( "attached-artifact-test-0-1.0-SNAPSHOT.jar.md5" );
-        expectedFiles.add( "attached-artifact-test-0-1.0-SNAPSHOT.jar.sha1" );   
+        expectedFiles.add( "attached-artifact-test-0-1.0-SNAPSHOT.jar.sha1" );
+        // as we are in SNAPSHOT the file is here twice
+        expectedFiles.add( "maven-metadata.xml" );
+        expectedFiles.add( "maven-metadata.xml.md5" );
+        expectedFiles.add( "maven-metadata.xml.sha1" );         
         
         remoteRepo = new File( remoteRepo, "basic-deploy-with-attached-artifacts" );
         
