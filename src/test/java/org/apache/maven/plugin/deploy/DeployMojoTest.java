@@ -193,6 +193,58 @@ public class DeployMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );         
     }
 
+    public void testSkippingDeploy()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-deploy-test/plugin-config.xml" );
+
+        DeployMojo mojo = (DeployMojo) lookupMojo( "deploy", testPom );
+
+        assertNotNull( mojo );
+
+        File file = new File( getBasedir(), "target/test-classes/unit/basic-deploy-test/target/"
+            + "deploy-test-file-1.0-SNAPSHOT.jar" );
+
+        assertTrue( file.exists() );
+
+        ArtifactRepository loc = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+
+        artifact = (DeployArtifactStub) getVariableValueFromObject( mojo, "artifact" );
+
+        String packaging = (String) getVariableValueFromObject( mojo, "packaging" );
+
+        assertEquals( "jar", packaging );
+
+        artifact.setFile( file );
+
+        ArtifactRepositoryStub repo = (ArtifactRepositoryStub) getVariableValueFromObject( mojo, "deploymentRepository" );
+
+        assertNotNull( repo );
+
+        repo.setAppendToUrl( "basic-deploy-test" );
+
+        assertEquals( "deploy-test", repo.getId() );
+        assertEquals( "deploy-test", repo.getKey() );
+        assertEquals( "file", repo.getProtocol() );
+        assertEquals( "file://" + getBasedir() + "/target/remote-repo/basic-deploy-test", repo.getUrl() );
+
+        setVariableValueToObject( mojo, "skip", Boolean.TRUE );
+        
+        mojo.execute();
+
+        File localRepo = new File( LOCAL_REPO, "" );
+
+        File[] files = localRepo.listFiles();
+
+        assertNull( files );
+       
+        remoteRepo = new File( remoteRepo, "basic-deploy-test" );
+
+        files = remoteRepo.listFiles();
+
+        assertNull( files );
+    }    
+    
     public void testBasicDeployWithPackagingAsPom()
         throws Exception
     {
