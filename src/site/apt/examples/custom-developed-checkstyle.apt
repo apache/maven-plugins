@@ -106,6 +106,7 @@ mycompany-checkstyle-checks
       <package name="header"/>
       <package name="imports"/>
       <package name="indentation"/>
+      <package name="j2ee"/>
       <package name="javadoc"/>
       <package name="metrics"/>
       <package name="modifier"/>
