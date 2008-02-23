@@ -51,5 +51,24 @@ under the License.
        </p>
      </answer>
    </faq>
+     <faq id="skip">
+       <question>I don't want to deploy one of the artifacts in my multi-module build.  Can I skip deployment?</question>
+       <answer>
+         <p>
+           Yes, you can skip deployment of individual modules by configuring the deploy plugin as follows:
+         </p>
+         <p>
+           <pre>
+             <plugin>
+               <artifactId>maven-deploy-plugin</artifactId>
+	           <version>X.Y</version>
+	           <configuration>
+                 <skip>true</skip>
+               </configuration>
+             </plugin>
+           </pre>
+         </p>
+       </answer>
+     </faq>
  </part>
 </faqs>
