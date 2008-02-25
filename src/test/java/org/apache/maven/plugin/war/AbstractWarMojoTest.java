@@ -19,6 +19,7 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
@@ -66,6 +67,8 @@ public abstract class AbstractWarMojoTest
         setVariableValueToObject( mojo, "filters", filters );
         setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
         setVariableValueToObject( mojo, "mavenFileFilter", lookup( MavenFileFilter.class.getName() ) );
+        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+        setVariableValueToObject( mojo, "session", mavenSession );
         mojo.setClassesDirectory( classesDir );
         mojo.setWarSourceDirectory( webAppSource );
         mojo.setWebappDirectory( webAppDir );
