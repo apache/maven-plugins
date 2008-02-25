@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -260,6 +261,15 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
     private List nonFilteredFileExtensions;
+    
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.1-alpha-2
+     */
+     private MavenSession session;
+    
 
     /**
      * The maven archive configuration to use.
@@ -395,7 +405,7 @@ public abstract class AbstractWarMojo
         List filterWrappers = new ArrayList( );
         try
         {
-            List defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, true );
+            List defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, true, this.session );
 
             filterWrappers.addAll( defaultFilterWrappers );
             FileUtils.FilterWrapper filterWrapper = new FileUtils.FilterWrapper()
