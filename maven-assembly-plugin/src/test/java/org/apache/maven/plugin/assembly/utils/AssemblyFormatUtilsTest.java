@@ -122,6 +122,30 @@ public class AssemblyFormatUtilsTest
         verifyOutputDir( "${pom.build.finalName}", null, null, null, null, "finalName", "finalName/", true );
     }
 
+    public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyOutputDir( "${project.groupId}", null, "group", null, null, null, "group/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyOutputDir( "${project.artifactId}", null, null, "artifact", null, null, "artifact/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveVersionInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyOutputDir( "${project.version}", null, null, null, "version", null, "version/", true );
+    }
+
+    public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyOutputDir( "${project.build.finalName}", null, null, null, null, "finalName", "finalName/", true );
+    }
+
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions()
     throws AssemblyFormattingException
     {
@@ -284,6 +308,24 @@ public class AssemblyFormatUtilsTest
     throws AssemblyFormattingException
     {
         verifyEvalFileNameMapping( "${pom.version}", null, null, null, "version", null, "version", true );
+    }
+
+    public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( "${project.groupId}", null, "group", null, null, null, "group", true );
+    }
+
+    public void testEvalFileNameMapping_ShouldResolveArtifactIdInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( "${project.artifactId}", null, null, "artifact", null, null, "artifact", true );
+    }
+
+    public void testEvalFileNameMapping_ShouldResolveVersionInOutDir_UseExplicitMainProject_projectRef()
+    throws AssemblyFormattingException
+    {
+        verifyEvalFileNameMapping( "${project.version}", null, null, null, "version", null, "version", true );
     }
 
     public void testEvalFileNameMapping_ShouldPassExpressionThroughUnchanged() throws AssemblyFormattingException
