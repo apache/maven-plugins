@@ -111,6 +111,8 @@ public class AddFileSetsTask
             destDirectory = fileSet.getDirectory();
         }
 
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
+
         if ( logger.isDebugEnabled() )
         {
             logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "
@@ -118,8 +120,6 @@ public class AddFileSetsTask
                 + Integer.toString( archiver.getDefaultFileMode(), 8 )
                 + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
-
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
 
