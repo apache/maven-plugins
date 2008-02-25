@@ -133,6 +133,7 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectBasedValueSource( "pom.", mainProject ) );
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "project.", mainProject ) );
         }
 
         if ( artifactProject != null )
@@ -152,6 +153,7 @@ public final class AssemblyFormatUtils
             // 6
             interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
             interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "pom.properties.", mainProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "project.properties.", mainProject.getProperties() ) );
         }
 
         // 7
@@ -266,6 +268,7 @@ public final class AssemblyFormatUtils
         {
             // 3
             interpolator.addValueSource( new PrefixedObjectBasedValueSource( "pom.", mainProject ) );
+            interpolator.addValueSource( new PrefixedObjectBasedValueSource( "project.", mainProject ) );
 
             // 4
             interpolator.addValueSource( new ObjectBasedValueSource( mainProject ) );
@@ -291,6 +294,7 @@ public final class AssemblyFormatUtils
             // 6
             interpolator.addValueSource( new PropertiesInterpolationValueSource( mainProject.getProperties() ) );
             interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "pom.properties.", mainProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesInterpolationValueSource( "project.properties.", mainProject.getProperties() ) );
         }
 
         // 7
