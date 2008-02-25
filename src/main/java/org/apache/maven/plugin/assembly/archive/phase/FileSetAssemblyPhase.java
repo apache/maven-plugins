@@ -44,13 +44,11 @@ public class FileSetAssemblyPhase
     {
         List fileSets = assembly.getFileSets();
 
-        if ( fileSets != null && !fileSets.isEmpty() )
+        if ( ( fileSets != null ) && !fileSets.isEmpty() )
         {
             AddFileSetsTask task = new AddFileSetsTask( fileSets );
 
             task.setLogger( getLogger() );
-            task.setProject( configSource.getProject() );
-
             task.execute( archiver, configSource );
         }
     }
