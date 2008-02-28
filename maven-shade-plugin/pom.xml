@@ -45,8 +45,18 @@
     <!-- Others -->
     <dependency>
       <groupId>asm</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>20070324</version>
+      <artifactId>asm</artifactId>
+      <version>3.1</version>
+    </dependency>
+     <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-util</artifactId>
+      <version>3.1</version>
+    </dependency>
+     <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-commons</artifactId>
+      <version>3.1</version>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
