@@ -231,6 +231,17 @@ public class ShadeMojo
         Set artifactIds = new LinkedHashSet();
         Set sourceArtifacts = new LinkedHashSet();
 
+        artifacts.add( project.getArtifact().getFile() );
+
+        if ( createSourcesJar )
+        {
+            File file = shadedSourcesArtifactFile();
+            if ( file.exists() )
+            {
+                sourceArtifacts.add( file );
+            }
+        }
+        
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -258,16 +269,6 @@ public class ShadeMojo
             }
         }
 
-        artifacts.add( project.getArtifact().getFile() );
-
-        if ( createSourcesJar )
-        {
-            File file = shadedSourcesArtifactFile();
-            if ( file.exists() )
-            {
-                sourceArtifacts.add( file );
-            }
-        }
 
         File outputJar = shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();

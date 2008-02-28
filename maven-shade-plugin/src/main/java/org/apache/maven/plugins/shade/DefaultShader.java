@@ -83,16 +83,6 @@ public class DefaultShader
                     continue;
                 }
 
-                if ( "META-INF/MANIFEST.MF".equals( name ) ) 
-                {
-                    // Ignore MANIFEST for jars except the last one, which is
-                    // the project artifact. Ideally, we could create a new one later
-                    if ( i.hasNext() )
-                    {
-                        continue;
-                    }
-                }
-
                 String mappedName = remapper.map( name );
 
                 InputStream is = jarFile.getInputStream( entry );
