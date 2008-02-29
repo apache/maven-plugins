@@ -24,7 +24,11 @@ public interface Relocator
 {
     String ROLE = Relocator.class.getName();
 
-    boolean canRelocate( String clazz );
+    boolean canRelocatePath( String clazz );
 
-    String relocate( String clazz );
+    String relocatePath( String clazz );
+
+    boolean canRelocateClass( String clazz );
+
+    String relocateClass( String clazz );
 }
