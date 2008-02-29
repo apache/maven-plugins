@@ -274,22 +274,47 @@ public class DefaultShader
 
         public Object mapValue( Object object )
         {
+            if ( object instanceof String )
+            {
+                String name = (String) object;
+                String value = name;
+                for ( Iterator i = relocators.iterator(); i.hasNext(); )
+                {
+                    Relocator r = (Relocator) i.next();
+
+                    if ( r.canRelocatePath( name ) )
+                    {
+                        value = r.relocatePath( name );
+                        break;
+                    }
+
+                    if ( r.canRelocateClass( name ) )
+                    {
+                        value = r.relocateClass( name );
+                        break;
+                    }
+                }
+
+                return value;
+            }
             return object;
         }
 
         public String map( String name )
         {
+            String value = name;
             for ( Iterator i = relocators.iterator(); i.hasNext(); )
             {
                 Relocator r = (Relocator) i.next();
 
-                if ( r.canRelocate( name ) )
+                if ( r.canRelocatePath( name ) )
                 {
-                    return r.relocate( name );
+                    value = r.relocatePath( name );
+                    break;
                 }
             }
 
-            return name;
+            return value;
         }
     }
 }

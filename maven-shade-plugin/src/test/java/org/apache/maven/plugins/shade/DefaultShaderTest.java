@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 import junit.framework.TestCase;
 
@@ -46,6 +48,32 @@ public class DefaultShaderTest
         throws Exception
     {
         shaderWithPattern( null, new File( "target/foo-default.jar" ), EXCLUDES );
+    }
+
+    public void testShaderWithStaticInitializedClass()
+        throws Exception
+    {
+        Shader s = new DefaultShader();
+
+        Set set = new HashSet();
+
+        set.add( new File( "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
+
+        List relocators = new ArrayList();
+
+        relocators.add( new SimpleRelocator( "org.apache.maven.plugins.shade", null, null ) );
+
+        List resourceTransformers = new ArrayList();
+
+        List filters = new ArrayList();
+
+        File file = new File( "target/testShaderWithStaticInitializedClass.jar" );
+        s.shade( set, file, filters, relocators, resourceTransformers );
+
+        URLClassLoader cl = new URLClassLoader( new URL[]{file.toURL()} );
+        Class c = cl.loadClass( "hidden.org.apache.maven.plugins.shade.Lib" );
+        Object o = c.newInstance();
+        assertEquals( "foo.bar/baz", c.getDeclaredField( "CONSTANT" ).get( o ) );
     }
 
     public void testShaderWithCustomShadedPattern()
