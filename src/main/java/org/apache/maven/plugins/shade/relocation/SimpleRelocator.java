@@ -32,20 +32,27 @@ public class SimpleRelocator
 {
     private String pattern;
 
+    private String pathPattern;
+
     private String shadedPattern;
+
+    private String shadedPathPattern;
 
     private List excludes;
 
     public SimpleRelocator(String patt, String shadedPattern, List excludes)
     {
-        this.pattern = patt.replace('.', '/');
+        this.pattern = patt;
+        this.pathPattern = patt.replace('.', '/');
 
         if ( shadedPattern != null )
         {
-            this.shadedPattern = shadedPattern.replace('.', '/');
+            this.shadedPattern = shadedPattern;
+            this.shadedPathPattern = shadedPattern.replace('.', '/');
         } else
         {
-            this.shadedPattern = "hidden/" + this.pattern;
+            this.shadedPattern = "hidden." + this.pattern;
+            this.shadedPathPattern = "hidden/" + this.pathPattern;
         }
 
         if (excludes != null)
@@ -61,7 +68,7 @@ public class SimpleRelocator
         }
     }
 
-    public boolean canRelocate( String clazz )
+    public boolean canRelocatePath( String clazz )
     {
         if ( excludes != null )
         {
@@ -81,12 +88,39 @@ public class SimpleRelocator
             }
         }
 
+        return clazz.startsWith( pathPattern );
+    }
+
+    public boolean canRelocateClass( String clazz )
+    {
+        if ( excludes != null )
+        {
+            for ( Iterator i = excludes.iterator(); i.hasNext(); )
+            {
+                String exclude = (String) i.next();
+
+                exclude = exclude.replace( '/', '.' );
+                if ( exclude.endsWith( ".*" ) && clazz.startsWith( exclude.substring( 0, exclude.length() - 2 ) ) )
+                {
+                    return false;
+                }
+                else if ( clazz.equals( exclude ) )
+                {
+                    return false;
+                }
+            }
+        }
+
         return clazz.startsWith( pattern );
     }
 
-    public String relocate( String clazz )
+    public String relocatePath( String clazz )
+    {
+        return clazz.replaceFirst(pathPattern, shadedPathPattern);
+    }
+
+    public String relocateClass( String clazz )
     {
         return clazz.replaceFirst(pattern, shadedPattern);
     }
-
 }
