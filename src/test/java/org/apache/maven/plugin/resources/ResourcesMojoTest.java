@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -312,6 +313,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
+        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+        setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
