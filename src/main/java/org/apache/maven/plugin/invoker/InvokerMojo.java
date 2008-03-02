@@ -259,6 +259,14 @@ public class InvokerMojo
      * @since 1.1
      */
     private String profilesFile;
+    
+    /**
+     * Path to an alternate settings.xml to use for maven invocation with all ITs
+     * 
+     * @parameter expression="${invoker.settingsFile}"
+     * @since 1.2
+     */
+    private File settingsFile;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -568,6 +576,11 @@ public class InvokerMojo
             request.setPomFile( interpolatedPomFile );
 
             request.setProfiles( getProfiles(basedir) );
+            
+            if ( settingsFile != null )
+            {
+                request.setUserSettingsFile( settingsFile );
+            }
 
             try
             {
