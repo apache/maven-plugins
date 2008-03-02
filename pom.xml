@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>maven-shade-plugin</artifactId>
-  <version>1.0-beta-2-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>maven-plugin</packaging>
   <name>maven-shade-plugin</name>
 
@@ -88,4 +88,10 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-shade-plugin-1.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-shade-plugin-1.0</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-shade-plugin-1.0</url>
+  </scm>
 </project>
