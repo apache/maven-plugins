@@ -41,7 +41,7 @@ public abstract class AbstractResolveMojo
     extends AbstractDependencyFilterMojo
 {
     /**
-     * Artifact factory, needed to download source jars.
+     * Project builder -- builds a model from a pom.xml
      * 
      * @component role="org.apache.maven.project.MavenProjectBuilder"
      * @required
