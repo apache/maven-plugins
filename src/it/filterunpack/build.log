@@ -1,0 +1,42 @@
+OUT: -------------------------------------------------------------------------------
+OUT: TEST BUILD: D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\pom.xml
+OUT: Goals: package
+OUT: -------------------------------------------------------------------------------
+OUT: + Error stacktraces are turned on.
+OUT: [INFO] Scanning for projects...
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Building Unnamed - dependency:dependency:jar:testing
+OUT: [INFO]    task-segment: [package]
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] [dependency:unpack-dependencies {execution: default}]
+OUT: [INFO] Unpacking d:\mavenRepo\junit\junit\3.8.1\junit-3.8.1.jarto
+OUT:  D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\target\dependency
+OUT: with Includes **/MANIFEST.MF and excludes:null
+OUT: [INFO] [resources:resources]
+OUT: [INFO] Using default encoding to copy filtered resources.
+OUT: [INFO] Resource directory does not exist: D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\src\main\resources
+OUT: [INFO] [compiler:compile]
+OUT: [INFO] No sources to compile
+OUT: [INFO] [resources:testResources]
+OUT: [INFO] Using default encoding to copy filtered resources.
+OUT: [INFO] Resource directory does not exist: D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\src\test\resources
+OUT: [INFO] [compiler:testCompile]
+OUT: [INFO] No sources to compile
+OUT: [INFO] [surefire:test]
+OUT: [INFO] No tests to run.
+OUT: [INFO] [jar:jar]
+OUT: [WARNING] JAR will be empty - no content was marked for inclusion!
+OUT: [INFO] Building jar: D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\target\dependency-testing.jar
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] BUILD SUCCESSFUL
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Total time: 4 seconds
+OUT: [INFO] Finished at: Mon Mar 03 15:35:04 EST 2008
+OUT: [INFO] Final Memory: 11M/23M
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: -------------------------------------------------------------------------------
+OUT: -------------------------------------------------------------------------------
+OUT: SCRIPT (validate): D:\svn\Maven\maven-plugins\maven-dependency-plugin\src\it\filterunpack\validate.groovy
+OUT: -------------------------------------------------------------------------------
+OUT: SUCCESS
+OUT: -------------------------------------------------------------------------------
