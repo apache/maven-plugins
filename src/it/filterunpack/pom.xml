@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>dependency</groupId>
+    <artifactId>dependency</artifactId>
+    <packaging>jar</packaging>
+    <version>testing</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>testing</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                          <includes>**/MANIFEST.MF</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
