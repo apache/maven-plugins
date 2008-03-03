@@ -62,5 +62,12 @@ org.apache.maven.plugins:maven-dependency-plugin:2.0-alpha-4:unpack
   	</p>
   </answer>
   </faq>
+      <faq id="includes">
+  <question>Why am I having trouble unpacking only a specific file?</question>
+  <answer><p>
+  	The excludes will override the includes declaration. That means if you specify <excludes>**/*</excludes><includes>**/foo</includes>, you will exclude everything. If you only want foo, then just specify the includes. The plexus component used to unpack uses the following code to determing which files to unpack: return isIncluded( name ) && !isExcluded( name );
+  	</p>
+  </answer>
+  </faq>
  </part>
 </faqs>
