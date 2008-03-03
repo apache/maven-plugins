@@ -84,7 +84,6 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
  * @version $Id$
  * @since 2.0
  * @requiresDependencyResolution compile
- * @aggregator
  */
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
@@ -1667,11 +1666,6 @@ public abstract class AbstractJavadocMojo
                     if ( subProject != project )
                     {
                         List sourceRoots = getProjectSourceRoots( subProject );
-
-                        if ( subProject.getExecutionProject() != null )
-                        {
-                            sourceRoots.addAll( getExecutionProjectSourceRoots( subProject ) );
-                        }
 
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                         if ( "java".equals( artifactHandler.getLanguage() ) )
