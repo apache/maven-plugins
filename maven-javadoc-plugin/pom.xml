@@ -260,6 +260,7 @@
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/MJAVADOC-110/pom.xml</pomInclude>
+                <pomInclude>**/MJAVADOC-137/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-172/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
