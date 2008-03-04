@@ -1695,7 +1695,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        sourcePaths = JavadocUtil.pruneSourceDirs( sourcePaths );
+        sourcePaths = JavadocUtil.pruneDirs( sourcePaths );
         return sourcePaths;
     }
 
@@ -2148,37 +2148,36 @@ public abstract class AbstractJavadocMojo
         }
         else if ( taglets != null )
         {
+            List tagletsPath = new ArrayList();
             for ( int i = 0; i < taglets.length; i++ )
             {
                 Taglet current = taglets[i];
-                if ( current != null )
-                {
-                    boolean separated = false;
-                    if ( current.getTagletArtifact() != null )
-                    {
-                        path.append( getArtifactAbsolutePath( current.getTagletArtifact() ) );
-                        separated = true;
-                    }
-                    else if ( ( current.getTagletArtifact() != null )
-                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getGroupId() ) )
-                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getArtifactId() ) )
-                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
-                    {
-                        path.append( getArtifactAbsolutePath( current.getTagletArtifact() ) );
-                        separated = true;
-                    }
-                    else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
-                    {
-                        path.append( current.getTagletpath() );
-                        separated = true;
-                    }
 
-                    if ( separated && ( i < taglets.length - 1 ) )
-                    {
-                        path.append( File.pathSeparator );
-                    }
+                if ( current == null )
+                {
+                    continue;
+                }
+
+                if ( current.getTagletArtifact() != null )
+                {
+                    tagletsPath.add( getArtifactAbsolutePath( current.getTagletArtifact() ) );
+                }
+                else if ( ( current.getTagletArtifact() != null )
+                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getGroupId() ) )
+                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getArtifactId() ) )
+                    && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
+                {
+                    tagletsPath.add( getArtifactAbsolutePath( current.getTagletArtifact() ) );
+                }
+                else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
+                {
+                    tagletsPath.add( current.getTagletpath() );
                 }
             }
+
+            tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
+
+            path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
         }
         else
         {
