@@ -59,24 +59,60 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JavadocUtil
 {
     /**
-     * Method that removes the invalid directories in the specified source directories
+     * Method that removes the invalid directories in the specified directories
      *
-     * @param sourceDirs the list of source directories that will be validated
-     * @return a List of valid source directories
+     * @param dirs the list of directories that will be validated
+     * @return a List of valid directories
      */
-    // TODO: could be better aligned with JXR, including getFiles() vs hasSources that finds java files.
-    protected static List pruneSourceDirs( List sourceDirs )
+    protected static List pruneDirs( List dirs )
     {
-        List pruned = new ArrayList( sourceDirs.size() );
-        for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
+        List pruned = new ArrayList( dirs.size() );
+        for ( Iterator i = dirs.iterator(); i.hasNext(); )
         {
             String dir = (String) i.next();
+
+            if ( dir == null )
+            {
+                continue;
+            }
+
             File directory = new File( dir );
             if ( directory.exists() && directory.isDirectory() )
             {
                 if ( !pruned.contains( dir ) )
                 {
                     pruned.add( dir );
+                }
+            }
+        }
+
+        return pruned;
+    }
+
+    /**
+     * Method that removes the invalid files in the specified files
+     *
+     * @param files the list of files that will be validated
+     * @return a List of valid files
+     */
+    protected static List pruneFiles( List files )
+    {
+        List pruned = new ArrayList( files.size() );
+        for ( Iterator i = files.iterator(); i.hasNext(); )
+        {
+            String f = (String) i.next();
+
+            if ( f == null )
+            {
+                continue;
+            }
+
+            File file = new File( f );
+            if ( file.exists() && file.isFile() )
+            {
+                if ( !pruned.contains( f ) )
+                {
+                    pruned.add( f );
                 }
             }
         }
