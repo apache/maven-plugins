@@ -67,6 +67,14 @@
               <name>maven.home</name>
               <value>${maven.home}</value>
             </property>
+            <property>
+              <name>org.apache.maven.user-settings</name>
+              <value>${org.apache.maven.user-settings}</value>
+            </property>
+            <property>
+              <name>org.apache.maven.global-settings</name>
+              <value>${org.apache.maven.global-settings}</value>
+            </property>
           </systemProperties>
           <argLine>${maven.test.jvmargs}</argLine>
         </configuration>
