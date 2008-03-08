@@ -22,9 +22,6 @@ import java.io.*;
 
 boolean result = true;
 
-// This test should fail -- mvn javadoc:jar at the command line does *not* produce the jars.
-// However, with the same config in the parent pom, it works.
-
 try
 {
     File target = new File( basedir, "test1/target/test1-1.0-SNAPSHOT-javadoc.jar" );
