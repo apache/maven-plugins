@@ -26,6 +26,12 @@
   <name>Maven MJAVADOC-137 test</name>
   <url>http://maven.apache.org</url>
 
+  <description>
+  Tests that 'mvn javadoc:jar' produces javadoc jars in each sub-project
+  when run from the parent.  This broke when @aggregator was added to the
+  javadoc plugin as part of MJAVADOC-104.
+  </description>
+
   <build>
     <pluginManagement>
       <plugins>
