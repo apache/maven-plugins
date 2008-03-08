@@ -19,16 +19,17 @@ package org.apache.maven.plugin.idea;
  * under the License.
  */
 
-import org.dom4j.io.XMLWriter;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Custom implementation of <a href="http://dom4j.org/apidocs/org/dom4j/io/XMLWriter.html">XMLWriter</a> for use with
- * the Idea plugin.
+ * the IDEA plugin.
  */
 public class IdeaXmlWriter
     extends XMLWriter
@@ -41,7 +42,8 @@ public class IdeaXmlWriter
     public IdeaXmlWriter( File file )
         throws IOException
     {
-        super( new FileWriter( file ), OutputFormat.createPrettyPrint() );
+        super( new OutputStreamWriter( new FileOutputStream( file ), "UTF-8" ),
+               OutputFormat.createPrettyPrint() );
     }
 
     protected String escapeAttributeEntities( String text )
