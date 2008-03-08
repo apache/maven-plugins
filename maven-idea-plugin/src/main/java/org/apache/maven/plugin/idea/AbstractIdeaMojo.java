@@ -58,6 +58,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * @author Edwin Punzalan
@@ -218,14 +219,98 @@ public abstract class AbstractIdeaMojo
         if ( convertedAbsolutePath.startsWith( convertedBasedirAbsolutePath )
             && convertedAbsolutePath.length() > convertedBasedirAbsolutePath.length() )
         {
+            // Simple case, path starts with basepath
             relative = convertedAbsolutePath.substring( convertedBasedirAbsolutePath.length() + 1 );
+            relative = StringUtils.replace( relative, "\\", "/" );
         }
         else
         {
-            relative = convertedAbsolutePath;
-        }
+            // It's more complex...
+            convertedAbsolutePath = StringUtils.replace( convertedAbsolutePath, "\\", "/" );
+            convertedBasedirAbsolutePath = StringUtils.replace( convertedBasedirAbsolutePath, "\\", "/" );
 
-        relative = StringUtils.replace( relative, "\\", "/" );
+            StringTokenizer baseTokens = new StringTokenizer( convertedBasedirAbsolutePath, "/", false );
+
+            int baseCount = baseTokens.countTokens();
+            List baseTokenList = new ArrayList( baseCount );
+            while ( baseTokens.hasMoreTokens() )
+            {
+                baseTokenList.add( baseTokens.nextToken() );
+            }
+
+            StringTokenizer pathTokens = new StringTokenizer( convertedAbsolutePath, "/", false );
+
+            int pathCount = pathTokens.countTokens();
+            List pathTokenList = new ArrayList( pathCount );
+            while ( pathTokens.hasMoreTokens() )
+            {
+                pathTokenList.add( pathTokens.nextToken() );
+            }
+
+            int maxCount = Math.max( baseTokenList.size(), pathTokenList.size() );
+            int differIndex = -1;
+            for ( int i = 0; i < maxCount; i++ )
+            {
+                if ( i >= pathTokenList.size() || i >= baseTokenList.size() )
+                {
+                    differIndex = i;
+                    break;
+                }
+                String basePart = (String) baseTokenList.get( i );
+                String pathPart = (String) pathTokenList.get( i );
+                if ( !basePart.equals( pathPart ) )
+                {
+                    differIndex = i;
+                    break;
+                }
+            }
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Construction of relative path... differIndex=" + differIndex );
+            }
+            if ( differIndex < 1 )
+            {
+                // Paths are either equal or completely different
+                relative = convertedAbsolutePath;
+            }
+            else
+            {
+                StringBuffer result = new StringBuffer();
+                int parentCount = baseTokenList.size() - differIndex;
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "parentCount=" + parentCount );
+                }
+                boolean isFirst = true;
+                for ( int i = 0; i < parentCount; i++ )
+                {
+                    // Add parents
+                    if ( isFirst )
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        result.append( "/" );
+                    }
+                    result.append( ".." );
+                }
+                for ( int i = differIndex; i < pathTokenList.size(); i++ )
+                {
+                    // Add the remaining path elements
+                    if ( isFirst )
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        result.append( "/" );
+                    }
+                    result.append( pathTokenList.get( i ) );
+                }
+                relative = result.toString();
+            }
+        }
 
         if ( getLog().isDebugEnabled() )
         {
