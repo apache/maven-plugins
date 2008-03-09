@@ -86,7 +86,7 @@ public class EclipseManifestWriter
     /**
      * Search the project for the existing META-INF directory where the manifest should be located.
      * 
-     * @return the apsolute path to the META-INF directory
+     * @return the absolute path to the META-INF directory
      * @throws MojoExecutionException
      */
     public String getMetaInfBaseDirectory( MavenProject project )
@@ -105,7 +105,8 @@ public class EclipseManifestWriter
             File metaInfDirectoryFile =
                 new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY );
 
-            if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
+            if ( !metaInfDirectoryFile.exists()
+                || ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() ) )
             {
                 metaInfBaseDirectory = null;
             }
@@ -115,9 +116,9 @@ public class EclipseManifestWriter
         {
 
             File manifestFile =
-                new File( this.config.getEclipseProjectDirectory(), this.config.getSourceDirs()[index].getPath() +
-                    File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY + File.separatorChar +
-                    EclipseManifestWriter.MANIFEST_MF_FILENAME );
+                new File( this.config.getEclipseProjectDirectory(), this.config.getSourceDirs()[index].getPath()
+                    + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY + File.separatorChar
+                    + EclipseManifestWriter.MANIFEST_MF_FILENAME );
 
             this.log.debug( "Checking for existence of META-INF/MANIFEST.MF file: " + manifestFile );
 
@@ -143,46 +144,31 @@ public class EclipseManifestWriter
     public void write()
         throws MojoExecutionException
     {
-        String metaInfBaseDirectory = getMetaInfBaseDirectory( this.config.getProject() );
-
-        if ( metaInfBaseDirectory == null )
+        File manifestFile = null;
+        if ( config.getManifestFile() == null )
         {
-            // TODO: if this really is an error, shouldn't we stop the build??
-            throw new MojoExecutionException(
-                                              Messages.getString(
-                                                                  "EclipseCleanMojo.nofilefound",
-                                                                  new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
-        }
-        // if
-        // (this.config.getEclipseProjectName().equals(IdeUtils.getProjectName(IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE,
-        // this.config.getProject()))) {
-        // MavenArchiver mavenArchiver = new MavenArchiver();
-        // ManifestConfiguration configuration = new ManifestConfiguration() {
-        //
-        // public boolean isAddClasspath() {
-        // return true;
-        // }
-        // };
-        //
-        // File manifestFile = new File(metaInfBaseDirectory + File.separatorChar +
-        // EclipseManifestWriter.META_INF_DIRECTORY + File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME);
-        // manifestFile.getParentFile().mkdirs();
-        //
-        // try {
-        // PrintWriter printwriter = new PrintWriter(manifestFile);
-        // mavenArchiver.getManifest(this.config.getProject(), configuration).write(printwriter);
-        // printwriter.close();
-        // } catch (Exception e) {
-        // this.log.error(Messages.getString("EclipsePlugin.cantwritetofile", new Object[]{
-        // metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME
-        // }));
-        // }
-        // } else {
-        Manifest manifest = createNewManifest();
 
-        File manifestFile =
-            new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY +
-                File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME );
+            String metaInfBaseDirectory = getMetaInfBaseDirectory( this.config.getProject() );
+
+            if ( metaInfBaseDirectory == null )
+            {
+                // TODO: if this really is an error, shouldn't we stop the build??
+                throw new MojoExecutionException(
+                                                  Messages.getString(
+                                                                      "EclipseCleanMojo.nofilefound",
+                                                                      new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
+            }
+            manifestFile =
+                new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY
+                    + File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME );
+
+        }
+        else
+        {
+            manifestFile = config.getManifestFile();
+        }
+
+        Manifest manifest = createNewManifest();
 
         log.info( "MANIFEST LOCATION: " + manifestFile );
 
@@ -204,11 +190,8 @@ public class EclipseManifestWriter
             catch ( Exception e )
             {
                 this.log.error( Messages.getString( "EclipsePlugin.cantwritetofile",
-                                                    new Object[] { metaInfBaseDirectory + File.separatorChar +
-                                                        EclipseManifestWriter.MANIFEST_MF_FILENAME } ) );
+                                                    new Object[] { manifestFile.getAbsolutePath() } ) );
             }
-
-            // }
         }
     }
 
@@ -229,13 +212,13 @@ public class EclipseManifestWriter
 
         String manifestDirectory = manifestWriter.getMetaInfBaseDirectory( config.getProject() );
 
-        if ( !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) &&
-            !Constants.PROJECT_PACKAGING_WAR.equals( packaging ) && manifestDirectory == null )
+        if ( !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
+            && !Constants.PROJECT_PACKAGING_WAR.equals( packaging ) && manifestDirectory == null )
         {
 
             String generatedResourceDir =
-                config.getProject().getBasedir().getAbsolutePath() + File.separatorChar +
-                    EclipseManifestWriter.GENERATED_RESOURCE_DIRNAME;
+                config.getProject().getBasedir().getAbsolutePath() + File.separatorChar
+                    + EclipseManifestWriter.GENERATED_RESOURCE_DIRNAME;
 
             manifestDirectory = generatedResourceDir + File.separatorChar + "META-INF";
 
@@ -251,8 +234,8 @@ public class EclipseManifestWriter
             }
             catch ( IOException e )
             {
-                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { manifestDirectory +
-                    File.separatorChar + "META-INF" + File.separatorChar + "MANIFEST.MF" } ) );
+                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { manifestDirectory
+                    + File.separatorChar + "META-INF" + File.separatorChar + "MANIFEST.MF" } ) );
             }
 
             log.debug( "Adding " + EclipseManifestWriter.GENERATED_RESOURCE_DIRNAME + " to eclipse sources " );
@@ -287,8 +270,8 @@ public class EclipseManifestWriter
      */
     private void addDependencyToClassPath( StringBuffer classpath, IdeDependency dependency )
     {
-        if ( !dependency.isTestDependency() && !dependency.isProvided() &&
-            !dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
+        if ( !dependency.isTestDependency() && !dependency.isProvided()
+            && !dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
         {
 
             // blank is the separator in manifest classpath's
@@ -343,8 +326,8 @@ public class EclipseManifestWriter
                 newValue = orderClasspath( newValue );
                 existingValue = orderClasspath( existingValue );
             }
-            if ( ( newValue == null || !newValue.equals( existingValue ) ) &&
-                ( existingValue == null || !existingValue.equals( newValue ) ) )
+            if ( ( newValue == null || !newValue.equals( existingValue ) )
+                && ( existingValue == null || !existingValue.equals( newValue ) ) )
             {
                 return false;
             }
