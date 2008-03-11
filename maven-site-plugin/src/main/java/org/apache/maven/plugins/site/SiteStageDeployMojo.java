@@ -119,7 +119,7 @@ public class SiteStageDeployMojo
 
             wagon.addTransferListener( debug );
 
-            ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( settings );
+            ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
