@@ -21,7 +21,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>10</version>
+    <version>11-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-deploy-plugin</artifactId>
@@ -150,5 +150,18 @@ under the License.
         </plugins>
       </build>
     </profile>
-  </profiles>  
+  </profiles> 
+  <repositories>
+    <!-- TODO remove it when parent is released -->
+    <repository>
+      <id>apache.snapshots</id>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>   
 </project>
