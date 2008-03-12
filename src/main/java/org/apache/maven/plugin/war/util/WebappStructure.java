@@ -25,6 +25,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -447,7 +448,7 @@ public class WebappStructure
     {
         if ( dependencies == null )
         {
-            return null;
+            return Collections.EMPTY_LIST;
         }
         final List result = new ArrayList();
         final Iterator it = dependencies.iterator();
