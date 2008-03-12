@@ -167,12 +167,20 @@ public class DeployMojo
             else
             {
                 File file = artifact.getFile();
-                if ( file == null )
+
+                if ( file != null && !file.isDirectory() )
+                {
+                    getDeployer().deploy( file, artifact, repo, getLocalRepository() );
+                }
+                else if ( !attachedArtifacts.isEmpty() )
+                {
+                    getLog().info( "No primary artifact to deploy, deploy attached artifacts instead." );
+                }
+                else
                 {
                     throw new MojoExecutionException(
                                                       "The packaging for this project did not assign a file to the build artifact" );
                 }
-                getDeployer().deploy( file, artifact, repo, getLocalRepository() );
             }
 
             for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
