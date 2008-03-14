@@ -20,14 +20,20 @@ package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.writers.testutils.TestEclipseWriterConfig;
+import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.shared.tools.easymock.TestFileManager;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -99,6 +105,61 @@ public class EclipseClasspathWriterUnitTest
 
         assertTrue( "standard output classpath entry not found.", stdOutputPath.selectSingleNode( doc ) != null );
 
+    }
+
+    public void testWrite_ShouldGenerateValidJavadocURLs()
+        throws MojoExecutionException, JDOMException, IOException
+    {
+        TestEclipseWriterConfig config = new TestEclipseWriterConfig();
+
+        File basedir = fileManager.createTempDir();
+
+        File repoDir = new File( basedir, "repo" );
+        config.setLocalRepository( new StubArtifactRepository( repoDir.getPath() ) );
+
+        config.setProjectBaseDir( basedir );
+        config.setEclipseProjectDirectory( basedir );
+
+        String baseOutputDir = "target/classes";
+        String maskedOutputDir = "target/classes/main-resources";
+
+        File buildOutputDir = new File( basedir, baseOutputDir );
+        buildOutputDir.mkdirs();
+
+        config.setBuildOutputDirectory( buildOutputDir );
+
+        new File( basedir, maskedOutputDir ).mkdirs();
+
+        config.setEclipseProjectName( "test-project" );
+
+        IdeDependency dependency = new IdeDependency();
+        dependency.setFile( new File( repoDir, "g/a/v/a-v.jar" ) );
+        dependency.setGroupId( "g" );
+        dependency.setArtifactId( "a" );
+        dependency.setVersion( "v" );
+        dependency.setAddedToClasspath( true );
+        dependency.setJavadocAttachment( new File( System.getProperty( "user.home" ) + ".m2/some.jar" ) );
+
+        config.setDeps( new IdeDependency[] { dependency } );
+
+        TestLog log = new TestLog();
+
+        EclipseClasspathWriter classpathWriter = new EclipseClasspathWriter();
+        classpathWriter.init( log, config );
+        classpathWriter.write();
+
+        SAXBuilder builder = new SAXBuilder( false );
+
+        Document doc = builder.build( new File( basedir, ".classpath" ) );
+
+        XPath javadocUrls = XPath.newInstance( "//attribute/@value" );
+        for ( Iterator it = javadocUrls.selectNodes( doc ).iterator(); it.hasNext(); )
+        {
+            Attribute attribute = (Attribute) it.next();
+            URL jarUrl = new URL( attribute.getValue() );
+            URL fileUrl = ( (JarURLConnection) jarUrl.openConnection() ).getJarFileURL();
+            assertTrue( "".equals( fileUrl.getHost() ) || "localhost".equals( fileUrl.getHost() ) );
+        }
     }
 
     private static final class TestLog

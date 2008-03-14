@@ -4,7 +4,7 @@
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.0/junit-3.0.jar">
     <attributes>
-      <attribute value="jar:file:/${M2_REPO}/junit/junit/3.0/junit-3.0-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:${M2_REPO}/junit/junit/3.0/junit-3.0-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
 </classpath>
