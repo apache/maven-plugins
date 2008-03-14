@@ -504,6 +504,19 @@ public abstract class AbstractEclipsePluginTestCase
                 continue;
             }
 
+            /*
+             * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix. On a
+             * Windows box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir" is mapped
+             * to "file:/home/dir". So, in the first case the slash after "file:" is not part of the corresponding
+             * filesystem path while in the later case it is. This discrepancy makes verifying the javadoc attachments
+             * in ".classpath" a little tricky.
+             */
+            if ( !expected.equals( actual ) )
+            {
+                // convert "file:C:/dir" to "file:/C:/dir"
+                expected = expected.replaceAll( "file:([a-zA-Z])", "file:/$1" );
+            }
+
             assertEquals( "Checking " + filename + ", line #" + ( i + 1 ), expected, actual );
         }
 
