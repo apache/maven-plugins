@@ -494,7 +494,7 @@ public class EclipseClasspathWriter
             }
 
             writer.startElement( "attribute" ); //$NON-NLS-1$
-            writer.addAttribute( "value", "jar:file:/" + javadocpath + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            writer.addAttribute( "value", "jar:" + new File( javadocpath ).toURI() + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             writer.addAttribute( "name", "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
