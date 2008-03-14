@@ -138,7 +138,7 @@ public class EclipseClasspathWriterUnitTest
         dependency.setArtifactId( "a" );
         dependency.setVersion( "v" );
         dependency.setAddedToClasspath( true );
-        dependency.setJavadocAttachment( new File( System.getProperty( "user.home" ) + ".m2/some.jar" ) );
+        dependency.setJavadocAttachment( new File( System.getProperty( "user.home" ), ".m2/some.jar" ) );
 
         config.setDeps( new IdeDependency[] { dependency } );
 
@@ -158,7 +158,8 @@ public class EclipseClasspathWriterUnitTest
             Attribute attribute = (Attribute) it.next();
             URL jarUrl = new URL( attribute.getValue() );
             URL fileUrl = ( (JarURLConnection) jarUrl.openConnection() ).getJarFileURL();
-            assertTrue( "".equals( fileUrl.getHost() ) || "localhost".equals( fileUrl.getHost() ) );
+            String host = fileUrl.getHost();
+            assertTrue( "Unexpected host: \"" + host + "\"", "".equals( host ) || "localhost".equals( host ) );
         }
     }
 
