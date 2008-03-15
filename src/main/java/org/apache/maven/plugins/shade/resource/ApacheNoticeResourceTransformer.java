@@ -155,6 +155,17 @@ public class ApacheNoticeResourceTransformer
 
             line = reader.readLine();
         }
+        if ( sb.length() > 0 ) 
+        {
+            if ( currentOrg == null )
+            {
+                entries.add( sb.toString() );
+            }
+            else
+            {
+                currentOrg.add( sb.toString() );
+            }
+        }
     }
 
     public boolean hasTransformedResource()
