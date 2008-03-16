@@ -43,6 +43,7 @@ public class ApacheNoticeResourceTransformer
     Map organizationEntries = new LinkedHashMap();
 
     String projectName;
+    boolean addHeader = true;
 
     String preamble1 =
           "// ------------------------------------------------------------------\n"
@@ -86,7 +87,14 @@ public class ApacheNoticeResourceTransformer
 
 
             //add headers
-            entries.add( preamble1 + projectName + preamble2 );
+            if ( addHeader ) 
+            {
+                entries.add( preamble1 + projectName + preamble2 );
+            }
+            else
+            {
+                entries.add("");
+            }
             //fake second entry, we'll look for a real one later
             entries.add( projectName + "\nCopyright " + year + " " + organizationName + "\n" );
             entries.add( preamble3 + organizationName + " ("+ organizationURL +").\n" );
