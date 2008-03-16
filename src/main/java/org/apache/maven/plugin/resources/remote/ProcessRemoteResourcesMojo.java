@@ -45,9 +45,11 @@ import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
 import org.apache.maven.shared.downloader.Downloader;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -61,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -668,25 +671,10 @@ public class ProcessRemoteResourcesMojo
                                 try
                                 {
                                     velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-
-                                    File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
-                                    if ( appendedResourceFile.exists() )
-                                    {
-                                        FileReader freader = new FileReader( appendedResourceFile );
-                                        BufferedReader breader = new BufferedReader( freader );
-
-                                        String line = breader.readLine();
-
-                                        while ( line != null )
-                                        {
-                                            writer.println( line );
-                                            line = breader.readLine();
-                                        }
-                                    }
                                 }
                                 finally
                                 {
-                                    writer.close();
+                                    IOUtil.close(writer);
                                 }
                             }
                             else
@@ -697,6 +685,47 @@ public class ProcessRemoteResourcesMojo
                                     FileUtils.copyURLToFile( resUrl, f );
                                 }
                             }
+                            File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
+                            File appendedVmResourceFile = new File( appendedResourcesDirectory,
+                                                                    projectResource + ".vm" );
+                            if ( appendedResourceFile.exists() )
+                            {
+                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                FileReader freader = new FileReader( appendedResourceFile );
+                                BufferedReader breader = new BufferedReader( freader );
+
+                                try
+                                {
+                                    String line = breader.readLine();
+    
+                                    while ( line != null )
+                                    {
+                                        writer.println( line );
+                                        line = breader.readLine();
+                                    }
+                                }
+                                finally
+                                {
+                                    IOUtil.close(writer);
+                                    IOUtil.close(breader);
+                                }
+                            } 
+                            else if ( appendedVmResourceFile.exists() ) 
+                            {
+                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                FileReader freader = new FileReader( appendedVmResourceFile );
+                                try 
+                                {
+                                    Velocity.init();
+                                    Velocity.evaluate( context, writer, "remote-resources", freader );
+                                }
+                                finally
+                                {
+                                    IOUtil.close(writer);
+                                    IOUtil.close(freader);
+                                }
+                            }
+                            
                         }
                     }
                 }
