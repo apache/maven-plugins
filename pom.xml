@@ -80,6 +80,11 @@
       <artifactId>velocity-dep</artifactId>
       <version>1.4</version>
     </dependency>
+    <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>maven-common-artifact-filters</artifactId>
+        <version>1.0</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
