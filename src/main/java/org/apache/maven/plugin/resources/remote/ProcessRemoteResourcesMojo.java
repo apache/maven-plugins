@@ -41,13 +41,23 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
+import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
 import org.apache.maven.shared.downloader.Downloader;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -61,6 +71,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -74,6 +85,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -93,7 +105,7 @@ import java.util.TreeMap;
  * </p>
  *
  * @goal process
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution test
  * @phase generate-resources
  */
 public class ProcessRemoteResourcesMojo
@@ -103,6 +115,8 @@ public class ProcessRemoteResourcesMojo
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
      * @parameter expression="${localRepository}"
+     * @readonly
+     * @required
      */
     private ArtifactRepository localRepository;
 
@@ -110,6 +124,8 @@ public class ProcessRemoteResourcesMojo
      * The remote repositories used as specified in your POM.
      *
      * @parameter expression="${project.repositories}"
+     * @readonly
+     * @required
      */
     private List repositories;
 
@@ -126,6 +142,8 @@ public class ProcessRemoteResourcesMojo
      * The current Maven project.
      *
      * @parameter expression="${project}"
+     * @readonly
+     * @required
      */
     private MavenProject project;
 
@@ -166,6 +184,8 @@ public class ProcessRemoteResourcesMojo
      * incomplete POM metadata.
      *
      * @component
+     * @readonly
+     * @required
      */
     private ModelInheritanceAssembler inheritanceAssembler;
 
@@ -212,6 +232,7 @@ public class ProcessRemoteResourcesMojo
      * The list of resources defined for the project.
      *
      * @parameter expression="${project.resources}"
+     * @readonly
      * @required
      */
     private List resources;
@@ -220,6 +241,8 @@ public class ProcessRemoteResourcesMojo
      * Artifact downloader.
      *
      * @component
+     * @readonly
+     * @required
      */
     private Downloader downloader;
 
@@ -227,6 +250,8 @@ public class ProcessRemoteResourcesMojo
      * Velocity component.
      *
      * @component
+     * @readonly
+     * @required
      */
     private VelocityComponent velocity;
 
@@ -239,6 +264,8 @@ public class ProcessRemoteResourcesMojo
      * Artifact repository factory component.
      *
      * @component
+     * @readonly
+     * @required
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
@@ -246,6 +273,8 @@ public class ProcessRemoteResourcesMojo
      * Artifact factory, needed to create artifacts.
      *
      * @component
+     * @readonly
+     * @required
      */
     private ArtifactFactory artifactFactory;
 
@@ -253,6 +282,8 @@ public class ProcessRemoteResourcesMojo
      * The Maven session.
      *
      * @parameter expression="${session}"
+     * @readonly
+     * @required
      */
     private MavenSession mavenSession;
 
@@ -271,6 +302,70 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      */
     private ResourceManager locator;
+    
+    
+    /**
+     * Scope to include. An Empty string indicates all scopes (default).
+     * 
+     * @since 1.0
+     * @parameter expression="${includeScope}" default-value="runtime"
+     * @optional
+     */
+    protected String includeScope;
+
+    /**
+     * Scope to exclude. An Empty string indicates no scopes (default).
+     * 
+     * @since 1.0
+     * @parameter expression="${excludeScope}" default-value=""
+     * @optional
+     */
+    protected String excludeScope;
+    
+    /**
+     * Comma separated list of Artifact names too exclude.
+     * 
+     * @since 1.0
+     * @optional
+     * @parameter expression="${excludeArtifactIds}" default-value=""
+     */
+    protected String excludeArtifactIds;
+
+    /**
+     * Comma separated list of Artifact names to include.
+     * 
+     * @since 1.0
+     * @optional
+     * @parameter expression="${includeArtifactIds}" default-value=""
+     */
+    protected String includeArtifactIds;
+
+    /**
+     * Comma separated list of GroupId Names to exclude.
+     * 
+     * @since 1.0
+     * @optional
+     * @parameter expression="${excludeGroupIds}" default-value=""
+     */
+    protected String excludeGroupIds;
+
+    /**
+     * Comma separated list of GroupIds to include.
+     * 
+     * @since 1.0
+     * @optional
+     * @parameter expression="${includeGroupIds}" default-value=""
+     */
+    protected String includeGroupIds;
+
+    /**
+     * If we should exclude transitive dependencies
+     * 
+     * @since 1.0
+     * @optional
+     * @parameter expression="${excludeTransitive}" default-value="false"
+     */
+    protected boolean excludeTransitive;
 
     public void execute()
         throws MojoExecutionException
@@ -364,8 +459,29 @@ public class ProcessRemoteResourcesMojo
         throws MojoExecutionException
     {
         List projects = new ArrayList();
+        
+        // add filters in well known order, least specific to most specific
+        FilterArtifacts filter = new FilterArtifacts();
 
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
+        filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
+        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
+
+        // start with all artifacts.
+        Set artifacts = project.getArtifacts();
+        // perform filtering
+        try
+        {
+            artifacts = filter.filter( artifacts );
+        }
+        catch ( ArtifactFilterException e )
+        {
+            throw new MojoExecutionException(e.getMessage(),e);
+        }
+
+
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
@@ -668,25 +784,10 @@ public class ProcessRemoteResourcesMojo
                                 try
                                 {
                                     velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-
-                                    File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
-                                    if ( appendedResourceFile.exists() )
-                                    {
-                                        FileReader freader = new FileReader( appendedResourceFile );
-                                        BufferedReader breader = new BufferedReader( freader );
-
-                                        String line = breader.readLine();
-
-                                        while ( line != null )
-                                        {
-                                            writer.println( line );
-                                            line = breader.readLine();
-                                        }
-                                    }
                                 }
                                 finally
                                 {
-                                    writer.close();
+                                    IOUtil.close(writer);
                                 }
                             }
                             else
@@ -697,6 +798,47 @@ public class ProcessRemoteResourcesMojo
                                     FileUtils.copyURLToFile( resUrl, f );
                                 }
                             }
+                            File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
+                            File appendedVmResourceFile = new File( appendedResourcesDirectory,
+                                                                    projectResource + ".vm" );
+                            if ( appendedResourceFile.exists() )
+                            {
+                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                FileReader freader = new FileReader( appendedResourceFile );
+                                BufferedReader breader = new BufferedReader( freader );
+
+                                try
+                                {
+                                    String line = breader.readLine();
+    
+                                    while ( line != null )
+                                    {
+                                        writer.println( line );
+                                        line = breader.readLine();
+                                    }
+                                }
+                                finally
+                                {
+                                    IOUtil.close(writer);
+                                    IOUtil.close(breader);
+                                }
+                            } 
+                            else if ( appendedVmResourceFile.exists() ) 
+                            {
+                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                FileReader freader = new FileReader( appendedVmResourceFile );
+                                try 
+                                {
+                                    Velocity.init();
+                                    Velocity.evaluate( context, writer, "remote-resources", freader );
+                                }
+                                finally
+                                {
+                                    IOUtil.close(writer);
+                                    IOUtil.close(freader);
+                                }
+                            }
+                            
                         }
                     }
                 }
