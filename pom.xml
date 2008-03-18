@@ -336,9 +336,9 @@ under the License.
             <locale>nl</locale>
             <locale>no</locale>
             <locale>pl</locale>
-            <locale>pt</locale>
+            <locale>pt_BR</locale>
             <locale>sk</locale>
-            <locale>zh</locale>
+            <locale>zh_CN</locale>
           </locales>
         </configuration>
       </plugin>
