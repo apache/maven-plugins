@@ -152,7 +152,7 @@ under the License.
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
     <module>maven-stage-plugin</module>
-    <module>maven-toolchains-plugin</module>
+    <!-- We cannot build it without maven 2.0.9-SNAPSHOT<module>maven-toolchains-plugin</module>-->
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
   </modules>
