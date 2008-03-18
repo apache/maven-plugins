@@ -360,4 +360,32 @@ under the License.
     <doxiaSitetoolsVersion>1.0-alpha-11-SNAPSHOT</doxiaSitetoolsVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>l10n-maven-plugin</artifactId>
+        <version>1.0-alpha-1</version>
+        <configuration>
+          <locales>
+            <locale>cs</locale>
+            <locale>de</locale>
+            <locale>es</locale>
+            <locale>fr</locale>
+            <locale>hu</locale>
+            <locale>it</locale>
+            <locale>ja</locale>
+            <locale>ko</locale>
+            <locale>nl</locale>
+            <locale>no</locale>
+            <locale>pl</locale>
+            <locale>pt_BR</locale>
+            <locale>sk</locale>
+            <locale>zh_CN</locale>
+          </locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
