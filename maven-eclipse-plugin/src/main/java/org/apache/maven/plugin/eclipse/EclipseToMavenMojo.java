@@ -140,6 +140,17 @@ public class EclipseToMavenMojo
      * @component
      */
     protected InputHandler inputHandler;
+    
+    /**
+     * Strip qualifier (fourth token) from the plugin version. Qualifiers are for eclipse plugin the equivalent of
+     * timestamped snapshot versions for Maven, but the date is maintained also for released version (e.g. a jar for the
+     * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's
+     * usually handy to not to include this qualifier when generating maven artifacts for major releases, while it's
+     * needed when working with eclipse integration/nightly builds.
+     * 
+     * @parameter expression="${stripQualifier}" default-value="false"
+     */
+    private boolean stripQualifier;
 
     /**
      * Specifies a remote repository to which generated artifacts should be deployed to. If this property is specified,
@@ -476,7 +487,7 @@ public class EclipseToMavenMojo
 
     protected String osgiVersionToMavenVersion( String version )
     {
-        return osgiVersionToMavenVersion( version, null, false );
+        return osgiVersionToMavenVersion( version, null, stripQualifier );
     }
 
     /**
