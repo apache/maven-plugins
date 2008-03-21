@@ -390,7 +390,7 @@ public class AntBuildWriter
 
         // TODO: optional in m1
         // TODO: USD properties
-        AntBuildWriterUtil.writeCommentText( writer, "Build environnement properties", 1 );
+        AntBuildWriterUtil.writeCommentText( writer, "Build environment properties", 1 );
 
         // ----------------------------------------------------------------------
         // File properties to override local properties
@@ -470,9 +470,9 @@ public class AntBuildWriter
             }
         }
 
-        if ( project.getBuild().getResources() != null )
+        if ( project.getBuild().getTestResources() != null )
         {
-            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            Resource[] array = (Resource[]) project.getBuild().getTestResources().toArray( new Resource[0] );
             for ( int i = 0; i < array.length; i++ )
             {
                 writer.startElement( "property" );
