@@ -105,6 +105,8 @@ public class AntBuildWriterUtilTest
 
         assertNotNull( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "includes", null ) );
         assertEquals( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "includes", null ).length, 2 );
+        assertNotNull( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "excludes", null ) );
+        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "excludes", null ).length, 1 );
 
         maven.stop();
     }
@@ -164,4 +166,20 @@ public class AntBuildWriterUtilTest
 
         maven.stop();
     }
+
+    /**
+     * Test method for {@link AntBuildWriterUtil#getSingularForm(String)}.
+     * 
+     * @throws Exception
+     */
+    public static void testGetSingularForm()
+        throws Exception
+    {
+        assertEquals( "property", AntBuildWriterUtil.getSingularForm( "properties" ) );
+        assertEquals( "branch", AntBuildWriterUtil.getSingularForm( "branches" ) );
+        assertEquals( "report", AntBuildWriterUtil.getSingularForm( "reports" ) );
+        assertEquals( "", AntBuildWriterUtil.getSingularForm( "singular" ) );
+        assertEquals( "", AntBuildWriterUtil.getSingularForm( null ) );
+    }
+
 }

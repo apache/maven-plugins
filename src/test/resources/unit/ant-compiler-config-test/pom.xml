@@ -45,6 +45,9 @@ under the License.
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <debug>true</debug>
+          <excludes>
+            <exclude>**/reversemapping/Main.java</exclude>
+          </excludes>
           <includes>
             <include>**/*.java</include>
             <include>**/*.jad</include>
