@@ -27,7 +27,8 @@
             <configuration>
               <tasks>
                 <!-- delete the properties file to prevent fallback, we want only stuff from the XML file -->
-                <delete file="${basedir}/maven-build.properties"/>
+                <delete file="${basedir}/maven-build.properties" />
+                <property name="maven.repo.local" location="${settings.localRepository}" />
                 <ant dir="${basedir}" antfile="${basedir}/build.xml" target="package" />
               </tasks>
             </configuration>
