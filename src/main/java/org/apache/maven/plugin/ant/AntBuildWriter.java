@@ -21,8 +21,8 @@ package org.apache.maven.plugin.ant;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -232,9 +232,13 @@ public class AntBuildWriter
         throws IOException
     {
         // TODO: parameter
-        FileWriter w = new FileWriter( new File( project.getBasedir(), DEFAULT_MAVEN_BUILD_FILENAME ) );
+        File outputFile = new File( project.getBasedir(), DEFAULT_MAVEN_BUILD_FILENAME );
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", DEFAULT_INDENTATION_SIZE ), "UTF-8",
+        String encoding = "UTF-8";
+
+        OutputStreamWriter w = new OutputStreamWriter( new FileOutputStream( outputFile ), encoding );
+
+        XMLWriter writer = new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", DEFAULT_INDENTATION_SIZE ), encoding,
                                                      null );
 
         // ----------------------------------------------------------------------
@@ -322,14 +326,18 @@ public class AntBuildWriter
     private void writeBuildXml()
         throws IOException
     {
-        if ( new File( project.getBasedir(), DEFAULT_BUILD_FILENAME ).exists() && !overwrite )
+        File outputFile = new File( project.getBasedir(), DEFAULT_BUILD_FILENAME );
+
+        if ( outputFile.exists() && !overwrite )
         {
             return;
         }
 
-        FileWriter w = new FileWriter( new File( project.getBasedir(), DEFAULT_BUILD_FILENAME ) );
+        String encoding = "UTF-8";
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", DEFAULT_INDENTATION_SIZE ), "UTF-8",
+        OutputStreamWriter w = new OutputStreamWriter( new FileOutputStream( outputFile ), encoding );
+
+        XMLWriter writer = new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", DEFAULT_INDENTATION_SIZE ), encoding,
                                                      null );
 
         // ----------------------------------------------------------------------
