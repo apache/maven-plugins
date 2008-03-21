@@ -20,7 +20,8 @@ package org.apache.maven.plugin.ant.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -59,7 +60,9 @@ public abstract class AbstractAntTestMavenProjectStub
 
         try
         {
-            model = pomReader.read( new FileReader( new File( antTestDir, "pom.xml" ) ) );
+            File pomFile = new File( antTestDir, "pom.xml" );
+            // TODO: Once plexus-utils has been bumped to 1.4.4, use ReaderFactory.newXmlReader()
+            model = pomReader.read( new InputStreamReader( new FileInputStream( pomFile ), "UTF-8" ) );
             setModel( model );
         }
         catch ( Exception e )
