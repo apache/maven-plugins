@@ -203,14 +203,12 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
-                <pomInclude>ear-it/pom.xml</pomInclude>
-                <pomInclude>webapp-it/pom.xml</pomInclude>
-                <pomInclude>plugin-it/pom.xml</pomInclude>
+                <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <goals>
