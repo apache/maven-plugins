@@ -1257,16 +1257,53 @@ public class AntBuildWriterUtil
         String lastNodeName = null;
         for ( int i = 0; i < childs.getLength(); i++ )
         {
-            if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
+            Node child = childs.item( i );
+            if ( child.getNodeType() == Node.ELEMENT_NODE )
             {
-                if ( i != 0 )
-                {
-                    isList = isList || ( childs.item( i ).getNodeName().equals( lastNodeName ) );
-                }
-                lastNodeName = childs.item( i ).getNodeName();
+                isList = isList || ( child.getNodeName().equals( lastNodeName ) );
+                lastNodeName = child.getNodeName();
             }
+        }
+        if ( StringUtils.isNotEmpty( lastNodeName ) )
+        {
+            isList = isList || lastNodeName.equals( getSingularForm( node.getNodeName() ) );
         }
 
         return isList;
     }
+
+    /**
+     * Gets the singular form of the specified (English) plural form. For example:
+     * 
+     * <pre>
+     * properties -&gt; property
+     * branches   -&gt; branch
+     * reports    -&gt; report
+     * </pre>
+     * 
+     * @param pluralForm The plural form for which to derive the singular form, may be <code>null</code>.
+     * @return The corresponding singular form or an empty string if the input string was not recognized as a plural
+     *         form.
+     */
+    static String getSingularForm( String pluralForm )
+    {
+        String singularForm = "";
+        if ( StringUtils.isNotEmpty( pluralForm ) )
+        {
+            if ( pluralForm.endsWith( "ies" ) )
+            {
+                singularForm = pluralForm.substring( 0, pluralForm.length() - 3 ) + 'y';
+            }
+            else if ( pluralForm.endsWith( "ches" ) )
+            {
+                singularForm = pluralForm.substring( 0, pluralForm.length() - 2 );
+            }
+            else if ( pluralForm.endsWith( "s" ) && pluralForm.length() > 1 )
+            {
+                singularForm = pluralForm.substring( 0, pluralForm.length() - 1 );
+            }
+        }
+        return singularForm;
+    }
+
 }
