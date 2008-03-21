@@ -508,7 +508,7 @@ public class AntBuildWriter
 
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.repo.local" );
-        writer.addAttribute( "value", getLocalRepositoryPath() );
+        writer.addAttribute( "value", "${user.home}/.m2/repository" );
         writer.endElement(); // property
 
         writer.startElement( "property" );
