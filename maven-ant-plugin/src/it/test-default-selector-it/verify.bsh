@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+
+try
+{
+    File reportDir = new File( basedir, "target/test-reports" );
+
+    {
+        File file = new File( reportDir, "TEST-it.GoodTest.xml" );
+        if ( !file.isFile() )
+        {
+            System.err.println( "Report file does not exist: " + file );
+            return false;
+        }
+    }
+
+    {
+        File file = new File( reportDir, "TEST-it.GoodTestCase.xml" );
+        if ( !file.isFile() )
+        {
+            System.err.println( "Report file does not exist: " + file );
+            return false;
+        }
+    }
+
+    {
+        File file = new File( reportDir, "TEST-it.TestGood.xml" );
+        if ( !file.isFile() )
+        {
+            System.err.println( "Report file does not exist: " + file );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
