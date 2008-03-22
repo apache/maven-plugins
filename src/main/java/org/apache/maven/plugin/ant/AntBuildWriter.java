@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -744,6 +746,7 @@ public class AntBuildWriter
      * @param testCompileSourceRoots
      */
     private void writeTestTargets( XMLWriter writer, List testCompileSourceRoots )
+        throws IOException
     {
         AntBuildWriterUtil.writeCommentText( writer, "Run all tests", 1 );
 
@@ -812,18 +815,27 @@ public class AntBuildWriter
                 writer.startElement( "batchtest" );
                 writer.addAttribute( "todir", "${maven.test.reports}" );
 
+                List includes =
+                    getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "includes", null ) );
+                if ( includes == null || includes.isEmpty() )
+                {
+                    includes = Arrays.asList( new String[] { "**/Test*.java", "**/*Test.java", "**/*TestCase.java" } );
+                }
+
+                List excludes =
+                    getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "excludes", null ) );
+                if ( excludes == null || excludes.isEmpty() )
+                {
+                    excludes = Arrays.asList( new String[] { "**/*Abstract*Test.java" } );
+                }
+
                 String[] compileSourceRoots = (String[]) testCompileSourceRoots.toArray( new String[0] );
                 for ( int i = 0; i < compileSourceRoots.length; i++ )
                 {
                     writer.startElement( "fileset" );
                     writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
-                    /* TODO: need to get these from the test plugin somehow?
-                     UnitTest unitTest = project.getBuild().getUnitTest();
-                     writeIncludesExcludes( writer, unitTest.getIncludes(), unitTest.getExcludes() );
-                     // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
-                     */
-                    AntBuildWriterUtil.writeIncludesExcludes( writer, Collections.singletonList( "**/*Test.java" ),
-                                                              Collections.singletonList( "**/*Abstract*Test.java" ) );
+                    // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
+                    AntBuildWriterUtil.writeIncludesExcludes( writer, includes, excludes );
                     writer.endElement(); // fileset
                 }
                 writer.endElement(); // batchtest
@@ -1265,4 +1277,35 @@ public class AntBuildWriter
 
         return sb.toString();
     }
+    
+    /**
+     * Flattens the specified file selector options into a simple string list. For instance, the input
+     * 
+     * <pre>
+     * [ {include=&quot;*Test.java&quot;}, {include=&quot;*TestCase.java&quot;} ]
+     * </pre>
+     * 
+     * is converted to
+     * 
+     * <pre>
+     * [ &quot;*Test.java&quot;, &quot;*TestCase.java&quot; ]
+     * </pre>
+     * 
+     * @param options The file selector options to flatten, may be <code>null</code>.
+     * @return The string list, might be empty but never <code>null</code>.
+     */
+    private static List getSelectorList( Map[] options )
+    {
+        List list = new ArrayList();
+        if ( options != null && options.length > 0 )
+        {
+            for ( int i = 0; i < options.length; i++ )
+            {
+                Map option = options[i];
+                list.addAll( option.values() );
+            }
+        }
+        return list;
+    }
+
 }
