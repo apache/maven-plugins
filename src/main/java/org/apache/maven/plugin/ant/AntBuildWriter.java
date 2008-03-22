@@ -1144,6 +1144,8 @@ public class AntBuildWriter
         writer.addAttribute( "dir", "${maven.repo.local}" );
         writer.endElement(); // mkdir
 
+        String basedir = project.getBasedir().getAbsolutePath();
+
         // TODO: proxy - probably better to use wagon!
         for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
         {
@@ -1166,13 +1168,35 @@ public class AntBuildWriter
                 for ( Iterator j = project.getRepositories().iterator(); j.hasNext(); )
                 {
                     Repository repository = (Repository) j.next();
+                    String url = repository.getUrl();
 
-                    writer.startElement( "get" );
-                    writer.addAttribute( "src", repository.getUrl() + "/" + path );
-                    AntBuildWriterUtil.addWrapAttribute( writer, "get", "dest", "${maven.repo.local}/" + path, 3 );
-                    AntBuildWriterUtil.addWrapAttribute( writer, "get", "usetimestamp", "false", 3 );
-                    AntBuildWriterUtil.addWrapAttribute( writer, "get", "ignoreerrors", "true", 3 );
-                    writer.endElement(); // get
+                    if ( url.regionMatches( true, 0, "file:", 0, 5 ) && url.indexOf( basedir ) > 0 )
+                    {
+                        url = url.substring( url.indexOf( basedir ) + basedir.length() );
+                        if ( url.startsWith( "/" ) )
+                        {
+                            url = url.substring( 1 );
+                        }
+                        if ( !url.endsWith( "/" ) && url.length() > 0 )
+                        {
+                            url += '/';
+                        }
+
+                        writer.startElement( "copy" );
+                        writer.addAttribute( "file", url + path );
+                        AntBuildWriterUtil.addWrapAttribute( writer, "copy", "tofile", "${maven.repo.local}/" + path, 3 );
+                        AntBuildWriterUtil.addWrapAttribute( writer, "copy", "failonerror", "false", 3 );
+                        writer.endElement(); // copy
+                    }
+                    else
+                    {
+                        writer.startElement( "get" );
+                        writer.addAttribute( "src", url + '/' + path );
+                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "dest", "${maven.repo.local}/" + path, 3 );
+                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "usetimestamp", "false", 3 );
+                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "ignoreerrors", "true", 3 );
+                        writer.endElement(); // get
+                    }
                 }
             }
         }
