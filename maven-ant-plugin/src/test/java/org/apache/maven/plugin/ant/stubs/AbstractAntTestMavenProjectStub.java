@@ -96,7 +96,11 @@ public abstract class AbstractAntTestMavenProjectStub
 
         setBuild( build );
 
-        getModel().setReporting( new Reporting() );
+        Reporting reporting = new Reporting();
+
+        reporting.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/site" );
+
+        getModel().setReporting( reporting );
     }
 
     /**

@@ -495,9 +495,16 @@ public class AntBuildWriter
         writer.addAttribute( "value", "${maven.build.dir}/test-reports" );
         writer.endElement(); // property
 
+        String reportingOutputDir = project.getReporting().getOutputDirectory();
+        // workaround for MNG-3475
+        if ( !new File( reportingOutputDir ).isAbsolute() )
+        {
+            reportingOutputDir = new File( project.getBasedir(), reportingOutputDir ).getAbsolutePath();
+        }
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.reporting.outputDirectory" );
-        writer.addAttribute( "value", "${maven.build.dir}/site" );
+        writer.addAttribute( "value", "${maven.build.dir}/"
+            + PathUtils.toRelative( new File( project.getBuild().getDirectory() ), reportingOutputDir ) );
         writer.endElement(); // property
 
         // ----------------------------------------------------------------------
