@@ -19,10 +19,6 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
@@ -31,6 +27,7 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.CommandExecutor;
@@ -51,9 +48,15 @@ import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Deploys the site using scp/file protocol.
@@ -144,7 +147,7 @@ public class SiteDeployMojo
 
         try
         {
-            // TODO use WagonManager#getWagon(Repository) when available
+            // @todo Use WagonManager#getWagon(Repository) when available. It's available in Maven 2.0.5.
             wagon = wagonManager.getWagon( repository.getProtocol() );
             configureWagon( wagon, repository.getId() );
         }
@@ -294,7 +297,7 @@ public class SiteDeployMojo
     /**
      * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
      * 
-     * @todo remove when {@link WagonManager#getWagon(Repository) is available}
+     * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
      * @param wagon
      * @param repositoryId
      * @throws WagonConfigurationException
@@ -302,6 +305,18 @@ public class SiteDeployMojo
     private void configureWagon( Wagon wagon, String repositoryId )
         throws WagonConfigurationException
     {
+        // MSITE-25: Make sure that the server settings are inserted
+        for ( int i = 0; i < settings.getServers().size(); i++ )
+        {
+            Server server = (Server) settings.getServers().get( i );
+            if ( server.getConfiguration() != null )
+            {
+                final XmlPlexusConfiguration xmlConf =
+                    new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
+                serverConfigurationMap.put( repositoryId, xmlConf );
+            }
+        }
+
         if ( serverConfigurationMap.containsKey( repositoryId ) )
         {
             ComponentConfigurator componentConfigurator = null;
