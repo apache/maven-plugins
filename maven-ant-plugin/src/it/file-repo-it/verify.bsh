@@ -1,0 +1,38 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File buildFile = new File( basedir, "maven-build.xml" );
+    String xml = FileUtils.fileRead( buildFile, "UTF-8" );
+
+    Matcher m0 = Pattern.compile( "<copy\\s+file\\s*=\\s*\\Q\"junit/junit/3.8.2/junit-3.8.2.jar\"\\E" ).matcher( xml );
+    if ( !m0.find() )
+    {
+        System.err.println( "Build script does not contain <copy> for local artifacts from repo0." );
+        return false;
+    }
+
+    Matcher m1 = Pattern.compile( "<copy\\s+file\\s*=\\s*\\Q\"repo1/junit/junit/3.8.2/junit-3.8.2.jar\"\\E" ).matcher( xml );
+    if ( !m1.find() )
+    {
+        System.err.println( "Build script does not contain <copy> for local artifacts from repo1." );
+        return false;
+    }
+
+    Matcher m2 = Pattern.compile( "<copy\\s+file\\s*=\\s*\\Q\"repo2/junit/junit/3.8.2/junit-3.8.2.jar\"\\E" ).matcher( xml );
+    if ( !m2.find() )
+    {
+        System.err.println( "Build script does not contain <copy> for local artifacts from repo2." );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
