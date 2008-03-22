@@ -779,6 +779,51 @@ public class AntBuildWriterUtil
     }
 
     /**
+     * Return the <code>optionName</code> value defined in a project for the "maven-surefire-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static String getMavenSurefirePluginBasicOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginBasicOption( project, "maven-surefire-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return the map of <code>optionName</code> value defined in a project for the "maven-surefire-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the map for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static Map getMavenSurefirePluginOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginOption( project, "maven-surefire-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return an array of map of <code>optionName</code> value defined in a project for the "maven-surefire-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the array of option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static Map[] getMavenSurefirePluginOptions( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginOptions( project, "maven-surefire-plugin", optionName, defaultValue );
+    }
+
+    /**
      * Return the <code>optionName</code> value defined in a project for the "maven-javadoc-plugin" plugin.
      *
      * @param project not null
