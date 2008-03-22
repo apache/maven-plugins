@@ -1010,7 +1010,7 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation", AntBuildWriterUtil
                 .getMavenCompilerPluginBasicOption( project, "showDeprecation", "true" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "target", AntBuildWriterUtil
-                .getMavenCompilerPluginBasicOption( project, "target", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "target", "1.1" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "verbose", AntBuildWriterUtil
                 .getMavenCompilerPluginBasicOption( project, "verbose", "false" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "fork", AntBuildWriterUtil
@@ -1020,7 +1020,7 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "memoryInitialSize", AntBuildWriterUtil
                 .getMavenCompilerPluginBasicOption( project, "maxmem", null ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "source", AntBuildWriterUtil
-                .getMavenCompilerPluginBasicOption( project, "source", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "source", "1.3" ), 3 );
 
             String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray( new String[0] );
             for ( int i = 0; i < compileSourceRootsArray.length; i++ )
