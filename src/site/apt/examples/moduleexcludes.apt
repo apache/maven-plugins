@@ -31,7 +31,7 @@ Excluding Modules
 
   To exclude specific modules from the site to be generated, you can use the <<<excludeModules>>> parameter.
 
-  For example, you have the following site content in your pom
+  For example, you have the following site content in your POM
 
 +-----+
 Module1
@@ -45,8 +45,8 @@ Module1
 `-- pom.xml
 +-----+
 
-  and you want to exclude the whole fml module from the site to be generated, you need to set the following in your pom
-  then execute <<<mvn site>>>.
+  and you want to exclude the whole fml module from the site to be generated, you need to set the following in your POM
+  then execute "<<<mvn site>>>".
 
 +-----+
 <project>
@@ -66,4 +66,4 @@ Module1
 </project>
 +-----+
 
-  You will see that no sample-fml.html will be generated with the site.
+  You will see that no <<<sample-fml.html>>> will be generated with the site.

@@ -30,7 +30,7 @@ under the License.
   <artifactId>maven-site-plugin</artifactId>
   <version>2.0-beta-7-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Maven Site plugin</name>
+  <name>Maven Site Plugin</name>
   <description>
     The Maven Site Plugin is a plugin that generates a site for the current project.
   </description>
