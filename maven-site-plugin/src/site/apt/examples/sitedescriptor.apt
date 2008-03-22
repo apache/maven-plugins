@@ -72,6 +72,16 @@ Configuring the Site Descriptor
   The <<<position>>> attribute can have one of these values: <<<left>>>,
   <<<right>>>, <<<navigation-top>>>, <<<navigation-bottom>>>, <<<bottom>>>.
 
+  If you want hide the publish date, you can use this in your <<<site.xml>>>:
+
++-----+
+<project>
+  ...
+  <publishDate position="none"/>
+  ...
+</project>
++-----+
+
 * Powered by logo
 
   You can add your own "Powered by" logo to your site.
