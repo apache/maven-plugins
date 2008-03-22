@@ -49,3 +49,5 @@ Maven 2 Ant Plugin
    * {{{examples/run-single-test.html}Running Individual Unit Tests}}
 
    * {{{examples/fail-missing-junit.html}Failing the Build if JUnit is Missing}}
+
+   * {{{examples/skip-tests.html}Skipping Unit Tests}}

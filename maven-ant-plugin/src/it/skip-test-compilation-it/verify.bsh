@@ -1,0 +1,20 @@
+import java.io.*;
+import java.util.*;
+
+try
+{
+    File classesDir = new File( basedir, "target/test-classes" );
+
+    if ( classesDir.exists() )
+    {
+        System.err.println( "Creation of output directory for test classes not skipped: " + classesDir );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
