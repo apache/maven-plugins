@@ -74,5 +74,48 @@ under the License.
        </p>
      </answer>
    </faq>
+   <faq id="attached">
+     <question>How do I create a jar containing the classes in my webapp?</question>
+       <answer>
+       <p>If you would simply like to package the classes and resources  as a jar in WEB-INF/lib
+           rather than as loose files under WEB-INF/classes, use the following configuration:</p>
+       <p>
+         <source>
+           <plugin>
+             <artifactId>maven-war-plugin</artifactId>
+             <version>X.Y</version>
+             <configuration>
+               <archiveClasses>true</archiveClasses>
+             </configuration>
+           </plugin>
+         </source>
+       </p>
+       <p>If you need to re-use this jar in another project, the recommended approach is to move the classes to a
+       separate module that builds a jar, and then declare a dependency on that jar from your webapp as well as from
+       any other projects that need it.</p>
+       <p>If you can't move the classes to another project, you can deploy the classes and resources included in
+           your webapp as an "attached" artifact, with a classifier, by using the following configuration:</p>
+       <p>
+         <source>
+         <project>
+           ...
+           <artifactId>mywebapp</artifactId>
+           <version>1.0-SNAPSHOT</version>
+           ...
+               <plugin>
+                 <artifactId>maven-war-plugin</artifactId>
+                 <version>X.Y</version>
+                 <configuration>
+                   <attachClasses>true</attachClasses>
+                 </configuration>
+               </plugin>
+             ...
+           </project>
+         </source>
+       </p>
+       <p>This will result in two artifacts being deployed:  mywebapp-1.0-SNAPSHOT.war
+       and mywebapp-1.0-SNAPSHOT-classes.jar</p>
+     </answer>
+   </faq>
  </part>
 </faqs>
