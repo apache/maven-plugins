@@ -1,5 +1,5 @@
  ------
- Grammar Inheritance
+ Customizing Generated Ant Build Files
  ------
  Vincent Siveton
  ------
@@ -24,9 +24,9 @@
  ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 
-Using generated Ant build files
+Customizing Generated Ant Build Files
 
- <<Note>>: If you want to add your own Ant targets, you should add them to <<<build.xml>>> and <<NOT>> <<<maven-build.xml>>>.
+ <<Warning>>: If you want to add your own Ant targets, you should add them to <<<build.xml>>> and <not> to <<<maven-build.xml>>>.
 
  The <<<build.xml>>> file uses the {{{http://ant.apache.org/manual/CoreTasks/import.html}import task}} of Ant.
  So, you can override the generated targets in the <<<build.xml>>> file. For instance:

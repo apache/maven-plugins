@@ -43,6 +43,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
+import sun.security.action.GetIntegerAction;
+
 /**
  * Write Ant build files from <code>Maven Project</code> for <a href="http://ant.apache.org">Ant</a> 1.6.2 or above:
  * <ul>
@@ -814,30 +816,23 @@ public class AntBuildWriter
 
                 writer.startElement( "batchtest" );
                 writer.addAttribute( "todir", "${maven.test.reports}" );
+                writer.addAttribute( "unless", "test" );
 
-                List includes =
-                    getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "includes", null ) );
-                if ( includes == null || includes.isEmpty() )
-                {
-                    includes = Arrays.asList( new String[] { "**/Test*.java", "**/*Test.java", "**/*TestCase.java" } );
-                }
+                List includes = getTestIncludes();
+                List excludes = getTestExcludes();
 
-                List excludes =
-                    getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "excludes", null ) );
-                if ( excludes == null || excludes.isEmpty() )
-                {
-                    excludes = Arrays.asList( new String[] { "**/*Abstract*Test.java" } );
-                }
+                writeTestFilesets( writer, testCompileSourceRoots, includes, excludes );
 
-                String[] compileSourceRoots = (String[]) testCompileSourceRoots.toArray( new String[0] );
-                for ( int i = 0; i < compileSourceRoots.length; i++ )
-                {
-                    writer.startElement( "fileset" );
-                    writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
-                    // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
-                    AntBuildWriterUtil.writeIncludesExcludes( writer, includes, excludes );
-                    writer.endElement(); // fileset
-                }
+                writer.endElement(); // batchtest
+
+                writer.startElement( "batchtest" );
+                writer.addAttribute( "todir", "${maven.test.reports}" );
+                writer.addAttribute( "if", "test" );
+
+                includes = Arrays.asList( new String[] { "**/${test}.java" } );
+
+                writeTestFilesets( writer, testCompileSourceRoots, includes, excludes );
+
                 writer.endElement(); // batchtest
 
                 writer.endElement(); // junit
@@ -879,6 +874,58 @@ public class AntBuildWriter
         }
 
         AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    /**
+     * Gets the include patterns for the unit tests.
+     * 
+     * @return A list of strings with include patterns, might be empty but never <code>null</code>.
+     */
+    private List getTestIncludes()
+        throws IOException
+    {
+        List includes = getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "includes", null ) );
+        if ( includes == null || includes.isEmpty() )
+        {
+            includes = Arrays.asList( new String[] { "**/Test*.java", "**/*Test.java", "**/*TestCase.java" } );
+        }
+        return includes;
+    }
+
+    /**
+     * Gets the exclude patterns for the unit tests.
+     * 
+     * @return A list of strings with exclude patterns, might be empty but never <code>null</code>.
+     */
+    private List getTestExcludes()
+        throws IOException
+    {
+        List excludes = getSelectorList( AntBuildWriterUtil.getMavenSurefirePluginOptions( project, "excludes", null ) );
+        if ( excludes == null || excludes.isEmpty() )
+        {
+            excludes = Arrays.asList( new String[] { "**/*Abstract*Test.java" } );
+        }
+        return excludes;
+    }
+
+    /**
+     * Write the <code>&lt;fileset&gt;</code> elements for the test compile source roots.
+     * 
+     * @param writer
+     * @param testCompileSourceRoots
+     * @param includes
+     * @param excludes
+     */
+    private void writeTestFilesets( XMLWriter writer, List testCompileSourceRoots, List includes, List excludes )
+    {
+        for ( int i = 0; i < testCompileSourceRoots.size(); i++ )
+        {
+            writer.startElement( "fileset" );
+            writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
+            // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
+            AntBuildWriterUtil.writeIncludesExcludes( writer, includes, excludes );
+            writer.endElement(); // fileset
+        }
     }
 
     /**
