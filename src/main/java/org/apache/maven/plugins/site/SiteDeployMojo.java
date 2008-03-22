@@ -313,7 +313,7 @@ public class SiteDeployMojo
             {
                 final XmlPlexusConfiguration xmlConf =
                     new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
-                serverConfigurationMap.put( repositoryId, xmlConf );
+                serverConfigurationMap.put( server.getId(), xmlConf );
             }
         }
 
