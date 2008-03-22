@@ -33,7 +33,7 @@ Changing the Template File
 
   It is possible to change the Velocity template used for creating the site.
   Save your custom template in a directory of your choice and configure the
-  site plugin accordingly.
+  Site Plugin accordingly.
 
   <<Note:>> If you use this method then skins and the default templates, CSS
   and images are disabled. It is therefor highly recommended that you package
@@ -88,9 +88,9 @@ Changing the Template File
 mvn site
 +-----+
 
-  If you don't want to start from scratch you can start with the
+  If you do not want to start from scratch you can start with the
   {{{https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default template}}
-  that is used by the site plugin.
+  that is used by the Site Plugin.
 
   For more information about Velocity, see
   {{{http://velocity.apache.org/}http://velocity.apache.org/}}.

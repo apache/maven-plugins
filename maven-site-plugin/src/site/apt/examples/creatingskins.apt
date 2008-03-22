@@ -33,9 +33,9 @@ Creating Skins
 
   A Maven 2 site skin contains the following elements:
 
-    * Resources to copy into each project (such as images used by the CSS)
+    * Resources to copy into each project (such as images used by the CSS).
 
-    * A couple of css files, containing the visual styling.
+    * A couple of CSS files, containing the visual styling.
 
     * An optional Velocity template for an alternate HTML rendering of the site.
 
@@ -56,7 +56,7 @@ Creating Skins
   you copy an existing skin's <<<maven-theme.css>>> file and modify it to suit
   your needs.
 
-* Customizing the HTML output with a Velocity template
+* Customizing the HTML Output with a Velocity Template
 
   <<Details on the Velocity template variables and use should be included>>.
 
@@ -66,7 +66,7 @@ Creating Skins
   to <<<src/main/resources/META-INF/maven/site.vm>>> in your project and then
   modify it to your needs.
 
-* Examples of existing skins
+* Examples of Existing Skins
 
   A list of links to skins that can be used as inspiration can be found on
   {{{http://docs.codehaus.org/display/MAVENUSER/Maven+Skins}the wiki}}.
