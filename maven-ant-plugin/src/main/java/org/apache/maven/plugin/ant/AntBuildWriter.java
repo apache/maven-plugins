@@ -313,7 +313,11 @@ public class AntBuildWriter
         // ----------------------------------------------------------------------
         writeGetDepsTarget( writer );
 
+        AntBuildWriterUtil.writeLineBreak( writer );
+
         writer.endElement(); // project
+
+        AntBuildWriterUtil.writeLineBreak( writer );
 
         IOUtil.close( w );
     }
@@ -378,9 +382,11 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        AntBuildWriterUtil.writeLineBreak( writer, 2 );
 
         writer.endElement(); // project
+
+        AntBuildWriterUtil.writeLineBreak( writer );
 
         IOUtil.close( w );
     }
