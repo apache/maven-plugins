@@ -29,10 +29,10 @@
  
 Configuring Site Run
 
-  For the <<<site:run>>> goal, you can configure which port to use to start up the site as well as the directory where
+  For the <<<{{{run-mojo.html}site:run}}>>> goal, you can configure which port to use to start up the site as well as the directory where
   the pages for the site will be rendered.
 
-  Example, you have the following configuration in your pom:
+  For example, you have the following configuration in your POM:
 
 +-----+
 <project>
@@ -53,6 +53,6 @@ Configuring Site Run
 </project>
 +-----+
 
-  When you execute <<<mvn site:run>>>, you will see in the command line that the Jetty server is started at port 9000.
-  To access the site, type http://localhost:9000 in your browser. You will also see that the dummy web application is
-  generated in the '${basedir}/target/site/tempdir' directory as specified in the <<<tempWebappDirectory>>> parameter.
+  When you execute "<<<mvn site:run>>>", you will see in the command line that the Jetty server is started at port 9000.
+  To access the site, type <<<http://localhost:9000>>> in your browser. You will also see that the dummy web application is
+  generated in the <<<$\{basedir\}/target/site/tempdir>>> directory as specified in the <<<tempWebappDirectory>>> parameter.
