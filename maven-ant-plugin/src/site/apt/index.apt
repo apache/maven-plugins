@@ -47,3 +47,5 @@ Maven 2 Ant Plugin
    * {{{examples/customize.html}Customizing Generated Ant Build Files}}
 
    * {{{examples/run-single-test.html}Running Individual Unit Tests}}
+
+   * {{{examples/fail-missing-junit.html}Failing the Build if JUnit is Missing}}
