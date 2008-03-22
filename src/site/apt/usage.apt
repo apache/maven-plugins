@@ -26,7 +26,7 @@
 
 Usage
 
- The Ant Plugin generates Ant build files. The following example describe the basic
+ The Ant Plugin generates Ant build files from POMs. The following example describe the basic
  usage of the Plugin.
 
 * Generate Ant build files
@@ -93,10 +93,10 @@ mvn ant:ant -Doverwrite=true
 ant -projecthelp
 +-----+
 
- <<Note>>: <<DO NOT EDIT maven-build.xml!>> It will be overwritten when calling <<<mvn ant:ant>>>.
+ <<Warning>>: Do not edit <<<maven-build.xml>>>! It will be overwritten when calling <<<mvn ant:ant>>>.
 
 ** maven-build.properties
 
  The <<<maven-build.properties>>> file contains several properties used by the <<<maven-build.xml>>> build file.
 
- <<Note>>: <<DO NOT EDIT maven-build.properties!>> It will be overwritten when calling <<<mvn ant:ant>>>.
+ <<Warning>>: Do not edit <<<maven-build.properties>>>! It will be overwritten when calling <<<mvn ant:ant>>>.
