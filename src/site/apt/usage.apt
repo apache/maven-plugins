@@ -49,7 +49,7 @@ mvn site
   The <<<{{{deploy-mojo.html}site:deploy}}>>> goal supports the <<<scp>>> and
   <<<file>>> protocols. To deploy the generated site, you first need to specify
   where the site will be deployed. This can be set in the
-  <<<\<distributionManagement\>>>> section of the pom as shown below.
+  <<<\<distributionManagement\>>>> section of the POM as shown below.
 
 +-----+
 <project>
@@ -83,7 +83,7 @@ mvn site-deploy
 
 * Staging a Site
 
-  <<Note:>> This goal is available in version 2.0-beta-5 or later of the site plugin.
+  <<Note:>> This goal is available in version 2.0-beta-5 or later of the Site Plugin.
 
   To review/test the generated web site before an official deploy, you can stage the site in
   a specific directory. It will use the <<<\<distributionManagement\>>>> element or the project hierarchy to link the
@@ -96,7 +96,7 @@ mvn site-deploy
 mvn site:stage -DstagingDirectory=C:\fullsite
 +-----+
 
-  <<Note:>> <<<stagingDirectory>>> can not be dynamic, i.e. <<<stagingDirectory=$\{basedir\}\fullsite>>>
+  <<Note:>> <<<stagingDirectory>>> cannot be dynamic, i.e. <<<stagingDirectory=$\{basedir\}\fullsite>>>
 
   To stage a site and to deploy it, just execute the <<<{{{stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
   with the required parameters. The <<<site:stage-deploy>>> goal will use the
@@ -113,20 +113,20 @@ mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
 
 * Running a Site
 
-  The site plugin can also be used to start up the site in Jetty. To do this,
+  The Site Plugin can also be used to start up the site in Jetty. To do this,
   execute:
 
 +-----+
 mvn site:run
 +-----+
 
-  The server will, by default, be started on http://localhost:8080/. See
+  The server will, by default, be started on <<<http://localhost:8080/>>>. See
   {{{http://jetty.mortbay.org/}http://jetty.mortbay.org/}} for more information about
   the Jetty server.
 
 * Filtering
 
-  <<Note:>> This feature is available in version 2.0-beta-6 or later of the site plugin.
+  <<Note:>> This feature is available in version 2.0-beta-6 or later of the Site Plugin.
 
   To filter properties into any supported documentation format, add a <<<.vm>>>
   extension to the filename.
@@ -137,7 +137,7 @@ mvn site:run
   property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
 
-  <<Note:>> Velocity is used to apply the filtering. Because Velocity uses a
+  <<Note:>> {{{http://velocity.apache.org/}Velocity}} is used to apply the filtering. Because Velocity uses a
   dot-notation internally you can <<not>> use dots in your properties. So if
   you declare a property like this
 

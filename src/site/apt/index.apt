@@ -29,32 +29,32 @@
 
 Maven 2 Site Plugin
 
- The Maven 2 Site plugin is used to generate a site for the project. The generated site also includes the project's reports
+ The Maven 2 Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
  that were configured in the <<<\<reporting\>>>> section of the pom.
 
 * Goals Overview
 
    The Site Plugin has seven goals:
 
+   * {{{site-mojo.html}site:site}} is used generate a site for the project.
+
    * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to the site
      specified in the <<<\<distributionManagement\>>>> section of the pom.
+
+   * {{{run-mojo.html}site:run}} starts the site up, rendering documents as requested for faster editing. It uses Jetty
+     as the webapp server.
+
+   * {{{stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site url specified
+     in the <<<\<distributionManagement\>>>> section of the pom.
+
+   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site in a staging or mock directory on the site
+     specified in the <<<\<distributionManagement\>>>> section of the pom. It also supports <<<scp>>> and <<<file>>> protocol for deployment.
 
    * {{{attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor to the list of files to be
      installed/deployed. For more references of the site descriptor,
      {{{examples/sitedescriptor.html}here's a link}}.
 
    * {{{site-jar.html}site:jar}} is used to bundle the site output into a jar.
-
-   * {{{site-mojo.html}site:site}} is used generate a site for the project.
-
-   * {{{run-mojo.html}site:run}} starts the site up, rendering documents as requested for faster editing. It uses Jetty
-     as the webapp server.
-
-   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site in a staging or mock directory on the site
-     specified in the <<<\<distributionManagement\>>>> section of the pom. It also supports <<<scp>>> and <<<file>>> protocol for deployment.
-
-   * {{{stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site url specified
-     in the <<<\<distributionManagement\>>>> section of the pom.
 
 * Usage
 

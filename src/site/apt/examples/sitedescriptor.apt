@@ -38,14 +38,14 @@ Configuring the Site Descriptor
 
 * Title
 
-  The title of each generated page will be a combination of the "Site title"
-  and the title of the current page. By default the site plugin will use the
+  The title of each generated page will be a combination of the <site title>
+  and the title of the current page. By default the Site Plugin will use the
   value of <<<$\{project.name\}>>> from your <<<pom.xml>>> file as the
-  "Site title". The title for this page is <"Maven Site plugin - Configuring
-  the Site Descriptor">.
+  site title. The complete title for this page is "Maven Site Plugin - Configuring
+  the Site Descriptor".
 
-  If you want to use a different "Site title", but don't want to change the
-  <<<\<name\>>>> in your <<<pom.xml>>>, you can configure this in your
+  If you want to use a different site title, but do not want to change the
+  <<<\<name\>>>> element in your <<<pom.xml>>>, you can configure this in your
   <<<site.xml>>>, like this:
 
 +-----+
@@ -82,7 +82,7 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-* Powered by logo
+* "Powered by" Logo
 
   You can add your own "Powered by" logo to your site.
   To do this, you add a <<<\<poweredBy\>>>> element in your <<<site.xml>>> like
@@ -157,14 +157,14 @@ Configuring the Site Descriptor
   <<Note:>> The old syntax using <<<$\{reports\}>>>, <<<$\{parent\}>>> and
   <<<$\{modules\}>>> has been deprecated and you are encouraged to use the new
   syntax instead. The support for the old syntax will be removed in a future
-  version of maven-site-plugin.
+  version of the Site Plugin.
 
 * Skinning
 
-  Skins can be created to customise the look and feel of a site in a consistent way. For more information on creating a
+  Skins can be created to customize the look and feel of a site in a consistent way. For more information on creating a
   skin, see {{{creatingskins.html}Creating a Skin}}. To reference a skin in your project, you use the <<<skin>>>
-  element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the Classic
-  Maven skin, you'd include:
+  element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the
+  {{{http://maven.apache.org/skins/maven-classic-skin/}Maven Classic Skin}}, you would include:
 
 +-----+
 <project>
@@ -178,7 +178,7 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-  <<Note:>> The <<<\<version\>>>> is optional and, like plugins, if omitted the latest version available will be used.
+  <<Note:>> The <<<\<version\>>>> element is optional and, like plugins, if omitted the latest version available will be used.
 
   This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
   template to render the site.
@@ -198,7 +198,7 @@ Configuring the Site Descriptor
 
   []
 
-  <<Note:>> Support for some expressions, like <<<$\{project.name\}>>> are present in
-  version 2.0-beta-5 of this plugin. Full support will be available in version
+  <<Note:>> Support for some expressions, like <<<$\{project.name\}>>> is present in
+  version 2.0-beta-5 of this plugin. Full support is only available since version
   2.0-beta-6.
 
