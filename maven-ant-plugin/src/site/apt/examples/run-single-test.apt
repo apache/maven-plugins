@@ -1,9 +1,9 @@
  ------
- Introduction
+ Running Individual Unit Tests
  ------
- Vincent Siveton
+ Benjamin Bentmann
  ------
- September 2006
+ March 2008
  ------
 
  ~~ Copyright 2006 The Apache Software Foundation.
@@ -24,26 +24,20 @@
  ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 
-Maven 2 Ant Plugin
+Running Individual Unit Tests
 
- The Ant Plugin generates build files for {{{http://ant.apache.org/}Ant}} 1.6.2 or above from the POM.
+ Since version 2.1 of the Ant Plugin, the generated Ant build files allow to run individual unit tests. You merely need
+ to specify the simple name of the desired test class via the system property <<<test>>> as illustrated below:
 
-* Goals Overview
++-----+
+ant test -Dtest=MyFavoriteTest
++-----+
 
-   The Ant Plugin has two goals:
+ This will run a test matching the pattern <<<**/MyFavoriteTest.java>>>. You can also employ a simple pattern to select
+ multiple tests:
+ 
++-----+
+ant test -Dtest=*FavoriteTest
++-----+
 
-   * {{{ant-mojo.html}ant:ant}} Generate Ant build files.
-
-   * {{{clean-mojo.html}ant:clean}} Clean all Ant build files.
-
-* Usage
-
-   Instructions on how to use the Ant Plugin can be found on the {{{usage.html}usage page}}.
-
-* Examples
-
-   The following examples show how to use the Ant Plugin in more advanced usecases:
-
-   * {{{examples/customize.html}Customizing Generated Ant Build Files}}
-
-   * {{{examples/run-single-test.html}Running Individual Unit Tests}}
+ <<Note>>: Unlike the Surefire Plugin, the Ant scripts do not support a comma-separated value for the <<<test>>> property.
