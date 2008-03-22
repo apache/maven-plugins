@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +41,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
-
-import sun.security.action.GetIntegerAction;
 
 /**
  * Write Ant build files from <code>Maven Project</code> for <a href="http://ant.apache.org">Ant</a> 1.6.2 or above:
@@ -863,7 +860,7 @@ public class AntBuildWriter
             writer.endElement(); // echo
 
             writer.startElement( "echo" );
-            writer.writeText( " Junit isn't present in your $ANT_HOME/lib directory. Tests not executed. " );
+            writer.writeText( " JUnit is not present in your $ANT_HOME/lib directory. Tests not executed." );
             writer.endElement(); // echo
 
             writer.startElement( "echo" );
