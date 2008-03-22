@@ -731,9 +731,9 @@ public class AntBuildWriter
         {
             writer.startElement( "target" );
             writer.addAttribute( "name", "compile-tests" );
-            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "compile", 2 );
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Compile the test code", 2 );
-            AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "maven.test.skip", 2 );
 
             writeCompileTasks( writer, project.getBasedir(), "${maven.build.testOutputDir}", testCompileSourceRoots,
                                project.getBuild().getTestResources(), "${maven.build.outputDir}", true );
@@ -774,15 +774,15 @@ public class AntBuildWriter
         {
             writer.startElement( "target" );
             writer.addAttribute( "name", "test" );
-            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile-tests", 2 );
-            AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "compile-tests, junit-missing", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "junit.skipped", 2 );
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Run the test cases", 2 );
 
             if ( !testCompileSourceRoots.isEmpty() )
             {
                 writer.startElement( "mkdir" );
                 writer.addAttribute( "dir", "${maven.test.reports}" );
-                writer.endElement(); //mkdir
+                writer.endElement(); // mkdir
 
                 writer.startElement( "junit" );
                 writer.addAttribute( "printSummary", "yes" );
@@ -857,9 +857,38 @@ public class AntBuildWriter
             AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
 
             writer.startElement( "target" );
-            writer.addAttribute( "name", "junit-present" );
+            writer.addAttribute( "name", "test-junit-status" );
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "test-junit-present", 2 );
-            AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "junit.present", 2 );
+            writer.startElement( "condition" );
+            writer.addAttribute( "property", "junit.missing" );
+            writer.startElement( "and" );
+            writer.startElement( "isfalse" );
+            writer.addAttribute( "value", "${junit.present}" );
+            writer.endElement(); // isfalse
+            writer.startElement( "isfalse" );
+            writer.addAttribute( "value", "${maven.test.skip}" );
+            writer.endElement(); // isfalse
+            writer.endElement(); // and
+            writer.endElement(); // condition
+            writer.startElement( "condition" );
+            writer.addAttribute( "property", "junit.skipped" );
+            writer.startElement( "or" );
+            writer.startElement( "isfalse" );
+            writer.addAttribute( "value", "${junit.present}" );
+            writer.endElement(); // isfalse
+            writer.startElement( "istrue" );
+            writer.addAttribute( "value", "${maven.test.skip}" );
+            writer.endElement(); // istrue
+            writer.endElement(); // or
+            writer.endElement(); // condition
+            writer.endElement(); // target
+
+            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "junit-missing" );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "test-junit-status", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.missing", 2 );
 
             writer.startElement( "echo" );
             writer.writeText( StringUtils.repeat( "=", 35 ) + " WARNING " + StringUtils.repeat( "=", 35 ) );

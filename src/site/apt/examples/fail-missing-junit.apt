@@ -45,10 +45,10 @@ Failing the Build if JUnit is Missing
   <!-- Unit testing, overridden to fail upon missing JUnit                    -->
   <!-- ====================================================================== -->
 
-  <target name="junit-present" 
-          depends="test-junit-present" 
-          unless="junit.present">
-    <property name="ant.libdir" location="${ant.home}/lib" />
+  <target name="junit-missing" 
+          depends="test-junit-status" 
+          if="junit.missing">
+    <property name="ant.libdir" location="${ant.home}/lib"/>
     <echo level="error">==================================== ERROR ====================================</echo>
     <echo level="error"> JUnit is not present in your $ANT_HOME/lib directory, aborting build.         </echo>
     <echo level="error"> Please copy "junit.jar" to "${ant.libdir}".                                   </echo>
