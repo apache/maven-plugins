@@ -1,2 +1,3 @@
+clean
 ant:ant
-initialize
+antrun:run
