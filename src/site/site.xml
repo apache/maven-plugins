@@ -34,6 +34,7 @@ under the License.
     <menu name="Examples">
       <item name="Customizing Ant Build Files" href="/examples/customize.html"/>
       <item name="Running Individual Unit Tests" href="/examples/run-single-test.html"/>
+      <item name="Failing if JUnit is Missing" href="/examples/fail-missing-junit.html"/>
     </menu>
   </body>
 </project>
