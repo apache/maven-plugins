@@ -64,7 +64,7 @@ under the License.
         </includes>
       </testResource>
     </testResources>
-    <finalName>${artifactId}</finalName>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
