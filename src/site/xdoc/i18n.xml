@@ -23,397 +23,326 @@ under the License.
   <properties>
     <title>Internationalization</title>
     <author email="vincent.siveton@gmail.com">Vincent Siveton</author>
+    <author email="dennisl@apache.org">Dennis Lundberg</author>
   </properties>
   <body>
-    <section name="Supported Languages">
+    <section name="Internationalization">
       <p>
-        <ul>
-          <li>
-            Maven Site Plugin
-            <br />
-            <table>
-              <tr>
-                <th>Languages available</th>
-                <th>
-                  Files
-                  <a href="#note">*</a>
-                </th>
-              </tr>
-              <tr>
-                <td>Brazilian Portuguese</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pt_BR.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Chinese simplified</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_CN.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Czech</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_cs.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Dutch</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_nl.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>English (Default)</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>French</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_fr.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>German</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_de.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Hungarian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_hu.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Italian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_it.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Japanese</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ja.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Korean</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ko.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Norwegian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_no.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Polish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pl.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Slovak</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sk.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Spanish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_es.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Swedish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sv.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-            </table>
-            <br />
-          </li>
-          <li>
-            Maven Project Info Reports Plugin
-            <br />
-            <table>
-              <tr>
-                <th>Languages available</th>
-                <th>
-                  Files
-                  <a href="#note">*</a>
-                </th>
-              </tr>
-              <tr>
-                <td>Brazilian Portuguese</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pt_BR.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Chinese simplified</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_zh_CN.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Czech</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_cs.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Dutch</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_nl.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>English (Default)</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>French</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_fr.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>German</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_de.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Hungarian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_hu.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Italian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_it.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Japanese</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_ja.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Korean</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_ko.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Norwegian</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_no.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Polish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pl.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Slovak</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_sk.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Spanish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_es.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>Swedish</td>
-                <td>
-                  <a
-                    href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_sv.properties">
-                    See
-                  </a>
-                </td>
-              </tr>
-            </table>
-            <br />
-          </li>
-        </ul>
-        <a name="note">
-          * The files linked above are the files used in the latest development code. So the file
-          may be newer than the one included in the latest release.
-        </a>
+        The site generation done by the Site Plugin and the Project Info
+        Reports Plugin is fully internationalized. This means that adapting them
+        to another language, a process known as localization, is very easy. All
+        that is needed is to download a couple of properties files and start
+        translating the texts in them. If you want to provide a patch for an
+        unsupported language, there are
+        <a href="#Instructions for Translators">detailed instructions</a> below.
       </p>
-    </section>
 
-    <section name="Unsupported Languages - Patches welcome!">
-      <subsection name="Prerequisites">
+      <p>
+        There are currently three files that needs to be localized to support a
+        new language. The following table summarizes the currently supported
+        languages.
+      </p>
+
+      <p>
+        <b>Note:</b> The files linked to below are the files used in the latest
+        development code. So the files may be newer than the ones included in
+        the latest release.
+      </p>
+
+      <subsection name="Supported Languages">
+        <p>
+          <table>
+            <tr>
+              <th>Languages available</th>
+              <th>Site Plugin</th>
+              <th>Project Info Reports Plugin</th>
+              <th>Doxia Tools</th>
+            </tr>
+            <tr>
+              <td>Brazilian Portuguese</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pt_BR.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pt_BR.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_pt_BR.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Chinese simplified</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_CN.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_zh_CN.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_zh_CN.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Czech</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_cs.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_cs.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_cs.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Dutch</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_nl.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_nl.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_nl.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>English (Default)</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>French</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_fr.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_fr.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_fr.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>German</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_de.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_de.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_de.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Hungarian</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_hu.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_hu.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_hu.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Italian</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_it.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_it.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_it.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Japanese</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ja.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_ja.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_ja.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Korean</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ko.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_ko.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_ko.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Norwegian</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_no.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_no.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_no.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Polish</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pl.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pl.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_pl.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Slovak</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sk.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_sk.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_sk.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Spanish</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_es.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_es.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_es.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Swedish</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sv.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_sv.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_sv.properties">See</a>
+              </td>
+            </tr>
+          </table>
+        </p>
+
+        <p>
+          To see the current level of localization support you can have a look
+          at the L10n Status Report for each one of them:
+          <ul>
+            <li><a href="l10n-status.html">Site Plugin</a></li>
+            <!-- TODO: This one has not bee published yet. Remove this comment when that has been done.
+            <li><a href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/l10n-status.html">Project Info Reports Plugin</a></li>
+            -->
+            <li><a href="http://maven.apache.org/shared/maven-doxia-tools/l10n-status.html">Doxia Tools</a></li>
+          </ul>
+        </p>
+      </subsection>
+
+      <subsection name="Instructions for Translators">
+        <p>
+          If you want to contribute a localization, follow these steps:
+          <ol>
+            <li>
+              Download each of the three properties files linked above as
+              the base for your translation. Pick files from a language that you
+              understand well, for instance English.
+            </li>
+            <li>
+              Rename the files to the wanted locale. For example,
+              <code>site-plugin_de.properties</code> for a new German
+              translation for the Maven Site Plugin.
+            </li>
+            <li>
+              Translate the files contents using your preferred text editor. If
+              the characters of your language are included in the ISO-8859-1
+              character set, then use that encoding for your files. Otherwise
+              either use Unicode escapes, like "\u8ff0", or save your files with
+              UTF-8 encoding.
+            </li>
+            <li>
+              To test your localization
+              <ul>
+                <li>Checkout the latest source for
+                  <a href="source-repository.html">Site Plugin</a>,
+                  <a href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/source-repository.html">Project Info Reports Plugin</a> and
+                  <a href="http://maven.apache.org/shared/maven-doxia-tools/source-repository.html">Doxia Tools</a></li>
+                <li>Include your files in <code>src/main/resources</code> for each one</li>
+                <li>Run "<code>mvn install</code>" for each one</li>
+                <li>Configure a project to produce a site in several locales</li>
+                <li>Make sure that it is using the latest SNAPSHOT versions of
+                  the above artifacts</li>
+                <li>Run "<code>mvn site</code>" on that project to test it</li>
+              </ul>
+            </li>
+            <li>
+              When you are happy with it, create a new issue in
+              <a href="http://jira.codehaus.org/browse/MSITE">JIRA</a>
+              and attach your files there.
+            </li>
+          </ol>
+        </p>
+      </subsection>
+
+      <subsection name="References and Tools">
         <p>
           Please refer to the
           <a target="_blank" href="http://java.sun.com/j2se/corejava/intl/index.jsp">
             Java Internationalization home page</a> for an introduction to the topic.
         </p>
+
         <p>
-          You could find here some useful tools to help you with charset questions:
+          Here you can find some useful tools to help you with charset
+          questions and conversions:
           <ul>
             <li>
-              <b>Tools to know the charset of a file</b>: Unix <i>file</i> command,
+              <b>Tools to find out the charset of a file</b>:
+              Unix <i>file</i> command,
               <a href="http://cpdetector.sourceforge.net/">cpdetector</a>,
-              <a href="http://plugins.intellij.net/plugin/?id=24">IntelliJ IDEA ShowEncodingPlugin</a>, ...
+              <a href="http://plugins.intellij.net/plugin/?id=24">IntelliJ IDEA ShowEncodingPlugin</a>,
+              <a href="http://notepad-plus.sourceforge.net/">Notepad++</a>, ...
             </li>
             <li>
-              <b>Tools to write a file in a given charset like UTF-8</b>: any editor like Notepad,
-              Eclipse, IntelliJ IDEA, ...
+              <b>Tools to write a file in a given charset, like UTF-8</b>:
+              any editor like Notepad, Eclipse, IntelliJ IDEA, ...
             </li>
             <li>
               <b>Tools to convert a file from one encoding to another encoding</b>:
-              Unix <i>iconv</i> command.
+              Unix <i>iconv</i> command, Notepad++.
             </li>
           </ul>
         </p>
         <p>
-          You could also refer to this Sun FAQ:
+          You can also refer to this Sun FAQ:
           <a href="http://developers.sun.com/global/technology/standards/reference/faqs/determining-file-encoding.html">
             How Can I Determine the Encoding of a File?</a>.
-        </p>
-      </subsection>
-      <subsection name="Instructions for Translators">
-        <p>
-          If your language is not currently supported and you want to contribute a translation,
-          follow these steps:
-          <ol>
-            <li>
-              Download one of the text files linked above as the base for your translation. For
-              instance, the English file.
-            </li>
-            <li>
-              Rename the file with the wanted locale. For example, <code>site-plugin_de.properties</code> for a
-              new German translation for the Maven Site Plugin.
-            </li>
-            <li>
-              Translate the file contents using your preferred text editor.
-              <b>Make sure you save the file with UTF-8 encoding</b>.
-            </li>
-            <li>
-              To test the translation, checkout the Site Plugin, include your file in
-              <code>src/main/resources</code>, and run "<code>mvn install</code>"
-              on the plugin, then "<code>mvn site</code>" on a project to test it.
-            </li>
-            <li>
-              When happy with it, create a new issue in
-              <a href="http://jira.codehaus.org/browse/MSITE">JIRA</a>
-              and attach your file there.
-            </li>
-          </ol>
-        </p>
-        <p>
-          You could also refer to the <a href="l10n-status.html">L10n Status report</a>.
         </p>
       </subsection>
     </section>
