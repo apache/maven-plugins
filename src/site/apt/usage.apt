@@ -31,10 +31,13 @@
 
 Usage
 
- Aside from the reports, you can put additional content (e.g. additional
- documentation, resources, etc.) in your site. See the
- {{{http://maven.apache.org/guides/mini/guide-site.html}Guide to creating a site}}
- for more information on this.
+ You can put additional content (e.g. documentation, resources, etc.) in your
+ site. See {{{examples/creating-content.html}Creating Content}} for more
+ information on this. If you want to change the menus, breadcrumbs, links or
+ logos on your pages you need to add and configure a
+ {{{examples/sitedescriptor.html}site descriptor}}. If you like, you also can
+ let Maven generate some {{{examples/configuring-reports.html}reports}} for you,
+ based on the contents of your POM.
 
 * Generating a Site
 
