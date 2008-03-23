@@ -20,7 +20,7 @@
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
 					<modules>
 						<webModule>
-							<groupId>${groupId}</groupId>
+							<groupId>${project.groupId}</groupId>
 							<artifactId>multymodule-war</artifactId>
 							<contextRoot>/somethingVeryDifferent</contextRoot>
 						</webModule>
@@ -31,7 +31,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>${groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>multymodule-war</artifactId>
 			<version>1.0</version>
 			<type>war</type>
