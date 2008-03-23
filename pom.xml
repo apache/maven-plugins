@@ -369,6 +369,7 @@ under the License.
         <version>1.0-alpha-1</version>
         <configuration>
           <locales>
+            <locale>ca</locale>
             <locale>cs</locale>
             <locale>de</locale>
             <locale>es</locale>
