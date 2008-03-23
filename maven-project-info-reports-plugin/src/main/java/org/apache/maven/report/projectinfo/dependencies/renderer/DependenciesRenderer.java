@@ -189,7 +189,7 @@ public class DependenciesRenderer
             }
             catch ( NoSuchMethodException e )
             {
-                log.warn( "Dependency Locations report will not be anabled: it requires wagon 1.0-beta-2" );
+                log.warn( "Dependency Locations report will not be enabled: it requires wagon 1.0-beta-2" );
                 return;
             }
 
@@ -478,7 +478,7 @@ public class DependenciesRenderer
             }
             catch ( ProjectBuildingException e )
             {
-                log.warn( "Unable to create maven project from repository.", e );
+                log.warn( "Unable to create Maven project from repository.", e );
             }
         }
 
@@ -523,7 +523,7 @@ public class DependenciesRenderer
 
         endTable();
 
-        // Render Aritfact Breakdown.
+        // Render Artifact Breakdown.
 
         sink.paragraph();
         sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
@@ -788,7 +788,7 @@ public class DependenciesRenderer
             }
             catch ( ProjectBuildingException e )
             {
-                log.error( "ProjectBuildException error : ", e );
+                log.error( "ProjectBuildingException error : ", e );
             }
 
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
