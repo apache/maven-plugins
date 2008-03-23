@@ -47,8 +47,7 @@ Maven Project Info Reports Plugin
    * {{{dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
    Project DependencyManagement report.
 
-   * {{{plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
-   Project PluginManagement report.
+   * {{{index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
 
    * {{{issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
    Tracking report.
@@ -58,14 +57,15 @@ Maven Project Info Reports Plugin
    * {{{mailing-list-mojo.html}project-info-reports:mailing-list}} is used to generate the Project Mailing
    List report.
 
-   * {{{index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
+   * {{{plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
+   Project PluginManagement report.
 
-   * {{{summary-mojo.html}project-info-reports:summary}} is used to generate the Project information reports
-   summary.
+   * {{{project-team-mojo.html}project-info-reports:project-team}} is used to generate the Project Team report.
 
    * {{{scm-mojo.html}project-info-reports:scm}} is used to generate the Project Source Code Management report.
 
-   * {{{project-team-mojo.html}project-info-reports:project-team}} is used to generate the Project Team report.
+   * {{{summary-mojo.html}project-info-reports:summary}} is used to generate the Project information reports
+   summary.
 
 * Usage
 
