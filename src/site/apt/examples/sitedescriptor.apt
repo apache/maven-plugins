@@ -36,6 +36,10 @@ Configuring the Site Descriptor
   to be accessible in the generated site, you must configure your site descriptor. You create the site descriptor in
   a file called <<<site.xml>>> which should be located in your <<<src/site>>> directory.
 
+  If you are migrating from Maven 1.x you will be interested to know that the
+  <<<navigation.xml>>> file has been replaced by the site descriptor in Maven 2.
+  The format is nearly the same, so you can probably reuse most of your old file.
+
 * Title
 
   The title of each generated page will be a combination of the <site title>

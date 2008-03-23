@@ -32,11 +32,13 @@ under the License.
     </menu>
 
     <menu name="Examples">
+      <item name="Creating Content" href="/examples/creating-content.html"/>
       <item name="Configuring the Site Descriptor" href="/examples/sitedescriptor.html"/>
-      <item name="Changing the Template File" href="/examples/templatefile.html"/>
-      <item name="Excluding Modules" href="/examples/moduleexcludes.html"/>
+      <item name="Configuring Reports" href="/examples/configuring-reports.html"/>
       <item name="Configuring Site Run" href="/examples/siterun.html"/>
+      <item name="Changing the Template File" href="/examples/templatefile.html"/>
       <item name="Creating Skins" href="/examples/creatingskins.html"/>
+      <item name="Excluding Modules" href="/examples/moduleexcludes.html"/>
     </menu>
   </body>
 </project>
