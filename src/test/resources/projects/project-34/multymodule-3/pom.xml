@@ -20,7 +20,7 @@
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
 					<modules>
 						<webModule>
-							<groupId>${groupId}</groupId>
+							<groupId>${project.groupId}</groupId>
 							<artifactId>multymodule-2</artifactId>
 							<contextRoot>/multymodule-2-${project.version}</contextRoot>
 						</webModule>
