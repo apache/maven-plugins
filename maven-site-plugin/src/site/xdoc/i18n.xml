@@ -250,6 +250,18 @@ under the License.
                 <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_sv.properties">See</a>
               </td>
             </tr>
+            <tr>
+              <td>Turkish</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_tr.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_tr.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_tr.properties">See</a>
+              </td>
+            </tr>
           </table>
         </p>
 
