@@ -58,13 +58,13 @@ public class SimpleMavenProjectStub
         build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
 
         Resource resource = new Resource();
-        resource.setDirectory( "src/main/resources" );
+        resource.setDirectory( getBasedir().getAbsolutePath() + "/src/main/resources" );
         resource.setFiltering( false );
         build.setResources( Collections.singletonList( resource ) );
 
         resource = new Resource();
         resource.setFiltering( false );
-        resource.setDirectory( "src/test/resources" );
+        resource.setDirectory( getBasedir().getAbsolutePath() + "/src/test/resources" );
         build.setTestResources( Collections.singletonList( resource ) );
     }
 
