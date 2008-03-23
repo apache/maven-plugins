@@ -29,6 +29,14 @@
 
 Creating Skins
 
+  If you want to tune the way your site looks, you can use a custom skin to
+  provide your own CSS styles. If that is still not enough, you can even tweak
+  the output templates that Maven uses to generate the site documentation.
+
+~~  TODO: The following link is currently unavailable. Restore it when it becomes available again  
+~~  For an in-depth discussion of site customization, please have a look at the
+~~  {{{http://www.sonatype.com/book/site-generation.html} Maven User Guide, Chapter 9, "Site Generation"}}.
+
 * About
 
   A Maven 2 site skin contains the following elements:
