@@ -26,6 +26,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,11 +108,11 @@ public class ResourcesMojo
 
         if ( encoding == null || encoding.length() < 1 )
         {
-            getLog().info( "Using default encoding to copy filtered resources." );
+            getLog().info( "Using platform encoding (" + ReaderFactory.FILE_ENCODING + " actually) to copy filtered resources." );
         }
         else
         {
-            getLog().info( "Using '" + encoding + "' to copy filtered resources." );
+            getLog().info( "Using " + encoding + " encoding to copy filtered resources." );
         }
 
         for ( Iterator i = resources.iterator(); i.hasNext(); )
