@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>org.codehaus.mojo.patch.it</groupId>
+    <groupId>org.apache.maven.plugins.patch.it</groupId>
     <artifactId>it-project-parent</artifactId>
     <version>1</version>
   </parent>
@@ -41,11 +41,10 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>patch-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-patch-plugin</artifactId>
         
         <configuration>
-          <skipResolve>true</skipResolve>
           <patches>
             <patch>first.patch</patch>
             <patch>second.patch</patch>
