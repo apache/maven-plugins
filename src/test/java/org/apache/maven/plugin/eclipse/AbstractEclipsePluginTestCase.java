@@ -517,6 +517,18 @@ public abstract class AbstractEclipsePluginTestCase
                 expected = expected.replaceAll( "file:([a-zA-Z])", "file:/$1" );
             }
 
+            /*
+             * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file as the
+             * value for a key like "org.eclipse.jdt.ui.formatterprofiles" from "org.eclipse.jdt.ui.prefs". Line
+             * terminators in this value are platform-dependent.
+             */
+            if ( !expected.equals( actual ) && expectedFile.getName().endsWith( ".prefs" ) )
+            {
+                // normalize line terminators
+                expected = expected.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+                actual = actual.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+            }
+
             assertEquals( "Checking " + filename + ", line #" + ( i + 1 ), expected, actual );
         }
 
