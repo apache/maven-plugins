@@ -28,7 +28,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.shell.BourneShell;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -552,7 +551,6 @@ public class ApplyMojo
     private Commandline createPatchCommand( File patchFile )
     {
         Commandline cli = new Commandline();
-        cli.setShell( new BourneShell() );
 
         cli.setExecutable( "patch" );
 
