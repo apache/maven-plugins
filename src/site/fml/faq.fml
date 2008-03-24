@@ -27,17 +27,15 @@
         </p>
       </answer>
     </faq>
-    <faq id="Why won't this work on Windows">
-      <question>Why won't this work on Windows?</question>
+    <faq id="Why doesn't this work on Windows">
+      <question>Why doesn't this work on Windows?</question>
       <answer>
         <p>
-          This patch wraps the <a href="http://www.gnu.org/software/patch/">GNU patch tool</a>, which must be in your
-          <tt>PATH</tt> in order to function properly. You might be able to get this plugin working within
-          <a href="http://cygwin.com/">Cygwin</a>.
-        </p>
-        <p>
-          If you would like to add Windows support to this plugin, please do and submit modifications through the normal
-          project mechanisms.
+          This plugin wraps the <a href="http://www.gnu.org/software/patch/">GNU patch tool</a>, which must be in your
+          <tt>PATH</tt> in order to function properly. A Windows installation usually does not ship with this tool so
+          you will need to install it manually. You might be able to get this plugin working within
+          <a href="http://cygwin.com/">Cygwin</a> or by using the port
+          <a href="http://gnuwin32.sourceforge.net/packages/patch.htm">Patch for Windows</a>.
         </p>
       </answer>
     </faq>
