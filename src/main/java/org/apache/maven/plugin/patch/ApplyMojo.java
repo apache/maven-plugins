@@ -32,6 +32,7 @@ import org.codehaus.plexus.util.cli.shell.BourneShell;
 //import org.codehaus.plexus.util.cli.shell.BourneShell;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -85,22 +86,22 @@ public class ApplyMojo
     }
 
     /**
-     * Whether to exclude default ignored patch items, such as .svn or CVS directories.
-     *
+     * Whether to exclude default ignored patch items, such as <code>.svn</code> or <code>CVS</code> directories.
+     * 
      * @parameter default-value="true"
      */
     private boolean useDefaultIgnores;
 
     /**
-     * The list of patch file names (without directory information), supplying the order in which patches should be
-     * applied. (relative to 'patchSourceDir')
-     *
+     * The list of patch file names, supplying the order in which patches should be applied. The path names in this list
+     * must be relative to the base directory specified by the parameter <code>patchDirectory</code>.
+     * 
      * @parameter
      */
     protected List patches;
 
     /**
-     * Whether to skip this mojo's execution.
+     * Whether to skip this goal's execution.
      *
      * @parameter default-value="false" alias="patch.apply.skip"
      */
@@ -108,7 +109,7 @@ public class ApplyMojo
 
     /**
      * Flag to enable/disable optimization file from being written. This file tracks the patches that were applied the
-     * last time this mojo actually executed. It is required for cases where project-sources optimizations are enabled,
+     * last time this goal actually executed. It is required for cases where project-sources optimizations are enabled,
      * since project-sources will not be re-unpacked if they are at least as fresh as the source archive. If we avoid
      * re-unpacking project sources, we need to make sure we don't reapply patches. This flag is true by default. <br/>
      * <b>NOTE:</b> If the list of patches changes and this flag is enabled, a `mvn clean` must be executed before the
@@ -121,7 +122,7 @@ public class ApplyMojo
     /**
      * This is the tracking file used to maintain a list of the patches applied to the unpacked project sources which
      * are currently in the target directory. If this file is present, and project-source unpacking is optimized
-     * (meaning it won't re-unpack unless the project-sources archive is newer), this mojo will not execute and no
+     * (meaning it won't re-unpack unless the project-sources archive is newer), this goal will not execute and no
      * patches will be applied in the current build.
      *
      * @parameter default-value="${project.build.directory}/optimization-files/patches-applied.txt"
@@ -137,16 +138,16 @@ public class ApplyMojo
     private File targetDirectory;
 
     /**
-     * true if the desired behavior is to fail the build on the first failed patch detected
+     * true if the desired behavior is to fail the build on the first failed patch detected.
      *
      * @parameter default-value="true"
      */
     private boolean failFast;
     
     /**
-     * setting natural order processing to true will all patches in a directory to be processed in an natural order
-     * alleviating the need to declare patches directly in the project file.
-     *
+     * Setting natural order processing to true will cause all patches in a directory to be processed in an natural
+     * order alleviating the need to declare patches directly in the project file.
+     * 
      * @parameter default-value="false"
      */
     private boolean naturalOrderProcessing;
@@ -210,27 +211,30 @@ public class ApplyMojo
     private List failurePhrases = PATCH_FAILURE_WATCH_PHRASES;
 
     /**
-     * The original file which will be modified by the patch. Mutually exclusive with workDir.
-     *
+     * The original file which will be modified by the patch. Mutually exclusive with <code>workDir</code>.
+     * 
      * @parameter
      */
     private File originalFile;
 
     /**
-     * The file which is the original file, plus modifications from the patch. Mutually exclusive with workDir.
-     *
+     * The file which is the original file, plus modifications from the patch. Mutually exclusive with
+     * <code>workDir</code>.
+     * 
      * @parameter
      */
     private File destFile;
 
     /**
-     * The single patch file to apply. Mutually exclusive with 'patches'.
+     * The single patch file to apply. Mutually exclusive with <code>patches</code>.
      *
      * @parameter
      */
     private File patchFile;
 
     /**
+     * The base directory for the file names specified by the parameter <code>patches</code>.
+     * 
      * @parameter default-value="src/main/patches"
      * @required
      */
@@ -255,7 +259,7 @@ public class ApplyMojo
 
         if ( skipApplication )
         {
-            getLog().info( "Skipping patchfile application (per configuration)." );
+            getLog().info( "Skipping patch file application (per configuration)." );
             return;
         }
 
@@ -271,6 +275,12 @@ public class ApplyMojo
             }
             else
             {
+                if ( !patchDirectory.isDirectory() )
+                {
+                    throw new FileNotFoundException( "The base directory for patch files does not exist: "
+                        + patchDirectory );
+                }
+
                 List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
 
                 patchesToApply = findPatchesToApply(foundPatchFiles, patchDirectory );
@@ -286,7 +296,7 @@ public class ApplyMojo
 		}
         catch (IOException ioe)
 		{
-			throw new MojoExecutionException( "unable to obtain list of patch files", ioe);
+			throw new MojoExecutionException( "Unable to obtain list of patch files", ioe);
 		}
     }
 
