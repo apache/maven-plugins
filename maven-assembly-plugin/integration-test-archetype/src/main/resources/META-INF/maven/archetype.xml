@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype>
+  <id>assembly-integration-test</id>
+  <sources>
+    <source>src/main/java/App.java</source>
+  </sources>
+  <testSources>
+    <source>src/java/AppTest.java</source>
+  </testSources>
+  <resources>
+    <resource>goals.txt</resource>
+    <resource>src/assemble/bin.xml</resource>
+    <resource>verify.bsh</resource>
+  </resources>
+</archetype>
