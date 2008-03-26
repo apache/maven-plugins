@@ -90,7 +90,7 @@ public class EclipseWriterConfig
     /**
      * Manifest file.
      */
-    private File manifestFile;
+    private File osgiManifestFile;
 
     /**
      * PDE mode.
@@ -344,9 +344,9 @@ public class EclipseWriterConfig
      * 
      * @return Returns the manifestFile.
      */
-    public File getManifestFile()
+    public File getOSGIManifestFile()
     {
-        return manifestFile;
+        return osgiManifestFile;
     }
 
     /**
@@ -354,9 +354,9 @@ public class EclipseWriterConfig
      * 
      * @param manifestFile The manifestFile to set.
      */
-    public void setManifestFile( File manifestFile )
+    public void setOSGIManifestFile( File manifestFile )
     {
-        this.manifestFile = manifestFile;
+        this.osgiManifestFile = manifestFile;
     }
 
     /**

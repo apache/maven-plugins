@@ -1085,7 +1085,7 @@ public class EclipsePlugin
         config.setDeps( deps );
         config.setEclipseProjectDirectory( eclipseProjectDir );
         config.setLocalRepository( localRepository );
-        config.setManifestFile( manifest );
+        config.setOSGIManifestFile( manifest );
         config.setPde( pde );
         config.setProject( project );
         config.setProjectBaseDir( projectBaseDir );

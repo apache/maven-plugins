@@ -85,29 +85,29 @@ public class EclipseOSGiManifestWriter
         throws MojoExecutionException
     {
         // check for existence
-        if ( !config.getManifestFile().exists() )
+        if ( !config.getOSGIManifestFile().exists() )
         {
             log.warn( Messages.getString( "EclipseOSGiManifestWriter.nomanifestfile",
-                                          config.getManifestFile().getAbsolutePath() ) );
+                                          config.getOSGIManifestFile().getAbsolutePath() ) );
             return;
         }
 
-        StringBuffer manifestSb = rewriteManifest( config.getManifestFile() );
+        StringBuffer manifestSb = rewriteManifest( config.getOSGIManifestFile() );
         Writer out = null;
         try
         {
-            out = new OutputStreamWriter( new FileOutputStream( config.getManifestFile() ), "UTF-8" );
+            out = new OutputStreamWriter( new FileOutputStream( config.getOSGIManifestFile() ), "UTF-8" );
             out.write( manifestSb.toString() );
         }
         catch ( FileNotFoundException e )
         {
             throw new MojoExecutionException( Messages.getString( "cantwritetofile",
-                                                                  config.getManifestFile().getAbsolutePath() ) );
+                                                                  config.getOSGIManifestFile().getAbsolutePath() ) );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( Messages.getString( "cantwritetofile",
-                                                                  config.getManifestFile().getAbsolutePath() ), e );
+                                                                  config.getOSGIManifestFile().getAbsolutePath() ), e );
         }
         finally
         {
