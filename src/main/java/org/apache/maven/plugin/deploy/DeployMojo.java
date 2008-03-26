@@ -135,7 +135,7 @@ public class DeployMojo
 
         String protocol = repo.getProtocol();
 
-        if ( protocol.equals( "scp" ) )
+        if ( protocol.equalsIgnoreCase( "scp" ) )
         {
             File sshFile = new File( System.getProperty( "user.home" ), ".ssh" );
 
