@@ -145,29 +145,19 @@ public class EclipseManifestWriter
         throws MojoExecutionException
     {
         File manifestFile = null;
-        if ( config.getManifestFile() == null )
+        String metaInfBaseDirectory = getMetaInfBaseDirectory( this.config.getProject() );
+
+        if ( metaInfBaseDirectory == null )
         {
-
-            String metaInfBaseDirectory = getMetaInfBaseDirectory( this.config.getProject() );
-
-            if ( metaInfBaseDirectory == null )
-            {
-                // TODO: if this really is an error, shouldn't we stop the build??
-                throw new MojoExecutionException(
-                                                  Messages.getString(
-                                                                      "EclipseCleanMojo.nofilefound",
-                                                                      new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
-            }
-            manifestFile =
-                new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY
-                    + File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME );
-
+            // TODO: if this really is an error, shouldn't we stop the build??
+            throw new MojoExecutionException(
+                                              Messages.getString(
+                                                                  "EclipseCleanMojo.nofilefound",
+                                                                  new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
         }
-        else
-        {
-            manifestFile = config.getManifestFile();
-        }
-
+        manifestFile =
+            new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY
+                + File.separatorChar + EclipseManifestWriter.MANIFEST_MF_FILENAME );
         Manifest manifest = createNewManifest();
 
         log.info( "MANIFEST LOCATION: " + manifestFile );
