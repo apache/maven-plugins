@@ -239,6 +239,15 @@ public class ApplyMojo
     private File patchDirectory;
 
     /**
+     * When set to <code>true</code>, the empty files resulting from the patching process are removed. Empty ancestor
+     * directories are removed as well.
+     * 
+     * @parameter default-value="false"
+     * @since 1.1
+     */
+    private boolean removeEmptyFiles;
+
+    /**
      * Apply the patches. Give preference to patchFile over patchSourceDir/patches, and preference to originalFile over
      * workDir.
      */
@@ -584,6 +593,11 @@ public class ApplyMojo
         if ( backups )
         {
             cli.createArg().setValue( "-b" );
+        }
+
+        if ( removeEmptyFiles )
+        {
+            cli.createArg().setValue( "-E" );
         }
 
         cli.createArg().setValue( "<" );
