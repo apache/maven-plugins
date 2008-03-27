@@ -226,8 +226,8 @@ public abstract class AbstractDependencyMojo
         try
         {
             getLog().info(
-                            "Unpacking " + file.getPath() + "to\n " + location.getPath()
-                                + "\nwith Includes " + includes + " and excludes:" + excludes );
+                            "Unpacking " + file.getPath() + " to\n  " + location.getPath()
+                                + "\n   with Includes " + includes + " and excludes:" + excludes );
 
             location.mkdirs();
 
