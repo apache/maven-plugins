@@ -558,34 +558,36 @@ public class ApplyMojo
 
         if ( originalFile != null )
         {
-            cli.createArg().setLine( originalFile.getAbsolutePath() );
+            cli.createArg().setFile( originalFile );
 
             if ( destFile != null )
             {
-                cli.createArg().setLine( "-o " + destFile.getAbsolutePath() );
+                cli.createArg().setValue( "-o" );
+                cli.createArg().setFile( destFile );
             }
 
-            cli.createArg().setLine( patchFile.getAbsolutePath() );
+            cli.createArg().setFile( patchFile );
         }
 
-        cli.createArg().setLine( "-p" + strip );
+        cli.createArg().setValue( "-p" + strip );
 
         if ( ignoreWhitespace )
         {
-            cli.createArg().setLine( "-l" );
+            cli.createArg().setValue( "-l" );
         }
 
         if ( reverse )
         {
-            cli.createArg().setLine( "-R" );
+            cli.createArg().setValue( "-R" );
         }
 
         if ( backups )
         {
-            cli.createArg().setLine( "-b" );
+            cli.createArg().setValue( "-b" );
         }
 
-        cli.createArg().setLine( " < " + patchFile.getAbsolutePath() );
+        cli.createArg().setValue( "<" );
+        cli.createArg().setFile( patchFile );
 
         return cli;
     }
