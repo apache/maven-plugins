@@ -92,7 +92,8 @@ public class ApplyMojo
 
     /**
      * The list of patch file names, supplying the order in which patches should be applied. The path names in this list
-     * must be relative to the base directory specified by the parameter <code>patchDirectory</code>.
+     * must be relative to the base directory specified by the parameter <code>patchDirectory</code>. This parameter
+     * is mutually exclusive with the <code>patchfile</code> parameter.
      * 
      * @parameter
      */
@@ -109,9 +110,9 @@ public class ApplyMojo
      * Flag to enable/disable optimization file from being written. This file tracks the patches that were applied the
      * last time this goal actually executed. It is required for cases where project-sources optimizations are enabled,
      * since project-sources will not be re-unpacked if they are at least as fresh as the source archive. If we avoid
-     * re-unpacking project sources, we need to make sure we don't reapply patches. This flag is true by default. <br/>
-     * <b>NOTE:</b> If the list of patches changes and this flag is enabled, a `mvn clean` must be executed before the
-     * next build, to remove the tracking file.
+     * re-unpacking project sources, we need to make sure we don't reapply patches.<br/> <strong>Note:</strong> If the
+     * list of patches changes and this flag is enabled, a "<code>mvn clean</code>" must be executed before the next
+     * build, to remove the tracking file.
      * 
      * @parameter default-value="true"
      */
@@ -131,43 +132,42 @@ public class ApplyMojo
      * The target directory for applying patches. Files in this directory will be modified.
      * 
      * @parameter alias="patchTargetDir" default-value="${project.build.sourceDirectory}"
-     * @required
      */
     private File targetDirectory;
 
     /**
-     * true if the desired behavior is to fail the build on the first failed patch detected.
+     * Flag being <code>true</code> if the desired behavior is to fail the build on the first failed patch detected.
      * 
      * @parameter default-value="true"
      */
     private boolean failFast;
 
     /**
-     * Setting natural order processing to true will cause all patches in a directory to be processed in an natural
-     * order alleviating the need to declare patches directly in the project file.
+     * Setting natural order processing to <code>true</code> will cause all patches in a directory to be processed in
+     * a natural order alleviating the need to declare patches directly in the project file.
      * 
      * @parameter default-value="false"
      */
     private boolean naturalOrderProcessing;
 
     /**
-     * When the strictPatching flag is set, this parameter is useful to mark certain contents of the patch-source
-     * directory that should be ignored without causing the build to fail.
+     * When the <code>strictPatching</code> flag is set, this parameter is useful to mark certain contents of the
+     * patch-source directory that should be ignored without causing the build to fail.
      * 
      * @parameter
      */
     private List ignoredPatches;
 
     /**
-     * Flag that, when set to true, will make sure that all patches included in the 'patches' list must be present and
-     * describe the full contents of the patch directory. If strictPatching is set to true, and the patches list has a
-     * value that does not correspond to a file in the patch directory, the build will fail. If strictPatching is set to
-     * true, and the patch directory contains files not listed in the patches parameter, the build will fail. If set to
-     * false, only the patches listed in the patches parameter that have corresponding files will be applied; the rest
-     * will be ignored. Default value for this parameter is false.
+     * Flag that, when set to <code>true</code>, will make sure that all patches included in the <code>patches</code>
+     * list must be present and describe the full contents of the patch directory. If <code>strictPatching</code> is
+     * set to <code>true</code>, and the <code>patches</code> list has a value that does not correspond to a file
+     * in the patch directory, the build will fail. If <code>strictPatching</code> is set to <code>true</code>, and
+     * the patch directory contains files not listed in the <code>patches</code> parameter, the build will fail. If
+     * set to <code>false</code>, only the patches listed in the <code>patches</code> parameter that have
+     * corresponding files will be applied; the rest will be ignored.
      * 
      * @parameter default-value="false"
-     * @required
      */
     private boolean strictPatching;
 
@@ -175,56 +175,57 @@ public class ApplyMojo
      * The number of directories to be stripped from patch file paths, before applying, starting from the leftmost, or
      * root-est.
      * 
-     * @parameter
+     * @parameter default-value="0"
      */
-    private int strip = 0;
+    private int strip;
 
     /**
      * Whether to ignore whitespaces when applying the patches.
      * 
-     * @parameter
+     * @parameter default-value="true"
      */
-    private boolean ignoreWhitespace = true;
+    private boolean ignoreWhitespace;
 
     /**
      * Whether to treat these patches as having reversed source and dest in the patch syntax.
      * 
-     * @parameter
+     * @parameter default-value="false"
      */
-    private boolean reverse = false;
+    private boolean reverse;
 
     /**
      * Whether to make backups of the original files before modding them.
      * 
-     * @parameter
+     * @parameter default-value="false"
      */
-    private boolean backups = false;
+    private boolean backups;
 
     /**
-     * List of phrases to watch for in patch-command output. If one is found, it will cause the build to fail. All
-     * phrases should be lower-case ONLY.
+     * List of phrases to watch for in the command output from the patch tool. If one is found, it will cause the build
+     * to fail. All phrases should be lower-case <em>only</em>. By default, the phrases <code>fail</code>,
+     * <code>skip</code> and <code>reject</code> are used.
      * 
      * @parameter
      */
     private List failurePhrases = PATCH_FAILURE_WATCH_PHRASES;
 
     /**
-     * The original file which will be modified by the patch. Mutually exclusive with <code>workDir</code>.
+     * The original file which will be modified by the patch. By default, the patch tool will automatically derive the
+     * original file from the header of the patch file.
      * 
      * @parameter
      */
     private File originalFile;
 
     /**
-     * The file which is the original file, plus modifications from the patch. Mutually exclusive with
-     * <code>workDir</code>.
+     * The output file which is the original file, plus modifications from the patch.
      * 
      * @parameter
      */
     private File destFile;
 
     /**
-     * The single patch file to apply. Mutually exclusive with <code>patches</code>.
+     * The single patch file to apply. This parameter is mutually exclusive with the <code>patches</code> parameter.
      * 
      * @parameter
      */
@@ -234,7 +235,6 @@ public class ApplyMojo
      * The base directory for the file names specified by the parameter <code>patches</code>.
      * 
      * @parameter default-value="src/main/patches"
-     * @required
      */
     private File patchDirectory;
 

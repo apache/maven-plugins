@@ -29,10 +29,10 @@
 
 Patch Multiple Files from Multiple Directories
 
-  The <<<maven-patch-plugin>>> can be configured to apply sets of patches from multiple directories.
+  The Patch Plugin can be configured to apply sets of patches from multiple directories.
   In the example below, the plugin is setup to apply all the patches in a <<<bugfix>>> directory with 
   optimization (will not reapply the same patch) and also from an <<<enhancement>>> directory.  This 
-  scenario might crop up if you don't have commit access to a projects source yet need to apply 
+  scenario might crop up if you don't have commit access to a project's source yet need to apply 
   bugfix and enhancement patches.  The two different patch source directories are shown purely as 
   an example of what can be configured.
 
@@ -47,7 +47,7 @@ Patch Multiple Files from Multiple Directories
         <artifactId>maven-patch-plugin</artifactId>
         <version>1.0</version>
         <configuration>
-          <patchTargetDir>${moduleDirectory}</patchTargetDir>
+          <targetDirectory>${moduleDirectory}</targetDirectory>
           <skipApplication>false</skipApplication>
         </configuration>
         <executions>
