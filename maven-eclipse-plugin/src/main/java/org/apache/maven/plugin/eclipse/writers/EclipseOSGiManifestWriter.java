@@ -158,7 +158,7 @@ public class EclipseOSGiManifestWriter
                 {
                     manifestSb.append( ENTRY_BUNDLE_SYMBOLICNAME );
                     manifestSb.append( " " );
-                    manifestSb.append( config.getProject().getArtifactId() );
+                    manifestSb.append( config.getEclipseProjectName() );
                     manifestSb.append( ";singleton:=true" );
                     manifestSb.append( NEWLINE );
                 }
