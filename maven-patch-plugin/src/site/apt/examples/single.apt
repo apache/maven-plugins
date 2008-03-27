@@ -29,7 +29,7 @@
 
 Patch a Single File
 
-  The <<<maven-patch-plugin>>> can be configured to apply a single patch to a file as specified:
+  The Patch Plugin can be configured to apply a single patch to a file as specified:
 
 +--------
 <project>
@@ -38,7 +38,9 @@ Patch a Single File
     [...]
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-patch-plugin</artifactId>
+        <version>1.0</version>
         <configuration>
           <patches>
             <patch>mylittle.patch</patch>
