@@ -118,29 +118,19 @@ public class EclipseWtpFacetsWriter
     private void writeModuleTypeFacetCore( XMLWriter writer, String packaging )
     {
         writer.startElement( ELT_FACETED_PROJECT );
-        // common facet
-        writer.startElement( ELT_FIXED );
-        writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.endElement(); // element fixed
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveServletVersion( config.getProject() ) );
-            writer.endElement(); // installed
+            writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
+            writeFacetFixedElement( writer, FACET_JST_WEB ); // fixed
+            writeFacetInstalledElement( writer, FACET_JST_WEB, JeeUtils.resolveServletVersion( config.getProject() ) ); // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveEjbVersion( config.getProject() ) );
-            writer.endElement(); // installed
+            writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
+            writeFacetFixedElement( writer, FACET_JST_EJB ); // fixed
+            writeFacetInstalledElement( writer, FACET_JST_EJB, JeeUtils.resolveEjbVersion( config.getProject() ) ); // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
@@ -150,46 +140,59 @@ public class EclipseWtpFacetsWriter
                 writer.addAttribute( "name", config.getWorkspaceConfiguration().getDefaultDeployServerName() );
                 writer.endElement(); // runtime
 
-                writer.startElement( ELT_INSTALLED );
-                writer.addAttribute( ATTR_FACET, FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR );
-                writer.addAttribute( ATTR_VERSION, this.config.getWorkspaceConfiguration().getWebsphereVersion() );
-                writer.endElement(); // installed
-
-                writer.startElement( ELT_INSTALLED );
-                writer.addAttribute( ATTR_FACET, FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR );
-                writer.addAttribute( ATTR_VERSION, this.config.getWorkspaceConfiguration().getWebsphereVersion() );
-                writer.endElement(); // installed
+                writeFacetInstalledElement( writer, FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR,
+                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() ); // installed
+                writeFacetInstalledElement( writer, FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR,
+                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() ); // installed
 
             }
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion( config.getProject() ) );
-            writer.endElement(); // installed
+            writeFacetFixedElement( writer, FACET_JST_EAR ); // fixed
+            writeFacetInstalledElement( writer, FACET_JST_EAR, JeeUtils.resolveJeeVersion( config.getProject() ) ); // installed
 
         }
         else if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_UTILITY );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_UTILITY );
-            writer.addAttribute( ATTR_VERSION, "1.0" ); //$NON-NLS-1$
-            writer.endElement(); // installed
+            writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
+            writeFacetFixedElement( writer, FACET_JST_UTILITY ); // fixed
+            writeFacetInstalledElement( writer, FACET_JST_UTILITY, "1.0" ); //$NON-NLS-1$
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            // installed
         }
-
-        // common installed element
-        writer.startElement( ELT_INSTALLED );
-        writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.addAttribute( ATTR_VERSION, IdeUtils.resolveJavaVersion( config.getProject() ) );
-        writer.endElement(); // installed
 
         writeAdditionalProjectFacets( writer );
 
         writer.endElement(); // faceted-project
+    }
+
+    /**
+     * Writes facet <code>fixed</code> element with attribute <code>facet</code> set to the value of argument
+     * <code>facetName</code>.
+     * 
+     * @param writer
+     * @param facetName
+     */
+    private void writeFacetFixedElement( XMLWriter writer, String facetName )
+    {
+        writer.startElement( ELT_FIXED );
+        writer.addAttribute( ATTR_FACET, facetName );
+        writer.endElement();
+    }
+
+    /**
+     * Writes a facet <code>installed</code> element with attribute <code>facet</code> set to the value of argument
+     * <code>facetName</code>, and attribute <code>version</code> set to the value of argument
+     * <code>facetVersion</code>.
+     * 
+     * @param writer
+     * @param facetName
+     * @param facetVersion
+     */
+    private void writeFacetInstalledElement( XMLWriter writer, String facetName, String facetVersion )
+    {
+        writer.startElement( ELT_INSTALLED );
+        writer.addAttribute( ATTR_FACET, facetName );
+        writer.addAttribute( ATTR_VERSION, facetVersion );
+        writer.endElement();
     }
 
     /**
