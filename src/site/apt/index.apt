@@ -29,20 +29,24 @@
 
 Maven 2 Patch Plugin
 
-  The patch plugin is used to apply patches to source files.
+  The Patch Plugin is used to apply patches to source files.
 
 * Goals Overview
 
-  The patch plugin has a single goal that can apply either a single declared patch or a directory of patches. Application of an entire patch directory can be configured with various patch-inclusion, -exclusion, and -ordering options.
+  The Patch Plugin has a single goal that can apply either a single declared patch or a directory of patches.
+  Application of an entire patch directory can be configured with various patch-inclusion, -exclusion, and -ordering
+  options:
+
+  * {{{apply-mojo.html}patch:apply}} Applies one or more patches to project sources.
 
 * Usage
 
-  Instructions on the basic usage of the patch plugin can be found
-  {{{usage.html}here}}.
+  Instructions on the basic usage of the Patch Plugin can be found on the
+  {{{usage.html}usage page}}.
 
 * Examples
 
-  To provide you with better understanding on some usages of the patch plugin,
+  To provide you with better understanding on some usages of the Patch Plugin,
   you can take a look into the following examples:
 
   * {{{examples/single.html}How to patch from a single file.}}
