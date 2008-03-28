@@ -74,8 +74,8 @@
       <id>integration-tests</id>
       <activation>
         <property>
-          <name>integration-tests</name>
-          <value>true</value>
+          <name>maven.test.skip</name>
+          <value>!true</value>
         </property>
       </activation>
 
