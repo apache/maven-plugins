@@ -28,15 +28,6 @@
   
   <artifactId>skip-when-patch-tracking-file-present</artifactId>
   <name>skip-when-patch-tracking-file-present</name>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
   
   <build>
     <plugins>
