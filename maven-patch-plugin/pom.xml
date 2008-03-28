@@ -122,9 +122,6 @@
                   <includes>
                     <include>**/build.log</include>
                   </includes>
-                  <excludes>
-                    <exclude>**/autoskip/skip-when-patch-tracking-file-present/target/**</exclude>
-                  </excludes>
                 </fileset>
               </filesets>
             </configuration>
