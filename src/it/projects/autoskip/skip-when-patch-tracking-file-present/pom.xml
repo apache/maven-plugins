@@ -45,9 +45,10 @@
         <artifactId>maven-patch-plugin</artifactId>
         
         <configuration>
+          <targetDirectory>${basedir}</targetDirectory>
+          <patchTrackingFile>${basedir}/src/main/patches/patches-applied.txt</patchTrackingFile>
           <patches>
             <patch>first.patch</patch>
-            <patch>second.patch</patch>
           </patches>
         </configuration>
 
