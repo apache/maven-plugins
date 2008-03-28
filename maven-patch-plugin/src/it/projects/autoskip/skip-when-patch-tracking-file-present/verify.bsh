@@ -18,9 +18,21 @@
 */
 
 import java.io.*;
+import java.util.*;
 
-File testFile = new File( basedir, "target/test2.txt" );
+try
+{
+    File testFile = new File( basedir, "target/test.txt" );
+    if ( testFile.exists() )
+    {
+        System.err.println( "Patch application has not been skipped, file was created: " + testFile );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
 
-System.out.println( "Does " + testFile + " exist? " + testFile.exists() );
-
-return !testFile.exists();
+return true;
