@@ -1,0 +1,37 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>mwar131</artifactId>
+    <groupId>com.example</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>mwar131-webapp2</artifactId>
+  <packaging>war</packaging>
+  <name>Maven Webapp Archetype</name>
+
+  <description>
+    Webapp that declares the attached jar from mwar131-webapp as a dependency, which should show up in WEB-INF/lib
+    along with its transitive dependencies.
+  </description>
+
+  <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+        <groupId>com.example</groupId>
+        <artifactId>mwar131-webapp</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <classifier>classes</classifier>
+      </dependency>
+  </dependencies>
+</project>
