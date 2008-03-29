@@ -1,0 +1,32 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>mwar131</artifactId>
+    <groupId>com.example</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>mwar131-test</artifactId>
+  <name>Maven Quick Start Archetype</name>
+
+  <description>
+    Example project that expects the attached jar from mwar131-webapp to be on the compile and test classpath.
+  </description>
+
+  <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>mwar131-webapp</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>classes</classifier>
+    </dependency>
+  </dependencies>
+</project>

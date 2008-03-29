@@ -197,6 +197,9 @@ under the License.
               <pomExcludes>
                 <pomExclude>MWAR-143/war-common/pom.xml</pomExclude>
                 <pomExclude>MWAR-143/war-filter-overlay/pom.xml</pomExclude>
+                <pomExclude>MWAR-131/mwar131-test/pom.xml</pomExclude>
+                <pomExclude>MWAR-131/mwar131-webapp/pom.xml</pomExclude>
+                <pomExclude>MWAR-131/mwar131-webapp2/pom.xml</pomExclude>
                 <pomExclude>**/META-INF/**/pom.xml</pomExclude>
               </pomExcludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
