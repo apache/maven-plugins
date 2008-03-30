@@ -31,25 +31,25 @@ import java.io.PrintStream;
 public class FileLogger
     implements InvocationOutputHandler
 {
-    
+
     private PrintStream stream;
-    
+
     private boolean shouldFinalize = true;
 
     private final Log log;
-    
+
     public FileLogger( File outputFile )
         throws IOException
     {
         this( outputFile, null );
     }
-    
+
     public FileLogger( File outputFile, Log log )
         throws IOException
     {
         this.log = log;
         stream = new PrintStream( new FileOutputStream( outputFile  ) );
-        
+
         Runnable finalizer = new Runnable()
         {
             public void run()
@@ -63,7 +63,7 @@ public class FileLogger
                 }
             }
         };
-        
+
         Runtime.getRuntime().addShutdownHook( new Thread( finalizer ) );
     }
 
@@ -76,23 +76,23 @@ public class FileLogger
     {
         stream.println( line );
         stream.flush();
-        
+
         if ( log != null )
         {
             log.info( line );
         }
     }
-    
+
     public void close()
     {
         if ( stream != null )
         {
             stream.flush();
         }
-        
+
         IOUtil.close( stream );
     }
-    
+
     public void finalize()
     {
         if ( shouldFinalize )
