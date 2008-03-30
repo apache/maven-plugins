@@ -175,7 +175,4 @@ class CompositeMap
     {
         throw new UnsupportedOperationException();
     }
-
-
-
 }
