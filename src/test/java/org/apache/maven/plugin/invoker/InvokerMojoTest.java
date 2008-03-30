@@ -50,7 +50,7 @@ public class InvokerMojoTest
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 3, goals.size() );
     }
-    
+
     public void testSimpleRunValidate()
         throws Exception
     {
@@ -75,7 +75,7 @@ public class InvokerMojoTest
         setVariableValueToObject( invokerMojo, "postBuildHookScript", "verify.bsh" );
         invokerMojo.execute();
     }
-    
+
     public void testSingleInvokerTest()
         throws Exception
     {
@@ -104,8 +104,8 @@ public class InvokerMojoTest
         String[] poms = invokerMojo.getPoms();
         System.out.println( Arrays.asList( poms ) );
         assertEquals( 2, poms.length );
-    }   
-    
+    }
+
     public void testFullPatternInvokerTest()
         throws Exception
     {
@@ -119,6 +119,5 @@ public class InvokerMojoTest
         String[] poms = invokerMojo.getPoms();
         System.out.println( Arrays.asList( poms ) );
         assertEquals( 3, poms.length );
-    }    
-    
+    }
 }
