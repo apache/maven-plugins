@@ -54,7 +54,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileDoesNotExist.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/FileDoesNotExist.xml" ).toURI() );
         mojo.setBaseDir( new File( "c:/some/path" ) );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -83,7 +83,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileExists.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/File Exists.xml" ).toURI() );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -104,7 +104,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/InexistentFile.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/InexistentFile.xml" ).toURI() );
         mojo.setBaseDir( new File( "c:/some/path" ) );
         mojo.setVerificationFile( file );
         mojo.setVerificationResultPrinter( new VerificationResultPrinter()
@@ -124,7 +124,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/InexistentFileThatExists.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/InexistentFileThatExists.xml" ).toURI() );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -153,7 +153,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileExistsValidContent.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/FileExistsValidContent.xml" ).toURI() );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setVerificationResultPrinter( new VerificationResultPrinter()
@@ -173,7 +173,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileExistsInvalidContent.xml" ).getFile() );
+        File file = new File( getClass().getResource( "/FileExistsInvalidContent.xml" ).toURI() );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );

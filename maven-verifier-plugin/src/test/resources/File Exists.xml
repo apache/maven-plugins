@@ -20,7 +20,7 @@ under the License.
 <verifications>
   <files>
     <file>
-      <location>FileExists.xml</location>
+      <location>File Exists.xml</location>
     </file>
   </files>
 </verifications>
