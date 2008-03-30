@@ -23,10 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -51,9 +51,10 @@ import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -479,7 +480,7 @@ public class InvokerMojo
                 catch ( final IOException e )
                 {
                     getLog().debug( "Error initializing build logfile in: " + outputLog, e );
-                    getLog().info( "...FAILED[could not initialize logfile in: " + outputLog );
+                    getLog().info( "...FAILED[could not initialize logfile in: " + outputLog + "]" );
 
                     failures.add( pom );
 
@@ -537,7 +538,7 @@ public class InvokerMojo
             catch ( final IOException e )
             {
                 getLog().debug( "Error reading test-properties file in: " + testPropertiesFile, e );
-                getLog().info( "...FAILED[error reading test properties in: " + testPropertiesFile );
+                getLog().info( "...FAILED[error reading test properties in: " + testPropertiesFile + "]" );
 
                 failures.add( pom );
 
@@ -719,7 +720,7 @@ public class InvokerMojo
             PrintStream origOut = System.out;
             PrintStream origErr = System.err;
 
-            FileReader reader = null;
+            Reader reader = null;
             try
             {
                 if ( !noLog )
@@ -735,7 +736,7 @@ public class InvokerMojo
 
                 engine.set( "basedir", basedir );
 
-                reader = new FileReader( script );
+                reader = ReaderFactory.newPlatformReader( script );
 
                 final Object result = engine.eval( reader );
 
@@ -923,8 +924,7 @@ public class InvokerMojo
         try
         {
             Map composite = new CompositeMap( this.project, this.interpolationsProperties );
-            reader = new BufferedReader( new InterpolationFilterReader( new FileReader( projectGoalList ), composite ) );
-            /// new BufferedReader( new FileReader( projectGoalList ) );
+            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newPlatformReader(  projectGoalList ), composite ) );
 
             result = new ArrayList();
 
@@ -943,16 +943,7 @@ public class InvokerMojo
         }
         finally
         {
-            if ( reader != null )
-            {
-                try
-                {
-                    reader.close();
-                }
-                catch ( final IOException e )
-                {
-                }
-            }
+            IOUtil.close( reader );
         }
 
         return result;
@@ -1001,20 +992,19 @@ public class InvokerMojo
         getLog().debug( "interpolate it pom to create interpolated in " + interpolatedPomFile.getPath() );
 
         BufferedReader reader = null;
-        FileWriter fileWriter = null;
+        Writer writer = null;
         try
         {
             // pom interpolation with token @...@
-            reader = new BufferedReader( new InterpolationFilterReader( new XmlStreamReader( pomFile ), composite, "@",
+            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( pomFile ), composite, "@",
                                                                         "@" ) );
-            fileWriter = new FileWriter( interpolatedPomFile );
+            writer = WriterFactory.newXmlWriter( interpolatedPomFile );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
-                fileWriter.write( line );
+                writer.write( line );
             }
-            fileWriter.flush();
-            fileWriter.close();
+            writer.flush();
         }
         catch ( IOException e )
         {
@@ -1025,7 +1015,7 @@ public class InvokerMojo
         {
             // IOUtil in p-u is null check and silently NPE
             IOUtil.close( reader );
-            IOUtil.close( fileWriter );
+            IOUtil.close( writer );
         }
 
         if ( interpolatedPomFile == null )
@@ -1052,7 +1042,7 @@ public class InvokerMojo
         try
         {
             List profilesInFiles = new ArrayList();
-            reader = new BufferedReader( new FileReader( projectProfilesFile ) );
+            reader = new BufferedReader( ReaderFactory.newPlatformReader( projectProfilesFile ) );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
