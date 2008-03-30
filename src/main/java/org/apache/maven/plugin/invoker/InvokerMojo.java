@@ -187,13 +187,13 @@ public class InvokerMojo
      */
     private Properties testProperties;
 
-	/**
-	 * Common set of properties to pass in on each project's command line, via -D parameters.
-	 *
-	 * @parameter
-	 * @since 1.1
-	 */
-	private Map properties;
+    /**
+     * Common set of properties to pass in on each project's command line, via -D parameters.
+     *
+     * @parameter
+     * @since 1.1
+     */
+    private Map properties;
 
     /**
      * Whether to show errors in the build output.
@@ -223,15 +223,15 @@ public class InvokerMojo
      * @since 1.1
      */
     private List profiles;
-    
+
     /**
      * List properties which will be used to interpolate goal files.
-     * 
+     *
      * @parameter
      * @since 1.1
-     */    
+     */
     private Properties interpolationsProperties;
-    
+
     /**
      * The Maven Project Object
      *
@@ -240,8 +240,8 @@ public class InvokerMojo
      * @readonly
      * @since 1.1
      */
-    private MavenProject project;  
-    
+    private MavenProject project;
+
     /**
      * Specify this parameter to run individual tests by file name, overriding the <code>pomIncludes</code>
      * and <code>pomExcludes</code> parameters.  Each pattern you specify here will be used to create an 
@@ -249,9 +249,9 @@ public class InvokerMojo
      * so you can just type "-Dinvoker.test=MyTest" to run a single it in ${projectsDirectory}/${invoker.test}".  
      * @parameter expression="${invoker.test}"
      * @since 1.1
-     */    
+     */
     private String invokerTest;
-    
+
     /**
      * The name of the project-specific file that contains the enumeration of profiles to use for that test.
      * <b>If the file exists and empty no profiles will be used even if the profiles is set</b>
@@ -259,7 +259,7 @@ public class InvokerMojo
      * @since 1.1
      */
     private String profilesFile;
-    
+
     /**
      * Path to an alternate settings.xml to use for maven invocation with all ITs
      * 
@@ -339,7 +339,7 @@ public class InvokerMojo
 
             runBuild( projectsDir, pom, failures );
         }
-        
+
 
         if ( !suppressSummaries )
         {
@@ -448,7 +448,7 @@ public class InvokerMojo
     private void runBuild( final File projectsDir, final String pom, final List failures )
         throws MojoExecutionException
     {
-        
+
         File pomFile = new File( projectsDir, pom );
         final File basedir = pomFile.getParentFile();
         File interpolatedPomFile = buildInterpolatedPomFile( pomFile, basedir );
@@ -576,7 +576,7 @@ public class InvokerMojo
             request.setPomFile( interpolatedPomFile );
 
             request.setProfiles( getProfiles(basedir) );
-            
+
             if ( settingsFile != null )
             {
                 request.setUserSettingsFile( settingsFile );
@@ -779,7 +779,7 @@ public class InvokerMojo
             {
                 String errorMessage = "error evaluating script " + basedir.getPath() + File.separatorChar
                     + postBuildHookScript + ", " + e.getMessage();
-                getLog().error( errorMessage, e );                
+                getLog().error( errorMessage, e );
                 result = false;
             }
         }
@@ -823,14 +823,14 @@ public class InvokerMojo
         {
             String[] testRegexes = StringUtils.split( invokerTest, "," );
             List /* String */includes = new ArrayList( testRegexes.length );
-            
+
             for ( int i = 0, size = testRegexes.length; i < size; i++ )
             {
                 // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
                 includes.add( testRegexes[i].endsWith( "pom.xml" ) ? testRegexes[i] : testRegexes[i]
                     + File.separatorChar + "pom.xml" );
             }
-            
+
             final FileSet fs = new FileSet();
 
             fs.setIncludes( includes );
@@ -842,7 +842,7 @@ public class InvokerMojo
             final FileSetManager fsm = new FileSetManager( getLog() );
 
             poms = fsm.getIncludedFiles( fs );
-        }  
+        }
         else
         {
             final FileSet fs = new FileSet();
@@ -862,7 +862,7 @@ public class InvokerMojo
 
         return poms;
     }
-    
+
     private String[] normalizePomPaths( String[] poms )
         throws IOException
     {
@@ -974,7 +974,7 @@ public class InvokerMojo
 
         return result;
     }
-    
+
     protected File buildInterpolatedPomFile( File pomFile, File targetDirectory )
         throws MojoExecutionException
     {
@@ -1035,7 +1035,7 @@ public class InvokerMojo
         }
         return interpolatedPomFile;
     }
-    
+
     protected List getProfiles( File projectDirectory )
         throws MojoExecutionException
     {
