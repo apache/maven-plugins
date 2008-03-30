@@ -268,6 +268,15 @@ public class InvokerMojo
      * @since 1.2
      */
     private File settingsFile;
+    
+
+    /**
+     * The MAVEN_OPTS env var to use when invoking maven
+     * 
+     * @parameter expression="${invoker.mavenOpts}"
+     * @since 1.2
+     */    
+    private String mavenOpts;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -581,6 +590,11 @@ public class InvokerMojo
             if ( settingsFile != null )
             {
                 request.setUserSettingsFile( settingsFile );
+            }
+            
+            if ( mavenOpts != null )
+            {
+                request.setMavenOpts( mavenOpts );
             }
 
             try
