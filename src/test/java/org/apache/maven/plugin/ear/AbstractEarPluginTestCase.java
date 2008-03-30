@@ -75,7 +75,7 @@ public abstract class AbstractEarPluginTestCase
         File testDir = getTestDir( projectName );
         Verifier verifier = new Verifier( testDir.getAbsolutePath() );
         // Let's add alternate settings.xml setting so that the latest dependencies are used
-        verifier.getCliOptions().add( "-s " + settingsFile.getAbsolutePath() );
+        verifier.getCliOptions().add( "-s \"" + settingsFile.getAbsolutePath() + "\"" );
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
 
         // On linux and macOSX, an exception is thrown if a build failure occurs underneath
