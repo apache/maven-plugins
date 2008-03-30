@@ -7,6 +7,14 @@
   <version>1.0-SNAPSHOT</version>
   <name>MWAR-131 Integration Test</name>
   <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>@pom.version@</version>
+      </plugin>
+    </plugins>
+  </build>
   <modules>
     <module>mwar131-webapp</module>
     <module>mwar131-test</module>
