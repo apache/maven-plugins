@@ -77,6 +77,16 @@ under the License.
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <!-- TODO: remove when maven-plugin-plugin 2.4.2 is released, then version can be set in parent pom -->
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.2-SNAPSHOT</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
