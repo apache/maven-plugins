@@ -148,7 +148,11 @@ public class ShadeMojo
      */
     private ArchiveFilter[] filters;
 
-    /** @parameter expression="${project.build.directory}" */
+    /**
+     * The destination directory for the shaded artifact.
+     *
+     * @parameter default-value="${project.build.directory}"
+     */
     private File outputDirectory;
 
     /**
@@ -186,6 +190,11 @@ public class ShadeMojo
     private boolean shadedArtifactAttached;
 
     /**
+     * Flag whether to generate a simplified POM for the shaded artifact. If set to <code>true</code>, dependencies that
+     * have been included into the uber JAR will be removed from the <code>&lt;dependencies&gt;</code> section of the
+     * generated POM. The reduced POM will be named <code>dependency-reduced-pom.xml</code> and is stored into the same
+     * directory as the shaded artifact.
+     *
      * @parameter expression="${createDependencyReducedPom}" default-value="true"
      */
     private boolean createDependencyReducedPom;
@@ -206,7 +215,6 @@ public class ShadeMojo
      * @parameter expression="${promoteTransitiveDependencies}" default-value="false"
      */
     private boolean promoteTransitiveDependencies;
-
 
     /**
      * The name of the classifier used in case the shaded artifact is attached.
