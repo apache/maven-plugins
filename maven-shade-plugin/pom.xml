@@ -36,6 +36,16 @@ under the License.
     <url>http://jira.codehaus.org/browse/MSHADE</url>
   </issueManagement>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-shade-plugin</url>
+  </scm>
+
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
   <dependencies>
     <!-- Maven -->
     <dependency>
