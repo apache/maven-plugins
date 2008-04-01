@@ -24,10 +24,19 @@ import junit.framework.TestCase;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 public class VerifierMojoTest
     extends TestCase
 {
+    private File getResourceFile( String name ) throws UnsupportedEncodingException
+    {
+        String file = getClass().getResource( name ).getFile();
+        String decode = URLDecoder.decode( file, "UTF-8" ); // necessary for JDK 1.5+, where spaces are escaped to %20
+        return new File( decode );
+    }
+
     public void testPrefixWithBaseDir()
     {
         VerifierMojo mojo = new VerifierMojo();
@@ -54,7 +63,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileDoesNotExist.xml" ).toURI() );
+        File file = getResourceFile( "/FileDoesNotExist.xml" );
         mojo.setBaseDir( new File( "c:/some/path" ) );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -83,7 +92,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/File Exists.xml" ).toURI() );
+        File file = getResourceFile( "/File Exists.xml" );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -104,7 +113,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/InexistentFile.xml" ).toURI() );
+        File file = getResourceFile( "/InexistentFile.xml" );
         mojo.setBaseDir( new File( "c:/some/path" ) );
         mojo.setVerificationFile( file );
         mojo.setVerificationResultPrinter( new VerificationResultPrinter()
@@ -124,7 +133,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/InexistentFileThatExists.xml" ).toURI() );
+        File file = getResourceFile( "/InexistentFileThatExists.xml" );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
@@ -153,7 +162,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileExistsValidContent.xml" ).toURI() );
+        File file = getResourceFile( "/FileExistsValidContent.xml" );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setVerificationResultPrinter( new VerificationResultPrinter()
@@ -173,7 +182,7 @@ public class VerifierMojoTest
         throws Exception
     {
         VerifierMojo mojo = new VerifierMojo();
-        File file = new File( getClass().getResource( "/FileExistsInvalidContent.xml" ).toURI() );
+        File file = getResourceFile( "/FileExistsInvalidContent.xml" );
         mojo.setBaseDir( file.getParentFile() );
         mojo.setVerificationFile( file );
         mojo.setFailOnError( true );
