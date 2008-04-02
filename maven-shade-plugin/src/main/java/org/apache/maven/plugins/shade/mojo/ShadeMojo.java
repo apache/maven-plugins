@@ -239,6 +239,19 @@ public class ShadeMojo
         Set artifactIds = new LinkedHashSet();
         Set sourceArtifacts = new LinkedHashSet();
 
+        if ( project.getArtifact().getFile() == null )
+        {
+            getLog().error( "The project main artifact does not exist. This could have the following" );
+            getLog().error( "reasons:" );
+            getLog().error( "- You have invoked the goal directly from the command line. This is not" );
+            getLog().error( "  supported. Please add the goal to the default lifecycle via an" );
+            getLog().error( "  <execution> element in your POM and use \"mvn package\" to have it run." );
+            getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
+            getLog().error( "  remove this binding from your POM such that the goal will be run in" );
+            getLog().error( "  the proper phase." );
+            throw new MojoExecutionException( "Failed to create shaded artifact.",
+                                              new IllegalStateException( "Project main artifact does not exist." ) );
+        }
         artifacts.add( project.getArtifact().getFile() );
 
         if ( createSourcesJar )
