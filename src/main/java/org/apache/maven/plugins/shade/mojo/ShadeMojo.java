@@ -22,7 +22,6 @@ package org.apache.maven.plugins.shade.mojo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -53,6 +52,7 @@ import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -691,7 +691,7 @@ public class ShadeMojo
                 f.delete();
             }
 
-            Writer w = new FileWriter( f );
+            Writer w = WriterFactory.newXmlWriter( f );
 
             PomWriter.write( w, model, true );
 
