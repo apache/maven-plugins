@@ -21,12 +21,11 @@ package org.apache.maven.plugins.shade.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,6 +33,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
@@ -65,8 +66,6 @@ public class ComponentsXmlResourceTransformer
 
         f.deleteOnExit();
 
-        String n = f.getAbsolutePath();
-
         OutputStream os = new FileOutputStream( f );
 
         IOUtil.copy( is, os );
@@ -81,7 +80,7 @@ public class ComponentsXmlResourceTransformer
 
         try
         {
-            reader = new FileReader( n );
+            reader = ReaderFactory.newXmlReader( f );
 
             newDom = Xpp3DomBuilder.build( reader );
         }
@@ -115,7 +114,7 @@ public class ComponentsXmlResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        Reader reader = new FileReader( getTransformedResource() );
+        Reader reader = ReaderFactory.newXmlReader( getTransformedResource() );
 
         jos.putNextEntry( new JarEntry( COMPONENTS_XML_PATH ) );
 
@@ -138,7 +137,7 @@ public class ComponentsXmlResourceTransformer
 
         f.deleteOnExit();
 
-        FileWriter fileWriter = new FileWriter( f );
+        Writer writer = WriterFactory.newXmlWriter( f );
         try
         {
             Xpp3Dom dom = new Xpp3Dom( "component-set" );
@@ -153,11 +152,11 @@ public class ComponentsXmlResourceTransformer
                 componentDom.addChild( component );
             }
 
-            Xpp3DomWriter.write( fileWriter, dom );
+            Xpp3DomWriter.write( writer, dom );
         }
         finally
         {
-            IOUtil.close( fileWriter );
+            IOUtil.close( writer );
         }
 
         return f;
