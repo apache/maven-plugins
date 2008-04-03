@@ -13,7 +13,19 @@ try
             if ( file.getName().indexOf( '?' ) >= 0 )
             {
                 System.err.println( "JAR file name contains corrupted characters: " + file );
-                return false;
+                System.err.println( "Platform encoding: " + System.getProperty( "file.encoding" ) );
+                String expected = "\u00E4\u00F6\u00FC\u00DF";
+                System.err.println( "expected string with this platform encoding:" + expected );
+                String result = new String( expected.getBytes() );
+                if ( expected.equals( result ) )
+                {
+                    System.err.println( "Platform encoding supports these characters, filename should not be corrupted." );
+                    return false;
+                }
+                else
+                {
+                    System.err.println( "WARN: Platform encoding does not support these characters: filename is corrupted, but cannot determine if it's plugins' fault or not." );
+                }
             }
             return true;
         }
