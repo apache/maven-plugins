@@ -20,12 +20,12 @@ package org.apache.maven.plugins.site.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -41,8 +41,8 @@ public class SiteMavenProjectStub
 
         try
         {
-            model = pomReader.read( new FileReader( new File( getBasedir(),
-                                                              "/src/test/resources/unit/interpolated-site/pom.xml" ) ) );
+            File pomFile = new File( getBasedir(), "/src/test/resources/unit/interpolated-site/pom.xml" );
+            model = pomReader.read( ReaderFactory.newXmlReader( pomFile ) );
             setModel( model );
         }
         catch ( Exception e )
