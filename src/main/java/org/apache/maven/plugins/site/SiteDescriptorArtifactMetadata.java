@@ -27,9 +27,9 @@ import org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreExce
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -80,7 +80,7 @@ public class SiteDescriptorArtifactMetadata
         Writer writer = null;
         try
         {
-            writer = new FileWriter( destination );
+            writer = WriterFactory.newXmlWriter( destination );
             new DecorationXpp3Writer().write( writer, decoration );
         }
         catch ( IOException e )
