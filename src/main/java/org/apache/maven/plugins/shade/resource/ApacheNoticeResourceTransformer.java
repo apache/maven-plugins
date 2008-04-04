@@ -66,9 +66,9 @@ public class ApacheNoticeResourceTransformer
      */
     String encoding = "ISO-8859-1";
 
-    private static final String NOTICE_PATH = "meta-inf/notice";
+    private static final String NOTICE_PATH = "META-INF/NOTICE";
 
-    private static final String NOTICE_TXT_PATH = "meta-inf/notice.txt";
+    private static final String NOTICE_TXT_PATH = "META-INF/NOTICE.txt";
 
     public boolean canTransformResource( String resource )
     {
@@ -190,7 +190,7 @@ public class ApacheNoticeResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        jos.putNextEntry( new JarEntry( "META-INF/NOTICE" ) );
+        jos.putNextEntry( new JarEntry( NOTICE_PATH ) );
 
         OutputStreamWriter pow = new OutputStreamWriter( jos, encoding );
         PrintWriter writer = new PrintWriter( pow );
