@@ -61,12 +61,13 @@ public class ApacheNoticeResourceTransformer
 
     String copyright;
 
+    private static final String NOTICE_PATH = "meta-inf/notice";
+
+    private static final String NOTICE_TXT_PATH = "meta-inf/notice.txt";
 
     public boolean canTransformResource( String resource )
     {
-        String s = resource.toLowerCase();
-
-        if (s.equals( "meta-inf/notice.txt" ) || s.equals( "meta-inf/notice" ) )
+        if ( NOTICE_PATH.equalsIgnoreCase( resource ) || NOTICE_TXT_PATH.equalsIgnoreCase( resource ) )
         {
             return true;
         }
