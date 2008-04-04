@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.codehaus.plexus.util.SelectorUtils;
+
 /**
  * @author Jason van Zyl
  * @author Mauro Talevi
@@ -55,7 +57,7 @@ public class SimpleRelocator
             this.shadedPathPattern = "hidden/" + this.pathPattern;
         }
 
-        if (excludes != null)
+        if ( excludes != null && !excludes.isEmpty() )
         {
             this.excludes = new ArrayList();
 
@@ -68,55 +70,36 @@ public class SimpleRelocator
         }
     }
 
-    public boolean canRelocatePath( String clazz )
+    public boolean canRelocatePath( String path )
     {
+        if ( path.endsWith( ".class" ) )
+        {
+            path = path.substring( 0, path.length() - 6 );
+        }
         if ( excludes != null )
         {
             for ( Iterator i = excludes.iterator(); i.hasNext(); )
             {
                 String exclude = (String) i.next();
 
-                // Remember we have converted "." -> "/" in the constructor. So ".*" is really "/*"
-                if ( exclude.endsWith( "/*" ) && clazz.startsWith( exclude.substring( 0, exclude.length() - 2 ) ) )
-                {
-                    return false;
-                }
-                else if ( clazz.equals( exclude ) )
+                if ( SelectorUtils.matchPath( exclude, path, true ) )
                 {
                     return false;
                 }
             }
         }
 
-        return clazz.startsWith( pathPattern );
+        return path.startsWith( pathPattern );
     }
 
     public boolean canRelocateClass( String clazz )
     {
-        if ( excludes != null )
-        {
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
-            {
-                String exclude = (String) i.next();
-
-                exclude = exclude.replace( '/', '.' );
-                if ( exclude.endsWith( ".*" ) && clazz.startsWith( exclude.substring( 0, exclude.length() - 2 ) ) )
-                {
-                    return false;
-                }
-                else if ( clazz.equals( exclude ) )
-                {
-                    return false;
-                }
-            }
-        }
-
-        return clazz.startsWith( pattern );
+        return canRelocatePath( clazz.replace( '.', '/' ) );
     }
 
-    public String relocatePath( String clazz )
+    public String relocatePath( String path )
     {
-        return clazz.replaceFirst(pathPattern, shadedPathPattern);
+        return path.replaceFirst(pathPattern, shadedPathPattern);
     }
 
     public String relocateClass( String clazz )
