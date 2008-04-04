@@ -32,9 +32,9 @@ public class ApacheLicenseResourceTransformer
     implements ResourceTransformer
 {
 
-    private static final String LICENSE_PATH = "meta-inf/license";
+    private static final String LICENSE_PATH = "META-INF/LICENSE";
 
-    private static final String LICENSE_TXT_PATH = "meta-inf/license.txt";
+    private static final String LICENSE_TXT_PATH = "META-INF/LICENSE.txt";
 
     Set entries = new HashSet();
 
