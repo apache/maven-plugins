@@ -1,5 +1,5 @@
  ------
- Maven 2 Shade Plugin
+ Usage
  ------
  Mauro Talevi
  ------
@@ -21,16 +21,18 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
- * Creating a shaded jar
+Usage
 
-  The goals for the Shade Plugin are bound to the package phase in the
+* Creating a Shaded JAR
+
+  The goals for the Shade Plugin are bound to the <<<package>>> phase in the
   build lifecycle.
 
 +-----
 mvn package
 +-----
 
- * Configuring Your Shade Plugin
+* Configuring Your Shade Plugin
 
 +-----
 <project>
@@ -40,6 +42,7 @@ mvn package
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>1.0.1</version>
         <configuration>
           <!-- put your configurations here -->
         </configuration>
