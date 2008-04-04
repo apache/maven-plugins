@@ -61,6 +61,11 @@ public class ApacheNoticeResourceTransformer
 
     String copyright;
 
+    /**
+     * The file encoding of the <code>NOTICE</code> file.
+     */
+    String encoding = "ISO-8859-1";
+
     private static final String NOTICE_PATH = "meta-inf/notice";
 
     private static final String NOTICE_TXT_PATH = "meta-inf/notice.txt";
@@ -102,7 +107,7 @@ public class ApacheNoticeResourceTransformer
         }
 
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader( new InputStreamReader( is, encoding ) );
 
         String line = reader.readLine();
         StringBuffer sb = new StringBuffer();
@@ -187,8 +192,8 @@ public class ApacheNoticeResourceTransformer
     {
         jos.putNextEntry( new JarEntry( "META-INF/NOTICE" ) );
 
-        OutputStreamWriter pow = new OutputStreamWriter( jos );
-        PrintWriter writer = new PrintWriter(pow);
+        OutputStreamWriter pow = new OutputStreamWriter( jos, encoding );
+        PrintWriter writer = new PrintWriter( pow );
 
         int count = 0;
         for ( Iterator itr = entries.iterator() ; itr.hasNext() ; )
