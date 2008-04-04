@@ -44,9 +44,7 @@ public class XmlAppendingTransformer
 
     public boolean canTransformResource( String r )
     {
-        r = r.toLowerCase();
-
-        if (resource != null && resource.toLowerCase().equals(r))
+        if ( resource != null && resource.equalsIgnoreCase( r ) )
         {
             return true;
         }
