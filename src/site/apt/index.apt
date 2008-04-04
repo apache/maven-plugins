@@ -1,5 +1,5 @@
  ------
- Maven 2 Shade Plugin
+ Introduction
  ------
  Mauro Talevi
  ------
@@ -21,25 +21,24 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Introduction
+Maven 2 Shade Plugin
 
  This plugin provides the capability to package the artifact in a uber-jar, including its dependencies and
- to "shade" - ie rename - the packages of some of the dependencies.
+ to <shade> - i.e. rename - the packages of some of the dependencies.
 
- * Goals Overview
+* Goals Overview
 
   The Shade Plugin has a single goal:
 
-  * {{{shade-mojo.html}shade:shade}} is bound to the package phase and
+  * {{{shade-mojo.html}shade:shade}} is bound to the <<<package>>> phase and
   is used to create a shaded jar.
 
-
- * Usage
+* Usage
 
   Instructions on how to use the Shade Plugin can be found in the
   {{{usage.html}usage}} page.
 
- * Examples
+* Examples
 
   To provide you with better understanding on some usages of the Shade
   Plugin, you can take a look {{{examples.html}examples}} page.
