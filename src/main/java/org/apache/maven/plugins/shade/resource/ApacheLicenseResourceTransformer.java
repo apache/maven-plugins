@@ -27,18 +27,21 @@ import java.util.jar.JarOutputStream;
 
 /**
  * Prevents duplicate copies of the license
- *
  */
 public class ApacheLicenseResourceTransformer
     implements ResourceTransformer
 {
+
+    private static final String LICENSE_PATH = "meta-inf/license";
+
+    private static final String LICENSE_TXT_PATH = "meta-inf/license.txt";
+
     Set entries = new HashSet();
 
     public boolean canTransformResource( String resource )
     {
-        String s = resource.toLowerCase();
-
-        if ( s.startsWith( "meta-inf/license.txt" ) || s.equals( "meta-inf/license" ))
+        if ( LICENSE_PATH.equalsIgnoreCase( resource )
+            || LICENSE_TXT_PATH.regionMatches( true, 0, resource, 0, LICENSE_TXT_PATH.length() ) )
         {
             return true;
         }
