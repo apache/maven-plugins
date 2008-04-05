@@ -21,7 +21,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-verifier-plugin</artifactId>
@@ -29,7 +29,7 @@ under the License.
   <name>Maven Verifier Plugin</name>
   <version>1.0-beta-2-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
@@ -90,7 +90,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-15</version>
+        <version>1.0-alpha-18</version>
         <executions>
           <execution>
             <goals>
@@ -109,7 +109,9 @@ under the License.
           </execution>
         </executions>
         <configuration>
-          <model>src/main/mdo/verifications.mdo</model>
+          <models>
+            <model>src/main/mdo/verifications.mdo</model>
+          </models>
           <version>1.0.0</version>
         </configuration>
       </plugin>
@@ -124,13 +126,13 @@ under the License.
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.0.4</version>
+      <version>1.5.1</version>
     </dependency>
   </dependencies>
 </project>
