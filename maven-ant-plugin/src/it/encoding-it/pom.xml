@@ -9,8 +9,6 @@
   <version>1.0-SNAPSHOT</version>
 
   <build>
-    <!-- some non-ascii characters here -->
-    <finalName>encoding-it-&#x00E4;&#x00F6;&#x00FC;&#x00DF;</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -48,5 +46,9 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <!-- some non-ascii characters here -->
+    <outputDirectory>target/site-&#x00E4;&#x0130;&#x03A3;&#x05D0;&#x06DE;</outputDirectory>
+  </reporting>
 
 </project>
