@@ -20,7 +20,7 @@
   </description>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <issueManagement>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -125,7 +125,7 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-15</version>
+        <version>1.0-alpha-18</version>
         <executions>
           <execution>
             <id>site-docs</id>
@@ -136,7 +136,9 @@
             </goals>
             <configuration>
               <version>1.0.0</version>
-              <model>src/main/mdo/supplemental-model.mdo</model>
+              <models>
+                <model>src/main/mdo/supplemental-model.mdo</model>
+              </models>
             </configuration>
           </execution>
           <execution>
@@ -148,7 +150,9 @@
             </goals>
             <configuration>
               <version>1.0.0</version>
-              <model>src/main/mdo/remote-resources.mdo</model>
+              <models>
+                <model>src/main/mdo/remote-resources.mdo</model>
+              </models>
             </configuration>
           </execution>
           <execution>
@@ -160,7 +164,9 @@
             </goals>
             <configuration>
               <version>1.0.0</version>
-              <model>src/main/mdo/remote-resources.mdo</model>
+              <models>
+                <model>src/main/mdo/remote-resources.mdo</model>
+              </models>
             </configuration>
           </execution>
           <execution>
@@ -172,7 +178,9 @@
             </goals>
             <configuration>
               <version>1.0.0</version>
-              <model>src/main/mdo/supplemental-model.mdo</model>
+              <models>
+                <model>src/main/mdo/supplemental-model.mdo</model>
+              </models>
             </configuration>
           </execution>
         </executions>
