@@ -1,37 +1,23 @@
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
 
 try
 {
-    File targetDir = new File( basedir, "target" );
-    File[] files = targetDir.listFiles();
-    for ( int i = 0; i < files.length; i++ )
+    File buildFile = new File( basedir, "maven-build.xml" );
+    String xml = FileUtils.fileRead( buildFile, "UTF-8" );
+
+    Matcher matcher = Pattern.compile( "value\\s*=\\s*\"\\$\\{maven.build.dir\\}/site-([^\"]+)\"" ).matcher( xml );
+    matcher.find();
+    String chars = matcher.group( 1 );
+
+    if ( !"\u00E4\u0130\u03A3\u05D0\u06DE".equals( chars ) )
     {
-        File file = files[i];
-        if ( file.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".jar" ) )
-        {
-            if ( file.getName().indexOf( '?' ) >= 0 )
-            {
-                System.err.println( "JAR file name contains corrupted characters: " + file );
-                System.err.println( "Platform encoding: " + System.getProperty( "file.encoding" ) );
-                String expected = "\u00E4\u00F6\u00FC\u00DF";
-                System.err.println( "expected string with this platform encoding:" + expected );
-                String result = new String( expected.getBytes() );
-                if ( expected.equals( result ) )
-                {
-                    System.err.println( "Platform encoding supports these characters, filename should not be corrupted." );
-                    return false;
-                }
-                else
-                {
-                    System.err.println( "WARN: Platform encoding does not support these characters: filename is corrupted, but cannot determine if it's plugins' fault or not." );
-                }
-            }
-            return true;
-        }
+        System.err.println( "Generated build script contains corrupted characters: " + buildFile );
+        return false;
     }
-    System.err.println( "Could not find generated JAR file" );
-    return false;
 }
 catch( Throwable t )
 {
