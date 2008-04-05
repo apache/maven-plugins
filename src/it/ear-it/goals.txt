@@ -1,0 +1,3 @@
+clean
+install
+ant:ant

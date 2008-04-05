@@ -212,8 +212,9 @@ under the License.
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <goals>
-                <!-- Install to the target local-repo -->
-                <goal>install ant:ant</goal>
+                <goal>clean</goal>
+                <goal>ant:ant</goal>
+                <goal>antrun:run</goal>
               </goals>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
@@ -225,31 +226,18 @@ under the License.
                   <goal>run</goal>
                 </goals>
               </execution>
-            </executions>
-          </plugin>
-          <!--  Verify the results by calling Ant -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.1</version>
-            <executions>
               <execution>
-                <phase>post-integration-test</phase>
-                <configuration>
-                  <tasks>
-                    <ant dir="${basedir}/src/it/ear-it" antfile="${basedir}/src/it/ear-it/build.xml" target="clean" />
-                    <ant dir="${basedir}/src/it/ear-it" antfile="${basedir}/src/it/ear-it/build.xml" target="package" />
-
-                    <ant dir="${basedir}/src/it/webapp-it" antfile="${basedir}/src/it/webapp-it/build.xml" target="clean" />
-                    <ant dir="${basedir}/src/it/webapp-it" antfile="${basedir}/src/it/webapp-it/build.xml" target="package" />
-
-                    <ant dir="${basedir}/src/it/plugin-it" antfile="${basedir}/src/it/plugin-it/build.xml" target="clean" />
-                    <ant dir="${basedir}/src/it/plugin-it" antfile="${basedir}/src/it/plugin-it/build.xml" target="package" />
-                  </tasks>
-                </configuration>
+                <id>integration-test-phase-2</id>
+                <phase>integration-test</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
+                <configuration>
+                  <pomIncludes>
+                    <pomInclude>ear-it/pom.xml</pomInclude>
+                  </pomIncludes>
+                  <goalsFile>goals-2.txt</goalsFile>
+                </configuration>
               </execution>
             </executions>
           </plugin>
