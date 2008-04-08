@@ -30,7 +30,7 @@ under the License.
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
   <packaging>pom</packaging>
-  <version>11-SNAPSHOT</version>
+  <version>11</version>
 
   <name>Maven Plugins</name>
   <description>Maven Plugins</description>
@@ -117,6 +117,7 @@ under the License.
     </site>
   </distributionManagement>
 
+<!--
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
@@ -153,15 +154,18 @@ under the License.
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
     <module>maven-stage-plugin</module>
+-->
     <!-- We cannot build it without maven 2.0.9-SNAPSHOT<module>maven-toolchains-plugin</module>-->
+<!--
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
   </modules>
+-->
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-11</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-plugins-11</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/tags/maven-plugins-11</url>
   </scm>
 
   <build>
