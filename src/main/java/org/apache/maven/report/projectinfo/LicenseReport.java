@@ -249,7 +249,7 @@ public class LicenseReport
                                 bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                                 String body = licenseContent.substring( bodyStart, bodyEnd );
 
-                                link( "[Original text]", licenseUrl.toExternalForm() );
+                                link( licenseUrl.toExternalForm(), "[Original text]" );
                                 paragraph( "Copy of the license follows." );
 
                                 body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
