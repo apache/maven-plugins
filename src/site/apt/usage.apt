@@ -417,7 +417,7 @@ mvn dependency:unpack
   
   You can also define the <<<markersDirectory>>> either in the pom or settings
   to be a common location for all projects. This allows the system to resolve sources faster for dependencies that don't
-  have the sources published. The plugin will store a marker file to describe if the sources where resolved or not. By placing
+  have the sources published. The plugin will store a marker file to describe if the sources were resolved or not. By placing
   them in a common location, multiple attempts to resolve non-existent sources will be avoided.
 
 * The <<<dependency:resolve-plugins>>> mojo
