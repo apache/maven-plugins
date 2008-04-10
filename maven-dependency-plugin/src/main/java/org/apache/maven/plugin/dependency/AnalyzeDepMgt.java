@@ -212,7 +212,7 @@ public class AnalyzeDepMgt
     }
 
     /**
-     * Returns a List of the artifacts that should have been excluded, but where
+     * Returns a List of the artifacts that should have been excluded, but were
      * found in the dependency tree.
      * 
      * @param exclusions

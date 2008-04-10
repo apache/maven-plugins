@@ -179,7 +179,7 @@ public class DependencyStatusSets
         if ( this.skippedDependencies != null && !this.skippedDependencies.isEmpty() )
         {
             sb.append( "\n" );
-            sb.append( "The following files where skipped:\n" );
+            sb.append( "The following files were skipped:\n" );
             SortedSet sortedSkippedDependencies = new TreeSet();
             sortedSkippedDependencies.addAll( this.skippedDependencies );
             for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )

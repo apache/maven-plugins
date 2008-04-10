@@ -218,7 +218,7 @@ public class BuildClasspathMojo
         String cpString = sb.toString();
 
         // if file separator is set, I need to replace the default one from all
-        // the file paths the where pulled from the artifacts
+        // the file paths that were pulled from the artifacts
         if ( isFileSepSet )
         {
             String separator = File.separator;
