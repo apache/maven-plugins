@@ -46,6 +46,11 @@ public class CopyRepositoryMojo
     /**
      * The URL to the target repository.
      * 
+     * <p>
+     * <strong>Note:</strong> currently only <code>scp:</code> URLs are allowed
+     * as a target URL.
+     * </p>
+     * 
      * @parameter expression="${target}"
      */
     private String target;
