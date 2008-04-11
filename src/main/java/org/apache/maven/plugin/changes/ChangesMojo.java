@@ -59,7 +59,7 @@ public class ChangesMojo
      * </p>
      *
      * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
-     *
+     * @since 2.0-beta-2
      */
     private String issueLinkTemplate;
 
