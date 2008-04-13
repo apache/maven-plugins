@@ -117,7 +117,6 @@ under the License.
     </site>
   </distributionManagement>
 
-<!--
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
@@ -154,13 +153,10 @@ under the License.
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
     <module>maven-stage-plugin</module>
--->
     <!-- We cannot build it without maven 2.0.9-SNAPSHOT<module>maven-toolchains-plugin</module>-->
-<!--
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
   </modules>
--->
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
@@ -184,7 +180,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>2.4.2-SNAPSHOT</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
