@@ -151,6 +151,11 @@ under the License.
       <version>1.1.2</version>
       <exclusions>
         <exclusion>
+          <!-- Use the version specified by checkstyle:checkstyle instead -->
+          <artifactId>commons-collections</artifactId>
+          <groupId>commons-collections</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>plexus-utils</artifactId>
           <groupId>plexus</groupId>
         </exclusion>
