@@ -21,7 +21,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>11</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-antrun-plugin</artifactId>
@@ -71,7 +71,7 @@
       <id>integration-tests</id>
       <activation>
         <property>
-          <name>maven.test.skip</name>
+          <name>skipTests</name>
           <value>!true</value>
         </property>
       </activation>
@@ -80,6 +80,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.1</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
