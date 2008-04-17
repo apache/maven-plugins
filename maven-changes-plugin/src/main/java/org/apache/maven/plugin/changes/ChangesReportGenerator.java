@@ -165,6 +165,8 @@ public class ChangesReportGenerator
 
     private void constructReleaseHistory( Sink sink, ResourceBundle bundle )
     {
+        sink.section2();
+
         sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.releasehistory" ), bundle
             .getString( "report.changes.label.releasehistory" ) );
 
@@ -199,8 +201,6 @@ public class ChangesReportGenerator
 
         sink.table_();
 
-        sink.lineBreak();
-
         // @todo Temporarily commented out until MCHANGES-46 is completely solved
         //        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
         //        sink.text( " " );
@@ -210,7 +210,7 @@ public class ChangesReportGenerator
         //
         //        sink.lineBreak();
 
-        sink.lineBreak();
+        sink.section2_();
     }
 
     private void constructReleases( Sink sink, ResourceBundle bundle )
@@ -221,10 +221,14 @@ public class ChangesReportGenerator
         {
             Release release = (Release) releaseList.get( idx );
 
+            sink.section2();
+
             sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
                 + release.getVersion() + " - " + release.getDateRelease(), HtmlTools.encodeId( release.getVersion() ) );
 
             constructActions( sink, release.getAction(), bundle );
+
+            sink.section2_();
         }
     }
 
@@ -260,6 +264,8 @@ public class ChangesReportGenerator
 
         sink.body();
 
+        sink.section1();
+
         sinkSectionTitle1Anchor( sink, bundle.getString( "report.changes.header" ), bundle
             .getString( "report.changes.header" ) );
     }
@@ -284,6 +290,8 @@ public class ChangesReportGenerator
 
     private void sinkEndReport( Sink sink )
     {
+        sink.section1_();
+
         sink.body_();
 
         sink.flush();
