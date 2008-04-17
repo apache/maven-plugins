@@ -70,6 +70,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -353,7 +354,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: Since 2.4, the default value is locked to <code>ISO-8859-1</code> to better reproducing build.
      *
-     * @parameter expression="${encoding}" default-value="ISO-8859-1"
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
     private String encoding;
 
@@ -1132,6 +1133,16 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * Gets the source file encoding.
+     *
+     * @return The source file encoding, never <code>null</code>.
+     */
+    protected String getEncoding()
+    {
+        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
+    }
+
+    /**
      * @param locale the wanted locale (actually unused).
      * @throws MavenReportException if any
      */
@@ -1319,7 +1330,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
             addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
         }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
         addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
@@ -3012,9 +3023,9 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         // encoding
-        if ( StringUtils.isNotEmpty( encoding ) && !JavadocUtil.validateEncoding( encoding ) )
+        if ( !JavadocUtil.validateEncoding( getEncoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + encoding );
+            throw new MavenReportException( "Encoding not supported: " + getEncoding() );
         }
     }
 
