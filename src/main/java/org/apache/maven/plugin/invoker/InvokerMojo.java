@@ -48,6 +48,7 @@ import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
@@ -118,6 +119,16 @@ public class InvokerMojo
      * @since 1.1
      */
     private File cloneProjectsTo;
+
+    /**
+     * Some files are normally excluded when copying from the projectsDirectory
+     * to the "cloneProjectsTo" directory (.svn, CVS, *~, etc).  Setting this parameter to true
+     * will cause all files to be copied to the cloneProjectsTo directory.
+     *
+     * @parameter default-value="false"
+     * @since 1.2
+     */
+    private boolean cloneAllFiles;
 
     /**
      * A single POM to build, skipping any scanning parameters and behavior.
@@ -419,24 +430,50 @@ public class InvokerMojo
                         temp.delete();
                         temp.mkdirs();
 
-                        FileUtils.copyDirectoryStructure( projectsDirectory, temp );
+                        copyDirectoryStructure( projectsDirectory, temp );
 
                         FileUtils.deleteDirectory( new File( temp, cloneSubdir ) );
 
-                        FileUtils.copyDirectoryStructure( temp, cloneProjectsTo );
+                        copyDirectoryStructure( temp, cloneProjectsTo );
                     }
                     else
                     {
-                        FileUtils.copyDirectoryStructure( projectsDirectory, cloneProjectsTo );
+                        copyDirectoryStructure( projectsDirectory, cloneProjectsTo );
                     }
                 }
                 else
                 {
-                    FileUtils.copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo, subpath ) );
+                    copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo, subpath ) );
                 }
 
                 clonedSubpaths.add( subpath );
             }
+        }
+    }
+    
+    /**
+     * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
+     * 
+     * @param sourceDir
+     * @param destDir
+     * @throws IOException
+     */
+    private void copyDirectoryStructure( File sourceDir, File destDir ) throws IOException
+    {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( sourceDir );
+        if ( ! cloneAllFiles )
+        {
+            scanner.addDefaultExcludes();
+        }
+        scanner.scan();
+        
+        String [] includedFiles = scanner.getIncludedFiles();
+        for ( int i = 0; i < includedFiles.length; ++i )
+        {
+            File sourceFile = new File( sourceDir, includedFiles[ i ] );
+            File destFile = new File( destDir, includedFiles[ i ] );
+            FileUtils.copyFile( sourceFile, destFile );
         }
     }
 
