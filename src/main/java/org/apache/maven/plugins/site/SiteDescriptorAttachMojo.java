@@ -25,7 +25,8 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public class SiteDescriptorAttachMojo
                 DecorationModel decoration;
                 try
                 {
-                    String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
+                    String siteDescriptorContent = IOUtil.toString( ReaderFactory.newXmlReader( descriptorFile ) );
 
                     siteDescriptorContent =
                         siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent, getInputEncoding(), outputEncoding );
