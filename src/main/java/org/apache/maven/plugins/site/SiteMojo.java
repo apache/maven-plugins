@@ -112,7 +112,7 @@ public class SiteMojo
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );
 
-        context.setInputEncoding( inputEncoding );
+        context.setInputEncoding( getInputEncoding() );
         context.setOutputEncoding( outputEncoding );
 
         Map documents = locateDocuments( context, reports, locale );

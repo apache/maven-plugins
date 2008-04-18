@@ -85,7 +85,7 @@ public class SiteDescriptorAttachMojo
                     String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
 
                     siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent, inputEncoding, outputEncoding );
+                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent, getInputEncoding(), outputEncoding );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
