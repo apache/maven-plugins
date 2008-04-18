@@ -58,7 +58,7 @@ public abstract class AbstractPmdReport
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
-    protected String outputDirectory;
+    protected File outputDirectory;
 
     /**
      * Site rendering component for generating the HTML report.
@@ -202,7 +202,7 @@ public abstract class AbstractPmdReport
         {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
             
-            String relativePath = PathTool.getRelativePath( outputDirectory, xrefLoc.getAbsolutePath() );
+            String relativePath = PathTool.getRelativePath( outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath() );
             if ( StringUtils.isEmpty( relativePath ) )
             {
                 relativePath = ".";
@@ -423,6 +423,6 @@ public abstract class AbstractPmdReport
      */
     protected String getOutputDirectory()
     {
-        return outputDirectory;
+        return outputDirectory.getAbsolutePath();
     }
 }
