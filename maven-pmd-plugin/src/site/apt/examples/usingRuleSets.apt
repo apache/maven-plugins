@@ -29,7 +29,7 @@
 Using Rule Sets
 
  The PMD plugin uses three default rule sets: <basic.xml>, <unusedcode.xml> and <imports.xml>. These rule sets are
- bundled in the PMD code analysis tool ({{{http://pmd.sourceforge.net/rules/index.html}more info}}). To use other
+ bundled in the PMD code analysis tool (see the {{{http://pmd.sourceforge.net/rules/index.html}ruleset index}}). To use other
  rule sets, you can configure it in the plugin as shown below.
 
  The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool,
@@ -44,6 +44,7 @@ Using Rule Sets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <rulesets>
             <!-- Two rule sets that come bundled with PMD -->
