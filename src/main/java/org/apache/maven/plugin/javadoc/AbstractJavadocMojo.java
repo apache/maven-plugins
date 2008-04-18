@@ -269,8 +269,9 @@ public abstract class AbstractJavadocMojo
     private boolean debug;
 
     /**
-     * Sets the path of the Javadoc Tool executable to use.
-     *
+     * Sets the absolute path of the Javadoc Tool executable to use. Since version 2.5, a mere directory specification
+     * is sufficient to have the plugin use "javadoc" or "javadoc.exe" respectively from this directory.
+     * 
      * @since 2.3
      * @parameter expression="${javadocExecutable}"
      */
@@ -2398,7 +2399,17 @@ public abstract class AbstractJavadocMojo
         {
             javadocExe = new File( javadocExecutable );
 
-            if ( !javadocExe.exists() || !javadocExe.isFile() )
+            if ( javadocExe.isDirectory() )
+            {
+                javadocExe = new File( javadocExe, javadocCommand );
+            }
+
+            if ( SystemUtils.IS_OS_WINDOWS && javadocExe.getName().indexOf( '.' ) < 0 )
+            {
+                javadocExe = new File( javadocExe.getPath() + ".exe" );
+            }
+
+            if ( !javadocExe.isFile() )
             {
                 throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. "
                     + "Verify the <javadocExecutable/> parameter." );
