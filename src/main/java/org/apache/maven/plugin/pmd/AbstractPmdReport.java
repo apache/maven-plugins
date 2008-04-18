@@ -22,7 +22,9 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +156,7 @@ public abstract class AbstractPmdReport
      * @parameter
      * @since 2.2
      */
-    private List excludeRoots;
+    private File[] excludeRoots;
     
     /**
      * Run PMD on the tests.
@@ -257,16 +259,14 @@ public abstract class AbstractPmdReport
 
         if ( excludeRoots == null )
         {
-            excludeRoots = Collections.EMPTY_LIST;
+            excludeRoots = new File[0];
         }
-        List excludeRootFiles = new ArrayList( excludeRoots.size() );
+        Collection excludeRootFiles = new HashSet( excludeRoots.length );
         
-        for ( Iterator it = excludeRoots.iterator(); it.hasNext(); ) 
+        for ( int i = 0; i < excludeRoots.length; i++ ) 
         {
-            String root = (String) it.next();
-            File file = new File( root );
-            if ( file.exists()
-                && file.isDirectory() )
+            File file = excludeRoots[i];
+            if ( file.isDirectory() )
             {
                 excludeRootFiles.add( file );
             }
@@ -343,9 +343,7 @@ public abstract class AbstractPmdReport
         {
             PmdFileInfo finfo = (PmdFileInfo) it.next();
             File sourceDirectory = finfo.getSourceDirectory();
-            if ( sourceDirectory.exists()
-                && sourceDirectory.isDirectory()
-                && !excludeRootFiles.contains( sourceDirectory ) )
+            if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
                 List newfiles = FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() );
                 for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
