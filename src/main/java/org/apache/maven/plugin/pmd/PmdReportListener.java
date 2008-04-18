@@ -281,7 +281,7 @@ public class PmdReportListener
     {
         if ( fileCount == 0 )
         {
-            sink.text( "PMD found no problems in your source code." );
+            sink.text( bundle.getString( "report.pmd.noProblems" ) );
         }
 
         sink.section1_();
