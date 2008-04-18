@@ -36,7 +36,14 @@ public class PmdFileInfo
                        String x ) 
     {
         this.project = project;
-        this.sourceDir = dir;
+        if ( dir.isAbsolute() )
+        {
+            this.sourceDir = dir;
+        }
+        else
+        {
+            this.sourceDir = new File( project.getBasedir(), dir.getPath() );
+        }
         this.xref = x;
     }
     
