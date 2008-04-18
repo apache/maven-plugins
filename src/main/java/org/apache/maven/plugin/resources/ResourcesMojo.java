@@ -269,6 +269,6 @@ public class ResourcesMojo
                     }
             };
         }
-        FileUtils.copyFile(from, to, encoding, wrappers);
+        FileUtils.copyFile(from, to, getEncoding(), wrappers);
     }
 }
