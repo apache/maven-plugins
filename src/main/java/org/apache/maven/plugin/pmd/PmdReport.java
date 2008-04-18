@@ -63,6 +63,7 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
  *
  * @author Brett Porter
  * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
+ * @since 2.0
  * @goal pmd
  */
 public class PmdReport
@@ -84,6 +85,7 @@ public class PmdReport
      * than this will not be evaluated.
      *
      * @parameter expression="${minimumPriority}" default-value="5"
+     * @since 2.1
      */
     private int minimumPriority = 5;
 
@@ -92,6 +94,7 @@ public class PmdReport
      * via "-Dpmd.skip=true".
      *
      * @parameter expression="${pmd.skip}" default-value="false"
+     * @since 2.1
      */
     private boolean skip;
 
