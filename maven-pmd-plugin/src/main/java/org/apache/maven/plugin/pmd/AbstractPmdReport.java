@@ -53,8 +53,10 @@ public abstract class AbstractPmdReport
     protected File targetDirectory;
 
     /**
-     * The output directory for the final HTML report.
-     *
+     * The output directory for the final HTML report. Note that this parameter is only evaluated if the goal is run
+     * directly from the command line or during the default lifecycle. If the goal is run indirectly as part of a site
+     * generation, the output directory configured in the Maven Site Plugin is used instead.
+     * 
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
