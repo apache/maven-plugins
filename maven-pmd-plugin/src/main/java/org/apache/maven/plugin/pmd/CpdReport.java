@@ -48,7 +48,6 @@ import org.apache.maven.reporting.MavenReportException;
  * @author Mike Perham
  * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
  * @goal cpd
- * @todo needs to support the multiple source roots
  */
 public class CpdReport
     extends AbstractPmdReport
