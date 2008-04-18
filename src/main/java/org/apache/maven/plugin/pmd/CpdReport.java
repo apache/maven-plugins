@@ -39,6 +39,7 @@ import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Creates a report for PMD's CPD tool.  See
@@ -70,9 +71,10 @@ public class CpdReport
     private boolean skip;
 
     /**
-     * The file encoding to use when reading the java source.
-     *
-     * @parameter
+     * The file encoding to use when reading the java source. <strong>Note:</strong> Prior to version 2.4, this
+     * parameter defaulted to the JVM's default encoding which led to platform-dependent builds.
+     * 
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.3
      */
     private String sourceEncoding;
@@ -110,13 +112,11 @@ public class CpdReport
                 Map files = null;
                 try
                 {
-                    if ( sourceEncoding != null )
-                    {
-                        cpd.setEncoding( sourceEncoding );
+                    cpd.setEncoding( getSourceEncoding() );
 
-                        // test encoding as CPD will convert exception into a RuntimeException
-                        new OutputStreamWriter( new ByteArrayOutputStream() , sourceEncoding );
-                    }
+                    // test encoding as CPD will convert exception into a RuntimeException
+                    new OutputStreamWriter( new ByteArrayOutputStream() , getSourceEncoding() );
+
                     files = getFilesToProcess( );
                     for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
                     {
@@ -125,7 +125,7 @@ public class CpdReport
                 }
                 catch ( UnsupportedEncodingException e )
                 {
-                    throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e );
+                    throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e );
                 }
                 catch ( IOException e )
                 {
@@ -148,6 +148,16 @@ public class CpdReport
             }
 
         }
+    }
+
+    /**
+     * Gets the effective source file encoding.
+     * 
+     * @return The effective source file encoding, never <code>null</code>.
+     */
+    private String getSourceEncoding()
+    {
+        return ( sourceEncoding == null ) ? ReaderFactory.ISO_8859_1 : sourceEncoding;
     }
 
     void writeNonHtml( CPD cpd ) throws MavenReportException
