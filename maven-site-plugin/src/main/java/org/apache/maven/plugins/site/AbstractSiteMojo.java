@@ -35,6 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Base class for site mojos.
@@ -109,9 +110,9 @@ public abstract class AbstractSiteMojo
     /**
      * Specifies the input encoding.
      *
-     * @parameter expression="${inputEncoding}" default-value="ISO-8859-1"
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
-    protected String inputEncoding;
+    private String inputEncoding;
 
     /**
      * Specifies the output encoding.
@@ -119,6 +120,16 @@ public abstract class AbstractSiteMojo
      * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
      */
     protected String outputEncoding;
+
+    /**
+     * Gets the input files encoding.
+     *
+     * @return The input files encoding, never <code>null</code>.
+     */
+    protected String getInputEncoding()
+    {
+        return ( inputEncoding == null ) ? ReaderFactory.ISO_8859_1 : inputEncoding;
+    }
 
     protected void populateReportItems( DecorationModel decorationModel, Locale locale, Map reportsByOutputName )
     {

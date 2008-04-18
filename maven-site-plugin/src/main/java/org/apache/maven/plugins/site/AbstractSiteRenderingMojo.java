@@ -209,7 +209,7 @@ public abstract class AbstractSiteRenderingMojo
 
         if ( attributes.get( "inputEncoding" ) == null )
         {
-            attributes.put( "inputEncoding", inputEncoding );
+            attributes.put( "inputEncoding", getInputEncoding() );
         }
 
         if ( attributes.get( "outputEncoding" ) == null )
@@ -223,7 +223,7 @@ public abstract class AbstractSiteRenderingMojo
         DecorationModel decorationModel;
         try
         {
-            decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories, toRelative( project.getBasedir(), siteDirectory.getAbsolutePath() ), locale, inputEncoding, outputEncoding );
+            decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories, toRelative( project.getBasedir(), siteDirectory.getAbsolutePath() ), locale, getInputEncoding(), outputEncoding );
         }
         catch ( SiteToolException e )
         {
