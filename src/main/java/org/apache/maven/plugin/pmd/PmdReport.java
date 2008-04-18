@@ -64,7 +64,6 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
  * @author Brett Porter
  * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
  * @goal pmd
- * @todo needs to support the multiple source roots
  */
 public class PmdReport
     extends AbstractPmdReport
