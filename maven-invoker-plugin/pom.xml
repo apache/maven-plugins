@@ -28,15 +28,15 @@ under the License.
   <version>1.2-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.6</maven>
-  </prerequisites>   
+  </prerequisites>
   <packaging>maven-plugin</packaging>
   <name>Maven Invoker Plugin</name>
-		
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-invoker-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-invoker-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-invoker-plugin/</url>
-  </scm>	
+  </scm>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MINVOKER</url>
@@ -50,9 +50,9 @@ under the License.
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.0.4</version>
-      </plugin>      
+      </plugin>
     </plugins>
-  </build>	
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -61,28 +61,18 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
+      <artifactId>maven-project</artifactId>
       <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0</version>
-    </dependency>   
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
+      <artifactId>maven-plugin-api</artifactId>
       <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>file-management</artifactId>
       <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-io</artifactId>
-      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.beanshell</groupId>
@@ -99,6 +89,12 @@ under the License.
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.1</version>
       <scope>test</scope>
-    </dependency>	
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>2.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
