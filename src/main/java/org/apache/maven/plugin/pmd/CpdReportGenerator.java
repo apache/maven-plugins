@@ -113,7 +113,7 @@ public class CpdReportGenerator
 
         if ( !matches.hasNext() )
         {
-            sink.text( "CPD found no problems in your source code." );            
+            sink.text( bundle.getString( "report.cpd.noProblems" ) );
         }
 
         while ( matches.hasNext() )
