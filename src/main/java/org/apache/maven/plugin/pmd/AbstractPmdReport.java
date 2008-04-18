@@ -22,10 +22,12 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -128,9 +130,6 @@ public abstract class AbstractPmdReport
      * @since 2.2
      */
     private String[] includes;
-
-    
-    
     
     /**
      * The directories containing the sources to be compiled.
@@ -314,30 +313,12 @@ public abstract class AbstractPmdReport
   
         }
         
-        String excluding = getIncludeExcludeString( excludes );
-        String including = getIncludeExcludeString( includes );
-        Map files = new TreeMap();
-        
-        if ( "".equals( including ) )
-        {
-            including = "**/*.java";
-        }
+        String excluding = getExcludes();
+        getLog().debug( "Exclusions: " + excluding );
+        String including = getIncludes();
+        getLog().debug( "Inclusions: " + including );
 
-        StringBuffer excludesStr = new StringBuffer();
-        if ( StringUtils.isNotEmpty( excluding ) )
-        {
-            excludesStr.append( excluding );
-        }
-        String[] defaultExcludes = FileUtils.getDefaultExcludes();
-        for ( int i = 0; i < defaultExcludes.length; i++ )
-        {
-            if ( excludesStr.length() > 0 )
-            {
-                excludesStr.append( "," );
-            }
-            excludesStr.append( defaultExcludes[i] );
-        }
-        getLog().debug( "Excluded files: '" + excludesStr + "'" );
+        Map files = new TreeMap();
 
         for ( Iterator it = directories.iterator(); it.hasNext(); )
         {
@@ -345,7 +326,7 @@ public abstract class AbstractPmdReport
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
-                List newfiles = FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() );
+                List newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
                 {
                     files.put( it2.next(), finfo );
@@ -357,30 +338,38 @@ public abstract class AbstractPmdReport
     }
 
     /**
-     * Convenience method that concatenates the files to be excluded into the appropriate format.
-     *
-     * @param arr the array of Strings that contains the files to be excluded
-     * @return a String that contains the concatenated file names
+     * Gets the comma separated list of effective include patterns.
+     * 
+     * @return The comma separated list of effective include patterns, never <code>null</code>.
      */
-    private String getIncludeExcludeString( String[] arr )
+    private String getIncludes()
     {
-        StringBuffer str = new StringBuffer();
-
-        if ( arr != null )
+        Collection patterns = new LinkedHashSet();
+        if ( includes != null )
         {
-            for ( int index = 0; index < arr.length; index++ )
-            {
-                if ( str.length() > 0 )
-                {
-                    str.append( ',' );
-                }
-                str.append( arr[index] );
-            }
+            patterns.addAll( Arrays.asList( includes ) );
         }
-
-        return str.toString();
+        if ( patterns.isEmpty() )
+        {
+            patterns.add( "**/*.java" );
+        }
+        return StringUtils.join( patterns.iterator(), "," );
     }
 
+    /**
+     * Gets the comma separated list of effective exclude patterns.
+     * 
+     * @return The comma separated list of effective exclude patterns, never <code>null</code>.
+     */
+    private String getExcludes()
+    {
+        Collection patterns = new LinkedHashSet( FileUtils.getDefaultExcludesAsList() );
+        if ( excludes != null )
+        {
+            patterns.addAll( Arrays.asList( excludes ) );
+        }
+        return StringUtils.join( patterns.iterator(), "," );
+    }
 
     protected boolean isHtml()
     {
