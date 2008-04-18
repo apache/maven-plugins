@@ -28,7 +28,7 @@ Usage
   The PMD plugin generates PMD and CPD reports using the PMD code analysis tool.
 
   To include a report with default rule sets and configuration in your project site, set the following in the
-  <<<\<reporting\>>>> section of your pom:
+  <<<\<reporting\>>>> section of your POM:
 
 +-----+
 <project>
@@ -38,6 +38,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
@@ -46,7 +47,7 @@ Usage
 +-----+
 
   You can also explicitly execute the PMD plugin and generate the same report by setting the plugin in the
-  <<<\<build\>>>> section of your pom as shown below:
+  <<<\<build\>>>> section of your POM as shown below:
 
 +-----+
 <project>
@@ -56,6 +57,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </build>
@@ -90,6 +92,7 @@ Configuration
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <linkXref>true</linkXref>
           <sourceEncoding>utf-8</sourceEncoding>
