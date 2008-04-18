@@ -289,6 +289,14 @@ public class InvokerMojo
      */    
     private String mavenOpts;
 
+    /**
+     * The file encoding for the BeanShell scripts and the list files for goals and profiles.
+     * 
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     * @since 1.2
+     */
+    private String encoding;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -394,6 +402,16 @@ public class InvokerMojo
 
             throw new MojoFailureException( this, message, message );
         }
+    }
+
+    /**
+     * Gets the source file encoding.
+     * 
+     * @return The source file encoding, never <code>null</code>.
+     */
+    protected String getEncoding()
+    {
+        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
     }
 
     private void cloneProjects( String[] includedPoms )
@@ -787,7 +805,7 @@ public class InvokerMojo
 
                 engine.set( "basedir", basedir );
 
-                reader = ReaderFactory.newPlatformReader( script );
+                reader = ReaderFactory.newReader( script, getEncoding() );
 
                 final Object result = engine.eval( reader );
 
@@ -975,7 +993,7 @@ public class InvokerMojo
         try
         {
             Map composite = new CompositeMap( this.project, this.interpolationsProperties );
-            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newPlatformReader(  projectGoalList ), composite ) );
+            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newReader(  projectGoalList, getEncoding() ), composite ) );
 
             result = new ArrayList();
 
@@ -1093,7 +1111,7 @@ public class InvokerMojo
         try
         {
             List profilesInFiles = new ArrayList();
-            reader = new BufferedReader( ReaderFactory.newPlatformReader( projectProfilesFile ) );
+            reader = new BufferedReader( ReaderFactory.newReader( projectProfilesFile, getEncoding() ) );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
