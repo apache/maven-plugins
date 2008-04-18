@@ -65,6 +65,7 @@ import bsh.Interpreter;
  * outputting the results to the screen.
  *
  * @goal run
+ * @since 1.0
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
