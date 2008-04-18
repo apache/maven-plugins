@@ -102,6 +102,9 @@ Configuration
             <exclude>**/*Bean.java</exclude>
             <exclude>**/generated/*.java</exclude>
           </excludes>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources/stubs</excludeRoot>
+          </excludeRoots>
         </configuration>
       </plugin>
     </plugins>

@@ -115,15 +115,18 @@ public abstract class AbstractPmdReport
     private File xrefTestLocation;
 
     /**
-     * A list of files to exclude from checking. Can contain ant-style wildcards and double wildcards.
-     *
+     * A list of files to exclude from checking. Can contain Ant-style wildcards and double wildcards. Note that these
+     * exclusion patterns only operate on the path of a source file relative to its source root directory. In other
+     * words, files are excluded based on their package and/or class name. If you want to exclude entire source root
+     * directories, use the parameter <code>excludeRoots</code> instead.
+     * 
      * @parameter
      * @since 2.2
      */
     private String[] excludes;
-    
+
     /**
-     * A list of files to include from checking. Can contain ant-style wildcards and double wildcards.  
+     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.  
      * Defaults to **\/*.java.
      *
      * @parameter
