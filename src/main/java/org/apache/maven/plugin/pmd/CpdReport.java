@@ -47,6 +47,7 @@ import org.apache.maven.reporting.MavenReportException;
  *
  * @author Mike Perham
  * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
+ * @since 2.0
  * @goal cpd
  */
 public class CpdReport
@@ -64,6 +65,7 @@ public class CpdReport
      * via "-Dcpd.skip=true".
      *
      * @parameter expression="${cpd.skip}" default-value="false"
+     * @since 2.1
      */
     private boolean skip;
 
