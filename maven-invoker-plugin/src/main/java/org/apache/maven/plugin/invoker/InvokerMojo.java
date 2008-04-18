@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -35,6 +36,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.installer.ArtifactInstallationException;
+import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -74,6 +81,29 @@ public class InvokerMojo
     extends AbstractMojo
 {
     /**
+     * @parameter expression="${component.org.apache.maven.artifact.installer.ArtifactInstaller}"
+     * @required
+     * @readonly
+     * @since 1.2
+     */
+    protected ArtifactInstaller installer;
+
+    /**
+     * Used to create artifacts
+     *
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * Flag to determine if the project artifact(s) should be installed to the
+     * local repository.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean installProjectArtifacts;
+    
+    /**
      * Flag used to suppress certain invocations. This is useful in tailoring the
      * build using profiles.
      *
@@ -100,11 +130,18 @@ public class InvokerMojo
     private boolean streamLogs;
 
     /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
      * The local repository for caching artifacts.
      *
      * @parameter expression="${invoker.localRepositoryPath}"
      */
-    private String localRepositoryPath;
+    private File localRepositoryPath;
 
     /**
      * Directory to search for integration tests.
@@ -307,6 +344,11 @@ public class InvokerMojo
             return;
         }
 
+        if ( installProjectArtifacts )
+        {
+            installProjectArtifacts();
+        }
+        
         String[] includedPoms;
         if ( pom != null )
         {
@@ -403,6 +445,56 @@ public class InvokerMojo
 
             throw new MojoFailureException( this, message, message );
         }
+    }
+    
+    /**
+     * Install the main project artifact and any attached artifacts to the local repository.
+     * 
+     * @throws MojoExecutionException
+     */
+    private void installProjectArtifacts()
+        throws MojoExecutionException
+    {
+        ArtifactRepository integrationTestRepository = localRepository;
+        
+        try
+        {
+            if ( localRepositoryPath != null )
+            {
+                if ( ! localRepositoryPath.exists() )
+                {
+                    localRepositoryPath.mkdirs();
+                }
+                integrationTestRepository = new DefaultArtifactRepository( "local-repo", localRepositoryPath.toURL().toString(), 
+                                                                 localRepository.getLayout() );
+            }
+                        
+            // Install the pom
+            Artifact pomArtifact = artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), 
+                                                          project.getVersion(), null, "pom" );
+            installer.install( project.getFile(), pomArtifact, integrationTestRepository );
+            
+            // Install the main project artifact
+            installer.install( project.getArtifact().getFile(), project.getArtifact(), integrationTestRepository );
+            
+            // Install any attached project artifacts
+            List attachedArtifacts = project.getAttachedArtifacts();
+            Iterator artifactIter = attachedArtifacts.iterator();
+            while ( artifactIter.hasNext() )
+            {
+                Artifact theArtifact = (Artifact)artifactIter.next();
+                installer.install( theArtifact.getFile(), theArtifact, integrationTestRepository );
+            }
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
+        }
+        catch ( ArtifactInstallationException e )
+        {
+            throw new MojoExecutionException( "ArtifactInstallationException: " + e.getMessage(), e );
+        }
+        
     }
 
     /**
@@ -612,12 +704,7 @@ public class InvokerMojo
 
             if ( localRepositoryPath != null )
             {
-                File localRepoDir = new File( localRepositoryPath );
-
-                if ( !localRepoDir.isAbsolute() )
-                {
-                    localRepoDir = new File( basedir, localRepositoryPath );
-                }
+                File localRepoDir = localRepositoryPath;
 
                 getLog().debug( "Using local repository: " + localRepoDir );
 
