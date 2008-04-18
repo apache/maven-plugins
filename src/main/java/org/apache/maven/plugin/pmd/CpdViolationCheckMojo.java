@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Fail the build if there were any CPD violations in the source code.
  *
+ * @since 2.0
  * @goal cpd-check
  * @phase verify
  * @execute goal="cpd"
