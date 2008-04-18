@@ -1,36 +1,36 @@
  ------
- Advance Usage
+ Advanced Usage
  ------
  Olivier Lamy
  ------
  24 November 2007
  ------
  
-Advance Usage
+Advanced Usage
 
-* Goals file Interpolation
+* Goals File Interpolation
 
-  goals files can be interpolated with some values : 
+  The goals files can be interpolated with some values:
   
-  * values from the project pom (you must use $\{pom.groupId} notation in your goals file)
+  * Values from the project POM (you must use <<<$\{pom.groupId}>>> notation in your goals file)
   
-  * In the plugin configuration you can add some properties in a interpolationsProperties element
+  * In the plugin configuration you can add some properties in a <<<\<interpolationsProperties\>>>> element
 
-* it Pom Interpolation 
+* IT POM Interpolation 
 
-  It poms can be interpolated with some values : 
+  IT POMs can be interpolated with some values:
     
-  * values from the project pom (you must use @pom.groupId@ notation in your pom file)
+  * Values from the project POM (you must use <<<@pom.groupId@>>> notation in your POM file)
   
-  * In the plugin configuration you can add some properties in a interpolationsProperties element
+  * In the plugin configuration you can add some properties in a <<<\<interpolationsProperties\>>>> element
   
-  * properties from pom.properties      
+  * Properties from <<<pom.properties>>>
 
-* Running only some tests
+* Running Only Some Tests
 
-  The plugin support a parameter -Dinvoker.test to run only its in the directory match by the expressions 
-  used in the parameter 
-  command line is : mvn -Dinvoker.test=*MWAR*,simple*
-    
-  
-   
+  The plugin supports a parameter <<<-Dinvoker.test>>> to run only ITs in the directories matched by the expressions 
+  used in the parameter. See this example command line:
+
++---
+  mvn -Dinvoker.test=*MWAR*,simple*
++---
