@@ -54,7 +54,7 @@ public class ResourcesMojo
     /**
      * The character encoding scheme to be applied.
      *
-     * @parameter
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
     private String encoding;
 
@@ -95,6 +95,16 @@ public class ResourcesMojo
      */
     private List filters;
 
+    /**
+     * Gets the source file encoding.
+     *
+     * @return The source file encoding, never <code>null</code>.
+     */
+    protected String getEncoding()
+    {
+        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
+    }
+
     public void execute()
         throws MojoExecutionException
     {
@@ -106,14 +116,7 @@ public class ResourcesMojo
     {
         initializeFiltering();
 
-        if ( encoding == null || encoding.length() < 1 )
-        {
-            getLog().info( "Using platform encoding (" + ReaderFactory.FILE_ENCODING + " actually) to copy filtered resources." );
-        }
-        else
-        {
-            getLog().info( "Using " + encoding + " encoding to copy filtered resources." );
-        }
+        getLog().info( "Using " + getEncoding() + " encoding to copy filtered resources." );
 
         for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
