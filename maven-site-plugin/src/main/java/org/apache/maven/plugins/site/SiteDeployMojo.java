@@ -26,6 +26,7 @@ import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -104,9 +105,6 @@ public class SiteDeployMojo
 
     private PlexusContainer container;
 
-    /** Map( String, XmlPlexusConfiguration ) with the repository id and the wagon configuration */
-    private Map serverConfigurationMap = new HashMap();
-
     public void execute()
         throws MojoExecutionException
     {
@@ -149,7 +147,7 @@ public class SiteDeployMojo
         {
             // @todo Use WagonManager#getWagon(Repository) when available. It's available in Maven 2.0.5.
             wagon = wagonManager.getWagon( repository.getProtocol() );
-            configureWagon( wagon, repository.getId() );
+            configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -300,52 +298,55 @@ public class SiteDeployMojo
      * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
      * @param wagon
      * @param repositoryId
+     * @param settings
+     * @param container
+     * @param log
      * @throws WagonConfigurationException
      */
-    private void configureWagon( Wagon wagon, String repositoryId )
+    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container, Log log )
         throws WagonConfigurationException
     {
         // MSITE-25: Make sure that the server settings are inserted
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
             Server server = (Server) settings.getServers().get( i );
-            if ( server.getConfiguration() != null )
+            String id = server.getId();
+            if ( id != null && id.equals( repositoryId ) )
             {
-                final XmlPlexusConfiguration xmlConf =
-                    new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
-                serverConfigurationMap.put( server.getId(), xmlConf );
-            }
-        }
-
-        if ( serverConfigurationMap.containsKey( repositoryId ) )
-        {
-            ComponentConfigurator componentConfigurator = null;
-            try
-            {
-                componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
-                componentConfigurator.configureComponent( wagon, (PlexusConfiguration) serverConfigurationMap
-                    .get( repositoryId ), container.getContainerRealm() );
-            }
-            catch ( final ComponentLookupException e )
-            {
-                throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator. Wagon configuration cannot be applied.", e );
-            }
-            catch ( ComponentConfigurationException e )
-            {
-                throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
-            }
-            finally
-            {
-                if ( componentConfigurator != null )
+                if ( server.getConfiguration() != null )
                 {
+                    final PlexusConfiguration plexusConf =
+                        new XmlPlexusConfiguration( (Xpp3Dom) server.getConfiguration() );
+
+                    ComponentConfigurator componentConfigurator = null;
                     try
                     {
-                        container.release( componentConfigurator );
+                        componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                        componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
-                    catch ( ComponentLifecycleException e )
+                    catch ( final ComponentLookupException e )
                     {
-                        getLog().error( "Problem releasing configurator - ignoring: " + e.getMessage() );
+                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator. Wagon configuration cannot be applied.", e );
                     }
+                    catch ( ComponentConfigurationException e )
+                    {
+                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
+                    }
+                    finally
+                    {
+                        if ( componentConfigurator != null )
+                        {
+                            try
+                            {
+                                container.release( componentConfigurator );
+                            }
+                            catch ( ComponentLifecycleException e )
+                            {
+                                log.error( "Problem releasing configurator - ignoring: " + e.getMessage() );
+                            }
+                        }
+                    }
+
                 }
 
             }
