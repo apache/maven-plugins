@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.invoker.Invoker;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -73,6 +74,7 @@ public class InvokerMojoTest
         //cloneProjectsTo.getParent()
         setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
         setVariableValueToObject( invokerMojo, "postBuildHookScript", "verify.bsh" );
+        setVariableValueToObject( invokerMojo, "settings", new Settings() );
         invokerMojo.execute();
     }
 

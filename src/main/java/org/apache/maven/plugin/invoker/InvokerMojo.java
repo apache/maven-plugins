@@ -46,6 +46,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -334,6 +335,18 @@ public class InvokerMojo
      * @since 1.2
      */
     private String encoding;
+    
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     * @since 1.2
+     */
+    private Settings settings;    
+    
+    
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -609,7 +622,7 @@ public class InvokerMojo
 
         File pomFile = new File( projectsDir, pom );
         final File basedir = pomFile.getParentFile();
-        File interpolatedPomFile = buildInterpolatedPomFile( pomFile, basedir );
+        File interpolatedPomFile = buildInterpolatedFile( pomFile, basedir, "interpolated-pom.xml" );
         FileLogger logger = null;
         try
         {
@@ -732,7 +745,10 @@ public class InvokerMojo
 
             if ( settingsFile != null )
             {
-                request.setUserSettingsFile( settingsFile );
+                buildInterpolatedFile( settingsFile, settingsFile.getParentFile(), settingsFile.getName()
+                    + ".interpolated" );
+                request.setUserSettingsFile( new File( settingsFile.getParentFile(), settingsFile.getName()
+                    + ".interpolated" ) );
             }
             
             if ( mavenOpts != null )
@@ -1123,39 +1139,47 @@ public class InvokerMojo
         return result;
     }
 
-    protected File buildInterpolatedPomFile( File pomFile, File targetDirectory )
+    protected File buildInterpolatedFile( File originalFile, File targetDirectory, String targetFileName )
         throws MojoExecutionException
     {
-        File interpolatedPomFile = new File( targetDirectory, "interpolated-pom.xml" );
-        if (interpolatedPomFile.exists())
+        File interpolatedFile = new File( targetDirectory, targetFileName );
+        if (interpolatedFile.exists())
         {
-            interpolatedPomFile.delete();
+            interpolatedFile.delete();
         }
-        interpolatedPomFile.deleteOnExit();
+        interpolatedFile.deleteOnExit();
+        if ( settings.getLocalRepository() != null )
+        {
+            if (this.interpolationsProperties == null)
+            {
+                this.interpolationsProperties = new Properties();
+            }
+            this.interpolationsProperties.put( "localRepository", settings.getLocalRepository() );
+        }
         Map composite = new CompositeMap( this.project, this.interpolationsProperties );
 
         try
         {
-            boolean created = interpolatedPomFile.createNewFile();
+            boolean created = interpolatedFile.createNewFile();
             if ( !created )
             {
-                throw new MojoExecutionException( "fail to create file " + interpolatedPomFile.getPath() );
+                throw new MojoExecutionException( "fail to create file " + interpolatedFile.getPath() );
             }
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "fail to create file " + interpolatedPomFile.getPath() );
+            throw new MojoExecutionException( "fail to create file " + interpolatedFile.getPath() );
         }
-        getLog().debug( "interpolate it pom to create interpolated in " + interpolatedPomFile.getPath() );
+        getLog().debug( "interpolate it pom to create interpolated in " + interpolatedFile.getPath() );
 
         BufferedReader reader = null;
         Writer writer = null;
         try
         {
-            // pom interpolation with token @...@
-            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( pomFile ), composite, "@",
+            // interpolation with token @...@
+            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ), composite, "@",
                                                                         "@" ) );
-            writer = WriterFactory.newXmlWriter( interpolatedPomFile );
+            writer = WriterFactory.newXmlWriter( interpolatedFile );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
@@ -1175,12 +1199,12 @@ public class InvokerMojo
             IOUtil.close( writer );
         }
 
-        if ( interpolatedPomFile == null )
+        if ( interpolatedFile == null )
         {
             // null check : normally impossibe but :-)
             throw new MojoExecutionException( "pom file is null after interpolation" );
         }
-        return interpolatedPomFile;
+        return interpolatedFile;
     }
 
     protected List getProfiles( File projectDirectory )
