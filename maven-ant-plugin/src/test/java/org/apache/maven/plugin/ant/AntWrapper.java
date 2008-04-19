@@ -19,6 +19,7 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -28,7 +29,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ExitException;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.util.optional.NoExitSecurityManager;
-import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -73,12 +73,12 @@ public class AntWrapper
         System.setSecurityManager( new NoExitSecurityManager() );
 
         PrintStream oldErr = System.err;
-        OutputStream errOS = new StringOutputStream();
+        OutputStream errOS = new ByteArrayOutputStream();
         PrintStream err = new PrintStream( errOS );
         System.setErr( err );
 
         PrintStream oldOut = System.out;
-        OutputStream outOS = new StringOutputStream();
+        OutputStream outOS = new ByteArrayOutputStream();
         PrintStream out = new PrintStream( outOS );
         System.setOut( out );
 
