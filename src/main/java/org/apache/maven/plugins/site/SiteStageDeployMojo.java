@@ -19,6 +19,7 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,6 +34,11 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 
@@ -46,7 +52,7 @@ import java.io.File;
  * @requiresDependencyResolution test
  */
 public class SiteStageDeployMojo
-    extends SiteStageMojo
+    extends SiteStageMojo implements Contextualizable
 {
     /**
      * Staging site URL to deploy the staging directory.
@@ -70,6 +76,10 @@ public class SiteStageDeployMojo
      */
     private Settings settings;
 
+    private PlexusContainer container;
+
+    private final String STAGING_SERVER_ID = "stagingSite";
+
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
@@ -92,17 +102,21 @@ public class SiteStageDeployMojo
     private void deployStagingSite()
         throws MojoExecutionException, MojoFailureException
     {
-        String id = "stagingSite";
-        Repository repository = new Repository( id, stagingSiteURL );
+        Repository repository = new Repository( STAGING_SERVER_ID, stagingSiteURL );
 
         Wagon wagon;
         try
         {
             wagon = wagonManager.getWagon( repository.getProtocol() );
+            SiteDeployMojo.configureWagon( wagon, STAGING_SERVER_ID, settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
             throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
+        }
+        catch ( WagonConfigurationException e )
+        {
+            throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
 
         if ( !wagon.supportsDirectoryCopy() )
@@ -122,11 +136,11 @@ public class SiteStageDeployMojo
             ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( STAGING_SERVER_ID ), proxyInfo );
             }
             else
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( STAGING_SERVER_ID ) );
             }
 
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
@@ -163,4 +177,11 @@ public class SiteStageDeployMojo
             }
         }
     }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
 }
