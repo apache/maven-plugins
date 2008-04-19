@@ -19,6 +19,7 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -39,7 +40,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
-import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -1129,7 +1129,7 @@ public class AntBuildWriterUtil
             try
             {
                 Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                    .parse( new StringInputStream( pluginConf.toString() ) );
+                    .parse( new ByteArrayInputStream( pluginConf.toString().getBytes( "UTF-8" ) ) );
 
                 XObject obj = XPathAPI.eval( doc, "//configuration/" + optionName );
 
