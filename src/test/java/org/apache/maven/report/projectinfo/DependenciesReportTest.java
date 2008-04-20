@@ -78,15 +78,16 @@ public class DependenciesReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.dependencies.title" ) );
-        assertEquals( textBlocks[1].getText(), "test" );
-        assertEquals( textBlocks[2].getText(), getString( "report.dependencies.intro.test" ) );
-        assertEquals( textBlocks[3].getText(), getString( "report.transitivedependencies.title" ) );
-        assertEquals( textBlocks[4].getText(), getString( "report.transitivedependencies.intro" ) );
-        assertEquals( textBlocks[5].getText(), "test" );
-        assertEquals( textBlocks[6].getText(), getString( "report.dependencies.intro.test" ) );
-        assertEquals( textBlocks[7].getText(), getString( "report.dependencies.graph.title" ) );
-        assertEquals( textBlocks[8].getText(), getString( "report.dependencies.graph.tree.title" ) );
-        assertEquals( textBlocks[12].getText(), getString( "report.dependencies.graph.tables.title" ) );
+        assertEquals( textBlocks[0].getText(), getString( "report.dependencies.java.section.title" ) );
+        assertEquals( textBlocks[3].getText(), getString( "report.dependencies.title" ) );
+        assertEquals( textBlocks[4].getText(), "test" );
+        assertEquals( textBlocks[5].getText(), getString( "report.dependencies.intro.test" ) );
+        assertEquals( textBlocks[6].getText(), getString( "report.transitivedependencies.title" ) );
+        assertEquals( textBlocks[7].getText(), getString( "report.transitivedependencies.intro" ) );
+        assertEquals( textBlocks[8].getText(), "test" );
+        assertEquals( textBlocks[9].getText(), getString( "report.dependencies.intro.test" ) );
+        assertEquals( textBlocks[10].getText(), getString( "report.dependencies.graph.title" ) );
+        assertEquals( textBlocks[11].getText(), getString( "report.dependencies.graph.tree.title" ) );
+        assertEquals( textBlocks[15].getText(), getString( "report.dependencies.graph.tables.title" ) );
     }
 }
