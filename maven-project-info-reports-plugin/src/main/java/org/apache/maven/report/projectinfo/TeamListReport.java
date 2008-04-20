@@ -136,8 +136,8 @@ public class TeamListReport
             javascript.append( "    var now = new Date();\n" );
             javascript.append( "    var nowTime = now.getTime();\n" );
             javascript.append( "    var localOffset = now.getTimezoneOffset();\n" );
-            javascript
-                .append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 ) + ( localOffset * 60 * 1000 );\n" );
+            javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
+                               + "+ ( localOffset * 60 * 1000 );\n" );
             javascript.append( "    var developerDate = new Date(developerTime);\n" );
             javascript.append( "\n" );
             javascript.append( "    document.getElementById(id).innerHTML = developerDate;\n" );
@@ -178,77 +178,7 @@ public class TeamListReport
                 {
                     Developer developer = (Developer) i.next();
 
-                    // To handle JS
-                    sink.tableRow();
-
-                    if ( headersMap.get( ID ) == Boolean.TRUE )
-                    {
-                        tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
-                    }
-                    if ( headersMap.get( NAME ) == Boolean.TRUE )
-                    {
-                        tableCell( developer.getName() );
-                    }
-                    if ( headersMap.get( EMAIL ) == Boolean.TRUE )
-                    {
-                        tableCell( createLinkPatternedText( developer.getEmail(), developer.getEmail() ) );
-                    }
-                    if ( headersMap.get( URL ) == Boolean.TRUE )
-                    {
-                        tableCellForUrl( developer.getUrl() );
-                    }
-                    if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
-                    {
-                        tableCell( developer.getOrganization() );
-                    }
-                    if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
-                    {
-                        tableCellForUrl( developer.getOrganizationUrl() );
-                    }
-                    if ( headersMap.get( ROLES ) == Boolean.TRUE )
-                    {
-                        if ( developer.getRoles() != null )
-                        {
-                            // Comma separated roles
-                            tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
-                        }
-                        else
-                        {
-                            tableCell( null );
-                        }
-                    }
-                    if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
-                    {
-                        tableCell( developer.getTimezone() );
-
-                        // To handle JS
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"developer-" + developersRows + "\">" );
-                        text( developer.getTimezone() );
-                        if ( !StringUtils.isEmpty( developer.getTimezone() ) )
-                        {
-                            javascript.append( "    offsetDate('developer-" ).append( developersRows ).append( "', '" );
-                            javascript.append( developer.getTimezone() );
-                            javascript.append( "');\n" );
-                        }
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-
-                    if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
-                    {
-                        Properties props = developer.getProperties();
-                        if ( props != null )
-                        {
-                            tableCell( propertiesToString( props ) );
-                        }
-                        else
-                        {
-                            tableCell( null );
-                        }
-                    }
-
-                    sink.tableRow_();
+                    renderDeveloper( developer, developersRows, headersMap, javascript );
 
                     developersRows++;
                 }
@@ -285,73 +215,7 @@ public class TeamListReport
                 {
                     Contributor contributor = (Contributor) i.next();
 
-                    sink.tableRow();
-                    if ( headersMap.get( NAME ) == Boolean.TRUE )
-                    {
-                        tableCell( contributor.getName() );
-                    }
-                    if ( headersMap.get( EMAIL ) == Boolean.TRUE )
-                    {
-                        tableCell( createLinkPatternedText( contributor.getEmail(), contributor.getEmail() ) );
-                    }
-                    if ( headersMap.get( URL ) == Boolean.TRUE )
-                    {
-                        tableCellForUrl( contributor.getUrl() );
-                    }
-                    if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
-                    {
-                        tableCell( contributor.getOrganization() );
-                    }
-                    if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
-                    {
-                        tableCellForUrl( contributor.getOrganizationUrl() );
-                    }
-                    if ( headersMap.get( ROLES ) == Boolean.TRUE )
-                    {
-                        if ( contributor.getRoles() != null )
-                        {
-                            // Comma separated roles
-                            tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
-                        }
-                        else
-                        {
-                            tableCell( null );
-                        }
-
-                    }
-                    if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
-                    {
-                        tableCell( contributor.getTimezone() );
-
-                        // To handle JS
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"contributor-" + contributorsRows + "\">" );
-                        text( contributor.getTimezone() );
-                        if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
-                        {
-                            javascript.append( "    offsetDate('contributor-" ).append( contributorsRows )
-                                .append( "', '" );
-                            javascript.append( contributor.getTimezone() );
-                            javascript.append( "');\n" );
-                        }
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-
-                    if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
-                    {
-                        Properties props = contributor.getProperties();
-                        if ( props != null )
-                        {
-                            tableCell( propertiesToString( props ) );
-                        }
-                        else
-                        {
-                            tableCell( null );
-                        }
-                    }
-
-                    sink.tableRow_();
+                    renderContributor( contributor, contributorsRows, headersMap, javascript );
 
                     contributorsRows++;
                 }
@@ -366,6 +230,153 @@ public class TeamListReport
             // To handle JS
             javascript.append( "}\n" ).append( "\n" ).append( "window.onLoad = init();\n" );
             javaScript( javascript.toString() );
+        }
+
+        private void renderDeveloper( Developer developer, int developerRow, Map headersMap, StringBuffer javascript )
+        {
+            // To handle JS
+            sink.tableRow();
+
+            if ( headersMap.get( ID ) == Boolean.TRUE )
+            {
+                tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
+            }
+            if ( headersMap.get( NAME ) == Boolean.TRUE )
+            {
+                tableCell( developer.getName() );
+            }
+            if ( headersMap.get( EMAIL ) == Boolean.TRUE )
+            {
+                tableCell( createLinkPatternedText( developer.getEmail(), developer.getEmail() ) );
+            }
+            if ( headersMap.get( URL ) == Boolean.TRUE )
+            {
+                tableCellForUrl( developer.getUrl() );
+            }
+            if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
+            {
+                tableCell( developer.getOrganization() );
+            }
+            if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
+            {
+                tableCellForUrl( developer.getOrganizationUrl() );
+            }
+            if ( headersMap.get( ROLES ) == Boolean.TRUE )
+            {
+                if ( developer.getRoles() != null )
+                {
+                    // Comma separated roles
+                    tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                }
+                else
+                {
+                    tableCell( null );
+                }
+            }
+            if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
+            {
+                tableCell( developer.getTimezone() );
+
+                // To handle JS
+                sink.tableCell();
+                sink.rawText( "<span id=\"developer-" + developerRow + "\">" );
+                text( developer.getTimezone() );
+                if ( !StringUtils.isEmpty( developer.getTimezone() ) )
+                {
+                    javascript.append( "    offsetDate('developer-" ).append( developerRow ).append( "', '" );
+                    javascript.append( developer.getTimezone() );
+                    javascript.append( "');\n" );
+                }
+                sink.rawText( "</span>" );
+                sink.tableCell_();
+            }
+
+            if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
+            {
+                Properties props = developer.getProperties();
+                if ( props != null )
+                {
+                    tableCell( propertiesToString( props ) );
+                }
+                else
+                {
+                    tableCell( null );
+                }
+            }
+
+            sink.tableRow_();
+        }
+
+        private void renderContributor( Contributor contributor, int contributorRow, Map headersMap,
+                                        StringBuffer javascript )
+        {
+            sink.tableRow();
+            if ( headersMap.get( NAME ) == Boolean.TRUE )
+            {
+                tableCell( contributor.getName() );
+            }
+            if ( headersMap.get( EMAIL ) == Boolean.TRUE )
+            {
+                tableCell( createLinkPatternedText( contributor.getEmail(), contributor.getEmail() ) );
+            }
+            if ( headersMap.get( URL ) == Boolean.TRUE )
+            {
+                tableCellForUrl( contributor.getUrl() );
+            }
+            if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
+            {
+                tableCell( contributor.getOrganization() );
+            }
+            if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
+            {
+                tableCellForUrl( contributor.getOrganizationUrl() );
+            }
+            if ( headersMap.get( ROLES ) == Boolean.TRUE )
+            {
+                if ( contributor.getRoles() != null )
+                {
+                    // Comma separated roles
+                    tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                }
+                else
+                {
+                    tableCell( null );
+                }
+
+            }
+            if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
+            {
+                tableCell( contributor.getTimezone() );
+
+                // To handle JS
+                sink.tableCell();
+                sink.rawText( "<span id=\"contributor-" + contributorRow + "\">" );
+                text( contributor.getTimezone() );
+                if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
+                {
+                    javascript.append( "    offsetDate('contributor-" ).append( contributorRow )
+                        .append( "', '" );
+                    javascript.append( contributor.getTimezone() );
+                    javascript.append( "');\n" );
+                }
+                sink.rawText( "</span>" );
+                sink.tableCell_();
+            }
+
+            if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
+            {
+                Properties props = contributor.getProperties();
+                if ( props != null )
+                {
+                    tableCell( propertiesToString( props ) );
+                }
+                else
+                {
+                    tableCell( null );
+                }
+            }
+
+            sink.tableRow_();
         }
 
         /**

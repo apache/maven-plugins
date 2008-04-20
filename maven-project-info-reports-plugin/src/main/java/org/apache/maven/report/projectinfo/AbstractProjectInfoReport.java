@@ -139,7 +139,8 @@ public abstract class AbstractProjectInfoReport
             attributes.put( "outputEncoding", "UTF-8" );
             attributes.put( "project", project );
             Locale locale = Locale.getDefault();
-            Artifact defaultSkin = siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories()  );
+            Artifact defaultSkin =
+                siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
             SiteRenderingContext siteContext = siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes,
                                                                                   model, getName( locale ), locale );
 
@@ -150,7 +151,9 @@ public abstract class AbstractProjectInfoReport
 
             outputDirectory.mkdirs();
 
-            Writer writer = new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, getOutputName() + ".html" ) ), "UTF-8" );
+            Writer writer =
+                new OutputStreamWriter( new FileOutputStream( new File( outputDirectory, getOutputName() + ".html" ) ),
+                                        "UTF-8" );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
 

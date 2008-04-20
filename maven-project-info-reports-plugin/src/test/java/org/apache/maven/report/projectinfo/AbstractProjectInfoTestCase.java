@@ -133,7 +133,7 @@ public abstract class AbstractProjectInfoTestCase
      * @return the generated report as file
      * @throws IOException if the return file doesnt exist
      */
-    protected File getGeneratedReport(String name )
+    protected File getGeneratedReport( String name )
         throws IOException
     {
         String outputDirectory = getBasedir() + "/target/test-harness/" + getTestMavenProject().getArtifactId();
@@ -167,7 +167,8 @@ public abstract class AbstractProjectInfoTestCase
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
         ProfileManager profileManager = new DefaultProfileManager( getContainer() );
 
-        ArtifactRepository localRepository = ( ArtifactRepository ) getVariableValueFromObject( mojo, "localRepository" );
+        ArtifactRepository localRepository = (ArtifactRepository) getVariableValueFromObject( mojo,
+                                                                                              "localRepository" );
 
         testMavenProject = builder.buildWithDependencies( pluginXmlFile, localRepository, profileManager );
 
