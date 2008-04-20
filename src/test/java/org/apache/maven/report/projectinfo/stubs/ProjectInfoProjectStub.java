@@ -85,8 +85,8 @@ public abstract class ProjectInfoProjectStub
         build.setFinalName( model.getArtifactId() );
         build.setDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId() + "/target" );
         build.setSourceDirectory( getBasedir() + "/src/main/java" );
-        build
-            .setOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId() + "/target/classes" );
+        build.setOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId()
+                                  + "/target/classes" );
         build.setTestSourceDirectory( getBasedir() + "/src/test/java" );
         build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId()
             + "/target/test-classes" );

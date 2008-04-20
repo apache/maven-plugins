@@ -223,7 +223,8 @@ public class DependenciesRenderer
 
     private void renderSectionJavaVersion()
     {
-        Xpp3Dom pluginConfig = project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
+        Xpp3Dom pluginConfig =
+            project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
         String source = null;
         String target = null;
         String compilerVersion = null;
@@ -249,31 +250,41 @@ public class DependenciesRenderer
 
         if ( source == null && target == null )
         {
-            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.notset", compilerVersion );
+            javaOptionsText =
+                i18n.format( "project-info-report", locale, "report.dependencies.java.options.notset",
+                             compilerVersion );
         }
         else if ( source != null && target != null )
         {
             minimumJavaVersion = target;
             if ( source.equals( target ) )
             {
-                javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.same", compilerVersion, source );
+                javaOptionsText =
+                    i18n.format( "project-info-report", locale, "report.dependencies.java.options.same",
+                                 compilerVersion, source );
             }
             else
             {
                 Object[] args = new Object[] { compilerVersion, source, target };
-                javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.different", args );
+                javaOptionsText =
+                    i18n.format( "project-info-report", locale, "report.dependencies.java.options.different", args );
             }
         }
         else if ( target != null )
         {
             minimumJavaVersion = target;
-            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.target", compilerVersion, target );
+            javaOptionsText =
+                i18n.format( "project-info-report", locale, "report.dependencies.java.options.target", compilerVersion,
+                             target );
         }
         else
         {
-            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.source", compilerVersion, source );
+            javaOptionsText =
+                i18n.format( "project-info-report", locale, "report.dependencies.java.options.source", compilerVersion,
+                             source );
         }
-        String minimumJavaText = i18n.format( "project-info-report", locale, "report.dependencies.java.minimum", minimumJavaVersion);
+        String minimumJavaText =
+            i18n.format( "project-info-report", locale, "report.dependencies.java.minimum", minimumJavaVersion );
 
         // Output the section text
         startSection( getReportString( "report.dependencies.java.section.title" ) );
@@ -282,19 +293,19 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private String getChildValue(Xpp3Dom parent, String childName)
+    private String getChildValue( Xpp3Dom parent, String childName )
     {
-        if (parent == null)
+        if ( parent == null )
         {
             return null;
         }
-        Xpp3Dom child = parent.getChild(childName);
-        if (child == null)
+        Xpp3Dom child = parent.getChild( childName );
+        if ( child == null )
         {
             return null;
         }
         String value = child.getValue();
-        if (child == null || value.trim().length() == 0)
+        if ( child == null || value.trim().length() == 0 )
         {
             return null;
         }
