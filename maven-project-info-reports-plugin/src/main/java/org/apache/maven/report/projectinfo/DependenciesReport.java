@@ -151,7 +151,7 @@ public class DependenciesReport
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTree, config, repoUtils );
+            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTree, config, repoUtils, project );
 
         repoUtils.setLog( getLog() );
         r.setLog( getLog() );

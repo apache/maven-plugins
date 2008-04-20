@@ -40,6 +40,7 @@ import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.wagon.Wagon;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,6 +89,8 @@ public class DependenciesRenderer
 
     private RepositoryUtils repoUtils;
 
+    private MavenProject project;
+
     /**
      * Will be filled with license name / list of projects.
      */
@@ -109,7 +112,7 @@ public class DependenciesRenderer
 
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
                                  DependencyTree depTree, DependenciesReportConfiguration config,
-                                 RepositoryUtils repoUtils )
+                                 RepositoryUtils repoUtils, MavenProject project )
     {
         super( sink );
 
@@ -124,6 +127,8 @@ public class DependenciesRenderer
         this.i18n = i18n;
 
         this.configuration = config;
+
+        this.project = project;
     }
 
     // ----------------------------------------------------------------------
@@ -157,6 +162,9 @@ public class DependenciesRenderer
 
             return;
         }
+
+        // === Section: Project Java Version.
+        renderSectionJavaVersion();
 
         // === Section: Project Dependencies.
         renderSectionProjectDependencies();
@@ -211,6 +219,86 @@ public class DependenciesRenderer
         String type = getReportString( "report.dependencies.column.type" );
         String optional = getReportString( "report.dependencies.column.optional" );
         return new String[]{groupId, artifactId, version, classifier, type, optional};
+    }
+
+    private void renderSectionJavaVersion()
+    {
+        Xpp3Dom pluginConfig = project.getGoalConfiguration( "org.apache.maven.plugins", "maven-compiler-plugin", null, null );
+        String source = null;
+        String target = null;
+        String compilerVersion = null;
+
+        if ( pluginConfig != null )
+        {
+            source = getChildValue( pluginConfig, "source" );
+            target = getChildValue( pluginConfig, "target" );
+            String fork = getChildValue( pluginConfig, "fork" );
+            if ( "true".equalsIgnoreCase( fork ) )
+            {
+                compilerVersion = getChildValue( pluginConfig, "compilerVersion" );
+            }
+        }
+
+        if ( compilerVersion == null )
+        {
+            compilerVersion = System.getProperty( "java.specification.version" );
+        }
+
+        String javaOptionsText = null;
+        String minimumJavaVersion = compilerVersion;
+
+        if ( source == null && target == null )
+        {
+            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.notset", compilerVersion );
+        }
+        else if ( source != null && target != null )
+        {
+            minimumJavaVersion = target;
+            if ( source.equals( target ) )
+            {
+                javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.same", compilerVersion, source );
+            }
+            else
+            {
+                Object[] args = new Object[] { compilerVersion, source, target };
+                javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.different", args );
+            }
+        }
+        else if ( target != null )
+        {
+            minimumJavaVersion = target;
+            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.target", compilerVersion, target );
+        }
+        else
+        {
+            javaOptionsText = i18n.format( "project-info-report", locale, "report.dependencies.java.options.source", compilerVersion, source );
+        }
+        String minimumJavaText = i18n.format( "project-info-report", locale, "report.dependencies.java.minimum", minimumJavaVersion);
+
+        // Output the section text
+        startSection( getReportString( "report.dependencies.java.section.title" ) );
+        paragraph( minimumJavaText );
+        paragraph( javaOptionsText );
+        endSection();
+    }
+
+    private String getChildValue(Xpp3Dom parent, String childName)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+        Xpp3Dom child = parent.getChild(childName);
+        if (child == null)
+        {
+            return null;
+        }
+        String value = child.getValue();
+        if (child == null || value.trim().length() == 0)
+        {
+            return null;
+        }
+        return value.trim();
     }
 
     private void renderSectionProjectDependencies()
