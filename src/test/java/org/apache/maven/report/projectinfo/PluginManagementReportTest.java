@@ -39,7 +39,7 @@ public class PluginManagementReportTest
     /**
      * WebConversation object
      */
-    private static final WebConversation webConversation = new WebConversation();
+    private static final WebConversation WEB_CONVERSATION = new WebConversation();
 
     /**
      * Test report
@@ -57,15 +57,15 @@ public class PluginManagementReportTest
 
         // HTTPUnit
         WebRequest request = new GetMethodWebRequest( reportURL.toString() );
-        WebResponse response = webConversation.getResponse( request );
+        WebResponse response = WEB_CONVERSATION.getResponse( request );
 
         // Basic HTML tests
         assertTrue( response.isHTML() );
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.pluginManagement.name" ) + " - " + getString( "report.pluginManagement.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.pluginManagement.name" ) + " - "
+                      + getString( "report.pluginManagement.title" ), response.getTitle() );
 
         // Test the tables
         WebTable[] webTables = response.getTables();

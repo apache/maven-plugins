@@ -38,7 +38,7 @@ public class ProjectIndexPageReportTest
     /**
      * WebConversation object
      */
-    private static final WebConversation webConversation = new WebConversation();
+    private static final WebConversation WEB_CONVERSATION = new WebConversation();
 
     /**
      * Test report
@@ -56,7 +56,7 @@ public class ProjectIndexPageReportTest
 
         // HTTPUnit
         WebRequest request = new GetMethodWebRequest( reportURL.toString() );
-        WebResponse response = webConversation.getResponse( request );
+        WebResponse response = WEB_CONVERSATION.getResponse( request );
 
         // Basic HTML tests
         assertTrue( response.isHTML() );
@@ -68,7 +68,8 @@ public class ProjectIndexPageReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( textBlocks[0].getText(), getString( "report.index.title" ) + " " + getTestMavenProject().getName() );
+        assertEquals( textBlocks[0].getText(), getString( "report.index.title" ) + " "
+                        + getTestMavenProject().getName() );
         assertEquals( textBlocks[1].getText(), getString( "report.index.nodescription" ) );
     }
 }

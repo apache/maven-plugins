@@ -105,7 +105,7 @@ public class MailingListsReportTest
      * @throws Throwable if any
      */
     public void testGetArchiveServer()
-        throws Exception, Throwable
+        throws Throwable
     {
         String server = "http://mail-archives.apache.org/mod_mbox/maven-announce/";
         assertEquals( "mail-archives.apache.org", invokeGetArchiveServer( server ) );
@@ -132,7 +132,7 @@ public class MailingListsReportTest
     private static String invokeGetArchiveServer( String s )
         throws Throwable
     {
-        return (String)PrivateAccessor.invoke( MailingListsRenderer.class, "getArchiveServer",
-                                new Class[] { String.class }, new Object[] { s } );
+        return (String) PrivateAccessor.invoke( MailingListsRenderer.class, "getArchiveServer",
+                                                new Class[] { String.class }, new Object[] { s } );
     }
 }

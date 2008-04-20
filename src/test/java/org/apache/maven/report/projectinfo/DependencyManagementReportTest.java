@@ -39,7 +39,7 @@ public class DependencyManagementReportTest
     /**
      * WebConversation object
      */
-    private static final WebConversation webConversation = new WebConversation();
+    private static final WebConversation WEB_CONVERSATION = new WebConversation();
 
     /**
      * Test report
@@ -57,22 +57,23 @@ public class DependencyManagementReportTest
 
         // HTTPUnit
         WebRequest request = new GetMethodWebRequest( reportURL.toString() );
-        WebResponse response = webConversation.getResponse( request );
+        WebResponse response = WEB_CONVERSATION.getResponse( request );
 
         // Basic HTML tests
         assertTrue( response.isHTML() );
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.dependencyManagement.name" ) + " - " + getString( "report.dependencyManagement.title" ),
-                      response.getTitle() );
+        assertEquals( getString( "report.dependencyManagement.name" ) + " - "
+                        + getString( "report.dependencyManagement.title" ), response.getTitle() );
 
         // Test the tables
         WebTable[] webTables = response.getTables();
         assertEquals( webTables.length, 1 );
 
         assertEquals( webTables[0].getColumnCount(), 5 );
-        assertEquals( webTables[0].getRowCount(), 1 + getTestMavenProject().getDependencyManagement().getDependencies().size() );
+        assertEquals( webTables[0].getRowCount(),
+                      1 + getTestMavenProject().getDependencyManagement().getDependencies().size() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

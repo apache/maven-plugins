@@ -57,7 +57,8 @@ public class DependencyManagementReport
     public void executeReport( Locale locale )
     {
 
-        ManagementDependencies dependencies = new ManagementDependencies(project.getDependencyManagement().getDependencies());
+        ManagementDependencies dependencies =
+            new ManagementDependencies( project.getDependencyManagement().getDependencies() );
 
         DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, dependencies );
 
