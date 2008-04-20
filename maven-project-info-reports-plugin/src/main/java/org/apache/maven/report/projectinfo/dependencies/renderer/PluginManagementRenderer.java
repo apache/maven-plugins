@@ -158,7 +158,8 @@ public class PluginManagementRenderer
                 try
                 {
                     MavenProject pluginProject =
-                        mavenProjectBuilder.buildFromRepository( pluginArtifact, artifactRepositories, localRepository );
+                        mavenProjectBuilder.buildFromRepository( pluginArtifact, artifactRepositories,
+                                                                 localRepository );
                     tableRow( getPluginRow( plugin, pluginProject.getUrl() ) );
                 }
                 catch ( ProjectBuildingException e )
