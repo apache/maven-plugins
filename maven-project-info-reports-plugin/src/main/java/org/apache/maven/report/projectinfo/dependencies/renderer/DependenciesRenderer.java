@@ -40,7 +40,6 @@ import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.wagon.Wagon;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.IOException;
