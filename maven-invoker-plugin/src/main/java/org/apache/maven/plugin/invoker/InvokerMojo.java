@@ -721,6 +721,11 @@ public class InvokerMojo
 
                 getLog().debug( "Using local repository: " + localRepoDir );
 
+                if ( ! localRepositoryPath.exists() )
+                {
+                    localRepositoryPath.mkdirs();
+                }
+                
                 request.setLocalRepositoryDirectory( localRepoDir );
             }
 
