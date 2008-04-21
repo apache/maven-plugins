@@ -43,7 +43,7 @@ public class MailingListsReportTest
     /**
      * WebConversation object
      */
-    private static final WebConversation webConversation = new WebConversation();
+    private static final WebConversation WEB_CONVERSATION = new WebConversation();
 
     /**
      * Test report
@@ -61,7 +61,7 @@ public class MailingListsReportTest
 
         // HTTPUnit
         WebRequest request = new GetMethodWebRequest( reportURL.toString() );
-        WebResponse response = webConversation.getResponse( request );
+        WebResponse response = WEB_CONVERSATION.getResponse( request );
 
         // Basic HTML tests
         assertTrue( response.isHTML() );
