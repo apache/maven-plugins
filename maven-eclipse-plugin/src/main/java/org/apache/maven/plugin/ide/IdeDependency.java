@@ -523,6 +523,14 @@ public class IdeDependency
         return isSystemScoped() && !getFile().getAbsolutePath().startsWith( modulesTop.getAbsolutePath() );
     }
 
+	/**
+	 * @return <tt>true</tt> if this dependency is a Java API
+	 */
+	public boolean isJavaApi()
+	{
+		return groupId.startsWith( "java." ) || groupId.startsWith( "javax." );
+	}
+	
     /**
      * {@inheritDoc}
      */

@@ -324,6 +324,26 @@ public class EclipseClasspathWriter
         writer.addAttribute( ATTR_PATH, defaultOutput );
         writer.endElement();
 
+        Set addedDependencies = new HashSet();
+        // TODO if (..magic property equals orderDependencies..)
+
+		// ----------------------------------------------------------------------
+        // Java API dependencies that may complete the classpath container so must 
+		// be declared BEFORE so that container access rules don't fail
+        // ----------------------------------------------------------------------
+        IdeDependency[] depsToWrite = config.getDepsOrdered();
+		for ( int j = 0; j < depsToWrite.length; j++ )
+        {
+            IdeDependency dep = depsToWrite[j];
+			if ( dep.isJavaApi() )
+			{
+				String depId =
+                    dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":" + dep.getVersion();
+				addDependency( writer, dep );
+				addedDependencies.add( depId );
+			}
+		}
+		
         // ----------------------------------------------------------------------
         // Container classpath entries
         // ----------------------------------------------------------------------
@@ -339,9 +359,6 @@ public class EclipseClasspathWriter
         // ----------------------------------------------------------------------
         // The dependencies
         // ----------------------------------------------------------------------
-        Set addedDependencies = new HashSet();
-        // TODO if (..magic property equals orderDependencies..)
-        IdeDependency[] depsToWrite = config.getDepsOrdered();
         for ( int j = 0; j < depsToWrite.length; j++ )
         {
             IdeDependency dep = depsToWrite[j];
