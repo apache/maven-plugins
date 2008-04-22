@@ -8,15 +8,28 @@
 
 Maven 2 Invoker Plugin
 
- The invoker Plugin is used to run a set of Maven projects and makes sure that each
- project execution is successful, and optionally verifies the output from a given project execution. 
-
+  The invoker plugin is used to run a set of Maven projects.  The plugin can determine whether each
+  project execution is successful, and optionally can verify the output generated from a given 
+  project execution.
+  
 * Goals Overview
 
-  * {{{run-mojo.html}invoker:run}} runs a set of Maven projects that you have configured in your POM.
+  * {{{run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result.
 
   []
 
 * Usage
 
-  Instructions on how to use the Invoker Plugin can be found {{{usage.html}here}}.
+  General instructions on how to use the Invoker Plugin can be found on the {{{usage.html}usage page}}.
+
+* Examples
+
+  The following example configurations are available:
+  
+  * {{{examples/clone-projects.html}Clone projects}} to a new directory before running.
+
+  * {{{examples/install-artifacts.html}Install}} projects artifacts to a local repository before running.
+  
+  * {{{examples/post-build-script.html}Run a Beanshell script}} to verify project output.
+  
+  []

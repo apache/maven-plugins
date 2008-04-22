@@ -28,11 +28,13 @@ under the License.
       <item name="Advanced Usage" href="advance-usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    <!--
+    
     <menu name="Examples">
-      <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
-      <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
+      <item name="Basic Example" href="usage.html"/>
+      <item name="Clone Projects" href="examples/clone-projects.html"/>
+      <item name="Install Artifacts" href="examples/install-artifacts.html"/>
+      <item name="Post Build Script" href="examples/post-build-script.html"/>
     </menu>
-    -->
+    
   </body>
 </project>
