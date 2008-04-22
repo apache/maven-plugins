@@ -70,7 +70,7 @@ import bsh.Interpreter;
 
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
- * outputting the results to the screen.
+ * outputting the results to the command line.
  *
  * @goal run
  * @since 1.0
@@ -82,6 +82,8 @@ public class InvokerMojo
     extends AbstractMojo
 {
     /**
+     * Maven artifact install component to copy artifacts to the local repository.
+     * 
      * @parameter expression="${component.org.apache.maven.artifact.installer.ArtifactInstaller}"
      * @required
      * @readonly
@@ -178,6 +180,8 @@ public class InvokerMojo
 
     /**
      * Includes for searching the integration test directory. This parameter is meant to be set from the POM.
+     * If this parameter is not set, the plugin will search for all pom.xml files one directory below
+     * {@link #projectDirectory projectDirectory} (*&#47;pom.xml).
      *
      * @parameter
      */
@@ -298,6 +302,7 @@ public class InvokerMojo
      * and <code>pomExcludes</code> parameters.  Each pattern you specify here will be used to create an 
      * include pattern formatted like <code>${projectsDirectory}/${invoker.test}</code>, 
      * so you can just type "-Dinvoker.test=MyTest" to run a single it in ${projectsDirectory}/${invoker.test}".  
+     * 
      * @parameter expression="${invoker.test}"
      * @since 1.1
      */
@@ -306,6 +311,7 @@ public class InvokerMojo
     /**
      * The name of the project-specific file that contains the enumeration of profiles to use for that test.
      * <b>If the file exists and empty no profiles will be used even if the profiles is set</b>
+     * 
      * @parameter expression="${invoker.profilesFile}" default-value="profiles.txt"
      * @since 1.1
      */
