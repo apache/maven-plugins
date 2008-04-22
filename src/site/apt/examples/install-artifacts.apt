@@ -1,24 +1,18 @@
  ------
- Usage
+ Installing Artifacts Example
  ------
- Jason van Zyl
+ Paul Gier
  ------
- 27 November 2006
+ 18 April 2008
  ------
 
-Usage
-  
-* How to use the invoker plugin
- 
-  This page provides general usage information along with some basic examples.  The plugin
-  is commonly used to run and verify integration tests for a project.  This is done using
-  the {{{run-mojo.html} run }} goal.
+Installing Artifacts Example
 
-* Basic example
-
-  The following example shows basic plugin configuration for running integration tests.
-  The projects directory (src/it) is the location where the plugin will look for test projects
-  to execute.  The plugin is set to find and run all pom.xml files in this directory.
+  The following example shows a plugin configuration with the \<installProjectArtifacts\> 
+  parameter set to true.  This will cause the project artifact(s) to be installed to the local 
+  repository before executing the projects.  This can be helpful if you 
+  want to build you project and test the new artifacts artifact in a single step instead of 
+  installing first and then running tests.
   
 -------------------
 <project>
@@ -35,6 +29,8 @@ Usage
               <goal>run</goal>
             </goals>
             <configuration>
+              <localRepositoryPath>target/local-repo</localRepositoryPath>
+              <installProjectArtifacts>true</installProjectArtifacts>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
@@ -48,4 +44,6 @@ Usage
   ...
 </project>
 -------------------
+
+
           

@@ -1,24 +1,18 @@
  ------
- Usage
+ Clone Projects Example
  ------
- Jason van Zyl
+ Paul Gier
  ------
- 27 November 2006
+ 18 April 2008
  ------
 
-Usage
-  
-* How to use the invoker plugin
- 
-  This page provides general usage information along with some basic examples.  The plugin
-  is commonly used to run and verify integration tests for a project.  This is done using
-  the {{{run-mojo.html} run }} goal.
+Clone Projects Example
 
-* Basic example
-
-  The following example shows basic plugin configuration for running integration tests.
-  The projects directory (src/it) is the location where the plugin will look for test projects
-  to execute.  The plugin is set to find and run all pom.xml files in this directory.
+  By default the projects will be executed in the same directory where they are found.
+  This means that build output will be generated with the project files.  It may be
+  helpful to copy the projects to another directory before running them, for example
+  <<<target/it>>>.  This will allow <<<mvn clean>>> to remove the output generated
+  by all of the test projects.
   
 -------------------
 <project>
@@ -35,6 +29,8 @@ Usage
               <goal>run</goal>
             </goals>
             <configuration>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <installProjectArtifacts>true</installProjectArtifacts>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
@@ -48,4 +44,5 @@ Usage
   ...
 </project>
 -------------------
+
           
