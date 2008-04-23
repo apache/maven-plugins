@@ -102,14 +102,14 @@ public class ChangesMojo
     {
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
 
-        if ( ( url == null ) || ( url.trim().equals( "" ) ) )
-        {
-            getLog().warn(
-                "No Issue Management/URL defined in pom.xml.  Links to your issues will not work correctly." );
-        }
-
         report.setIssueLink( issueLinkTemplate );
         report.setUrl( url );
+
+        if ( !report.canGenerateIssueLinks() )
+        {
+            getLog().warn( "No issue management URL defined in POM. Links to your issues will not work correctly." );
+        }
+
         report.doGenerateReport( getBundle( locale ), getSink() );
 
         // Copy the images
