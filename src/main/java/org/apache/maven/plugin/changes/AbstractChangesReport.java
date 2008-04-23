@@ -62,10 +62,11 @@ public abstract class AbstractChangesReport
     extends AbstractMavenReport
 {
     /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
+     * Report output directory. Note that this parameter is only relevant if the goal is run from the command line or
+     * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
+     * directory configured in the Maven Site Plugin is used instead.
+     * 
+     * @parameter default-value="${project.reporting.outputDirectory}"
      */
     protected File outputDirectory;
 
