@@ -19,8 +19,6 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -41,30 +39,29 @@ public class ChangesMojo
     extends AbstractChangesReport
 {
     /**
-     * The path of the changes.xml file that will be converted into an html report.
+     * The path of the <code>changes.xml</code> file that will be converted into an HTML report.
      *
-     * @parameter expression="${basedir}/src/changes/changes.xml"
-     * @required
+     * @parameter expression="${changes.xmlPath}" default-value="src/changes/changes.xml"
      */
     private File xmlPath;
 
     /**
      * Template string that is used to discover the URL to use to display an issue report.
-     * There are 2 template tokens you can use. %URL%: this is computed by getting the
-     * &lt;issueManagement&gt;/&lt;url&gt; value from the POM, and removing the last '/'
-     * and everything that comes after it. %ISSUE% : this is the issue number.
+     * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
+     * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
+     * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
      * <p>
      * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called
      * <code>link_template</code>.
      * </p>
      *
-     * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
+     * @parameter expression="${changes.issueLinkTemplate}" default-value="%URL%/ViewIssue.jspa?key=%ISSUE%"
      * @since 2.0-beta-2
      */
     private String issueLinkTemplate;
 
     /**
-     * @parameter expression="${project.issueManagement.url}"
+     * @parameter default-value="${project.issueManagement.url}"
      * @readonly
      */
     private String url;
