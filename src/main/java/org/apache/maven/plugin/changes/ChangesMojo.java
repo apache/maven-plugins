@@ -88,7 +88,7 @@ public class ChangesMojo
             for ( int i = 0; i < resourceNames.length; i++ )
             {
                 URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
-                FileUtils.copyURLToFile( url, new File( outputDirectory, resourceNames[i] ) );
+                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
             }
         }
         catch ( IOException e )

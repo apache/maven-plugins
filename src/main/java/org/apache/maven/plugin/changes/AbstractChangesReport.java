@@ -68,7 +68,7 @@ public abstract class AbstractChangesReport
      * 
      * @parameter default-value="${project.reporting.outputDirectory}"
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     /**
      * Doxia Site Renderer.
