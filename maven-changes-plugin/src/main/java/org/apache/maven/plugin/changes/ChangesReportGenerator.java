@@ -35,6 +35,17 @@ import java.util.ResourceBundle;
  */
 public class ChangesReportGenerator
 {
+
+    /**
+     * The token in {@link #issueLink} denoting the base URL for the issue management.
+     */
+    private static final String URL_TOKEN = "%URL%";
+
+    /**
+     * The token in {@link #issueLink} denoting the issue ID.
+     */
+    private static final String ISSUE_TOKEN = "%ISSUE%";
+
     private ChangesXML report;
 
     private String issueLink;
@@ -68,6 +79,17 @@ public class ChangesReportGenerator
     public String getUrl()
     {
         return url;
+    }
+
+    /**
+     * Checks whether links to the issues can be generated.
+     * 
+     * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
+     */
+    public boolean canGenerateIssueLinks()
+    {
+        return !StringUtils.isBlank( getIssueLink() )
+            && ( !StringUtils.isBlank( getUrl() ) || getIssueLink().indexOf( URL_TOKEN ) < 0 );
     }
 
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink, String message )
@@ -120,7 +142,7 @@ public class ChangesReportGenerator
             {
                 sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
-                if ( StringUtils.isEmpty( url ) )
+                if ( !canGenerateIssueLinks() )
                 {
                     sink.text( action.getIssue() );
 
@@ -234,13 +256,15 @@ public class ChangesReportGenerator
 
     private String parseIssueLink( String issue )
     {
-        String parseLink = "";
+        String parseLink;
 
-        String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
+        parseLink = this.issueLink.replaceFirst( ISSUE_TOKEN, issue );
 
-        parseLink = this.issueLink.replaceFirst( "%ISSUE%", issue );
-
-        parseLink = parseLink.replaceFirst( "%URL%", url );
+        if ( parseLink.indexOf( URL_TOKEN ) >= 0 )
+        {
+            String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
+            parseLink = parseLink.replaceFirst( URL_TOKEN, url );
+        }
 
         return parseLink;
     }
