@@ -155,16 +155,17 @@ public class SiteStageMojo
         }
 
         Repository repository = new Repository( site.getId(), site.getUrl() );
-        if ( StringUtils.isEmpty( repository.getBasedir() ) )
+        StringBuffer hierarchy = new StringBuffer( 1024 );
+        hierarchy.append( repository.getHost() );
+        if ( !StringUtils.isEmpty( repository.getBasedir() ) )
         {
-            return repository.getHost();
+            if ( !repository.getBasedir().startsWith( "/" ) )
+            {
+                hierarchy.append( '/' );
+            }
+            hierarchy.append( repository.getBasedir() );
         }
 
-        if ( repository.getBasedir().startsWith( "/" ) )
-        {
-            return repository.getHost() + repository.getBasedir();
-        }
-
-        return repository.getHost() + "/" + repository.getBasedir();
+        return hierarchy.toString().replaceAll( "[\\:\\?\\*]", "" );
     }
 }
