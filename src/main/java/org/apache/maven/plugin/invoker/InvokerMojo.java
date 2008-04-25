@@ -180,8 +180,8 @@ public class InvokerMojo
 
     /**
      * Includes for searching the integration test directory. This parameter is meant to be set from the POM.
-     * If this parameter is not set, the plugin will search for all pom.xml files one directory below
-     * {@link #projectDirectory projectDirectory} (*&#47;pom.xml).
+     * If this parameter is not set, the plugin will search for all <code>pom.xml</code> files one directory below
+     * {@link #projectsDirectory} (<code>*&#47;pom.xml</code>).
      *
      * @parameter
      */
