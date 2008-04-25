@@ -324,15 +324,30 @@ public class InvokerMojo
      * @since 1.2
      */
     private File settingsFile;
-    
 
     /**
-     * The MAVEN_OPTS env var to use when invoking maven
+     * The <code>MAVEN_OPTS</code> environment variable to use when invoking Maven. This value can be overridden for
+     * individual integration tests by using {@link #mavenOptsFile}.
      * 
      * @parameter expression="${invoker.mavenOpts}"
      * @since 1.2
-     */    
+     */
     private String mavenOpts;
+
+    /**
+     * The name of an optional project-specific file that contains the <code>MAVEN_OPTS</code> value to use for that
+     * test. If the file exists, it will override the value specified by the parameter {@link #mavenOpts}. Line breaks
+     * may be used to format the file contents, for example:
+     * 
+     * <pre>
+     * -Dfile.encoding=UTF-16
+     * -Xms32m -Xmx256m
+     * </pre>
+     * 
+     * @parameter expression="${invoker.mavenOptsFile}" default-value="mvnopts.txt"
+     * @since 1.2
+     */
+    private String mavenOptsFile;
 
     /**
      * The file encoding for the BeanShell scripts and the list files for goals and profiles.
@@ -762,10 +777,7 @@ public class InvokerMojo
                     + ".interpolated" ) );
             }
             
-            if ( mavenOpts != null )
-            {
-                request.setMavenOpts( mavenOpts );
-            }
+            request.setMavenOpts( getMavenOpts( basedir ) );
 
             try
             {
@@ -1256,4 +1268,40 @@ public class InvokerMojo
             IOUtil.close( reader );
         }
     }
+
+    /**
+     * Gets the effective <code>MAVEN_OPTS</code> variable for an integration test.
+     * 
+     * @param projectDirectory The base directory of the IT project, must not be <code>null</code>.
+     * @return The <code>MAVEN_OPTS</code> variable for the integration test.
+     * @throws MojoExecutionException If an error occurred.
+     */
+    private String getMavenOpts( File projectDirectory )
+        throws MojoExecutionException
+    {
+        String opts = mavenOpts;
+        if ( mavenOptsFile != null )
+        {
+            File projectMavenOptsFile = new File( projectDirectory, mavenOptsFile );
+            if ( projectMavenOptsFile.isFile() )
+            {
+                Reader reader = null;
+                try
+                {
+                    reader = ReaderFactory.newReader( projectMavenOptsFile, getEncoding() );
+                    opts = IOUtil.toString( reader ).trim().replaceAll( "[\r\n]+", " " );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Failed to read MAVEN_OPTS file: " + projectMavenOptsFile, e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
+            }
+        }
+        return opts;
+    }
+
 }
