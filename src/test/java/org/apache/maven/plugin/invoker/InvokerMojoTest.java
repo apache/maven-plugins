@@ -22,9 +22,11 @@ package org.apache.maven.plugin.invoker;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.invoker.Invoker;
 import org.codehaus.plexus.util.FileUtils;
@@ -72,6 +74,9 @@ public class InvokerMojoTest
             FileUtils.deleteDirectory( cloneProjectsTo );
         }
         //cloneProjectsTo.getParent()
+        MavenProjectStub project = new MavenProjectStub();
+        project.setTestClasspathElements( Collections.EMPTY_LIST );
+        setVariableValueToObject( invokerMojo, "project", project );
         setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
         setVariableValueToObject( invokerMojo, "postBuildHookScript", "verify.bsh" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
