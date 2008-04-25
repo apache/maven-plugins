@@ -73,6 +73,7 @@ import bsh.Interpreter;
  * outputting the results to the command line.
  *
  * @goal run
+ * @requiresDependencyResolution test
  * @since 1.0
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
@@ -366,8 +367,16 @@ public class InvokerMojo
      * @since 1.2
      */
     private Settings settings;    
-    
-    
+
+    /**
+     * A flag whether the test class path of the project under test should be added to the class path of the BeanShell
+     * scripts.
+     * 
+     * @parameter expression="${invoker.addTestClassPath}" default-value="false"
+     * @since 1.2
+     */
+    private boolean addTestClassPath;
+
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -912,6 +921,25 @@ public class InvokerMojo
         if ( script.exists() )
         {
             final Interpreter engine = new Interpreter();
+
+            if ( addTestClassPath )
+            {
+                getLog().debug( "Adding test class path to BeanShell interpreter:" );
+                try
+                {
+                    List testClassPath = project.getTestClasspathElements();
+                    for ( Iterator it = testClassPath.iterator(); it.hasNext(); )
+                    {
+                        String path = (String) it.next();
+                        getLog().debug( "  " + path );
+                        engine.getClassManager().addClassPath( new File( path ).toURI().toURL() );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    getLog().error( "Failed to add test class path to BeanShell interpreter", e );
+                }
+            }
 
             PrintStream origOut = System.out;
             PrintStream origErr = System.err;
