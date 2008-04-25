@@ -85,10 +85,7 @@ public class InvokerMojo
     /**
      * Maven artifact install component to copy artifacts to the local repository.
      * 
-     * @parameter expression="${component.org.apache.maven.artifact.installer.ArtifactInstaller}"
-     * @required
-     * @readonly
-     * @since 1.2
+     * @component
      */
     protected ArtifactInstaller installer;
 
@@ -104,6 +101,7 @@ public class InvokerMojo
      * local repository.
      * 
      * @parameter default-value="false"
+     * @since 1.2
      */
     private boolean installProjectArtifacts;
     
