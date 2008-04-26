@@ -21,6 +21,7 @@ Clone Projects Example
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -30,11 +31,7 @@ Clone Projects Example
             </goals>
             <configuration>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <installProjectArtifacts>true</installProjectArtifacts>
               <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/pom.xml</pomInclude>
-              </pomIncludes>
             </configuration>
           </execution>
         </executions>

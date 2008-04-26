@@ -8,8 +8,8 @@
 
 Installing Artifacts Example
 
-  The following example shows a plugin configuration with the \<installProjectArtifacts\> 
-  parameter set to true.  This will cause the project artifact(s) to be installed to the local 
+  The following example shows a plugin configuration with the <<<\<installProjectArtifacts\>>>> 
+  parameter set to <<<true>>>.  This will cause the project artifact(s) to be installed to the local 
   repository before executing the projects.  This can be helpful if you 
   want to build you project and test the new artifacts artifact in a single step instead of 
   installing first and then running tests.
@@ -21,6 +21,7 @@ Installing Artifacts Example
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -32,9 +33,6 @@ Installing Artifacts Example
               <localRepositoryPath>target/local-repo</localRepositoryPath>
               <installProjectArtifacts>true</installProjectArtifacts>
               <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/pom.xml</pomInclude>
-              </pomIncludes>
             </configuration>
           </execution>
         </executions>

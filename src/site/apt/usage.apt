@@ -8,17 +8,17 @@
 
 Usage
   
-* How to use the invoker plugin
+* How to use the Invoker Plugin
  
   This page provides general usage information along with some basic examples.  The plugin
   is commonly used to run and verify integration tests for a project.  This is done using
-  the {{{run-mojo.html} run }} goal.
+  the <<<{{{run-mojo.html} invoker:run }}>>> goal.
 
 * Basic example
 
   The following example shows basic plugin configuration for running integration tests.
-  The projects directory (src/it) is the location where the plugin will look for test projects
-  to execute.  The plugin is set to find and run all pom.xml files in this directory.
+  The projects directory (<<<src/it>>>) is the location where the plugin will look for test projects
+  to execute.  The plugin is set to find and run all <<<pom.xml>>> files in this directory.
   
 -------------------
 <project>
@@ -27,6 +27,7 @@ Usage
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <id>integration-test</id>
