@@ -51,5 +51,18 @@ under the License.
        </p>
      </answer>
    </faq>
+   <faq id="question2">
+     <question>How can I assert that the build of an IT project fails?</question>
+     <answer>
+       <p>
+         Sometimes you might want to test that error conditions are properly dealt with, i.e. fail a build. To assert
+         a failure for a particular IT project, put the following setting into the properties file denoted by the
+         plugin's <a href="run-mojo.html#invokerPropertiesFile"><code>invokerPropertiesFile</code></a> parameter:
+         <pre>invoker.buildResult=failure</pre>
+         Now, the failure of the IT build will be interpreted as a test success. Likewise, a successful IT build will
+         be considered a test failure.
+       </p>
+     </answer>
+   </faq>
  </part>
 </faqs>
