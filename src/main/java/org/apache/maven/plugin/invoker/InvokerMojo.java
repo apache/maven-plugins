@@ -24,17 +24,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -64,6 +67,9 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.interpolation.Interpolator;
+import org.codehaus.plexus.util.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -202,8 +208,10 @@ public class InvokerMojo
 
     /**
      * The name of the project-specific file that contains the enumeration of goals to execute for that test.
-     *
+     * 
      * @parameter expression="${invoker.goalsFile}" default-value="goals.txt"
+     * @deprecated As of version 1.2 the properties file specified by the parameter invokerPropertiesFile should be used
+     *             instead.
      */
     private String goalsFile;
 
@@ -308,11 +316,13 @@ public class InvokerMojo
     private String invokerTest;
 
     /**
-     * The name of the project-specific file that contains the enumeration of profiles to use for that test.
-     * <b>If the file exists and empty no profiles will be used even if the profiles is set</b>
+     * The name of the project-specific file that contains the enumeration of profiles to use for that test. <b>If the
+     * file exists and empty no profiles will be used even if the profiles is set</b>
      * 
      * @parameter expression="${invoker.profilesFile}" default-value="profiles.txt"
      * @since 1.1
+     * @deprecated As of version 1.2 the properties file specified by the parameter invokerPropertiesFile should be used
+     *             instead.
      */
     private String profilesFile;
 
@@ -326,27 +336,12 @@ public class InvokerMojo
 
     /**
      * The <code>MAVEN_OPTS</code> environment variable to use when invoking Maven. This value can be overridden for
-     * individual integration tests by using {@link #mavenOptsFile}.
+     * individual integration tests by using {@link #invokerPropertiesFile}.
      * 
      * @parameter expression="${invoker.mavenOpts}"
      * @since 1.2
      */
     private String mavenOpts;
-
-    /**
-     * The name of an optional project-specific file that contains the <code>MAVEN_OPTS</code> value to use for that
-     * test. If the file exists, it will override the value specified by the parameter {@link #mavenOpts}. Line breaks
-     * may be used to format the file contents, for example:
-     * 
-     * <pre>
-     * -Dfile.encoding=UTF-16
-     * -Xms32m -Xmx256m
-     * </pre>
-     * 
-     * @parameter expression="${invoker.mavenOptsFile}" default-value="mvnopts.txt"
-     * @since 1.2
-     */
-    private String mavenOptsFile;
 
     /**
      * The file encoding for the BeanShell scripts and the list files for goals and profiles.
@@ -375,6 +370,40 @@ public class InvokerMojo
      * @since 1.2
      */
     private boolean addTestClassPath;
+
+    /**
+     * The name of an optional test-specific file that contains properties used to configure the invocation of an
+     * integration test. This properties file may be used to specify settings for an individual test invocation. Any
+     * property present in the file will override the corresponding setting from the plugin configuration. The values of
+     * the properties are filtered and may use expressions like <code>${project.version}</code> to reference project
+     * properties or values from the parameter {@link #interpolationsProperties}. The snippet below describes the
+     * supported properties:
+     * 
+     * <pre>
+     * # A comma or space separated list of goals/phases to execute, may
+     * # specify an empty list to execute the default goal of the IT project
+     * invoker.goals=clean package site
+     * 
+     * # A comma or space separated list of profiles to activate
+     * invoker.profiles=its,jdk15
+     * 
+     * # The value for the environment variable MAVEN_OPTS
+     * invoker.mavenOpts=-Dfile.encoding=UTF-16 -Xms32m -Xmx256m
+     * 
+     * # Possible values are &quot;fail-fast&quot; (default), &quot;fail-at-end&quot; and &quot;fail-never&quot;
+     * invoker.failureBehavior=fail-never
+     * 
+     * # The expected result of the build, possible values are &quot;success&quot; (default) and &quot;failure&quot;
+     * invoker.buildResult=failure
+     * 
+     * # A boolean value controlling the -N flag, defaults to &quot;false&quot;
+     * invoker.nonRecursive=false
+     * </pre>
+     * 
+     * @parameter expression="${invoker.invokerPropertiesFile}" default-value="invoker.properties"
+     * @since 1.2
+     */
+    private String invokerPropertiesFile;
 
 
     public void execute()
@@ -659,6 +688,18 @@ public class InvokerMojo
 
             final File outputLog = new File( basedir, "build.log" );
 
+            final Properties invokerProperties = getInvokerProperties( basedir );
+            if ( getLog().isDebugEnabled() && !invokerProperties.isEmpty() )
+            {
+                getLog().debug( "Using invoker properties:" );
+                for ( Iterator it = new TreeSet( invokerProperties.keySet() ).iterator(); it.hasNext(); )
+                {
+                    String key = (String) it.next();
+                    String value = invokerProperties.getProperty( key );
+                    getLog().debug( "  " + key + ": " + value );
+                }
+            }
+
             if ( !noLog )
             {
                 outputLog.getParentFile().mkdirs();
@@ -696,9 +737,9 @@ public class InvokerMojo
                 return;
             }
 
-            final List invocationGoals = getGoals( basedir );
-
             final InvocationRequest request = new DefaultInvocationRequest();
+
+            final List invocationGoals = getGoals( basedir );
 
             if ( ( invocationGoals.size() == 1 ) && "_default".equals( invocationGoals.get( 0 ) ) )
             {
@@ -785,11 +826,13 @@ public class InvokerMojo
                     + ".interpolated" ) );
             }
 
-            request.setMavenOpts( getMavenOpts( basedir ) );
-            getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
+            request.setMavenOpts( mavenOpts );
+
+            configureInvocation( request, invokerProperties );
 
             try
             {
+                getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
                 getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
             }
             catch ( CommandLineConfigurationException e )
@@ -812,6 +855,8 @@ public class InvokerMojo
             }
 
             final CommandLineException executionException = result.getExecutionException();
+            final boolean nonZeroExit =
+                "failure".equalsIgnoreCase( invokerProperties.getProperty( "invoker.buildResult" ) );
 
             if ( executionException != null )
             {
@@ -821,7 +866,7 @@ public class InvokerMojo
                 }
                 failures.add( pom );
             }
-            else if ( result.getExitCode() != 0 )
+            else if ( (result.getExitCode() != 0) != nonZeroExit )
             {
                 if ( !suppressSummaries )
                 {
@@ -1298,38 +1343,92 @@ public class InvokerMojo
     }
 
     /**
-     * Gets the effective <code>MAVEN_OPTS</code> variable for an integration test.
+     * Gets the (interpolated) invoker properties for an integration test.
      * 
      * @param projectDirectory The base directory of the IT project, must not be <code>null</code>.
-     * @return The <code>MAVEN_OPTS</code> variable for the integration test.
+     * @return The invoker properties, may be empty but never <code>null</code>.
      * @throws MojoExecutionException If an error occurred.
      */
-    private String getMavenOpts( File projectDirectory )
+    private Properties getInvokerProperties( final File projectDirectory )
         throws MojoExecutionException
     {
-        String opts = mavenOpts;
-        if ( mavenOptsFile != null )
+        Properties props = new Properties();
+        if ( invokerPropertiesFile != null )
         {
-            File projectMavenOptsFile = new File( projectDirectory, mavenOptsFile );
-            if ( projectMavenOptsFile.isFile() )
+            File propertiesFile = new File( projectDirectory, invokerPropertiesFile );
+            if ( propertiesFile.isFile() )
             {
-                Reader reader = null;
+                InputStream in = null;
                 try
                 {
-                    reader = ReaderFactory.newReader( projectMavenOptsFile, getEncoding() );
-                    opts = IOUtil.toString( reader ).trim().replaceAll( "[\r\n]+", " " );
+                    in = new FileInputStream( propertiesFile );
+                    props.load( in );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Failed to read MAVEN_OPTS file: " + projectMavenOptsFile, e );
+                    throw new MojoExecutionException( "Failed to read invoker properties: " + propertiesFile, e );
                 }
                 finally
                 {
-                    IOUtil.close( reader );
+                    IOUtil.close( in );
                 }
             }
+
+            Map filter = new CompositeMap( project, this.interpolationsProperties );
+            Interpolator interpolator = new RegexBasedInterpolator();
+            interpolator.addValueSource( new MapBasedValueSource( filter ) );
+            for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
+            {
+                String key = (String) it.next();
+                String value = props.getProperty( key );
+                value = interpolator.interpolate( value, "" );
+                props.setProperty( key, value );
+            }
         }
-        return opts;
+        return props;
+    }
+
+    /**
+     * Configures the specified invocation request from the given invoker properties. Settings not present in the
+     * invoker properties will be left unchanged in the invocation request.
+     * 
+     * @param request The invocation request to configure, must not be <code>null</code>.
+     * @param properties The invoker properties used to configure the invocation, must not be <code>null</code>.
+     * @return The configured invocation request.
+     */
+    private InvocationRequest configureInvocation( InvocationRequest request, Properties properties )
+    {
+        String goals = properties.getProperty( "invoker.goals" );
+        if ( goals != null )
+        {
+            request.setGoals( new ArrayList( Arrays.asList( goals.split( "[,\\s]+" ) ) ) );
+        }
+
+        String profiles = properties.getProperty( "invoker.profiles" );
+        if ( profiles != null )
+        {
+            request.setProfiles( new ArrayList( Arrays.asList( profiles.split( "[,\\s]+" ) ) ) );
+        }
+
+        String opts = properties.getProperty( "invoker.mavenOpts" );
+        if ( opts != null )
+        {
+            request.setMavenOpts( opts );
+        }
+
+        String failureBehavior = properties.getProperty( "invoker.failureBehavior" );
+        if ( failureBehavior != null )
+        {
+            request.setFailureBehavior( failureBehavior );
+        }
+
+        String nonRecursive = properties.getProperty( "invoker.nonRecursive" );
+        if ( nonRecursive != null )
+        {
+            request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
+        }
+
+        return request;
     }
 
 }
