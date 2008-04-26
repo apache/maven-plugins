@@ -115,10 +115,10 @@ public class InvokerMojo
     private boolean skipInvocation;
 
     /**
-     * Flag used to suppress the summary output notifying of successes and failures. If set to true,
+     * Flag used to suppress the summary output notifying of successes and failures. If set to <code>true</code>,
      * the only indication of the build's success or failure will be the effect it has on the main
-     * build (if it fails, the main build should fail as well). If streamLogs is enabled, the sub-build
-     * summary will also provide an indication. By default, this parameter is set to false.
+     * build (if it fails, the main build should fail as well). If <code>streamLogs</code> is enabled, the sub-build
+     * summary will also provide an indication.
      *
      * @parameter default-value="false"
      */
@@ -213,14 +213,14 @@ public class InvokerMojo
     private Invoker invoker;
 
     /**
-     * relative path of a pre-build hook beanshell script to run prior to executing the build.
+     * Relative path of a pre-build hook BeanShell script to run prior to executing the build.
      *
      * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild.bsh"
      */
     private String preBuildHookScript;
 
     /**
-     * relative path of a cleanup/verification beanshell script to run after executing the build.
+     * Relative path of a cleanup/verification BeanShell script to run after executing the build.
      *
      * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
      */
@@ -264,7 +264,7 @@ public class InvokerMojo
     private boolean debug;
 
     /**
-     * Suppress logging to the build.log file.
+     * Suppress logging to the <code>build.log</code> file.
      *
      * @parameter expression="${invoker.noLog}" default-value="false"
      */
@@ -317,7 +317,7 @@ public class InvokerMojo
     private String profilesFile;
 
     /**
-     * Path to an alternate settings.xml to use for maven invocation with all ITs
+     * Path to an alternate <code>settings.xml</code> to use for Maven invocation with all ITs.
      * 
      * @parameter expression="${invoker.settingsFile}"
      * @since 1.2
@@ -368,7 +368,8 @@ public class InvokerMojo
 
     /**
      * A flag whether the test class path of the project under test should be added to the class path of the BeanShell
-     * scripts.
+     * scripts. If set to <code>false</code>, the scripts can only access classes from the <a
+     * href="dependencies.html">runtime class path</a> of the Maven Invoker Plugin.
      * 
      * @parameter expression="${invoker.addTestClassPath}" default-value="false"
      * @since 1.2
@@ -783,8 +784,9 @@ public class InvokerMojo
                 request.setUserSettingsFile( new File( settingsFile.getParentFile(), settingsFile.getName()
                     + ".interpolated" ) );
             }
-            
+
             request.setMavenOpts( getMavenOpts( basedir ) );
+            getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
 
             try
             {
