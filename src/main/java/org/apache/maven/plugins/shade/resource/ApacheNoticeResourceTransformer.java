@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -35,6 +36,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+
+import org.codehaus.plexus.util.StringUtils;
 
 public class ApacheNoticeResourceTransformer
     implements ResourceTransformer
@@ -64,7 +67,7 @@ public class ApacheNoticeResourceTransformer
     /**
      * The file encoding of the <code>NOTICE</code> file.
      */
-    String encoding = "ISO-8859-1";
+    String encoding;
 
     private static final String NOTICE_PATH = "META-INF/NOTICE";
 
@@ -107,7 +110,15 @@ public class ApacheNoticeResourceTransformer
         }
 
 
-        BufferedReader reader = new BufferedReader( new InputStreamReader( is, encoding ) );
+        BufferedReader reader;
+        if ( StringUtils.isNotEmpty( encoding ) )
+        {
+            reader = new BufferedReader( new InputStreamReader( is, encoding ) );
+        }
+        else
+        {
+            reader = new BufferedReader( new InputStreamReader( is ) );
+        }
 
         String line = reader.readLine();
         StringBuffer sb = new StringBuffer();
@@ -192,7 +203,15 @@ public class ApacheNoticeResourceTransformer
     {
         jos.putNextEntry( new JarEntry( NOTICE_PATH ) );
 
-        OutputStreamWriter pow = new OutputStreamWriter( jos, encoding );
+        Writer pow;
+        if ( StringUtils.isNotEmpty( encoding ) )
+        {
+            pow = new OutputStreamWriter( jos, encoding );
+        }
+        else
+        {
+            pow = new OutputStreamWriter( jos );
+        }
         PrintWriter writer = new PrintWriter( pow );
 
         int count = 0;
