@@ -44,6 +44,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -101,6 +102,13 @@ public class InvokerMojo
      * @component
      */
     private ArtifactFactory artifactFactory;
+
+    /**
+     * Used to create artifacts
+     *
+     * @component
+     */
+    private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
      * Flag to determine if the project artifact(s) should be installed to the
@@ -536,8 +544,12 @@ public class InvokerMojo
                 {
                     localRepositoryPath.mkdirs();
                 }
-                integrationTestRepository = new DefaultArtifactRepository( "local-repo", localRepositoryPath.toURL().toString(), 
-                                                                 localRepository.getLayout() );
+                integrationTestRepository =
+                    artifactRepositoryFactory.createArtifactRepository( "it-repo",
+                                                                        localRepositoryPath.toURL().toString(),
+                                                                        localRepository.getLayout(),
+                                                                        localRepository.getSnapshots(),
+                                                                        localRepository.getReleases() );
             }
                         
             // Install the pom
