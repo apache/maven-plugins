@@ -144,18 +144,6 @@ under the License.
           </execution>
         </executions>
       </plugin>      
-
-      <!-- Testing the result of the it pom.xml -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <excludes>
-            <exclude>**/*IntegrationTest.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -171,33 +159,8 @@ under the License.
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>2.2</version>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <configuration>
-                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <packaging>${project.packaging}</packaging>
-                  <pomFile>${basedir}/pom.xml</pomFile>
-                  <createChecksum>true</createChecksum>
-                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                  <localRepositoryId>it-local-repo</localRepositoryId>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.1</version>
+            <version>1.2-SNAPSHOT</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
@@ -209,6 +172,8 @@ under the License.
                 <goal>clean</goal>
                 <goal>package</goal>
               </goals>
+              <installProjectArtifacts>true</installProjectArtifacts>
+              <settingsFile>src/it/settings.xml</settingsFile>              
             </configuration>
             <executions>
               <execution>
@@ -236,4 +201,17 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
+  <!-- TODO remove when invoker plugin 1.2 is released -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>apache.snapshots</id>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+    </pluginRepository>
+  </pluginRepositories>   
 </project>
