@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.invoker;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.invoker;
 
 import java.util.Collection;
 import java.util.Map;
@@ -39,7 +40,7 @@ class CompositeMap
 
     private Properties properties;
 
-    protected CompositeMap(MavenProject mavenProject, Properties properties)
+    protected CompositeMap( MavenProject mavenProject, Properties properties )
     {
         this.mavenProject = mavenProject;
         this.properties = properties == null ? new Properties() : properties;

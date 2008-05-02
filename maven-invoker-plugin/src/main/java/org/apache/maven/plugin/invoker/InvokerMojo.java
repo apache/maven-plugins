@@ -827,7 +827,7 @@ public class InvokerMojo
 
             request.setPomFile( interpolatedPomFile );
 
-            request.setProfiles( getProfiles(basedir) );
+            request.setProfiles( getProfiles( basedir ) );
 
             if ( settingsFile != null )
             {
@@ -877,7 +877,7 @@ public class InvokerMojo
                 }
                 failures.add( pom );
             }
-            else if ( (result.getExitCode() != 0) != nonZeroExit )
+            else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
             {
                 if ( !suppressSummaries )
                 {
@@ -914,7 +914,7 @@ public class InvokerMojo
     private Properties loadTestProperties( final File basedir )
         throws IOException
     {
-        if (testProperties == null)
+        if ( testProperties == null )
         {
             return new Properties();
         }
@@ -1250,14 +1250,14 @@ public class InvokerMojo
         throws MojoExecutionException
     {
         File interpolatedFile = new File( targetDirectory, targetFileName );
-        if (interpolatedFile.exists())
+        if ( interpolatedFile.exists() )
         {
             interpolatedFile.delete();
         }
         interpolatedFile.deleteOnExit();
         if ( settings.getLocalRepository() != null )
         {
-            if (this.interpolationsProperties == null)
+            if ( this.interpolationsProperties == null )
             {
                 this.interpolationsProperties = new Properties();
             }
