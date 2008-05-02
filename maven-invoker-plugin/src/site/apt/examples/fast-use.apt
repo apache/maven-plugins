@@ -1,0 +1,83 @@
+ ------
+ Fast Build Configuration
+ ------
+ Olivier Lamy
+ ------
+ 01 May 2008
+ ------
+
+Fast Invoker Plugin Configuration
+
+  The plugin use an empty to launch it test. This means by default, the plugin will 
+  download all artifacts from the central repo.
+  <<This default bevahiour can be very long !.>>
+  But you can configure the plugin to download released artifacts from your local repo.
+  NOTE : this will works without optionnal settings with maven >= 2.0.9 because all plugins 
+  versions are locked in the super pom. For older version, you have to lock plugins versions.
+  
+  To enable this feature, you have to add a settings.xml file in your project (by example in src/it/settings.xml)
+  and modify the plugin configuration as this :  
+  
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          ...
+          <settingsFile>src/it/settings.xml</settingsFile>
+          ...              
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------
+
+  The settings must contains the following content :
+  
+-------------------
+<?xml version="1.0"?>
+<settings>
+  <profiles>
+    <profile>
+      <id>apache</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>      
+      <repositories>
+        <repository>
+          <id>local.central</id>
+          <url>file://@localRepository@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>             
+        </repository>        
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>local.central</id>
+          <url>file://@localRepository@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>          
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+</settings>
+-------------------  
+  
+
+          
