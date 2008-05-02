@@ -28,6 +28,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+/**
+ * @version $Id$
+ */
 public class FileLogger
     implements InvocationOutputHandler
 {
@@ -60,6 +63,7 @@ public class FileLogger
                 }
                 catch ( Throwable e )
                 {
+                    // ignore
                 }
             }
         };
