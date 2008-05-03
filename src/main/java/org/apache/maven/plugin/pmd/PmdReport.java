@@ -208,7 +208,14 @@ public class PmdReport
                 {
                     throw new MavenReportException( "Can't get file list", e );
                 }
-    
+
+                if ( StringUtils.isEmpty( sourceEncoding ) && !files.isEmpty() )
+                {
+                    getLog().warn(
+                                   "File encoding has not been set, using platform encoding "
+                                       + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+                }
+
                 for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
                 {
                     Map.Entry entry = (Map.Entry) i.next();
