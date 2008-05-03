@@ -22,11 +22,9 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -58,6 +56,7 @@ import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Creates a PMD report.
@@ -108,8 +107,7 @@ public class PmdReport
     private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
 
     /**
-     * The file encoding to use when reading the java source. <strong>Note:</strong> Prior to version 2.4, this
-     * parameter defaulted to the JVM's default encoding which led to platform-dependent builds.
+     * The file encoding to use when reading the Java sources.
      * 
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
@@ -227,12 +225,20 @@ public class PmdReport
                         {
                             // PMD closes this Reader even though it did not open it so we have
                             // to open a new one with every call to processFile().
-                            Reader reader = new InputStreamReader( new FileInputStream( file ), getSourceEncoding() );
+                            Reader reader;
+                            if ( StringUtils.isNotEmpty( sourceEncoding ) )
+                            {
+                                reader = ReaderFactory.newReader( file, sourceEncoding );
+                            }
+                            else
+                            {
+                                reader = ReaderFactory.newPlatformReader( file );
+                            }
                             pmd.processFile( reader, sets[idx], ruleContext );
                         }
                         catch ( UnsupportedEncodingException e1 )
                         {
-                            throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e1 );
+                            throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
                         }
                         catch ( PMDException pe )
                         {
@@ -302,16 +308,6 @@ public class PmdReport
         }
     }
 
-    /**
-     * Gets the effective source file encoding.
-     * 
-     * @return The effective source file encoding, never <code>null</code>.
-     */
-    private String getSourceEncoding()
-    {
-        return ( sourceEncoding == null ) ? ReaderFactory.ISO_8859_1 : sourceEncoding;
-    }
-    
     /**
      * Convenience method to get the location of the specified file name.
      *
