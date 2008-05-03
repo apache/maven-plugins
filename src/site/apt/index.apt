@@ -32,4 +32,8 @@ Maven 2 Invoker Plugin
   
   * {{{examples/post-build-script.html}Run a BeanShell script}} to verify project output.
   
+  * {{{examples/fast-use.html}Fast Invoker Plugin configuration}} to accelerate test execution.
+  
+  * {{{examples/access-test-classes.html}Access test classes}} to share code between IT scripts.
+  
   []
