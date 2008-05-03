@@ -351,7 +351,7 @@ public class InvokerMojo
     private String mavenOpts;
 
     /**
-     * The file encoding for the BeanShell scripts and the list files for goals and profiles.
+     * The file encoding for the pre-/post-build scripts and the list files for goals and profiles.
      * 
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 1.2
@@ -369,9 +369,11 @@ public class InvokerMojo
     private Settings settings;    
 
     /**
-     * A flag whether the test class path of the project under test should be added to the class path of the BeanShell
-     * scripts. If set to <code>false</code>, the scripts can only access classes from the <a
-     * href="dependencies.html">runtime class path</a> of the Maven Invoker Plugin.
+     * A flag whether the test class path of the project under test should be included in the class path of the
+     * pre-/post-build scripts. If set to <code>false</code>, the class path of script interpreter consists only of
+     * the <a href="dependencies.html">runtime dependencies</a> of the Maven Invoker Plugin. If set the
+     * <code>true</code>, the project's test class path will be prepended to the interpreter class path. Among
+     * others, this feature allows the scripts to access utility classes from the test sources of your project.
      * 
      * @parameter expression="${invoker.addTestClassPath}" default-value="false"
      * @since 1.2
