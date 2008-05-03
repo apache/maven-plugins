@@ -524,7 +524,27 @@ public class InvokerMojo
             throw new MojoFailureException( this, message, message );
         }
     }
-    
+
+    /**
+     * Creates a new reader for the specified file, using the plugin's {@link #encoding} parameter.
+     * 
+     * @param file The file to create a reader for, must not be <code>null</code>.
+     * @return The reader for the file, never <code>null</code>.
+     * @throws IOException If the specified file was not found or the configured encoding is not supported.
+     */
+    private Reader newReader( File file )
+        throws IOException
+    {
+        if ( StringUtils.isNotEmpty( encoding ) )
+        {
+            return ReaderFactory.newReader( file, encoding );
+        }
+        else
+        {
+            return ReaderFactory.newPlatformReader( file );
+        }
+    }
+
     /**
      * Install the main project artifact and any attached artifacts to the local repository.
      * 
@@ -577,16 +597,6 @@ public class InvokerMojo
             throw new MojoExecutionException( "ArtifactInstallationException: " + e.getMessage(), e );
         }
         
-    }
-
-    /**
-     * Gets the source file encoding.
-     * 
-     * @return The source file encoding, never <code>null</code>.
-     */
-    protected String getEncoding()
-    {
-        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
     }
 
     private void cloneProjects( String[] includedPoms )
@@ -1016,7 +1026,7 @@ public class InvokerMojo
 
                 engine.set( "basedir", basedir );
 
-                reader = ReaderFactory.newReader( script, getEncoding() );
+                reader = newReader( script );
 
                 final Object result = engine.eval( reader );
 
@@ -1204,7 +1214,7 @@ public class InvokerMojo
         try
         {
             Map composite = new CompositeMap( this.project, this.interpolationsProperties );
-            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newReader(  projectGoalList, getEncoding() ), composite ) );
+            reader = new BufferedReader( new InterpolationFilterReader( newReader( projectGoalList ), composite ) );
 
             result = new ArrayList();
 
@@ -1330,7 +1340,7 @@ public class InvokerMojo
         try
         {
             List profilesInFiles = new ArrayList();
-            reader = new BufferedReader( ReaderFactory.newReader( projectProfilesFile, getEncoding() ) );
+            reader = new BufferedReader( newReader( projectProfilesFile ) );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
