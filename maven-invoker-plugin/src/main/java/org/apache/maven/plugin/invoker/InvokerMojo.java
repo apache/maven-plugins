@@ -79,6 +79,7 @@ import bsh.Interpreter;
  * outputting the results to the command line.
  *
  * @goal run
+ * @phase integration-test
  * @requiresDependencyResolution test
  * @since 1.0
  *
