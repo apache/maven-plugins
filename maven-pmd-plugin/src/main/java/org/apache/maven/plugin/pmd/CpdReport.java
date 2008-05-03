@@ -112,6 +112,8 @@ public class CpdReport
                 Map files = null;
                 try
                 {
+                    files = getFilesToProcess();
+
                     if ( StringUtils.isNotEmpty( sourceEncoding ) )
                     {
                         cpd.setEncoding( sourceEncoding );
@@ -119,8 +121,13 @@ public class CpdReport
                         // test encoding as CPD will convert exception into a RuntimeException
                         WriterFactory.newWriter( new ByteArrayOutputStream(), sourceEncoding );
                     }
+                    else if ( !files.isEmpty() )
+                    {
+                        getLog().warn(
+                                       "File encoding has not been set, using platform encoding "
+                                           + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+                    }
 
-                    files = getFilesToProcess( );
                     for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
                     {
                         cpd.add( (File) it.next() );
