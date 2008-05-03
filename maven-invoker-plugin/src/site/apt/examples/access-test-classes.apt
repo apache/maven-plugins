@@ -1,0 +1,42 @@
+ ------
+ Accessing Test Classes
+ ------
+ Benjamin Bentmann
+ ------
+ 03 May 2008
+ ------
+
+Accessing Test Classes
+ 
+  In case your pre-/post-build scripts perform complex operations that you would rather like to refactor out into some
+  utility class instead of copy&pasting them in each script, you can use the parameter <<<addTestClassPath>>>:
+
++----
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <addTestClassPath>true</addTestClassPath>
+            </configuration>
+          </execution>
+       </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++----
+
+  Setting <<<addTestClassPath>>> to <<<true>>> will prepend the directory <<<$\{project.build.testOutputDirectory\}>>>
+  and all dependencies of your project to the class path of the script interpreter. Of course, this requires your test
+  classes to be compiled before running the integration tests but this is usually the case if you employ the Invoker
+  Plugin during the lifecycle phase <<<integration-test>>>.
