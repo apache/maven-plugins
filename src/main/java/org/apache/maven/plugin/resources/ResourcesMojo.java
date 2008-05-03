@@ -27,11 +27,13 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -52,7 +54,7 @@ public class ResourcesMojo
 {
 
     /**
-     * The character encoding scheme to be applied.
+     * The character encoding scheme to be applied when filtering resources.
      *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
@@ -95,16 +97,6 @@ public class ResourcesMojo
      */
     private List filters;
 
-    /**
-     * Gets the source file encoding.
-     *
-     * @return The source file encoding, never <code>null</code>.
-     */
-    protected String getEncoding()
-    {
-        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
-    }
-
     public void execute()
         throws MojoExecutionException
     {
@@ -116,7 +108,12 @@ public class ResourcesMojo
     {
         initializeFiltering();
 
-        getLog().info( "Using " + getEncoding() + " encoding to copy filtered resources." );
+        if ( StringUtils.isEmpty( encoding ) && isFilteringEnabled( resources ) )
+        {
+            getLog().warn(
+                           "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+        }
 
         for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
@@ -168,8 +165,8 @@ public class ResourcesMojo
 
             List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
 
-            getLog().info( "Copying " + includedFiles.size() + " resource"
-                + ( includedFiles.size() > 1 ? "s" : "" )
+            getLog().info( "Copying " + ( resource.isFiltering() ? "and filtering " : "")
+                + includedFiles.size() + " resource" + ( includedFiles.size() != 1 ? "s" : "" )
                 + ( targetPath == null ? "" : " to " + targetPath ) );
 
             for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
@@ -202,6 +199,28 @@ public class ResourcesMojo
                 }
             }
         }
+    }
+
+    /**
+     * Determines whether filtering has been enabled for any resource.
+     * 
+     * @param resources The set of resources to check for filtering, may be <code>null</code>.
+     * @return <code>true</code> if at least one resource uses filtering, <code>false</code> otherwise.
+     */
+    private boolean isFilteringEnabled( Collection resources )
+    {
+        if ( resources != null )
+        {
+            for ( Iterator i = resources.iterator(); i.hasNext(); )
+            {
+                Resource resource = (Resource) i.next();
+                if ( resource.isFiltering() )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void initializeFiltering()
@@ -269,6 +288,6 @@ public class ResourcesMojo
                     }
             };
         }
-        FileUtils.copyFile(from, to, getEncoding(), wrappers);
+        FileUtils.copyFile(from, to, encoding, wrappers);
     }
 }
