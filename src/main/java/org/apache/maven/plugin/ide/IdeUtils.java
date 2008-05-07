@@ -18,12 +18,6 @@
  */
 package org.apache.maven.plugin.ide;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -38,6 +32,12 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -97,7 +97,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings, considering also settings altered in plugin executions .
-     * 
+     *
      * @param project maven project
      * @return option value (may be null)
      */
@@ -116,7 +116,7 @@ public class IdeUtils
     /**
      * Returns the source version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     * 
+     *
      * @param project maven project
      * @return java source version
      */
@@ -128,7 +128,7 @@ public class IdeUtils
     /**
      * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     * 
+     *
      * @param project maven project
      * @return java target version
      */
@@ -164,7 +164,7 @@ public class IdeUtils
 
     /**
      * Extracts the version of the first matching artifact in the given list.
-     * 
+     *
      * @param artifactIds artifact names to compare against for extracting version
      * @param artifacts Set of artifacts for our project
      * @param len expected length of the version sub-string
@@ -191,7 +191,7 @@ public class IdeUtils
 
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -211,7 +211,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -223,6 +223,7 @@ public class IdeUtils
         Plugin plugin = (org.apache.maven.model.Plugin) project.getBuild().getPluginsAsMap().get( pluginId );
         if ( plugin != null )
         {
+            // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
             return (Xpp3Dom) plugin.getConfiguration();
         }
         return null;
@@ -230,7 +231,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     * 
+     *
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param artifactId the artifact id of the plugin to search for
@@ -276,7 +277,7 @@ public class IdeUtils
 
     /**
      * Use the project name template to create an eclipse project.
-     * 
+     *
      * @param template Template for the project name
      * @param artifact the artifact to create the project name for
      * @return the created ide project name
@@ -368,11 +369,11 @@ public class IdeUtils
             version = IdeUtils.getCompilerSourceVersion( project );
         }
 
-        if ( "1.5".equals( version ) ) //$NON-NLS-1$ 
+        if ( "1.5".equals( version ) ) //$NON-NLS-1$
         {
             version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version
         }
-        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ 
+        else if ( "1.6".equals( version ) ) //$NON-NLS-1$
         {
             version = IdeUtils.JAVA_6_0;
         }
@@ -426,7 +427,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings from a list of plugins .
-     * 
+     *
      * @param project maven project
      * @return option value (may be null)
      */
@@ -440,6 +441,7 @@ public class IdeUtils
 
             if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
             {
+                // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
                 // this is the default setting
@@ -454,6 +456,8 @@ public class IdeUtils
                 for ( Iterator iter = executions.iterator(); iter.hasNext(); )
                 {
                     PluginExecution execution = (PluginExecution) iter.next();
+
+                    // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                     o = (Xpp3Dom) execution.getConfiguration();
 
                     if ( o != null && o.getChild( optionName ) != null )
