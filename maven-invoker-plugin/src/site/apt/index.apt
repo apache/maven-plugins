@@ -14,6 +14,11 @@ Maven 2 Invoker Plugin
   
 * Goals Overview
 
+  The Invoker Plugin has two goals:
+
+  * {{{install-mojo.html}invoker:install}} copies the project artifacts into the local repository to prepare the
+    execution of the integration tests.
+
   * {{{run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result.
 
   []
