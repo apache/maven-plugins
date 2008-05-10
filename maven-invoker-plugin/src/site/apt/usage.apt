@@ -14,7 +14,7 @@ Usage
   is commonly used to run and verify integration tests for a project.  This is done using
   the <<<{{{run-mojo.html} invoker:run }}>>> goal.
 
-* Basic example
+* Basic Example
 
   The following example shows basic plugin configuration for running integration tests.
   The projects directory (<<<src/it>>>) is the location where the plugin will look for test projects
@@ -31,7 +31,6 @@ Usage
         <executions>
           <execution>
             <id>integration-test</id>
-            <phase>integration-test</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -49,4 +48,4 @@ Usage
   ...
 </project>
 -------------------
-          
+ 
