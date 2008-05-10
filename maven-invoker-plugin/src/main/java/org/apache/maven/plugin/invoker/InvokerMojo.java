@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,12 +38,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -85,40 +78,12 @@ import bsh.Interpreter;
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
+ * @version $Id$
  */
 public class InvokerMojo
     extends AbstractMojo
 {
-    /**
-     * Maven artifact install component to copy artifacts to the local repository.
-     * 
-     * @component
-     */
-    protected ArtifactInstaller installer;
 
-    /**
-     * Used to create artifacts
-     *
-     * @component
-     */
-    private ArtifactFactory artifactFactory;
-
-    /**
-     * Used to create artifacts
-     *
-     * @component
-     */
-    private ArtifactRepositoryFactory artifactRepositoryFactory;
-
-    /**
-     * Flag to determine if the project artifact(s) should be installed to the
-     * local repository.
-     * 
-     * @parameter default-value="false"
-     * @since 1.2
-     */
-    private boolean installProjectArtifacts;
-    
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the
      * build using profiles.
@@ -144,13 +109,6 @@ public class InvokerMojo
      * @parameter expression="${invoker.streamLogs}" default-value="false"
      */
     private boolean streamLogs;
-
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    protected ArtifactRepository localRepository;
 
     /**
      * The local repository for caching artifacts.
@@ -425,11 +383,6 @@ public class InvokerMojo
             return;
         }
 
-        if ( installProjectArtifacts )
-        {
-            installProjectArtifacts();
-        }
-        
         String[] includedPoms;
         if ( pom != null )
         {
@@ -553,60 +506,6 @@ public class InvokerMojo
         {
             return ReaderFactory.newPlatformReader( file );
         }
-    }
-
-    /**
-     * Install the main project artifact and any attached artifacts to the local repository.
-     * 
-     * @throws MojoExecutionException
-     */
-    private void installProjectArtifacts()
-        throws MojoExecutionException
-    {
-        ArtifactRepository integrationTestRepository = localRepository;
-        
-        try
-        {
-            if ( localRepositoryPath != null )
-            {
-                if ( ! localRepositoryPath.exists() )
-                {
-                    localRepositoryPath.mkdirs();
-                }
-                integrationTestRepository =
-                    artifactRepositoryFactory.createArtifactRepository( "it-repo",
-                                                                        localRepositoryPath.toURL().toString(),
-                                                                        localRepository.getLayout(),
-                                                                        localRepository.getSnapshots(),
-                                                                        localRepository.getReleases() );
-            }
-                        
-            // Install the pom
-            Artifact pomArtifact = artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), 
-                                                          project.getVersion(), null, "pom" );
-            installer.install( project.getFile(), pomArtifact, integrationTestRepository );
-            
-            // Install the main project artifact
-            installer.install( project.getArtifact().getFile(), project.getArtifact(), integrationTestRepository );
-            
-            // Install any attached project artifacts
-            List attachedArtifacts = project.getAttachedArtifacts();
-            Iterator artifactIter = attachedArtifacts.iterator();
-            while ( artifactIter.hasNext() )
-            {
-                Artifact theArtifact = (Artifact)artifactIter.next();
-                installer.install( theArtifact.getFile(), theArtifact, integrationTestRepository );
-            }
-        }
-        catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
-        }
-        catch ( ArtifactInstallationException e )
-        {
-            throw new MojoExecutionException( "ArtifactInstallationException: " + e.getMessage(), e );
-        }
-        
     }
 
     private void cloneProjects( String[] includedPoms )
