@@ -8,14 +8,16 @@
 
 Fast Invoker Plugin Configuration
 
-  The plugin use an empty to launch it test. This means by default, the plugin will 
-  download all artifacts from the central repo.
-  <<This default bevahiour can be very long !.>>
+  If you follow the recommended approach and use a dedicated local repository for the integration tests (e.g.
+  <<<target/local-repo>>>), you will likely encounter long build times. If the test repository has been cleaned, the
+  plugin needs to re-download all artifacts from the central repo and the resulting network traffic slows the test
+  execution down.
+
   But you can configure the plugin to download released artifacts from your local repo.
-  NOTE : this will works without optionnal settings with maven >= 2.0.9 because all plugins 
-  versions are locked in the super pom. For older version, you have to lock plugins versions.
+  <Note:> This will work without optional settings with Maven >= 2.0.9 because many plugins 
+  versions are locked in the super POM. For older versions, you have to lock plugins versions.
   
-  To enable this feature, you have to add a settings.xml file in your project (by example in src/it/settings.xml)
+  To enable this feature, you have to add a <<<settings.xml>>> file in your project (for example in <<<src/it/settings.xml>>>)
   and modify the plugin configuration as this :  
   
 -------------------
@@ -46,7 +48,7 @@ Fast Invoker Plugin Configuration
 <settings>
   <profiles>
     <profile>
-      <id>apache</id>
+      <id>it-repo</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>      
