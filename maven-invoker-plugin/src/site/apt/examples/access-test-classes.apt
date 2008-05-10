@@ -21,7 +21,6 @@ Accessing Test Classes
         <executions>
           <execution>
             <id>integration-test</id>
-            <phase>integration-test</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -37,6 +36,8 @@ Accessing Test Classes
 +----
 
   Setting <<<addTestClassPath>>> to <<<true>>> will prepend the directory <<<$\{project.build.testOutputDirectory\}>>>
-  and all dependencies of your project to the class path of the script interpreter. Of course, this requires your test
-  classes to be compiled before running the integration tests but this is usually the case if you employ the Invoker
-  Plugin during the lifecycle phase <<<integration-test>>>.
+  and all dependencies of your project to the class path of the script interpreter. Among others, this allows you to
+  create some utility classes in your test source tree and use this code for the integration tests.
+  
+  <Note:> Of course, this requires your test classes to be compiled before running the integration tests but this is
+  usually the case if you employ the Invoker Plugin during the lifecycle phase <<<integration-test>>>.
