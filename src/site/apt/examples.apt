@@ -266,8 +266,8 @@
                   <include>org/junit/**</include>
                 </includes>
                 <excludes>
-                  <exclude>org/junit/experimental/**</include>
-                  <exclude>org/junit/runners/**</include>
+                  <exclude>org/junit/experimental/**</exclude>
+                  <exclude>org/junit/runners/**</exclude>
                 </excludes>
               </filter>
             </filters>
