@@ -60,6 +60,7 @@ import org.codehaus.plexus.util.WriterFactory;
  * @author Jason van Zyl
  * @author Mauro Talevi
  * @author David Blevins
+ * @author Hiram Chirino
  * @goal shade
  * @phase package
  * @requiresDependencyResolution runtime
@@ -703,6 +704,13 @@ public class ShadeMojo
 
     private String getId( Artifact artifact )
     {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId();
+        if ( artifact.getClassifier() == null || "jar".equals( artifact.getClassifier() ) )
+        {
+            return artifact.getGroupId() + ":" + artifact.getArtifactId();
+        }
+        else
+        {
+            return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier();
+        }
     }
 }
