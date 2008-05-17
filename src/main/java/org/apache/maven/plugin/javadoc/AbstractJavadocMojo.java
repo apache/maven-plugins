@@ -1699,14 +1699,11 @@ public abstract class AbstractJavadocMojo
                             sourcePaths.addAll( sourceRoots );
                         }
 
-                        if ( subProject.getExecutionProject() != null )
+                        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
+                        File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
+                        if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
-                            String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
-                            File javadocDir = new File( subProject.getExecutionProject().getBasedir(), javadocDirRelative );
-                            if ( javadocDir.exists() && javadocDir.isDirectory() )
-                            {
-                                sourcePaths.add( javadocDir.getAbsolutePath() );
-                            }
+                            sourcePaths.add( javadocDir.getAbsolutePath() );
                         }
                     }
                 }
