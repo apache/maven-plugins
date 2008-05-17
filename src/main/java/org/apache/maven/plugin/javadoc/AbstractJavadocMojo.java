@@ -2509,16 +2509,19 @@ public abstract class AbstractJavadocMojo
      */
     private void addArgIf( List arguments, boolean b, String value, float requiredJavaVersion )
     {
-        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
+        if ( b )
         {
-            addArgIf( arguments, b, value );
-        }
-        else
-        {
-            if ( getLog().isWarnEnabled() )
+            if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
             {
-                getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion
-                               + ". Ignore this option." );
+                addArgIf( arguments, b, value );
+            }
+            else
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( value + " option is not supported on Java version < " + requiredJavaVersion
+                                   + ". Ignore this option." );
+                }
             }
         }
     }
@@ -2556,16 +2559,19 @@ public abstract class AbstractJavadocMojo
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey, boolean splitValue, float requiredJavaVersion )
     {
-        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
+        if ( StringUtils.isNotEmpty( value ) )
         {
-            addArgIfNotEmpty( arguments, key, value, repeatKey, splitValue );
-        }
-        else
-        {
-            if ( getLog().isWarnEnabled() )
+            if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
             {
-                getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion
-                               + ". Ignore this option." );
+                addArgIfNotEmpty( arguments, key, value, repeatKey, splitValue );
+            }
+            else
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion
+                                   + ". Ignore this option." );
+                }
             }
         }
     }
@@ -2662,15 +2668,18 @@ public abstract class AbstractJavadocMojo
     private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
                                    boolean repeatKey )
     {
-        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
+        if ( StringUtils.isNotEmpty( value ) )
         {
-            addArgIfNotEmpty( arguments, key, value, repeatKey );
-        }
-        else
-        {
-            if ( getLog().isWarnEnabled() )
+            if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
             {
-                getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+                addArgIfNotEmpty( arguments, key, value, repeatKey );
+            }
+            else
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( key + " option is not supported on Java version < " + requiredJavaVersion );
+                }
             }
         }
     }
@@ -2682,7 +2691,8 @@ public abstract class AbstractJavadocMojo
      */
     private void addLinkofflineArguments( List arguments )
     {
-        List offlineLinksList = ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ): new ArrayList() );
+        List offlineLinksList = ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) )
+                                                      : new ArrayList() );
 
         if ( !aggregate && reactorProjects != null )
         {
