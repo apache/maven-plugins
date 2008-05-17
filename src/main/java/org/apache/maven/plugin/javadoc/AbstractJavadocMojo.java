@@ -271,7 +271,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Sets the absolute path of the Javadoc Tool executable to use. Since version 2.5, a mere directory specification
      * is sufficient to have the plugin use "javadoc" or "javadoc.exe" respectively from this directory.
-     * 
+     *
      * @since 2.3
      * @parameter expression="${javadocExecutable}"
      */
@@ -1931,25 +1931,28 @@ public abstract class AbstractJavadocMojo
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
-    
     //TODO remove the part with ToolchainManager lookup once we depend on
     //3.0.9 (have it as prerequisite). Define as regular component field then.
-    private Toolchain getToolchain() 
+    private Toolchain getToolchain()
     {
         Toolchain tc = null;
-        try 
+        try
         {
-            if (session != null) //session is null in tests..
+            if ( session != null ) //session is null in tests..
             {
-                ToolchainManager toolchainManager = (ToolchainManager) session.getContainer().lookup(ToolchainManager.ROLE);
-                if (toolchainManager != null) 
+                ToolchainManager toolchainManager = (ToolchainManager) session.getContainer()
+                    .lookup( ToolchainManager.ROLE );
+                if ( toolchainManager != null )
                 {
-                    tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
+                    tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
                 }
             }
-        } catch (ComponentLookupException componentLookupException) {
+        }
+        catch ( ComponentLookupException componentLookupException )
+        {
             //just ignore, could happen in pre-3.0.9 builds..
         }
+
         return tc;
     }
 
@@ -2374,20 +2377,20 @@ public abstract class AbstractJavadocMojo
         throws IOException
     {
         Toolchain tc = getToolchain();
-        
+
         if ( tc != null )
         {
             getLog().info( "Toolchain in javadoc-plugin: " + tc );
-            if ( javadocExecutable  != null) 
-            { 
-                getLog().warn( "Toolchains are ignored, 'javadocExecutable' parameter is set to " + javadocExecutable );
-            } 
-            else 
+            if ( javadocExecutable != null )
             {
-                javadocExecutable = tc.findTool( "javadoc" ); //NOI18N
+                getLog().warn( "Toolchains are ignored, 'javadocExecutable' parameter is set to " + javadocExecutable );
+            }
+            else
+            {
+                javadocExecutable = tc.findTool( "javadoc" );
             }
         }
-        
+
         String javadocCommand = "javadoc" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
         File javadocExe;
