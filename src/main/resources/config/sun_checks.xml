@@ -66,8 +66,6 @@ under the License.
 
     <module name="TreeWalker">
 
-        <property name="charset" value="ISO-8859-1"/>
-
         <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
         <!-- Checks for Javadoc comments.                     -->
