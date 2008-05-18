@@ -175,30 +175,30 @@ public class CheckPluginDocumentationMojo
             }
         }
 
-        // check for index.(apt|html|xml)
+        // check for index.(apt|html|xml)[.vm]
         if ( !findFiles( projectSiteDirectory, "index" ) )
         {
-            reporter.error( "There is no \'index\' file in your site directory (in apt|html|xml format)." );
+            reporter.error( "There is no \'index\' file in your site directory (in apt|html|xml[.vm] format)." );
         }
 
-        // check for usage.(apt|html|xml)
+        // check for usage.(apt|html|xml)[.vm]
         if ( !findFiles( projectSiteDirectory, "usage" ) )
         {
-            reporter.error( "There is no \'usage\' file in your site directory (in apt|html|xml format)." );
+            reporter.error( "There is no \'usage\' file in your site directory (in apt|html|xml[.vm] format)." );
         }
 
-        // check for **/examples/**.(apt|html|xml) or **/example*.(apt|html|xml) 
+        // check for **/examples/**.(apt|html|xml)[.vm] or **/example*.(apt|html|xml)[.vm] 
         if ( !findFiles( projectSiteDirectory, "**/examples/*" )
              && !findFiles( projectSiteDirectory, "**/example*" ) )
         {
-            reporter.error( "There are no example files in your site directory (in apt|html|xml format)."
-                + " They should either be called \'example*.(apt|html|xml)\'"
+            reporter.error( "There are no example files in your site directory (in apt|html|xml[.vm] format)."
+                + " They should either be called \'example*.(apt|html|xml)[.vm]\'"
                 + " or they should be located in the \'examples\' directory." );
         }
 
         if ( !findFiles( projectSiteDirectory, "faq" ) )
         {
-            reporter.error( "There is no \'faq\' file in your site directory (in apt|fml|html|xml format)." );
+            reporter.error( "There is no \'faq\' file in your site directory (in apt|fml|html|xml[.vm] format)." );
         }
     }
 
