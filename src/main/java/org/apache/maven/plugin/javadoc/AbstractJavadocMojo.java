@@ -367,7 +367,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
      * <br/>
-     * <b>Note</b>: Since 2.4, the default value is locked to <code>ISO-8859-1</code> to better reproducing build.
+     * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to better reproducing build,but
+     * this was reverted in 2.5.
      *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
@@ -1148,16 +1149,6 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Gets the source file encoding.
-     *
-     * @return The source file encoding, never <code>null</code>.
-     */
-    protected String getEncoding()
-    {
-        return ( encoding == null ) ? ReaderFactory.ISO_8859_1 : encoding;
-    }
-
-    /**
      * @param locale the wanted locale (actually unused).
      * @throws MavenReportException if any
      */
@@ -1345,7 +1336,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
             addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
         }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
         addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
@@ -3095,9 +3086,9 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         // encoding
-        if ( !JavadocUtil.validateEncoding( getEncoding() ) )
+        if ( StringUtils.isNotEmpty( encoding ) && !JavadocUtil.validateEncoding( encoding ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + getEncoding() );
+            throw new MavenReportException( "Encoding not supported: " + encoding );
         }
     }
 
