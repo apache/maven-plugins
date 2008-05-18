@@ -74,6 +74,7 @@ import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -1334,6 +1335,11 @@ public abstract class AbstractJavadocMojo
         {
             addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
             addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
+        }
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                           + ", i.e. build is platform dependent!" );
         }
         addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
         addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
