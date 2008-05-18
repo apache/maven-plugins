@@ -119,8 +119,8 @@ mvn docck:check
 [ERROR] The following documentation problems were found:
 
 o Maven Documentation Checker Plugin (3 errors)
-  [ERROR] There is no 'index' file in your site directory (in apt|html|xml format).
-  [ERROR] There are no example files in your site directory (in apt|html|xml format). They should either be called 'example*.(apt|html|xml)' or they should be located in the 'examples' directory.
+  [ERROR] There is no 'index' file in your site directory (in apt|html|xml[.vm] format).
+  [ERROR] There are no example files in your site directory (in apt|html|xml[.vm] format). They should either be called 'example*.(apt|html|xml)[.vm]' or they should be located in the 'examples' directory.
   [ERROR] Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
 
 [INFO] ------------------------------------------------------------------------
