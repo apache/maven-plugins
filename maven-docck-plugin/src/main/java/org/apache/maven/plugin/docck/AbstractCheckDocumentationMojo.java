@@ -547,9 +547,13 @@ public abstract class AbstractCheckDocumentationMojo
         fs.setFollowSymlinks( false );
 
         fs.addInclude( "apt/" + pattern + ".apt" );
+        fs.addInclude( "apt/" + pattern + ".apt.vm" );
         fs.addInclude( "xdoc/" + pattern + ".xml" );
+        fs.addInclude( "xdoc/" + pattern + ".xml.vm" );
         fs.addInclude( "fml/" + pattern + ".fml" );
+        fs.addInclude( "fml/" + pattern + ".fml.vm" );
         fs.addInclude( "resources/" + pattern + ".html" );
+        fs.addInclude( "resources/" + pattern + ".html.vm" );
 
         String[] includedFiles = fileSetManager.getIncludedFiles( fs );
 
