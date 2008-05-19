@@ -23,10 +23,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,11 +39,15 @@ import java.util.HashMap;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,8 +56,25 @@ import org.apache.maven.plugins.shade.filter.SimpleFilter;
 import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.shared.dependency.tree.DependencyTreeResolutionListener;
+import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
+import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.tree.traversal.BuildingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor.TreeTokens;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -71,14 +95,59 @@ public class ShadeMojo
     /**
      * @parameter expression="${project}"
      * @readonly
+     * @required
      */
     private MavenProject project;
 
-    /** @component */
+    /** 
+     * @component
+     * @required
+     * @readonly
+     */
     private MavenProjectHelper projectHelper;
 
-    /** @component */
+    /** 
+     * @component
+     * @required
+     * @readonly
+     */
     private Shader shader;
+    
+    /**
+     * The dependency tree builder to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private DependencyTreeBuilder dependencyTreeBuilder;
+    
+    /**
+     * ProjectBuilder, needed to create projects from the artifacts.
+     *
+     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     * @required
+     * @readonly
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+    
+    /**
+     * The artifact metadata source to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * The artifact collector to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactCollector artifactCollector;
 
     /**
      * Remote repositories which will be searched for source attachments.
@@ -344,7 +413,7 @@ public class ShadeMojo
                 }
             }
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Error creating shaded jar.", e );
         }
@@ -622,14 +691,13 @@ public class ShadeMojo
     // We need to find the direct dependencies that have been included in the uber JAR so that we can modify the
     // POM accordingly.
     private void createDependencyReducedPom( Set artifactsToRemove )
-        throws IOException
+        throws IOException, DependencyTreeBuilderException, ProjectBuildingException
     {
         Model model = getProject().getOriginalModel();
-
         List dependencies = new ArrayList();
 
         boolean modified = false;
-
+        
         List origDeps = getProject().getDependencies();
         if ( promoteTransitiveDependencies )
         {
@@ -651,9 +719,8 @@ public class ShadeMojo
                 dep.setType( artifact.getType() );
                 dep.setVersion( artifact.getVersion() );
 
-                // How to do these?
-                //dep.setSystemPath( .... );
-                //dep.setExclusions( exclusions );
+                //we'll figure out the exclusions in a bit.
+                
                 origDeps.add( dep );
             }
         }
@@ -682,23 +749,44 @@ public class ShadeMojo
         }
 
         // Check to see if we have a reduction and if so rewrite the POM.
-        if ( modified )
+        if (modified)
         {
-            model.setDependencies( dependencies );
-
-            File f = new File( outputDirectory, "dependency-reduced-pom.xml" );
-            if (f.exists())
+            while (modified)
+            {
+            
+                model.setDependencies( dependencies );
+    
+                File f = new File( outputDirectory, "dependency-reduced-pom.xml" );
+                if ( f.exists() )
+                {
+                    f.delete();
+                }
+    
+                Writer w = WriterFactory.newXmlWriter( f );
+    
+                PomWriter.write( w, model, true );
+    
+                w.close();
+    
+                MavenProject p2 = mavenProjectBuilder.build( f, localRepository, null );
+                modified = updateExcludesInDeps( p2, dependencies );
+    
+            }
+            
+            //copy the dependecy-reduced-pom.xml to the basedir where 
+            //we'll set the file for the project to it.  We cannot set
+            //it to the real version in "target" as then ${basedir} gets
+            //messed up.   We'll delete this file on exit to make 
+            //sure it gets cleaned up.
+            File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
+            File f2 = new File( outputDirectory, "dependency-reduced-pom.xml" );
+            if (f.exists() )
             {
                 f.delete();
             }
-
-            Writer w = WriterFactory.newXmlWriter( f );
-
-            PomWriter.write( w, model, true );
-
-            w.close();
-
-            project.setFile( f );
+            FileUtils.copyFile( f2, f );
+            FileUtils.forceDeleteOnExit( f );
+            project.setFile( f );            
         }
     }
 
@@ -713,4 +801,49 @@ public class ShadeMojo
             return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier();
         }
     }
+    
+    
+    public boolean updateExcludesInDeps( MavenProject project, List dependencies )
+        throws DependencyTreeBuilderException
+    {
+        DependencyNode node = dependencyTreeBuilder.buildDependencyTree(
+                                                  project,
+                                                  localRepository,
+                                                  artifactFactory,
+                                                  artifactMetadataSource,
+                                                  null,
+                                                  artifactCollector );
+        boolean modified = false;
+        Iterator it = node.getChildren().listIterator();
+        while ( it.hasNext() ) 
+        {
+            DependencyNode n2 = (DependencyNode) it.next();
+            Iterator it2 = n2.getChildren().listIterator();
+            while ( it2.hasNext() ) 
+            {
+                DependencyNode n3 = (DependencyNode) it2.next();
+                //anything two levels deep that is not marked "included"
+                //is stuff that was excluded by the original poms, make sure it
+                //remains excluded
+                if ( n3.getState() == DependencyNode.INCLUDED)
+                {
+                    for ( int x = 0; x < dependencies.size(); x++ ) 
+                    {
+                        Dependency dep = (Dependency) dependencies.get( x );
+                        if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
+                            && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) ) 
+                        {
+                            Exclusion exclusion = new Exclusion();
+                            exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
+                            exclusion.setGroupId( n3.getArtifact().getGroupId() );
+                            dep.addExclusion( exclusion );
+                            modified = true;
+                            break;
+                        }
+                    }
+                }
+            }            
+        }
+        return modified;
+    }    
 }
