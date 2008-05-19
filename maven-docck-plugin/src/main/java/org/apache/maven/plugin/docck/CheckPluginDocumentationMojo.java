@@ -28,13 +28,15 @@ import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Checks a plugin's documentation for the standard minimums.
@@ -144,9 +146,12 @@ public class CheckPluginDocumentationMojo
         }
         else
         {
+            XmlStreamReader streamReader = null;
             try
             {
-                String siteHtml = FileUtils.fileRead( siteXml.getAbsolutePath() );
+                streamReader = ReaderFactory.newXmlReader( siteXml );
+
+                String siteHtml = IOUtil.toString( streamReader );
 
                 if ( siteHtml.indexOf( "href=\"index.html\"" ) < 0 )
                 {
@@ -172,6 +177,20 @@ public class CheckPluginDocumentationMojo
             {
                 reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath()
                     + "\'.\nError: " + e.getMessage() );
+            }
+            finally
+            {
+                if ( streamReader != null )
+                {
+                    try
+                    {
+                        streamReader.close();
+                    }
+                    catch ( IOException e )
+                    {
+                        // Ignore this, there is nothing we can do about it anyway
+                    }
+                }
             }
         }
 
