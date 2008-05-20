@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- * 
+ *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -328,7 +328,7 @@ public class EclipseClasspathWriter
         // TODO if (..magic property equals orderDependencies..)
 
 		// ----------------------------------------------------------------------
-        // Java API dependencies that may complete the classpath container so must 
+        // Java API dependencies that may complete the classpath container so must
 		// be declared BEFORE so that container access rules don't fail
         // ----------------------------------------------------------------------
         IdeDependency[] depsToWrite = config.getDepsOrdered();
@@ -337,13 +337,15 @@ public class EclipseClasspathWriter
             IdeDependency dep = depsToWrite[j];
 			if ( dep.isJavaApi() )
 			{
-				String depId =
-                    dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":" + dep.getVersion();
-				addDependency( writer, dep );
-				addedDependencies.add( depId );
+				String depId = getDependencyId( dep );
+				if ( !addedDependencies.contains( depId ) )
+                {
+				    addDependency( writer, dep );
+	                addedDependencies.add( depId );
+                }
 			}
 		}
-		
+
         // ----------------------------------------------------------------------
         // Container classpath entries
         // ----------------------------------------------------------------------
@@ -365,12 +367,11 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                String depId =
-                    dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":" + dep.getVersion();
-                /* avoid duplicates in the classpath for artifacts with different types (like ejbs) */
+                String depId = getDependencyId( dep );
+                /* avoid duplicates in the classpath for artifacts with different types (like ejbs or test-jars) */
                 if ( !addedDependencies.contains( depId ) )
                 {
-                    addDependency( writer, dep );
+	                addDependency( writer, dep );
                     addedDependencies.add( depId );
                 }
             }
@@ -380,6 +381,19 @@ public class EclipseClasspathWriter
 
         IOUtil.close( w );
 
+    }
+
+    private String getDependencyId( IdeDependency dep )
+    {
+        String depId =
+            dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getClassifier() + ":" + dep.getVersion();
+
+        if ( dep.isReferencedProject() )
+        {
+            // This dependency will be refered as an eclipse project
+            depId = dep.getEclipseProjectName();
+        }
+        return depId;
     }
 
     protected void addDependency( XMLWriter writer, IdeDependency dep )
