@@ -42,6 +42,12 @@ under the License.
     <url>http://jira.codehaus.org/browse/MANT</url>
   </issueManagement>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ant-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ant-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ant-plugin/</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
