@@ -356,8 +356,8 @@ under the License.
   </profiles>
 
   <properties>
-    <doxiaVersion>1.0-alpha-11-SNAPSHOT</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-11-SNAPSHOT</doxiaSitetoolsVersion>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 
