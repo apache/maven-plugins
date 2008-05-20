@@ -149,7 +149,7 @@ public class PluginManagementRenderer
                 }
 
                 Artifact pluginArtifact =
-                    artifactFactory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(), versionRange );
+                    artifactFactory.createParentArtifact( plugin.getGroupId(), plugin.getArtifactId(), versionRange.toString() );
                 List artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {
