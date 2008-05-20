@@ -44,6 +44,7 @@ under the License.
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <encoding>iso-8859-1</encoding>
         </configuration>
@@ -51,6 +52,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <minmemory>128m</minmemory>
           <maxmemory>512m</maxmemory>
