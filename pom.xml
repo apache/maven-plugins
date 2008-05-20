@@ -341,8 +341,8 @@ under the License.
   </reporting>
 
   <properties>
-    <doxiaVersion>1.0-alpha-10</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0-alpha-10</doxia-sitetoolsVersion>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
     <scmVersion>1.0</scmVersion>
   </properties>
