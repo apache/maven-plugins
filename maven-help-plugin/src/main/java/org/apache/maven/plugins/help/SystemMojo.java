@@ -38,6 +38,7 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
  * @version $Id$
  * @since 2.1
  * @goal system
+ * @requiresProject false
  */
 public class SystemMojo
     extends AbstractMojo
