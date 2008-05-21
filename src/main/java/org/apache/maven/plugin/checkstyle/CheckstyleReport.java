@@ -21,6 +21,7 @@ package org.apache.maven.plugin.checkstyle;
 
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
+import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
 import com.puppycrawl.tools.checkstyle.ModuleFactory;
 import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
@@ -470,6 +471,16 @@ public class CheckstyleReport
     private File xrefLocation;
 
     /**
+     * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
+     * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
+     * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
+     * 
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.2
+     */
+    private String encoding;
+
+    /**
      * @component
      * @required
      * @readonly
@@ -584,6 +595,32 @@ public class CheckstyleReport
 
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
+                String effectiveEncoding =
+                    StringUtils.isNotEmpty( encoding ) ? encoding : System.getProperty( "file.encoding", "UTF-8" );
+                if ( StringUtils.isEmpty( encoding ) )
+                {
+                    getLog().warn(
+                                   "File encoding has not been set, using platform encoding " + effectiveEncoding
+                                       + ", i.e. build is platform dependent!" );
+                }
+                Configuration[] modules = config.getChildren();
+                for ( int i = 0; i < modules.length; i++ )
+                {
+                    Configuration module = modules[i];
+                    if ( "TreeWalker".equals( module.getName() )
+                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
+                    {
+                        if ( module instanceof DefaultConfiguration )
+                        {
+                            ( (DefaultConfiguration) module ).addAttribute( "charset", effectiveEncoding );
+                        }
+                        else
+                        {
+                            getLog().warn( "Failed to configure file encoding on module " + module );
+                        }
+                    }
+                }
+
                 results = executeCheckstyle( config, moduleFactory );
 
                 ResourceBundle bundle = getBundle( locale );
