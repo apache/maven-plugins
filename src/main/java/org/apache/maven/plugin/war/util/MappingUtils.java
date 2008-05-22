@@ -39,6 +39,7 @@ import java.util.Properties;
  * </ul>
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class MappingUtils
 {

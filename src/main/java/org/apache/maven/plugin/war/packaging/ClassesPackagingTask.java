@@ -36,6 +36,8 @@ import java.io.IOException;
  * within the <tt>WEB-INF/lib</tt> directory.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class ClassesPackagingTask
     extends AbstractWarPackagingTask

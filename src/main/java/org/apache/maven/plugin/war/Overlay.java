@@ -38,6 +38,7 @@ import java.util.List;
  * current project.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class Overlay
 {
