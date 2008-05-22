@@ -6,6 +6,7 @@ import org.apache.maven.model.Dependency;
  * Holds a dependency and packaging information.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class DependencyInfo
 {

@@ -37,6 +37,7 @@ import java.util.Set;
  * they don't start with starting /.
  *
  * @author Piotr Tabor
+ * @version $Id$
  */
 
 public class PathSet
