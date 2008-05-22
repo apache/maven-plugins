@@ -22,8 +22,9 @@ package org.apache.maven.plugin.source;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Aggregrate sources for all modules in an aggregator project.
+ * Aggregate sources for all modules in an aggregator project.
  *
+ * @version $Id$
  * @goal aggregate
  * @phase package
  * @aggregator
@@ -33,9 +34,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class AggregatorSourceJarMojo
     extends SourceJarMojo
 {
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {

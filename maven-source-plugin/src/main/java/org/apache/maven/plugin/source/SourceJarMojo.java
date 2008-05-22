@@ -32,28 +32,29 @@ import java.util.List;
  * @goal jar
  * @phase package
  * @execute phase="generate-sources"
- * @since 2.0
+ * @since 2.0.3
  */
 public class SourceJarMojo
     extends AbstractSourceJarMojo
 {
-    protected List getSources( MavenProject project )
+    /** {@inheritDoc} */
+    protected List getSources( MavenProject p )
     {
-        return project.getCompileSourceRoots();
+        return p.getCompileSourceRoots();
     }
 
-    protected List getResources( MavenProject project )
+    /** {@inheritDoc} */
+    protected List getResources( MavenProject p )
     {
         if ( excludeResources )
         {
             return Collections.EMPTY_LIST;
         }
-        else
-        {
-            return project.getResources();
-        }
+
+        return p.getResources();
     }
 
+    /** {@inheritDoc} */
     protected String getClassifier()
     {
         return "sources";
