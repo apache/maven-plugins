@@ -24,6 +24,19 @@ under the License.
    <faq id="filtering">
      <question>How is filtering done in the war plugin?</question>
      <answer>
+       <p>To enable filtering of web.xml you must configure the war plugin as this :
+         <source>
+<![CDATA[
+  <plugin>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>2.1-alpha-2</version>
+    <configuration>
+      <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+    </configuration>
+  </plugin>
+]]>         
+         </source> 
+       </p>
        <p>Examples can be found <a href="examples/adding-filtering-webresources.html">here</a></p>
      </answer>
    </faq>
