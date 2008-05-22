@@ -269,6 +269,14 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
      private MavenSession session;
+     
+     /**
+      * To filtering deployment descriptors <b>disabled by default</b> 
+      * 
+      * @parameter expression="${maven.war.filteringDeploymentDescriptors}" default-value="false"
+      * @since 2.1-alpha-2
+      */     
+     private boolean filteringDeploymentDescriptors = false;
     
 
     /**
@@ -426,7 +434,8 @@ public abstract class AbstractWarMojo
         
         final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager,
                                                                             filterWrappers,
-                                                                            getNonFilteredFileExtensions() );
+                                                                            getNonFilteredFileExtensions(),
+                                                                            filteringDeploymentDescriptors );
         final Iterator it = packagingTasks.iterator();
         while ( it.hasNext() )
         {
@@ -516,15 +525,18 @@ public abstract class AbstractWarMojo
         private final List filterWrappers;
         
         private List nonFilteredFileExtensions;
+        
+        private boolean filteringDeploymentDescriptors;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
                                            final OverlayManager overlayManager, List filterWrappers,
-                                           List nonFilteredFileExtensions )
+                                           List nonFilteredFileExtensions, boolean filteringDeploymentDescriptors )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
             this.overlayManager = overlayManager;
             this.filterWrappers = filterWrappers;
+            this.filteringDeploymentDescriptors = filteringDeploymentDescriptors;
             this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.EMPTY_LIST
                                                                               : nonFilteredFileExtensions;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
@@ -630,6 +642,11 @@ public abstract class AbstractWarMojo
         public boolean isNonFilteredExtension( String fileName )
         {
             return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
+        }
+
+        public boolean isFilteringDeploymentDescriptors()
+        {
+            return filteringDeploymentDescriptors;
         }
         
     }

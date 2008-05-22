@@ -20,6 +20,8 @@
 
 import java.io.*;
 
+import org.codehaus.plexus.util.*;
+
 boolean result = true;
 
 try
@@ -44,6 +46,19 @@ try
         System.err.println( "webInfFile is missing or a directory." );
         return false;
     }  
+    
+    
+    
+    FileInputStream fis = new FileInputStream ( webInfFile );
+    String paramContent = IOUtil.toString ( fis );
+    
+    
+    int indexOf = paramContent.indexOf( "<display-name>maven test it</display-name>" );
+    if ( indexOf < 0)
+    {
+      System.err.println( "web.xml not contains <display-name>maven test it</display-name>" );
+      return false;
+    }    
     
     File indexJsp = new File( webappDirectory, "index.jsp" );
     if ( !indexJsp.exists() || indexJsp.isDirectory() )
