@@ -26,13 +26,15 @@
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Maven Simple War Project Test</name>
+  <description>maven test it</description>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-        
+          <!--webXml>src/main/webapp/WEB-INF/web.xml</webXml-->
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
         </configuration>
       </plugin>
     </plugins>
