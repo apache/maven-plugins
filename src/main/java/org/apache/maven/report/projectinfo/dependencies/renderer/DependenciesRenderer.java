@@ -669,8 +669,16 @@ public class DependenciesRenderer
 
     private String[] getArtifactRow( Artifact artifact )
     {
-        return new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-            artifact.getClassifier(), artifact.getType(), artifact.isOptional() ? "(optional)" : " "};
+        String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
+            : getReportString( "report.dependencies.column.isNotOptional" );
+
+        return new String[] {
+            artifact.getGroupId(),
+            artifact.getArtifactId(),
+            artifact.getVersion(),
+            artifact.getClassifier(),
+            artifact.getType(),
+            isOptional };
     }
 
     private void printDependencyListing( DependencyNode node )
