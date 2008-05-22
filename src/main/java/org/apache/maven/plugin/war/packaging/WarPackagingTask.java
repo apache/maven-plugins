@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * The base packaging task.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public interface WarPackagingTask
 {
