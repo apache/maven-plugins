@@ -23,11 +23,11 @@ under the License.
   <parent>
      <artifactId>maven-plugins</artifactId>
      <groupId>org.apache.maven.plugins</groupId>
-     <version>10</version>
+     <version>11</version>
   </parent>
 
   <artifactId>maven-shade-plugin</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Shade Plugin</name>
 
