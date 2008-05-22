@@ -31,6 +31,8 @@ import java.io.IOException;
  * Handles an overlay.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class OverlayPackagingTask
     extends AbstractWarPackagingTask

@@ -28,8 +28,8 @@ import java.util.Iterator;
 
 /**
  *
- *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class WarUtils
 {

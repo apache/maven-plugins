@@ -43,6 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
  * </ul>
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class WarProjectPackagingTask
     extends AbstractWarPackagingTask

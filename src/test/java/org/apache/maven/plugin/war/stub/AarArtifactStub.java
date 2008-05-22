@@ -26,6 +26,7 @@ import java.io.File;
 
 /**
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class AarArtifactStub
     extends AbstractArtifactStub

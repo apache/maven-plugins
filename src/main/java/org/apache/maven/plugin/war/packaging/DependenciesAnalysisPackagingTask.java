@@ -34,6 +34,8 @@ import java.util.Iterator;
  * the target directory accordingly.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class DependenciesAnalysisPackagingTask
     extends AbstractWarPackagingTask
