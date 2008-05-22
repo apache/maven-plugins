@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal exploded
  * @phase package
  * @requiresDependencyResolution runtime
+ * @version $Id$
  */
 public class WarExplodedMojo
     extends AbstractWarMojo

@@ -31,6 +31,7 @@ import java.io.IOException;
  * Serializes {@link WebappStructure} back and forth.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class WebappStructureSerializer
 {

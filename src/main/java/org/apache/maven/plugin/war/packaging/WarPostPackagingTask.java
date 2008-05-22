@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * Defines tasks that should be performed after the packaging.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public interface WarPostPackagingTask
 {
