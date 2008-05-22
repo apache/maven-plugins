@@ -150,7 +150,7 @@ public class JavadocUtil
      * @param artifacts
      * @return list of compile artifacts
      */
-    protected static List getCompileArtifacts( Set artifacts )
+    protected static List getCompileArtifacts( Set artifacts, boolean withTestScope )
     {
         List list = new ArrayList( artifacts.size() );
 
@@ -162,10 +162,21 @@ public class JavadocUtil
             if ( a.getArtifactHandler().isAddedToClasspath() )
             {
                 // TODO: let the scope handler deal with this
-                if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
-                    || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) )
+                if ( withTestScope )
                 {
-                    list.add( a );
+                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
+                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) || Artifact.SCOPE_TEST.equals( a.getScope() ))
+                    {
+                        list.add( a );
+                    }
+                }
+                else
+                {
+                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
+                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) )
+                    {
+                        list.add( a );
+                    }
                 }
             }
         }
