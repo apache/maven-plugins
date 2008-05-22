@@ -36,7 +36,7 @@ import java.io.PrintWriter;
  * Generate a manifest for this WAR.
  *
  * @author Mike Perham
- * @version $Id: WarMojo.java 307363 2005-10-09 04:50:58Z brett $
+ * @version $Id$
  * @goal manifest
  * @phase process-resources
  * @requiresDependencyResolution runtime
