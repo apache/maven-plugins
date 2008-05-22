@@ -36,6 +36,8 @@ import java.util.Set;
  * Manages the overlays.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class OverlayManager
 {

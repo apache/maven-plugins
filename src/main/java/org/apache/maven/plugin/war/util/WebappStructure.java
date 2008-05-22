@@ -41,6 +41,7 @@ import java.util.Set;
  * store wich owner holds which path (file).
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class WebappStructure
 {

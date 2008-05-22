@@ -27,6 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
  *
  * @goal inplace
  * @requiresDependencyResolution runtime
+ * @version $Id$
  */
 public class WarInPlaceMojo
     extends AbstractWarMojo
