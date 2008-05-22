@@ -34,6 +34,8 @@ import java.util.Set;
  * Handles the artifacts that needs to be packaged in the web application.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class ArtifactsPackagingTask
     extends AbstractWarPackagingTask

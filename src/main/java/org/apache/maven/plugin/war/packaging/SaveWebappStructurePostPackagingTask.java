@@ -30,6 +30,8 @@ import java.io.IOException;
  * Saves the webapp structure cache.
  *
  * @author Stephane Nicoll
+ * 
+ * @version $Id$
  */
 public class SaveWebappStructurePostPackagingTask
     implements WarPostPackagingTask

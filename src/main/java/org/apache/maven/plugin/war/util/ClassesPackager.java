@@ -32,13 +32,11 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
 import java.io.File;
 import java.io.IOException;
 
-
-
-
 /**
  * Packages the content of the classes directory.
  *
  * @author Stephane Nicoll
+ * @version $Id$
  */
 public class ClassesPackager
 {
