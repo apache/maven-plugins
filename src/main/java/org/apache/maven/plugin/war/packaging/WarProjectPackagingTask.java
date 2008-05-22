@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -212,21 +213,52 @@ public class WarProjectPackagingTask
                 {
                     throw new MojoFailureException( "The specified web.xml file '" + webXml + "' does not exist" );
                 }
+                if ( context.isFilteringDeploymentDescriptors() )
+                {
+                    context.getMavenFileFilter().copyFile( webXml, new File( webinfDir, "web.xml" ), true,
+                                                           context.getFilterWrappers(), null );
+                }
+                else
+                {
+                    copyFile( context, webXml, new File( webinfDir, "web.xml" ), "WEB-INF/web.xml", true );
+                }
 
-                //rename to web.xml
-                copyFile( context, webXml, new File( webinfDir, "web.xml" ), "WEB-INF/web.xml", true );
                 context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
+            }
+            else
+            {
+                // the webXml can be the default one
+                File defaultWebXml = new File( context.getWebappSourceDirectory(), WEB_INF_PATH + "/web.xml" );
+                // if exists we can filter it
+                if ( defaultWebXml.exists() && context.isFilteringDeploymentDescriptors() )
+                {
+                    context.getMavenFileFilter().copyFile( defaultWebXml, new File( webinfDir, "web.xml" ), true,
+                                                           context.getFilterWrappers(), null );
+                    context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
+                }
             }
 
             if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
             {
                 String xmlFileName = containerConfigXML.getName();
+                if (context.isFilteringDeploymentDescriptors())
+                {
+                    context.getMavenFileFilter().copyFile( containerConfigXML, new File( metainfDir, xmlFileName ),
+                                                           true, context.getFilterWrappers(), null );
+                }
+                else
+                {
                 copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ), "META-INF/" + xmlFileName,
                           true );
+                }
                 context.getWebappStructure().getFullStructure().add( META_INF_PATH + "/" + xmlFileName );
             }
         }
         catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to copy deployment descriptor", e );
+        }
+        catch ( MavenFilteringException e )
         {
             throw new MojoExecutionException( "Failed to copy deployment descriptor", e );
         }
