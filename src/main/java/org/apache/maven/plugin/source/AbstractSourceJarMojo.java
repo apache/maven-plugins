@@ -40,6 +40,7 @@ import java.util.List;
  * Base class for bundling sources into a jar archive.
  *
  * @version $Id$
+ * @since 2.0.3
  */
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
@@ -47,6 +48,8 @@ public abstract class AbstractSourceJarMojo
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/*"};
 
     /**
+     * The Maven Project Object
+     *
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -106,27 +109,44 @@ public abstract class AbstractSourceJarMojo
      */
     protected List reactorProjects;
 
-    protected abstract String getClassifier();
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
-    protected abstract List getSources( MavenProject project );
-
-    protected abstract List getResources( MavenProject project );
-
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
         packageSources( project );
     }
 
-    protected void packageSources( MavenProject project )
+    // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @return the wanted classifier, ie <code>sources</code> or <code>test-sources</code>
+     */
+    protected abstract String getClassifier();
+
+    /**
+     * @param p not null
+     * @return the compile or test sources
+     */
+    protected abstract List getSources( MavenProject p );
+
+    /**
+     * @param p not null
+     * @return the compile or test resources
+     */
+    protected abstract List getResources( MavenProject p );
+
+    protected void packageSources( MavenProject p )
         throws MojoExecutionException
     {
-        if ( !"pom".equals( project.getPackaging() ) )
+        if ( !"pom".equals( p.getPackaging() ) )
         {
-            packageSources( Arrays.asList( new Object[]{project} ) );
+            packageSources( Arrays.asList( new Object[]{p} ) );
         }
     }
 
@@ -145,14 +165,14 @@ public abstract class AbstractSourceJarMojo
 
             for ( Iterator i = projects.iterator(); i.hasNext(); )
             {
-                MavenProject project = getProject( (MavenProject) i.next() );
+                MavenProject subProject = getProject( (MavenProject) i.next() );
 
-                if ( "pom".equals( project.getPackaging() ) )
+                if ( "pom".equals( subProject.getPackaging() ) )
                 {
                     continue;
                 }
 
-                archiveProjectContent( project, archiver );
+                archiveProjectContent( subProject, archiver );
             }
 
             File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
@@ -183,10 +203,10 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected void archiveProjectContent( MavenProject project, Archiver archiver )
+    protected void archiveProjectContent( MavenProject p, Archiver archiver )
         throws MojoExecutionException
     {
-        for ( Iterator i = getSources( project ).iterator(); i.hasNext(); )
+        for ( Iterator i = getSources( p ).iterator(); i.hasNext(); )
         {
             String s = (String) i.next();
 
@@ -199,7 +219,7 @@ public abstract class AbstractSourceJarMojo
         }
 
         //MAPI: this should be taken from the resources plugin
-        for ( Iterator i = getResources( project ).iterator(); i.hasNext(); )
+        for ( Iterator i = getResources( p ).iterator(); i.hasNext(); )
         {
             Resource resource = (Resource) i.next();
 
@@ -312,15 +332,13 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected MavenProject getProject( MavenProject project )
+    protected MavenProject getProject( MavenProject p )
     {
-        if ( project.getExecutionProject() != null )
+        if ( p.getExecutionProject() != null )
         {
-            return project.getExecutionProject();
+            return p.getExecutionProject();
         }
-        else
-        {
-            return project;
-        }
+
+        return p;
     }
 }
