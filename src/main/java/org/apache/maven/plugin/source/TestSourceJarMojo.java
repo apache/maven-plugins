@@ -30,28 +30,29 @@ import java.util.List;
  * @goal test-jar
  * @phase package
  * @execute phase="generate-sources"
- * @since 2.0.1
+ * @since 2.0.3
  */
 public class TestSourceJarMojo
     extends AbstractSourceJarMojo
 {
-    protected List getSources( MavenProject project )
+    /** {@inheritDoc} */
+    protected List getSources( MavenProject p )
     {
-        return project.getTestCompileSourceRoots();
+        return p.getTestCompileSourceRoots();
     }
 
-    protected List getResources( MavenProject project )
+    /** {@inheritDoc} */
+    protected List getResources( MavenProject p )
     {
         if ( excludeResources )
         {
             return Collections.EMPTY_LIST;
         }
-        else
-        {
-            return project.getTestResources();
-        }
+
+        return p.getTestResources();
     }
 
+    /** {@inheritDoc} */
     protected String getClassifier()
     {
         return "test-sources";
