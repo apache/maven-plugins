@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -271,6 +272,14 @@ public class TestJavadocReport
     protected String getWindowtitle()
     {
         return windowtitle;
+    }
+
+    /**
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getCompileArtifacts(org.apache.maven.artifact.resolver.ArtifactResolutionResult)
+     */
+    protected List getCompileArtifacts( ArtifactResolutionResult result )
+    {
+        return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
     }
 
     /**

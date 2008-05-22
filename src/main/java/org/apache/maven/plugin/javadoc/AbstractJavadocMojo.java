@@ -1737,6 +1737,16 @@ public abstract class AbstractJavadocMojo
         return canGenerate;
     }
 
+    /**
+     * @param result not null
+     * @return the compile artifacts from the result
+     * @see JavadocUtil#getCompileArtifacts(Set, boolean)
+     */
+    protected List getCompileArtifacts( ArtifactResolutionResult result )
+    {
+        return JavadocUtil.getCompileArtifacts( result.getArtifacts(), false );
+    }
+
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
@@ -1843,6 +1853,7 @@ public abstract class AbstractJavadocMojo
                 for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
                 {
                     MavenProject subProject = (MavenProject) i.next();
+
                     if ( subProject != project )
                     {
                         classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
@@ -1883,7 +1894,7 @@ public abstract class AbstractJavadocMojo
                                 continue;
                             }
 
-                            populateCompileArtifactMap( compileArtifactMap, JavadocUtil.getCompileArtifacts( result.getArtifacts() ) );
+                            populateCompileArtifactMap( compileArtifactMap, getCompileArtifacts( result ) );
 
                             if ( getLog().isDebugEnabled() )
                             {
