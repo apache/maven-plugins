@@ -181,4 +181,6 @@ public interface WarPackagingContext
      * @since 2.1-alpha-2
      */
     boolean isNonFilteredExtension( String fileName );
+    
+    boolean isFilteringDeploymentDescriptors();
 }
