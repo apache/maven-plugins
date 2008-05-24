@@ -683,6 +683,30 @@ public class JavadocReportTest
         File feather2 = new File( getBasedir(),
                                   "target/test/unit/resources-test/target/site/apidocs/resources/test2/doc-files/maven-feather.png" );
         assertFalse( FileUtils.fileExists( feather2.getAbsolutePath() ) );
+
+        // with excludes
+        testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/resources-with-excludes-test/resources-with-excludes-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        app = new File( getBasedir(),
+                             "target/test/unit/resources-with-excludes-test/target/site/apidocs/resources/test/App.html" );
+        assertTrue( FileUtils.fileExists( app.getAbsolutePath() ) );
+        readed = readFile( app );
+        assertTrue( readed.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        feather = new File( getBasedir(),
+                                 "target/test/unit/resources-with-excludes-test/target/site/apidocs/resources/test/doc-files/maven-feather.png" );
+        assertFalse( FileUtils.fileExists( feather.getAbsolutePath() ) );
+
+        app2 = new File( getBasedir(),
+                              "target/test/unit/resources-with-excludes-test/target/site/apidocs/resources/test2/App2.html" );
+        assertTrue( FileUtils.fileExists( app2.getAbsolutePath() ) );
+        readed = readFile( app2 );
+        assertTrue( readed.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        feather2 = new File( getBasedir(),
+                                  "target/test/unit/resources-with-excludes-test/target/site/apidocs/resources/test2/doc-files/maven-feather.png" );
+        assertTrue( FileUtils.fileExists( feather2.getAbsolutePath() ) );
     }
 
     /**
