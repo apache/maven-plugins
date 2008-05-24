@@ -30,10 +30,12 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -255,15 +257,30 @@ public class JavadocUtil
      *
      * @param outputDirectory the output directory
      * @param javadocDir the javadoc directory
-     * @throws java.io.IOException if any
+     * @param excludedocfilessubdir the excludedocfilessubdir parameter
+     * @throws IOException if any
      */
-    protected static void copyJavadocResources( File outputDirectory, File javadocDir )
+    protected static void copyJavadocResources( File outputDirectory, File javadocDir, String excludedocfilessubdir )
         throws IOException
     {
+        List excludes = new ArrayList();
+        excludes.addAll( Arrays.asList( FileUtils.getDefaultExcludes() ) );
+
+        if ( StringUtils.isNotEmpty( excludedocfilessubdir ) )
+        {
+            StringTokenizer st = new StringTokenizer( excludedocfilessubdir, ":" );
+            String current;
+            while ( st.hasMoreTokens() )
+            {
+                current = st.nextToken();
+                excludes.add( "**/" + current + "/*" );
+            }
+        }
+
         if ( javadocDir.exists() && javadocDir.isDirectory() )
         {
-            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( FileUtils
-                .getDefaultExcludes(), "," ), false, true );
+            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( excludes
+                .iterator(), "," ), false, true );
             for ( Iterator it = docFiles.iterator(); it.hasNext(); )
             {
                 String docFile = (String) it.next();
