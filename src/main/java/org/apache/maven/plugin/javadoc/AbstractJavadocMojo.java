@@ -618,7 +618,8 @@ public abstract class AbstractJavadocMojo
     private String doctitle;
 
     /**
-     * Excludes any "doc-files" subdirectories with the given names.
+     * Excludes any "doc-files" subdirectories with the given names. Multiple patterns can be excluded
+     * by separating them with colons (<code>:</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#excludedocfilessubdir">
      * excludedocfilessubdir</a>.
@@ -1276,6 +1277,10 @@ public abstract class AbstractJavadocMojo
 
         if ( docfilessubdirs )
         {
+            /*
+             * Workaround since -docfilessubdirs doesn't seem to be used correctly by the javadoc tool
+             * (see other note about -sourcepath). Take care of the -excludedocfilessubdir option.
+             */
             try
             {
                 copyJavadocResources( javadocOutputDirectory );
@@ -1670,6 +1675,11 @@ public abstract class AbstractJavadocMojo
                 sourcePaths.addAll( getExecutionProjectSourceRoots( project ) );
             }
 
+            /*
+             * Should be after the source path (i.e. -sourcepath '.../src/main/java;.../src/main/javadoc') and
+             * *not* the opposite. If not, the javadoc tool always copies doc files, even if -docfilessubdirs is
+             * not setted.
+             */
             if ( getJavadocDirectory() != null )
             {
                 File javadocDir = getJavadocDirectory();
@@ -2870,7 +2880,7 @@ public abstract class AbstractJavadocMojo
 
         if ( getJavadocDirectory() != null )
         {
-            JavadocUtil.copyJavadocResources( outputDirectory, getJavadocDirectory() );
+            JavadocUtil.copyJavadocResources( outputDirectory, getJavadocDirectory(), excludedocfilessubdir );
         }
 
         if ( aggregate && project.isExecutionRoot() )
@@ -2883,7 +2893,7 @@ public abstract class AbstractJavadocMojo
                 {
                     String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                     File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
-                    JavadocUtil.copyJavadocResources( outputDirectory, javadocDir );
+                    JavadocUtil.copyJavadocResources( outputDirectory, javadocDir, excludedocfilessubdir );
                 }
             }
         }
