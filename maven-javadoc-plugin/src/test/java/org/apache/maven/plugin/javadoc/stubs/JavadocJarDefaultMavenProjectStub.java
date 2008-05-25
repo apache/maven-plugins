@@ -25,6 +25,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileReader;
@@ -50,7 +51,7 @@ public class JavadocJarDefaultMavenProjectStub
         try
         {
             model = pomReader.read( new FileReader( new File( getBasedir() +
-                "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) ) );
+                "/src/test/resources/unit/javadocjar-default/javadocjar-default-plugin-config.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
@@ -69,9 +70,11 @@ public class JavadocJarDefaultMavenProjectStub
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 
-        Artifact artifact =
+        JavadocPluginArtifactStub artifact =
             new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
+        artifact.setType( "jar" );
+        artifact.setBaseVersion( "1.0-SNAPSHOT" );
         setArtifact( artifact );
 
         Build build = new Build();

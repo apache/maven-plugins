@@ -38,6 +38,8 @@ public class JavadocPluginArtifactStub
 
     private String packaging;
 
+    private String baseVersion;
+
     private VersionRange versionRange;
 
     private ArtifactHandler handler;
@@ -109,5 +111,15 @@ public class JavadocPluginArtifactStub
     public void setArtifactHandler( ArtifactHandler handler )
     {
         this.handler = handler;
+    }
+
+    public String getBaseVersion()
+    {
+        return baseVersion;
+    }
+
+    public void setBaseVersion( String string )
+    {
+        this.baseVersion = string;
     }
 }
