@@ -182,7 +182,8 @@ public class EjbMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The maven archiver to use.
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
      * @parameter
      */
