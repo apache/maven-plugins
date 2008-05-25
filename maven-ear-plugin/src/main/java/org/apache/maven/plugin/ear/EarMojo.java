@@ -141,7 +141,8 @@ public class EarMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The maven archiver to use.
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
      * @parameter
      */
@@ -456,13 +457,13 @@ public class EarMojo
         // Extract the module
         unArchiver.extract();
     }
-    
+
     /**
      * Returns the {@link JarArchiver} implementation used
      * to package the EAR file.
-     * <p/> 
+     * <p/>
      * By default the archiver is obtained from the Plexus container.
-     * 
+     *
      * @return the archiver
      */
     protected JarArchiver getJarArchiver()
