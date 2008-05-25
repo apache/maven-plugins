@@ -92,10 +92,7 @@ public abstract class AbstractJarMojo
 
     /**
      * The archive configuration to use.
-     *
-     * See <a
-     * href="http://maven.apache.org/shared/maven-archiver/index.html">the
-     * documentation for Maven Archiver</a>.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
      * @parameter
      */
