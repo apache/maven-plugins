@@ -124,7 +124,8 @@ public class RarMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The maven archiver to use.
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
      * @parameter
      */
@@ -168,7 +169,7 @@ public class RarMojo
             for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
             {
                 Artifact artifact = (Artifact) iter.next();
-                
+
                 ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
                 if ( !artifact.isOptional() && filter.include( artifact ) )
                 {
@@ -252,7 +253,7 @@ public class RarMojo
 
             archiver.getArchiver().addDirectory( getBuildDir() );
             archiver.createArchive( project, archive );
-	    
+
             project.getArtifact().setFile( rarFile );
         }
         catch ( Exception e )
