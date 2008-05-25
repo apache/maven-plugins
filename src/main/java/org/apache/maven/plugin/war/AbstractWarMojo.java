@@ -92,7 +92,7 @@ public abstract class AbstractWarMojo
 
     /**
      * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
-     * 
+     *
      * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
      * @required
      */
@@ -124,7 +124,7 @@ public abstract class AbstractWarMojo
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
 
-     * @parameter 
+     * @parameter
      */
     private List filters;
 
@@ -176,7 +176,7 @@ public abstract class AbstractWarMojo
      * @since 2.1
      */
     private boolean useCache = true;
-   
+
     /**
      * To look up Archiver/UnArchiver implementations
      *
@@ -184,19 +184,19 @@ public abstract class AbstractWarMojo
      * @required
      */
     private ArchiverManager archiverManager;
-    
+
     /**
-     * 
+     *
      * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
      * @required
      */
-    private MavenFileFilter mavenFileFilter; 
-    
+    private MavenFileFilter mavenFileFilter;
+
     /**
-     * 
+     *
      * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
      * @required
-     */    
+     */
     private MavenResourcesFiltering mavenResourcesFiltering;
 
     private static final String WEB_INF = "WEB-INF";
@@ -252,35 +252,35 @@ public abstract class AbstractWarMojo
      * @since 2.1
      */
     private List overlays = new ArrayList();
-    
+
     /**
      * A list of file extensions to not filtering.
      * <b>will be used for webResources and overlay filtering</b>
-     * 
-     * @parameter 
+     *
+     * @parameter
      * @since 2.1-alpha-2
      */
     private List nonFilteredFileExtensions;
-    
+
     /**
      * @parameter expression="${session}"
      * @readonly
      * @required
      * @since 2.1-alpha-2
      */
-     private MavenSession session;
-     
-     /**
-      * To filtering deployment descriptors <b>disabled by default</b> 
-      * 
-      * @parameter expression="${maven.war.filteringDeploymentDescriptors}" default-value="false"
-      * @since 2.1-alpha-2
-      */     
-     private boolean filteringDeploymentDescriptors = false;
-    
+    private MavenSession session;
 
     /**
-     * The maven archive configuration to use.
+     * To filtering deployment descriptors <b>disabled by default</b>
+     *
+     * @parameter expression="${maven.war.filteringDeploymentDescriptors}" default-value="false"
+     * @since 2.1-alpha-2
+     */
+    private boolean filteringDeploymentDescriptors = false;
+
+    /**
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      *
      * @parameter
      */
@@ -431,7 +431,7 @@ public abstract class AbstractWarMojo
             getLog().error( "fail to build filering wrappers " + e.getMessage() );
             throw new MojoExecutionException( e.getMessage(), e );
         }
-        
+
         final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager,
                                                                             filterWrappers,
                                                                             getNonFilteredFileExtensions(),
@@ -521,11 +521,11 @@ public abstract class AbstractWarMojo
         private final File webappDirectory;
 
         private final OverlayManager overlayManager;
-        
+
         private final List filterWrappers;
-        
+
         private List nonFilteredFileExtensions;
-        
+
         private boolean filteringDeploymentDescriptors;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
@@ -648,7 +648,7 @@ public abstract class AbstractWarMojo
         {
             return filteringDeploymentDescriptors;
         }
-        
+
     }
 
     public MavenProject getProject()
