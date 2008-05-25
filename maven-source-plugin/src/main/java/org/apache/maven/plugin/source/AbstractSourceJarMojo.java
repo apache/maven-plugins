@@ -158,48 +158,46 @@ public abstract class AbstractSourceJarMojo
             getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
                 + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
                 + project.getArtifact().getClassifier() + "] classifier." );
+
+            return;
+        }
+
+        Archiver archiver = createArchiver();
+
+        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        {
+            MavenProject subProject = getProject( (MavenProject) i.next() );
+
+            if ( "pom".equals( subProject.getPackaging() ) )
+            {
+                continue;
+            }
+
+            archiveProjectContent( subProject, archiver );
+        }
+
+        File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
+        try
+        {
+            archiver.setDestFile( outputFile );
+            archiver.createArchive();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+        }
+
+        if ( attach )
+        {
+            projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
         }
         else
         {
-            Archiver archiver = createArchiver();
-
-            for ( Iterator i = projects.iterator(); i.hasNext(); )
-            {
-                MavenProject subProject = getProject( (MavenProject) i.next() );
-
-                if ( "pom".equals( subProject.getPackaging() ) )
-                {
-                    continue;
-                }
-
-                archiveProjectContent( subProject, archiver );
-            }
-
-            File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
-
-            try
-            {
-                archiver.setDestFile( outputFile );
-
-                archiver.createArchive();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-            }
-
-            if ( attach )
-            {
-                projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
-            }
-            else
-            {
-                getLog().info( "NOT adding java-sources to attached artifacts list." );
-            }
+            getLog().info( "NOT adding java-sources to attached artifacts list." );
         }
     }
 
@@ -225,61 +223,51 @@ public abstract class AbstractSourceJarMojo
 
             File sourceDirectory = new File( resource.getDirectory() );
 
-            if ( sourceDirectory.exists() )
+            if ( !sourceDirectory.exists() )
             {
-                List resourceIncludes = resource.getIncludes();
+                continue;
+            }
 
-                String includes[];
+            List resourceIncludes = resource.getIncludes();
+            String includes[];
+            if ( resourceIncludes == null || resourceIncludes.size() == 0 )
+            {
+                includes = DEFAULT_INCLUDES;
+            }
+            else
+            {
+                includes = (String[]) resourceIncludes.toArray( new String[resourceIncludes.size()] );
+            }
 
-                if ( resourceIncludes == null || resourceIncludes.size() == 0 )
-                {
-                    includes = DEFAULT_INCLUDES;
-                }
-                else
-                {
-                    includes = (String[]) resourceIncludes.toArray( new String[resourceIncludes.size()] );
-                }
+            List resourceExcludes = resource.getExcludes();
+            String[] excludes;
 
-                List resourceExcludes = resource.getExcludes();
+            if ( resourceExcludes == null || resourceExcludes.size() == 0 )
+            {
+                excludes = FileUtils.getDefaultExcludes();
+            }
+            else
+            {
+                List allExcludes = new ArrayList();
+                allExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
+                allExcludes.addAll( resourceExcludes );
+                excludes = (String[]) allExcludes.toArray( new String[allExcludes.size()] );
+            }
 
-                String[] excludes;
-
-                if ( resourceExcludes == null || resourceExcludes.size() == 0 )
+            String targetPath = resource.getTargetPath();
+            if ( targetPath != null )
+            {
+                if ( !targetPath.trim().endsWith( "/" ) )
                 {
-                    excludes = FileUtils.getDefaultExcludes();
+                    targetPath += "/";
                 }
-                else
-                {
-                    List allExcludes = new ArrayList();
-                    allExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
-                    allExcludes.addAll( resourceExcludes );
-                    excludes = (String[]) allExcludes.toArray( new String[allExcludes.size()] );
-                }
-                String targetPath = resource.getTargetPath();
-                if ( targetPath != null )
-                {
-                    if ( !targetPath.trim().endsWith( "/" ) )
-                    {
-                        targetPath += "/";
-                    }
-                    addDirectory( archiver, sourceDirectory, targetPath, includes, excludes );
-                }
-                else
-                {
-                    addDirectory( archiver, sourceDirectory, includes, excludes );
-                }
+                addDirectory( archiver, sourceDirectory, targetPath, includes, excludes );
+            }
+            else
+            {
+                addDirectory( archiver, sourceDirectory, includes, excludes );
             }
         }
-    }
-
-    /**
-     * Method to attach generated artifact to artifact list
-     *
-     * @param outputFile the artifact file to be attached
-     * @param classifier
-     */
-    protected void attachArtifact( File outputFile, String classifier )
-    {
     }
 
     protected Archiver createArchiver()
