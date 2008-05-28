@@ -24,6 +24,8 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
+import org.apache.maven.wagon.CommandExecutor;
+import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -33,7 +35,6 @@ import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
-import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -146,6 +147,13 @@ public class DefaultRepositoryCopier
         logger.info( "Downloading metadata from the target repository." );
 
         Wagon targetWagon = wagonManager.getWagon( targetRepository );
+
+        if ( ! ( targetWagon instanceof CommandExecutor ) )
+        {
+            throw new CommandExecutionException( "Wagon class '" + targetWagon.getClass().getName() +
+                "' in use for target repository is not a CommandExecutor" );
+        }
+
         AuthenticationInfo targetAuth = wagonManager.getAuthenticationInfo( targetRepository.getId() );
 
         targetWagon.connect( targetRepository, targetAuth );
@@ -249,25 +257,25 @@ public class DefaultRepositoryCopier
 
         String command = "unzip -o -qq -d " + targetRepoBaseDirectory + " " + targetRepoBaseDirectory + "/" + fileName;
 
-        ( (ScpWagon) targetWagon ).executeCommand( command );
+        ( (CommandExecutor) targetWagon ).executeCommand( command );
 
         logger.info( "Deleting zip file from the target repository." );
 
         command = "rm -f " + targetRepoBaseDirectory + "/" + fileName;
 
-        ( (ScpWagon) targetWagon ).executeCommand( command );
+        ( (CommandExecutor) targetWagon ).executeCommand( command );
 
         logger.info( "Running rename script on the target machine." );
 
         command = "cd " + targetRepoBaseDirectory + "; sh " + renameScriptName;
 
-        ( (ScpWagon) targetWagon ).executeCommand( command );
+        ( (CommandExecutor) targetWagon ).executeCommand( command );
 
         logger.info( "Deleting rename script from the target repository." );
 
         command = "rm -f " + targetRepoBaseDirectory + "/" + renameScriptName;
 
-        ( (ScpWagon) targetWagon ).executeCommand( command );
+        ( (CommandExecutor) targetWagon ).executeCommand( command );
 
         targetWagon.disconnect();
     }
