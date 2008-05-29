@@ -208,6 +208,12 @@ public class JavadocReport
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping javadoc generation" );
+            return;
+        }
+
         try
         {
             RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
