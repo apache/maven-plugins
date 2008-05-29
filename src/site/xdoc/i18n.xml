@@ -107,6 +107,18 @@ under the License.
               </td>
             </tr>
             <tr>
+              <td>Danish</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_da.properties">See</a>
+              </td>
+              <td>
+                N/A
+              </td>
+              <td>
+                N/A
+              </td>
+            </tr>
+            <tr>
               <td>Dutch</td>
               <td>
                 <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_nl.properties">See</a>
