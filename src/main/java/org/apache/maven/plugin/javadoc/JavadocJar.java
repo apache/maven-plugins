@@ -128,6 +128,12 @@ public class JavadocJar
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping javadoc generation" );
+            return;
+        }
+
         File destDir = this.destDir;
         if ( destDir == null )
         {
