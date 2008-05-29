@@ -287,6 +287,13 @@ public abstract class AbstractJavadocMojo
 
     private float fJavadocVersion = 0.0f;
 
+    /**
+     * Specifies whether the javadoc generation should be skipped
+     *
+     * @parameter expression="${maven.javadoc.skip}" default-value="false"
+     */
+    protected boolean skip;
+
     // ----------------------------------------------------------------------
     // Javadoc Options
     // ----------------------------------------------------------------------
@@ -1156,6 +1163,12 @@ public abstract class AbstractJavadocMojo
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping javadoc generation" );
+            return;
+        }
+
         if ( aggregate && !project.isExecutionRoot() )
         {
             return;
