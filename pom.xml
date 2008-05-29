@@ -133,6 +133,13 @@ under the License.
         <role>Czech translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Kristian Mandrup</name>
+      <email>kristian@mandrup.dk</email>
+      <roles>
+        <role>Danish translator</role>
+      </roles>
+    </contributor>
   </contributors>
 
   <scm>
@@ -371,6 +378,7 @@ under the License.
           <locales>
             <locale>ca</locale>
             <locale>cs</locale>
+            <locale>da</locale>
             <locale>de</locale>
             <locale>es</locale>
             <locale>fr</locale>
