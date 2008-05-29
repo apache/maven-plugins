@@ -64,6 +64,8 @@ import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.plugin.javadoc.options.Taglet;
 import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
@@ -290,9 +292,18 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies whether the javadoc generation should be skipped
      *
+     * @since 2.5
      * @parameter expression="${maven.javadoc.skip}" default-value="false"
      */
     protected boolean skip;
+
+    /**
+     * Project builder
+     *
+     * @since 2.5
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
 
     // ----------------------------------------------------------------------
     // Javadoc Options
@@ -1990,7 +2001,7 @@ public abstract class AbstractJavadocMojo
      * @param artifactList       the list of artifacts that will be put in the map
      * @throws MavenReportException
      */
-    private void populateCompileArtifactMap( Map compileArtifactMap, List artifactList )
+    private void populateCompileArtifactMap( Map compileArtifactMap, Collection artifactList )
         throws MavenReportException
     {
         if ( artifactList != null )
@@ -2152,7 +2163,7 @@ public abstract class AbstractJavadocMojo
         StringBuffer path = new StringBuffer();
         if ( !isDocletArtifactEmpty( docletArtifact ) )
         {
-            path.append( getArtifactAbsolutePath( docletArtifact ) );
+            path.append( StringUtils.join( getArtifactsAbsolutePath( docletArtifact ).iterator(), File.pathSeparator ) );
         }
         else if ( docletArtifacts != null )
         {
@@ -2160,7 +2171,7 @@ public abstract class AbstractJavadocMojo
             {
                 if ( !isDocletArtifactEmpty( docletArtifacts[i] ) )
                 {
-                    path.append( getArtifactAbsolutePath( docletArtifacts[i] ) );
+                    path.append( StringUtils.join( getArtifactsAbsolutePath( docletArtifacts[i] ).iterator(), File.pathSeparator ) );
 
                     if ( i < docletArtifacts.length - 1 )
                     {
@@ -2222,7 +2233,7 @@ public abstract class AbstractJavadocMojo
             && ( StringUtils.isNotEmpty( tagletArtifact.getArtifactId() ) )
             && ( StringUtils.isNotEmpty( tagletArtifact.getVersion() ) ) )
         {
-            path.append( getArtifactAbsolutePath( tagletArtifact ) );
+            path.append( StringUtils.join( getArtifactsAbsolutePath( tagletArtifact ).iterator(), File.pathSeparator ) );
         }
         else if ( taglets != null )
         {
@@ -2236,16 +2247,12 @@ public abstract class AbstractJavadocMojo
                     continue;
                 }
 
-                if ( current.getTagletArtifact() != null )
-                {
-                    tagletsPath.add( getArtifactAbsolutePath( current.getTagletArtifact() ) );
-                }
-                else if ( ( current.getTagletArtifact() != null )
+                if ( ( current.getTagletArtifact() != null )
                     && ( StringUtils.isNotEmpty( current.getTagletArtifact().getGroupId() ) )
                     && ( StringUtils.isNotEmpty( current.getTagletArtifact().getArtifactId() ) )
                     && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
                 {
-                    tagletsPath.add( getArtifactAbsolutePath( current.getTagletArtifact() ) );
+                    tagletsPath.addAll( getArtifactsAbsolutePath( current.getTagletArtifact() ) );
                 }
                 else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
                 {
@@ -2266,29 +2273,57 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Return the Javadoc artifact path from the local repository
+     * Return the Javadoc artifact path and its transitive dependencies path from the local repository
      *
      * @param javadocArtifact
-     * @return the locale artifact path
-     * @throws MavenReportException
+     * @return a list of locale artifacts absolute path
+     * @throws MavenReportException if any
      */
-    private String getArtifactAbsolutePath( JavadocPathArtifact javadocArtifact )
+    private List getArtifactsAbsolutePath( JavadocPathArtifact javadocArtifact )
         throws MavenReportException
     {
         if ( ( StringUtils.isEmpty( javadocArtifact.getGroupId() ) )
             && ( StringUtils.isEmpty( javadocArtifact.getArtifactId() ) )
             && ( StringUtils.isEmpty( javadocArtifact.getVersion() ) ) )
         {
-            return "";
+            return Collections.EMPTY_LIST;
         }
 
+        List path = new ArrayList();
+
         Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
-                                                    javadocArtifact.getVersion(), "compile", "jar" );
+                                                    javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE, "jar" );
+
         try
         {
+            // Find the Javadoc Artifact in the local repo
             resolver.resolve( artifact, remoteRepositories, localRepository );
+            path.add( artifact.getFile().getAbsolutePath() );
 
-            return artifact.getFile().getAbsolutePath();
+            // Find its transitive dependencies in the local repo
+            MavenProject artifactProject = mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories,
+                                                                                    localRepository );
+            Set dependencyArtifacts = artifactProject.createArtifacts( factory, null, null );
+            if ( !dependencyArtifacts.isEmpty() )
+            {
+                ArtifactResolutionResult result = resolver.resolveTransitively( dependencyArtifacts, artifactProject
+                    .getArtifact(), artifactProject.getRemoteArtifactRepositories(), localRepository,
+                                                                                artifactMetadataSource );
+                Set artifacts = result.getArtifacts();
+
+                Map compileArtifactMap = new HashMap();
+                populateCompileArtifactMap( compileArtifactMap, artifacts );
+
+                for ( Iterator it = compileArtifactMap.keySet().iterator(); it.hasNext(); )
+                {
+                    String key = it.next().toString();
+
+                    Artifact a = (Artifact) compileArtifactMap.get( key );
+                    path.add( a.getFile().getAbsolutePath() );
+                }
+            }
+
+            return path;
         }
         catch ( ArtifactResolutionException e )
         {
@@ -2297,6 +2332,14 @@ public abstract class AbstractJavadocMojo
         catch ( ArtifactNotFoundException e )
         {
             throw new MavenReportException( "Unable to find artifact:" + javadocArtifact, e );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new MavenReportException( "Unable to build the Maven project for the artifact:" + javadocArtifact, e );
+        }
+        catch ( InvalidDependencyVersionException e )
+        {
+            throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
         }
     }
 
