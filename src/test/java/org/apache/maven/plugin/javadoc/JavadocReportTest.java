@@ -890,9 +890,9 @@ public class JavadocReportTest
         assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=http://localhost" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=80" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\"toto\"" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\"toto\"" ) != -1 );
-        assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\"" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"toto\\\"" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"toto\\\"" ) != -1 );
+        assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\\\"www.google.com|*.somewhere.com\\\"" ) != -1 );
     }
 
     /**
