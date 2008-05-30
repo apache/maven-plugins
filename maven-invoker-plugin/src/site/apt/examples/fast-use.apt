@@ -18,7 +18,7 @@ Fast Invoker Plugin Configuration
   versions are locked in the super POM. For older versions, you have to lock plugins versions.
   
   To enable this feature, you have to add a <<<settings.xml>>> file in your project (for example in <<<src/it/settings.xml>>>)
-  and modify the plugin configuration as this :  
+  and modify the plugin configuration as this:  
   
 -------------------
 <project>
@@ -41,7 +41,7 @@ Fast Invoker Plugin Configuration
 </project>
 -------------------
 
-  The settings must contains the following content :
+  The settings must contain the following content:
   
 -------------------
 <?xml version="1.0"?>
@@ -51,7 +51,7 @@ Fast Invoker Plugin Configuration
       <id>it-repo</id>
       <activation>
         <activeByDefault>true</activeByDefault>
-      </activation>      
+      </activation>
       <repositories>
         <repository>
           <id>local.central</id>
@@ -60,9 +60,9 @@ Fast Invoker Plugin Configuration
             <enabled>true</enabled>
           </releases>
           <snapshots>
-            <enabled>false</enabled>
-          </snapshots>             
-        </repository>        
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
@@ -72,8 +72,8 @@ Fast Invoker Plugin Configuration
             <enabled>true</enabled>
           </releases>
           <snapshots>
-            <enabled>false</enabled>
-          </snapshots>          
+            <enabled>true</enabled>
+          </snapshots>
         </pluginRepository>
       </pluginRepositories>
     </profile>
@@ -81,5 +81,3 @@ Fast Invoker Plugin Configuration
 </settings>
 -------------------  
   
-
-          
