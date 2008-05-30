@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * @since 2.0
  * @goal javadoc
- * @phase generate-sources
+ * @execute phase="generate-sources"
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
  * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
