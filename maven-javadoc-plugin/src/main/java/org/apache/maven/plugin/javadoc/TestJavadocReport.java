@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * @since 2.3
  * @goal test-javadoc
- * @phase generate-test-sources
+ * @execute phase=generate-test-sources
  * @requiresDependencyResolution test
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
  * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
