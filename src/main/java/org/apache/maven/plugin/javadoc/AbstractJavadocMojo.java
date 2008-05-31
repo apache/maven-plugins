@@ -56,10 +56,12 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.DefaultPluginManager;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
 import org.apache.maven.plugin.javadoc.options.OfflineLink;
+import org.apache.maven.plugin.javadoc.options.ResourcesArtifact;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.plugin.javadoc.options.Taglet;
 import org.apache.maven.plugin.javadoc.options.TagletArtifact;
@@ -73,6 +75,9 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -217,6 +222,25 @@ public abstract class AbstractJavadocMojo
      * @component
      */
     private ArtifactResolver resolver;
+
+    /**
+     * A list of artifacts containing resources which sould be copied into the
+     * javadoc output directory (like stylesheets, icons, etc.).
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;resourcesArtifacts&gt;<br/>
+     *   &lt;resourcesArtifact&gt;<br/>
+     *     &lt;groupId&gt;external.group.id&lt;/groupId&gt;<br/>
+     *     &lt;artifactId&gt;external-resources&lt;/artifactId&gt;<br/>
+     *     &lt;version&gt;1.0&lt;/version&gt;<br/>
+     *   &lt;/resourcesArtifact&gt;<br/>
+     *  &lt;/resourcesArtifacts&gt;
+     * </pre>
+     *
+     * @parameter expression="${resourcesArtifacts}"
+     */
+    private ResourcesArtifact[] resourcesArtifacts;
 
     /**
      * Factory for creating artifact objects
@@ -1071,6 +1095,12 @@ public abstract class AbstractJavadocMojo
      */
     private String windowtitle;
 
+    /**
+     * @component
+     */
+    private ArchiverManager archiverManager;
+
+
     // ----------------------------------------------------------------------
     // protected methods
     // ----------------------------------------------------------------------
@@ -1314,6 +1344,62 @@ public abstract class AbstractJavadocMojo
                 throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
             }
         }
+
+        // ----------------------------------------------------------------------
+        // Copy additional javadoc resources in artifacts
+        // ----------------------------------------------------------------------
+        if ( resourcesArtifacts != null && resourcesArtifacts.length > 0 )
+        {
+
+            File target = javadocOutputDirectory;
+
+            UnArchiver unArchiver;
+            try
+            {
+                unArchiver = archiverManager.getUnArchiver( "jar" );
+            }
+            catch ( NoSuchArchiverException e )
+            {
+                throw new MavenReportException( "Unable to extract resources artifact. No archiver for 'jar' available.", e );
+            }
+
+            for ( int i = 0; i < resourcesArtifacts.length; i++ )
+            {
+                ResourcesArtifact item = resourcesArtifacts[i];
+
+                Artifact artifact;
+
+                try
+                {
+                    artifact = createAndResolveArtifact( item );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    throw new MavenReportException( "Unable to resolve artifact:" + item, e );
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    throw new MavenReportException( "Unable to find artifact:" + item, e );
+                }
+
+                unArchiver.setSourceFile( artifact.getFile() );
+                unArchiver.setDestDirectory( target );
+
+                getLog().info(
+                               "extracting contents of resources artifact: " + item.getGroupId() + ":"
+                                   + item.getArtifactId() + ":" + item.getVersion() );
+                try
+                {
+                    unArchiver.extract();
+                }
+                catch ( Exception e )
+                {
+                    throw new MavenReportException( "extraction of resources failed. Artifact that failed was: "
+                        + item, e );
+                }
+            }
+        }
+
 
         // ----------------------------------------------------------------------
         // Wrap javadoc options
@@ -2291,13 +2377,10 @@ public abstract class AbstractJavadocMojo
 
         List path = new ArrayList();
 
-        Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
-                                                    javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE, "jar" );
 
         try
         {
-            // Find the Javadoc Artifact in the local repo
-            resolver.resolve( artifact, remoteRepositories, localRepository );
+            Artifact artifact = createAndResolveArtifact( javadocArtifact );
             path.add( artifact.getFile().getAbsolutePath() );
 
             // Find its transitive dependencies in the local repo
@@ -2341,6 +2424,24 @@ public abstract class AbstractJavadocMojo
         {
             throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
         }
+    }
+
+    /**
+     * creates an {@link Artifact} representing the configured {@link JavadocPathArtifact} and resolves it.
+     *
+     * @param javadocArtifact the {@link JavadocPathArtifact} to resolve
+     * @return a resolved {@link Artifact}
+     * @throws ArtifactResolutionException if the resolution of the artifact failed.
+     * @throws ArtifactNotFoundException if the artifact hasn't been found.
+     */
+    private Artifact createAndResolveArtifact( JavadocPathArtifact javadocArtifact )
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
+                                                    javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE, "jar" );
+        // Find the Javadoc Artifact in the local repo
+        resolver.resolve( artifact, remoteRepositories, localRepository );
+        return artifact;
     }
 
     /**
