@@ -238,6 +238,7 @@ public abstract class AbstractJavadocMojo
      *  &lt;/resourcesArtifacts&gt;
      * </pre>
      *
+     * @since 2.5
      * @parameter expression="${resourcesArtifacts}"
      */
     private ResourcesArtifact[] resourcesArtifacts;
@@ -328,6 +329,14 @@ public abstract class AbstractJavadocMojo
      * @component
      */
     private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Archiver manager
+     *
+     * @since 2.5
+     * @component
+     */
+    private ArchiverManager archiverManager;
 
     // ----------------------------------------------------------------------
     // Javadoc Options
@@ -1094,12 +1103,6 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} API"
      */
     private String windowtitle;
-
-    /**
-     * @component
-     */
-    private ArchiverManager archiverManager;
-
 
     // ----------------------------------------------------------------------
     // protected methods
