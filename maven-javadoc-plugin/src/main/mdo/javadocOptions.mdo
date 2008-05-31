@@ -178,6 +178,13 @@ under the License.
     </class>
 
     <class>
+      <name>ResourcesArtifact</name>
+      <description>A artifact containing resources.</description>
+      <version>1.0.0</version>
+      <superClass>JavadocPathArtifact</superClass>
+    </class>
+
+    <class>
       <name>Taglet</name>
       <description>A Taglet parameter.</description>
       <version>1.0.0</version>
@@ -230,4 +237,5 @@ under the License.
     </class>
   </classes>
 </model>
+
 
