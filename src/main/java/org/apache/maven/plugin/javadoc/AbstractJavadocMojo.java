@@ -155,6 +155,48 @@ public abstract class AbstractJavadocMojo
     private static final float SINCE_JAVADOC_1_6 = 1.6f;
 
     // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Archiver manager
+     *
+     * @since 2.5
+     * @component
+     */
+    private ArchiverManager archiverManager;
+
+    /**
+     * Factory for creating artifact objects
+     *
+     * @component
+     */
+    private ArtifactFactory factory;
+
+    /**
+     * Used to resolve artifacts of aggregated modules
+     *
+     * @since 2.1
+     * @component
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * Used for resolving artifacts
+     *
+     * @component
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * Project builder
+     *
+     * @since 2.5
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
 
@@ -217,13 +259,6 @@ public abstract class AbstractJavadocMojo
     private String additionalJOption;
 
     /**
-     * Used for resolving artifacts
-     *
-     * @component
-     */
-    private ArtifactResolver resolver;
-
-    /**
      * A list of artifacts containing resources which sould be copied into the
      * javadoc output directory (like stylesheets, icons, etc.).
      * <br/>
@@ -242,13 +277,6 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${resourcesArtifacts}"
      */
     private ResourcesArtifact[] resourcesArtifacts;
-
-    /**
-     * Factory for creating artifact objects
-     *
-     * @component
-     */
-    private ArtifactFactory factory;
 
     /**
      * The local repository where the artifacts are located
@@ -278,14 +306,6 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${aggregate}" default-value="false"
      */
     protected boolean aggregate;
-
-    /**
-     * Used to resolve artifacts of aggregated modules
-     *
-     * @since 2.1
-     * @component
-     */
-    private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Set this to 'true' to debug Javadoc plugin. With this, 'options' and 'files' files are provided.
@@ -321,22 +341,6 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${maven.javadoc.skip}" default-value="false"
      */
     protected boolean skip;
-
-    /**
-     * Project builder
-     *
-     * @since 2.5
-     * @component
-     */
-    private MavenProjectBuilder mavenProjectBuilder;
-
-    /**
-     * Archiver manager
-     *
-     * @since 2.5
-     * @component
-     */
-    private ArchiverManager archiverManager;
 
     // ----------------------------------------------------------------------
     // Javadoc Options
