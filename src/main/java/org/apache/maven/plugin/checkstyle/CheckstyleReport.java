@@ -34,6 +34,7 @@ import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -75,7 +76,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * Perform checkstyle analysis, and generate report on violations.
+ * Perform a Checkstyle analysis, and generate a report on violations.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -316,6 +317,16 @@ public class CheckstyleReport
      * @parameter
      */
     private File useFile;
+
+    /**
+     * SiteTool.
+     *
+     * @since 2.2
+     * @component role="org.apache.maven.doxia.tools.SiteTool"
+     * @required
+     * @readonly
+     */
+    protected SiteTool siteTool;
 
     /**
      * <p>
@@ -719,7 +730,7 @@ public class CheckstyleReport
     private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory,
                                      ResourceBundle bundle )
     {
-        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle );
+        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
 
         generator.setLog( getLog() );
         generator.setEnableRulesSummary( enableRulesSummary );
