@@ -64,7 +64,7 @@ import java.util.Map;
  * For scp protocol, website files are packaged into zip archive,
  * then the archive is transfered to the remote host, next it is un-archived.
  * This method of deployment should normally be much faster
- * then making a file by file copy.  For file protocol, the files are copied
+ * than making a file by file copy.  For file protocol, the files are copied
  * directly to the destination directory.
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
