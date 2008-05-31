@@ -24,11 +24,13 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +44,8 @@ import java.util.ResourceBundle;
 public class CheckstyleReportGenerator
 {
     private Log log;
+
+    private File basedir;
 
     private ResourceBundle bundle;
 
@@ -61,13 +65,19 @@ public class CheckstyleReportGenerator
 
     private boolean enableRSS;
 
+    private SiteTool siteTool;
+
     private String xrefLocation;
 
-    public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle )
+    public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
     {
         this.bundle = bundle;
 
         this.sink = sink;
+
+        this.basedir = basedir;
+
+        this.siteTool = siteTool;
 
         this.enableRulesSummary = true;
         this.enableSeveritySummary = true;
@@ -413,6 +423,24 @@ public class CheckstyleReportGenerator
                         sink.monospaced_();
                         linenum++;
                     }
+                }
+                else if ( "headerFile".equals( name ) && "RegexpHeader".equals( ruleName ) )
+                {
+                    sink.text( ": " );
+                    sink.monospaced();
+                    sink.text( "\"" );
+                    if ( basedir != null )
+                    {
+                        // Make the headerFile value relative to ${basedir}
+                        String path = siteTool.getRelativePath( value, basedir.getAbsolutePath() );
+                        sink.text( path.replace( '\\', '/' ) );
+                    }
+                    else
+                    {
+                        sink.text( value );
+                    }
+                    sink.text( "\"" );
+                    sink.monospaced_();
                 }
                 else
                 {

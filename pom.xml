@@ -29,7 +29,7 @@ under the License.
   <name>Maven Checkstyle Plugin</name>
   <version>2.2-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0.2</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
@@ -131,6 +131,11 @@ under the License.
       <version>2.0</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-doxia-tools</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9</version>
@@ -143,7 +148,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
+      <version>1.4.4</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
