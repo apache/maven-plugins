@@ -75,6 +75,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -1355,58 +1356,7 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         // Copy additional javadoc resources in artifacts
         // ----------------------------------------------------------------------
-        if ( resourcesArtifacts != null && resourcesArtifacts.length > 0 )
-        {
-
-            File target = javadocOutputDirectory;
-
-            UnArchiver unArchiver;
-            try
-            {
-                unArchiver = archiverManager.getUnArchiver( "jar" );
-            }
-            catch ( NoSuchArchiverException e )
-            {
-                throw new MavenReportException( "Unable to extract resources artifact. No archiver for 'jar' available.", e );
-            }
-
-            for ( int i = 0; i < resourcesArtifacts.length; i++ )
-            {
-                ResourcesArtifact item = resourcesArtifacts[i];
-
-                Artifact artifact;
-
-                try
-                {
-                    artifact = createAndResolveArtifact( item );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    throw new MavenReportException( "Unable to resolve artifact:" + item, e );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    throw new MavenReportException( "Unable to find artifact:" + item, e );
-                }
-
-                unArchiver.setSourceFile( artifact.getFile() );
-                unArchiver.setDestDirectory( target );
-
-                getLog().info(
-                               "extracting contents of resources artifact: " + item.getGroupId() + ":"
-                                   + item.getArtifactId() + ":" + item.getVersion() );
-                try
-                {
-                    unArchiver.extract();
-                }
-                catch ( Exception e )
-                {
-                    throw new MavenReportException( "extraction of resources failed. Artifact that failed was: "
-                        + item, e );
-                }
-            }
-        }
-
+        copyAdditionalJavadocResources( javadocOutputDirectory );
 
         // ----------------------------------------------------------------------
         // Wrap javadoc options
@@ -2446,8 +2396,10 @@ public abstract class AbstractJavadocMojo
     {
         Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
                                                     javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE, "jar" );
+
         // Find the Javadoc Artifact in the local repo
         resolver.resolve( artifact, remoteRepositories, localRepository );
+
         return artifact;
     }
 
@@ -3030,6 +2982,7 @@ public abstract class AbstractJavadocMojo
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.2.html#docfiles">Reference
      * Guide, Copies new "doc-files" directory for holding images and examples</a>
+     * @see #docfilessubdirs
      *
      * @param outputDirectory the output directory
      * @throws java.io.IOException if any
@@ -3058,6 +3011,65 @@ public abstract class AbstractJavadocMojo
                     String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                     File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                     JavadocUtil.copyJavadocResources( outputDirectory, javadocDir, excludedocfilessubdir );
+                }
+            }
+        }
+    }
+
+    /**
+     * Method that copy additional Javadoc resources from given artifacts.
+     *
+     * @see #resourcesArtifacts
+     * @param outputDirectory the output directory
+     * @throws MavenReportException if any
+     */
+    private void copyAdditionalJavadocResources( File outputDirectory )
+        throws MavenReportException
+    {
+        if ( resourcesArtifacts != null && resourcesArtifacts.length > 0 )
+        {
+            UnArchiver unArchiver;
+            try
+            {
+                unArchiver = archiverManager.getUnArchiver( "jar" );
+            }
+            catch ( NoSuchArchiverException e )
+            {
+                throw new MavenReportException(
+                                                "Unable to extract resources artifact. No archiver for 'jar' available.",
+                                                e );
+            }
+
+            for ( int i = 0; i < resourcesArtifacts.length; i++ )
+            {
+                ResourcesArtifact item = resourcesArtifacts[i];
+
+                Artifact artifact;
+                try
+                {
+                    artifact = createAndResolveArtifact( item );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    throw new MavenReportException( "Unable to resolve artifact:" + item, e );
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    throw new MavenReportException( "Unable to find artifact:" + item, e );
+                }
+
+                unArchiver.setSourceFile( artifact.getFile() );
+                unArchiver.setDestDirectory( outputDirectory );
+
+                getLog().info( "Extracting contents of resources artifact: " + artifact.getArtifactId() );
+                try
+                {
+                    unArchiver.extract();
+                }
+                catch ( ArchiverException e )
+                {
+                    throw new MavenReportException( "Extraction of resources failed. Artifact that failed was: "
+                        + artifact.getArtifactId(), e );
                 }
             }
         }
