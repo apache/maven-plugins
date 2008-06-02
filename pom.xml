@@ -22,13 +22,13 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-plugins</artifactId>
     <version>10</version>
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
-  <version>2.0-beta-7-SNAPSHOT</version>
+  <version>2.0-beta-8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Site Plugin</name>
   <description>
@@ -183,7 +183,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.10-SNAPSHOT</version>
     </dependency>
 
     <!-- Doxia -->
@@ -195,6 +195,22 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <!-- TODO: IT fails without those, why? -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-apt</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-xdoc</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-fml</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
 
@@ -363,8 +379,8 @@ under the License.
   </profiles>
 
   <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
+    <doxiaVersion>1.0-beta-1-SNAPSHOT</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-beta-1-SNAPSHOT</doxiaSitetoolsVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 
