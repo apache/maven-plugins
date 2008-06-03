@@ -37,7 +37,7 @@ under the License.
   <inceptionYear>2005</inceptionYear>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>2.0.10-SNAPSHOT</maven>
   </prerequisites>
 
   <issueManagement>
