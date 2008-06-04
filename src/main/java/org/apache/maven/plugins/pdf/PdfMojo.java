@@ -142,7 +142,7 @@ public class PdfMojo
 
         try
         {
-            List localesList = initLocalesList();
+            List localesList = getSiteTool().getAvailableLocales( getLocales() );
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
