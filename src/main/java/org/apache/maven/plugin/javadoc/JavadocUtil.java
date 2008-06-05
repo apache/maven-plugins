@@ -453,7 +453,7 @@ public class JavadocUtil
         Commandline cmd = new Commandline();
         cmd.setExecutable( javadocExe.getAbsolutePath() );
         cmd.setWorkingDirectory( javadocExe.getParentFile() );
-        cmd.createArgument().setValue( "-J-version" );
+        cmd.createArg().setValue( "-J-version" );
 
         CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
@@ -464,7 +464,7 @@ public class JavadocUtil
         {
             StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
             msg.append( '\n' );
-            msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ) );
+            msg.append( "Command line was:" + CommandLineUtils.toString( cmd.getCommandline() ) );
             throw new CommandLineException( msg.toString() );
         }
 
