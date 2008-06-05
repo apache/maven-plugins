@@ -111,7 +111,13 @@ under the License.
               <version>4.5</version>
             </docletArtifact>
           </docletArtifacts>
-
+          <tags>
+            <tag>
+              <name>requirement</name>
+              <placement>a</placement>
+              <head>Software Requirement:</head>
+            </tag>
+          </tags>
         </configuration>
       </plugin>
   </plugins>

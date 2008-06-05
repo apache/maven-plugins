@@ -21,6 +21,7 @@ package org.apache.maven.plugin.ant;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Map;
 
 import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
@@ -163,6 +164,16 @@ public class AntBuildWriterUtilTest
 
         assertNotNull( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "docletArtifacts", null ) );
         assertEquals( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "docletArtifacts", null ).length, 2 );
+
+        Map[] options = AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "tags", null );
+        assertNotNull( options );
+        assertEquals( options.length, 1 );
+        assertEquals( 1, options[0].size() );
+        Map properties = (Map) options[0].get( "tag" );
+        assertNotNull( properties );
+        assertEquals( "requirement", properties.get( "name" ) );
+        assertEquals( "a", properties.get( "placement" ) );
+        assertEquals( "Software Requirement:", properties.get( "head" ) );
 
         maven.stop();
     }
