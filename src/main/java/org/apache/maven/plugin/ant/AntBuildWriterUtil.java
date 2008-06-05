@@ -39,7 +39,6 @@ import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -535,10 +534,11 @@ public class AntBuildWriterUtil
         {
             for ( int i = 0; i < tags.length; i++ )
             {
+                Map props = (Map) tags[i].get( "tag" );
                 writer.startElement( "tag" );
-                writer.addAttribute( "name", (String) tags[i].get( "name" ) );
-                addWrapAttribute( writer, "javadoc", "scope", (String) tags[i].get( "placement" ), 4 );
-                addWrapAttribute( writer, "javadoc", "description", (String) tags[i].get( "head" ), 4 );
+                writer.addAttribute( "name", (String) props.get( "name" ) );
+                addWrapAttribute( writer, "javadoc", "scope", (String) props.get( "placement" ), 4 );
+                addWrapAttribute( writer, "javadoc", "description", (String) props.get( "head" ), 4 );
                 writer.endElement(); // tag
             }
         }
@@ -1131,98 +1131,103 @@ public class AntBuildWriterUtil
                 Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                     .parse( new ByteArrayInputStream( pluginConf.toString().getBytes( "UTF-8" ) ) );
 
-                XObject obj = XPathAPI.eval( doc, "//configuration/" + optionName );
-
-                NodeList nodeList = obj.nodelist();
-                if ( nodeList.getLength() > 0 && isList( nodeList.item( 0 ) ) )
+                NodeList nodeList = XPathAPI.eval( doc, "//configuration/" + optionName ).nodelist();
+                if ( nodeList.getLength() > 0 )
                 {
-                    /*
-                     * <optionNames>
-                     *   <optionName>
-                     *    <param1>value1</param1>
-                     *    <param2>value2</param2>
-                     *   </optionName>
-                     * </optionNames>
-                     */
-                    Map options = new HashMap();
+                    Node optionNode = nodeList.item( 0 );
 
-                    List optionNames = new ArrayList();
-                    NodeList childs = nodeList.item( 0 ).getChildNodes();
-                    for ( int i = 0; i < childs.getLength(); i++ )
+                    if ( isList( optionNode ) )
                     {
-                        if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
-                        {
-                            Map option = new HashMap();
+                        /*
+                         * <optionNames>
+                         *   <optionName>
+                         *    <param1>value1</param1>
+                         *    <param2>value2</param2>
+                         *   </optionName>
+                         * </optionNames>
+                         */
+                        Map options = new HashMap();
 
-                            obj = XPathAPI.eval( doc, "//configuration/" + childs.item( i ).getNodeName() );
-
-                            if ( StringUtils.isNotEmpty( obj.toString() ) )
-                            {
-                                Map properties = new HashMap();
-                                NodeList childs2 = childs.item( i ).getChildNodes();
-                                if ( childs2.getLength() > 0 )
-                                {
-                                    for ( int j = 0; j < childs2.getLength(); j++ )
-                                    {
-                                        if ( childs2.item( j ).getNodeType() == Node.ELEMENT_NODE )
-                                        {
-                                            properties.put( childs2.item( j ).getNodeName(), childs2.item( j )
-                                                .getFirstChild().getNodeValue() );
-                                        }
-                                    }
-                                    option.put( childs.item( i ).getNodeName(), properties );
-                                }
-                            }
-                            else
-                            {
-                                option.put( childs.item( i ).getNodeName(), childs.item( i ).getFirstChild()
-                                    .getNodeValue() );
-                            }
-
-                            optionNames.add( option );
-                        }
-                    }
-
-                    options.put( optionName, optionNames.toArray( new Map[0] ) );
-
-                    return options;
-                }
-
-                /*
-                 * <optionName>
-                 *  <param1>value1</param1>
-                 *  <param2>value2</param2>
-                 * </optionName>
-                 */
-                if ( StringUtils.isNotEmpty( obj.toString() ) )
-                {
-                    Map option = new HashMap();
-
-                    NodeList childs = nodeList.item( 0 ).getChildNodes();
-                    if ( childs.getLength() > 1 )
-                    {
-                        Map parameters = new HashMap();
-
+                        List optionNames = new ArrayList();
+                        NodeList childs = optionNode.getChildNodes();
                         for ( int i = 0; i < childs.getLength(); i++ )
                         {
-                            if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
+                            Node child = childs.item( i );
+                            if ( child.getNodeType() == Node.ELEMENT_NODE )
                             {
-                                parameters.put( childs.item( i ).getNodeName(), childs.item( i ).getFirstChild()
-                                    .getNodeValue() );
+                                Map option = new HashMap();
+
+                                if ( isElementContent( child ) )
+                                {
+                                    Map properties = new HashMap();
+                                    NodeList childs2 = child.getChildNodes();
+                                    if ( childs2.getLength() > 0 )
+                                    {
+                                        for ( int j = 0; j < childs2.getLength(); j++ )
+                                        {
+                                            Node child2 = childs2.item( j );
+                                            if ( child2.getNodeType() == Node.ELEMENT_NODE )
+                                            {
+                                                properties.put( child2.getNodeName(), getTextContent( child2 ) );
+                                            }
+                                        }
+                                        option.put( child.getNodeName(), properties );
+                                    }
+                                }
+                                else
+                                {
+                                    option.put( child.getNodeName(), getTextContent( child ) );
+                                }
+
+                                optionNames.add( option );
                             }
                         }
 
-                        option.put( optionName, parameters );
+                        options.put( optionName, optionNames.toArray( new Map[0] ) );
+
+                        return options;
+                    }
+
+                    if ( isElementContent( optionNode ) )
+                    {
+                        /*
+                         * <optionName>
+                         *  <param1>value1</param1>
+                         *  <param2>value2</param2>
+                         * </optionName>
+                         */
+                        Map option = new HashMap();
+
+                        NodeList childs = optionNode.getChildNodes();
+                        if ( childs.getLength() > 1 )
+                        {
+                            Map parameters = new HashMap();
+
+                            for ( int i = 0; i < childs.getLength(); i++ )
+                            {
+                                Node child = childs.item( i );
+                                if ( child.getNodeType() == Node.ELEMENT_NODE )
+                                {
+                                    parameters.put( child.getNodeName(), getTextContent( child ) );
+                                }
+                            }
+
+                            option.put( optionName, parameters );
+                        }
+
+                        return option;
                     }
                     else
                     {
                         /*
                          * <optionName>value1</optionName>
                          */
-                        option.put( optionName, obj.toString() );
-                    }
+                        Map option = new HashMap();
 
-                    return option;
+                        option.put( optionName, getTextContent( optionNode ) );
+
+                        return option;
+                    }
                 }
             }
             catch ( Exception e )
@@ -1286,7 +1291,7 @@ public class AntBuildWriterUtil
      * &lt;/options&gt;
      * </pre>
      *
-     * @param node a given node
+     * @param node a given node, may be <code>null</code>.
      * @return true if the node is a list, false otherwise.
      */
     private static boolean isList( Node node )
@@ -1296,13 +1301,13 @@ public class AntBuildWriterUtil
             return false;
         }
 
-        NodeList childs = node.getChildNodes();
+        NodeList children = node.getChildNodes();
 
         boolean isList = false;
         String lastNodeName = null;
-        for ( int i = 0; i < childs.getLength(); i++ )
+        for ( int i = 0; i < children.getLength(); i++ )
         {
-            Node child = childs.item( i );
+            Node child = children.item( i );
             if ( child.getNodeType() == Node.ELEMENT_NODE )
             {
                 isList = isList || ( child.getNodeName().equals( lastNodeName ) );
@@ -1315,6 +1320,54 @@ public class AntBuildWriterUtil
         }
 
         return isList;
+    }
+
+    /**
+     * Checks whether the specified node has element content or consists only of character data.
+     * 
+     * @param node The node to test, may be <code>null</code>.
+     * @return <code>true</code> if any child node is an element, <code>false</code> otherwise.
+     */
+    private static boolean isElementContent( Node node )
+    {
+        if ( node == null )
+        {
+            return false;
+        }
+        NodeList children = node.getChildNodes();
+        for ( int i = 0; i < children.getLength(); i++ )
+        {
+            Node child = children.item( i );
+            if ( child.getNodeType() == Node.ELEMENT_NODE )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the text content of the specified node.
+     * 
+     * @param node The node whose text contents should be retrieved, may be <code>null</code>.
+     * @return The text content of the node, can be empty but never <code>null</code>.
+     */
+    private static String getTextContent( Node node )
+    {
+        StringBuffer buffer = new StringBuffer();
+        if ( node != null )
+        {
+            NodeList children = node.getChildNodes();
+            for ( int i = 0; i < children.getLength(); i++ )
+            {
+                Node child = children.item( i );
+                if ( child.getNodeType() == Node.TEXT_NODE || child.getNodeType() == Node.CDATA_SECTION_NODE )
+                {
+                    buffer.append( child.getNodeValue() );
+                }
+            }
+        }
+        return buffer.toString();
     }
 
     /**
