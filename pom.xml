@@ -29,9 +29,11 @@ under the License.
   </parent>
 
   <artifactId>maven-ant-plugin</artifactId>
+  <version>2.1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Ant Plugin</name>
-  <version>2.2-SNAPSHOT</version>
+  <description>Generates an Ant build file from a POM.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>
@@ -144,16 +146,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </build>
-
   <profiles>
     <profile>
       <id>integration-tests</id>
@@ -167,75 +159,34 @@ under the License.
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-clean-plugin</artifactId>
-            <configuration>
-              <filesets>
-                <fileset>
-                  <directory>src/it</directory>
-                  <includes>
-                    <include>**/target</include>
-                    <include>**/build.xml</include>
-                    <include>**/maven-build.xml</include>
-                    <include>**/maven-build.properties</include>
-                  </includes>
-                </fileset>
-              </filesets>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>2.2</version>
-            <executions>
-              <execution>
-                <id>it-test</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <configuration>
-                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <packaging>${project.packaging}</packaging>
-                  <pomFile>${basedir}/pom.xml</pomFile>
-                  <createChecksum>true</createChecksum>
-                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                  <localRepositoryId>it-local-repo</localRepositoryId>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <settingsFile>src/it/settings.xml</settingsFile>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
                 <goal>ant:ant</goal>
                 <goal>antrun:run</goal>
               </goals>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
-                <phase>integration-test</phase>
                 <goals>
+                  <goal>install</goal>
                   <goal>run</goal>
                 </goals>
               </execution>
               <execution>
                 <id>integration-test-phase-2</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
@@ -248,13 +199,12 @@ under the License.
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.4.3</version>
-          </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 </project>
