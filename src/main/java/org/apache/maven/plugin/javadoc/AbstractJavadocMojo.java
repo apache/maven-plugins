@@ -102,16 +102,6 @@ public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
     /**
-     * The current build session instance. This is used for
-     * toolchain manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
-     */
-    private MavenSession session;
-
-    /**
      * The current class directory
      */
     private static final String RESOURCE_DIR = ClassUtils.getPackageName( JavadocReport.class ).replace( '.', '/' );
@@ -200,6 +190,16 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
+
+    /**
+     * The current build session instance. This is used for
+     * toolchain manager API calls.
+     *
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    private MavenSession session;
 
     /**
      * The Maven Settings.
@@ -1396,7 +1396,7 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isNotEmpty( additionalJOption ) )
         {
-            cmd.createArgument().setValue( additionalJOption );
+            cmd.createArg().setValue( additionalJOption );
         }
 
         // General javadoc arguments
@@ -1633,7 +1633,7 @@ public abstract class AbstractJavadocMojo
 
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted arguments
+            getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted arguments
         }
 
         if ( debug )
@@ -1642,7 +1642,7 @@ public abstract class AbstractJavadocMojo
 
             try
             {
-                FileUtils.fileWrite( commandLineFile.getAbsolutePath(), Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+                FileUtils.fileWrite( commandLineFile.getAbsolutePath(), CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
 
                 if ( !SystemUtils.IS_OS_WINDOWS )
                 {
@@ -1665,7 +1665,7 @@ public abstract class AbstractJavadocMojo
 
             if ( exitCode != 0 )
             {
-                String cmdLine = Commandline.toString( cmd.getCommandline() ).replaceAll( "'", "" );
+                String cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
                 cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
 
                 StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
@@ -2417,7 +2417,7 @@ public abstract class AbstractJavadocMojo
         {
             try
             {
-                cmd.createArgument().setValue( "-J" + arg + JavadocUtil.parseJavadocMemory( memory ) );
+                cmd.createArg().setValue( "-J" + arg + JavadocUtil.parseJavadocMemory( memory ) );
             }
             catch ( IllegalArgumentException e )
             {
@@ -2444,7 +2444,7 @@ public abstract class AbstractJavadocMojo
                 getLog().warn( "The Javadoc plugin parameter 'proxyHost' is deprecated since 2.4. " +
                         "Please configure an active proxy in your settings.xml." );
             }
-            cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
+            cmd.createArg().setValue( "-J-DproxyHost=" + proxyHost );
 
             if ( proxyPort > 0 )
             {
@@ -2453,7 +2453,7 @@ public abstract class AbstractJavadocMojo
                     getLog().warn( "The Javadoc plugin parameter 'proxyPort' is deprecated since 2.4. " +
                         "Please configure an active proxy in your settings.xml." );
                 }
-                cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
+                cmd.createArg().setValue( "-J-DproxyPort=" + proxyPort );
             }
         }
 
@@ -2470,26 +2470,26 @@ public abstract class AbstractJavadocMojo
 
             if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
             {
-                cmd.createArgument().setValue( "-J-D" + protocol + "proxySet=true" );
-                cmd.createArgument().setValue( "-J-D" + protocol + "proxyHost=" + activeProxy.getHost() );
+                cmd.createArg().setValue( "-J-D" + protocol + "proxySet=true" );
+                cmd.createArg().setValue( "-J-D" + protocol + "proxyHost=" + activeProxy.getHost() );
 
                 if ( activeProxy.getPort() > 0 )
                 {
-                    cmd.createArgument().setValue( "-J-D" + protocol + "proxyPort=" + activeProxy.getPort() );
+                    cmd.createArg().setValue( "-J-D" + protocol + "proxyPort=" + activeProxy.getPort() );
                 }
 
                 if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
                 {
-                    cmd.createArgument().setValue( "-J-D" + protocol + "nonProxyHosts=\"" + activeProxy.getNonProxyHosts() + "\"" );
+                    cmd.createArg().setValue( "-J-D" + protocol + "nonProxyHosts=\"" + activeProxy.getNonProxyHosts() + "\"" );
                 }
 
                 if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) )
                 {
-                    cmd.createArgument().setValue( "-J-Dhttp.proxyUser=\"" + activeProxy.getUsername() + "\"" );
+                    cmd.createArg().setValue( "-J-Dhttp.proxyUser=\"" + activeProxy.getUsername() + "\"" );
 
                     if ( StringUtils.isNotEmpty( activeProxy.getPassword() ) )
                     {
-                        cmd.createArgument().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
+                        cmd.createArg().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
                     }
                 }
             }
@@ -3180,7 +3180,7 @@ public abstract class AbstractJavadocMojo
                 + "' temporary file for command execution", e );
         }
 
-        cmd.createArgument().setValue( "@options" );
+        cmd.createArg().setValue( "@options" );
 
         if ( !debug )
         {
@@ -3231,11 +3231,11 @@ public abstract class AbstractJavadocMojo
 
         if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
-            cmd.createArgument().setValue( "@argfile" );
+            cmd.createArg().setValue( "@argfile" );
         }
         else
         {
-            cmd.createArgument().setValue( "@files" );
+            cmd.createArg().setValue( "@files" );
         }
 
         if ( !debug )
@@ -3271,7 +3271,7 @@ public abstract class AbstractJavadocMojo
                 + "' temporary file for command execution", e );
         }
 
-        cmd.createArgument().setValue( "@packages" );
+        cmd.createArg().setValue( "@packages" );
 
         if ( !debug )
         {
