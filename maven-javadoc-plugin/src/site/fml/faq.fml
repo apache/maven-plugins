@@ -214,5 +214,17 @@ mvn deploy:deploy-file \
         </p>
       </answer>
     </faq>
+    <faq id="How to include additional source code directories in aggregate mode">
+      <question>How to include additional source code directories in aggregate mode?</question>
+      <answer>
+        <p>
+          If you use the Javadoc report in the aggregate mode, i.e. using the <code>aggregate</code> parameter, and if the
+          Javadoc report does not include additional source code directories defined using the
+          <a href="http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html">build-helper:add-source</a> goal,
+          you need to use the <code>javadoc:aggregate</code> goal instead of <code>javadoc:javadoc</code> goal. Read the
+          <a href="examples/aggregate.html">Aggregating Javadocs for Multi-Projects</a> part for more information.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
