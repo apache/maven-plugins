@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- May 2007
+ June 2008
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -49,16 +49,22 @@ Maven 2 Javadoc Plugin
 
 * Goals Overview
 
-   The Javadoc Plugin has three goals:
+   The Javadoc Plugin has five goals:
 
-   * {{{javadoc-mojo.html}javadoc:javadoc}} generates the javadoc files for the project. It executes the standard
+   * {{{javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
-   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test javadoc files for the project. It executes the standard
+   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
-   * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated javadocs. It is used during
-     the release process to create the javadoc artifact for the project's release.  This artifact is uploaded
+   * {{{aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes the standard
+     Javadoc tool and supports the parameters used by the tool.
+
+   * {{{test-aggregate-mojo.html}javadoc:test-aggregate}} generates the test Javadoc files for an aggregator project. It executes the standard
+     Javadoc tool and supports the parameters used by the tool.
+
+   * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated Javadocs. It is used during
+     the release process to create the Javadoc artifact for the project's release.  This artifact is uploaded
      to the remote repository along with the project's compiled binary and source archive.
 
 * Usage
@@ -90,3 +96,5 @@ Maven 2 Javadoc Plugin
    * {{{examples/test-javadocs.html}Generating test Javadocs}}
 
    * {{{examples/selective-javadocs-report.html}Selective Javadocs Reports}}
+
+   []
