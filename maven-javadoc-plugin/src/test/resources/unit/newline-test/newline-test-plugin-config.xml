@@ -35,6 +35,9 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.NewlineTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/newline-test/target/site/apidocs</outputDirectory>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <packagesheader>
             Maven Javadoc Plugin
             newline 1.0-SNAPSHOT API
@@ -67,12 +70,6 @@ under the License.
 </table>
               ]]>
           </footer>
-          <top>
-            <![CDATA[
-Copyright 2005,
-<a href="http://www.mycompany.com">MyCompany, Inc.<a>
-              ]]>
-          </top>
           <bottom>
             <![CDATA[
 Copyright 2005,

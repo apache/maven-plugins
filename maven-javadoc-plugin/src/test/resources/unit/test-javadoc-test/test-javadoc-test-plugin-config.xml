@@ -43,6 +43,9 @@ under the License.
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/test-javadoc-test/target/site/apidocs</outputDirectory>
           <windowtitle>Maven Test Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/test-javadoc-test/src/test/javadoc</javadocDirectory>
           <debug>true</debug>

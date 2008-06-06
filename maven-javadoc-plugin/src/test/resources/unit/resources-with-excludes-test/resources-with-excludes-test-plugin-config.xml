@@ -37,6 +37,9 @@ under the License.
           <outputDirectory>${basedir}/target/test/unit/resources-with-excludes-test/target/site/apidocs</outputDirectory>
           <windowtitle>Maven Javadoc Plugin resources 1.0-SNAPSHOT API</windowtitle>
           <javadocDirectory>${basedir}/src/test/resources/unit/resources-with-excludes-test/src/main/javadoc</javadocDirectory>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <quiet>true</quiet>
           <debug>true</debug>
           <docfilessubdirs>true</docfilessubdirs>
