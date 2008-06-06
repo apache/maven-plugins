@@ -303,6 +303,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
+     * Since 2.5, you could use <code>javadoc:aggregate</code> goal as an alternative.
      *
      * @parameter expression="${aggregate}" default-value="false"
      */
@@ -1765,6 +1766,11 @@ public abstract class AbstractJavadocMojo
                     if ( subProject != project )
                     {
                         List sourceRoots = getProjectSourceRoots( subProject );
+
+                        if ( subProject.getExecutionProject() != null )
+                        {
+                            sourceRoots.addAll( getExecutionProjectSourceRoots( subProject ) );
+                        }
 
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                         if ( "java".equals( artifactHandler.getLanguage() ) )

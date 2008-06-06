@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- June 2006
+ June 2008
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,9 +28,6 @@
 
 Aggregating Javadocs for Multi-Projects
 
- The \<aggregate\> parameter can be used to generate javadocs for multi-module projects. It gives the option to
- generate one javadoc report for the entire project (all modules) or generate one javadoc report for each module.
-
  For example, consider the following directory structure:
 
 +-----+
@@ -46,9 +43,14 @@ Project
 
 +-----+
 
- When you execute javadoc from Project directory with aggregate set to <<true>>, a javadoc report will be created
+* Using the \<aggregate\> parameter
+
+ The \<aggregate\> parameter can be used to generate javadocs for multi-module projects. It gives the option to
+ generate one javadoc report for the entire project (all modules) or generate one javadoc report for each module.
+
+ When you execute javadoc:javadoc from Project directory with aggregate set to <<true>>, a javadoc report will be created
  in the target directory of Project with all the javadocs of Project's modules included. If aggregate is
- set to <<false>>, a javadoc report for Module1 will be generated in the target directory of Module1, a javadoc
+ set to <<false>> (default), a javadoc report for Module1 will be generated in the target directory of Module1, a javadoc
  report for Module2 will be generated in the target directory of Module2, and a javadoc report for Module3 will be
  generated in the target directory of Module3.
 
@@ -72,3 +74,9 @@ Project
   ...
 </project>
 +-----+
+
+* Using the \<aggregate\> goal
+
+ The \<aggregate\> parameter doesn't include generate source directories defined using the
+ {{{http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html}build-helper:add-source}}. In this case, you need
+ to use the <<<aggregate>>> goal and <<<test-aggregate>>> goals.
