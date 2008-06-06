@@ -42,6 +42,9 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.PomMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/pom-test/target/site/apidocs</outputDirectory>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <windowtitle>Maven Pom 1.0-SNAPSHOT API</windowtitle>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/pom-test/src/test/javadoc</javadocDirectory>
