@@ -38,7 +38,9 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
+ * Bundles the Javadoc documentation into a jar.
+ * <br/>
+ * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>false</code>.
  *
  * @version $Id$
  * @since 2.0
