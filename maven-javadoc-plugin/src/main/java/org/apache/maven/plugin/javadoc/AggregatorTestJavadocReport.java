@@ -36,7 +36,7 @@ import org.codehaus.doxia.sink.Sink;
  * @aggregator
  * @since 2.5
  */
-public class TestAggregatorJavadocReport
+public class AggregatorTestJavadocReport
     extends TestJavadocReport
 {
     /**
