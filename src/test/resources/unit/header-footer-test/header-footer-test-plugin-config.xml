@@ -35,6 +35,9 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.HeaderFooterTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/header-footer-test/target/site/apidocs</outputDirectory>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <windowtitle>Maven Javadoc Plugin header-footer 1.0-SNAPSHOT API</windowtitle>
           <header>
             <![CDATA[

@@ -55,12 +55,8 @@ under the License.
           <serialwarn>false</serialwarn>
           <splitindex>false</splitindex>
           <stylesheet>java</stylesheet>
-          <groups>
-            <group/>
-          </groups>
-          <tags>
-            <tag/>
-          </tags>
+          <groups/>
+          <tags/>
           <use>true</use>
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Java Home Test 1.0-SNAPSHOT API</windowtitle>
