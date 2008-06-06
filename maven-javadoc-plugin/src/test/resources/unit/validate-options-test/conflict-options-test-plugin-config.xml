@@ -35,6 +35,9 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.StandardDocletConflictOptionsTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/validate-options-test/target/site/apidocs</outputDirectory>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <quiet>true</quiet>
           <debug>true</debug>
           <nohelp>true</nohelp>
