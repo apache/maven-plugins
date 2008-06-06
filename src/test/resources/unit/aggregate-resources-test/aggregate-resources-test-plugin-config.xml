@@ -40,6 +40,9 @@ under the License.
             <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject1TestMavenProjectStub"/>
             <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject2TestMavenProjectStub"/>
           </reactorProjects>
+          <show>protected</show>
+          <groups/>
+          <tags/>
           <aggregate>true</aggregate>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-resources-test/src/main/javadoc</javadocDirectory>
