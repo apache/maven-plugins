@@ -119,12 +119,12 @@ public class SiteStageMojo
     {
         if ( project.getDistributionManagement() == null )
         {
-            String hierarchy = project.getName();
+            String hierarchy = project.getArtifactId();
 
             MavenProject parent = project.getParent();
             while ( parent != null )
             {
-                hierarchy = parent.getName() + "/" + hierarchy;
+                hierarchy = parent.getArtifactId() + "/" + hierarchy;
                 parent = parent.getParent();
             }
 
