@@ -29,6 +29,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Staging a site in specific directory.
@@ -42,11 +43,14 @@ import java.util.Iterator;
 public class SiteStageMojo
     extends SiteMojo
 {
+    private static final String DEFAULT_STAGING_DIRECTORY = "staging";
+
     /**
-     * Staging directory location.
+     * Staging directory location. This needs to be an absolute path, like
+     * <code>C:\stagingArea\myProject\</code> on Windows or
+     * <code>/stagingArea/myProject/</code> on Unix. 
      *
-     * @parameter expression="${stagingDirectory}" default-value="${project.build.directory}/staging"
-     * @required
+     * @parameter expression="${stagingDirectory}"
      */
     protected File stagingDirectory;
 
@@ -63,7 +67,10 @@ public class SiteStageMojo
             throw new MojoExecutionException( "Missing site information." );
         }
 
-        outputDirectory = new File( stagingDirectory, structureProject );
+        File calculatedStagingDirectory = getStagingDirectory( project, reactorProjects, stagingDirectory );
+        getLog().info( "Using this directory for staging: " + calculatedStagingDirectory );
+
+        outputDirectory = new File( calculatedStagingDirectory, structureProject );
 
         // Safety
         if ( !outputDirectory.exists() )
@@ -71,7 +78,7 @@ public class SiteStageMojo
             outputDirectory.mkdirs();
         }
 
-        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
+        String outputRelativePath = PathTool.getRelativePath( calculatedStagingDirectory.getAbsolutePath(), new File(
             outputDirectory, "dummy.html" ).getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
@@ -103,6 +110,69 @@ public class SiteStageMojo
         }
 
         super.execute();
+    }
+
+    /**
+     * Find the directory where staging will take place.
+     *
+     * @param currentProject        The currently executing project
+     * @param reactorProjects       The projects in the reactor
+     * @param usersStagingDirectory The staging directory as suggested by the user's configuration
+     * @return the directory for staging
+     * @throws MojoFailureException if any
+     */
+    protected File getStagingDirectory( MavenProject currentProject, List reactorProjects, File usersStagingDirectory )
+        throws MojoFailureException
+    {
+        // Check if the user has specified a stagingDirectory
+        if ( usersStagingDirectory != null )
+        {
+            getLog().debug( "stagingDirectory specified by the user." );
+            return usersStagingDirectory;
+        }
+        getLog().debug( "stagingDirectory NOT specified by the user." );
+
+        // Find the top level project in the reactor
+        MavenProject topLevelProject = getTopLevelProject( reactorProjects );
+
+        // Use the top level project's build directory if there is one, otherwise use this project's build directory
+        File buildDirectory;
+        if ( topLevelProject == null )
+        {
+            getLog().debug( "No top level project found in the reactor, using the current project." );
+            buildDirectory = new File( currentProject.getBuild().getDirectory() );
+        }
+        else
+        {
+            getLog().debug( "Using the top level project found in the reactor." );
+            buildDirectory = new File( topLevelProject.getBuild().getDirectory() );
+        }
+
+        return new File( buildDirectory, DEFAULT_STAGING_DIRECTORY );
+    }
+
+    /**
+     * Find the top level parent in the reactor, i.e. the execution root.
+     *
+     * @param reactorProjects The projects in the reactor
+     * @return The top level project in the reactor, or <code>null</code> if none can be found
+     */
+    private MavenProject getTopLevelProject( List reactorProjects )
+    {
+        MavenProject topLevelProject = null;
+        if ( reactorProjects != null )
+        {
+            Iterator iterator = reactorProjects.iterator();
+            while ( iterator.hasNext() )
+            {
+                MavenProject reactorProject = (MavenProject) iterator.next();
+                if ( reactorProject.isExecutionRoot() )
+                {
+                    topLevelProject = reactorProject;
+                }
+            }
+        }
+        return topLevelProject;
     }
 
     /**
