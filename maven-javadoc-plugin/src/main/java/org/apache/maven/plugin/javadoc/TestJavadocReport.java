@@ -104,6 +104,10 @@ public class TestJavadocReport
      */
     private File javadocDirectory;
 
+    // ----------------------------------------------------------------------
+    // Report Mojo Parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The name of the test Javadoc report.
      *
@@ -119,7 +123,7 @@ public class TestJavadocReport
     private String description;
 
     // ----------------------------------------------------------------------
-    // public methods
+    // Report public methods
     // ----------------------------------------------------------------------
 
     /**
@@ -187,7 +191,7 @@ public class TestJavadocReport
     }
 
     // ----------------------------------------------------------------------
-    // protected methods
+    // Protected methods
     // ----------------------------------------------------------------------
 
     /**
