@@ -67,6 +67,8 @@ Maven 2 Javadoc Plugin
      the release process to create the Javadoc artifact for the project's release.  This artifact is uploaded
      to the remote repository along with the project's compiled binary and source archive.
 
+   * {{{test-jar-mojo.html}javadoc:test-jar}} creates an archive file of the generated Test Javadocs.
+
 * Usage
 
    Instructions on how to use the Javadoc Plugin can be found {{{usage.html}here}}.

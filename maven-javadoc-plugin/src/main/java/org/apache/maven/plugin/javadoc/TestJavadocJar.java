@@ -9,7 +9,7 @@ package org.apache.maven.plugin.javadoc;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -23,32 +23,39 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Generates documentation for the <code>Java Test code</code> in the project using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * Bundles the Javadoc documentation for test source in a jar.
+ * <br/>
+ * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>false</code>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 2.3
- * @goal test-javadoc
- * @execute phase=generate-test-sources
+ * @since 2.5
+ * @goal test-jar
+ * @phase package
  * @requiresDependencyResolution test
- * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
-public class TestJavadocReport
-    extends JavadocReport
+public class TestJavadocJar
+    extends JavadocJar
 {
     // ----------------------------------------------------------------------
-    // Javadoc Options (should be inline with options defined in TestJavadocJar)
+    // Javadoc Options (should be inline with Javadoc options defined in TestJavadocReport)
     // ----------------------------------------------------------------------
+
+    /**
+     * Specifies the destination directory where javadoc saves the generated HTML files.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     *
+     * @parameter default-value="${project.build.directory}/testapidocs"
+     * @required
+     */
+    private File outputDirectory;
 
     /**
      * Specifies the title to be placed near the top of the overview summary file.
@@ -79,23 +86,8 @@ public class TestJavadocReport
     private String windowtitle;
 
     // ----------------------------------------------------------------------
-    // Mojo Parameters (should be inline with options defined in TestJavadocJar)
+    // Mojo Parameters (should be inline with options defined in TestJavadocReport)
     // ----------------------------------------------------------------------
-
-    /**
-     * Specifies the destination directory where test javadoc saves the generated HTML files.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}/testapidocs"
-     * @required
-     */
-    private File reportOutputDirectory;
-
-    /**
-     * The name of the destination directory.
-     *
-     * @parameter expression="${destDir}" default-value="testapidocs"
-     */
-    private String destDir;
 
     /**
      * Specifies the test Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
@@ -105,94 +97,58 @@ public class TestJavadocReport
     private File javadocDirectory;
 
     // ----------------------------------------------------------------------
-    // Report Mojo Parameters
+    // Protected methods
     // ----------------------------------------------------------------------
 
     /**
-     * The name of the test Javadoc report.
-     *
-     * @parameter expression="${name}"
+     * @see org.apache.maven.plugin.javadoc.JavadocJar#getClassifier()
      */
-    private String name;
-
-    /**
-     * The description of the test Javadoc report.
-     *
-     * @parameter expression="${description}"
-     */
-    private String description;
-
-    // ----------------------------------------------------------------------
-    // Report public methods
-    // ----------------------------------------------------------------------
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
-    public String getName( Locale locale )
+    protected String getClassifier()
     {
-        if ( StringUtils.isEmpty( name ) )
-        {
-            return getBundle( locale ).getString( "report.test-javadoc.name" );
-        }
+        return "test-javadoc";
+    }
 
-        return name;
+    // Next methods should be inline with methods defined in TestJavadocReport
+
+    /**
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getOutputDirectory()
+     */
+    protected String getOutputDirectory()
+    {
+        return outputDirectory.getAbsoluteFile().toString();
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getJavadocDirectory()
      */
-    public String getDescription( Locale locale )
+    protected File getJavadocDirectory()
     {
-        if ( StringUtils.isEmpty( description ) )
-        {
-            return getBundle( locale ).getString( "report.test-javadoc.description" );
-        }
-
-        return description;
+        return javadocDirectory;
     }
 
     /**
-     * @see org.apache.maven.plugin.javadoc.JavadocReport#getOutputName()
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getDoctitle()
      */
-    public String getOutputName()
+    protected String getDoctitle()
     {
-        return destDir + "/index";
+        return doctitle;
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getReportOutputDirectory()
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getOverview()
      */
-    public File getReportOutputDirectory()
+    protected File getOverview()
     {
-        if ( reportOutputDirectory == null )
-        {
-            return outputDirectory;
-        }
-
-        return reportOutputDirectory;
+        return overview;
     }
 
     /**
-     * Method to set the directory where the generated reports will be put
-     *
-     * @param reportOutputDirectory the directory file to be set
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getWindowtitle()
      */
-    public void setReportOutputDirectory( File reportOutputDirectory )
+    protected String getWindowtitle()
     {
-        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( destDir ) ) )
-        {
-            this.reportOutputDirectory = new File( reportOutputDirectory, destDir );
-        }
-        else
-        {
-            this.reportOutputDirectory = reportOutputDirectory;
-        }
+        return windowtitle;
     }
-
-    // ----------------------------------------------------------------------
-    // Protected methods (should be inline with methods defined in TestJavadocJar)
-    // ----------------------------------------------------------------------
 
     /**
      * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectBuildOutputDirs(org.apache.maven.project.MavenProject)
@@ -247,53 +203,10 @@ public class TestJavadocReport
     }
 
     /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getJavadocDirectory()
-     */
-    protected File getJavadocDirectory()
-    {
-        return javadocDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getDoctitle()
-     */
-    protected String getDoctitle()
-    {
-        return doctitle;
-    }
-
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getOverview()
-     */
-    protected File getOverview()
-    {
-        return overview;
-    }
-
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getWindowtitle()
-     */
-    protected String getWindowtitle()
-    {
-        return windowtitle;
-    }
-
-    /**
      * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getCompileArtifacts(org.apache.maven.artifact.resolver.ArtifactResolutionResult)
      */
     protected List getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
-    }
-
-    /**
-     * Gets the resource bundle for the specified locale.
-     *
-     * @param locale The locale of the currently generated report.
-     * @return The resource bundle for the requested locale.
-     */
-    private ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "test-javadoc-report", locale, getClass().getClassLoader() );
     }
 }
