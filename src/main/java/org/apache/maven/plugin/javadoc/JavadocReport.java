@@ -51,7 +51,7 @@ public class JavadocReport
     implements MavenReport
 {
     // ----------------------------------------------------------------------
-    // Mojo Parameters
+    // Report Mojo Parameters
     // ----------------------------------------------------------------------
 
     /**
@@ -87,7 +87,7 @@ public class JavadocReport
     private String description;
 
     // ----------------------------------------------------------------------
-    // public methods
+    // Report public methods
     // ----------------------------------------------------------------------
 
     /**
