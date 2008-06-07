@@ -265,13 +265,13 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;resourcesArtifacts&gt;<br/>
-     *   &lt;resourcesArtifact&gt;<br/>
-     *     &lt;groupId&gt;external.group.id&lt;/groupId&gt;<br/>
-     *     &lt;artifactId&gt;external-resources&lt;/artifactId&gt;<br/>
-     *     &lt;version&gt;1.0&lt;/version&gt;<br/>
-     *   &lt;/resourcesArtifact&gt;<br/>
-     *  &lt;/resourcesArtifacts&gt;
+     * &lt;resourcesArtifacts&gt;
+     * &nbsp;&nbsp;&lt;resourcesArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;external.group.id&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;external-resources&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/resourcesArtifact&gt;
+     * &lt;/resourcesArtifacts&gt;
      * </pre>
      *
      * @since 2.5
@@ -386,10 +386,10 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;docletArtifact&gt;<br/>
-     *   &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;<br/>
-     *   &lt;artifactId&gt;doccheck&lt;/artifactId&gt;<br/>
-     *   &lt;version&gt;1.2b2&lt;/version&gt;<br/>
+     * &lt;docletArtifact&gt;
+     * &nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     * &nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
      * &lt;/docletArtifact&gt;
      * </pre>
      *
@@ -405,12 +405,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;docletArtifacts&gt;<br/>
-     *   &lt;docletArtifact&gt;<br/>
-     *     &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;<br/>
-     *     &lt;artifactId&gt;doccheck&lt;/artifactId&gt;<br/>
-     *     &lt;version&gt;1.2b2&lt;/version&gt;<br/>
-     *   &lt;/docletArtifact&gt;<br/>
+     * &lt;docletArtifacts&gt;
+     * &nbsp;&nbsp;&lt;docletArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/docletArtifact&gt;
      * &lt;/docletArtifacts&gt;
      * </pre>
      *
@@ -706,12 +706,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;groups&gt;<br/>
-     *   &lt;group&gt;<br/>
-     *     &lt;title&gt;Core Packages&lt;/title&gt;<br/>
-     *     &lt;packages&gt;org.apache.core&lt;/packages&gt;<br/>
-     *   &lt;/group&gt;<br/>
-     *  &lt;/groups&gt;
+     * &lt;groups&gt;
+     * &nbsp;&nbsp;&lt;group&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Core Packages&lt;/title&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;org.apache.core&lt;/packages&gt;
+     * &nbsp;&nbsp;&lt;/group&gt;
+     * &lt;/groups&gt;
      * </pre>
      *
      * @parameter expression="${groups}"
@@ -772,12 +772,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;offlineLinks&gt;<br/>
-     *   &lt;offlineLink&gt;<br/>
-     *     &lt;url&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/url&gt;<br/>
-     *     &lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;<br/>
-     *   &lt;/offlineLink&gt;<br/>
-     *  &lt;/offlineLinks&gt;
+     * &lt;offlineLinks&gt;
+     * &nbsp;&nbsp;&lt;offlineLink&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/url&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;
+     * &nbsp;&nbsp;&lt;/offlineLink&gt;
+     * &lt;/offlineLinks&gt;
      * </pre>
      *
      * @parameter expression="${offlineLinks}"
@@ -988,13 +988,13 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;tags&gt;<br/>
-     *   &lt;tag&gt;<br/>
-     *     &lt;name&gt;todo&lt;/name&gt;<br/>
-     *     &lt;placement&gt;a&lt;/placement&gt;<br/>
-     *     &lt;head&gt;To Do:&lt;/head&gt;<br/>
-     *   &lt;/tag&gt;<br/>
-     *  &lt;/tags&gt;
+     * &lt;tags&gt;
+     * &nbsp;&nbsp;&lt;tag&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;todo&lt;/name&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;placement&gt;a&lt;/placement&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;To Do:&lt;/head&gt;
+     * &nbsp;&nbsp;&lt;/tag&gt;
+     * &lt;/tags&gt;
      * </pre>
      *
      * @parameter expression="${tags}"
@@ -1032,10 +1032,10 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;tagletArtifact&gt;<br/>
-     *   &lt;groupId&gt;group-Taglet&lt;/groupId&gt;<br/>
-     *   &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;<br/>
-     *   &lt;version&gt;version-Taglet&lt;/version&gt;<br/>
+     * &lt;tagletArtifact&gt;
+     * &nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     * &nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
      * &lt;/tagletArtifact&gt;
      * </pre>
      *
@@ -1053,17 +1053,17 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Example:
      * <pre>
-     * &lt;taglets&gt;<br/>
-     *   &lt;taglet&gt;<br/>
-     *     &lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;<br/>
-     *     &lt;!--&lt;tagletpath&gt;/home/taglets&lt;/tagletpath&gt;--&gt;<br/>
-     *     &lt;tagletArtifact&gt;<br/>
-     *       &lt;groupId&gt;group-Taglet&lt;/groupId&gt;<br/>
-     *       &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;<br/>
-     *       &lt;version&gt;version-Taglet&lt;/version&gt;<br/>
-     *     &lt;/tagletArtifact&gt;<br/>
-     *   &lt;/taglet&gt;<br/>
-     *  &lt;/taglets&gt;
+     * &lt;taglets&gt;
+     * &nbsp;&nbsp;&lt;taglet&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;!--&lt;tagletpath&gt;/home/taglets&lt;/tagletpath&gt;--&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/tagletArtifact&gt;
+     * &nbsp;&nbsp;&lt;/taglet&gt;
+     * &lt;/taglets&gt;
      * </pre>
      *
      * @since 2.1
