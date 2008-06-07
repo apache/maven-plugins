@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * Bundles the Javadoc documentation into a jar.
+ * Bundles the Javadoc documentation for main source into a jar.
  * <br/>
  * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>false</code>.
  *
@@ -50,6 +50,29 @@ import java.util.Iterator;
 public class JavadocJar
     extends AbstractJavadocMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Used for attaching the artifact in the project.
+     *
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * The Jar archiver.
+     *
+     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @since 2.5
+     */
+    private JarArchiver jarArchiver;
+
+    // ----------------------------------------------------------------------
+    // Mojo Parameters
+    // ----------------------------------------------------------------------
+
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
@@ -68,18 +91,11 @@ public class JavadocJar
 
     /**
      * Specifies the filename that will be used for the generated jar file. Please note that "-javadoc"
-     * will be appended to the file name.
+     * or "-test-javadoc" will be appended to the file name.
      *
      * @parameter expression="${project.build.finalName}"
      */
     private String finalName;
-
-    /**
-     * Used for attaching the artifact in the project.
-     *
-     * @component
-     */
-    private MavenProjectHelper projectHelper;
 
     /**
      * Specifies whether to attach the generated artifact to the project helper.
@@ -96,14 +112,6 @@ public class JavadocJar
      * @since 2.5
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
-
-    /**
-     * The Jar archiver.
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @since 2.5
-     */
-    private JarArchiver jarArchiver;
 
     /**
      * Path to the default MANIFEST file to use. It will be used if
@@ -139,7 +147,7 @@ public class JavadocJar
         File destDir = this.destDir;
         if ( destDir == null )
         {
-            destDir = outputDirectory;
+            destDir = new File( getOutputDirectory() );
         }
 
         // The JAR does not operate in aggregation mode - individual Javadoc JARs are always distributed.
@@ -162,7 +170,7 @@ public class JavadocJar
 
             if ( destDir.exists() )
             {
-                File outputFile = generateArchive( destDir, finalName + "-javadoc.jar" );
+                File outputFile = generateArchive( destDir, finalName + "-" + getClassifier() + ".jar" );
 
                 if ( !attach )
                 {
@@ -175,7 +183,7 @@ public class JavadocJar
                 {
                     // TODO: these introduced dependencies on the project are going to become problematic - can we export it
                     //  through metadata instead?
-                    projectHelper.attachArtifact( project, "javadoc", "javadoc", outputFile );
+                    projectHelper.attachArtifact( project, "javadoc", getClassifier(), outputFile );
                 }
             }
         }
@@ -194,6 +202,18 @@ public class JavadocJar
     }
 
     // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @return the wanted classifier, i.e. <code>javadoc</code> or <code>test-javadoc</code>
+     */
+    protected String getClassifier()
+    {
+        return "javadoc";
+    }
+
+    // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
 
@@ -201,10 +221,10 @@ public class JavadocJar
      * Method that creates the jar file
      *
      * @param javadocFiles the directory where the generated jar file will be put
-     * @param target       the filename of the generated jar file
+     * @param target the filename of the generated jar file
      * @return a File object that contains the generated jar file
-     * @throws ArchiverException
-     * @throws IOException
+     * @throws ArchiverException if any
+     * @throws IOException if any
      */
     private File generateArchive( File javadocFiles, String target )
         throws ArchiverException, IOException
