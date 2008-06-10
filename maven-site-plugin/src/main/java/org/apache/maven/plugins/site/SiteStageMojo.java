@@ -43,7 +43,7 @@ import java.util.List;
 public class SiteStageMojo
     extends SiteMojo
 {
-    private static final String DEFAULT_STAGING_DIRECTORY = "staging";
+    protected static final String DEFAULT_STAGING_DIRECTORY = "staging";
 
     /**
      * Staging directory location. This needs to be an absolute path, like
@@ -67,10 +67,10 @@ public class SiteStageMojo
             throw new MojoExecutionException( "Missing site information." );
         }
 
-        File calculatedStagingDirectory = getStagingDirectory( project, reactorProjects, stagingDirectory );
-        getLog().info( "Using this directory for staging: " + calculatedStagingDirectory );
+        stagingDirectory = getStagingDirectory( project, reactorProjects, stagingDirectory );
+        getLog().info( "Using this directory for staging: " + stagingDirectory );
 
-        outputDirectory = new File( calculatedStagingDirectory, structureProject );
+        outputDirectory = new File( stagingDirectory, structureProject );
 
         // Safety
         if ( !outputDirectory.exists() )
@@ -78,7 +78,7 @@ public class SiteStageMojo
             outputDirectory.mkdirs();
         }
 
-        String outputRelativePath = PathTool.getRelativePath( calculatedStagingDirectory.getAbsolutePath(), new File(
+        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
             outputDirectory, "dummy.html" ).getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
@@ -155,7 +155,7 @@ public class SiteStageMojo
      * @param reactorProjects The projects in the reactor
      * @return The top level project in the reactor, or <code>null</code> if none can be found
      */
-    private MavenProject getTopLevelProject( List reactorProjects )
+    protected MavenProject getTopLevelProject( List reactorProjects )
     {
         MavenProject topLevelProject = null;
         if ( reactorProjects != null )
