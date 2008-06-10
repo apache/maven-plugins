@@ -119,10 +119,8 @@ public class SiteStageMojo
      * @param reactorProjects       The projects in the reactor
      * @param usersStagingDirectory The staging directory as suggested by the user's configuration
      * @return the directory for staging
-     * @throws MojoFailureException if any
      */
     protected File getStagingDirectory( MavenProject currentProject, List reactorProjects, File usersStagingDirectory )
-        throws MojoFailureException
     {
         // Check if the user has specified a stagingDirectory
         if ( usersStagingDirectory != null )
