@@ -260,6 +260,7 @@ public class InstallMojo
             if ( requiredProject != null )
             {
                 installProjectArtifacts( requiredProject, testRepository );
+                installProjectParents( requiredProject, testRepository );
             }
         }
     }
