@@ -94,7 +94,7 @@ public class ProjectSummaryReport
         {
             startSection( getTitle() );
 
-            //generatl information sub-section
+            //general information sub-section
             String name = project.getName();
             if ( name == null )
             {
