@@ -84,7 +84,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>ant</groupId>
