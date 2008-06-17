@@ -46,12 +46,15 @@ import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Packs artifacts already available in a local repository in a bundle for upload requests. It will require an existing
- * POM in the local repository, and it will check for mandatory elements, asking interactively for missing values.
- * Can be used to generate bundles for third parties artifacts that have been manually added to the local repository.
+ * Packs artifacts already available in a local repository in a bundle for an
+ * upload requests. It requires that the artifact has a POM in the local
+ * repository. It will check for mandatory elements, asking interactively for
+ * missing values. Can be used to generate bundles for third parties artifacts
+ * that have been manually added to the local repository.
  *
  * @goal bundle-pack
  * @requiresProject false
+ * @since 2.1
  */
 public class BundlePackMojo
     extends AbstractMojo
@@ -60,6 +63,7 @@ public class BundlePackMojo
 
     /**
      * Jar archiver.
+     * 
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     protected JarArchiver jarArchiver;
@@ -94,24 +98,28 @@ public class BundlePackMojo
 
     /**
      * Directory where the upload-bundle will be created.
+     *
      * @parameter expression="${basedir}"
      */
     protected String basedir;
 
     /**
      * GroupId for the artifact to create an upload bundle for.
+     *
      * @parameter expression="${groupId}"
      */
     protected String groupId;
 
     /**
      * ArtifactId for the artifact to create an upload bundle for.
+     *
      * @parameter expression="${artifactId}"
      */
     protected String artifactId;
 
     /**
      * Version for the artifact to create an upload bundle for.
+     * 
      * @parameter expression="${version}"
      */
     protected String version;

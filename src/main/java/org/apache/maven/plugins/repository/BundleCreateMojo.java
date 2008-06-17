@@ -28,11 +28,11 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 
 /**
- * Goal which creates an upload bundle for a project built with maven.
+ * Goal which creates an upload bundle for a project built with Maven.
  *
  * @goal bundle-create
  * @execute phase="package"
- * 
+ * @since 2.0
  */
 public class BundleCreateMojo
     extends AbstractMojo
@@ -41,18 +41,21 @@ public class BundleCreateMojo
 
     /**
      * Base directory.
+     *
      * @parameter expression="${basedir}"
      */
     private String basedir;
 
     /**
      * The current maven project.
+     *
      * @parameter expression="${project}"
      */
     private MavenProject project;
 
     /**
      * Jar archiver.
+     *
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
