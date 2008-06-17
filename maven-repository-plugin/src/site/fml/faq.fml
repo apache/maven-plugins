@@ -31,7 +31,6 @@ mvn sources:jar javadoc:jar repository:bundle-create
         </source>
       </answer>
     </faq>
-<!--
     <faq id="bundle-pack">
       <question>How can I create an upload bundle for a project that I don't build using maven?</question>
       <answer>
@@ -42,6 +41,5 @@ mvn sources:jar javadoc:jar repository:bundle-create
         </p>
       </answer>
     </faq>
--->
   </part>
 </faqs>
