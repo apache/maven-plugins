@@ -24,7 +24,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8</version>
+    <version>11</version>
   </parent>
 
   <artifactId>maven-assembly-plugin</artifactId>
