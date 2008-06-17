@@ -1,10 +1,33 @@
  ------
  Usage
  ------
- Fabrizio Giustina
+ Dennis Lundberg
  ------
- 6 January 2007
+ 2008-06-17
  ------
  
-Maven Repository Plugin: Usage
+Usage
 
+* Create an upload bundle
+
+ You can use the <<<repository:bundle-create>>> goal to create an upload bundle:
+
++----+
+mvn repository:bundle-create
+
++----+
+
+ The bundle will be created in your <<<target>>> directory with the name:
+ <<<$\{pom.artifactId\}-$\{pom.currentVersion\}-bundle.jar>>>
+
+ If you want to include a jar with java sources in your upload (recommended, unless your license doesn't
+ allow sources to be redistributed) the command to run is:
+
++----+
+mvn source:jar javadoc:jar repository:bundle-create
+
++----+
+
+ <<Note:>> Due to {{{http://jira.codehaus.org/browse/MREPOSITORY-11}a bug}}
+ you will need to manually add the javadoc jar to the bundle jar, using zip or
+ any other compression program.
