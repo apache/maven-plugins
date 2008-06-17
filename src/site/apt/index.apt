@@ -36,6 +36,8 @@ Maven Repository Plugin
 
   * {{{bundle-create-mojo.html}repository:bundle-create}} Creates an upload bundle for a project built with Maven.
 
+  * {{{bundle-pack-mojo.html}repository:bundle-pack}} Creates an upload bundle for an artifact that exists in your local repository.
+
   []
 
 * Usage
