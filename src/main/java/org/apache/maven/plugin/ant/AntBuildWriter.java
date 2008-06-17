@@ -41,6 +41,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Write Ant build files from <code>Maven Project</code> for <a href="http://ant.apache.org">Ant</a> 1.6.2 or above:
@@ -59,7 +60,7 @@ public class AntBuildWriter
     /**
      * The default line indenter
      */
-    protected static final int DEFAULT_INDENTATION_SIZE = 2;
+    protected static final int DEFAULT_INDENTATION_SIZE = XmlWriterUtil.DEFAULT_INDENTATION_SIZE;
 
     /**
      * The default build file name (build.xml)
@@ -257,7 +258,7 @@ public class AntBuildWriter
         writer.addAttribute( "default", "package" );
         writer.addAttribute( "basedir", "." );
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
         // ----------------------------------------------------------------------
         // <property/>
@@ -313,11 +314,11 @@ public class AntBuildWriter
         // ----------------------------------------------------------------------
         writeGetDepsTarget( writer );
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
         writer.endElement(); // project
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
         IOUtil.close( w );
     }
@@ -360,18 +361,18 @@ public class AntBuildWriter
         writer.addAttribute( "default", "package" );
         writer.addAttribute( "basedir", "." );
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
-        AntBuildWriterUtil.writeCommentText( writer, "Import " + DEFAULT_MAVEN_BUILD_FILENAME
+        XmlWriterUtil.writeCommentText( writer, "Import " + DEFAULT_MAVEN_BUILD_FILENAME
             + " into the current project", 1 );
 
         writer.startElement( "import" );
         writer.addAttribute( "file", DEFAULT_MAVEN_BUILD_FILENAME );
         writer.endElement(); // import
 
-        AntBuildWriterUtil.writeLineBreak( writer, 1, 1 );
+        XmlWriterUtil.writeLineBreak( writer, 1, 1 );
 
-        AntBuildWriterUtil.writeCommentText( writer, "Help target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Help target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "help" );
@@ -382,11 +383,11 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2 );
+        XmlWriterUtil.writeLineBreak( writer, 2 );
 
         writer.endElement(); // project
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
         IOUtil.close( w );
     }
@@ -405,7 +406,7 @@ public class AntBuildWriter
 
         // TODO: optional in m1
         // TODO: USD properties
-        AntBuildWriterUtil.writeCommentText( writer, "Build environment properties", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Build environment properties", 1 );
 
         // ----------------------------------------------------------------------
         // File properties to override local properties
@@ -423,7 +424,7 @@ public class AntBuildWriter
         // Build properties
         // ----------------------------------------------------------------------
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+        XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.build.finalName" );
@@ -518,7 +519,7 @@ public class AntBuildWriter
         // Setting properties
         // ----------------------------------------------------------------------
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+        XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.repo.local" );
@@ -535,7 +536,7 @@ public class AntBuildWriter
         writer.addAttribute( "value", String.valueOf( settings.isInteractiveMode() ) );
         writer.endElement(); // property
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -570,7 +571,7 @@ public class AntBuildWriter
             return;
         }
 
-        AntBuildWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
 
         writer.startElement( "path" );
         writer.addAttribute( "id", "build.classpath" );
@@ -618,7 +619,7 @@ public class AntBuildWriter
         writer.endElement(); // fileset
         writer.endElement(); // path
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -628,7 +629,7 @@ public class AntBuildWriter
      */
     private void writeCleanTarget( XMLWriter writer )
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Cleaning up target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Cleaning up target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "clean" );
@@ -654,7 +655,7 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -667,7 +668,7 @@ public class AntBuildWriter
     private void writeCompileTarget( XMLWriter writer, List compileSourceRoots )
         throws IOException
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Compilation target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Compilation target", 1 );
 
         if ( AntBuildWriterUtil.isPomPackaging( project ) )
         {
@@ -697,7 +698,7 @@ public class AntBuildWriter
             writer.endElement(); // target
         }
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -710,7 +711,7 @@ public class AntBuildWriter
     private void writeCompileTestsTarget( XMLWriter writer, List testCompileSourceRoots )
         throws IOException
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Test-compilation target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Test-compilation target", 1 );
 
         if ( AntBuildWriterUtil.isPomPackaging( project ) )
         {
@@ -741,7 +742,7 @@ public class AntBuildWriter
             writer.endElement(); // target
         }
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -753,7 +754,7 @@ public class AntBuildWriter
     private void writeTestTargets( XMLWriter writer, List testCompileSourceRoots )
         throws IOException
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Run all tests", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Run all tests", 1 );
 
         if ( AntBuildWriterUtil.isPomPackaging( project ) )
         {
@@ -842,7 +843,7 @@ public class AntBuildWriter
             }
             writer.endElement(); // target
 
-            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+            XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
             writer.startElement( "target" );
             writer.addAttribute( "name", "test-junit-present" );
@@ -854,7 +855,7 @@ public class AntBuildWriter
 
             writer.endElement(); // target
 
-            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+            XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
             writer.startElement( "target" );
             writer.addAttribute( "name", "test-junit-status" );
@@ -883,7 +884,7 @@ public class AntBuildWriter
             writer.endElement(); // condition
             writer.endElement(); // target
 
-            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+            XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
             writer.startElement( "target" );
             writer.addAttribute( "name", "junit-missing" );
@@ -905,12 +906,12 @@ public class AntBuildWriter
             writer.endElement(); // target
         }
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
      * Gets the include patterns for the unit tests.
-     * 
+     *
      * @return A list of strings with include patterns, might be empty but never <code>null</code>.
      */
     private List getTestIncludes()
@@ -926,7 +927,7 @@ public class AntBuildWriter
 
     /**
      * Gets the exclude patterns for the unit tests.
-     * 
+     *
      * @return A list of strings with exclude patterns, might be empty but never <code>null</code>.
      */
     private List getTestExcludes()
@@ -942,7 +943,7 @@ public class AntBuildWriter
 
     /**
      * Write the <code>&lt;fileset&gt;</code> elements for the test compile source roots.
-     * 
+     *
      * @param writer
      * @param testCompileSourceRoots
      * @param includes
@@ -969,7 +970,7 @@ public class AntBuildWriter
     private void writeJavadocTarget( XMLWriter writer )
         throws IOException
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Javadoc target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Javadoc target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "javadoc" );
@@ -993,7 +994,7 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     /**
@@ -1006,7 +1007,7 @@ public class AntBuildWriter
         throws IOException
     {
         String synonym = null; // type of the package we are creating (for example jar)
-        AntBuildWriterUtil.writeCommentText( writer, "Package target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Package target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "package" );
@@ -1056,11 +1057,11 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
 
         if ( synonym != null )
         {
-            AntBuildWriterUtil.writeCommentText( writer,
+            XmlWriterUtil.writeCommentText( writer,
                                                  "A dummy target for the package named after the type it creates", 1 );
             writer.startElement( "target" );
             writer.addAttribute( "name", synonym );
@@ -1068,7 +1069,7 @@ public class AntBuildWriter
             writer.addAttribute( "description", "Builds the " + synonym + " for the application" );
             writer.endElement(); //target
 
-            AntBuildWriterUtil.writeLineBreak( writer );
+            XmlWriterUtil.writeLineBreak( writer );
         }
     }
 
@@ -1216,7 +1217,7 @@ public class AntBuildWriter
             return;
         }
 
-        AntBuildWriterUtil.writeCommentText( writer, "Download dependencies target", 1 );
+        XmlWriterUtil.writeCommentText( writer, "Download dependencies target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "test-offline" );
@@ -1230,7 +1231,7 @@ public class AntBuildWriter
         writer.endElement(); // condition
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+        XmlWriterUtil.writeLineBreak( writer, 2, 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "get-deps" );
@@ -1301,7 +1302,7 @@ public class AntBuildWriter
 
         writer.endElement(); // target
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeLineBreak( writer );
     }
 
     // ----------------------------------------------------------------------
@@ -1356,20 +1357,20 @@ public class AntBuildWriter
 
         return sb.toString();
     }
-    
+
     /**
      * Flattens the specified file selector options into a simple string list. For instance, the input
-     * 
+     *
      * <pre>
      * [ {include=&quot;*Test.java&quot;}, {include=&quot;*TestCase.java&quot;} ]
      * </pre>
-     * 
+     *
      * is converted to
-     * 
+     *
      * <pre>
      * [ &quot;*Test.java&quot;, &quot;*TestCase.java&quot; ]
      * </pre>
-     * 
+     *
      * @param options The file selector options to flatten, may be <code>null</code>.
      * @return The string list, might be empty but never <code>null</code>.
      */
