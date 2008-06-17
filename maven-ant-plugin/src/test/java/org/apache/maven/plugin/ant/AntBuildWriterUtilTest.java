@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Test cases for 'org.apache.maven.plugin.ant.AntBuildWriterUtil'
@@ -46,7 +47,7 @@ public class AntBuildWriterUtilTest
     {
         StringWriter s = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( s );
-        AntBuildWriterUtil.writeComment( writer, null );
+        XmlWriterUtil.writeComment( writer, null );
         StringBuffer sb = new StringBuffer();
         sb.append( "<!-- null                                                                   -->" ).append( '\n' );
         assertTrue( s.toString().equals( sb.toString() ) );
@@ -59,7 +60,7 @@ public class AntBuildWriterUtilTest
     {
         StringWriter s = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( s );
-        AntBuildWriterUtil.writeComment( writer, "This is a short text" );
+        XmlWriterUtil.writeComment( writer, "This is a short text" );
         StringBuffer sb = new StringBuffer();
         sb.append( "<!-- This is a short text                                                   -->" ).append( '\n' );
         assertTrue( s.toString().equals( sb.toString() ) );
@@ -72,7 +73,7 @@ public class AntBuildWriterUtilTest
     {
         StringWriter s = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( s );
-        AntBuildWriterUtil.writeComment( writer, "Maven is a software project management and comprehension tool. "
+        XmlWriterUtil.writeComment( writer, "Maven is a software project management and comprehension tool. "
             + "Based on the concept of a project object model (POM), Maven can manage a project's build, reporting "
             + "and documentation from a central piece of information." );
         StringBuffer sb = new StringBuffer();
@@ -180,7 +181,7 @@ public class AntBuildWriterUtilTest
 
     /**
      * Test method for {@link AntBuildWriterUtil#getSingularForm(String)}.
-     * 
+     *
      * @throws Exception
      */
     public static void testGetSingularForm()
