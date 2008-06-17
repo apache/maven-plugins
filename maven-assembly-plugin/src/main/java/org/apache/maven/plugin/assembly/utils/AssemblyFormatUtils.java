@@ -280,10 +280,12 @@ public final class AssemblyFormatUtils
         if ( classifier != null )
         {
             specialRules.setProperty( "dashClassifier?",  "-" + classifier );
+            specialRules.setProperty( "dashClassifier",  "-" + classifier );
         }
         else
         {
             specialRules.setProperty( "dashClassifier?", "" );
+            specialRules.setProperty( "dashClassifier", "" );
         }
 
         // 5

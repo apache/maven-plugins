@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.filter;
  */
 
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -50,6 +51,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -546,7 +548,21 @@ public class ComponentsXmlArchiverFileFilterTest
         public ResourceIterator getResources()
             throws ArchiverException
         {
-            throw new UnsupportedOperationException( "not supported" );
+            return new ResourceIterator(){
+
+                public boolean hasNext()
+                    throws ArchiverException
+                {
+                    return false;
+                }
+
+                public ArchiveEntry next()
+                    throws ArchiverException
+                {
+                    throw new NoSuchElementException();
+                }
+
+            };
         }
     }
 

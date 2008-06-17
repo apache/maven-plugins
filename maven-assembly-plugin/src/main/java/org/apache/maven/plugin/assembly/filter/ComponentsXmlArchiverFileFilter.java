@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.filter;
 
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.util.IOUtil;
@@ -73,6 +74,7 @@ public class ComponentsXmlArchiverFileFilter
         if ( newDom != null )
         {
             Xpp3Dom[] children = newDom.getChildren();
+
             for ( int i = 0; i < children.length; i++ )
             {
                 Xpp3Dom component = children[i];
@@ -85,7 +87,17 @@ public class ComponentsXmlArchiverFileFilter
                 String role = component.getChild( "role" ).getValue();
                 Xpp3Dom child = component.getChild( "role-hint" );
                 String roleHint = child != null ? child.getValue() : "";
-                components.put( role + roleHint, component );
+
+                String key = role + roleHint;
+                if ( !components.containsKey( key ) )
+                {
+                    System.out.println( "Adding " + key );
+                    components.put( key, component );
+                }
+                else
+                {
+                    System.out.println( "Component: " + key + " is already defined. Skipping." );
+                }
             }
         }
     }
@@ -146,6 +158,16 @@ public class ComponentsXmlArchiverFileFilter
     public void finalizeArchiveCreation( Archiver archiver )
         throws ArchiverException
     {
+        // this will prompt the isSelected() call, below, for all resources added to the archive.
+        // FIXME: This needs to be corrected in the AbstractArchiver, where
+        // runArchiveFinalizers() is called before regular resources are added...
+        // which is done because the manifest needs to be added first, and the
+        // manifest-creation component is a finalizer in the assembly plugin...
+        for ( ResourceIterator it = archiver.getResources(); it.hasNext(); )
+        {
+            it.next();
+        }
+
         try
         {
             addToArchive( archiver );
