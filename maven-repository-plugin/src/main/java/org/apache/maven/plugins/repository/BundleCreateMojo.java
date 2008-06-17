@@ -48,7 +48,7 @@ public class BundleCreateMojo
     private String basedir;
 
     /**
-     * The current maven project.
+     * The current Maven project.
      *
      * @parameter expression="${project}"
      */
@@ -81,6 +81,7 @@ public class BundleCreateMojo
         // ----------------------------------------------------------------------
         // Check the mandatory elements of the POM
         //
+        // modelVersion
         // groupId
         // artifactId
         // packaging
@@ -92,7 +93,8 @@ public class BundleCreateMojo
         // dependencies
         // ----------------------------------------------------------------------
 
-        // We don't have to validate groupId, artifactId or version here - it is done by maven-artifact
+        // We don't have to validate modelVersion, groupId, artifactId or version here,
+        // it is done by DefaultMaven and maven-artifact
 
         validate( project.getName(), "project.name" );
 
