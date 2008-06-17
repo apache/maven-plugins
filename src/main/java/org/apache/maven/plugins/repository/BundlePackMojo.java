@@ -201,6 +201,11 @@ public class BundlePackMojo
         try
         {
 
+            if ( model.getPackaging() == null )
+            {
+                model.setPackaging( "jar" );
+                rewrite = true;
+            }
             if ( model.getName() == null )
             {
                 getLog().info( "Project name is missing, please type the project name [" + artifactId + "]:" );
@@ -211,21 +216,16 @@ public class BundlePackMojo
                 }
                 rewrite = true;
             }
-            if ( model.getUrl() == null )
-            {
-                getLog().info( "Project Url is missing, please type the project URL:" );
-                model.setUrl( inputHandler.readLine() );
-                rewrite = true;
-            }
-            if ( model.getPackaging() == null )
-            {
-                model.setPackaging( "jar" );
-                rewrite = true;
-            }
             if ( model.getDescription() == null )
             {
                 getLog().info( "Project Description is missing, please type the project Description:" );
                 model.setDescription( inputHandler.readLine() );
+                rewrite = true;
+            }
+            if ( model.getUrl() == null )
+            {
+                getLog().info( "Project Url is missing, please type the project URL:" );
+                model.setUrl( inputHandler.readLine() );
                 rewrite = true;
             }
 

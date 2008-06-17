@@ -75,7 +75,7 @@ public class BundleCreateMojo
 
         if ( project.getPackaging().equals( "pom" ) )
         {
-            throw new MojoExecutionException( "Packaging cannot be POM when creating an upload bundle." );
+            throw new MojoExecutionException( "Packaging cannot be 'pom' when creating an upload bundle." );
         }
 
         // ----------------------------------------------------------------------
@@ -86,17 +86,19 @@ public class BundleCreateMojo
         // packaging
         // name
         // version
-        // url
         // description
-        // dependencies
+        // url
         // licenses
+        // dependencies
         // ----------------------------------------------------------------------
+
+        // We don't have to validate groupId, artifactId or version here - it is done by maven-artifact
 
         validate( project.getName(), "project.name" );
 
-        validate( project.getUrl(), "project.url" );
-
         validate( project.getDescription(), "project.description" );
+
+        validate( project.getUrl(), "project.url" );
 
         if ( project.getLicenses().isEmpty() )
         {
@@ -104,7 +106,7 @@ public class BundleCreateMojo
         }
 
         // ----------------------------------------------------------------------
-        //
+        // Create the bundle archive
         // ----------------------------------------------------------------------
 
         File pom = new File( basedir, POM );
