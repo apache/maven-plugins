@@ -19,16 +19,6 @@ package org.apache.maven.plugins.repository;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -44,7 +34,15 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Packs artifacts already available in a local repository in a bundle for an
@@ -177,8 +175,7 @@ public class BundlePackMojo
         Model model;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            model = new MavenXpp3Reader().read( new InputStreamReader( new FileInputStream( pom ), "UTF-8" ) );
+            model = new MavenXpp3Reader().read( ReaderFactory.newXmlReader( pom ) );
         }
         catch ( XmlPullParserException e )
         {
@@ -252,8 +249,7 @@ public class BundlePackMojo
 
             if ( rewrite )
             {
-                // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-                new MavenXpp3Writer().write( new OutputStreamWriter( new FileOutputStream( pom ), "UTF-8" ), model );
+                new MavenXpp3Writer().write( WriterFactory.newXmlWriter( pom ), model );
             }
 
             String finalName = null;
