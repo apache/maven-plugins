@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.tools.ant.Main;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -1269,20 +1271,16 @@ public class AntBuildWriter
                     Repository repository = (Repository) j.next();
                     String url = repository.getUrl();
 
-                    if ( url.regionMatches( true, 0, "file:", 0, 5 ) && url.indexOf( basedir ) > 0 )
+                    String localDir = getProjectRepoDirectory( url, basedir );
+                    if ( localDir != null )
                     {
-                        url = url.substring( url.indexOf( basedir ) + basedir.length() );
-                        if ( url.startsWith( "/" ) )
+                        if ( localDir.length() > 0 && !localDir.endsWith( "/" ) )
                         {
-                            url = url.substring( 1 );
-                        }
-                        if ( !url.endsWith( "/" ) && url.length() > 0 )
-                        {
-                            url += '/';
+                            localDir += '/';
                         }
 
                         writer.startElement( "copy" );
-                        writer.addAttribute( "file", url + path );
+                        writer.addAttribute( "file", localDir + path );
                         AntBuildWriterUtil.addWrapAttribute( writer, "copy", "tofile", "${maven.repo.local}/" + path, 3 );
                         AntBuildWriterUtil.addWrapAttribute( writer, "copy", "failonerror", "false", 3 );
                         writer.endElement(); // copy
@@ -1303,6 +1301,56 @@ public class AntBuildWriter
         writer.endElement(); // target
 
         XmlWriterUtil.writeLineBreak( writer );
+    }
+
+    /**
+     * Gets the relative path to a repository that is rooted in the project. The returned path (if any) will always use
+     * the forward slash ('/') as the directory separator. For example, the path "target/it-repo" will be returned for a
+     * repository constructed from the URL "file://${basedir}/target/it-repo".
+     * 
+     * @param repoUrl The URL to the repository, must not be <code>null</code>.
+     * @param projectDir The absolute path to the base directory of the project, must not be <code>null</code>
+     * @return The path to the repository (relative to the project base directory) or <code>null</code> if the
+     *         repository is not rooted in the project.
+     */
+    static String getProjectRepoDirectory( String repoUrl, String projectDir )
+    {
+        try
+        {
+            /*
+             * NOTE: The usual way of constructing repo URLs rooted in the project is "file://${basedir}" or
+             * "file:/${basedir}". None of these forms delivers a valid URL on both Unix and Windows (even ignoring URL
+             * encoding), one platform will end up with the first directory of the path being interpreted as the host
+             * name...
+             */
+            if ( repoUrl.regionMatches( true, 0, "file://", 0, 7 ) )
+            {
+                String temp = repoUrl.substring( 7 );
+                if ( !temp.startsWith( "/" ) && !temp.regionMatches( true, 0, "localhost/", 0, 10 ) )
+                {
+                    repoUrl = "file:///" + temp;
+                }
+            }
+            String path = FileUtils.toFile( new URL( repoUrl ) ).getPath();
+            if ( path.startsWith( projectDir ) )
+            {
+                path = path.substring( projectDir.length() ).replace( '\\', '/' );
+                if ( path.startsWith( "/" ) )
+                {
+                    path = path.substring( 1 );
+                }
+                if ( path.endsWith( "/" ) )
+                {
+                    path = path.substring( 0, path.length() - 1 );
+                }
+                return path;
+            }
+        }
+        catch ( Exception e )
+        {
+            // not a "file:" URL or simply malformed
+        }
+        return null;
     }
 
     // ----------------------------------------------------------------------
