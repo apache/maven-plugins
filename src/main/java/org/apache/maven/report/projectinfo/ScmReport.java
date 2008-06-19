@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -108,7 +109,7 @@ public class ScmReport
     public void executeReport( Locale locale )
     {
         ScmRenderer r =
-            new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName,
+            new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName,
                     webAccessUrl, anonymousConnection, developerConnection );
 
         r.render();
@@ -127,6 +128,8 @@ public class ScmReport
     private static class ScmRenderer
         extends AbstractMavenReportRenderer
     {
+        private Log log;
+
         private Model model;
 
         private I18N i18n;
@@ -146,10 +149,12 @@ public class ScmReport
 
         private String webAccessUrl;
 
-        ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName,
+        ScmRenderer( Log log, ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName,
                      String webAccessUrl, String anonymousConnection, String devConnection )
         {
             super( sink );
+
+            this.log = log;
 
             this.scmManager = scmManager;
 
@@ -669,13 +674,20 @@ public class ScmReport
                 }
                 catch ( NoSuchScmProviderException e )
                 {
-                    // ignore
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( e.getMessage(), e );
+                    }
                 }
                 catch ( ScmRepositoryException e )
                 {
-                    // ignore
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( e.getMessage(), e );
+                    }
                 }
             }
+
             return repo;
         }
 
