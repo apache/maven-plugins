@@ -17,17 +17,6 @@
             <enabled>true</enabled>
           </snapshots>
         </repository>
-        <!-- Remove this once plexus-utils dependency is bumped out of -SNAPSHOT -->
-        <repository>
-          <id>plexus.snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
@@ -35,17 +24,6 @@
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-        <!-- Remove this once plexus-utils dependency is bumped out of -SNAPSHOT -->
-        <pluginRepository>
-          <id>plexus.snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-          <releases>
-            <enabled>false</enabled>
           </releases>
           <snapshots>
             <enabled>true</enabled>
