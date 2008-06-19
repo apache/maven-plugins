@@ -21,18 +21,26 @@ package org.apache.maven.plugin.doap;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
+import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
+import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Generate a Description of a Project (DOAP) file from the information found in a POM.
@@ -75,6 +83,16 @@ public class DoapMojo
      * @parameter expression="${language}" default-value="Java"
      */
     private String language;
+
+    /**
+     * Maven SCM Manager.
+     *
+     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
+     * @required
+     * @readonly
+     * @since 1.0
+     */
+    protected ScmManager scmManager;
 
     /**
      * {@inheritDoc}
@@ -144,7 +162,7 @@ public class DoapMojo
         publishReleases();
 
         // SCM
-        publishSourceRepository( writer );
+        writeSourceRepositories( writer );
 
         // Developers
         publishMaintainers( writer );
@@ -167,27 +185,101 @@ public class DoapMojo
     {
     }
 
-    private void publishSourceRepository( XMLWriter w )
+    /**
+     * Write all DOAP repositories.
+     *
+     * @param writer
+     */
+    private void writeSourceRepositories( XMLWriter writer )
     {
-        //<repository>
-        //  <SVNRepository>
-        //    <location rdf:resource="http://svn.apache.org/repos/asf/maven/components/trunk/"/>
-        //    <browse rdf:resource="http://svn.apache.org/viewcvs.cgi/maven/components/trunk/"/>
-        //  </SVNRepository>
-        //</repository>
-
-        if ( project.getScm() == null )
+        Scm scm = project.getScm();
+        if ( scm == null )
         {
             return;
         }
 
-        w.startElement( "repository" );
-        w.startElement( "SVNRepository" );
-        DoapUtil.writeRdfResourceElement( w, "location", project.getScm().getConnection().substring( 8 ) );
-        DoapUtil.writeRdfResourceElement( w, "browse", project.getScm().getUrl() );
-        w.endElement();
-        w.endElement();
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Anonymous Connection", 2 );
+        String anonymousConnection = scm.getConnection();
+        writeSourceRepository( writer, anonymousConnection );
 
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Developer Connection", 2 );
+        String developerConnection = scm.getDeveloperConnection();
+        writeSourceRepository( writer, developerConnection );
+    }
+
+    /**
+     * Write a DOAP repository, for instance:
+     * <pre>
+     *   &lt;repository&gt;
+     *     &lt;SVNRepository&gt;
+     *       &lt;location rdf:resource="http://svn.apache.org/repos/asf/maven/components/trunk/"/&gt;
+     *       &lt;browse rdf:resource="http://svn.apache.org/viewcvs.cgi/maven/components/trunk/"/&gt;
+     *     &lt;/SVNRepository&gt;
+     *   &lt;/repository&gt;
+     * </pre>
+     *
+     * @param writer not null
+     * @param connection not null
+     * @see <a href="http://usefulinc.com/ns/doap#Repository">http://usefulinc.com/ns/doap#Repository</a>
+     * @see <a href="http://usefulinc.com/ns/doap#CVSRepository">http://usefulinc.com/ns/doap#CVSRepository</a>
+     * @see <a href="http://usefulinc.com/ns/doap#SVNRepository">http://usefulinc.com/ns/doap#SVNRepository</a>
+     */
+    private void writeSourceRepository( XMLWriter writer, String connection )
+    {
+        ScmRepository repository = getScmRepository( connection );
+
+        writer.startElement( "repository" );
+
+        if ( isScmSystem( repository, "cvs" ) )
+        {
+            // http://usefulinc.com/ns/doap#CVSRepository
+            writer.startElement( "CVSRepository" );
+
+            CvsScmProviderRepository cvsRepo =
+                (CvsScmProviderRepository) repository.getProviderRepository();
+
+            // http://usefulinc.com/ns/doap#anon-root
+            DoapUtil.writeElement( writer, "anon-root", cvsRepo.getCvsRoot() );
+            // http://usefulinc.com/ns/doap#module
+            DoapUtil.writeElement( writer, "module", cvsRepo.getModule() );
+        }
+        else if ( isScmSystem( repository, "svn" ) )
+        {
+            // http://usefulinc.com/ns/doap#SVNRepository
+            writer.startElement( "SVNRepository" );
+
+            SvnScmProviderRepository svnRepo =
+                (SvnScmProviderRepository) repository.getProviderRepository();
+
+            // http://usefulinc.com/ns/doap#location
+            DoapUtil.writeRdfResourceElement( writer, "location", svnRepo.getUrl() );
+        }
+        else
+        {
+            /*
+             * Supported DOAP repositories actually unsupported by SCM:
+             *   BitKeeper (http://usefulinc.com/ns/doap#BKRepository)
+             *   Arch (http://usefulinc.com/ns/doap#ArchRepository)
+             * Other SCM repos are unsupported by DOAP.
+             */
+            writer.startElement( "Repository" );
+
+            if ( connection.length() < 4 )
+            {
+                throw new IllegalArgumentException( "The source repository connection is too short." );
+            }
+
+            // http://usefulinc.com/ns/doap#location
+            DoapUtil.writeRdfResourceElement( writer, "location", connection.substring( 4 ) );
+        }
+
+        // http://usefulinc.com/ns/doap#browse
+        DoapUtil.writeRdfResourceElement( writer, "browse", project.getScm().getUrl() );
+
+        writer.endElement(); // CVSRepository || SVNRepository || Repository
+        writer.endElement(); // repository
     }
 
     private void publishMaintainers( XMLWriter w )
@@ -235,5 +327,64 @@ public class DoapMojo
         }
 
         return base + path;
+    }
+
+    /**
+     * Return a <code>SCM repository</code> defined by a given url
+     *
+     * @param scmUrl an SCM URL
+     * @return a valid SCM repository or null
+     */
+    public ScmRepository getScmRepository( String scmUrl )
+    {
+        ScmRepository repo = null;
+        if ( !StringUtils.isEmpty( scmUrl ) )
+        {
+            try
+            {
+                repo = scmManager.makeScmRepository( scmUrl );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( e.getMessage(), e );
+                }
+            }
+            catch ( ScmRepositoryException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( e.getMessage(), e );
+                }
+            }
+        }
+        return repo;
+    }
+
+    /**
+     * Convenience method that return true is the defined <code>SCM repository</code> is a known provider.
+     * <p>
+     * Actually, we fully support Clearcase, CVS, Perforce, Starteam, SVN by the maven-scm-providers component.
+     * </p>
+     *
+     * @param scmRepository a SCM repository
+     * @param scmProvider a SCM provider name
+     * @return true if the provider of the given SCM repository is equal to the given scm provider.
+     * @see <a href="http://svn.apache.org/repos/asf/maven/scm/trunk/maven-scm-providers/">maven-scm-providers</a>
+     */
+    private static boolean isScmSystem( ScmRepository scmRepository, String scmProvider )
+    {
+        if ( StringUtils.isEmpty( scmProvider ) )
+        {
+            return false;
+        }
+
+        if ( scmRepository != null && scmProvider.equalsIgnoreCase( scmRepository.getProvider() ) )
+        {
+            return true;
+        }
+
+        return false;
     }
 }
