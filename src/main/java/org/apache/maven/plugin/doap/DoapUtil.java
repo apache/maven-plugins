@@ -66,7 +66,7 @@ public class DoapUtil
     /**
      * @param writer not null
      * @param name not null
-     * @param value not null
+     * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
     public static void writeElement( XMLWriter writer, String name, String value )
@@ -88,7 +88,7 @@ public class DoapUtil
     /**
      * @param writer not null
      * @param name not null
-     * @param value not null
+     * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */
     public static void writeRdfResourceElement( XMLWriter writer, String name, String value )
