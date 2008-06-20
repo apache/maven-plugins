@@ -22,8 +22,12 @@ package org.apache.maven.plugin.doap;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Scm;
@@ -53,6 +57,24 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
 public class DoapMojo
     extends AbstractMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Maven SCM Manager.
+     *
+     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
+     * @required
+     * @readonly
+     * @since 1.0
+     */
+    protected ScmManager scmManager;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The POM from which information will be extracted to create a DOAP file.
      *
@@ -84,15 +106,9 @@ public class DoapMojo
      */
     private String language;
 
-    /**
-     * Maven SCM Manager.
-     *
-     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
-     * @required
-     * @readonly
-     * @since 1.0
-     */
-    protected ScmManager scmManager;
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
@@ -139,7 +155,7 @@ public class DoapMojo
         {
             //TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
             //      be more appropriate.
-            DoapUtil.writeRdfResourceElement( writer, "license", ((License) project.getLicenses().get( 0 )).getUrl() );
+            DoapUtil.writeRdfResourceElement( writer, "license", ( (License) project.getLicenses().get( 0 ) ).getUrl() );
         }
 
         DoapUtil.writeElement( writer, "name", project.getName() );
@@ -152,8 +168,8 @@ public class DoapMojo
         {
             DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
         }
-        DoapUtil.writeRdfResourceElement( writer, "mailing-list", composeUrl( project.getUrl() , "/mail-lists.html" ) );
-        DoapUtil.writeRdfResourceElement( writer, "download-page", composeUrl( project.getUrl() , "/download.html" ) );
+        DoapUtil.writeRdfResourceElement( writer, "mailing-list", composeUrl( project.getUrl(), "/mail-lists.html" ) );
+        DoapUtil.writeRdfResourceElement( writer, "download-page", composeUrl( project.getUrl(), "/download.html" ) );
         DoapUtil.writeElement( writer, "programming-language", language );
         //TODO: how to lookup category, map it, or just declare it.
         DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
@@ -165,7 +181,10 @@ public class DoapMojo
         writeSourceRepositories( writer );
 
         // Developers
-        publishMaintainers( writer );
+        writeDevelopersOrContributors( writer, project.getDevelopers() );
+
+        // Contributors
+        writeDevelopersOrContributors( writer, project.getContributors() );
 
         writer.endElement();
         writer.endElement();
@@ -179,6 +198,10 @@ public class DoapMojo
             throw new MojoExecutionException( "Error when closing the writer.", e );
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     //TODO: we will actually have to pull all the metadata from the repository
     private void publishReleases()
@@ -237,8 +260,7 @@ public class DoapMojo
             // http://usefulinc.com/ns/doap#CVSRepository
             writer.startElement( "CVSRepository" );
 
-            CvsScmProviderRepository cvsRepo =
-                (CvsScmProviderRepository) repository.getProviderRepository();
+            CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) repository.getProviderRepository();
 
             // http://usefulinc.com/ns/doap#anon-root
             DoapUtil.writeElement( writer, "anon-root", cvsRepo.getCvsRoot() );
@@ -250,8 +272,7 @@ public class DoapMojo
             // http://usefulinc.com/ns/doap#SVNRepository
             writer.startElement( "SVNRepository" );
 
-            SvnScmProviderRepository svnRepo =
-                (SvnScmProviderRepository) repository.getProviderRepository();
+            SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
             // http://usefulinc.com/ns/doap#location
             DoapUtil.writeRdfResourceElement( writer, "location", svnRepo.getUrl() );
@@ -282,51 +303,215 @@ public class DoapMojo
         writer.endElement(); // repository
     }
 
-    private void publishMaintainers( XMLWriter w )
+    /**
+     * Write all DOAP persons.
+     *
+     * @param writer not null
+     * @param developersOrContributors list of developers or contributors
+     */
+    private void writeDevelopersOrContributors( XMLWriter writer, List developersOrContributors )
     {
-        //<maintainer>
-        //  <foaf:Person>
-        //    <foaf:name>Emmanuel Venisse</foaf:name>
-        //    <foaf:mbox rdf:resource="mailto:evenisse@apache.org"/>
-        //  </foaf:Person>
-        //</maintainer>
-
-        if ( project.getDevelopers() == null )
+        if ( developersOrContributors == null || developersOrContributors.size() == 0 )
         {
             return;
         }
 
-        for ( Iterator i = project.getDevelopers().iterator(); i.hasNext(); )
+        boolean isDeveloper = Developer.class.isAssignableFrom( developersOrContributors.get( 0 ).getClass() );
+        if ( isDeveloper )
         {
-            Developer d = (Developer) i.next();
+            XmlWriterUtil.writeLineBreak( writer );
+            XmlWriterUtil.writeCommentText( writer, "Main committers", 2 );
+        }
+        else
+        {
+            XmlWriterUtil.writeLineBreak( writer );
+            XmlWriterUtil.writeCommentText( writer, "Contributed persons", 2 );
+        }
 
-            w.startElement( "maintainer" );
-            w.startElement( "foaf:Person" );
-            w.startElement( "foaf:name" );
-            w.writeText( d.getName() );
-            w.endElement();
-            DoapUtil.writeRdfResourceElement( w, "foaf:mbox", "mailto:" + d.getEmail() );
-            w.endElement();
-            w.endElement();
+        List maintainers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "maintainers" );
+        List developers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "developers" );
+        List documenters = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "documenters" );
+        List translators = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "translators" );
+        List testers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "testers" );
+        List helpers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "helpers" );
+        List unknowns = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
+            .get( "unknowns" );
+
+        // By default, all developers are maintainers and contributors are helpers
+        if ( isDeveloper )
+        {
+            maintainers.addAll( unknowns );
+        }
+        else
+        {
+            helpers.addAll( unknowns );
+        }
+
+        // all alphabetical
+        if ( developers.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, developers, "developer" );
+        }
+        if ( documenters.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, documenters, "documenter" );
+        }
+        if ( helpers.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, helpers, "helper" );
+        }
+        if ( maintainers.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, maintainers, "maintainer" );
+        }
+        if ( testers.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, testers, "tester" );
+        }
+        if ( translators.size() != 0 )
+        {
+            writeDeveloperOrContributor( writer, translators, "translator" );
         }
     }
 
     /**
-     * Compose a URL from two parts: a base URL and a file path. This method
-     * makes sure that there will not be two slash '/' characters after each
-     * other.
+     * Write a DOAP maintainer or developer or documenter or translator or tester or helper, for instance:
+     * <pre>
+     *   &lt;maintainer&gt;
+     *     &lt;foaf:Person&gt;
+     *       &lt;foaf:name&gt;Emmanuel Venisse&lt;/foaf:name&gt;
+     *       &lt;foaf:mbox rdf:resource="mailto:evenisse@apache.org"/&gt;
+     *     &lt;/foaf:Person&gt;
+     *   &lt;/maintainer&gt;
+     * </pre>
      *
-     * @param base The base URL
-     * @param path The file
+     * @param writer not null
+     * @param developersOrContributors not null
+     * @param doapType not null
+     * @see <a href="http://usefulinc.com/ns/doap#maintainer">http://usefulinc.com/ns/doap#maintainer</a>
+     * @see <a href="http://usefulinc.com/ns/doap#developer">http://usefulinc.com/ns/doap#developer</a>
+     * @see <a href="http://usefulinc.com/ns/doap#documenter">http://usefulinc.com/ns/doap#documenter</a>
+     * @see <a href="http://usefulinc.com/ns/doap#translator">http://usefulinc.com/ns/doap#translator</a>
+     * @see <a href="http://usefulinc.com/ns/doap#tester">http://usefulinc.com/ns/doap#tester</a>
+     * @see <a href="http://usefulinc.com/ns/doap#helper">http://usefulinc.com/ns/doap#helper</a>
      */
-    private String composeUrl( String base, String path )
+    private void writeDeveloperOrContributor( XMLWriter writer, List developersOrContributors, String doapType )
     {
-        if ( base.endsWith( "/" ) && path.startsWith( "/" ) )
+        if ( developersOrContributors == null || developersOrContributors.size() == 0 )
         {
-            return base + path.substring( 1 );
+            return;
         }
 
-        return base + path;
+        // Sort list by names
+        Collections.sort( developersOrContributors, new Comparator()
+        {
+            /**
+             * {@inheritDoc}
+             */
+            public int compare( Object arg0, Object arg1 )
+            {
+                if ( Developer.class.isAssignableFrom( arg0.getClass() ) )
+                {
+                    Developer developer0 = (Developer) arg0;
+                    Developer developer1 = (Developer) arg1;
+
+                    if ( developer0.getName() == null )
+                    {
+                        return -1;
+                    }
+                    if ( developer1.getName() == null )
+                    {
+                        return +1;
+                    }
+
+                    return developer0.getName().compareTo( developer1.getName() );
+                }
+
+                Contributor contributor0 = (Contributor) arg0;
+                Contributor contributor1 = (Contributor) arg1;
+
+                if ( contributor0.getName() == null )
+                {
+                    return -1;
+                }
+                if ( contributor1.getName() == null )
+                {
+                    return +1;
+                }
+
+                return contributor0.getName().compareTo( contributor1.getName() );
+            }
+        } );
+
+        for ( Iterator it = developersOrContributors.iterator(); it.hasNext(); )
+        {
+            Object obj = it.next();
+
+            String name;
+            String email;
+            String organization;
+            String homepage;
+
+            if ( Developer.class.isAssignableFrom( obj.getClass() ) )
+            {
+                Developer d = (Developer) obj;
+                name = d.getName();
+                email = d.getEmail();
+                organization = d.getOrganization();
+                homepage = d.getUrl();
+            }
+            else
+            {
+                Contributor c = (Contributor) obj;
+                name = c.getName();
+                email = c.getEmail();
+                organization = c.getOrganization();
+                homepage = c.getUrl();
+            }
+
+            // Name is required to write doap
+            if ( StringUtils.isEmpty( name ) )
+            {
+                continue;
+            }
+
+            // http://usefulinc.com/ns/doap#maintainer
+            // http://usefulinc.com/ns/doap#developer
+            // http://usefulinc.com/ns/doap#documenter
+            // http://usefulinc.com/ns/doap#translator
+            // http://usefulinc.com/ns/doap#tester
+            // http://usefulinc.com/ns/doap#helper
+            writer.startElement( doapType );
+            // http://xmlns.com/foaf/0.1/Person
+            writer.startElement( "foaf:Person" );
+            // http://xmlns.com/foaf/0.1/name
+            writer.startElement( "foaf:name" );
+            writer.writeText( name );
+            writer.endElement(); // foaf:name
+            if ( StringUtils.isNotEmpty( email ) )
+            {
+                // http://xmlns.com/foaf/0.1/mbox
+                DoapUtil.writeRdfResourceElement( writer, "foaf:mbox", "mailto:" + email );
+            }
+            if ( StringUtils.isNotEmpty( organization ) )
+            {
+                // http://xmlns.com/foaf/0.1/Organization
+                DoapUtil.writeRdfResourceElement( writer, "foaf:Organization", organization );
+            }
+            if ( StringUtils.isNotEmpty( homepage ) )
+            {
+                // http://xmlns.com/foaf/0.1/homepage
+                DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", homepage );
+            }
+            writer.endElement(); // foaf:Person
+            writer.endElement(); // doapType
+        }
     }
 
     /**
@@ -335,7 +520,7 @@ public class DoapMojo
      * @param scmUrl an SCM URL
      * @return a valid SCM repository or null
      */
-    public ScmRepository getScmRepository( String scmUrl )
+    private ScmRepository getScmRepository( String scmUrl )
     {
         ScmRepository repo = null;
         if ( !StringUtils.isEmpty( scmUrl ) )
@@ -360,6 +545,28 @@ public class DoapMojo
             }
         }
         return repo;
+    }
+
+    // ----------------------------------------------------------------------
+    // Static methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Compose a URL from two parts: a base URL and a file path. This method
+     * makes sure that there will not be two slash '/' characters after each
+     * other.
+     *
+     * @param base The base URL
+     * @param path The file
+     */
+    private static String composeUrl( String base, String path )
+    {
+        if ( base.endsWith( "/" ) && path.startsWith( "/" ) )
+        {
+            return base + path.substring( 1 );
+        }
+
+        return base + path;
     }
 
     /**
