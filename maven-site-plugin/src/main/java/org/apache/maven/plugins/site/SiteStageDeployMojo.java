@@ -45,8 +45,10 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Deploy a staging site in a specific directory.
- * <p>Useful to test the generated site.</p>
+ * Deploys the generated site to a staging or mock directory on the site
+ * specified in the <code>&lt;distributionManagement&gt;</code> section of the
+ * POM. It also supports <code>scp</code> and <code>file</code> protocols for
+ * deployment.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

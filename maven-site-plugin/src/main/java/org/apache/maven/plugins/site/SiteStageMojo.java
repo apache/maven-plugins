@@ -32,8 +32,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Staging a site in specific directory.
- * <p>Useful to test the generated site.</p>
+ * Generates a site in a local staging or mock directory based on the site url
+ * specified in the <code>&lt;distributionManagement&gt;</code> section of the
+ * POM.
+ * <p>
+ * It can be used to test that links between module sites in a multi module
+ * build works.
+ * </p>
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
