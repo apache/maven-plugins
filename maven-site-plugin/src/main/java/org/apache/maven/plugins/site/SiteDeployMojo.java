@@ -60,12 +60,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Deploys the site using scp/file protocol.
- * For scp protocol, website files are packaged into zip archive,
+ * Deploys the generated site using <code>scp</code> or <code>file</code>
+ * protocol to the site specified in the
+ * <code>&lt;distributionManagement&gt;</code> section of the POM.
+ * <p>
+ * For <code>scp</code> protocol, the website files are packaged into zip archive,
  * then the archive is transfered to the remote host, next it is un-archived.
  * This method of deployment should normally be much faster
- * than making a file by file copy.  For file protocol, the files are copied
+ * than making a file by file copy.  For <code>file</code> protocol, the files are copied
  * directly to the destination directory.
+ * </p>
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
  * @version $Id$
