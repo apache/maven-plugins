@@ -37,7 +37,7 @@ Maven 2 Site Plugin
    The Site Plugin has seven goals:
 
    * {{{site-mojo.html}site:site}} is used generate a site for a single project.
-     Note that links between module sites in a multi module build will <<<not>> work.
+     Note that links between module sites in a multi module build will <<not>> work.
 
    * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to the site
      specified in the <<<\<distributionManagement\>>>> section of the POM.
