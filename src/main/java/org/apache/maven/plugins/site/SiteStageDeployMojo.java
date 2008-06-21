@@ -87,7 +87,7 @@ public class SiteStageDeployMojo
 
     private PlexusContainer container;
 
-    private final String STAGING_SERVER_ID = "stagingSite";
+    private static final String STAGING_SERVER_ID = "stagingSite";
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
