@@ -36,19 +36,21 @@ Maven 2 Site Plugin
 
    The Site Plugin has seven goals:
 
-   * {{{site-mojo.html}site:site}} is used generate a site for the project.
+   * {{{site-mojo.html}site:site}} is used generate a site for a single project.
+     Note that links between module sites in a multi module build will <<<not>> work.
 
    * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to the site
      specified in the <<<\<distributionManagement\>>>> section of the POM.
 
    * {{{run-mojo.html}site:run}} starts the site up, rendering documents as requested for faster editing. It uses Jetty
-     as the webapp server.
+     as the web server.
 
    * {{{stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site url specified
-     in the <<<\<distributionManagement\>>>> section of the POM.
+     in the <<<\<distributionManagement\>>>> section of the POM. It can be used
+     to test that links between module sites in a multi module build works.
 
-   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site in a staging or mock directory on the site
-     specified in the <<<\<distributionManagement\>>>> section of the POM. It also supports <<<scp>>> and <<<file>>> protocol for deployment.
+   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site to a staging or mock directory on the site
+     specified in the <<<\<distributionManagement\>>>> section of the POM. It also supports <<<scp>>> and <<<file>>> protocols for deployment.
 
    * {{{attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor to the list of files to be
      installed/deployed. For more references of the site descriptor,
