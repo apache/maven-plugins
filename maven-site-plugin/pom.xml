@@ -19,18 +19,17 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>11</version>
   </parent>
 
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-site-plugin</artifactId>
-  <version>2.0-beta-7-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Site Plugin</name>
+  <version>2.0-beta-7-SNAPSHOT</version>
   <description>
     The Maven Site Plugin is a plugin that generates a site for the current project.
   </description>
@@ -147,6 +146,64 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-site-plugin/</url>
   </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.4.2-SNAPSHOT</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.2</version>
+            <configuration>
+              <projectsDirectory>src/it</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>**/**/pom.xml</pomInclude>
+              </pomIncludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <goals>
+                <goal>clean</goal>
+                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
+              </goals>
+              <settingsFile>src/it/settings.xml</settingsFile>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+           </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
     <!-- Maven -->
@@ -286,70 +343,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.2-SNAPSHOT</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>maven.test.skip</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
-            <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/**/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
-              <goals>
-                <goal>clean</goal>
-                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
-              </goals>
-              <settingsFile>src/it/settings.xml</settingsFile>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-           </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
-  <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
-  </properties>
-
   <reporting>
     <plugins>
       <plugin>
@@ -381,4 +374,10 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
+
+  <properties>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
+  </properties>
 </project>
