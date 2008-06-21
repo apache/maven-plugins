@@ -56,8 +56,6 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
@@ -270,20 +268,20 @@ public class SiteDeployMojo
                 String nonProxyHostPrefix = StringUtils.substringBefore( nonProxyHost, "*" );
                 String nonProxyHostSuffix = StringUtils.substringAfter( nonProxyHost, "*" );
                 // prefix*
-                if ( StringUtils.isNotEmpty(nonProxyHostPrefix) && host.startsWith( nonProxyHostPrefix )
-                    && StringUtils.isEmpty(nonProxyHostSuffix) )
+                if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+                    && StringUtils.isEmpty( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
                 // *suffix
-                if ( StringUtils.isEmpty(nonProxyHostPrefix)
-                    && StringUtils.isNotEmpty(nonProxyHostSuffix) && host.endsWith( nonProxyHostSuffix ))
+                if ( StringUtils.isEmpty( nonProxyHostPrefix )
+                    && StringUtils.isNotEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
                 // prefix*suffix
-                if ( StringUtils.isNotEmpty(nonProxyHostPrefix) && host.startsWith( nonProxyHostPrefix )
-                    && StringUtils.isNotEmpty(nonProxyHostSuffix) && host.endsWith( nonProxyHostSuffix ))
+                if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+                    && StringUtils.isNotEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
@@ -307,7 +305,8 @@ public class SiteDeployMojo
      * @param log
      * @throws WagonConfigurationException
      */
-    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container, Log log )
+    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
+                                Log log )
         throws WagonConfigurationException
     {
         // MSITE-25: Make sure that the server settings are inserted
@@ -330,11 +329,13 @@ public class SiteDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator. Wagon configuration cannot be applied.", e );
+                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator." 
+                            + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
+                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
+                                                               e );
                     }
                     finally
                     {
