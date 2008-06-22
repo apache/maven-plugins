@@ -139,9 +139,8 @@ public class BundleCreateMojo
             }
             else
             {
-                getLog()
-                    .warn(
-                           "Sources not included in upload bundle. In order to add sources please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
+                getLog().warn( "Sources not included in upload bundle. In order to add sources please run"
+                    + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
             if ( javadocArtifact.exists() )
@@ -150,9 +149,8 @@ public class BundleCreateMojo
             }
             else
             {
-                getLog()
-                    .warn(
-                           "Javadoc not included in upload bundle. In order to add javadocs please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
+                getLog().warn( "Javadoc not included in upload bundle. In order to add javadocs please run"
+                    + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
             jarArchiver.setDestFile( bundle );
