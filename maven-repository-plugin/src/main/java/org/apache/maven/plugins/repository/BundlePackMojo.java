@@ -126,32 +126,7 @@ public class BundlePackMojo
     public void execute()
         throws MojoExecutionException
     {
-        try
-        {
-            if ( groupId == null )
-            {
-                getLog().info( "groupId? " );
-
-                groupId = inputHandler.readLine();
-
-            }
-
-            if ( artifactId == null )
-            {
-                getLog().info( "artifactId? " );
-                artifactId = inputHandler.readLine();
-            }
-
-            if ( version == null )
-            {
-                getLog().info( "version? " );
-                version = inputHandler.readLine();
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+        readArtifactDataFromUser();
 
         Artifact artifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
 
@@ -172,27 +147,7 @@ public class BundlePackMojo
 
         File dir = pom.getParentFile();
 
-        Model model;
-        try
-        {
-            model = new MavenXpp3Reader().read( ReaderFactory.newXmlReader( pom ) );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException(
-                                              "Unable to parse pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new MojoExecutionException( "Unable to read pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
+        Model model = readPom( pom );
 
         boolean rewrite = false;
         try
@@ -215,13 +170,13 @@ public class BundlePackMojo
             }
             if ( model.getDescription() == null )
             {
-                getLog().info( "Project Description is missing, please type the project Description:" );
+                getLog().info( "Project description is missing, please type the project description:" );
                 model.setDescription( inputHandler.readLine() );
                 rewrite = true;
             }
             if ( model.getUrl() == null )
             {
-                getLog().info( "Project Url is missing, please type the project URL:" );
+                getLog().info( "Project URL is missing, please type the project URL:" );
                 model.setUrl( inputHandler.readLine() );
                 rewrite = true;
             }
@@ -304,6 +259,76 @@ public class BundlePackMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
+    }
+
+    /**
+     * Read groupId, artifactId and version from the user on the command line,
+     * if they were not provided as parameters.
+     *
+     * @throws MojoExecutionException If the values can't be read
+     */
+    private void readArtifactDataFromUser()
+        throws MojoExecutionException
+    {
+        try
+        {
+            if ( groupId == null )
+            {
+                getLog().info( "groupId? " );
+
+                groupId = inputHandler.readLine();
+
+            }
+
+            if ( artifactId == null )
+            {
+                getLog().info( "artifactId? " );
+                artifactId = inputHandler.readLine();
+            }
+
+            if ( version == null )
+            {
+                getLog().info( "version? " );
+                version = inputHandler.readLine();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Read the POM file.
+     *
+     * @param pom The file to read
+     * @return A Maven Model
+     * @throws MojoExecutionException if something goes wrong when reading the file
+     */
+    private Model readPom( File pom )
+        throws MojoExecutionException
+    {
+        Model model;
+        try
+        {
+            model = new MavenXpp3Reader().read( ReaderFactory.newXmlReader( pom ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Unable to parse POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "Unable to read POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        return model;
     }
 
 }
