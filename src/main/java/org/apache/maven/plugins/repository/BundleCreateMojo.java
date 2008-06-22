@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.repository;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.repository;
 
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.AbstractMojo;
@@ -28,11 +29,11 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 
 /**
- * Goal which creates an upload bundle for a project built with maven.
+ * Goal which creates an upload bundle for a project built with Maven.
  *
  * @goal bundle-create
  * @execute phase="package"
- * 
+ * @since 2.0
  */
 public class BundleCreateMojo
     extends AbstractMojo
@@ -41,18 +42,21 @@ public class BundleCreateMojo
 
     /**
      * Base directory.
+     *
      * @parameter expression="${basedir}"
      */
     private String basedir;
 
     /**
-     * The current maven project.
+     * The current Maven project.
+     *
      * @parameter expression="${project}"
      */
     private MavenProject project;
 
     /**
      * Jar archiver.
+     *
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
@@ -71,28 +75,32 @@ public class BundleCreateMojo
 
         if ( project.getPackaging().equals( "pom" ) )
         {
-            throw new MojoExecutionException( "Packaging cannot be POM when creating an upload bundle." );
+            throw new MojoExecutionException( "Packaging cannot be 'pom' when creating an upload bundle." );
         }
 
         // ----------------------------------------------------------------------
         // Check the mandatory elements of the POM
         //
+        // modelVersion
         // groupId
         // artifactId
         // packaging
         // name
         // version
-        // url
         // description
-        // dependencies
+        // url
         // licenses
+        // dependencies
         // ----------------------------------------------------------------------
+
+        // We don't have to validate modelVersion, groupId, artifactId or version here,
+        // it is done by DefaultMaven and maven-artifact
 
         validate( project.getName(), "project.name" );
 
-        validate( project.getUrl(), "project.url" );
-
         validate( project.getDescription(), "project.description" );
+
+        validate( project.getUrl(), "project.url" );
 
         if ( project.getLicenses().isEmpty() )
         {
@@ -100,7 +108,7 @@ public class BundleCreateMojo
         }
 
         // ----------------------------------------------------------------------
-        //
+        // Create the bundle archive
         // ----------------------------------------------------------------------
 
         File pom = new File( basedir, POM );
@@ -131,9 +139,8 @@ public class BundleCreateMojo
             }
             else
             {
-                getLog()
-                    .warn(
-                           "Sources not included in upload bundle. In order to add sources please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
+                getLog().warn( "Sources not included in upload bundle. In order to add sources please run"
+                    + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
             if ( javadocArtifact.exists() )
@@ -142,9 +149,8 @@ public class BundleCreateMojo
             }
             else
             {
-                getLog()
-                    .warn(
-                           "Javadoc not included in upload bundle. In order to add javadocs please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
+                getLog().warn( "Javadoc not included in upload bundle. In order to add javadocs please run"
+                    + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
             jarArchiver.setDestFile( bundle );

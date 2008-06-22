@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.repository;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,17 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.repository;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -43,15 +34,26 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * Packs artifacts already available in a local repository in a bundle for upload requests. It will require an existing
- * POM in the local repository, and it will check for mandatory elements, asking interactively for missing values.
- * Can be used to generate bundles for third parties artifacts that have been manually added to the local repository.
+ * Packs artifacts already available in a local repository in a bundle for an
+ * upload requests. It requires that the artifact has a POM in the local
+ * repository. It will check for mandatory elements, asking interactively for
+ * missing values. Can be used to generate bundles for third parties artifacts
+ * that have been manually added to the local repository.
  *
  * @goal bundle-pack
  * @requiresProject false
+ * @since 2.1
  */
 public class BundlePackMojo
     extends AbstractMojo
@@ -60,6 +62,7 @@ public class BundlePackMojo
 
     /**
      * Jar archiver.
+     * 
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     protected JarArchiver jarArchiver;
@@ -94,24 +97,28 @@ public class BundlePackMojo
 
     /**
      * Directory where the upload-bundle will be created.
+     *
      * @parameter expression="${basedir}"
      */
     protected String basedir;
 
     /**
      * GroupId for the artifact to create an upload bundle for.
+     *
      * @parameter expression="${groupId}"
      */
     protected String groupId;
 
     /**
      * ArtifactId for the artifact to create an upload bundle for.
+     *
      * @parameter expression="${artifactId}"
      */
     protected String artifactId;
 
     /**
      * Version for the artifact to create an upload bundle for.
+     * 
      * @parameter expression="${version}"
      */
     protected String version;
@@ -119,32 +126,7 @@ public class BundlePackMojo
     public void execute()
         throws MojoExecutionException
     {
-        try
-        {
-            if ( groupId == null )
-            {
-                getLog().info( "groupId? " );
-
-                groupId = inputHandler.readLine();
-
-            }
-
-            if ( artifactId == null )
-            {
-                getLog().info( "artifactId? " );
-                artifactId = inputHandler.readLine();
-            }
-
-            if ( version == null )
-            {
-                getLog().info( "version? " );
-                version = inputHandler.readLine();
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+        readArtifactDataFromUser();
 
         Artifact artifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
 
@@ -165,33 +147,17 @@ public class BundlePackMojo
 
         File dir = pom.getParentFile();
 
-        Model model;
-        try
-        {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            model = new MavenXpp3Reader().read( new InputStreamReader( new FileInputStream( pom ), "UTF-8" ) );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException(
-                                              "Unable to parse pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new MojoExecutionException( "Unable to read pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read pom at " + pom.getAbsolutePath() + ": " + e.getMessage(),
-                                              e );
-        }
+        Model model = readPom( pom );
 
         boolean rewrite = false;
         try
         {
 
+            if ( model.getPackaging() == null )
+            {
+                model.setPackaging( "jar" );
+                rewrite = true;
+            }
             if ( model.getName() == null )
             {
                 getLog().info( "Project name is missing, please type the project name [" + artifactId + "]:" );
@@ -202,21 +168,16 @@ public class BundlePackMojo
                 }
                 rewrite = true;
             }
-            if ( model.getUrl() == null )
-            {
-                getLog().info( "Project Url is missing, please type the project URL:" );
-                model.setUrl( inputHandler.readLine() );
-                rewrite = true;
-            }
-            if ( model.getPackaging() == null )
-            {
-                model.setPackaging( "jar" );
-                rewrite = true;
-            }
             if ( model.getDescription() == null )
             {
-                getLog().info( "Project Description is missing, please type the project Description:" );
+                getLog().info( "Project description is missing, please type the project description:" );
                 model.setDescription( inputHandler.readLine() );
+                rewrite = true;
+            }
+            if ( model.getUrl() == null )
+            {
+                getLog().info( "Project URL is missing, please type the project URL:" );
+                model.setUrl( inputHandler.readLine() );
                 rewrite = true;
             }
 
@@ -243,8 +204,7 @@ public class BundlePackMojo
 
             if ( rewrite )
             {
-                // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-                new MavenXpp3Writer().write( new OutputStreamWriter( new FileOutputStream( pom ), "UTF-8" ), model );
+                new MavenXpp3Writer().write( WriterFactory.newXmlWriter( pom ), model );
             }
 
             String finalName = null;
@@ -299,6 +259,76 @@ public class BundlePackMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
+    }
+
+    /**
+     * Read groupId, artifactId and version from the user on the command line,
+     * if they were not provided as parameters.
+     *
+     * @throws MojoExecutionException If the values can't be read
+     */
+    private void readArtifactDataFromUser()
+        throws MojoExecutionException
+    {
+        try
+        {
+            if ( groupId == null )
+            {
+                getLog().info( "groupId? " );
+
+                groupId = inputHandler.readLine();
+
+            }
+
+            if ( artifactId == null )
+            {
+                getLog().info( "artifactId? " );
+                artifactId = inputHandler.readLine();
+            }
+
+            if ( version == null )
+            {
+                getLog().info( "version? " );
+                version = inputHandler.readLine();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Read the POM file.
+     *
+     * @param pom The file to read
+     * @return A Maven Model
+     * @throws MojoExecutionException if something goes wrong when reading the file
+     */
+    private Model readPom( File pom )
+        throws MojoExecutionException
+    {
+        Model model;
+        try
+        {
+            model = new MavenXpp3Reader().read( ReaderFactory.newXmlReader( pom ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Unable to parse POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "Unable to read POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
+                                              e );
+        }
+        return model;
     }
 
 }

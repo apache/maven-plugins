@@ -1,22 +1,43 @@
 <?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="including-sources">
       <question>How can I create an upload bundle containing sources and javadoc for a project?</question>
       <answer>
-        <p>You can do that by running the javadoc:jar and sources:jar goals before repository:bundle-create:</p>
         <p>
-          <code>mvn sources:jar javadoc:jar repository:bundle-create</code>
+          You can do that by running the <code>javadoc:jar</code> and
+          <code>sources:jar</code> goals before <code>repository:bundle-create</code>:
         </p>
+        <source>
+mvn sources:jar javadoc:jar repository:bundle-create
+        </source>
       </answer>
     </faq>
     <faq id="bundle-pack">
-      <question>How can I create an upload bunde for a project that I don't build using maven?</question>
+      <question>How can I create an upload bundle for a project that I don't build using maven?</question>
       <answer>
         <p>
-          You can manually add the artifact to your local repository, creating a pom and optionally adding source and
-          javadoc jars. Then you can run "mvn repository:bundle-pack" that will prompt you for groupId, artifactId and
-          version and generate a bundle you can use for an upload request.
+          You can manually add the artifact to your local repository, creating a POM and optionally adding source and
+          javadoc jars. Then you can run <code>mvn repository:bundle-pack</code> that will prompt you for <code>groupId</code>, <code>artifactId</code> and
+          <code>version</code> and will generate a bundle that you can use for an upload request.
         </p>
       </answer>
     </faq>
