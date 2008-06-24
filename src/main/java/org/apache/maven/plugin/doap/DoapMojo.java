@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
+import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -149,26 +150,33 @@ public class DoapMojo
         // Project
         writer.startElement( "Project" );
         writer.addAttribute( "rdf:about", "http://Maven.rdf.apache.org/" );
-        DoapUtil.writeElement( writer, "created", project.getInceptionYear() );
 
-        if ( project.getLicenses().size() > 0 )
-        {
-            //TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
-            //      be more appropriate.
-            DoapUtil.writeRdfResourceElement( writer, "license", ( (License) project.getLicenses().get( 0 ) ).getUrl() );
-        }
+        // name
+        writeName( writer );
 
-        DoapUtil.writeElement( writer, "name", project.getName() );
-        DoapUtil.writeRdfResourceElement( writer, "homepage", project.getUrl() );
+        // description
+        writeDescription( writer );
+
+        // created
+        writeCreated( writer );
+
+        // homepage
+        writeHomepage( writer );
+
+        // licenses
+        writeLicenses( writer );
+
         DoapUtil.writeRdfResourceElement( writer, "asfext:pmc", project.getUrl() );
-        DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
-        DoapUtil.writeElement( writer, "description", project.getDescription() );
 
-        if ( project.getIssueManagement() != null )
-        {
-            DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
-        }
-        DoapUtil.writeRdfResourceElement( writer, "mailing-list", composeUrl( project.getUrl(), "/mail-lists.html" ) );
+        // SCM
+        writeSourceRepositories( writer );
+
+        // bug-database
+        writeBugDatabase( writer );
+
+        // mailing list
+        writeMailingList( writer );
+
         DoapUtil.writeRdfResourceElement( writer, "download-page", composeUrl( project.getUrl(), "/download.html" ) );
         DoapUtil.writeElement( writer, "programming-language", language );
         //TODO: how to lookup category, map it, or just declare it.
@@ -177,17 +185,14 @@ public class DoapMojo
         // Releases
         publishReleases();
 
-        // SCM
-        writeSourceRepositories( writer );
-
         // Developers
         writeDevelopersOrContributors( writer, project.getDevelopers() );
 
         // Contributors
         writeDevelopersOrContributors( writer, project.getContributors() );
 
-        writer.endElement();
-        writer.endElement();
+        writer.endElement(); // Project
+        writer.endElement(); // rdf:RDF
 
         try
         {
@@ -203,6 +208,194 @@ public class DoapMojo
     // Private methods
     // ----------------------------------------------------------------------
 
+    /**
+     * Write DOAP name.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#name">http://usefulinc.com/ns/doap#name</a>
+     */
+    private void writeName( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( project.getName() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "A name of something.", 2 );
+        // http://usefulinc.com/ns/doap#name
+        DoapUtil.writeElement( writer, "name", project.getName() );
+    }
+
+    /**
+     * Write DOAP description.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#description">http://usefulinc.com/ns/doap#description</a>
+     * @see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>
+     */
+    private void writeDescription( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( project.getDescription() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Plain text description of a project, of 2-4 sentences in length.", 2 );
+        // http://usefulinc.com/ns/doap#description
+        DoapUtil.writeElement( writer, "description", project.getDescription() );
+        // http://usefulinc.com/ns/doap#shortdesc
+        DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
+    }
+
+    /**
+     * Write DOAP created.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#created">http://usefulinc.com/ns/doap#created</a>
+     */
+    private void writeCreated( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( project.getInceptionYear() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "Date when something was created, in YYYY-MM-DD form. e.g. 2004-04-05",
+                                        2 );
+        // http://usefulinc.com/ns/doap#created
+        DoapUtil.writeElement( writer, "created", project.getInceptionYear() + "/01/01" );
+    }
+
+    /**
+     * Write DOAP homepage.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#homepage">http://usefulinc.com/ns/doap#homepage</a>
+     */
+    private void writeHomepage( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( project.getUrl() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "URL of a project's homepage, associated with exactly one project.", 2 );
+        // http://usefulinc.com/ns/doap#homepage
+        DoapUtil.writeRdfResourceElement( writer, "homepage", project.getUrl() );
+    }
+
+    /**
+     * Write DOAP licenses.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#license">http://usefulinc.com/ns/doap#license</a>
+     */
+    private void writeLicenses( XMLWriter writer )
+    {
+        if ( project.getLicenses() == null || project.getLicenses().size() == 0 )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "The URI of the license the software is distributed under.", 2 );
+        //TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
+        //      be more appropriate.
+        for ( Iterator it = project.getLicenses().iterator(); it.hasNext(); )
+        {
+            License license = (License) it.next();
+
+            if ( StringUtils.isNotEmpty( license.getUrl() ) )
+            {
+                // http://usefulinc.com/ns/doap#license
+                DoapUtil.writeRdfResourceElement( writer, "license", license.getUrl() );
+            }
+            else
+            {
+                getLog().warn( "No URL was specified for license " + license.getName() );
+            }
+        }
+    }
+
+    /**
+     * Write DOAP bug-database.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#bug-database">http://usefulinc.com/ns/doap#bug-database</a>
+     */
+    private void writeBugDatabase( XMLWriter writer )
+    {
+        if ( project.getIssueManagement() == null )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "bug database.", 2 );
+        if ( StringUtils.isNotEmpty( project.getIssueManagement().getUrl() ) )
+        {
+            // http://usefulinc.com/ns/doap#bug-database
+            DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
+        }
+        else
+        {
+            getLog().warn( "No URL was specified for issue management" );
+        }
+    }
+
+    /**
+     * Write DOAP mailing-list.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#mailing-list">http://usefulinc.com/ns/doap#mailing-list</a>
+     */
+    private void writeMailingList( XMLWriter writer )
+    {
+        if ( project.getMailingLists() == null || project.getMailingLists().size() == 0 )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "mailing list.", 2 );
+        for ( Iterator it = project.getMailingLists().iterator(); it.hasNext(); )
+        {
+            MailingList mailingList = (MailingList) it.next();
+
+            if ( StringUtils.isNotEmpty( mailingList.getArchive() ) )
+            {
+                // http://usefulinc.com/ns/doap#mailing-list
+                DoapUtil.writeRdfResourceElement( writer, "mailing-list", mailingList.getArchive() );
+            }
+            else
+            {
+                getLog().warn( "No archive was specified for mailing list " + mailingList.getName() );
+            }
+
+            if ( mailingList.getOtherArchives() != null )
+            {
+                for ( Iterator it2 = mailingList.getOtherArchives().iterator(); it2.hasNext(); )
+                {
+                    String otherArchive = (String) it2.next();
+
+                    if ( StringUtils.isNotEmpty( otherArchive ) )
+                    {
+                        // http://usefulinc.com/ns/doap#mailing-list
+                        DoapUtil.writeRdfResourceElement( writer, "mailing-list", otherArchive );
+                    }
+                    else
+                    {
+                        getLog().warn( "No other archive was specified for mailing list " + mailingList.getName() );
+                    }
+                }
+            }
+        }
+    }
+
     //TODO: we will actually have to pull all the metadata from the repository
     private void publishReleases()
     {
@@ -212,6 +405,9 @@ public class DoapMojo
      * Write all DOAP repositories.
      *
      * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#Repository">http://usefulinc.com/ns/doap#Repository</a>
+     * @see <a href="http://usefulinc.com/ns/doap#CVSRepository">http://usefulinc.com/ns/doap#CVSRepository</a>
+     * @see <a href="http://usefulinc.com/ns/doap#SVNRepository">http://usefulinc.com/ns/doap#SVNRepository</a>
      */
     private void writeSourceRepositories( XMLWriter writer )
     {
