@@ -41,50 +41,6 @@ public class AntBuildWriterUtilTest
     extends PlexusTestCase
 {
     /**
-     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.writeComment(XMLWriter, String)'
-     */
-    public void testWriteCommentNull()
-    {
-        StringWriter s = new StringWriter();
-        XMLWriter writer = new PrettyPrintXMLWriter( s );
-        XmlWriterUtil.writeComment( writer, null );
-        StringBuffer sb = new StringBuffer();
-        sb.append( "<!-- null                                                                   -->" ).append( '\n' );
-        assertTrue( s.toString().equals( sb.toString() ) );
-    }
-
-    /**
-     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.writeComment(XMLWriter, String)'
-     */
-    public void testWriteCommentShort()
-    {
-        StringWriter s = new StringWriter();
-        XMLWriter writer = new PrettyPrintXMLWriter( s );
-        XmlWriterUtil.writeComment( writer, "This is a short text" );
-        StringBuffer sb = new StringBuffer();
-        sb.append( "<!-- This is a short text                                                   -->" ).append( '\n' );
-        assertTrue( s.toString().equals( sb.toString() ) );
-    }
-
-    /**
-     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.writeComment(XMLWriter, String)'
-     */
-    public void testWriteCommentLong()
-    {
-        StringWriter s = new StringWriter();
-        XMLWriter writer = new PrettyPrintXMLWriter( s );
-        XmlWriterUtil.writeComment( writer, "Maven is a software project management and comprehension tool. "
-            + "Based on the concept of a project object model (POM), Maven can manage a project's build, reporting "
-            + "and documentation from a central piece of information." );
-        StringBuffer sb = new StringBuffer();
-        sb.append( "<!-- Maven is a software project management and comprehension tool. Based   -->" ).append( '\n' );
-        sb.append( "<!-- on the concept of a project object model (POM), Maven can manage a     -->" ).append( '\n' );
-        sb.append( "<!-- project's build, reporting and documentation from a central piece of   -->" ).append( '\n' );
-        sb.append( "<!-- information.                                                           -->" ).append( '\n' );
-        assertTrue( s.toString().equals( sb.toString() ) );
-    }
-
-    /**
      * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.getMavenCompilerPluginConfiguration(MavenProject, String, String)'
      *
      * @throws Exception
