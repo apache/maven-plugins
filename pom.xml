@@ -108,6 +108,29 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <version>1.0-alpha-18</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <version>1.0.0</version>
+          <models>
+            <model>src/main/mdo/doapOptions.mdo</model>
+          </models>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <properties>
     <scmVersion>1.0</scmVersion>
   </properties>
