@@ -149,10 +149,11 @@ under the License.
 
   <build>
     <plugins>
+      <!-- TODO: remove when maven-plugins parent pom 12 is released -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.2-SNAPSHOT</version>
+        <version>2.4.2</version>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
