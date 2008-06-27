@@ -22,11 +22,20 @@ package org.apache.maven.plugin.doap;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataResolutionException;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
@@ -71,7 +80,23 @@ public class DoapMojo
      * @readonly
      * @since 1.0
      */
-    protected ScmManager scmManager;
+    private ScmManager scmManager;
+
+    /**
+     * Artifact factory.
+     *
+     * @component
+     * @since 1.0
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * Used to resolve artifacts.
+     *
+     * @component
+     * @since 1.0
+     */
+    private RepositoryMetadataManager repositoryMetadataManager;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -117,6 +142,26 @@ public class DoapMojo
      * @since 1.0
      */
     private DoapOptions doapOptions;
+
+    /**
+     * The local repository where the artifacts are located.
+     *
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     * @since 1.0
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * The remote repositories where the artifacts are located.
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     * @since 1.0
+     */
+    private List remoteRepositories;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -204,7 +249,7 @@ public class DoapMojo
         writeScreenshots( writer );
 
         // Releases
-        publishReleases();
+        writeReleases( writer );
 
         // Developers
         writeDevelopersOrContributors( writer, project.getDevelopers() );
@@ -575,9 +620,125 @@ public class DoapMojo
         }
     }
 
-    //TODO: we will actually have to pull all the metadata from the repository
-    private void publishReleases()
+    /**
+     * Write all DOAP releases.
+     *
+     * @param writer
+     * @throws MojoExecutionException if any
+     * @see <a href="http://usefulinc.com/ns/doap#release">http://usefulinc.com/ns/doap#release</a>
+     * @see <a href="http://usefulinc.com/ns/doap#Version">http://usefulinc.com/ns/doap#Version</a>
+     */
+    private void writeReleases( XMLWriter writer )
+        throws MojoExecutionException
     {
+        Artifact artifact = artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), project
+            .getVersion(), null, project.getPackaging() );
+        RepositoryMetadata metadata = new ArtifactRepositoryMetadata( artifact );
+        try
+        {
+            repositoryMetadataManager.resolve( metadata, remoteRepositories, localRepository );
+        }
+        catch ( RepositoryMetadataResolutionException e )
+        {
+            throw new MojoExecutionException( metadata + " could not be retrieved from repositories due to an error: "
+                + e.getMessage(), e );
+        }
+
+        if ( metadata.getMetadata().getVersioning() == null )
+        {
+            getLog().info( "No versioning was found - ignored writing <release/> tag." );
+            return;
+        }
+
+        List versions = metadata.getMetadata().getVersioning().getVersions();
+        // Recent releases in first
+        Collections.reverse( versions );
+        boolean addComment = false;
+        for ( Iterator it = versions.iterator(); it.hasNext(); )
+        {
+            String version = (String) it.next();
+
+            // we want only release
+            if ( StringUtils.isEmpty( metadata.getMetadata().getVersioning().getRelease() ) )
+            {
+                continue;
+            }
+
+            // we don't write the latest
+            if ( version.equals( metadata.getMetadata().getVersioning().getLatest() ) )
+            {
+                continue;
+            }
+
+            if ( !addComment )
+            {
+                XmlWriterUtil.writeLineBreak( writer );
+                XmlWriterUtil.writeCommentText( writer, "Project releases.", 2 );
+                addComment = true;
+            }
+
+            // http://usefulinc.com/ns/doap#release
+            writer.startElement( "release" );
+            // http://usefulinc.com/ns/doap#Version
+            writer.startElement( "Version" );
+
+            writer.startElement( "name" );
+            if ( version.equals( metadata.getMetadata().getVersioning().getRelease() ))
+            {
+                writer.writeText( "Latest stable release" );
+            }
+            else
+            {
+                writer.writeText( project.getName() + " - " + version );
+            }
+            writer.endElement(); // name
+
+            writer.startElement( "revision" );
+            writer.writeText( version );
+            writer.endElement(); // revision
+
+            // list all file release from all remote repos
+            for ( Iterator it2 = remoteRepositories.iterator(); it2.hasNext(); )
+            {
+                ArtifactRepository repo = (ArtifactRepository) it2.next();
+
+                Artifact artifactRelease = artifactFactory.createArtifact( project.getGroupId(), project
+                    .getArtifactId(), version, null, project.getPackaging() );
+
+                if ( artifactRelease == null )
+                {
+                    continue;
+                }
+
+                String fileRelease = repo.getUrl() + "/" + repo.pathOf( artifactRelease );
+                // try to ping the url
+                try
+                {
+                    URL urlRelease = new URL( fileRelease );
+                    urlRelease.openStream();
+                }
+                catch ( MalformedURLException e )
+                {
+                    getLog().debug( e.getMessage(), e );
+                    continue;
+                }
+                catch ( IOException e )
+                {
+                    // Not found, ignored
+                    getLog().debug( e.getMessage(), e );
+                    continue;
+                }
+
+                writer.startElement( "file-release" );
+                writer.writeText( fileRelease );
+                writer.endElement(); // file-release
+            }
+
+            // TODO: how to handle release date?
+
+            writer.endElement(); // Version
+            writer.endElement(); // release
+        }
     }
 
     /**
