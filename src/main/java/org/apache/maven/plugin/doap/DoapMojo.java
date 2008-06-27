@@ -248,6 +248,9 @@ public class DoapMojo
         // screenshots
         writeScreenshots( writer );
 
+        // wiki
+        writeWiki( writer );
+
         // Releases
         writeReleases( writer );
 
@@ -510,6 +513,25 @@ public class DoapMojo
         XmlWriterUtil.writeCommentText( writer, "Web page with screenshots of project.", 2 );
         // http://usefulinc.com/ns/doap#screenshots
         DoapUtil.writeRdfResourceElement( writer, "screenshots", doapOptions.getScreenshots() );
+    }
+
+    /**
+     * Write DOAP wiki.
+     *
+     * @param writer
+     * @see <a href="http://usefulinc.com/ns/doap#wiki">http://usefulinc.com/ns/doap#wiki</a>
+     */
+    private void writeWiki( XMLWriter writer )
+    {
+        if ( StringUtils.isEmpty( doapOptions.getWiki() ) )
+        {
+            return;
+        }
+
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "URL of Wiki for collaborative discussion of project.", 2 );
+        // http://usefulinc.com/ns/doap#wiki
+        DoapUtil.writeRdfResourceElement( writer, "wiki", doapOptions.getWiki() );
     }
 
     /**
