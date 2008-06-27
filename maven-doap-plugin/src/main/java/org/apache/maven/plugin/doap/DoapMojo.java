@@ -58,9 +58,11 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
- * Generate a Description of a Project (DOAP) file from the information found in a POM.
+ * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a>
+ * file from the main information found in a POM.
  *
  * @author Jason van Zyl
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 1.0
  * @goal generate
@@ -118,32 +120,6 @@ public class DoapMojo
     private File doapFile;
 
     /**
-     * The category which should be displayed in the DOAP file. The POM doesn't have any
-     * notions of category yet.
-     *
-     * @parameter expression="${category}"
-     * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code> parameter.
-     */
-    private String category;
-
-    /**
-     * The language which should be displayed in the DOAP file. The POM doesn't have any
-     * notions of language yet.
-     *
-     * @parameter expression="${language}"
-     * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in <code>doapOptions</code> parameter.
-     */
-    private String language;
-
-    /**
-     * Specific DOAP parameters, i.e. options that POM doesn't have any notions.
-     *
-     * @parameter expression="${doapOptions}"
-     * @since 1.0
-     */
-    private DoapOptions doapOptions;
-
-    /**
      * The local repository where the artifacts are located.
      *
      * @parameter expression="${localRepository}"
@@ -162,6 +138,41 @@ public class DoapMojo
      * @since 1.0
      */
     private List remoteRepositories;
+
+    // ----------------------------------------------------------------------
+    // Doap options
+    // ----------------------------------------------------------------------
+
+    /**
+     * The category which should be displayed in the DOAP file.
+     *
+     * @parameter expression="${category}"
+     * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code> parameter.
+     */
+    private String category;
+
+    /**
+     * The language which should be displayed in the DOAP file.
+     *
+     * @parameter expression="${language}"
+     * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in <code>doapOptions</code> parameter.
+     */
+    private String language;
+
+    /**
+     * Specific DOAP parameters, i.e. options that POM doesn't have any notions.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;doapOptions&gt;
+     * &nbsp;&nbsp;&lt;programmingLanguage&gt;java&lt;/programmingLanguage&gt;
+     * &lt;/doapOptions&gt;
+     * </pre>
+     *
+     * @parameter expression="${doapOptions}"
+     * @since 1.0
+     */
+    private DoapOptions doapOptions;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -280,7 +291,7 @@ public class DoapMojo
     /**
      * Write DOAP name.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#name">http://usefulinc.com/ns/doap#name</a>
      */
     private void writeName( XMLWriter writer )
@@ -292,14 +303,13 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "A name of something.", 2 );
-        // http://usefulinc.com/ns/doap#name
         DoapUtil.writeElement( writer, "name", project.getName() );
     }
 
     /**
      * Write DOAP description.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#description">http://usefulinc.com/ns/doap#description</a>
      * @see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>
      */
@@ -312,16 +322,14 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Plain text description of a project, of 2-4 sentences in length.", 2 );
-        // http://usefulinc.com/ns/doap#description
         DoapUtil.writeElement( writer, "description", project.getDescription() );
-        // http://usefulinc.com/ns/doap#shortdesc
         DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
     }
 
     /**
      * Write DOAP created.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#created">http://usefulinc.com/ns/doap#created</a>
      */
     private void writeCreated( XMLWriter writer )
@@ -334,14 +342,13 @@ public class DoapMojo
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Date when something was created, in YYYY-MM-DD form. e.g. 2004-04-05",
                                         2 );
-        // http://usefulinc.com/ns/doap#created
         DoapUtil.writeElement( writer, "created", project.getInceptionYear() + "-01-01" );
     }
 
     /**
      * Write DOAP homepage and old-homepage.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#homepage">http://usefulinc.com/ns/doap#homepage</a>
      * @see <a href="http://usefulinc.com/ns/doap#old-homepage">http://usefulinc.com/ns/doap#old-homepage</a>
      */
@@ -352,7 +359,6 @@ public class DoapMojo
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil.writeCommentText( writer,
                                             "URL of a project's homepage, associated with exactly one project.", 2 );
-            // http://usefulinc.com/ns/doap#homepage
             DoapUtil.writeRdfResourceElement( writer, "homepage", project.getUrl() );
         }
 
@@ -361,7 +367,6 @@ public class DoapMojo
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil
                 .writeCommentText( writer, "URL of a project's past homepage, associated with exactly one project.", 2 );
-            // http://usefulinc.com/ns/doap#old-homepage
             DoapUtil.writeRdfResourceElement( writer, "old-homepage", doapOptions.getOldHomepage() );
         }
     }
@@ -369,7 +374,7 @@ public class DoapMojo
     /**
      * Write DOAP programming-language.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#programming-language">http://usefulinc.com/ns/doap#programming-language</a>
      */
     private void writeProgrammingLanguage( XMLWriter writer )
@@ -384,7 +389,6 @@ public class DoapMojo
 
         if ( StringUtils.isNotEmpty( language ) ) // backward compatible
         {
-            // http://usefulinc.com/ns/doap#programming-language
             DoapUtil.writeRdfResourceElement( writer, "programming-language", language );
         }
 
@@ -393,7 +397,6 @@ public class DoapMojo
             String[] languages = StringUtils.split( doapOptions.getProgrammingLanguage(), "," );
             for ( int i = 0; i < languages.length; i++ )
             {
-                // http://usefulinc.com/ns/doap#programming-language
                 DoapUtil.writeRdfResourceElement( writer, "programming-language", languages[i].trim() );
             }
         }
@@ -402,7 +405,7 @@ public class DoapMojo
     /**
      * Write DOAP category.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#category">http://usefulinc.com/ns/doap#category</a>
      */
     private void writeCategory( XMLWriter writer )
@@ -418,7 +421,6 @@ public class DoapMojo
 
         if ( StringUtils.isNotEmpty( category ) ) // backward compatible
         {
-            // http://usefulinc.com/ns/doap#category
             DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
         }
 
@@ -427,7 +429,6 @@ public class DoapMojo
             String[] categories = StringUtils.split( doapOptions.getCategory(), "," );
             for ( int i = 0; i < categories.length; i++ )
             {
-                // http://usefulinc.com/ns/doap#category
                 DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/"
                     + categories[i].trim() );
             }
@@ -437,7 +438,7 @@ public class DoapMojo
     /**
      * Write DOAP download-page and download-mirror.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#download-page">http://usefulinc.com/ns/doap#download-page</a>
      * @see <a href="http://usefulinc.com/ns/doap#download-mirror">http://usefulinc.com/ns/doap#download-mirror</a>
      */
@@ -455,7 +456,6 @@ public class DoapMojo
         {
             XmlWriterUtil.writeLineBreak( writer );
             XmlWriterUtil.writeCommentText( writer, "Download page.", 2 );
-            // http://usefulinc.com/ns/doap#download-page
             DoapUtil.writeRdfResourceElement( writer, "download-page", doapOptions.getDownloadPage() );
         }
 
@@ -466,7 +466,6 @@ public class DoapMojo
             String[] downloadMirrors = StringUtils.split( doapOptions.getDownloadMirror(), "," );
             for ( int i = 0; i < downloadMirrors.length; i++ )
             {
-                // http://usefulinc.com/ns/doap#download-mirror
                 DoapUtil.writeRdfResourceElement( writer, "download-mirror", downloadMirrors[i].trim() );
             }
         }
@@ -475,7 +474,7 @@ public class DoapMojo
     /**
      * Write DOAP OS.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#os">http://usefulinc.com/ns/doap#os</a>
      */
     private void writeOS( XMLWriter writer )
@@ -491,7 +490,6 @@ public class DoapMojo
         String[] oses = StringUtils.split( doapOptions.getOs(), "," );
         for ( int i = 0; i < oses.length; i++ )
         {
-            // http://usefulinc.com/ns/doap#os
             DoapUtil.writeRdfResourceElement( writer, "os", oses[i].trim() );
         }
     }
@@ -499,7 +497,7 @@ public class DoapMojo
     /**
      * Write DOAP screenshots.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#screenshots">http://usefulinc.com/ns/doap#screenshots</a>
      */
     private void writeScreenshots( XMLWriter writer )
@@ -511,14 +509,13 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Web page with screenshots of project.", 2 );
-        // http://usefulinc.com/ns/doap#screenshots
         DoapUtil.writeRdfResourceElement( writer, "screenshots", doapOptions.getScreenshots() );
     }
 
     /**
      * Write DOAP wiki.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#wiki">http://usefulinc.com/ns/doap#wiki</a>
      */
     private void writeWiki( XMLWriter writer )
@@ -530,14 +527,13 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "URL of Wiki for collaborative discussion of project.", 2 );
-        // http://usefulinc.com/ns/doap#wiki
         DoapUtil.writeRdfResourceElement( writer, "wiki", doapOptions.getWiki() );
     }
 
     /**
      * Write DOAP licenses.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#license">http://usefulinc.com/ns/doap#license</a>
      */
     private void writeLicenses( XMLWriter writer )
@@ -557,7 +553,6 @@ public class DoapMojo
 
             if ( StringUtils.isNotEmpty( license.getUrl() ) )
             {
-                // http://usefulinc.com/ns/doap#license
                 DoapUtil.writeRdfResourceElement( writer, "license", license.getUrl() );
             }
             else
@@ -570,7 +565,7 @@ public class DoapMojo
     /**
      * Write DOAP bug-database.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#bug-database">http://usefulinc.com/ns/doap#bug-database</a>
      */
     private void writeBugDatabase( XMLWriter writer )
@@ -584,7 +579,6 @@ public class DoapMojo
         XmlWriterUtil.writeCommentText( writer, "bug database.", 2 );
         if ( StringUtils.isNotEmpty( project.getIssueManagement().getUrl() ) )
         {
-            // http://usefulinc.com/ns/doap#bug-database
             DoapUtil.writeRdfResourceElement( writer, "bug-database", project.getIssueManagement().getUrl() );
         }
         else
@@ -596,7 +590,7 @@ public class DoapMojo
     /**
      * Write DOAP mailing-list.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#mailing-list">http://usefulinc.com/ns/doap#mailing-list</a>
      */
     private void writeMailingList( XMLWriter writer )
@@ -614,7 +608,6 @@ public class DoapMojo
 
             if ( StringUtils.isNotEmpty( mailingList.getArchive() ) )
             {
-                // http://usefulinc.com/ns/doap#mailing-list
                 DoapUtil.writeRdfResourceElement( writer, "mailing-list", mailingList.getArchive() );
             }
             else
@@ -630,7 +623,6 @@ public class DoapMojo
 
                     if ( StringUtils.isNotEmpty( otherArchive ) )
                     {
-                        // http://usefulinc.com/ns/doap#mailing-list
                         DoapUtil.writeRdfResourceElement( writer, "mailing-list", otherArchive );
                     }
                     else
@@ -645,7 +637,7 @@ public class DoapMojo
     /**
      * Write all DOAP releases.
      *
-     * @param writer
+     * @param writer not null
      * @throws MojoExecutionException if any
      * @see <a href="http://usefulinc.com/ns/doap#release">http://usefulinc.com/ns/doap#release</a>
      * @see <a href="http://usefulinc.com/ns/doap#Version">http://usefulinc.com/ns/doap#Version</a>
@@ -699,9 +691,7 @@ public class DoapMojo
                 addComment = true;
             }
 
-            // http://usefulinc.com/ns/doap#release
             writer.startElement( "release" );
-            // http://usefulinc.com/ns/doap#Version
             writer.startElement( "Version" );
 
             writer.startElement( "name" );
@@ -766,7 +756,7 @@ public class DoapMojo
     /**
      * Write all DOAP repositories.
      *
-     * @param writer
+     * @param writer not null
      * @see <a href="http://usefulinc.com/ns/doap#Repository">http://usefulinc.com/ns/doap#Repository</a>
      * @see <a href="http://usefulinc.com/ns/doap#CVSRepository">http://usefulinc.com/ns/doap#CVSRepository</a>
      * @see <a href="http://usefulinc.com/ns/doap#SVNRepository">http://usefulinc.com/ns/doap#SVNRepository</a>
@@ -815,24 +805,19 @@ public class DoapMojo
 
         if ( isScmSystem( repository, "cvs" ) )
         {
-            // http://usefulinc.com/ns/doap#CVSRepository
             writer.startElement( "CVSRepository" );
 
             CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) repository.getProviderRepository();
 
-            // http://usefulinc.com/ns/doap#anon-root
             DoapUtil.writeElement( writer, "anon-root", cvsRepo.getCvsRoot() );
-            // http://usefulinc.com/ns/doap#module
             DoapUtil.writeElement( writer, "module", cvsRepo.getModule() );
         }
         else if ( isScmSystem( repository, "svn" ) )
         {
-            // http://usefulinc.com/ns/doap#SVNRepository
             writer.startElement( "SVNRepository" );
 
             SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
-            // http://usefulinc.com/ns/doap#location
             DoapUtil.writeRdfResourceElement( writer, "location", svnRepo.getUrl() );
         }
         else
@@ -850,11 +835,9 @@ public class DoapMojo
                 throw new IllegalArgumentException( "The source repository connection is too short." );
             }
 
-            // http://usefulinc.com/ns/doap#location
             DoapUtil.writeRdfResourceElement( writer, "location", connection.substring( 4 ) );
         }
 
-        // http://usefulinc.com/ns/doap#browse
         DoapUtil.writeRdfResourceElement( writer, "browse", project.getScm().getUrl() );
 
         writer.endElement(); // CVSRepository || SVNRepository || Repository
@@ -958,6 +941,11 @@ public class DoapMojo
      * @see <a href="http://usefulinc.com/ns/doap#translator">http://usefulinc.com/ns/doap#translator</a>
      * @see <a href="http://usefulinc.com/ns/doap#tester">http://usefulinc.com/ns/doap#tester</a>
      * @see <a href="http://usefulinc.com/ns/doap#helper">http://usefulinc.com/ns/doap#helper</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/Person">http://xmlns.com/foaf/0.1/Person</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/name">http://xmlns.com/foaf/0.1/name</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/mbox">http://xmlns.com/foaf/0.1/mbox</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/Organization">http://xmlns.com/foaf/0.1/Organization</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/homepage">http://xmlns.com/foaf/0.1/homepage</a>
      */
     private void writeDeveloperOrContributor( XMLWriter writer, List developersOrContributors, String doapType )
     {
@@ -1039,32 +1027,21 @@ public class DoapMojo
                 continue;
             }
 
-            // http://usefulinc.com/ns/doap#maintainer
-            // http://usefulinc.com/ns/doap#developer
-            // http://usefulinc.com/ns/doap#documenter
-            // http://usefulinc.com/ns/doap#translator
-            // http://usefulinc.com/ns/doap#tester
-            // http://usefulinc.com/ns/doap#helper
             writer.startElement( doapType );
-            // http://xmlns.com/foaf/0.1/Person
             writer.startElement( "foaf:Person" );
-            // http://xmlns.com/foaf/0.1/name
             writer.startElement( "foaf:name" );
             writer.writeText( name );
             writer.endElement(); // foaf:name
             if ( StringUtils.isNotEmpty( email ) )
             {
-                // http://xmlns.com/foaf/0.1/mbox
                 DoapUtil.writeRdfResourceElement( writer, "foaf:mbox", "mailto:" + email );
             }
             if ( StringUtils.isNotEmpty( organization ) )
             {
-                // http://xmlns.com/foaf/0.1/Organization
                 DoapUtil.writeRdfResourceElement( writer, "foaf:Organization", organization );
             }
             if ( StringUtils.isNotEmpty( homepage ) )
             {
-                // http://xmlns.com/foaf/0.1/homepage
                 DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", homepage );
             }
             writer.endElement(); // foaf:Person
