@@ -295,7 +295,7 @@ public class PmdReport
                         writer.write( buffer, 0, buffer.length() );
                         writer.close();
     
-                        File siteDir = new File( targetDirectory, "site" );
+                        File siteDir = getReportOutputDirectory();
                         siteDir.mkdirs();
                         writer = new FileWriter( new File( siteDir,
                                                              "pmd." + format ) );
