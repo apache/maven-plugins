@@ -45,6 +45,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
+        <version>@pom.version@</version>
         <configuration>
           <issueLinkTemplate>myjira/browse/%ISSUE%</issueLinkTemplate>
         </configuration>
