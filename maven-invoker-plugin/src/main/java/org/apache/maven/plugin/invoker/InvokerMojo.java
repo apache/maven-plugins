@@ -794,17 +794,36 @@ public class InvokerMojo
             {
                 if ( !suppressSummaries )
                 {
-                    getLog().info( "...FAILED. See " + outputLog.getAbsolutePath() + " for details." );
+                    StringBuffer buffer = new StringBuffer( 256 );
+                    buffer.append( "...FAILED. " );
+                    if ( noLog )
+                    {
+                        buffer.append( "Rerun with -Dinvoker.noLog=false for more details." );
+                    }
+                    else
+                    {
+                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                    }
+                    getLog().info( buffer.toString() );
                 }
+
                 failures.add( pom );
             }
             else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
             {
                 if ( !suppressSummaries )
                 {
-                    getLog().info(
-                                   "...FAILED[code=" + result.getExitCode() + "]. See " + outputLog.getAbsolutePath()
-                                       + " for details." );
+                    StringBuffer buffer = new StringBuffer( 256 );
+                    buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
+                    if ( noLog )
+                    {
+                        buffer.append( "Rerun with -Dinvoker.noLog=false for more details." );
+                    }
+                    else
+                    {
+                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                    }
+                    getLog().info( buffer.toString() );
                 }
 
                 failures.add( pom );
