@@ -782,6 +782,8 @@ public class InvokerMojo
                 getLog().info( "...FAILED[error invoking Maven]" );
 
                 failures.add( pom );
+
+                return;
             }
 
             final CommandLineException executionException = result.getExecutionException();
