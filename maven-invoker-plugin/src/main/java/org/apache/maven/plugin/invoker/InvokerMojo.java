@@ -796,13 +796,13 @@ public class InvokerMojo
                 {
                     StringBuffer buffer = new StringBuffer( 256 );
                     buffer.append( "...FAILED. " );
-                    if ( noLog )
+                    if ( !noLog )
                     {
-                        buffer.append( "Rerun with -Dinvoker.noLog=false for more details." );
+                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
                     }
                     else
                     {
-                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                        buffer.append( "See console output for details." );
                     }
                     getLog().info( buffer.toString() );
                 }
@@ -815,13 +815,13 @@ public class InvokerMojo
                 {
                     StringBuffer buffer = new StringBuffer( 256 );
                     buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
-                    if ( noLog )
+                    if ( !noLog )
                     {
-                        buffer.append( "Rerun with -Dinvoker.noLog=false for more details." );
+                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
                     }
                     else
                     {
-                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                        buffer.append( "See console output for details." );
                     }
                     getLog().info( buffer.toString() );
                 }
