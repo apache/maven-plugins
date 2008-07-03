@@ -32,7 +32,8 @@ under the License.
   <classes>
     <class>
       <name>DoapOptions</name>
-      <description>Specific DOAP parameters, i.e. options that POM doesn't have any notions.</description>
+      <description><![CDATA[Specific DOAP parameters, i.e. options that POM doesn't have any notions.
+@see <a href="http://usefulinc.com/ns/doap#">http://usefulinc.com/ns/doap#</a>]]></description>
       <version>1.0.0</version>
       <fields>
         <field>
