@@ -35,10 +35,13 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 /**
- * Generates the Project Source Code Management report.
+ * Generates the Project Source Code Management (SCM) report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
@@ -62,7 +65,7 @@ public class ScmReport
     protected ScmManager scmManager;
 
     /**
-     * The directory name to checkout right after the scm url
+     * The directory name to checkout right after the SCM url.
      *
      * @parameter expression="${project.artifactId}"
      * @required
@@ -70,23 +73,25 @@ public class ScmReport
     private String checkoutDirectoryName;
 
     /**
-     * The scm anonymous connection url.
+     * The SCM anonymous connection url respecting the SCM URL Format.
      *
      * @parameter default-value="${project.scm.connection}"
      * @since 2.1
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
      */
     private String anonymousConnection;
 
     /**
-     * The scm developer connection url.
+     * The SCM developer connection url respecting the SCM URL Format.
      *
      * @parameter default-value="${project.scm.developerConnection}"
      * @since 2.1
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
      */
     private String developerConnection;
 
     /**
-     * The scm web access url.
+     * The SCM web access url.
      *
      * @parameter default-value="${project.scm.url}"
      * @since 2.1
@@ -294,7 +299,7 @@ public class ScmReport
 
         /**
          * Render the anonymous access section depending the repository.
-         * <p>Note: ClearCase, Starteam et Perforce seems to have no anonymous access.</>
+         * <p>Note: ClearCase, Starteam et Perforce seems to have no anonymous access.</p>
          *
          * @param anonymousRepository the anonymous repository
          */
@@ -325,11 +330,6 @@ public class ScmReport
             else
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
-
-                if ( anonymousConnection.length() < 4 )
-                {
-                    throw new IllegalArgumentException( "The source repository connection is too short." );
-                }
 
                 verbatimText( anonymousConnection.substring( 4 ) );
             }
@@ -384,11 +384,6 @@ public class ScmReport
             else
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.general.intro" ) );
-
-                if ( devConnection.length() < 4 )
-                {
-                    throw new IllegalArgumentException( "The source repository connection is too short." );
-                }
 
                 verbatimText( devConnection.substring( 4 ) );
             }
@@ -660,26 +655,81 @@ public class ScmReport
          */
         public ScmRepository getScmRepository( String scmUrl )
         {
-            ScmRepository repo = null;
-            if ( !StringUtils.isEmpty( scmUrl ) )
+            if ( StringUtils.isEmpty( scmUrl ) )
             {
-                try
+                return null;
+            }
+
+            ScmRepository repo = null;
+            List messages = new ArrayList();
+            try
+            {
+                messages.addAll( scmManager.validateScmRepository( scmUrl ) );
+            }
+            catch ( Exception e )
+            {
+                messages.add( e.getMessage() );
+            }
+
+            if ( messages.size() > 0 )
+            {
+                StringBuffer sb = new StringBuffer();
+                boolean isIntroAdded = false;
+                for ( Iterator it = messages.iterator(); it.hasNext(); )
                 {
-                    repo = scmManager.makeScmRepository( scmUrl );
-                }
-                catch ( NoSuchScmProviderException e )
-                {
-                    if ( log.isDebugEnabled() )
+                    String msg = it.next().toString();
+
+                    // Ignore NoSuchScmProviderException msg
+                    // See impl of AbstractScmManager#validateScmRepository()
+                    if ( msg.startsWith( "No such provider" ) )
                     {
-                        log.debug( e.getMessage(), e );
+                        continue;
                     }
-                }
-                catch ( ScmRepositoryException e )
-                {
-                    if ( log.isDebugEnabled() )
+
+                    if ( !isIntroAdded )
                     {
-                        log.debug( e.getMessage(), e );
+                        sb.append( "This SCM url '" + scmUrl + "' is invalid due to the following errors:" );
+                        sb.append( "\n" );
+                        isIntroAdded = true;
                     }
+                    sb.append( " * " );
+                    sb.append( msg );
+                    sb.append( "\n" );
+                }
+
+                if ( StringUtils.isNotEmpty( sb.toString() ) )
+                {
+                    sb.append( "For more information about SCM URL Format, please refer to: "
+                        + "http://maven.apache.org/scm/scm-url-format.html" );
+
+                    throw new IllegalArgumentException( sb.toString() );
+                }
+            }
+
+            try
+            {
+                repo = scmManager.makeScmRepository( scmUrl );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
+                }
+            }
+            catch ( ScmRepositoryException e )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
+                }
+            }
+            catch ( Exception e )
+            {
+                // Should be already catched
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
                 }
             }
 
