@@ -49,6 +49,10 @@ public class DependencyConvergenceReport
 {
     private static final int PERCENTAGE = 100;
 
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
