@@ -29,5 +29,14 @@ under the License.
         </p>
       </answer>
     </faq>
+
+    <faq id="How to exclude SCM anonymous access info">
+      <question>How to exclude SCM access info?</question>
+      <answer>
+        <p>
+          See the <a href="examples/scm-report.html#How_to_exclude_SCM_anonymous_access_info">SCM report documentation</a>.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
