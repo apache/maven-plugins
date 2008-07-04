@@ -55,6 +55,10 @@ import java.util.regex.Pattern;
 public class LicenseReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The Maven Settings.
      *
