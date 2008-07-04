@@ -48,6 +48,10 @@ import java.util.Locale;
 public class ScmReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * Maven SCM Manager.
      *
