@@ -19,7 +19,10 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.File;
 import java.net.URL;
+
+import org.apache.maven.plugin.Mojo;
 
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.TextBlock;
@@ -77,5 +80,61 @@ public class ScmReportTest
         assertEquals( getString( "report.scm.webaccess.nourl" ), textBlocks[3].getText() );
         assertEquals( getString( "report.scm.accessbehindfirewall.title" ), textBlocks[4].getText() );
         assertEquals( getString( "report.scm.accessbehindfirewall.general.intro" ), textBlocks[5].getText() );
+    }
+
+    /**
+     * Test report with wrong URL
+     *
+     * @throws Exception if any
+     */
+    public void testReportWithWrongUrl()
+        throws Exception
+    {
+        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + "scm-wrong-url-plugin-config.xml" );
+        Mojo mojo = lookupMojo( "scm", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+
+        setVariableValueToObject( mojo, "anonymousConnection", "scm:svn" );
+        try
+        {
+            mojo.execute();
+            assertTrue( "IllegalArgumentException NOT catched", false );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertTrue( "IllegalArgumentException catched", true );
+        }
+
+        tearDown();
+        setUp();
+
+        mojo = lookupMojo( "scm", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+        setVariableValueToObject( mojo, "anonymousConnection", "scm:svn:http" );
+        try
+        {
+            mojo.execute();
+            assertTrue( "IllegalArgumentException NOT catched", false );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( "IllegalArgumentException catched", true );
+        }
+
+        tearDown();
+        setUp();
+
+        mojo = lookupMojo( "scm", pluginXmlFile );
+        assertNotNull( "Mojo found.", mojo );
+        setVariableValueToObject( mojo, "anonymousConnection", "scm" );
+        try
+        {
+            mojo.execute();
+            assertTrue( "IllegalArgumentException NOT catched", false );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( "IllegalArgumentException catched", true );
+        }
     }
 }
