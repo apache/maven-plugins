@@ -48,6 +48,10 @@ import java.util.Locale;
 public class DependenciesReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
     /**
      * Maven Project Builder component.
      *
@@ -92,6 +96,10 @@ public class DependenciesReport
      * @component
      */
     private JarClassesAnalysis classesAnalyzer;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
 
     /**
      * The current user system settings for use in Maven.

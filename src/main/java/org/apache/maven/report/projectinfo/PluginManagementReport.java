@@ -37,6 +37,10 @@ import org.apache.maven.report.projectinfo.dependencies.renderer.PluginManagemen
 public class PluginManagementReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
     /**
      * Maven Project Builder component.
      *

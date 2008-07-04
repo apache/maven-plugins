@@ -57,13 +57,49 @@ import java.util.Map;
 public abstract class AbstractProjectInfoReport
     extends AbstractMavenReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
     /**
-     * SiteTool.
+     * SiteTool component.
      *
      * @since 2.1
      * @component
      */
     protected SiteTool siteTool;
+
+    /**
+     * Doxia Site Renderer component.
+     *
+     * @component
+     */
+    protected Renderer siteRenderer;
+
+    /**
+     * Artifact Resolver component.
+     *
+     * @component
+     */
+    protected ArtifactResolver resolver;
+
+    /**
+     * Artifact Factory component.
+     *
+     * @component
+     */
+    protected ArtifactFactory factory;
+
+    /**
+     * Internationalization component.
+     *
+     * @component
+     */
+    protected I18N i18n;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
 
     /**
      * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
@@ -74,13 +110,6 @@ public abstract class AbstractProjectInfoReport
      * @required
      */
     protected File outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    protected Renderer siteRenderer;
 
     /**
      * The Maven Project.
@@ -99,23 +128,6 @@ public abstract class AbstractProjectInfoReport
      * @readonly
      */
     protected ArtifactRepository localRepository;
-
-    /**
-     * @component
-     */
-    protected ArtifactResolver resolver;
-
-    /**
-     * @component
-     */
-    protected ArtifactFactory factory;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    protected I18N i18n;
 
     // ----------------------------------------------------------------------
     // Public methods
