@@ -107,7 +107,20 @@ public class ComponentsXmlResourceTransformer
 
             String roleHint = child != null ? child.getValue() : "";
 
-            components.put( role + roleHint, component );
+            String key = role+roleHint;
+            if ( components.containsKey( key ) )
+            {
+                // TODO: use the tools in Plexus to merge these properly. For now, I just need an all-or-nothing
+                // configuration carry over
+                
+                Xpp3Dom dom = (Xpp3Dom) components.get( key );
+                if ( dom.getChild( "configuration" ) != null )
+                {
+                    component.addChild( dom.getChild( "configuration" ) );
+                }
+            }
+            
+            components.put( key, component );
         }
     }
 
