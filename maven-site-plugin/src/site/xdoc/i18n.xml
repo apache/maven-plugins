@@ -373,6 +373,9 @@ under the License.
               <b>Tools to convert a file from one encoding to another encoding</b>:
               Unix <i>iconv</i> command, Notepad++.
             </li>
+            <li>
+              <b>IDE plugins</b>: <a href="http://propedit.sourceforge.jp/index_en.html">Properties Editor Eclipse Plugin</a>.
+            </li>
           </ul>
         </p>
         <p>
