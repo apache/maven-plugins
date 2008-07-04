@@ -112,9 +112,8 @@ public class ScmReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r =
-            new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName,
-                    webAccessUrl, anonymousConnection, developerConnection );
+        ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale,
+                                         checkoutDirectoryName, webAccessUrl, anonymousConnection, developerConnection );
 
         r.render();
     }
@@ -153,8 +152,8 @@ public class ScmReport
 
         private String webAccessUrl;
 
-        ScmRenderer( Log log, ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName,
-                     String webAccessUrl, String anonymousConnection, String devConnection )
+        ScmRenderer( Log log, ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale,
+                     String checkoutDirName, String webAccessUrl, String anonymousConnection, String devConnection )
         {
             super( sink );
 
@@ -311,22 +310,21 @@ public class ScmReport
 
             if ( anonymousRepository != null && isScmSystem( anonymousRepository, "cvs" ) )
             {
-                CvsScmProviderRepository cvsRepo =
-                    (CvsScmProviderRepository) anonymousRepository.getProviderRepository();
+                CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessCVS( cvsRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
-                SvnScmProviderRepository svnRepo =
-                    (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
+                SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessSVN( svnRepo );
             }
             else
             {
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
 
                 if ( anonymousConnection.length() < 4 )
                 {
@@ -365,15 +363,15 @@ public class ScmReport
             }
             else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
-                PerforceScmProviderRepository perforceRepo =
-                    (PerforceScmProviderRepository) devRepository.getProviderRepository();
+                PerforceScmProviderRepository perforceRepo = (PerforceScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessPerforce( perforceRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "starteam" ) )
             {
-                StarteamScmProviderRepository starteamRepo =
-                    (StarteamScmProviderRepository) devRepository.getProviderRepository();
+                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessStarteam( starteamRepo );
             }
@@ -411,8 +409,7 @@ public class ScmReport
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
@@ -420,13 +417,13 @@ public class ScmReport
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
-                linkPatternedText(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale,
+                                                   "report.scm.accessbehindfirewall.cvs.intro" ) );
             }
             else
             {
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessbehindfirewall.general.intro" ) );
             }
 
             endSection();
@@ -436,7 +433,7 @@ public class ScmReport
          * Render the access from behind a firewall section
          *
          * @param anonymousRepository the anonymous repository
-         * @param devRepository       the dev repository
+         * @param devRepository the dev repository
          */
         private void renderAccessThroughProxySection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
@@ -444,12 +441,9 @@ public class ScmReport
             {
                 startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
 
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
@@ -628,8 +622,7 @@ public class ScmReport
             {
                 if ( svnRepo.getUrl().startsWith( "https://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale,
-                                               "report.scm.devaccess.svn.intro1.https" ) );
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.https" ) );
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn://" ) )
                 {
@@ -637,13 +630,11 @@ public class ScmReport
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn+ssh://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale,
-                                               "report.scm.devaccess.svn.intro1.svnssh" ) );
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svnssh" ) );
                 }
                 else
                 {
-                    paragraph( i18n.getString( "project-info-report", locale,
-                                               "report.scm.devaccess.svn.intro1.other" ) );
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.other" ) );
                 }
             }
 
@@ -702,7 +693,7 @@ public class ScmReport
          * </p>
          *
          * @param scmRepository a SCM repository
-         * @param scmProvider   a SCM provider name
+         * @param scmProvider a SCM provider name
          * @return true if the provider of the given SCM repository is equal to the given scm provider.
          * @see <a href="http://svn.apache.org/repos/asf/maven/scm/trunk/maven-scm-providers/">maven-scm-providers</a>
          */
