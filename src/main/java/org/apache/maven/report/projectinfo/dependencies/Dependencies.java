@@ -85,38 +85,129 @@ public class Dependencies
         return ( projectDependencies != null ) && ( !this.projectDependencies.isEmpty() );
     }
 
+    /**
+     * @return a list of <code>Artifact</code> from the project.
+     */
     public List getProjectDependencies()
     {
         return new ArrayList( projectDependencies );
     }
 
+    /**
+     * @return a list of transitive <code>Artifact</code> from the project.
+     */
     public List getTransitiveDependencies()
     {
-        List deps = new ArrayList( dependencyTree.getArtifacts() );
+        List deps = new ArrayList( getAllDependencies() );
         deps.removeAll( projectDependencies );
         return deps;
     }
 
+    /**
+     * @return a list of included <code>Artifact</code> returned by the dependency tree.
+     */
     public List getAllDependencies()
     {
-        return dependencyTree.getArtifacts();
+        List artifacts = new ArrayList();
+        for ( Iterator i = dependencyTree.getNodes().iterator(); i.hasNext(); )
+        {
+            DependencyNode dependencyNode = (DependencyNode) i.next();
+
+            if (dependencyNode.getState() != DependencyNode.INCLUDED )
+            {
+                continue;
+            }
+
+            if ( dependencyNode.getArtifact().getGroupId().equals( project.getGroupId() ) &&
+                dependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() ) &&
+                dependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
+            {
+                continue;
+            }
+
+            artifacts.add( dependencyNode.getArtifact() );
+        }
+
+        return artifacts;
     }
 
-    public Map getDependenciesByScope()
+    /**
+     * @param isTransitively <code>true</code> to return transitive dependencies, <code>false</code> otherwise.
+     * @return a map with supported scopes as key and <code>Artifact</code> as values.
+     * @see Artifact#SCOPE_COMPILE
+     * @see Artifact#SCOPE_PROVIDED
+     * @see Artifact#SCOPE_RUNTIME
+     * @see Artifact#SCOPE_SYSTEM
+     * @see Artifact#SCOPE_TEST
+     */
+    public Map getDependenciesByScope( boolean isTransitively )
     {
         Map dependenciesByScope = new HashMap();
-        for ( Iterator i = getAllDependencies().iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
 
-            List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
-            if ( multiValue == null )
+        if ( isTransitively )
+        {
+            for ( Iterator i = dependencyTree.getNodes().iterator(); i.hasNext(); )
             {
-                multiValue = new ArrayList();
+                DependencyNode dependencyNode = (DependencyNode) i.next();
+
+                if ( dependencyNode.getArtifact().getScope() == null )
+                {
+                    continue;
+                }
+
+                if (dependencyNode.getState() != DependencyNode.INCLUDED )
+                {
+                    continue;
+                }
+
+                if ( getProjectDependencies().contains( dependencyNode ) )
+                {
+                    continue;
+                }
+
+                List multiValue = (List) dependenciesByScope.get( dependencyNode.getArtifact().getScope() );
+                if ( multiValue == null )
+                {
+                    multiValue = new ArrayList();
+                }
+
+                if ( !multiValue.contains( dependencyNode.getArtifact() ) )
+                {
+                    multiValue.add( dependencyNode.getArtifact() );
+                }
+                dependenciesByScope.put( dependencyNode.getArtifact().getScope(), multiValue );
             }
-            multiValue.add( artifact );
-            dependenciesByScope.put( artifact.getScope(), multiValue );
         }
+        else
+        {
+            for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
+            {
+                DependencyNode dependencyNode = (DependencyNode) i.next();
+
+                if ( dependencyNode.getArtifact().getScope() == null )
+                {
+                    continue;
+                }
+
+                if (dependencyNode.getState() != DependencyNode.INCLUDED )
+                {
+                    continue;
+                }
+
+                List multiValue = (List) dependenciesByScope.get( dependencyNode.getArtifact().getScope() );
+                if ( multiValue == null )
+                {
+                    multiValue = new ArrayList();
+                }
+
+                if ( !multiValue.contains( dependencyNode.getArtifact() ) )
+                {
+                    multiValue.add( dependencyNode.getArtifact() );
+                }
+                dependenciesByScope.put( dependencyNode.getArtifact().getScope(), multiValue );
+            }
+        }
+
         return dependenciesByScope;
     }
 
