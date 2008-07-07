@@ -90,7 +90,7 @@ public class EjbMojo
     private String classifier;
 
     /**
-     * Whether the ejb client jar should be generated or not. Default
+     * Whether the EJB client jar should be generated or not. Default
      * is false.
      *
      * @parameter
@@ -99,9 +99,8 @@ public class EjbMojo
     private String generateClient = Boolean.FALSE.toString();
 
     /**
-     * Excludes.
-     *
-     * <br/>Usage:
+     * The files and directories to exclude from the client jar. Usage:
+     * 
      * <pre>
      * &lt;clientExcludes&gt;
      * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Ejb.class&lt;&#47;clientExclude&gt;
@@ -116,9 +115,8 @@ public class EjbMojo
     private List clientExcludes;
 
     /**
-     * Includes.
+     * The files and directories to include in the client jar. Usage:
      *
-     * <br/>Usage:
      * <pre>
      * &lt;clientIncludes&gt;
      * &nbsp;&nbsp;&lt;clientInclude&gt;**&#47;*&lt;&#47;clientInclude&gt;
@@ -132,7 +130,7 @@ public class EjbMojo
     private List clientIncludes;
 
     /**
-     * The maven project.
+     * The Maven project.
      *
      * @parameter expression="${project}"
      * @required
@@ -149,16 +147,16 @@ public class EjbMojo
     private JarArchiver jarArchiver;
 
     /**
-     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x"
-     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the
-     * ejb-jar.xml file is optional.
+     * What EJB version should the ejb-plugin generate? Valid values are "2.x" or "3.x"
+     * (where x is a digit).  When ejbVersion is "3.x", the
+     * <code>ejb-jar.xml</code> file is optional.
      * <p/>
      * Usage:
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
      *
-     * @parameter default-value="2.1"
+     * @parameter default-value="2.1" expression="${ejb.ejbVersion}"
      * @required
      * @since 2.1
      */
@@ -173,7 +171,7 @@ public class EjbMojo
     private JarArchiver clientJarArchiver;
 
     /**
-     * The maven project's helper.
+     * The Maven project's helper.
      *
      * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
      * @required
@@ -190,7 +188,7 @@ public class EjbMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * Generates an ejb jar and optionnaly an ejb-client jar.
+     * Generates an EJB jar and optionally an ejb-client jar.
      *
      * @todo Add license files in META-INF directory.
      */
@@ -199,7 +197,7 @@ public class EjbMojo
     {
         if ( getLog().isInfoEnabled() )
         {
-            getLog().info( "Building ejb " + jarName + " with ejbVersion " + ejbVersion );
+            getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
         }
 
         File jarFile = getEJBJarFile( basedir, jarName, classifier );
@@ -267,7 +265,7 @@ public class EjbMojo
 
         if ( new Boolean( generateClient ).booleanValue() )
         {
-            getLog().info( "Building ejb client " + jarName + "-client" );
+            getLog().info( "Building EJB client " + jarName + "-client" );
 
             String[] excludes = DEFAULT_EXCLUDES;
             String[] includes = DEFAULT_INCLUDES;
