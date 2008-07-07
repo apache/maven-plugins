@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTree;
 import org.apache.maven.shared.jar.JarAnalyzer;
 import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
@@ -43,17 +42,46 @@ public class Dependencies
 {
     private final MavenProject project;
 
-    private final List projectDependencies;
-
-    private final DependencyTree dependencyTree;
+    private final DependencyNode dependencyTreeNode;
 
     private final JarClassesAnalysis classesAnalyzer;
 
-    public Dependencies( MavenProject project, DependencyTree dependencyTree, JarClassesAnalysis classesAnalyzer )
+    /**
+     * @since 2.1
+     */
+    private List projectDependencies;
+
+    /**
+     * @since 2.1
+     */
+    private List projectTransitiveDependencies;
+
+    /**
+     * @since 2.1
+     */
+    private List allDependencies;
+
+    /**
+     * @since 2.1
+     */
+    private Map dependenciesByScope;
+
+    /**
+     * @since 2.1
+     */
+    private Map transitiveDependenciesByScope;
+
+    /**
+     * Default constructor
+     *
+     * @param project
+     * @param dependencyTreeNode
+     * @param classesAnalyzer
+     */
+    public Dependencies( MavenProject project, DependencyNode dependencyTreeNode, JarClassesAnalysis classesAnalyzer )
     {
         this.project = project;
-        this.dependencyTree = dependencyTree;
-        this.projectDependencies = dependencyTree.getRootNode().getChildren();
+        this.dependencyTreeNode = dependencyTreeNode;
         this.classesAnalyzer = classesAnalyzer;
 
         /*
@@ -67,7 +95,7 @@ public class Dependencies
             projectMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
         }
 
-        mapArtifactFiles( dependencyTree.getRootNode(), projectMap );
+        mapArtifactFiles( dependencyTreeNode, projectMap );
     }
 
     /**
@@ -80,9 +108,12 @@ public class Dependencies
         return project;
     }
 
+    /**
+     * @return <code>true</code> if getProjectDependencies() is not empty, <code>false</code> otherwise.
+     */
     public boolean hasDependencies()
     {
-        return ( projectDependencies != null ) && ( !this.projectDependencies.isEmpty() );
+        return ( getProjectDependencies() != null ) && ( !getProjectDependencies().isEmpty() );
     }
 
     /**
@@ -90,7 +121,20 @@ public class Dependencies
      */
     public List getProjectDependencies()
     {
-        return new ArrayList( projectDependencies );
+        if ( projectDependencies != null )
+        {
+            return projectDependencies;
+        }
+
+        projectDependencies = new ArrayList();
+        for ( Iterator i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
+        {
+            DependencyNode dependencyNode = (DependencyNode) i.next();
+
+            projectDependencies.add( dependencyNode.getArtifact() );
+        }
+
+        return projectDependencies;
     }
 
     /**
@@ -98,9 +142,15 @@ public class Dependencies
      */
     public List getTransitiveDependencies()
     {
-        List deps = new ArrayList( getAllDependencies() );
-        deps.removeAll( projectDependencies );
-        return deps;
+        if ( projectTransitiveDependencies != null )
+        {
+            return projectTransitiveDependencies;
+        }
+
+        projectTransitiveDependencies = new ArrayList( getAllDependencies() );
+        projectTransitiveDependencies.removeAll( getProjectDependencies() );
+
+        return projectTransitiveDependencies;
     }
 
     /**
@@ -108,27 +158,36 @@ public class Dependencies
      */
     public List getAllDependencies()
     {
-        List artifacts = new ArrayList();
-        for ( Iterator i = dependencyTree.getNodes().iterator(); i.hasNext(); )
+        if ( allDependencies != null )
+        {
+            return allDependencies;
+        }
+
+        allDependencies = new ArrayList();
+        for ( Iterator i = dependencyTreeNode.getChildren().iterator(); i.hasNext(); )
         {
             DependencyNode dependencyNode = (DependencyNode) i.next();
 
-            if (dependencyNode.getState() != DependencyNode.INCLUDED )
+            if ( dependencyNode.getState() != DependencyNode.INCLUDED )
             {
                 continue;
             }
 
-            if ( dependencyNode.getArtifact().getGroupId().equals( project.getGroupId() ) &&
-                dependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() ) &&
-                dependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
+            if ( dependencyNode.getArtifact().getGroupId().equals( project.getGroupId() )
+                && dependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() )
+                && dependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
             {
                 continue;
             }
 
-            artifacts.add( dependencyNode.getArtifact() );
+            if ( !allDependencies.contains( dependencyNode.getArtifact() ) )
+            {
+                allDependencies.add( dependencyNode.getArtifact() );
+            }
+            getAllDependencies( dependencyNode );
         }
 
-        return artifacts;
+        return allDependencies;
     }
 
     /**
@@ -142,70 +201,55 @@ public class Dependencies
      */
     public Map getDependenciesByScope( boolean isTransitively )
     {
-        Map dependenciesByScope = new HashMap();
-
         if ( isTransitively )
         {
-            for ( Iterator i = dependencyTree.getNodes().iterator(); i.hasNext(); )
+            if ( transitiveDependenciesByScope != null )
             {
-                DependencyNode dependencyNode = (DependencyNode) i.next();
+                return transitiveDependenciesByScope;
+            }
 
-                if ( dependencyNode.getArtifact().getScope() == null )
-                {
-                    continue;
-                }
+            transitiveDependenciesByScope = new HashMap();
+            for ( Iterator i = getTransitiveDependencies().iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact)i.next();
 
-                if (dependencyNode.getState() != DependencyNode.INCLUDED )
-                {
-                    continue;
-                }
-
-                if ( getProjectDependencies().contains( dependencyNode ) )
-                {
-                    continue;
-                }
-
-                List multiValue = (List) dependenciesByScope.get( dependencyNode.getArtifact().getScope() );
+                List multiValue = (List) transitiveDependenciesByScope.get( artifact.getScope() );
                 if ( multiValue == null )
                 {
                     multiValue = new ArrayList();
                 }
 
-                if ( !multiValue.contains( dependencyNode.getArtifact() ) )
+                if ( !multiValue.contains( artifact) )
                 {
-                    multiValue.add( dependencyNode.getArtifact() );
+                    multiValue.add( artifact );
                 }
-                dependenciesByScope.put( dependencyNode.getArtifact().getScope(), multiValue );
+                transitiveDependenciesByScope.put( artifact.getScope(), multiValue );
             }
+
+            return transitiveDependenciesByScope;
         }
-        else
+
+        if ( dependenciesByScope != null )
         {
-            for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
+            return dependenciesByScope;
+        }
+
+        dependenciesByScope = new HashMap();
+        for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact)i.next();
+
+            List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
+            if ( multiValue == null )
             {
-                DependencyNode dependencyNode = (DependencyNode) i.next();
-
-                if ( dependencyNode.getArtifact().getScope() == null )
-                {
-                    continue;
-                }
-
-                if (dependencyNode.getState() != DependencyNode.INCLUDED )
-                {
-                    continue;
-                }
-
-                List multiValue = (List) dependenciesByScope.get( dependencyNode.getArtifact().getScope() );
-                if ( multiValue == null )
-                {
-                    multiValue = new ArrayList();
-                }
-
-                if ( !multiValue.contains( dependencyNode.getArtifact() ) )
-                {
-                    multiValue.add( dependencyNode.getArtifact() );
-                }
-                dependenciesByScope.put( dependencyNode.getArtifact().getScope(), multiValue );
+                multiValue = new ArrayList();
             }
+
+            if ( !multiValue.contains( artifact ) )
+            {
+                multiValue.add( artifact );
+            }
+            dependenciesByScope.put( artifact.getScope(), multiValue );
         }
 
         return dependenciesByScope;
@@ -252,6 +296,46 @@ public class Dependencies
             }
 
             mapArtifactFiles( anode, projectMap );
+        }
+    }
+
+    /**
+     * Recursive method to get all dependencies from a given <code>dependencyNode</code>
+     *
+     * @param dependencyNode not null
+     */
+    private void getAllDependencies( DependencyNode dependencyNode )
+    {
+        if ( dependencyNode == null || dependencyNode.getChildren() == null )
+        {
+            if ( !allDependencies.contains( dependencyNode.getArtifact() ) )
+            {
+                allDependencies.add( dependencyNode.getArtifact() );
+            }
+            return;
+        }
+
+        for ( Iterator i = dependencyNode.getChildren().iterator(); i.hasNext(); )
+        {
+            DependencyNode subdependencyNode = (DependencyNode) i.next();
+
+            if ( subdependencyNode.getState() != DependencyNode.INCLUDED )
+            {
+                continue;
+            }
+
+            if ( subdependencyNode.getArtifact().getGroupId().equals( project.getGroupId() )
+                && subdependencyNode.getArtifact().getArtifactId().equals( project.getArtifactId() )
+                && subdependencyNode.getArtifact().getVersion().equals( project.getVersion() ) )
+            {
+                continue;
+            }
+
+            if ( !allDependencies.contains( subdependencyNode.getArtifact() ) )
+            {
+                allDependencies.add( subdependencyNode.getArtifact() );
+            }
+            getAllDependencies( subdependencyNode );
         }
     }
 }
