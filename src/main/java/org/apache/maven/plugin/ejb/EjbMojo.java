@@ -103,10 +103,10 @@ public class EjbMojo
      *
      * <br/>Usage:
      * <pre>
-     * &lt;clientIncludes&gt;
-     *   &lt;clientInclude&gt;**&#47;*Ejb.class&lt;&#47;clientInclude&gt;
-     *   &lt;clientInclude&gt;**&#47;*Bean.class&lt;&#47;clientInclude&gt;
-     * &lt;&#47;clientIncludes&gt;
+     * &lt;clientExcludes&gt;
+     * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Ejb.class&lt;&#47;clientExclude&gt;
+     * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Bean.class&lt;&#47;clientExclude&gt;
+     * &lt;&#47;clientExcludes&gt;
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
      * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
@@ -121,7 +121,7 @@ public class EjbMojo
      * <br/>Usage:
      * <pre>
      * &lt;clientIncludes&gt;
-     *   &lt;clientInclude&gt;**&#47;*&lt;&#47;clientInclude&gt;
+     * &nbsp;&nbsp;&lt;clientInclude&gt;**&#47;*&lt;&#47;clientInclude&gt;
      * &lt;&#47;clientIncludes&gt;
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
