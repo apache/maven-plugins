@@ -35,7 +35,6 @@ import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfig
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTree;
 import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.wagon.Wagon;
 import org.codehaus.plexus.i18n.I18N;
@@ -76,7 +75,7 @@ public class DependenciesRenderer
         JAR_SUBTYPE.add( "ejb" );
     }
 
-    private final DependencyTree dependencyTree;
+    private final DependencyNode dependencyTreeNode;
 
     private Dependencies dependencies;
 
@@ -108,14 +107,14 @@ public class DependenciesRenderer
     };
 
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
-                                 DependencyTree depTree, DependenciesReportConfiguration config,
+                                 DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
                                  RepositoryUtils repoUtils )
     {
         super( sink );
 
         this.locale = locale;
 
-        this.dependencyTree = depTree;
+        this.dependencyTreeNode = dependencyTreeNode;
 
         this.repoUtils = repoUtils;
 
@@ -282,7 +281,7 @@ public class DependenciesRenderer
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
         sink.paragraph();
         sink.list();
-        printDependencyListing( dependencyTree.getRootNode() );
+        printDependencyListing( dependencyTreeNode );
         sink.list_();
         sink.paragraph_();
         endSection();
@@ -605,7 +604,7 @@ public class DependenciesRenderer
     private void renderSectionDependencyListing()
     {
         startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-        printDescriptionsAndURLs( dependencyTree.getRootNode() );
+        printDescriptionsAndURLs( dependencyTreeNode );
         endSection();
     }
 
