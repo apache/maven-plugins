@@ -19,16 +19,19 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.dependency.tree.DependencyTree;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
@@ -151,15 +154,15 @@ public class DependenciesReport
                                                          project.getRemoteArtifactRepositories(),
                                                          project.getPluginArtifactRepositories(), localRepository );
 
-        DependencyTree dependencyTree = resolveProject();
+        DependencyNode dependencyTreeNode = resolveProject();
 
-        Dependencies dependencies = new Dependencies( project, dependencyTree, classesAnalyzer );
+        Dependencies dependencies = new Dependencies( project, dependencyTreeNode, classesAnalyzer );
 
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTree, config, repoUtils );
+            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTreeNode, config, repoUtils );
 
         repoUtils.setLog( getLog() );
         r.setLog( getLog() );
@@ -176,12 +179,13 @@ public class DependenciesReport
     // Private methods
     // ----------------------------------------------------------------------
 
-    private DependencyTree resolveProject()
+    private DependencyNode resolveProject()
     {
         try
         {
-            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory, artifactMetadataSource,
-                                                              collector );
+            ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
+            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory,
+                                                              artifactMetadataSource, artifactFilter, collector );
         }
         catch ( DependencyTreeBuilderException e )
         {
