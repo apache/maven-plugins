@@ -59,7 +59,7 @@ public class AnnouncementMailMojo
     /**
      * Smtp Server.
      *
-     * @parameter
+     * @parameter expression="${changes.smtpHost}"
      * @required
      */
     private String smtpHost;
@@ -67,7 +67,7 @@ public class AnnouncementMailMojo
     /**
      * Port.
      *
-     * @parameter default-value="25";
+     * @parameter default-value="25" expression="${changes.smtpPort}"
      * @required
      */
     private int smtpPort;
@@ -75,28 +75,28 @@ public class AnnouncementMailMojo
     /**
      * The username used to send the email.
      *
-     * @parameter
+     * @parameter expression="${changes.username}"
      */
     private String username;
 
     /**
      * The password used to send the email.
      *
-     * @parameter
+     * @parameter expression="${changes.password}"
      */
     private String password;
 
     /**
      * If the email should be sent in SSL mode.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="false" expression="${changes.sslMode}"
      */
     private boolean sslMode;
 
     /**
      * Subject for the email.
      *
-     * @parameter default-value="[ANNOUNCEMENT] - ${project.name} ${project.version} released"
+     * @parameter default-value="[ANNOUNCEMENT] - ${project.name} ${project.version} released" expression="${changes.subject}"
      * @required
      */
     private String subject;
@@ -115,7 +115,7 @@ public class AnnouncementMailMojo
      * Defines the sender of the announcement if the list of developer is empty or
      * if the sender is not a member of the development team.
      *
-     * @parameter
+     * @parameter expression="${changes.mailSender}"
      */
     private MailSender mailSender;
 
@@ -123,7 +123,7 @@ public class AnnouncementMailMojo
     /**
      * Recipient email address.
      *
-     * @parameter
+     * @parameter expression="${changes.toAddresses}"
      * @required
      */
     private List toAddresses;
@@ -148,7 +148,7 @@ public class AnnouncementMailMojo
     /**
      * The Velocity template used to format the announcement.
      *
-     * @parameter default-value="announcement.vm"
+     * @parameter default-value="announcement.vm" expression="${changes.template}"
      * @required
      */
     private String template;
