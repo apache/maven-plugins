@@ -69,12 +69,10 @@ public class DependenciesReportTest
 
         // Test the tables
         WebTable[] webTables = response.getTables();
-        assertEquals( webTables.length, 2 );
+        assertEquals( webTables.length, 1 );
 
         assertEquals( webTables[0].getColumnCount(), 6 );
         assertEquals( webTables[0].getRowCount(), 1 + getTestMavenProject().getDependencies().size() );
-
-        assertEquals( webTables[1].getColumnCount(), 6 );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
@@ -82,11 +80,10 @@ public class DependenciesReportTest
         assertEquals( textBlocks[1].getText(), "test" );
         assertEquals( textBlocks[2].getText(), getString( "report.dependencies.intro.test" ) );
         assertEquals( textBlocks[3].getText(), getString( "report.transitivedependencies.title" ) );
-        assertEquals( textBlocks[4].getText(), getString( "report.transitivedependencies.intro" ) );
-        assertEquals( textBlocks[5].getText(), "test" );
-        assertEquals( textBlocks[6].getText(), getString( "report.dependencies.intro.test" ) );
-        assertEquals( textBlocks[7].getText(), getString( "report.dependencies.graph.title" ) );
-        assertEquals( textBlocks[8].getText(), getString( "report.dependencies.graph.tree.title" ) );
-        assertEquals( textBlocks[12].getText(), getString( "report.dependencies.graph.tables.title" ) );
+        assertEquals( textBlocks[4].getText(), getString( "report.transitivedependencies.nolist" ) );
+        assertEquals( textBlocks[5].getText(), getString( "report.dependencies.graph.title" ) );
+        assertEquals( textBlocks[6].getText(), getString( "report.dependencies.graph.tree.title" ) );
+        assertEquals( textBlocks[7].getText(), "junit:junit:jar" );
+        assertEquals( textBlocks[10].getText(), getString( "report.dependencies.graph.tables.title" ) );
     }
 }
