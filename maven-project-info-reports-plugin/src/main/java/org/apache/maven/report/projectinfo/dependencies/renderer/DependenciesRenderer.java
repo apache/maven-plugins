@@ -220,7 +220,7 @@ public class DependenciesRenderer
         startSection( getTitle() );
 
         // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getDependenciesByScope();
+        Map dependenciesByScope = dependencies.getDependenciesByScope( false );
 
         renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
 
@@ -243,18 +243,17 @@ public class DependenciesRenderer
 
     private void renderSectionProjectTransitiveDependencies()
     {
-        List artifacts = dependencies.getTransitiveDependencies();
+        Map dependenciesByScope = dependencies.getDependenciesByScope( true );
 
         startSection( getReportString( "report.transitivedependencies.title" ) );
 
-        if ( artifacts.isEmpty() )
+        if ( dependenciesByScope.values().isEmpty() )
         {
             paragraph( getReportString( "report.transitivedependencies.nolist" ) );
         }
         else
         {
             String[] tableHeader = getDependencyTableHeader();
-            Map dependenciesByScope = dependencies.getDependenciesByScope();
 
             paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
