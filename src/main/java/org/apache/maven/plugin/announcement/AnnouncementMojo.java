@@ -123,7 +123,7 @@ public class AnnouncementMojo
     /**
      * Name of the team that develops the artifact.
      *
-     * @parameter default-value="${project.name} team"
+     * @parameter default-value="${project.name} team" expression="${changes.developmentTeam}"
      * @required
      */
     private String developmentTeam;
@@ -146,7 +146,7 @@ public class AnnouncementMojo
     /**
      * The Velocity template used to format the announcement.
      *
-     * @parameter default-value="announcement.vm"
+     * @parameter default-value="announcement.vm" expression="${changes.template}"
      * @required
      */
     private String template;
@@ -158,7 +158,7 @@ public class AnnouncementMojo
      * <code>/src/main/resources/</code>.
      * </p>
      *
-     * @parameter default-value="org/apache/maven/plugin/announcement"
+     * @parameter default-value="org/apache/maven/plugin/announcement" expression="${changes.templateDirectory}"
      * @required
      */
     private String templateDirectory;
@@ -202,7 +202,7 @@ public class AnnouncementMojo
      * called "statusId".
      * </p>
      *
-     * @parameter default-value="Closed"
+     * @parameter default-value="Closed" expression="${changes.statusIds}"
      */
     private String statusIds;
 
@@ -213,7 +213,7 @@ public class AnnouncementMojo
      * called "resolutionId".
      * </p>
      *
-     * @parameter default-value="Fixed"
+     * @parameter default-value="Fixed" expression="${changes.resolutionIds}"
      */
     private String resolutionIds;
 
@@ -227,13 +227,13 @@ public class AnnouncementMojo
     private File jiraXML;
 
     /**
-     * The maximum number of issues to include.
+     * The maximum number of issues to fetch from JIRA.
      * <p>
      * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
      * called "nbEntries".
      * </p>
      *
-     * @parameter default-value="25"
+     * @parameter default-value="25"  expression="${changes.maxEntries}"
      * @required
      */
     private int maxEntries;
