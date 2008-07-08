@@ -192,7 +192,7 @@ public class Dependencies
 
     /**
      * @param isTransitively <code>true</code> to return transitive dependencies, <code>false</code> otherwise.
-     * @return a map with supported scopes as key and <code>Artifact</code> as values.
+     * @return a map with supported scopes as key and a list of <code>Artifact</code> as values.
      * @see Artifact#SCOPE_COMPILE
      * @see Artifact#SCOPE_PROVIDED
      * @see Artifact#SCOPE_RUNTIME
