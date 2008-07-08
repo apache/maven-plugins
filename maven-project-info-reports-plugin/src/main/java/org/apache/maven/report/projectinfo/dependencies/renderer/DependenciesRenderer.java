@@ -758,14 +758,20 @@ public class DependenciesRenderer
     private void printDependencyListing( DependencyNode node )
     {
         Artifact artifact = node.getArtifact();
-        String id = artifact.getDependencyConflictId();
+        String id = artifact.getId();
 
         sink.listItem();
         sink.paragraph();
 
-        sink.link( "#" + id );
+        if ( id != null )
+        {
+            sink.link( "#" + id );
+        }
         sink.text( id );
-        sink.link_();
+        if ( id != null )
+        {
+            sink.link_();
+        }
 
         if ( !node.getChildren().isEmpty() )
         {
@@ -785,7 +791,7 @@ public class DependenciesRenderer
     private void printDescriptionsAndURLs( DependencyNode node )
     {
         Artifact artifact = node.getArtifact();
-        String id = artifact.getDependencyConflictId();
+        String id = artifact.getId();
 
         String unknownLicenseMessage = getReportString( "report.dependencies.graph.tables.unknown" );
 
