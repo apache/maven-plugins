@@ -201,7 +201,13 @@ public class DependenciesRenderer
     // Private methods
     // ----------------------------------------------------------------------
 
-    private String[] getDependencyTableHeader()
+    /**
+     * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @return the dependency table header with/without classifier/optional column
+     * @see #getArtifactRow(Artifact, boolean, boolean)
+     */
+    private String[] getDependencyTableHeader( boolean withClassifier, boolean withOptional )
     {
         String groupId = getReportString( "report.dependencies.column.groupId" );
         String artifactId = getReportString( "report.dependencies.column.artifactId" );
@@ -209,35 +215,52 @@ public class DependenciesRenderer
         String classifier = getReportString( "report.dependencies.column.classifier" );
         String type = getReportString( "report.dependencies.column.type" );
         String optional = getReportString( "report.dependencies.column.optional" );
-        return new String[]{groupId, artifactId, version, classifier, type, optional};
+
+        if ( withClassifier )
+        {
+            if ( withOptional )
+            {
+                return new String[] { groupId, artifactId, version, classifier, type, optional };
+            }
+
+            return new String[] { groupId, artifactId, version, classifier, type };
+        }
+
+        if ( withOptional )
+        {
+            return new String[] { groupId, artifactId, version, type, optional };
+        }
+
+        return new String[] { groupId, artifactId, version, type };
     }
 
     private void renderSectionProjectDependencies()
     {
-        String[] tableHeader = getDependencyTableHeader();
-
         startSection( getTitle() );
 
         // collect dependencies by scope
         Map dependenciesByScope = dependencies.getDependenciesByScope( false );
 
-        renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
+        renderDependenciesForAllScopes( dependenciesByScope );
 
         endSection();
     }
 
-    private void renderDependenciesForAllScopes( String[] tableHeader, Map dependenciesByScope )
+    /**
+     * @param dependenciesByScope map with supported scopes as key and a list of <code>Artifact</code> as values.
+     * @see Artifact#SCOPE_COMPILE
+     * @see Artifact#SCOPE_PROVIDED
+     * @see Artifact#SCOPE_RUNTIME
+     * @see Artifact#SCOPE_SYSTEM
+     * @see Artifact#SCOPE_TEST
+     */
+    private void renderDependenciesForAllScopes( Map dependenciesByScope )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
-                                    tableHeader );
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 
     private void renderSectionProjectTransitiveDependencies()
@@ -252,11 +275,9 @@ public class DependenciesRenderer
         }
         else
         {
-            String[] tableHeader = getDependencyTableHeader();
-
             paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
-            renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
+            renderDependenciesForAllScopes( dependenciesByScope );
         }
 
         endSection();
@@ -615,23 +636,28 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
+    private void renderDependenciesForScope( String scope, List artifacts )
     {
         if ( artifacts != null )
         {
+            boolean withClassifier = hasClassifier( artifacts );
+            boolean withOptional = hasOptional( artifacts );
+            String[] tableHeader = getDependencyTableHeader( withClassifier, withOptional );
+
             // can't use straight artifact comparison because we want optional last
             Collections.sort( artifacts, getArtifactComparator() );
 
             startSection( scope );
 
             paragraph( getReportString( "report.dependencies.intro." + scope ) );
+
             startTable();
             tableHeader( tableHeader );
-
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
-                tableRow( getArtifactRow( artifact ) );
+
+                tableRow( getArtifactRow( artifact, withClassifier, withOptional ) );
             }
             endTable();
 
@@ -665,18 +691,54 @@ public class DependenciesRenderer
         };
     }
 
-    private String[] getArtifactRow( Artifact artifact )
+    /**
+     * @param artifact not null
+     * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @return the dependency row with/without classifier/optional column
+     * @see #getDependencyTableHeader(boolean, boolean)
+     */
+    private String[] getArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
     {
         String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
             : getReportString( "report.dependencies.column.isNotOptional" );
+
+        if ( withClassifier )
+        {
+            if ( withOptional )
+            {
+                return new String[] {
+                    artifact.getGroupId(),
+                    artifact.getArtifactId(),
+                    artifact.getVersion(),
+                    artifact.getClassifier(),
+                    artifact.getType(),
+                    isOptional };
+            }
+
+            return new String[] {
+                artifact.getGroupId(),
+                artifact.getArtifactId(),
+                artifact.getVersion(),
+                artifact.getClassifier(),
+                artifact.getType() };
+        }
+
+        if ( withOptional )
+        {
+            return new String[] {
+                artifact.getGroupId(),
+                artifact.getArtifactId(),
+                artifact.getVersion(),
+                artifact.getType(),
+                isOptional };
+        }
 
         return new String[] {
             artifact.getGroupId(),
             artifact.getArtifactId(),
             artifact.getVersion(),
-            artifact.getClassifier(),
-            artifact.getType(),
-            isOptional };
+            artifact.getType()};
     }
 
     private void printDependencyListing( DependencyNode node )
@@ -858,5 +920,44 @@ public class DependenciesRenderer
     private String getReportString( String key )
     {
         return i18n.getString( "project-info-report", locale, key );
+    }
+
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list has a classifier, <code>false</code> otherwise.
+     */
+    private boolean hasClassifier( List artifacts )
+    {
+        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iterator.next();
+
+            if ( StringUtils.isNotEmpty(  artifact.getClassifier() ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list is optional, <code>false</code> otherwise.
+     */
+    private boolean hasOptional( List artifacts )
+    {
+        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iterator.next();
+
+            if ( artifact.isOptional() )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
