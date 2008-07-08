@@ -106,6 +106,17 @@ public class DependenciesRenderer
         }
     };
 
+    /**
+     * Default constructor.
+     *
+     * @param sink
+     * @param locale
+     * @param i18n
+     * @param dependencies
+     * @param dependencyTreeNode
+     * @param config
+     * @param repoUtils
+     */
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
                                  DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
                                  RepositoryUtils repoUtils )
@@ -129,6 +140,9 @@ public class DependenciesRenderer
     // Public methods
     // ----------------------------------------------------------------------
 
+    /**
+     * @param log the logger instance
+     */
     public void setLog( Log log )
     {
         this.log = log;
