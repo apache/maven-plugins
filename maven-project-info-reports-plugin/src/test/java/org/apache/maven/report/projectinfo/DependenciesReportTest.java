@@ -71,7 +71,7 @@ public class DependenciesReportTest
         WebTable[] webTables = response.getTables();
         assertEquals( webTables.length, 1 );
 
-        assertEquals( webTables[0].getColumnCount(), 6 );
+        assertEquals( webTables[0].getColumnCount(), 4 );
         assertEquals( webTables[0].getRowCount(), 1 + getTestMavenProject().getDependencies().size() );
 
         // Test the texts
