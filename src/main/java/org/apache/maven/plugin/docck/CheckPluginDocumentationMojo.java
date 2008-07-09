@@ -30,10 +30,10 @@ import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -146,7 +146,7 @@ public class CheckPluginDocumentationMojo
         }
         else
         {
-            XmlStreamReader streamReader = null;
+            Reader streamReader = null;
             try
             {
                 streamReader = ReaderFactory.newXmlReader( siteXml );
@@ -180,17 +180,7 @@ public class CheckPluginDocumentationMojo
             }
             finally
             {
-                if ( streamReader != null )
-                {
-                    try
-                    {
-                        streamReader.close();
-                    }
-                    catch ( IOException e )
-                    {
-                        // Ignore this, there is nothing we can do about it anyway
-                    }
-                }
+                IOUtil.close( streamReader );
             }
         }
 
