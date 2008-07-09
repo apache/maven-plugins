@@ -124,7 +124,7 @@ public class DependencyManagementRenderer
     // Private methods
     // ----------------------------------------------------------------------
 
-    private static String[] getDependencyTableHeader( boolean hasClassifier )
+    private String[] getDependencyTableHeader( boolean hasClassifier )
     {
         String groupId = getReportString( "report.dependencyManagement.column.groupId" );
         String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
