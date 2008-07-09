@@ -35,7 +35,14 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
+import org.codehaus.plexus.util.IOUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.util.Locale;
 
 /**
@@ -51,6 +58,9 @@ import java.util.Locale;
 public class DependenciesReport
     extends AbstractProjectInfoReport
 {
+    /** Images resources dir */
+    private static final String RESOURCES_DIR = "org/apache/maven/report/projectinfo/resources";
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -150,6 +160,15 @@ public class DependenciesReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
+        try
+        {
+            copyResources( outputDirectory );
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Cannot copy ressources", e );
+        }
+
         RepositoryUtils repoUtils = new RepositoryUtils( wagonManager, settings, mavenProjectBuilder, factory, resolver,
                                                          project.getRemoteArtifactRepositories(),
                                                          project.getPluginArtifactRepositories(), localRepository );
@@ -191,6 +210,51 @@ public class DependenciesReport
         {
             getLog().error( "Unable to build dependency tree.", e );
             return null;
+        }
+    }
+
+    /**
+     * @param outputDirectory the wanted output directory
+     * @throws IOException if any
+     */
+    private void copyResources( File outputDirectory )
+        throws IOException
+    {
+        InputStream resourceList = getClass().getClassLoader()
+                .getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
+
+        if ( resourceList != null )
+        {
+            LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList ) );
+
+            String line = reader.readLine();
+
+            while ( line != null )
+            {
+                InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
+
+                if ( is == null )
+                {
+                    throw new IOException( "The resource " + line + " doesn't exist." );
+                }
+
+                File outputFile = new File( outputDirectory, line );
+
+                if ( !outputFile.getParentFile().exists() )
+                {
+                    outputFile.getParentFile().mkdirs();
+                }
+
+                FileOutputStream w = new FileOutputStream( outputFile );
+
+                IOUtil.copy( is, w );
+
+                IOUtil.close( is );
+
+                IOUtil.close( w );
+
+                line = reader.readLine();
+            }
         }
     }
 }
