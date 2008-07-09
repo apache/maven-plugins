@@ -83,7 +83,6 @@ public class DependenciesReportTest
         assertEquals( textBlocks[4].getText(), getString( "report.transitivedependencies.nolist" ) );
         assertEquals( textBlocks[5].getText(), getString( "report.dependencies.graph.title" ) );
         assertEquals( textBlocks[6].getText(), getString( "report.dependencies.graph.tree.title" ) );
-        assertEquals( textBlocks[7].getText(), "junit:junit:jar" );
-        assertEquals( textBlocks[10].getText(), getString( "report.dependencies.graph.tables.title" ) );
+        assertEquals( textBlocks[7].getText(), getString( "report.dependencies.graph.tables.licenses" ) );
     }
 }
