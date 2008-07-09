@@ -71,29 +71,9 @@ public class DependenciesRenderer
     /** Random used to generate a UID */
     private final static SecureRandom RANDOM;
 
-    private final Locale locale;
-
     private final static HashSet JAR_SUBTYPE = new HashSet();
 
-    static
-    {
-        JAR_SUBTYPE.add( "jar" );
-        JAR_SUBTYPE.add( "war" );
-        JAR_SUBTYPE.add( "ear" );
-        JAR_SUBTYPE.add( "sar" );
-        JAR_SUBTYPE.add( "rar" );
-        JAR_SUBTYPE.add( "par" );
-        JAR_SUBTYPE.add( "ejb" );
-
-        try
-        {
-            RANDOM = SecureRandom.getInstance( "SHA1PRNG" );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
+    private final Locale locale;
 
     private final DependencyNode dependencyTreeNode;
 
@@ -125,6 +105,26 @@ public class DependenciesRenderer
             return super.put( key, valueList );
         }
     };
+
+    static
+    {
+        JAR_SUBTYPE.add( "jar" );
+        JAR_SUBTYPE.add( "war" );
+        JAR_SUBTYPE.add( "ear" );
+        JAR_SUBTYPE.add( "sar" );
+        JAR_SUBTYPE.add( "rar" );
+        JAR_SUBTYPE.add( "par" );
+        JAR_SUBTYPE.add( "ejb" );
+
+        try
+        {
+            RANDOM = SecureRandom.getInstance( "SHA1PRNG" );
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 
     /**
      * Default constructor.
