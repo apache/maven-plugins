@@ -790,6 +790,12 @@ public class DependenciesRenderer
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
                 DependencyNode dep = (DependencyNode) deps.next();
+
+                if ( !dependencies.getAllDependencies().contains( dep.getArtifact() ) )
+                {
+                    continue;
+                }
+
                 printDependencyListing( dep );
             }
             sink.list_();
