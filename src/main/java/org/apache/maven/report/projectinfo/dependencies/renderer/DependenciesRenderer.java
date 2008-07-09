@@ -19,6 +19,21 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
@@ -40,19 +55,6 @@ import org.apache.maven.wagon.Wagon;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * @version $Id$
  * @since 2.1
@@ -60,9 +62,18 @@ import java.util.Map;
 public class DependenciesRenderer
     extends AbstractMavenReportRenderer
 {
+    /** URL for the 'icon_info_sml.gif' image */
+    private static final String IMG_INFO_URL = "./images/icon_info_sml.gif";
+
+    /** URL for the 'close.gif' image */
+    private static final String IMG_CLOSE_URL = "./images/close.gif";
+
+    /** Random used to generate a UID */
+    private final static SecureRandom RANDOM;
+
     private final Locale locale;
 
-    static HashSet JAR_SUBTYPE = new HashSet();
+    private final static HashSet JAR_SUBTYPE = new HashSet();
 
     static
     {
@@ -73,6 +84,15 @@ public class DependenciesRenderer
         JAR_SUBTYPE.add( "rar" );
         JAR_SUBTYPE.add( "par" );
         JAR_SUBTYPE.add( "ejb" );
+
+        try
+        {
+            RANDOM = SecureRandom.getInstance( "SHA1PRNG" );
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     private final DependencyNode dependencyTreeNode;
@@ -301,24 +321,23 @@ public class DependenciesRenderer
     {
         startSection( getReportString( "report.dependencies.graph.title" ) );
 
-        // === Section: Dependency Tree
+        // === SubSection: Dependency Tree
         renderSectionDependencyTree();
-
-        // === Section: Dependency Listings
-        renderSectionDependencyListing();
 
         endSection();
     }
 
     private void renderSectionDependencyTree()
     {
+        sink.rawText(  getJavascript() );
+
         // for Dependencies Graph Tree
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
-        sink.paragraph();
+
         sink.list();
         printDependencyListing( dependencyTreeNode );
         sink.list_();
-        sink.paragraph_();
+
         endSection();
     }
 
@@ -636,13 +655,6 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void renderSectionDependencyListing()
-    {
-        startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-        printDescriptionsAndURLs( dependencyTreeNode );
-        endSection();
-    }
-
     private void renderSectionDependencyLicenseListing()
     {
         startSection( getReportString( "report.dependencies.graph.tables.licenses" ) );
@@ -759,19 +771,18 @@ public class DependenciesRenderer
     {
         Artifact artifact = node.getArtifact();
         String id = artifact.getId();
+        String dependencyDetailId = getUUID();
+        String imgId = getUUID();
 
         sink.listItem();
-        sink.paragraph();
 
-        if ( id != null )
-        {
-            sink.link( "#" + id );
-        }
+        sink.paragraph();
         sink.text( id );
-        if ( id != null )
-        {
-            sink.link_();
-        }
+        sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '"
+            + dependencyDetailId + "', '" + imgId + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
+        sink.paragraph_();
+
+        printDescriptionsAndURLs( node, dependencyDetailId );
 
         if ( !node.getChildren().isEmpty() )
         {
@@ -784,16 +795,18 @@ public class DependenciesRenderer
             sink.list_();
         }
 
-        sink.paragraph_();
         sink.listItem_();
     }
 
-    private void printDescriptionsAndURLs( DependencyNode node )
+    private void printDescriptionsAndURLs( DependencyNode node, String uid )
     {
         Artifact artifact = node.getArtifact();
         String id = artifact.getId();
-
         String unknownLicenseMessage = getReportString( "report.dependencies.graph.tables.unknown" );
+
+        sink.rawText( "<div id=\"" + uid + "\" style=\"display:none\">" );
+
+        sink.table();
 
         if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {
@@ -806,20 +819,14 @@ public class DependenciesRenderer
                 String artifactName = artifactProject.getName();
                 List licenses = artifactProject.getLicenses();
 
-                sink.paragraph();
-                if ( id != null )
-                {
-                    sink.anchor( id );
-                }
-                // startSection( artifactName );
-                sink.bold();
-                sink.text( artifactName );
-                sink.bold_();
-                if ( id != null )
-                {
-                    sink.anchor_();
-                }
-                sink.paragraph_();
+                sink.tableRow();
+                sink.tableHeaderCell();
+                sink.rawText( artifactName );
+                sink.tableHeaderCell_();
+                sink.tableRow_();
+
+                sink.tableRow();
+                sink.tableCell();
 
                 if ( artifactDescription != null )
                 {
@@ -859,7 +866,6 @@ public class DependenciesRenderer
                         }
 
                         licenseMap.put( licenseName, artifactName );
-
                     }
                 }
                 else
@@ -867,38 +873,36 @@ public class DependenciesRenderer
                     sink.text( getReportString( "report.license.nolicense" ) );
 
                     licenseMap.put( unknownLicenseMessage, artifactName );
-
                 }
                 sink.paragraph_();
-
-                // endSection();
-                sink.horizontalRule();
             }
             catch ( ProjectBuildingException e )
             {
                 log.error( "ProjectBuildingException error : ", e );
             }
-
-            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
-            {
-                DependencyNode dep = (DependencyNode) deps.next();
-                printDescriptionsAndURLs( dep );
-            }
         }
         else
         {
-            sink.paragraph();
-            sink.anchor( id );
-            sink.bold();
-            sink.text( id );
-            sink.bold_();
-            sink.anchor_();
-            sink.paragraph_();
+            sink.tableRow();
+            sink.tableHeaderCell();
+            sink.rawText( id );
+            sink.tableHeaderCell_();
+            sink.tableRow_();
+
+            sink.tableRow();
+            sink.tableCell();
 
             sink.paragraph();
             sink.text( artifact.getFile().toString() );
             sink.paragraph_();
         }
+
+        sink.tableCell_();
+        sink.tableRow_();
+
+        sink.table_();
+
+        sink.rawText( "</div>");
     }
 
     private void printGroupedLicenses()
@@ -979,5 +983,40 @@ public class DependenciesRenderer
         }
 
         return false;
+    }
+
+    /**
+     * @return an HTML script tag with the Javascript used by the dependencies report.
+     */
+    private static String getJavascript()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( "\n" );
+        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( "\n" );
+        sb.append( "      {" ).append( "\n" );
+        sb.append( "        var div = document.getElementById( divId );" ).append( "\n" );
+        sb.append( "        var img = document.getElementById( imgId );" ).append( "\n" );
+        sb.append( "        if( div.style.display == '' )" ).append( "\n" );
+        sb.append( "        {" ).append( "\n" );
+        sb.append( "          div.style.display = 'none';" ).append( "\n" );
+        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( "\n" );
+        sb.append( "        }" ).append( "\n" );
+        sb.append( "        else" ).append( "\n" );
+        sb.append( "        {" ).append( "\n" );
+        sb.append( "          div.style.display = '';" ).append( "\n" );
+        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( "\n" );
+        sb.append( "        }" ).append( "\n" );
+        sb.append( "      }" ).append( "\n" );
+        sb.append( "</script>" ).append( "\n" );
+
+        return sb.toString();
+    }
+
+    /**
+     * @return a valid HTML ID respecting <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment Identifiers</a>
+     */
+    private static String getUUID()
+    {
+        return "_" + Math.abs( RANDOM.nextInt() );
     }
 }
