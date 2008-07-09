@@ -25,6 +25,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Organization;
@@ -116,6 +117,8 @@ public abstract class AbstractCheckDocumentationMojo
         httpClient = new HttpClient();
 
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 5000 );
+        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
+                                             "Apache Maven/2.0 (Maven Documentation Checker Plugin)" );
     }
 
     protected List getReactorProjects()
