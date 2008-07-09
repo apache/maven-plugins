@@ -887,7 +887,8 @@ public class DependenciesRenderer
 
         if ( !node.getChildren().isEmpty() )
         {
-            sink.list();
+            boolean toBeIncluded = false;
+            List subList = new ArrayList();
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
                 DependencyNode dep = (DependencyNode) deps.next();
@@ -897,9 +898,21 @@ public class DependenciesRenderer
                     continue;
                 }
 
-                printDependencyListing( dep );
+                subList.add( dep );
+                toBeIncluded = true;
             }
-            sink.list_();
+
+            if ( toBeIncluded )
+            {
+                sink.list();
+                for ( Iterator deps = subList.iterator(); deps.hasNext(); )
+                {
+                    DependencyNode dep = (DependencyNode) deps.next();
+
+                    printDependencyListing( dep );
+                }
+                sink.list_();
+            }
         }
 
         sink.listItem_();
