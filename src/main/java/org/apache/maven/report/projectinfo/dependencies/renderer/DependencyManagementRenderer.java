@@ -33,6 +33,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author Nick Stolwijk
@@ -100,37 +101,30 @@ public class DependencyManagementRenderer
 
     private void renderSectionProjectDependencies()
     {
-        String[] tableHeader = getDependencyTableHeader();
-
         startSection( getTitle() );
 
         // collect dependencies by scope
         Map dependenciesByScope = dependencies.getDependenciesByScope();
 
-        renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
+        renderDependenciesForAllScopes( dependenciesByScope );
 
         endSection();
     }
 
-    private void renderDependenciesForAllScopes( String[] tableHeader, Map dependenciesByScope )
+    private void renderDependenciesForAllScopes( Map dependenciesByScope )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
-                                    tableHeader );
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
 
-    private String[] getDependencyTableHeader()
+    private static String[] getDependencyTableHeader( boolean hasClassifier )
     {
         String groupId = getReportString( "report.dependencyManagement.column.groupId" );
         String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
@@ -138,10 +132,15 @@ public class DependencyManagementRenderer
         String classifier = getReportString( "report.dependencyManagement.column.classifier" );
         String type = getReportString( "report.dependencyManagement.column.type" );
 
-        return new String[] { groupId, artifactId, version, classifier, type };
+        if ( hasClassifier )
+        {
+            return new String[] { groupId, artifactId, version, classifier, type };
+        }
+
+        return new String[] { groupId, artifactId, version, type };
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
+    private void renderDependenciesForScope( String scope, List artifacts )
     {
         if ( artifacts != null )
         {
@@ -152,12 +151,25 @@ public class DependencyManagementRenderer
 
             paragraph( getReportString( "report.dependencyManagement.intro." + scope ) );
             startTable();
+
+            boolean hasClassifier = false;
+            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            {
+                Dependency dependency = (Dependency) iterator.next();
+                if ( StringUtils.isNotEmpty( dependency.getClassifier() ) )
+                {
+                    hasClassifier = true;
+                    break;
+                }
+            }
+
+            String[] tableHeader = getDependencyTableHeader( hasClassifier );
             tableHeader( tableHeader );
 
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Dependency dependency = (Dependency) iterator.next();
-                tableRow( getDependencyRow( dependency ) );
+                tableRow( getDependencyRow( dependency, hasClassifier ) );
             }
             endTable();
 
@@ -165,10 +177,16 @@ public class DependencyManagementRenderer
         }
     }
 
-    private String[] getDependencyRow( Dependency dependency )
+    private String[] getDependencyRow( Dependency dependency, boolean hasClassifier )
     {
+        if ( hasClassifier )
+        {
+            return new String[] { dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
+                dependency.getClassifier(), dependency.getType() };
+        }
+
         return new String[] { dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
-            dependency.getClassifier(), dependency.getType() };
+            dependency.getType() };
     }
 
     private Comparator getDependencyComparator()
