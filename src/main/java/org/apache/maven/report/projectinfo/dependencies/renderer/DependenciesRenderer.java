@@ -358,9 +358,6 @@ public class DependenciesRenderer
         String debug = getReportString( "report.dependencies.file.details.column.debug" );
         String sealed = getReportString( "report.dependencies.file.details.column.sealed" );
 
-        String[] tableHeader = new String[]{filename, size, entries, classes, packages, jdkrev, debug, sealed};
-        tableHeader( tableHeader );
-
         int[] justification = new int[]{Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
             Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
             Parser.JUSTIFY_CENTER};
@@ -374,6 +371,72 @@ public class DependenciesRenderer
         double highestjdk = 0.0;
         int totaldebug = 0;
         int totalsealed = 0;
+
+        boolean hasSealed = false;
+        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                // TODO site:run Why do we need to resolve this...
+                if ( artifact.getFile() == null )
+                {
+                    try
+                    {
+                        repoUtils.resolve( artifact );
+                    }
+                    catch ( ArtifactResolutionException e )
+                    {
+                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                        continue;
+                    }
+                    catch ( ArtifactNotFoundException e )
+                    {
+                        if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
+                            && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
+                            && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                        {
+                            log.warn( "The artifact of this project has never been deployed." );
+                        }
+                        else
+                        {
+                            log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                        }
+
+                        continue;
+                    }
+                }
+
+                if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
+                {
+                    try
+                    {
+                        JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
+                        if ( jarDetails.isSealed() )
+                        {
+                            hasSealed = true;
+                            break;
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        log.error( "IOException: " + e.getMessage(), e );
+                    }
+                }
+            }
+        }
+
+        String[] tableHeader;
+        if ( hasSealed )
+        {
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug, sealed };
+        }
+        else
+        {
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug };
+        }
+        tableHeader( tableHeader );
 
         DecimalFormat decFormat = new DecimalFormat( "#,##0" );
 
@@ -436,13 +499,6 @@ public class DependenciesRenderer
                             totaldebug++;
                         }
 
-                        String sealedstr = "";
-                        if ( jarDetails.isSealed() )
-                        {
-                            sealedstr = "sealed";
-                            totalsealed++;
-                        }
-
                         totalentries += jarDetails.getNumEntries();
                         totalclasses += jarDetails.getNumClasses();
                         totalpackages += jarDetails.getNumPackages();
@@ -459,11 +515,36 @@ public class DependenciesRenderer
                             // ignore
                         }
 
-                        tableRow( new String[]{artifactFile.getName(), decFormat.format( artifactFile.length() ),
-                            decFormat.format( jarDetails.getNumEntries() ),
-                            decFormat.format( jarDetails.getNumClasses() ),
-                            decFormat.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(), debugstr,
-                            sealedstr} );
+                        if ( hasSealed )
+                        {
+                            String sealedstr = "";
+                            if ( jarDetails.isSealed() )
+                            {
+                                sealedstr = "sealed";
+                                totalsealed++;
+                            }
+
+                            tableRow( new String[] {
+                                artifactFile.getName(),
+                                decFormat.format( artifactFile.length() ),
+                                decFormat.format( jarDetails.getNumEntries() ),
+                                decFormat.format( jarDetails.getNumClasses() ),
+                                decFormat.format( jarDetails.getNumPackages() ),
+                                jarDetails.getJdkRevision(),
+                                debugstr,
+                                sealedstr } );
+                        }
+                        else
+                        {
+                            tableRow( new String[] {
+                                artifactFile.getName(),
+                                decFormat.format( artifactFile.length() ),
+                                decFormat.format( jarDetails.getNumEntries() ),
+                                decFormat.format( jarDetails.getNumClasses() ),
+                                decFormat.format( jarDetails.getNumPackages() ),
+                                jarDetails.getJdkRevision(),
+                                debugstr } );
+                        }
                     }
                     catch ( IOException e )
                     {
@@ -480,9 +561,29 @@ public class DependenciesRenderer
 
         tableHeader[0] = "Total";
         tableHeader( tableHeader );
-        tableRow( new String[]{"" + totaldeps + " total dependencies", decFormat.format( totaldepsize ),
-            decFormat.format( totalentries ), decFormat.format( totalclasses ), decFormat.format( totalpackages ),
-            String.valueOf( highestjdk ), decFormat.format( totaldebug ), decFormat.format( totalsealed )} );
+        if ( hasSealed )
+        {
+            tableRow( new String[] {
+                "" + totaldeps + " total dependencies",
+                decFormat.format( totaldepsize ),
+                decFormat.format( totalentries ),
+                decFormat.format( totalclasses ),
+                decFormat.format( totalpackages ),
+                String.valueOf( highestjdk ),
+                decFormat.format( totaldebug ),
+                decFormat.format( totalsealed ) } );
+        }
+        else
+        {
+            tableRow( new String[] {
+                "" + totaldeps + " total dependencies",
+                decFormat.format( totaldepsize ),
+                decFormat.format( totalentries ),
+                decFormat.format( totalclasses ),
+                decFormat.format( totalpackages ),
+                String.valueOf( highestjdk ),
+                decFormat.format( totaldebug ) } );
+        }
 
         sink.tableRows_();
 
