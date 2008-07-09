@@ -180,9 +180,11 @@ public class CimReport
             }
             else
             {
-                startTable();
+                sink.paragraph();
+                sink.text( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
+                sink.paragraph_();
 
-                tableCaption( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
+                startTable();
 
                 String type = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.type" );
                 String address = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.address" );
