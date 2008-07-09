@@ -72,9 +72,11 @@ public class DependencyManagementReport
         return "dependency-management";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean canGenerateReport()
     {
-
         return project.getDependencyManagement() != null;
     }
 }
