@@ -41,12 +41,13 @@ under the License.
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>3.0.1</version>
+      <version>3.1</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
+      <version>1.1.1</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -54,40 +55,49 @@ under the License.
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
+      <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-tools-api</artifactId>
-      <version>2.0.3</version>
+      <version>2.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-descriptor</artifactId>
       <version>2.0</version>
     </dependency>
+    <!-- TODO: Temporary fix for MDOCCK-12, remove once maven-plugin-tools-java has been updated to use latest QDOX by itself -->
     <dependency>
-      <groupId>org.apache.maven</groupId>
+      <groupId>com.thoughtworks.qdox</groupId>
+      <artifactId>qdox</artifactId>
+      <version>1.6.3</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-tools-java</artifactId>
-      <version>2.0.3</version>
+      <version>2.4.2</version>
       <scope>runtime</scope>
+      <exclusions>
+        <!-- using com.thoughtworks.qdox:qdox instead -->
+        <exclusion>
+          <groupId>qdox</groupId>
+          <artifactId>qdox</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact-manager</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
+      <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-tools-beanshell</artifactId>
-      <version>2.0.3</version>
+      <version>2.4.2</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
       <version>2.0</version>
     </dependency>
     <dependency>
@@ -103,12 +113,12 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.5</version>
+      <version>1.5.5</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
