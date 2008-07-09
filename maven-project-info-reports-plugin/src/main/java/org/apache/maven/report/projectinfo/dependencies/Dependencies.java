@@ -72,6 +72,11 @@ public class Dependencies
     private Map transitiveDependenciesByScope;
 
     /**
+     * @since 2.1
+     */
+    private Map dependencyDetails;
+
+    /**
      * Default constructor
      *
      * @param project
@@ -258,8 +263,18 @@ public class Dependencies
     public JarData getJarDependencyDetails( Artifact artifact )
         throws IOException
     {
-        JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
+        if ( dependencyDetails == null )
+        {
+            dependencyDetails = new HashMap();
+        }
 
+        JarData old = (JarData) dependencyDetails.get( artifact.getId() );
+        if ( dependencyDetails.get( artifact.getId() ) != null )
+        {
+            return old;
+        }
+
+        JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
         try
         {
             classesAnalyzer.analyze( jarAnalyzer );
@@ -268,6 +283,8 @@ public class Dependencies
         {
             jarAnalyzer.closeQuietly();
         }
+
+        dependencyDetails.put( artifact.getId(), jarAnalyzer.getJarData() );
 
         return jarAnalyzer.getJarData();
     }
