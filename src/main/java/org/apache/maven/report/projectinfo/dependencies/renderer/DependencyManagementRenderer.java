@@ -27,9 +27,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
@@ -51,7 +55,28 @@ public class DependencyManagementRenderer
 
     private Log log;
 
-    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies )
+    private final ArtifactFactory artifactFactory;
+
+    private final MavenProjectBuilder mavenProjectBuilder;
+
+    private final List remoteRepositories;
+
+    private final ArtifactRepository localRepository;
+
+    /**
+     * Default constructor
+     *
+     * @param sink
+     * @param locale
+     * @param i18n
+     * @param artifactFactory
+     * @param dependencies
+     * @param mavenProjectBuilder
+     * @param remoteRepositories
+     * @param localRepository
+     */
+    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies, ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
+                                         List remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink );
 
@@ -61,6 +86,13 @@ public class DependencyManagementRenderer
 
         this.i18n = i18n;
 
+        this.artifactFactory = artifactFactory;
+
+        this.mavenProjectBuilder = mavenProjectBuilder;
+
+        this.remoteRepositories = remoteRepositories;
+
+        this.localRepository = localRepository;
     }
 
     // ----------------------------------------------------------------------
@@ -179,13 +211,18 @@ public class DependencyManagementRenderer
 
     private String[] getDependencyRow( Dependency dependency, boolean hasClassifier )
     {
+        Artifact artifact = artifactFactory.createParentArtifact( dependency.getGroupId(), dependency.getArtifactId(),
+                                                                  dependency.getVersion() );
+        String url = ArtifactUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String artifactIdCell = ArtifactUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+
         if ( hasClassifier )
         {
-            return new String[] { dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
+            return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
                 dependency.getClassifier(), dependency.getType() };
         }
 
-        return new String[] { dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
+        return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
             dependency.getType() };
     }
 
