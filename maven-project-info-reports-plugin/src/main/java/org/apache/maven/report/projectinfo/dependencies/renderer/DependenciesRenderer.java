@@ -44,9 +44,11 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
+import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
@@ -106,6 +108,12 @@ public class DependenciesRenderer
         }
     };
 
+    private final MavenProjectBuilder mavenProjectBuilder;
+
+    private final List remoteRepositories;
+
+    private final ArtifactRepository localRepository;
+
     static
     {
         JAR_SUBTYPE.add( "jar" );
@@ -136,10 +144,14 @@ public class DependenciesRenderer
      * @param dependencyTreeNode
      * @param config
      * @param repoUtils
+     * @param mavenProjectBuilder
+     * @param remoteRepositories
+     * @param localRepository
      */
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
                                  DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
-                                 RepositoryUtils repoUtils )
+                                 RepositoryUtils repoUtils, MavenProjectBuilder mavenProjectBuilder,
+                                 List remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink );
 
@@ -154,6 +166,12 @@ public class DependenciesRenderer
         this.i18n = i18n;
 
         this.configuration = config;
+
+        this.mavenProjectBuilder = mavenProjectBuilder;
+
+        this.remoteRepositories = remoteRepositories;
+
+        this.localRepository = localRepository;
     }
 
     // ----------------------------------------------------------------------
@@ -830,13 +848,16 @@ public class DependenciesRenderer
         String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
             : getReportString( "report.dependencies.column.isNotOptional" );
 
+        String url = ArtifactUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String artifactIdCell = ArtifactUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+
         if ( withClassifier )
         {
             if ( withOptional )
             {
                 return new String[] {
                     artifact.getGroupId(),
-                    artifact.getArtifactId(),
+                    artifactIdCell,
                     artifact.getVersion(),
                     artifact.getClassifier(),
                     artifact.getType(),
@@ -845,7 +866,7 @@ public class DependenciesRenderer
 
             return new String[] {
                 artifact.getGroupId(),
-                artifact.getArtifactId(),
+                artifactIdCell,
                 artifact.getVersion(),
                 artifact.getClassifier(),
                 artifact.getType() };
@@ -855,7 +876,7 @@ public class DependenciesRenderer
         {
             return new String[] {
                 artifact.getGroupId(),
-                artifact.getArtifactId(),
+                artifactIdCell,
                 artifact.getVersion(),
                 artifact.getType(),
                 isOptional };
@@ -863,7 +884,7 @@ public class DependenciesRenderer
 
         return new String[] {
             artifact.getGroupId(),
-            artifact.getArtifactId(),
+            artifactIdCell,
             artifact.getVersion(),
             artifact.getType()};
     }
