@@ -51,6 +51,11 @@ public class ArtifactUtils
     public static String getArtifactUrl( Artifact artifact, MavenProjectBuilder mavenProjectBuilder,
                                          List remoteRepositories, ArtifactRepository localRepository )
     {
+        if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+        {
+            return null;
+        }
+
         try
         {
             MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories,
