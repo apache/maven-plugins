@@ -553,7 +553,7 @@ public class DependenciesRenderer
             }
         }
 
-        tableHeader[0] = "Total";
+        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
         if ( hasSealed )
         {
