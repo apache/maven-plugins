@@ -875,7 +875,7 @@ public class DependenciesRenderer
         sink.listItem();
 
         sink.paragraph();
-        sink.text( id );
+        sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
         sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '"
             + dependencyDetailId + "', '" + imgId + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
         sink.paragraph_();
@@ -938,23 +938,33 @@ public class DependenciesRenderer
 
                 sink.tableRow();
                 sink.tableHeaderCell();
-                sink.rawText( artifactName );
+                sink.text( artifactName );
                 sink.tableHeaderCell_();
                 sink.tableRow_();
 
                 sink.tableRow();
                 sink.tableCell();
 
-                if ( artifactDescription != null )
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.description" ) + ": " );
+                sink.bold_();
+                if ( StringUtils.isNotEmpty( artifactDescription ) )
                 {
-                    sink.paragraph();
                     sink.text( artifactDescription );
-                    sink.paragraph_();
                 }
+                else
+                {
+                    sink.text( getReportString( "report.index.nodescription" ) );
+                }
+                sink.paragraph_();
 
-                if ( artifactUrl != null )
+                if ( StringUtils.isNotEmpty( artifactUrl ) )
                 {
                     sink.paragraph();
+                    sink.bold();
+                    sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
+                    sink.bold_();
                     sink.link( artifactUrl );
                     sink.text( artifactUrl );
                     sink.link_();
@@ -962,7 +972,9 @@ public class DependenciesRenderer
                 }
 
                 sink.paragraph();
+                sink.bold();
                 sink.text( getReportString( "report.license.title" ) + ": " );
+                sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
                     for ( Iterator iter = licenses.iterator(); iter.hasNext(); )
@@ -1002,7 +1014,7 @@ public class DependenciesRenderer
         {
             sink.tableRow();
             sink.tableHeaderCell();
-            sink.rawText( id );
+            sink.text( id );
             sink.tableHeaderCell_();
             sink.tableRow_();
 
@@ -1010,8 +1022,21 @@ public class DependenciesRenderer
             sink.tableCell();
 
             sink.paragraph();
-            sink.text( artifact.getFile().toString() );
+            sink.bold();
+            sink.text( getReportString( "report.dependencies.column.description" ) + ": " );
+            sink.bold_();
+            sink.text( getReportString( "report.index.nodescription" ) );
             sink.paragraph_();
+
+            if ( artifact.getFile() != null )
+            {
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
+                sink.bold_();
+                sink.text( artifact.getFile().getAbsolutePath() );
+                sink.paragraph_();
+            }
         }
 
         sink.tableCell_();
