@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -141,6 +142,14 @@ public class DependenciesReport
      */
     private boolean dependencyLocationsEnabled;
 
+    /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -180,8 +189,9 @@ public class DependenciesReport
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
-        DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTreeNode, config, repoUtils );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTreeNode,
+                                                           config, repoUtils, mavenProjectBuilder, remoteRepositories,
+                                                           localRepository );
 
         repoUtils.setLog( getLog() );
         r.setLog( getLog() );

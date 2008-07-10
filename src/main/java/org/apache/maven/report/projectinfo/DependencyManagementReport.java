@@ -19,8 +19,11 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
 
@@ -37,6 +40,36 @@ import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManag
 public class DependencyManagementReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Maven Project Builder component.
+     *
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -60,7 +93,9 @@ public class DependencyManagementReport
         ManagementDependencies dependencies =
             new ManagementDependencies( project.getDependencyManagement().getDependencies() );
 
-        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, dependencies );
+        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, dependencies,
+                                                                           artifactFactory, mavenProjectBuilder,
+                                                                           remoteRepositories, localRepository );
 
         r.setLog( getLog() );
         r.render();
