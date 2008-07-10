@@ -88,6 +88,7 @@ public class PluginManagementReport
         return "plugin-management";
     }
 
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         return project.getPluginManagement() != null;
