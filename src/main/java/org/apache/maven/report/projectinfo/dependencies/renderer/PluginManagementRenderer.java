@@ -36,6 +36,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 
@@ -63,6 +64,16 @@ public class PluginManagementRenderer
 
     private Log log;
 
+    /**
+     * @param sink
+     * @param locale
+     * @param i18n
+     * @param plugins
+     * @param project
+     * @param mavenProjectBuilder
+     * @param artifactFactory
+     * @param localRepository
+     */
     public PluginManagementRenderer( Sink sink, Locale locale, I18N i18n, List plugins, MavenProject project,
                                      MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
                                      ArtifactRepository localRepository )
@@ -190,17 +201,8 @@ public class PluginManagementRenderer
 
     private String[] getPluginRow( Plugin plugin, String link )
     {
-        String artifactId = getPluginCell( plugin.getArtifactId(), link );
+        String artifactId = ArtifactUtils.getArtifactIdCell( plugin.getArtifactId(), link );
         return new String[] { plugin.getGroupId(), artifactId, plugin.getVersion() };
-    }
-
-    private String getPluginCell( String text, String link )
-    {
-        if ( link == null || "".equals( link ) )
-        {
-            return text;
-        }
-        return "{" + text + "," + link + "}";
     }
 
     private Comparator getPluginComparator()
