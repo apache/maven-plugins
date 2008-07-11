@@ -76,6 +76,9 @@ public class CimReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class CimRenderer
         extends AbstractMavenReportRenderer
     {
@@ -211,8 +214,9 @@ public class CimReport
         /**
          * Checks if a CIM system is bugzilla, continium...
          *
-         * @return true if the CIM system is bugzilla, continium..., false
-         *         otherwise.
+         * @param connection
+         * @param cim
+         * @return true if the CIM system is bugzilla, continium..., false otherwise.
          */
         private boolean isCimSystem( String connection, String cim )
         {

@@ -229,7 +229,7 @@ public class DependencyConvergenceReport
     {
         sink.numberedList( 1 ); // Use lower alpha numbering
         List depList = (List) artifactMap.get( version );
-        Collections.sort( depList, new ProjectComparator() );
+        Collections.sort( depList, new ReverseDependencyLinkComparator() );
         Iterator it = depList.iterator();
         while ( it.hasNext() )
         {
@@ -581,6 +581,9 @@ public class DependencyConvergenceReport
         return i18n.getString( "project-info-report", locale, "report.dependency-convergence." + key );
     }
 
+    /**
+     * Internal object
+     */
     private static class ReverseDependencyLink
     {
         private Dependency dependency;
@@ -610,7 +613,10 @@ public class DependencyConvergenceReport
         }
     }
 
-    private static class ProjectComparator
+    /**
+     * Internal ReverseDependencyLink comparator
+     */
+    private static class ReverseDependencyLinkComparator
         implements Comparator
     {
         /** {@inheritDoc} */
