@@ -964,9 +964,16 @@ public class DependenciesRenderer
                     sink.bold();
                     sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
                     sink.bold_();
-                    sink.link( artifactUrl );
-                    sink.text( artifactUrl );
-                    sink.link_();
+                    if ( ArtifactUtils.isArtifactUrlValid( artifactUrl ) )
+                    {
+                        sink.link( artifactUrl );
+                        sink.text( artifactUrl );
+                        sink.link_();
+                    }
+                    else
+                    {
+                        sink.text( artifactUrl );
+                    }
                     sink.paragraph_();
                 }
 
