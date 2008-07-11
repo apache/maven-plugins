@@ -208,6 +208,9 @@ public class DependenciesReport
     // Private methods
     // ----------------------------------------------------------------------
 
+    /**
+     * @return resolve the dependency tree
+     */
     private DependencyNode resolveProject()
     {
         try

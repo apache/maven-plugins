@@ -75,7 +75,8 @@ public class DependencyManagementRenderer
      * @param remoteRepositories
      * @param localRepository
      */
-    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies, ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
+    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies,
+                                         ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
                                          List remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink );
@@ -148,7 +149,8 @@ public class DependencyManagementRenderer
         renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
         renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
         renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
         renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 

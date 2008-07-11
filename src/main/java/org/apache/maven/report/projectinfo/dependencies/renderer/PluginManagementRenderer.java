@@ -159,8 +159,8 @@ public class PluginManagementRenderer
                     versionRange = VersionRange.createFromVersion( plugin.getVersion() );
                 }
 
-                Artifact pluginArtifact =
-                    artifactFactory.createParentArtifact( plugin.getGroupId(), plugin.getArtifactId(), versionRange.toString() );
+                Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
+                    .getArtifactId(), versionRange.toString() );
                 List artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
                 {

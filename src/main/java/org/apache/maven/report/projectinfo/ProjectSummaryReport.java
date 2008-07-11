@@ -71,6 +71,9 @@ public class ProjectSummaryReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private class ProjectSummaryRenderer
         extends AbstractMavenReportRenderer
     {

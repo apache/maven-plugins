@@ -27,7 +27,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.util.StringUtils;
 
 /**

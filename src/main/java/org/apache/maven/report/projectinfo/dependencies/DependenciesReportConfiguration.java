@@ -29,6 +29,10 @@ public class DependenciesReportConfiguration
 
     private boolean dependencyLocationsEnabled;
 
+    /**
+     * @param detailsEnabled
+     * @param locationEnabled
+     */
     public DependenciesReportConfiguration( boolean detailsEnabled, boolean locationEnabled )
     {
         this.dependencyDetailsEnabled = detailsEnabled;
