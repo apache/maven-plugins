@@ -60,7 +60,7 @@ public class ArtifactUtils
             MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories,
                                                                                   localRepository );
 
-            if ( URL_VALIDATOR.isValid( pluginProject.getUrl() ) )
+            if ( isArtifactUrlValid( pluginProject.getUrl() ) )
             {
                 return pluginProject.getUrl();
             }
@@ -87,5 +87,19 @@ public class ArtifactUtils
         }
 
         return "{" + artifactId + "," + link + "}";
+    }
+
+    /**
+     * @param url not null
+     * @return <code>true</code> if the url is valid, <code>false</code> otherwise.
+     */
+    public static boolean isArtifactUrlValid( String url )
+    {
+        if ( StringUtils.isEmpty( url ) )
+        {
+            return false;
+        }
+
+        return URL_VALIDATOR.isValid( url );
     }
 }
