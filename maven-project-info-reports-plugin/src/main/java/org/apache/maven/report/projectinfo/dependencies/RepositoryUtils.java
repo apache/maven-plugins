@@ -99,9 +99,10 @@ public class RepositoryUtils
      * @param localRepository
      * @param repositoryMetadataManager
      */
-    public RepositoryUtils( Log log, LoggerManager loggerManager, WagonManager wagonManager, Settings settings, MavenProjectBuilder mavenProjectBuilder,
-                            ArtifactFactory factory, ArtifactResolver resolver, List remoteRepositories,
-                            List pluginRepositories, ArtifactRepository localRepository, RepositoryMetadataManager repositoryMetadataManager )
+    public RepositoryUtils( Log log, LoggerManager loggerManager, WagonManager wagonManager, Settings settings,
+                            MavenProjectBuilder mavenProjectBuilder, ArtifactFactory factory,
+                            ArtifactResolver resolver, List remoteRepositories, List pluginRepositories,
+                            ArtifactRepository localRepository, RepositoryMetadataManager repositoryMetadataManager )
     {
         this.log = log;
         this.loggerManager = loggerManager;
@@ -199,7 +200,8 @@ public class RepositoryUtils
                 wagon.connect( repository, auth );
             }
 
-            return wagon.resourceExists( StringUtils.replace( getDependencyUrlFromRepository(artifact, repo), repo.getUrl(), "" ) );
+            return wagon.resourceExists( StringUtils.replace( getDependencyUrlFromRepository( artifact, repo ),
+                                                              repo.getUrl(), "" ) );
         }
         catch ( ConnectionException e )
         {
