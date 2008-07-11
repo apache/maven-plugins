@@ -73,6 +73,9 @@ public class IssueTrackingReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class IssueTrackingRenderer
         extends AbstractMavenReportRenderer
     {
@@ -160,8 +163,9 @@ public class IssueTrackingReport
         /**
          * Checks if a issue management system is Jira, bugzilla...
          *
-         * @return true if the issue management system is Jira, bugzilla, false
-         *         otherwise.
+         * @param system
+         * @param im
+         * @return true if the issue management system is Jira, bugzilla, false otherwise.
          */
         private boolean isIssueManagementSystem( String system, String im )
         {

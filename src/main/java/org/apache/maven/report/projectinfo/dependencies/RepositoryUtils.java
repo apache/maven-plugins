@@ -70,6 +70,16 @@ public class RepositoryUtils
 
     private ArtifactRepository localRepository;
 
+    /**
+     * @param wagonManager
+     * @param settings
+     * @param mavenProjectBuilder
+     * @param factory
+     * @param resolver
+     * @param remoteRepositories
+     * @param pluginRepositories
+     * @param localRepository
+     */
     public RepositoryUtils( WagonManager wagonManager, Settings settings, MavenProjectBuilder mavenProjectBuilder,
                             ArtifactFactory factory, ArtifactResolver resolver, List remoteRepositories,
                             List pluginRepositories, ArtifactRepository localRepository )
@@ -217,11 +227,10 @@ public class RepositoryUtils
     /**
      * Get the <code>Maven project</code> from the repository depending the <code>Artifact</code> given.
      *
-     * @param artifact        an artifact
+     * @param artifact an artifact
      * @param localRepository the local repository
      * @return the Maven project for the given artifact
-     * @throws org.apache.maven.project.ProjectBuildingException
-     *          if any
+     * @throws org.apache.maven.project.ProjectBuildingException if any
      */
     public MavenProject getMavenProjectFromRepository( Artifact artifact, ArtifactRepository localRepository )
         throws ProjectBuildingException

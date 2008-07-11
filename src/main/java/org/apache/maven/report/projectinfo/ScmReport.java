@@ -118,7 +118,8 @@ public class ScmReport
     public void executeReport( Locale locale )
     {
         ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale,
-                                         checkoutDirectoryName, webAccessUrl, anonymousConnection, developerConnection );
+                                         checkoutDirectoryName, webAccessUrl, anonymousConnection,
+                                         developerConnection );
 
         r.render();
     }
@@ -133,6 +134,9 @@ public class ScmReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class ScmRenderer
         extends AbstractMavenReportRenderer
     {
@@ -329,7 +333,8 @@ public class ScmReport
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.anonymousaccess.general.intro" ) );
 
                 verbatimText( anonymousConnection.substring( 4 ) );
             }
@@ -404,10 +409,12 @@ public class ScmReport
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
-                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
+                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() );
+                sb.append( " " ).append( checkoutDirectoryName );
                 verbatimText( sb.toString() );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
@@ -434,11 +441,15 @@ public class ScmReport
         {
             if ( isScmSystem( anonymousRepository, "svn" ) || isScmSystem( devRepository, "svn" ) )
             {
-                startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
+                startSection( i18n.getString( "project-info-report", locale,
+                                              "report.scm.accessthroughtproxy.title" ) );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro1" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro2" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro3" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
@@ -617,19 +628,23 @@ public class ScmReport
             {
                 if ( svnRepo.getUrl().startsWith( "https://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.https" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.https" ) );
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svn" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.svn" ) );
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn+ssh://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svnssh" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.svnssh" ) );
                 }
                 else
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.other" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.other" ) );
                 }
             }
 
