@@ -73,7 +73,7 @@ public class DependenciesRenderer
     private static final String IMG_CLOSE_URL = "./images/close.gif";
 
     /** Random used to generate a UID */
-    private final static SecureRandom RANDOM;
+    private static final SecureRandom RANDOM;
 
     /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
@@ -81,7 +81,7 @@ public class DependenciesRenderer
     /** Used to format file length values */
     private static final DecimalFormat FILE_LENGTH_DECIMAL_FORMAT = new FileDecimalFormat();
 
-    private final static HashSet JAR_SUBTYPE = new HashSet();
+    private static final HashSet JAR_SUBTYPE = new HashSet();
 
     private final Locale locale;
 
@@ -324,7 +324,8 @@ public class DependenciesRenderer
         renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
         renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
         renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
         renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 
@@ -876,8 +877,9 @@ public class DependenciesRenderer
 
         sink.paragraph();
         sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
-        sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '"
-            + dependencyDetailId + "', '" + imgId + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
+        sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL
+            + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '" + imgId
+            + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
         sink.paragraph_();
 
         printDescriptionsAndURLs( node, dependencyDetailId );
@@ -1044,7 +1046,7 @@ public class DependenciesRenderer
 
         sink.table_();
 
-        sink.rawText( "</div>");
+        sink.rawText( "</div>" );
     }
 
     private void printGroupedLicenses()
@@ -1155,7 +1157,8 @@ public class DependenciesRenderer
     }
 
     /**
-     * @return a valid HTML ID respecting <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment Identifiers</a>
+     * @return a valid HTML ID respecting
+     * <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment Identifiers</a>
      */
     private static String getUUID()
     {
