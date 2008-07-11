@@ -708,10 +708,9 @@ public class DependenciesRenderer
                     String repokey = (String) itrepo.next();
                     ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
 
-                    String depUrl = repo.getUrl() + "/" + repo.pathOf( dependency );
+                    String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
 
                     boolean dependencyExists = false;
-
                     // check snapshots in snapshots repository only and releases in release repositories...
                     if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
                         || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
@@ -1181,6 +1180,7 @@ public class DependenciesRenderer
             super( "########.00" );
         }
 
+        /** {@inheritDoc} */
         public StringBuffer format( long fs, StringBuffer result, FieldPosition fieldPosition )
         {
             if ( fs > 1024 * 1024 * 1024 )
