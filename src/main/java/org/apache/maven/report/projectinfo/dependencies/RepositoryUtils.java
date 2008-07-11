@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo.dependencies;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -124,29 +125,42 @@ public class RepositoryUtils
         resolver.resolve( artifact, remoteRepositories, localRepository );
     }
 
+    /**
+     * @param repo not null
+     * @param artifact not null
+     * @return <code>true</code> if the artifact exists in the given repo, <code>false</ccode> otherwise
+     */
     public boolean dependencyExistsInRepo( ArtifactRepository repo, Artifact artifact )
     {
-        Wagon wagon;
+        String id = repo.getId();
+        Repository repository = new Repository( id, repo.getUrl() );
 
+        Wagon wagon;
         try
         {
-            wagon = wagonManager.getWagon( repo.getProtocol() );
+            wagon = wagonManager.getWagon( repository );
         }
         catch ( UnsupportedProtocolException e )
         {
             log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
             return false;
         }
+        catch ( WagonConfigurationException e )
+        {
+            log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
+            return false;
+        }
 
-        try
+        if ( log.isDebugEnabled() )
         {
             Debug debug = new Debug();
 
             wagon.addSessionListener( debug );
             wagon.addTransferListener( debug );
+        }
 
-            String id = repo.getId();
-            Repository repository = new Repository( id, repo.getUrl() );
+        try
+        {
             AuthenticationInfo auth = wagonManager.getAuthenticationInfo( repo.getId() );
 
             ProxyInfo proxyInfo = getProxyInfo( settings );
@@ -158,6 +172,7 @@ public class RepositoryUtils
             {
                 wagon.connect( repository, auth );
             }
+
             return ( wagon.resourceExists( repo.pathOf( artifact ) ) );
         }
         catch ( ConnectionException e )
