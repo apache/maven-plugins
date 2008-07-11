@@ -321,6 +321,7 @@ under the License.
       <groupId>junit-addons</groupId>
       <artifactId>junit-addons</artifactId>
       <version>1.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
