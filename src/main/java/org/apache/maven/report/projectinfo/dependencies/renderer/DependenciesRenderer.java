@@ -619,8 +619,7 @@ public class DependenciesRenderer
             Artifact artifact = (Artifact) it.next();
             try
             {
-                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
-                    .getLocalRepository() );
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
 
                 populateRepositoryMap( repoMap, artifactProject.getRemoteArtifactRepositories() );
             }
@@ -930,8 +929,7 @@ public class DependenciesRenderer
         {
             try
             {
-                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
-                    .getLocalRepository() );
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();

@@ -57,6 +57,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * Utilities methods to play with repository
+ *
  * @version $Id$
  * @since 2.1
  */
@@ -187,7 +189,7 @@ public class RepositoryUtils
         {
             AuthenticationInfo auth = wagonManager.getAuthenticationInfo( repo.getId() );
 
-            ProxyInfo proxyInfo = getProxyInfo( settings );
+            ProxyInfo proxyInfo = getProxyInfo();
             if ( proxyInfo != null )
             {
                 wagon.connect( repository, auth, proxyInfo );
@@ -238,40 +240,13 @@ public class RepositoryUtils
     }
 
     /**
-     * Convenience method to map a <code>Proxy</code> object from the user system settings to a <code>ProxyInfo</code>
-     * object.
-     *
-     * @param settings the system settings
-     * @return a proxyInfo object instanced or null if no active proxy is define in the settings.xml
-     */
-    public ProxyInfo getProxyInfo( Settings settings )
-    {
-        ProxyInfo proxyInfo = null;
-        if ( settings != null && settings.getActiveProxy() != null )
-        {
-            Proxy settingsProxy = settings.getActiveProxy();
-
-            proxyInfo = new ProxyInfo();
-            proxyInfo.setHost( settingsProxy.getHost() );
-            proxyInfo.setType( settingsProxy.getProtocol() );
-            proxyInfo.setPort( settingsProxy.getPort() );
-            proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
-            proxyInfo.setUserName( settingsProxy.getUsername() );
-            proxyInfo.setPassword( settingsProxy.getPassword() );
-        }
-
-        return proxyInfo;
-    }
-
-    /**
      * Get the <code>Maven project</code> from the repository depending the <code>Artifact</code> given.
      *
      * @param artifact an artifact
-     * @param localRepository the local repository
      * @return the Maven project for the given artifact
-     * @throws org.apache.maven.project.ProjectBuildingException if any
+     * @throws ProjectBuildingException if any
      */
-    public MavenProject getMavenProjectFromRepository( Artifact artifact, ArtifactRepository localRepository )
+    public MavenProject getMavenProjectFromRepository( Artifact artifact )
         throws ProjectBuildingException
     {
         Artifact projectArtifact = artifact;
@@ -343,5 +318,35 @@ public class RepositoryUtils
         }
 
         return repo.getUrl() + "/" + repo.pathOf( copyArtifact );
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Convenience method to map a <code>Proxy</code> object from the user system settings to a <code>ProxyInfo</code>
+     * object.
+     *
+     * @param settings the system settings
+     * @return a proxyInfo object instanced or null if no active proxy is define in the settings.xml
+     */
+    private ProxyInfo getProxyInfo()
+    {
+        ProxyInfo proxyInfo = null;
+        if ( settings != null && settings.getActiveProxy() != null )
+        {
+            Proxy settingsProxy = settings.getActiveProxy();
+
+            proxyInfo = new ProxyInfo();
+            proxyInfo.setHost( settingsProxy.getHost() );
+            proxyInfo.setType( settingsProxy.getProtocol() );
+            proxyInfo.setPort( settingsProxy.getPort() );
+            proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
+            proxyInfo.setUserName( settingsProxy.getUsername() );
+            proxyInfo.setPassword( settingsProxy.getPassword() );
+        }
+
+        return proxyInfo;
     }
 }
