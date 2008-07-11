@@ -616,7 +616,7 @@ public class DependencyConvergenceReport
     /**
      * Internal ReverseDependencyLink comparator
      */
-    private static class ReverseDependencyLinkComparator
+    static class ReverseDependencyLinkComparator
         implements Comparator
     {
         /** {@inheritDoc} */
