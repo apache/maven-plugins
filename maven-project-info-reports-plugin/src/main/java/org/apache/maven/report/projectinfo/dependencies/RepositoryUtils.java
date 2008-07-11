@@ -115,14 +115,20 @@ public class RepositoryUtils
         return pluginRepositories;
     }
 
+    /**
+     * @param artifact not null
+     * @throws ArtifactResolutionException if any
+     * @throws ArtifactNotFoundException if any
+     * @see ArtifactResolver#resolve(Artifact, List, ArtifactRepository)
+     */
     public void resolve( Artifact artifact )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        List remoteRepositories = new ArrayList();
-        remoteRepositories.addAll( pluginRepositories );
-        remoteRepositories.addAll( remoteRepositories );
+        List repos = new ArrayList();
+        repos.addAll( pluginRepositories );
+        repos.addAll( remoteRepositories );
 
-        resolver.resolve( artifact, remoteRepositories, localRepository );
+        resolver.resolve( artifact, repos, localRepository );
     }
 
     /**
