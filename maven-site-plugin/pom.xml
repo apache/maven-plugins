@@ -383,6 +383,6 @@ under the License.
   <properties>
     <doxiaVersion>1.0-alpha-11</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
   </properties>
 </project>
