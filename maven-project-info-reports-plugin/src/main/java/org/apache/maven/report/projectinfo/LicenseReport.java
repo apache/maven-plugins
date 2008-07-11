@@ -116,6 +116,9 @@ public class LicenseReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class LicenseRenderer
         extends AbstractMavenReportRenderer
     {
@@ -278,6 +281,7 @@ public class LicenseReport
          *
          * @param licenseUrl
          * @return the content of the licenseUrl
+         * @throws IOException
          */
         private String getLicenseInputStream( URL licenseUrl )
             throws IOException

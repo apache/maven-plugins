@@ -216,7 +216,7 @@ public class Dependencies
             transitiveDependenciesByScope = new HashMap();
             for ( Iterator i = getTransitiveDependencies().iterator(); i.hasNext(); )
             {
-                Artifact artifact = (Artifact)i.next();
+                Artifact artifact = (Artifact) i.next();
 
                 List multiValue = (List) transitiveDependenciesByScope.get( artifact.getScope() );
                 if ( multiValue == null )
@@ -224,7 +224,7 @@ public class Dependencies
                     multiValue = new ArrayList();
                 }
 
-                if ( !multiValue.contains( artifact) )
+                if ( !multiValue.contains( artifact ) )
                 {
                     multiValue.add( artifact );
                 }
@@ -242,7 +242,7 @@ public class Dependencies
         dependenciesByScope = new HashMap();
         for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
         {
-            Artifact artifact = (Artifact)i.next();
+            Artifact artifact = (Artifact) i.next();
 
             List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
             if ( multiValue == null )
@@ -260,6 +260,11 @@ public class Dependencies
         return dependenciesByScope;
     }
 
+    /**
+     * @param artifact
+     * @return the jardata object from the artifact
+     * @throws IOException if any
+     */
     public JarData getJarDependencyDetails( Artifact artifact )
         throws IOException
     {
