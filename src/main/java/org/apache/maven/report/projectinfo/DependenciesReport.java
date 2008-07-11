@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
@@ -35,6 +36,11 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
@@ -58,6 +64,7 @@ import java.util.Locale;
  */
 public class DependenciesReport
     extends AbstractProjectInfoReport
+    implements Contextualizable
 {
     /** Images resources dir */
     private static final String RESOURCES_DIR = "org/apache/maven/report/projectinfo/resources";
@@ -104,12 +111,20 @@ public class DependenciesReport
     private DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
-     * Jar classes analyser component.
+     * Jar classes analyzer component.
      *
      * @since 2.1
      * @component
      */
     private JarClassesAnalysis classesAnalyzer;
+
+    /**
+     * Repository metadata component.
+     *
+     * @since 2.1
+     * @component
+     */
+    private RepositoryMetadataManager repositoryMetadataManager;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -150,6 +165,13 @@ public class DependenciesReport
      */
     private List remoteRepositories;
 
+    /**
+     * Plexus container to play with logger manager.
+     *
+     * @since 2.1
+     */
+    private PlexusContainer container;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -178,9 +200,11 @@ public class DependenciesReport
             getLog().error( "Cannot copy ressources", e );
         }
 
-        RepositoryUtils repoUtils = new RepositoryUtils( wagonManager, settings, mavenProjectBuilder, factory, resolver,
-                                                         project.getRemoteArtifactRepositories(),
-                                                         project.getPluginArtifactRepositories(), localRepository );
+        RepositoryUtils repoUtils = new RepositoryUtils( getLog(), container.getLoggerManager(), wagonManager,
+                                                         settings, mavenProjectBuilder, factory, resolver, project
+                                                             .getRemoteArtifactRepositories(), project
+                                                             .getPluginArtifactRepositories(), localRepository,
+                                                         repositoryMetadataManager );
 
         DependencyNode dependencyTreeNode = resolveProject();
 
@@ -192,8 +216,6 @@ public class DependenciesReport
         DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTreeNode,
                                                            config, repoUtils, mavenProjectBuilder, remoteRepositories,
                                                            localRepository );
-
-        repoUtils.setLog( getLog() );
         r.setLog( getLog() );
         r.render();
     }
@@ -202,6 +224,13 @@ public class DependenciesReport
     public String getOutputName()
     {
         return "dependencies";
+    }
+
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        this.container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     // ----------------------------------------------------------------------
