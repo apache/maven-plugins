@@ -114,16 +114,25 @@ public class RepositoryUtils
         this.repositoryMetadataManager = repositoryMetadataManager;
     }
 
+    /**
+     * @return localrepo
+     */
     public ArtifactRepository getLocalRepository()
     {
         return localRepository;
     }
 
+    /**
+     * @return remote artifact repo
+     */
     public List getRemoteArtifactRepositories()
     {
         return remoteRepositories;
     }
 
+    /**
+     * @return plugin artifact repo
+     */
     public List getPluginArtifactRepositories()
     {
         return pluginRepositories;
@@ -233,7 +242,7 @@ public class RepositoryUtils
      * object.
      *
      * @param settings the system settings
-     * @return a proxyInfo object instancied or null if no active proxy is define in the settings.xml
+     * @return a proxyInfo object instanced or null if no active proxy is define in the settings.xml
      */
     public ProxyInfo getProxyInfo( Settings settings )
     {
