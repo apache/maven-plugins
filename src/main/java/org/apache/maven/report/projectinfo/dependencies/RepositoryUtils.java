@@ -20,10 +20,15 @@ package org.apache.maven.report.projectinfo.dependencies;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataResolutionException;
+import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -43,8 +48,12 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.LoggerManager;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -53,25 +62,31 @@ import java.util.List;
  */
 public class RepositoryUtils
 {
-    private Log log;
+    private final Log log;
 
-    private WagonManager wagonManager;
+    private final LoggerManager loggerManager;
 
-    private Settings settings;
+    private final WagonManager wagonManager;
 
-    private MavenProjectBuilder mavenProjectBuilder;
+    private final Settings settings;
 
-    private ArtifactFactory factory;
+    private final MavenProjectBuilder mavenProjectBuilder;
 
-    private List remoteRepositories;
+    private final ArtifactFactory factory;
 
-    private List pluginRepositories;
+    private final List remoteRepositories;
 
-    private ArtifactResolver resolver;
+    private final List pluginRepositories;
 
-    private ArtifactRepository localRepository;
+    private final ArtifactResolver resolver;
+
+    private final ArtifactRepository localRepository;
+
+    private final RepositoryMetadataManager repositoryMetadataManager;
 
     /**
+     * @param log
+     * @param loggerManager
      * @param wagonManager
      * @param settings
      * @param mavenProjectBuilder
@@ -80,11 +95,14 @@ public class RepositoryUtils
      * @param remoteRepositories
      * @param pluginRepositories
      * @param localRepository
+     * @param repositoryMetadataManager
      */
-    public RepositoryUtils( WagonManager wagonManager, Settings settings, MavenProjectBuilder mavenProjectBuilder,
+    public RepositoryUtils( Log log, LoggerManager loggerManager, WagonManager wagonManager, Settings settings, MavenProjectBuilder mavenProjectBuilder,
                             ArtifactFactory factory, ArtifactResolver resolver, List remoteRepositories,
-                            List pluginRepositories, ArtifactRepository localRepository )
+                            List pluginRepositories, ArtifactRepository localRepository, RepositoryMetadataManager repositoryMetadataManager )
     {
+        this.log = log;
+        this.loggerManager = loggerManager;
         this.wagonManager = wagonManager;
         this.settings = settings;
         this.mavenProjectBuilder = mavenProjectBuilder;
@@ -93,11 +111,7 @@ public class RepositoryUtils
         this.remoteRepositories = remoteRepositories;
         this.pluginRepositories = pluginRepositories;
         this.localRepository = localRepository;
-    }
-
-    public void setLog( Log log )
-    {
-        this.log = log;
+        this.repositoryMetadataManager = repositoryMetadataManager;
     }
 
     public ArtifactRepository getLocalRepository()
@@ -128,7 +142,7 @@ public class RepositoryUtils
         repos.addAll( pluginRepositories );
         repos.addAll( remoteRepositories );
 
-        resolver.resolve( artifact, repos, localRepository );
+        resolver.resolveAlways( artifact, repos, localRepository );
     }
 
     /**
@@ -138,24 +152,19 @@ public class RepositoryUtils
      */
     public boolean dependencyExistsInRepo( ArtifactRepository repo, Artifact artifact )
     {
-        String id = repo.getId();
-        Repository repository = new Repository( id, repo.getUrl() );
-
         Wagon wagon;
         try
         {
-            wagon = wagonManager.getWagon( repository );
+            wagon = wagonManager.getWagon( repo.getProtocol() );
         }
         catch ( UnsupportedProtocolException e )
         {
             log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
             return false;
         }
-        catch ( WagonConfigurationException e )
-        {
-            log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
-            return false;
-        }
+
+        String id = repo.getId();
+        Repository repository = new Repository( id, repo.getUrl() );
 
         if ( log.isDebugEnabled() )
         {
@@ -179,7 +188,7 @@ public class RepositoryUtils
                 wagon.connect( repository, auth );
             }
 
-            return ( wagon.resourceExists( repo.pathOf( artifact ) ) );
+            return wagon.resourceExists( StringUtils.replace( getDependencyUrlFromRepository(artifact, repo), repo.getUrl(), "" ) );
         }
         catch ( ConnectionException e )
         {
@@ -269,5 +278,61 @@ public class RepositoryUtils
         // TODO: we should use the MavenMetadataSource instead
         return mavenProjectBuilder.buildFromRepository( projectArtifact, remoteRepositories, localRepository,
                                                         allowStubModel );
+    }
+
+    /**
+     * @param artifact not null
+     * @param repo not null
+     * @return the artifact url in the given repo for the given artifact. If it is a snapshot artifact, the version
+     * will be the the timestamp and the build number from the metadata.
+     */
+    public String getDependencyUrlFromRepository( Artifact artifact, ArtifactRepository repo )
+    {
+        Artifact copyArtifact = ArtifactUtils.copyArtifact( artifact );
+        // Try to get the last artifact repo name depending the snapshot version
+        if ( ( artifact.isSnapshot() && repo.getSnapshots().isEnabled() ) )
+        {
+            for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
+            {
+                ArtifactMetadata m = (ArtifactMetadata) it.next();
+                if ( m instanceof SnapshotArtifactRepositoryMetadata )
+                {
+                    SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;
+
+                    // Removed not found log
+                    int oldThreshold = loggerManager.getThreshold();
+                    loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), Logger.LEVEL_DISABLED );
+                    try
+                    {
+                        repositoryMetadataManager.resolveAlways( snapshotMetadata, localRepository, repo );
+                    }
+                    catch ( RepositoryMetadataResolutionException e )
+                    {
+                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
+                        log.error( "Unable to connect to: " + repo.getUrl(), e );
+                        return artifact.getFile().getName();
+                    }
+                    finally
+                    {
+                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
+                    }
+
+                    Metadata metadata = snapshotMetadata.getMetadata();
+                    if ( metadata.getVersioning() == null || metadata.getVersioning().getSnapshot() == null
+                        || metadata.getVersioning().getSnapshot().isLocalCopy()
+                        || metadata.getVersioning().getSnapshot().getTimestamp() == null )
+                    {
+                        continue;
+                    }
+
+                    copyArtifact.setVersion( StringUtils
+                        .replace( artifact.getVersion(), Artifact.SNAPSHOT_VERSION, metadata.getVersioning()
+                            .getSnapshot().getTimestamp() )
+                        + "-" + metadata.getVersioning().getSnapshot().getBuildNumber() );
+                }
+            }
+        }
+
+        return repo.getUrl() + "/" + repo.pathOf( copyArtifact );
     }
 }
