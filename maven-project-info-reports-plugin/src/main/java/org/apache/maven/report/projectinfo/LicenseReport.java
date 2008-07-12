@@ -94,16 +94,15 @@ public class LicenseReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        if ( !offline )
-        {
-            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
+        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
 
-            r.render();
-        }
-        else
-        {
-            getLog().info( "Not generating license report while offline." );
-        }
+        r.render();
+    }
+
+    /** {@inheritDoc} */
+    public boolean canGenerateReport()
+    {
+        return !offline;
     }
 
     /** {@inheritDoc} */
