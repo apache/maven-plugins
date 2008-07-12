@@ -141,6 +141,16 @@ public class DependenciesReport
     private Settings settings;
 
     /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
+
+    /**
      * Display file details for each dependency, such as: file size, number of
      * classes, number of packages etc.
      *
@@ -150,20 +160,12 @@ public class DependenciesReport
     private boolean dependencyDetailsEnabled;
 
     /**
-     * Display the repository locations of the dependencies. Requires Maven 2.0.5+.
+     * Display the repository locations of the dependencies.
      *
      * @since 2.1
-     * @parameter expression="${dependency.locations.enabled}" default-value="false"
+     * @parameter expression="${dependency.locations.enabled}" default-value="true"
      */
     private boolean dependencyLocationsEnabled;
-
-    /**
-     * Remote repositories used for the project.
-     *
-     * @since 2.1
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     */
-    private List remoteRepositories;
 
     /**
      * Plexus container to play with logger manager.
@@ -191,6 +193,12 @@ public class DependenciesReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
+        if ( settings.isOffline() && dependencyLocationsEnabled )
+        {
+            getLog().warn( "The parameter 'dependencyLocationsEnabled' is ignored in offline mode." );
+            dependencyLocationsEnabled = false;
+        }
+
         try
         {
             copyResources( outputDirectory );
