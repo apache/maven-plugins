@@ -160,7 +160,8 @@ public class DependenciesReport
     private boolean dependencyDetailsEnabled;
 
     /**
-     * Display the repository locations of the dependencies.
+     * Display the repository locations of the dependencies. If Maven is configured to be offline, this parameter
+     * will be ignored.
      *
      * @since 2.1
      * @parameter expression="${dependency.locations.enabled}" default-value="true"
