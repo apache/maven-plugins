@@ -242,21 +242,6 @@ public class DependenciesRenderer
 
         if ( configuration.getDependencyLocationsEnabled() )
         {
-            // this reports requires Wagon 1.0-beta-2 and will not work with maven <= 2.0.4
-            // since we don't want to make maven 2.0.5 a requirements for the whole project info report plugin
-            // let's do a check here
-
-            // org.apache.maven.wagon.Wagon.resourceExists(Ljava/lang/String;)Z
-            try
-            {
-                Wagon.class.getDeclaredMethod( "resourceExists", new Class[]{String.class} );
-            }
-            catch ( NoSuchMethodException e )
-            {
-                log.warn( "Dependency Locations report will not be enabled: it requires wagon 1.0-beta-2" );
-                return;
-            }
-
             // === Section: Dependency Repository Locations.
             renderSectionDependencyRepositoryLocations();
         }
