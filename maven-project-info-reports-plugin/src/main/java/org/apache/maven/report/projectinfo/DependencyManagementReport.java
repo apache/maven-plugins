@@ -70,6 +70,11 @@ public class DependencyManagementReport
      */
     private List remoteRepositories;
 
+    /**
+     * Lazy instantiation for management dependencies.
+     */
+    private ManagementDependencies managementDependencies;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -89,13 +94,10 @@ public class DependencyManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        ManagementDependencies dependencies = new ManagementDependencies( project.getDependencyManagement()
-            .getDependencies() );
-
         DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, getLog(),
-                                                                           dependencies, artifactFactory,
-                                                                           mavenProjectBuilder, remoteRepositories,
-                                                                           localRepository );
+                                                                           getManagementDependencies(),
+                                                                           artifactFactory, mavenProjectBuilder,
+                                                                           remoteRepositories, localRepository );
         r.render();
     }
 
@@ -108,6 +110,29 @@ public class DependencyManagementReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        return project.getDependencyManagement() != null;
+        return getManagementDependencies().hasDependencies();
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    private ManagementDependencies getManagementDependencies()
+    {
+        if ( managementDependencies != null )
+        {
+            return managementDependencies;
+        }
+
+        if ( project.getDependencyManagement() == null )
+        {
+            managementDependencies = new ManagementDependencies( null );
+        }
+        else
+        {
+            managementDependencies = new ManagementDependencies( project.getDependencyManagement().getDependencies() );
+        }
+
+        return managementDependencies;
     }
 }
