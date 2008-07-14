@@ -33,7 +33,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
+import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
@@ -215,8 +215,8 @@ public class DependencyManagementRenderer
     {
         Artifact artifact = artifactFactory.createParentArtifact( dependency.getGroupId(), dependency.getArtifactId(),
                                                                   dependency.getVersion() );
-        String url = ArtifactUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
-        String artifactIdCell = ArtifactUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+        String url = ProjectInfoReportUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         if ( hasClassifier )
         {
