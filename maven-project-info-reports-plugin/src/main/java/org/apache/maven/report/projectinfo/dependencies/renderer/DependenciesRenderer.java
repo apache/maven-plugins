@@ -604,7 +604,7 @@ public class DependenciesRenderer
                     try
                     {
                         URL repoUrl = new URL( repo.getUrl() );
-                        if ( ProjectInfoReportUtils.getInputStream( repoUrl, settings, "ISO-8859-1" ) == null )
+                        if ( ProjectInfoReportUtils.getInputStream( repoUrl, settings ) == null )
                         {
                             log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '"
                                 + repo.getId() + "' will be blacklisted." );
