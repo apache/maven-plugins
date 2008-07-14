@@ -39,6 +39,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Generates the Project Plugin Management report.
@@ -105,7 +106,8 @@ public class PluginManagementReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        return project.getPluginManagement() != null;
+        return project.getPluginManagement() != null && project.getPluginManagement().getPlugins() != null
+            && !project.getPluginManagement().getPlugins().isEmpty();
     }
 
     // ----------------------------------------------------------------------
@@ -120,11 +122,11 @@ public class PluginManagementReport
     protected static class PluginManagementRenderer
         extends AbstractMavenReportRenderer
     {
-        private List plugins;
+        private final List pluginManagement;
 
         private final Locale locale;
 
-        private I18N i18n;
+        private final I18N i18n;
 
         private final MavenProject project;
 
@@ -154,7 +156,7 @@ public class PluginManagementReport
 
             this.locale = locale;
 
-            this.plugins = plugins;
+            this.pluginManagement = plugins;
 
             this.i18n = i18n;
 
@@ -181,21 +183,7 @@ public class PluginManagementReport
         /** {@inheritDoc} */
         public void renderBody()
         {
-            // Dependencies report
-
-            if ( plugins.isEmpty() )
-            {
-                startSection( getTitle() );
-
-                // TODO: should the report just be excluded?
-                paragraph( getReportString( "report.pluginManagement.nolist" ) );
-
-                endSection();
-
-                return;
-            }
-
-            // === Section: Project Dependencies.
+            // === Section: Project PluginManagement.
             renderSectionPluginManagement();
         }
 
@@ -205,50 +193,48 @@ public class PluginManagementReport
 
             startSection( getTitle() );
 
-            if ( plugins != null )
+            // can't use straight artifact comparison because we want optional last
+            Collections.sort( pluginManagement, getPluginComparator() );
+
+            startTable();
+            tableHeader( tableHeader );
+
+            for ( Iterator iterator = pluginManagement.iterator(); iterator.hasNext(); )
             {
-                // can't use straight artifact comparison because we want optional last
-                Collections.sort( plugins, getPluginComparator() );
-
-                startTable();
-                tableHeader( tableHeader );
-
-                for ( Iterator iterator = plugins.iterator(); iterator.hasNext(); )
+                Plugin plugin = (Plugin) iterator.next();
+                VersionRange versionRange;
+                if ( StringUtils.isEmpty( plugin.getVersion() ) )
                 {
-                    Plugin plugin = (Plugin) iterator.next();
-                    VersionRange versionRange;
-                    if ( plugin.getVersion() == null || "".equals( plugin.getVersion() ) )
-                    {
-                        versionRange = VersionRange.createFromVersion( Artifact.RELEASE_VERSION );
-                    }
-                    else
-                    {
-                        versionRange = VersionRange.createFromVersion( plugin.getVersion() );
-                    }
-
-                    Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
-                        .getArtifactId(), versionRange.toString() );
-                    List artifactRepositories = project.getPluginArtifactRepositories();
-                    if ( artifactRepositories == null )
-                    {
-                        artifactRepositories = new ArrayList();
-                    }
-                    try
-                    {
-                        MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( pluginArtifact,
-                                                                                              artifactRepositories,
-                                                                                              localRepository );
-                        tableRow( getPluginRow( plugin, pluginProject.getUrl() ) );
-                    }
-                    catch ( ProjectBuildingException e )
-                    {
-                        log.info( "Could not build project for: " + plugin.getArtifactId() + ":" + e.getMessage(), e );
-                        tableRow( getPluginRow( plugin, null ) );
-                    }
-
+                    versionRange = VersionRange.createFromVersion( Artifact.RELEASE_VERSION );
                 }
-                endTable();
+                else
+                {
+                    versionRange = VersionRange.createFromVersion( plugin.getVersion() );
+                }
+
+                Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
+                    .getArtifactId(), versionRange.toString() );
+                List artifactRepositories = project.getPluginArtifactRepositories();
+                if ( artifactRepositories == null )
+                {
+                    artifactRepositories = new ArrayList();
+                }
+                try
+                {
+                    MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( pluginArtifact,
+                                                                                          artifactRepositories,
+                                                                                          localRepository );
+                    tableRow( getPluginRow( pluginProject.getGroupId(), pluginProject.getArtifactId(), pluginProject
+                        .getVersion(), pluginProject.getUrl() ) );
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    log.info( "Could not build project for: " + plugin.getArtifactId() + ":" + e.getMessage(), e );
+                    tableRow( getPluginRow( plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion(), null ) );
+                }
+
             }
+            endTable();
 
             endSection();
         }
@@ -265,10 +251,10 @@ public class PluginManagementReport
             return new String[] { groupId, artifactId, version };
         }
 
-        private String[] getPluginRow( Plugin plugin, String link )
+        private String[] getPluginRow( String groupId, String artifactId, String version, String link )
         {
-            String artifactId = ArtifactUtils.getArtifactIdCell( plugin.getArtifactId(), link );
-            return new String[] { plugin.getGroupId(), artifactId, plugin.getVersion() };
+            artifactId = ArtifactUtils.getArtifactIdCell( artifactId, link );
+            return new String[] { groupId, artifactId, version };
         }
 
         private Comparator getPluginComparator()
