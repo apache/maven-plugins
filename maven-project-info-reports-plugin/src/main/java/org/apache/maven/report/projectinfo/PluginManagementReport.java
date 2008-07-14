@@ -36,7 +36,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
@@ -251,7 +250,7 @@ public class PluginManagementReport
 
         private String[] getPluginRow( String groupId, String artifactId, String version, String link )
         {
-            artifactId = ArtifactUtils.getArtifactIdCell( artifactId, link );
+            artifactId = ProjectInfoReportUtils.getArtifactIdCell( artifactId, link );
             return new String[] { groupId, artifactId, version };
         }
 

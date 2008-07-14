@@ -52,7 +52,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
-import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.settings.Settings;
@@ -155,6 +154,7 @@ public class DependenciesRenderer
      * @param locale
      * @param i18n
      * @param log
+     * @param settings
      * @param dependencies
      * @param dependencyTreeNode
      * @param config
@@ -957,8 +957,8 @@ public class DependenciesRenderer
         String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
             : getReportString( "report.dependencies.column.isNotOptional" );
 
-        String url = ArtifactUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
-        String artifactIdCell = ArtifactUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+        String url = ProjectInfoReportUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         if ( withClassifier )
         {
@@ -1098,7 +1098,7 @@ public class DependenciesRenderer
                     sink.bold();
                     sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
                     sink.bold_();
-                    if ( ArtifactUtils.isArtifactUrlValid( artifactUrl ) )
+                    if ( ProjectInfoReportUtils.isArtifactUrlValid( artifactUrl ) )
                     {
                         sink.link( artifactUrl );
                         sink.text( artifactUrl );
