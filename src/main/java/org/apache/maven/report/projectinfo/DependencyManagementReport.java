@@ -89,15 +89,13 @@ public class DependencyManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
+        ManagementDependencies dependencies = new ManagementDependencies( project.getDependencyManagement()
+            .getDependencies() );
 
-        ManagementDependencies dependencies =
-            new ManagementDependencies( project.getDependencyManagement().getDependencies() );
-
-        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, dependencies,
-                                                                           artifactFactory, mavenProjectBuilder,
-                                                                           remoteRepositories, localRepository );
-
-        r.setLog( getLog() );
+        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, getLog(),
+                                                                           dependencies, artifactFactory,
+                                                                           mavenProjectBuilder, remoteRepositories,
+                                                                           localRepository );
         r.render();
     }
 
