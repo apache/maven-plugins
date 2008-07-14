@@ -24,23 +24,17 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -236,7 +230,8 @@ public class LicenseReport
                         String licenseContent = null;
                         try
                         {
-                            licenseContent = getLicenseInputStream( licenseUrl );
+                            // All licenses are supposed in English...
+                            licenseContent = ProjectInfoReportUtils.getInputStream( licenseUrl, settings, "ISO-8859-1" );
                         }
                         catch ( IOException e )
                         {
@@ -273,76 +268,6 @@ public class LicenseReport
             }
 
             endSection();
-        }
-
-        /**
-         * Get the content of the license Url
-         *
-         * @param licenseUrl
-         * @return the content of the licenseUrl
-         * @throws IOException
-         */
-        private String getLicenseInputStream( URL licenseUrl )
-            throws IOException
-        {
-            String scheme = licenseUrl.getProtocol();
-            if ( !"file".equals( scheme ) )
-            {
-                Proxy proxy = settings.getActiveProxy();
-                if ( proxy != null )
-                {
-                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
-                    {
-                        scheme = "http.";
-                    }
-                    else if ( "ftp".equals( scheme ) )
-                    {
-                        scheme = "ftp.";
-                    }
-                    else
-                    {
-                        scheme = "";
-                    }
-
-                    String host = proxy.getHost();
-                    if ( !StringUtils.isEmpty( host ) )
-                    {
-                        Properties p = System.getProperties();
-                        p.setProperty( scheme + "proxySet", "true" );
-                        p.setProperty( scheme + "proxyHost", host );
-                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
-                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
-                        {
-                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
-                        }
-
-                        final String userName = proxy.getUsername();
-                        if ( !StringUtils.isEmpty( userName ) )
-                        {
-                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
-                            Authenticator.setDefault( new Authenticator()
-                            {
-                                protected PasswordAuthentication getPasswordAuthentication()
-                                {
-                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
-                                }
-                            } );
-                        }
-                    }
-                }
-            }
-
-            InputStream in = null;
-            try
-            {
-                in = licenseUrl.openStream();
-                // All licenses are supposed in English...
-                return IOUtil.toString( in, "ISO-8859-1" );
-            }
-            finally
-            {
-                IOUtil.close( in );
-            }
         }
 
         private static URL baseURL( URL aUrl )
