@@ -365,7 +365,7 @@ public class DependenciesRenderer
         List alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
-        startTable();
+        // i18n
         String filename = getReportString( "report.dependencies.file.details.column.file" );
         String size = getReportString( "report.dependencies.file.details.column.size" );
         String entries = getReportString( "report.dependencies.file.details.column.entries" );
@@ -378,6 +378,9 @@ public class DependenciesRenderer
         int[] justification = new int[]{Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
             Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
             Parser.JUSTIFY_CENTER};
+
+        startTable();
+
         sink.tableRows( justification, true );
 
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
@@ -441,6 +444,8 @@ public class DependenciesRenderer
             }
         }
 
+        // Table header
+
         String[] tableHeader;
         if ( hasSealed )
         {
@@ -451,6 +456,8 @@ public class DependenciesRenderer
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug };
         }
         tableHeader( tableHeader );
+
+        // Table rows
 
         for ( Iterator it = alldeps.iterator(); it.hasNext(); )
         {
@@ -539,6 +546,8 @@ public class DependenciesRenderer
             }
         }
 
+        // Total raw
+
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
         if ( hasSealed )
@@ -576,9 +585,9 @@ public class DependenciesRenderer
         tableRow( new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
     }
 
-    private void populateRepositoryMap( Map repos, List rawRepos )
+    private void populateRepositoryMap( Map repos, List rowRepos )
     {
-        Iterator it = rawRepos.iterator();
+        Iterator it = rowRepos.iterator();
         while ( it.hasNext() )
         {
             ArtifactRepository repo = (ArtifactRepository) it.next();
@@ -630,7 +639,6 @@ public class DependenciesRenderer
         }
     }
 
-
     private void renderSectionDependencyRepositoryLocations()
     {
         startSection( getReportString( "report.dependencies.repo.locations.title" ) );
@@ -660,34 +668,53 @@ public class DependenciesRenderer
         List repoUrlBlackListed = new ArrayList();
         blacklistRepositoryMap( repoMap, repoUrlBlackListed );
 
-        // Render Repository List
-
-        startTable();
+        // i18n
         String repoid = getReportString( "report.dependencies.repo.locations.column.repoid" );
         String url = getReportString( "report.dependencies.repo.locations.column.url" );
         String release = getReportString( "report.dependencies.repo.locations.column.release" );
         String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
         String blacklisted = getReportString( "report.dependencies.repo.locations.column.blacklisted" );
+        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
+        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
+        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
+        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
+        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
+        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
+        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
+
+        // Render Repository List
+
+        startTable();
+
+        // Table header
 
         String[] tableHeader;
+        int[] justificationRepo;
         if ( repoUrlBlackListed.isEmpty() )
         {
             tableHeader = new String[] { repoid, url, release, snapshot };
+            justificationRepo = new int[] {
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER };
         }
         else
         {
             tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
+            justificationRepo = new int[] {
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER };
         }
+
+        sink.tableRows( justificationRepo, true );
+
         tableHeader( tableHeader );
 
-        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
-        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
-
-        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
-        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
-
-        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
-        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
+        // Table rows
 
         for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
         {
@@ -723,6 +750,8 @@ public class DependenciesRenderer
             sink.tableRow_();
         }
 
+        sink.tableRows_();
+
         endTable();
 
         // Render Artifact Breakdown.
@@ -733,17 +762,27 @@ public class DependenciesRenderer
 
         List repoIdList = new ArrayList( repoMap.keySet() );
 
-        startTable();
-        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
         tableHeader = new String[repoIdList.size() + 1];
-        tableHeader[0] = artifact;
-        int idnum = 1;
+        justificationRepo = new int[repoIdList.size() + 1];
 
+        tableHeader[0] = artifact;
+        justificationRepo[0] = Parser.JUSTIFY_LEFT;
+
+        int idnum = 1;
         for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
         {
             String id = (String) it.next();
-            tableHeader[idnum++] = id;
+            tableHeader[idnum] = id;
+            justificationRepo[idnum] = Parser.JUSTIFY_CENTER;
+            idnum++;
         }
+
+        Map totalByRepo = new HashMap();
+        TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+
+        startTable();
+
+        sink.tableRows( justificationRepo, true );
 
         tableHeader( tableHeader );
 
@@ -751,9 +790,12 @@ public class DependenciesRenderer
         {
             Artifact dependency = (Artifact) it.next();
 
+            totaldeps.incrementTotal( dependency.getScope() );
+
+            sink.tableRow();
+
             if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
             {
-                sink.tableRow();
 
                 tableCell( dependency.getId() );
 
@@ -763,6 +805,13 @@ public class DependenciesRenderer
                     ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
 
                     String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
+
+                    Integer old = (Integer)totalByRepo.get( repokey );
+                    if ( old == null )
+                    {
+                        totalByRepo.put( repokey, Integer.valueOf( 0 ) );
+                        old = Integer.valueOf( 0 );
+                    }
 
                     boolean dependencyExists = false;
                     // check snapshots in snapshots repository only and releases in release repositories...
@@ -786,18 +835,48 @@ public class DependenciesRenderer
 
                         sink.link_();
                         sink.tableCell_();
+
+                        totalByRepo.put( repokey, Integer.valueOf( old.intValue() + 1 ) );
                     }
                     else
                     {
-                        sink.tableCell();
-                        sink.text( "-" );
-                        sink.tableCell_();
+                        tableCell( "-" );
                     }
                 }
-
-                sink.tableRow_();
             }
+            else
+            {
+                tableCell( dependency.getId() );
+
+                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                {
+                    itrepo.next();
+
+                    tableCell( "-" );
+                }
+            }
+
+            sink.tableRow_();
         }
+
+        // Total row
+
+        //reused key
+        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
+        tableHeader( tableHeader );
+        String[] totalRow = new String[repoIdList.size() + 1];
+        totalRow[0] = totaldeps.toString();
+        idnum = 1;
+        for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+        {
+            String repokey = (String) itrepo.next();
+
+            totalRow[idnum++] = totalByRepo.get( repokey ).toString();
+        }
+
+        tableRow( totalRow );
+
+        sink.tableRows_();
 
         endTable();
 
@@ -1148,7 +1227,6 @@ public class DependenciesRenderer
     {
         return i18n.getString( "project-info-report", locale, key );
     }
-
 
     /**
      * @param artifacts not null
