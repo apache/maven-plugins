@@ -60,6 +60,8 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * Renderer the dependencies report.
+ *
  * @version $Id$
  * @since 2.1
  */
@@ -87,15 +89,15 @@ public class DependenciesRenderer
 
     private final DependencyNode dependencyTreeNode;
 
-    private Dependencies dependencies;
+    private final Dependencies dependencies;
 
-    private DependenciesReportConfiguration configuration;
+    private final DependenciesReportConfiguration configuration;
 
-    private I18N i18n;
+    private final I18N i18n;
 
-    private Log log;
+    private final Log log;
 
-    private RepositoryUtils repoUtils;
+    private final RepositoryUtils repoUtils;
 
     /**
      * Will be filled with license name / list of projects.
@@ -148,6 +150,7 @@ public class DependenciesRenderer
      * @param sink
      * @param locale
      * @param i18n
+     * @param log
      * @param dependencies
      * @param dependencyTreeNode
      * @param config
@@ -156,7 +159,7 @@ public class DependenciesRenderer
      * @param remoteRepositories
      * @param localRepository
      */
-    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
+    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Dependencies dependencies,
                                  DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
                                  RepositoryUtils repoUtils, MavenProjectBuilder mavenProjectBuilder,
                                  List remoteRepositories, ArtifactRepository localRepository )
@@ -164,21 +167,14 @@ public class DependenciesRenderer
         super( sink );
 
         this.locale = locale;
-
-        this.dependencyTreeNode = dependencyTreeNode;
-
-        this.repoUtils = repoUtils;
-
-        this.dependencies = dependencies;
-
         this.i18n = i18n;
-
+        this.log = log;
+        this.dependencies = dependencies;
+        this.dependencyTreeNode = dependencyTreeNode;
+        this.repoUtils = repoUtils;
         this.configuration = config;
-
         this.mavenProjectBuilder = mavenProjectBuilder;
-
         this.remoteRepositories = remoteRepositories;
-
         this.localRepository = localRepository;
 
         // Using the right set of symbols depending of the locale
@@ -190,14 +186,6 @@ public class DependenciesRenderer
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
-
-    /**
-     * @param log the logger instance
-     */
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
 
     /** {@inheritDoc} */
     public String getTitle()
