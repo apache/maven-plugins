@@ -160,10 +160,20 @@ public class RepositoryUtils
     /**
      * @param repo not null
      * @param artifact not null
-     * @return <code>true</code> if the artifact exists in the given repo, <code>false</ccode> otherwise
+     * @return <code>true</code> if the artifact exists in the given repo, <code>false</code> otherwise or if
+     * the repo is blacklisted.
      */
     public boolean dependencyExistsInRepo( ArtifactRepository repo, Artifact artifact )
     {
+        if ( repo.isBlacklisted() )
+        {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "The repo '" + repo.getId() + "' is black listed - Ignored it" );
+            }
+            return false;
+        }
+
         Wagon wagon;
         try
         {
@@ -205,22 +215,50 @@ public class RepositoryUtils
         }
         catch ( ConnectionException e )
         {
-            log.error( "Unable to connect to: " + repo.getUrl(), e );
+            if ( log.isDebugEnabled() )
+            {
+                log.error( "Unable to connect to: " + repo.getUrl(), e );
+            }
+            else
+            {
+                log.error( "Unable to connect to: " + repo.getUrl() );
+            }
             return false;
         }
         catch ( AuthenticationException e )
         {
-            log.error( "Unable to connect to: " + repo.getUrl(), e );
+            if ( log.isDebugEnabled() )
+            {
+                log.error( "Unable to connect to: " + repo.getUrl(), e );
+            }
+            else
+            {
+                log.error( "Unable to connect to: " + repo.getUrl() );
+            }
             return false;
         }
         catch ( TransferFailedException e )
         {
-            log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
+            if ( log.isDebugEnabled() )
+            {
+                log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl(), e );
+            }
+            else
+            {
+                log.error( "Unable to determine if resource " + artifact + " exists in " + repo.getUrl() );
+            }
             return false;
         }
         catch ( AuthorizationException e )
         {
-            log.error( "Unable to connect to: " + repo.getUrl(), e );
+            if ( log.isDebugEnabled() )
+            {
+                log.error( "Unable to connect to: " + repo.getUrl(), e );
+            }
+            else
+            {
+                log.error( "Unable to connect to: " + repo.getUrl() );
+            }
             return false;
         }
         catch ( AbstractMethodError e )
@@ -236,7 +274,14 @@ public class RepositoryUtils
             }
             catch ( ConnectionException e )
             {
-                log.error( "Error disconnecting wagon - ignored", e );
+                if ( log.isDebugEnabled() )
+                {
+                    log.error( "Error disconnecting wagon - ignored", e );
+                }
+                else
+                {
+                    log.error( "Error disconnecting wagon - ignored" );
+                }
             }
         }
     }
