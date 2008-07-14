@@ -222,10 +222,9 @@ public class DependenciesReport
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTreeNode,
-                                                           config, repoUtils, mavenProjectBuilder, remoteRepositories,
-                                                           localRepository );
-        r.setLog( getLog() );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, getLog(), dependencies,
+                                                           dependencyTreeNode, config, repoUtils, mavenProjectBuilder,
+                                                           remoteRepositories, localRepository );
         r.render();
     }
 
