@@ -49,11 +49,13 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.jar.JarData;
 import org.codehaus.plexus.i18n.I18N;
@@ -96,6 +98,8 @@ public class DependenciesRenderer
     private final I18N i18n;
 
     private final Log log;
+
+    private final Settings settings;
 
     private final RepositoryUtils repoUtils;
 
@@ -159,7 +163,7 @@ public class DependenciesRenderer
      * @param remoteRepositories
      * @param localRepository
      */
-    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Dependencies dependencies,
+    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings, Dependencies dependencies,
                                  DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
                                  RepositoryUtils repoUtils, MavenProjectBuilder mavenProjectBuilder,
                                  List remoteRepositories, ArtifactRepository localRepository )
@@ -169,6 +173,7 @@ public class DependenciesRenderer
         this.locale = locale;
         this.i18n = i18n;
         this.log = log;
+        this.settings = settings;
         this.dependencies = dependencies;
         this.dependencyTreeNode = dependencyTreeNode;
         this.repoUtils = repoUtils;
@@ -599,7 +604,7 @@ public class DependenciesRenderer
                     try
                     {
                         URL repoUrl = new URL( repo.getUrl() );
-                        if ( repoUrl.openStream() == null )
+                        if ( ProjectInfoReportUtils.getInputStream( repoUrl, settings, "ISO-8859-1" ) == null )
                         {
                             log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '"
                                 + repo.getId() + "' will be blacklisted." );
@@ -607,7 +612,7 @@ public class DependenciesRenderer
                             repoUrlBlackListed.add( repo.getUrl() );
                         }
                     }
-                    catch ( Exception e )
+                    catch ( IOException e )
                     {
                         log.warn( "The repository url '" + repo.getUrl() + "' is invalid - Repository '" + repo.getId()
                             + "' will be blacklisted." );
