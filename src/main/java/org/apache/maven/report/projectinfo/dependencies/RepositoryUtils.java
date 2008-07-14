@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo.dependencies;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -174,19 +175,24 @@ public class RepositoryUtils
             return false;
         }
 
+        String id = repo.getId();
+        Repository repository = new Repository( id, repo.getUrl() );
+
         Wagon wagon;
         try
         {
-            wagon = wagonManager.getWagon( repo.getProtocol() );
+            wagon = wagonManager.getWagon( repository );
         }
         catch ( UnsupportedProtocolException e )
         {
             log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
             return false;
         }
-
-        String id = repo.getId();
-        Repository repository = new Repository( id, repo.getUrl() );
+        catch ( WagonConfigurationException e )
+        {
+            log.error( "Unsupported protocol: '" + repo.getProtocol() + "'", e );
+            return false;
+        }
 
         if ( log.isDebugEnabled() )
         {
