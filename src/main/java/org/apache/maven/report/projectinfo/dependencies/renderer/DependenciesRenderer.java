@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
@@ -55,7 +56,6 @@ import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.jar.JarData;
-import org.apache.maven.wagon.Wagon;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -582,9 +582,54 @@ public class DependenciesRenderer
         while ( it.hasNext() )
         {
             ArtifactRepository repo = (ArtifactRepository) it.next();
+
             repos.put( repo.getId(), repo );
         }
     }
+
+    private void blacklistRepositoryMap( Map repos, List repoUrlBlackListed )
+    {
+        for ( Iterator it = repos.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repos.get( key );
+
+            // ping repo
+            if ( !repo.isBlacklisted() )
+            {
+                if ( !repoUrlBlackListed.contains( repo.getUrl() ) )
+                {
+                    try
+                    {
+                        URL repoUrl = new URL( repo.getUrl() );
+                        if ( repoUrl.openStream() == null )
+                        {
+                            log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '"
+                                + repo.getId() + "' will be blacklisted." );
+                            repo.setBlacklisted( true );
+                            repoUrlBlackListed.add( repo.getUrl() );
+                        }
+                    }
+                    catch ( Exception e )
+                    {
+                        log.warn( "The repository url '" + repo.getUrl() + "' is invalid - Repository '" + repo.getId()
+                            + "' will be blacklisted." );
+                        repo.setBlacklisted( true );
+                        repoUrlBlackListed.add( repo.getUrl() );
+                    }
+                }
+                else
+                {
+                    repo.setBlacklisted( true );
+                }
+            }
+            else
+            {
+                repoUrlBlackListed.add( repo.getUrl() );
+            }
+        }
+    }
+
 
     private void renderSectionDependencyRepositoryLocations()
     {
@@ -598,14 +643,12 @@ public class DependenciesRenderer
         Map repoMap = new HashMap();
 
         populateRepositoryMap( repoMap, repoUtils.getRemoteArtifactRepositories() );
-
         for ( Iterator it = alldeps.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
             {
                 MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
-
                 populateRepositoryMap( repoMap, artifactProject.getRemoteArtifactRepositories() );
             }
             catch ( ProjectBuildingException e )
@@ -614,6 +657,9 @@ public class DependenciesRenderer
             }
         }
 
+        List repoUrlBlackListed = new ArrayList();
+        blacklistRepositoryMap( repoMap, repoUrlBlackListed );
+
         // Render Repository List
 
         startTable();
@@ -621,8 +667,17 @@ public class DependenciesRenderer
         String url = getReportString( "report.dependencies.repo.locations.column.url" );
         String release = getReportString( "report.dependencies.repo.locations.column.release" );
         String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
+        String blacklisted = getReportString( "report.dependencies.repo.locations.column.blacklisted" );
 
-        String[] tableHeader = new String[]{repoid, url, release, snapshot};
+        String[] tableHeader;
+        if ( repoUrlBlackListed.isEmpty() )
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot };
+        }
+        else
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
+        }
         tableHeader( tableHeader );
 
         String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
@@ -630,6 +685,9 @@ public class DependenciesRenderer
 
         String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
         String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
+
+        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
+        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
 
         for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
         {
@@ -640,9 +698,16 @@ public class DependenciesRenderer
             tableCell( repo.getId() );
 
             sink.tableCell();
-            sink.link( repo.getUrl() );
-            sink.text( repo.getUrl() );
-            sink.link_();
+            if ( repo.isBlacklisted() )
+            {
+                sink.text( repo.getUrl() );
+            }
+            else
+            {
+                sink.link( repo.getUrl() );
+                sink.text( repo.getUrl() );
+                sink.link_();
+            }
             sink.tableCell_();
 
             ArtifactRepositoryPolicy releasePolicy = repo.getReleases();
@@ -650,6 +715,11 @@ public class DependenciesRenderer
 
             ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
             tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
+
+            if ( !repoUrlBlackListed.isEmpty() )
+            {
+                tableCell( repo.isBlacklisted() ? blacklistedEnabled : blacklistedDisabled );
+            }
             sink.tableRow_();
         }
 
