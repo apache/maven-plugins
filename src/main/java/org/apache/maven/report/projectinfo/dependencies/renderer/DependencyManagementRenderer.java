@@ -47,13 +47,13 @@ import org.codehaus.plexus.util.StringUtils;
 public class DependencyManagementRenderer
     extends AbstractMavenReportRenderer
 {
-    private ManagementDependencies dependencies;
+    private final ManagementDependencies dependencies;
 
     private final Locale locale;
 
-    private I18N i18n;
+    private final I18N i18n;
 
-    private Log log;
+    private final Log log;
 
     private final ArtifactFactory artifactFactory;
 
@@ -69,41 +69,33 @@ public class DependencyManagementRenderer
      * @param sink
      * @param locale
      * @param i18n
+     * @param log
      * @param artifactFactory
      * @param dependencies
      * @param mavenProjectBuilder
      * @param remoteRepositories
      * @param localRepository
      */
-    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies,
-                                         ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
-                                         List remoteRepositories, ArtifactRepository localRepository )
+    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
+                                         ManagementDependencies dependencies, ArtifactFactory artifactFactory,
+                                         MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
+                                         ArtifactRepository localRepository )
     {
         super( sink );
 
         this.locale = locale;
-
-        this.dependencies = dependencies;
-
         this.i18n = i18n;
-
+        this.log = log;
+        this.dependencies = dependencies;
         this.artifactFactory = artifactFactory;
-
         this.mavenProjectBuilder = mavenProjectBuilder;
-
         this.remoteRepositories = remoteRepositories;
-
         this.localRepository = localRepository;
     }
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
-
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
 
     /** {@inheritDoc} */
     public String getTitle()
@@ -132,6 +124,10 @@ public class DependencyManagementRenderer
         renderSectionProjectDependencies();
     }
 
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
     private void renderSectionProjectDependencies()
     {
         startSection( getTitle() );
@@ -153,10 +149,6 @@ public class DependencyManagementRenderer
                                     (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
         renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
-
-    // ----------------------------------------------------------------------
-    // Private methods
-    // ----------------------------------------------------------------------
 
     private String[] getDependencyTableHeader( boolean hasClassifier )
     {
@@ -272,6 +264,7 @@ public class DependencyManagementRenderer
                         }
                     }
                 }
+
                 return result;
             }
         };
