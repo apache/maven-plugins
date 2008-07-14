@@ -1,17 +1,5 @@
 package org.apache.maven.report.projectinfo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.util.Properties;
-
-import org.apache.maven.settings.Proxy;
-import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,6 +19,25 @@ import org.codehaus.plexus.util.StringUtils;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.validator.UrlValidator;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * Utilities methods.
  *
@@ -40,6 +47,8 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class ProjectInfoReportUtils
 {
+    private static final UrlValidator URL_VALIDATOR = new UrlValidator( new String[] { "http", "https" } );
+
     /**
      * Get the input stream using ISO-8859-1 as charset from an URL.
      *
@@ -130,6 +139,69 @@ public class ProjectInfoReportUtils
         {
             IOUtil.close( in );
         }
+    }
+
+    /**
+     * @param artifact not null
+     * @param mavenProjectBuilder not null
+     * @param remoteRepositories not null
+     * @param localRepository not null
+     * @return the artifact url or null if an error occurred.
+     */
+    public static String getArtifactUrl( Artifact artifact, MavenProjectBuilder mavenProjectBuilder,
+                                         List remoteRepositories, ArtifactRepository localRepository )
+    {
+        if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+        {
+            return null;
+        }
+
+        try
+        {
+            MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories,
+                                                                                  localRepository );
+
+            if ( isArtifactUrlValid( pluginProject.getUrl() ) )
+            {
+                return pluginProject.getUrl();
+            }
+
+            return null;
+        }
+        catch ( ProjectBuildingException e )
+        {
+            return null;
+        }
+    }
+
+    /**
+     * @param artifactId not null
+     * @param link could be null
+     * @return the artifactId cell with or without a link pattern
+     * @see {@link AbstractMavenReportRenderer#linkPatternedText(String)}
+     */
+    public static String getArtifactIdCell( String artifactId, String link )
+    {
+        if ( StringUtils.isEmpty( link ) )
+        {
+            return artifactId;
+        }
+
+        return "{" + artifactId + "," + link + "}";
+    }
+
+    /**
+     * @param url not null
+     * @return <code>true</code> if the url is valid, <code>false</code> otherwise.
+     */
+    public static boolean isArtifactUrlValid( String url )
+    {
+        if ( StringUtils.isEmpty( url ) )
+        {
+            return false;
+        }
+
+        return URL_VALIDATOR.isValid( url );
     }
 }
 
