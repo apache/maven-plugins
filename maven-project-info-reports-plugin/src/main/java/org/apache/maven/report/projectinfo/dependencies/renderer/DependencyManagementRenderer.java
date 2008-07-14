@@ -132,7 +132,7 @@ public class DependencyManagementRenderer
         startSection( getTitle() );
 
         // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getDependenciesByScope();
+        Map dependenciesByScope = dependencies.getManagementDependenciesByScope();
 
         renderDependenciesForAllScopes( dependenciesByScope );
 
