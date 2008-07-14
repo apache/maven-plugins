@@ -19,11 +19,26 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.report.projectinfo.dependencies.renderer.PluginManagementRenderer;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.report.projectinfo.dependencies.ArtifactUtils;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.codehaus.plexus.i18n.I18N;
 
 /**
  * Generates the Project Plugin Management report.
@@ -74,9 +89,8 @@ public class PluginManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        PluginManagementRenderer r =
-            new PluginManagementRenderer( getSink(), locale, i18n, project.getPluginManagement().getPlugins(), project,
-                                          mavenProjectBuilder, artifactFactory, localRepository );
+        PluginManagementRenderer r = new PluginManagementRenderer( getSink(), locale, i18n, project
+            .getPluginManagement().getPlugins(), project, mavenProjectBuilder, artifactFactory, localRepository );
 
         r.setLog( getLog() );
         r.render();
@@ -92,5 +106,194 @@ public class PluginManagementReport
     public boolean canGenerateReport()
     {
         return project.getPluginManagement() != null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Private
+    // ----------------------------------------------------------------------
+
+    /**
+     * Internal renderer class
+     *
+     * @author Nick Stolwijk
+     */
+    protected static class PluginManagementRenderer
+        extends AbstractMavenReportRenderer
+    {
+        private List plugins;
+
+        private final Locale locale;
+
+        private I18N i18n;
+
+        private final MavenProject project;
+
+        private final MavenProjectBuilder mavenProjectBuilder;
+
+        private final ArtifactFactory artifactFactory;
+
+        private final ArtifactRepository localRepository;
+
+        private Log log;
+
+        /**
+         * @param sink
+         * @param locale
+         * @param i18n
+         * @param plugins
+         * @param project
+         * @param mavenProjectBuilder
+         * @param artifactFactory
+         * @param localRepository
+         */
+        public PluginManagementRenderer( Sink sink, Locale locale, I18N i18n, List plugins, MavenProject project,
+                                         MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
+                                         ArtifactRepository localRepository )
+        {
+            super( sink );
+
+            this.locale = locale;
+
+            this.plugins = plugins;
+
+            this.i18n = i18n;
+
+            this.project = project;
+
+            this.mavenProjectBuilder = mavenProjectBuilder;
+
+            this.artifactFactory = artifactFactory;
+
+            this.localRepository = localRepository;
+        }
+
+        public void setLog( Log log )
+        {
+            this.log = log;
+        }
+
+        /** {@inheritDoc} */
+        public String getTitle()
+        {
+            return getReportString( "report.pluginManagement.title" );
+        }
+
+        /** {@inheritDoc} */
+        public void renderBody()
+        {
+            // Dependencies report
+
+            if ( plugins.isEmpty() )
+            {
+                startSection( getTitle() );
+
+                // TODO: should the report just be excluded?
+                paragraph( getReportString( "report.pluginManagement.nolist" ) );
+
+                endSection();
+
+                return;
+            }
+
+            // === Section: Project Dependencies.
+            renderSectionPluginManagement();
+        }
+
+        private void renderSectionPluginManagement()
+        {
+            String[] tableHeader = getPluginTableHeader();
+
+            startSection( getTitle() );
+
+            if ( plugins != null )
+            {
+                // can't use straight artifact comparison because we want optional last
+                Collections.sort( plugins, getPluginComparator() );
+
+                startTable();
+                tableHeader( tableHeader );
+
+                for ( Iterator iterator = plugins.iterator(); iterator.hasNext(); )
+                {
+                    Plugin plugin = (Plugin) iterator.next();
+                    VersionRange versionRange;
+                    if ( plugin.getVersion() == null || "".equals( plugin.getVersion() ) )
+                    {
+                        versionRange = VersionRange.createFromVersion( Artifact.RELEASE_VERSION );
+                    }
+                    else
+                    {
+                        versionRange = VersionRange.createFromVersion( plugin.getVersion() );
+                    }
+
+                    Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
+                        .getArtifactId(), versionRange.toString() );
+                    List artifactRepositories = project.getPluginArtifactRepositories();
+                    if ( artifactRepositories == null )
+                    {
+                        artifactRepositories = new ArrayList();
+                    }
+                    try
+                    {
+                        MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( pluginArtifact,
+                                                                                              artifactRepositories,
+                                                                                              localRepository );
+                        tableRow( getPluginRow( plugin, pluginProject.getUrl() ) );
+                    }
+                    catch ( ProjectBuildingException e )
+                    {
+                        log.info( "Could not build project for: " + plugin.getArtifactId() + ":" + e.getMessage(), e );
+                        tableRow( getPluginRow( plugin, null ) );
+                    }
+
+                }
+                endTable();
+            }
+
+            endSection();
+        }
+
+        // ----------------------------------------------------------------------
+        // Private methods
+        // ----------------------------------------------------------------------
+
+        private String[] getPluginTableHeader()
+        {
+            String groupId = getReportString( "report.dependencyManagement.column.groupId" );
+            String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
+            String version = getReportString( "report.dependencyManagement.column.version" );
+            return new String[] { groupId, artifactId, version };
+        }
+
+        private String[] getPluginRow( Plugin plugin, String link )
+        {
+            String artifactId = ArtifactUtils.getArtifactIdCell( plugin.getArtifactId(), link );
+            return new String[] { plugin.getGroupId(), artifactId, plugin.getVersion() };
+        }
+
+        private Comparator getPluginComparator()
+        {
+            return new Comparator()
+            {
+                /** {@inheritDoc} */
+                public int compare( Object o1, Object o2 )
+                {
+                    Plugin a1 = (Plugin) o1;
+                    Plugin a2 = (Plugin) o2;
+
+                    int result = a1.getGroupId().compareTo( a2.getGroupId() );
+                    if ( result == 0 )
+                    {
+                        result = a1.getArtifactId().compareTo( a2.getArtifactId() );
+                    }
+                    return result;
+                }
+            };
+        }
+
+        private String getReportString( String key )
+        {
+            return i18n.getString( "project-info-report", locale, key );
+        }
     }
 }
