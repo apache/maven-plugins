@@ -30,32 +30,49 @@ import org.apache.maven.model.Dependency;
 
 /**
  * @author Nick Stolwijk
- * @version $Id:$
+ * @version $Id$
  * @since 2.1
  */
 public class ManagementDependencies
 {
-    private final List projectDependencies;
+    private final List managementDependencies;
 
+    /**
+     * @param projectDependencies
+     */
     public ManagementDependencies( List projectDependencies )
     {
-        this.projectDependencies = projectDependencies;
+        this.managementDependencies = projectDependencies;
     }
 
+    /**
+     * @return <code>true</code> if managementDependencies is not null and not empty.
+     */
     public boolean hasDependencies()
     {
-        return ( projectDependencies != null ) && ( !this.projectDependencies.isEmpty() );
+        return ( managementDependencies != null ) && ( !this.managementDependencies.isEmpty() );
     }
 
-    public List getProjectDependencies()
+    /**
+     * @return managementDependencies
+     */
+    public List getManagementDependencies()
     {
-        return new ArrayList( projectDependencies );
+        return new ArrayList( managementDependencies );
     }
 
-    public Map getDependenciesByScope()
+    /**
+     * @return the managementDependencies by scope
+     * @see Artifact#SCOPE_COMPILE
+     * @see Artifact#SCOPE_PROVIDED
+     * @see Artifact#SCOPE_RUNTIME
+     * @see Artifact#SCOPE_SYSTEM
+     * @see Artifact#SCOPE_TEST
+     */
+    public Map getManagementDependenciesByScope()
     {
         Map dependenciesByScope = new HashMap();
-        for ( Iterator i = getProjectDependencies().iterator(); i.hasNext(); )
+        for ( Iterator i = getManagementDependencies().iterator(); i.hasNext(); )
         {
             Dependency dependency = (Dependency) i.next();
             String scope = dependency.getScope() != null ? dependency.getScope() : Artifact.SCOPE_COMPILE;
