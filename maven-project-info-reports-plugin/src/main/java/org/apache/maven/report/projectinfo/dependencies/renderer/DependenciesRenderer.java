@@ -824,7 +824,14 @@ public class DependenciesRenderer
                     if ( dependencyExists )
                     {
                         sink.tableCell();
-                        sink.link( depUrl );
+                        if ( StringUtils.isNotEmpty( depUrl ) )
+                        {
+                            sink.link( depUrl );
+                        }
+                        else
+                        {
+                            sink.text( depUrl );
+                        }
 
                         sink.figure();
                         sink.figureCaption();
