@@ -90,10 +90,8 @@ public class PluginManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        PluginManagementRenderer r = new PluginManagementRenderer( getSink(), locale, i18n, project
+        PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, i18n, project
             .getPluginManagement().getPlugins(), project, mavenProjectBuilder, artifactFactory, localRepository );
-
-        r.setLog( getLog() );
         r.render();
     }
 
@@ -122,6 +120,8 @@ public class PluginManagementReport
     protected static class PluginManagementRenderer
         extends AbstractMavenReportRenderer
     {
+        private final Log log;
+
         private final List pluginManagement;
 
         private final Locale locale;
@@ -136,9 +136,8 @@ public class PluginManagementReport
 
         private final ArtifactRepository localRepository;
 
-        private Log log;
-
         /**
+         * @param log
          * @param sink
          * @param locale
          * @param i18n
@@ -148,11 +147,13 @@ public class PluginManagementReport
          * @param artifactFactory
          * @param localRepository
          */
-        public PluginManagementRenderer( Sink sink, Locale locale, I18N i18n, List plugins, MavenProject project,
+        public PluginManagementRenderer( Log log, Sink sink, Locale locale, I18N i18n, List plugins, MavenProject project,
                                          MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
                                          ArtifactRepository localRepository )
         {
             super( sink );
+
+            this.log = log;
 
             this.locale = locale;
 
@@ -169,10 +170,6 @@ public class PluginManagementReport
             this.localRepository = localRepository;
         }
 
-        public void setLog( Log log )
-        {
-            this.log = log;
-        }
 
         /** {@inheritDoc} */
         public String getTitle()
@@ -245,6 +242,7 @@ public class PluginManagementReport
 
         private String[] getPluginTableHeader()
         {
+            // reused key...
             String groupId = getReportString( "report.dependencyManagement.column.groupId" );
             String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
             String version = getReportString( "report.dependencyManagement.column.version" );
