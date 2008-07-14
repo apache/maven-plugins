@@ -315,10 +315,15 @@ public class RepositoryUtils
      * @param artifact not null
      * @param repo not null
      * @return the artifact url in the given repo for the given artifact. If it is a snapshot artifact, the version
-     * will be the the timestamp and the build number from the metadata.
+     * will be the timestamp and the build number from the metadata. Could return null if the repo is blacklisted.
      */
     public String getDependencyUrlFromRepository( Artifact artifact, ArtifactRepository repo )
     {
+        if ( repo.isBlacklisted() )
+        {
+            return null;
+        }
+
         Artifact copyArtifact = ArtifactUtils.copyArtifact( artifact );
         // Try to get the last artifact repo name depending the snapshot version
         if ( ( artifact.isSnapshot() && repo.getSnapshots().isEnabled() ) )
@@ -340,7 +345,14 @@ public class RepositoryUtils
                     catch ( RepositoryMetadataResolutionException e )
                     {
                         loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
-                        log.error( "Unable to connect to: " + repo.getUrl(), e );
+                        if ( log.isDebugEnabled() )
+                        {
+                            log.error( "Unable to connect to: " + repo.getUrl(), e );
+                        }
+                        else
+                        {
+                            log.error( "Unable to connect to: " + repo.getUrl() );
+                        }
                         return artifact.getFile().getName();
                     }
                     finally
