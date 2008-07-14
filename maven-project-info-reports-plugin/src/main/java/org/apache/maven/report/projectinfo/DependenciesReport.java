@@ -219,10 +219,10 @@ public class DependenciesReport
 
         Dependencies dependencies = new Dependencies( project, dependencyTreeNode, classesAnalyzer );
 
-        DependenciesReportConfiguration config =
-            new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
+        DependenciesReportConfiguration config = new DependenciesReportConfiguration( dependencyDetailsEnabled,
+                                                                                      dependencyLocationsEnabled );
 
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, getLog(), dependencies,
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
                                                            dependencyTreeNode, config, repoUtils, mavenProjectBuilder,
                                                            remoteRepositories, localRepository );
         r.render();
@@ -270,8 +270,7 @@ public class DependenciesReport
     private void copyResources( File outputDirectory )
         throws IOException
     {
-        InputStream resourceList = getClass().getClassLoader()
-                .getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
+        InputStream resourceList = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
 
         if ( resourceList != null )
         {
