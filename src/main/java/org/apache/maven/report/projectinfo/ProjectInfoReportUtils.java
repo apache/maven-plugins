@@ -41,11 +41,27 @@ import org.codehaus.plexus.util.StringUtils;
 public class ProjectInfoReportUtils
 {
     /**
-     * Get the input stream from an URL
+     * Get the input stream using ISO-8859-1 as charset from an URL.
      *
      * @param url not null
      * @param settings not null to handle proxy settings
-     * @return the inputstream found
+     * @return the ISO-8859-1 inputstream found.
+     * @throws IOException if any
+     * @see #getInputStream(URL, Settings, String)
+     */
+    public static String getInputStream( URL url, Settings settings )
+        throws IOException
+    {
+        return getInputStream( url, settings, "ISO-8859-1" );
+    }
+
+    /**
+     * Get the input stream from an URL.
+     *
+     * @param url not null
+     * @param settings not null to handle proxy settings
+     * @param encoding the wanted encoding for the inputstream. If null, encoding will be "ISO-8859-1".
+     * @return the inputstream found depending the wanted encoding.
      * @throws IOException if any
      */
     public static String getInputStream( URL url, Settings settings, String encoding )
@@ -104,6 +120,10 @@ public class ProjectInfoReportUtils
         {
             in = url.openStream();
 
+            if ( encoding == null )
+            {
+                return IOUtil.toString( in, "ISO-8859-1" );
+            }
             return IOUtil.toString( in, encoding );
         }
         finally
