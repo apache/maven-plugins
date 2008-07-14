@@ -112,7 +112,6 @@ public class DependencyManagementRenderer
         {
             startSection( getTitle() );
 
-            // TODO: should the report just be excluded?
             paragraph( getReportString( "report.dependencyManagement.nolist" ) );
 
             endSection();
