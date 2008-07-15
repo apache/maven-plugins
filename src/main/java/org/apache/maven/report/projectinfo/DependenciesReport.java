@@ -202,7 +202,7 @@ public class DependenciesReport
 
         try
         {
-            copyResources( outputDirectory );
+            copyResources( new File( getOutputDirectory() ) );
         }
         catch ( IOException e )
         {
