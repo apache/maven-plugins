@@ -57,3 +57,5 @@ Maven AntRun Plugin
   * {{{examples/classpaths.html}Referencing the Maven Classpaths}}
 
   * {{{examples/tasksAttributes.html}Using <<<\<tasks/\>>>> Attributes}}
+
+  * {{{examples/customTasks.html}Using tasks not included in Ant default jar}}
