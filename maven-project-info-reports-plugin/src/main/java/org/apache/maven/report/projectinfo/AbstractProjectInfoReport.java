@@ -211,6 +211,18 @@ public abstract class AbstractProjectInfoReport
     }
 
     /** {@inheritDoc} */
+    public File getReportOutputDirectory()
+    {
+        return outputDirectory;
+    }
+
+    /** {@inheritDoc} */
+    public void setReportOutputDirectory( File reportOutputDirectory )
+    {
+        this.outputDirectory = reportOutputDirectory;
+    }
+
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
