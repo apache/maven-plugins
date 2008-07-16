@@ -89,8 +89,9 @@ public class MavenOnePluginMojo
     private MavenProject project;
 
     /**
+     * Used for attaching the artifact in the project.
+     *
      * @component
-     * @todo Write Javadoc for this
      */
     private MavenProjectHelper projectHelper;
 
