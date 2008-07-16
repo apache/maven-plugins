@@ -125,6 +125,7 @@
           <version>1.0.0</version>
           <models>
             <model>src/main/mdo/doapOptions.mdo</model>
+            <model>src/main/mdo/asfextOptions.mdo</model>
           </models>
         </configuration>
       </plugin>

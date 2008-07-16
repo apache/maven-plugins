@@ -43,7 +43,9 @@ import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.doap.options.ASFExtOptions;
 import org.apache.maven.plugin.doap.options.DoapOptions;
+import org.apache.maven.plugin.doap.options.Standard;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -171,8 +173,32 @@ public class DoapMojo
      *
      * @parameter expression="${doapOptions}"
      * @since 1.0
+     * @see <a href="http://usefulinc.com/ns/doap#">http://usefulinc.com/ns/doap#</a>
      */
     private DoapOptions doapOptions;
+
+    /**
+     * Specific ASF extensions parameters, i.e. options that POM doesn't have any notions but required by ASF DOAP
+     * requirements.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;asfExtOptions&gt;
+     * &nbsp;&nbsp;&lt;included&gt;true&lt;/included&gt;
+     * &nbsp;&nbsp;&lt;charter&gt;The mission of the Apache XXX project is to create and maintain software
+     * &nbsp;&nbsp;libraries that provide ...&lt;/charter&gt;
+     * &nbsp;&nbsp;...
+     * &lt;/asfExtOptions&gt;
+     * </pre>
+     *
+     * @parameter expression="${asfExtOptions}"
+     * @since 1.0
+     * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
+     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
+     * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
+     */
+    private ASFExtOptions asfExtOptions;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -211,8 +237,11 @@ public class DoapMojo
         writer.addAttribute( "xml:lang", "en" );
         writer.addAttribute( "xmlns", "http://usefulinc.com/ns/doap#" );
         writer.addAttribute( "xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
-        writer.addAttribute( "xmlns:asfext", "http://projects.apache.org/ns/asfext#" );
         writer.addAttribute( "xmlns:foaf", "http://xmlns.com/foaf/0.1/" );
+        if ( asfExtOptions.isIncluded() )
+        {
+            writer.addAttribute( "xmlns:asfext", ASFExtOptions.ASFEXT_NAMESPACE );
+        }
 
         // Project
         writer.startElement( "Project" );
@@ -232,8 +261,6 @@ public class DoapMojo
 
         // licenses
         writeLicenses( writer );
-
-        DoapUtil.writeRdfResourceElement( writer, "asfext:pmc", project.getUrl() );
 
         // programming-language
         writeProgrammingLanguage( writer );
@@ -271,6 +298,12 @@ public class DoapMojo
         // Contributors
         writeDevelopersOrContributors( writer, project.getContributors() );
 
+        // ASFext
+        if ( asfExtOptions.isIncluded() )
+        {
+            writeASFext( writer );
+        }
+
         writer.endElement(); // Project
         writer.endElement(); // rdf:RDF
 
@@ -303,7 +336,15 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "A name of something.", 2 );
-        DoapUtil.writeElement( writer, "name", project.getName() );
+
+        if ( asfExtOptions.isIncluded() && !project.getName().toLowerCase().trim().startsWith( "apache" ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "name", "Apache " + project.getName() );
+        }
+        else
+        {
+            DoapUtil.writeRdfResourceElement( writer, "name", project.getName() );
+        }
     }
 
     /**
@@ -323,7 +364,14 @@ public class DoapMojo
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Plain text description of a project, of 2-4 sentences in length.", 2 );
         DoapUtil.writeElement( writer, "description", project.getDescription() );
-        DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
+        if ( StringUtils.isNotEmpty( doapOptions.getShortdesc() ) )
+        {
+            DoapUtil.writeElement( writer, "shortdesc", doapOptions.getShortdesc() );
+        }
+        else
+        {
+            DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
+        }
     }
 
     /**
@@ -389,6 +437,13 @@ public class DoapMojo
 
         if ( StringUtils.isNotEmpty( language ) ) // backward compatible
         {
+            if ( asfExtOptions.isIncluded() && !ASFExtOptions.isProgrammingLanguageSupportedByASF( language ) )
+            {
+                getLog().warn(
+                               "The programming language '" + language + "' is not supported by ASF. "
+                                   + "Refer you to http://projects.apache.org/languages.html" );
+            }
+
             DoapUtil.writeRdfResourceElement( writer, "programming-language", language );
         }
 
@@ -397,6 +452,13 @@ public class DoapMojo
             String[] languages = StringUtils.split( doapOptions.getProgrammingLanguage(), "," );
             for ( int i = 0; i < languages.length; i++ )
             {
+                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isProgrammingLanguageSupportedByASF( languages[i].trim() ) )
+                {
+                    getLog().warn(
+                                   "The programming language '" + languages[i].trim() + "' is not supported by ASF. "
+                                       + "Refer you to http://projects.apache.org/languages.html" );
+                }
+
                 DoapUtil.writeRdfResourceElement( writer, "programming-language", languages[i].trim() );
             }
         }
@@ -421,7 +483,22 @@ public class DoapMojo
 
         if ( StringUtils.isNotEmpty( category ) ) // backward compatible
         {
-            DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
+            if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( category ) )
+            {
+                getLog().warn(
+                               "The given category '" + category + "' is not supported by ASF. "
+                                   + "Refer you to http://projects.apache.org/categories.html" );
+            }
+
+            if ( asfExtOptions.isIncluded() )
+            {
+                DoapUtil
+                    .writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/" + category );
+            }
+            else
+            {
+                DoapUtil.writeRdfResourceElement( writer, "category", category );
+            }
         }
 
         if ( StringUtils.isNotEmpty( doapOptions.getCategory() ) )
@@ -429,8 +506,22 @@ public class DoapMojo
             String[] categories = StringUtils.split( doapOptions.getCategory(), "," );
             for ( int i = 0; i < categories.length; i++ )
             {
-                DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/"
-                    + categories[i].trim() );
+                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isCategorySupportedByASF( categories[i] ) )
+                {
+                    getLog().warn(
+                                   "The given category '" + categories[i] + "' is not supported by ASF. "
+                                       + "Refer you to http://projects.apache.org/categories.html" );
+                }
+
+                if ( asfExtOptions.isIncluded() )
+                {
+                    DoapUtil.writeRdfResourceElement( writer, "category", "http://projects.apache.org/category/"
+                        + categories[i].trim() );
+                }
+                else
+                {
+                    DoapUtil.writeRdfResourceElement( writer, "category", categories[i].trim() );
+                }
             }
         }
     }
@@ -538,7 +629,7 @@ public class DoapMojo
      */
     private void writeLicenses( XMLWriter writer )
     {
-        if ( project.getLicenses() == null || project.getLicenses().size() == 0 )
+        if ( project.getLicenses() == null || project.getLicenses().isEmpty() )
         {
             return;
         }
@@ -595,7 +686,7 @@ public class DoapMojo
      */
     private void writeMailingList( XMLWriter writer )
     {
-        if ( project.getMailingLists() == null || project.getMailingLists().size() == 0 )
+        if ( project.getMailingLists() == null || project.getMailingLists().isEmpty() )
         {
             return;
         }
@@ -852,7 +943,7 @@ public class DoapMojo
      */
     private void writeDevelopersOrContributors( XMLWriter writer, List developersOrContributors )
     {
-        if ( developersOrContributors == null || developersOrContributors.size() == 0 )
+        if ( developersOrContributors == null || developersOrContributors.isEmpty() )
         {
             return;
         }
@@ -933,23 +1024,13 @@ public class DoapMojo
      * </pre>
      *
      * @param writer not null
-     * @param developersOrContributors not null
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @param doapType not null
-     * @see <a href="http://usefulinc.com/ns/doap#maintainer">http://usefulinc.com/ns/doap#maintainer</a>
-     * @see <a href="http://usefulinc.com/ns/doap#developer">http://usefulinc.com/ns/doap#developer</a>
-     * @see <a href="http://usefulinc.com/ns/doap#documenter">http://usefulinc.com/ns/doap#documenter</a>
-     * @see <a href="http://usefulinc.com/ns/doap#translator">http://usefulinc.com/ns/doap#translator</a>
-     * @see <a href="http://usefulinc.com/ns/doap#tester">http://usefulinc.com/ns/doap#tester</a>
-     * @see <a href="http://usefulinc.com/ns/doap#helper">http://usefulinc.com/ns/doap#helper</a>
-     * @see <a href="http://xmlns.com/foaf/0.1/Person">http://xmlns.com/foaf/0.1/Person</a>
-     * @see <a href="http://xmlns.com/foaf/0.1/name">http://xmlns.com/foaf/0.1/name</a>
-     * @see <a href="http://xmlns.com/foaf/0.1/mbox">http://xmlns.com/foaf/0.1/mbox</a>
-     * @see <a href="http://xmlns.com/foaf/0.1/Organization">http://xmlns.com/foaf/0.1/Organization</a>
-     * @see <a href="http://xmlns.com/foaf/0.1/homepage">http://xmlns.com/foaf/0.1/homepage</a>
+     * @see #writeDeveloperOrContributor(XMLWriter, Object, String)
      */
     private void writeDeveloperOrContributor( XMLWriter writer, List developersOrContributors, String doapType )
     {
-        if ( developersOrContributors == null || developersOrContributors.size() == 0 )
+        if ( developersOrContributors == null || developersOrContributors.isEmpty() )
         {
             return;
         }
@@ -998,55 +1079,87 @@ public class DoapMojo
         for ( Iterator it = developersOrContributors.iterator(); it.hasNext(); )
         {
             Object obj = it.next();
-
-            String name;
-            String email;
-            String organization;
-            String homepage;
-
-            if ( Developer.class.isAssignableFrom( obj.getClass() ) )
-            {
-                Developer d = (Developer) obj;
-                name = d.getName();
-                email = d.getEmail();
-                organization = d.getOrganization();
-                homepage = d.getUrl();
-            }
-            else
-            {
-                Contributor c = (Contributor) obj;
-                name = c.getName();
-                email = c.getEmail();
-                organization = c.getOrganization();
-                homepage = c.getUrl();
-            }
-
-            // Name is required to write doap
-            if ( StringUtils.isEmpty( name ) )
-            {
-                continue;
-            }
-
-            writer.startElement( doapType );
-            writer.startElement( "foaf:Person" );
-            writer.startElement( "foaf:name" );
-            writer.writeText( name );
-            writer.endElement(); // foaf:name
-            if ( StringUtils.isNotEmpty( email ) )
-            {
-                DoapUtil.writeRdfResourceElement( writer, "foaf:mbox", "mailto:" + email );
-            }
-            if ( StringUtils.isNotEmpty( organization ) )
-            {
-                DoapUtil.writeRdfResourceElement( writer, "foaf:Organization", organization );
-            }
-            if ( StringUtils.isNotEmpty( homepage ) )
-            {
-                DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", homepage );
-            }
-            writer.endElement(); // foaf:Person
-            writer.endElement(); // doapType
+            writeDeveloperOrContributor( writer, obj, doapType );
         }
+    }
+
+    /**
+     * Writer a single developer or contributor
+     *
+     * @param writer not null
+     * @param developerOrContributor not null, instance of <code>{@link Developer}/{@link Contributor}</code>
+     * @param doapType not null
+     * @see <a href="http://usefulinc.com/ns/doap#maintainer">http://usefulinc.com/ns/doap#maintainer</a>
+     * @see <a href="http://usefulinc.com/ns/doap#developer">http://usefulinc.com/ns/doap#developer</a>
+     * @see <a href="http://usefulinc.com/ns/doap#documenter">http://usefulinc.com/ns/doap#documenter</a>
+     * @see <a href="http://usefulinc.com/ns/doap#translator">http://usefulinc.com/ns/doap#translator</a>
+     * @see <a href="http://usefulinc.com/ns/doap#tester">http://usefulinc.com/ns/doap#tester</a>
+     * @see <a href="http://usefulinc.com/ns/doap#helper">http://usefulinc.com/ns/doap#helper</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/Person">http://xmlns.com/foaf/0.1/Person</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/name">http://xmlns.com/foaf/0.1/name</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/mbox">http://xmlns.com/foaf/0.1/mbox</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/Organization">http://xmlns.com/foaf/0.1/Organization</a>
+     * @see <a href="http://xmlns.com/foaf/0.1/homepage">http://xmlns.com/foaf/0.1/homepage</a>
+     */
+    private void writeDeveloperOrContributor( XMLWriter writer, Object developerOrContributor, String doapType )
+    {
+        if ( developerOrContributor == null )
+        {
+            return;
+        }
+
+        if ( StringUtils.isEmpty( doapType ) )
+        {
+            throw new IllegalArgumentException( "doapType is required." );
+        }
+
+        String name;
+        String email;
+        String organization;
+        String homepage;
+
+        if ( Developer.class.isAssignableFrom( developerOrContributor.getClass() ) )
+        {
+            Developer d = (Developer) developerOrContributor;
+            name = d.getName();
+            email = d.getEmail();
+            organization = d.getOrganization();
+            homepage = d.getUrl();
+        }
+        else
+        {
+            Contributor c = (Contributor) developerOrContributor;
+            name = c.getName();
+            email = c.getEmail();
+            organization = c.getOrganization();
+            homepage = c.getUrl();
+        }
+
+        // Name is required to write doap
+        if ( StringUtils.isEmpty( name ) )
+        {
+            return;
+        }
+
+        writer.startElement( doapType );
+        writer.startElement( "foaf:Person" );
+        writer.startElement( "foaf:name" );
+        writer.writeText( name );
+        writer.endElement(); // foaf:name
+        if ( StringUtils.isNotEmpty( email ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "foaf:mbox", "mailto:" + email );
+        }
+        if ( StringUtils.isNotEmpty( organization ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "foaf:Organization", organization );
+        }
+        if ( StringUtils.isNotEmpty( homepage ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "foaf:homepage", homepage );
+        }
+        writer.endElement(); // foaf:Person
+        writer.endElement(); // doapType
     }
 
     /**
@@ -1079,7 +1192,195 @@ public class DoapMojo
                 }
             }
         }
+
         return repo;
+    }
+
+    /**
+     * Write the ASF extensions
+     *
+     * @param writer not null
+     * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
+     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     * @see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
+     */
+    private void writeASFext( XMLWriter writer )
+    {
+        XmlWriterUtil.writeLineBreak( writer );
+        XmlWriterUtil.writeCommentText( writer, "ASF extension", 2 );
+
+        // asfext:pmc
+        if ( StringUtils.isNotEmpty( asfExtOptions.getPmc() ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "asfext:pmc", asfExtOptions.getPmc() );
+        }
+        else
+        {
+            if ( StringUtils.isEmpty( project.getUrl() ) )
+            {
+                getLog().warn(
+                               "No project url discovered! According http://projects.apache.org/docs/pmc.html, "
+                                   + "asfext:pmc is required" );
+            }
+            else
+            {
+                DoapUtil.writeRdfResourceElement( writer, "asfext:pmc", project.getUrl() );
+            }
+        }
+
+        // asfext:name
+        if ( StringUtils.isNotEmpty( asfExtOptions.getName() ) )
+        {
+            DoapUtil.writeRdfResourceElement( writer, "asfext:name", asfExtOptions.getName() );
+        }
+        else
+        {
+            if ( StringUtils.isEmpty( project.getName() ) )
+            {
+                getLog().warn(
+                               "No project name discovered! According http://projects.apache.org/docs/pmc.html, "
+                                   + "asfext:name is required" );
+            }
+            else
+            {
+                // Respect ASF rule
+                if ( !project.getName().trim().startsWith( "Apache" ) )
+                {
+                    DoapUtil.writeRdfResourceElement( writer, "asfext:name", "Apache " + project.getName().trim() );
+                }
+                else
+                {
+                    DoapUtil.writeRdfResourceElement( writer, "asfext:name", project.getName().trim() );
+                }
+            }
+        }
+
+        // asfext:charter
+        if ( StringUtils.isEmpty( asfExtOptions.getCharter() ) )
+        {
+            getLog().warn(
+                           "No charter specified! According http://projects.apache.org/docs/pmc.html, "
+                               + "charter is required" );
+        }
+        else
+        {
+            DoapUtil.writeRdfResourceElement( writer, "asfext:charter", asfExtOptions.getCharter() );
+        }
+
+        // asfext:chair
+        List developers = project.getDevelopers();
+
+        if ( StringUtils.isNotEmpty( asfExtOptions.getChair() ) )
+        {
+            writer.startElement( "asfext:chair" );
+            writer.startElement( "foaf:Person" );
+            writer.startElement( "foaf:name" );
+            writer.writeText( asfExtOptions.getChair() );
+            writer.endElement(); // foaf:name
+            writer.endElement(); // foaf:Person
+            writer.endElement(); // asfext:chair
+        }
+        else
+        {
+            Developer chair = ASFExtOptions.findChair( developers );
+            if ( chair != null )
+            {
+                writeDeveloperOrContributor( writer, chair, "asfext:chair" );
+            }
+            else
+            {
+                getLog().warn(
+                               "No chair man discovered! According http://projects.apache.org/docs/pmc.html, "
+                                   + "asfext:chair is required" );
+            }
+        }
+
+        // asfext:member
+        if ( developers != null && developers.size() > 0 )
+        {
+            List pmcMember = ASFExtOptions.findPMCMembers( developers );
+            for ( Iterator it = pmcMember.iterator(); it.hasNext(); )
+            {
+                Developer developer = (Developer) it.next();
+
+                writeDeveloperOrContributor( writer, developer, "asfext:member" );
+            }
+        }
+
+        writeASFImplements( writer );
+    }
+
+    /**
+     * Write the ASF implements.
+     *
+     * @param writer not null
+     * @see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
+     * http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+     * @see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>
+     */
+    private void writeASFImplements( XMLWriter writer )
+    {
+        if ( asfExtOptions.getStandards() == null || asfExtOptions.getStandards().isEmpty() )
+        {
+            return;
+        }
+
+        for ( Iterator it = asfExtOptions.getStandards().iterator(); it.hasNext(); )
+        {
+            Standard standard = (Standard) it.next();
+
+            writer.startElement( "asfext:implements" );
+            writer.startElement( "asfext:Standard" );
+
+            if ( StringUtils.isEmpty( standard.getTitle() ) )
+            {
+                getLog().warn(
+                               "No title specified! According http://projects.apache.org/docs/standards.html, "
+                                   + "asfext:title is required" );
+            }
+            else
+            {
+                writer.startElement( "asfext:title" );
+                writer.writeText( standard.getTitle() );
+                writer.endElement(); // asfext:title
+            }
+
+            if ( StringUtils.isEmpty( standard.getBody() ) )
+            {
+                getLog().warn(
+                               "No body specified! According http://projects.apache.org/docs/standards.html, "
+                                   + "asfext:body is required" );
+            }
+            else
+            {
+                writer.startElement( "asfext:body" );
+                writer.writeText( standard.getBody() );
+                writer.endElement(); // asfext:body
+            }
+
+            if ( StringUtils.isEmpty( standard.getId() ) )
+            {
+                getLog().warn(
+                               "No id specified! According http://projects.apache.org/docs/standards.html, "
+                                   + "asfext:id is required" );
+            }
+            else
+            {
+                writer.startElement( "asfext:id" );
+                writer.writeText( standard.getId() );
+                writer.endElement(); // asfext:id
+            }
+
+            if ( StringUtils.isNotEmpty( standard.getUrl() ) )
+            {
+                writer.startElement( "asfext:url" );
+                writer.writeText( standard.getUrl() );
+                writer.endElement(); // asfext:url
+            }
+
+            writer.endElement(); // asfext:Standard
+            writer.endElement(); // asfext:implements
+        }
     }
 
     // ----------------------------------------------------------------------
