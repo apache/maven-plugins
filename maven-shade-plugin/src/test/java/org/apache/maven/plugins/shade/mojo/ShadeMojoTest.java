@@ -20,6 +20,10 @@ package org.apache.maven.plugins.shade.mojo;
  */
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,6 +53,36 @@ public class ShadeMojoTest
         throws Exception
     {
         shaderWithPattern("org/shaded/plexus/util", new File( "target/foo-custom.jar" ));
+    }
+
+    public void testShaderWithExclusions()
+        throws Exception
+    {
+        File jarFile = new File( getBasedir(), "target/unit/foo-bar.jar" );
+
+        Shader s = (Shader) lookup( Shader.ROLE );
+
+        Set set = new HashSet();
+        set.add( new File( getBasedir(), "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
+
+        List relocators = new ArrayList();
+        relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", Arrays.asList( new String[] {
+            "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
+
+        List resourceTransformers = new ArrayList();
+
+        List filters = new ArrayList();
+
+        s.shade( set, jarFile, filters, relocators, resourceTransformers );
+
+        ClassLoader cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() } );
+        Class c = cl.loadClass( "org.apache.maven.plugins.shade.Lib" );
+
+        Field field = c.getDeclaredField( "CLASS_REALM_PACKAGE_IMPORT" );
+        assertEquals( "org.codehaus.plexus.util.xml.pull", field.get( null ) );
+
+        Method method = c.getDeclaredMethod( "getClassRealmPackageImport", new Class[0] );
+        assertEquals( "org.codehaus.plexus.util.xml.pull", method.invoke( null, new Object[0] ) );
     }
 
     public void shaderWithPattern(String shadedPattern, File jar)
