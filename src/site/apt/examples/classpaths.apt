@@ -39,7 +39,7 @@ Referencing the Maven Classpaths
   * <<<maven.plugin.classpath>>>
   
 
- For example, to display maven's classpaths using antrun, we can do this
+ For example, to display Maven's classpaths using antrun, we can do this
 
 ------
 <project>
