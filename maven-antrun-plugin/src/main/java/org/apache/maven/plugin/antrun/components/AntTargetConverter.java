@@ -75,12 +75,12 @@ public class AntTargetConverter
 
         retValue = instantiateObject( implementation );
 
-        if (! ( retValue instanceof Target ) )
+        if ( !( retValue instanceof Target ) )
         {
             retValue = new Target();
         }
 
-        processConfiguration( (Target)retValue, configuration, expressionEvaluator );
+        processConfiguration( (Target) retValue, configuration, expressionEvaluator );
 
         return retValue;
     }
