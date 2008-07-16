@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<model>
+  <id>asfextOptions</id>
+  <name>asfextOptions</name>
+  <description><![CDATA[Model for ASF extensions to DOAP.]]></description>
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugin.doap.options</value>
+    </default>
+  </defaults>
+  <classes>
+    <class>
+      <name>ASFExtOptions</name>
+      <description><![CDATA[Specific ASF DOAP parameters, i.e. ASF options which make DOAP file ASF compliant.
+@see <a href="http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext">
+http://svn.apache.org/repos/asf/infrastructure/site-tools/trunk/projects/asfext</a>
+@see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>included</name>
+          <description>Flag to use or not the ASF extension in the generated DOAP. Required.</description>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <identifier>true</identifier>
+          <defaultValue>true</defaultValue>
+        </field>
+        <field>
+          <name>pmc</name>
+          <description><![CDATA[The top level element within a file. Optional will be discovered from POM.
+@see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>name</name>
+          <description><![CDATA[The name of the PMC, including the 'Apache ', e.g. 'Apache Forrest'. Optional will be discovered from POM.
+@see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>charter</name>
+          <description><![CDATA[Every PMC is created by a board resolution with a specific charter. That charter should be
+            listed here as it gives the focus and scope of the PMC. Optional.
+@see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>chair</name>
+          <description><![CDATA[This should contain the name of the current PMC chairperson. Optional.
+@see <a href="http://projects.apache.org/docs/pmc.html">http://projects.apache.org/docs/pmc.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+
+        <field>
+          <name>standards</name>
+          <version>1.0.0</version>
+          <description><![CDATA[List of Standard object. Optional.
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+          <association>
+            <type>Standard</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+
+      <codeSegments>
+        <codeSegment>
+          <code>
+            <![CDATA[
+    /** The ASF ext namespace. */
+    public static final String ASFEXT_NAMESPACE = "http://projects.apache.org/ns/asfext#";
+
+    /**
+     * The ASF category resource.
+     *
+     * @see <a href="http://projects.apache.org/guidelines.html">http://projects.apache.org/guidelines.html</a>
+     */
+    public static final String CATEGORY_RESOURCE = "http://projects.apache.org/category/";
+
+    /** Projects related to building/maintaining source code/websites. */
+    public static final String BUILD_MANAGEMENT_CATEGORY = "build-management";
+
+    /** Projects related to databases. */
+    public static final String DATABASE_CATEGORY = "database";
+
+    /** Related to the HyperText Transfer Protocol. */
+    public static final String HTTP_CATEGORY = "http";
+
+    /** Modules designed for use by the Apache HTTP Server. */
+    public static final String HTTP_MODULES_CATEGORY = "httpd-modules";
+
+    /** A library meant to be used by other applications. */
+    public static final String LIBRARY_CATEGORY = "library";
+
+    /** Servers or applications related to internet mail protocols. */
+    public static final String MAIL_CATEGORY = "mail";
+
+    /** Anything that acts as a client across a network. */
+    public static final String NETWORK_CLIENT_CATEGORY = "network-client";
+
+    /** Anything that acts as a server across a network. */
+    public static final String NETWORK_SERVER_CATEGORY = "network-server";
+
+    /** Software designed to test or verify other software. */
+    public static final String TESTING_CATEGORY = "testing";
+
+    /** Unifying frameworks for website development. */
+    public static final String WEB_FRAMEWORK_CATEGORY = "web-framework";
+
+    /** Software based on XML technologies. */
+    public static final String XML_CATEGORY = "xml";
+
+    /** All categories supported by ASF */
+    public static final String[] CATEGORIES = {
+        BUILD_MANAGEMENT_CATEGORY,
+        DATABASE_CATEGORY,
+        HTTP_CATEGORY,
+        HTTP_MODULES_CATEGORY,
+        LIBRARY_CATEGORY,
+        MAIL_CATEGORY,
+        NETWORK_CLIENT_CATEGORY,
+        NETWORK_SERVER_CATEGORY,
+        TESTING_CATEGORY,
+        WEB_FRAMEWORK_CATEGORY,
+        XML_CATEGORY };
+
+    /** C or C++ Programming Language. */
+    public static final String C_PROGRAMMING_LANGUAGE = "C";
+
+    /** Java Programming Language and all its components.*/
+    public static final String JAVA_PROGRAMMING_LANGUAGE = "Java";
+
+    /** Perl Programming Language.*/
+    public static final String PERL_PROGRAMMING_LANGUAGE = "Perl";
+
+    /** Python Programming Language.*/
+    public static final String PYTHON_PROGRAMMING_LANGUAGE = "Python";
+
+    /** Scalable Vector Graphic Programming Language.*/
+    public static final String SVG_PROGRAMMING_LANGUAGE = "SVG";
+
+    /** Tcl Programming Language.*/
+    public static final String TCL_PROGRAMMING_LANGUAGE = "Tcl";
+
+    /** All Programming Languages supported by ASF */
+    public static final String[] PROGRAMMING_LANGUAGES = {
+        C_PROGRAMMING_LANGUAGE,
+        JAVA_PROGRAMMING_LANGUAGE,
+        PERL_PROGRAMMING_LANGUAGE,
+        PYTHON_PROGRAMMING_LANGUAGE,
+        SVG_PROGRAMMING_LANGUAGE,
+        TCL_PROGRAMMING_LANGUAGE};
+
+    /**
+     * @param category not null
+     * @return <code>true</code> if the given category is supported by ASF.
+     * @see <a href="http://projects.apache.org/categories.html">http://projects.apache.org/categories.html</a>
+     * @see #CATEGORIES
+     */
+    public static boolean isCategorySupportedByASF( String category )
+    {
+        for ( int i = 0; i < CATEGORIES.length; i++ )
+        {
+            if ( CATEGORIES[i].equalsIgnoreCase( category ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param programmingLanguage not null
+     * @return <code>true</code> if the given programming language is supported by ASF.
+     * @see <a href="http://projects.apache.org/languages.html">http://projects.apache.org/languages.html</a>
+     * @see #PROGRAMMING_LANGUAGES
+     */
+    public static boolean isProgrammingLanguageSupportedByASF( String programmingLanguage )
+    {
+        for ( int i = 0; i < PROGRAMMING_LANGUAGES.length; i++ )
+        {
+            if ( PROGRAMMING_LANGUAGES[i].equalsIgnoreCase( programmingLanguage ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the chair man of the project. The role of the developer should contain <code>chair</code>.
+     *
+     * @param developers list of <code>{@link org.apache.maven.model.Developer}</code>
+     * @return a Developer or null if not found.
+     */
+    public static org.apache.maven.model.Developer findChair( java.util.List developers )
+    {
+        if ( developers == null || developers.isEmpty() )
+        {
+            return null;
+        }
+
+        for ( java.util.Iterator it = developers.iterator(); it.hasNext(); )
+        {
+            org.apache.maven.model.Developer developer = (org.apache.maven.model.Developer) it.next();
+            java.util.List roles = developer.getRoles();
+
+            for ( java.util.Iterator it2 = roles.iterator(); it2.hasNext(); )
+            {
+                String role = (String) it2.next();
+
+                if ( role.toLowerCase().indexOf( "chair" ) != -1 )
+                {
+                    return developer;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the list of PMC members of the project. The role of each developer should contain <code>pmc</code>.
+     *
+     * @param developers list of <code>{@link org.apache.maven.model.Developer}</code>
+     * @return a not null list of Developer.
+     */
+    public static java.util.List findPMCMembers( java.util.List developers )
+    {
+        if ( developers == null || developers.isEmpty() )
+        {
+            return null;
+        }
+
+        java.util.List pmc = new java.util.ArrayList();
+        for ( java.util.Iterator it = developers.iterator(); it.hasNext(); )
+        {
+            org.apache.maven.model.Developer developer = (org.apache.maven.model.Developer) it.next();
+            java.util.List roles = developer.getRoles();
+
+            for ( java.util.Iterator it2 = roles.iterator(); it2.hasNext(); )
+            {
+                String role = (String) it2.next();
+
+                if ( role.toLowerCase().indexOf( "pmc" ) != -1 )
+                {
+                    pmc.add( developer );
+                }
+            }
+        }
+
+        return pmc;
+    }
+            ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
+
+    <class>
+      <name>Standard</name>
+      <description><![CDATA[The "Standard" element is used to list all the relevant standards implemented by the project.
+These standards include W3C or ISO standards, RFCs, various technical specifications etc.
+Example:
+<pre>
+&lt;asfext:implements&gt;
+&nbsp;&nbsp;&lt;asfext:Standard&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;asfext:title&gt;Extensible Stylesheet Language - Formatting Objects (XSL-FO 1.1)&lt;/asfext:title&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;asfext:body&gt;W3C&lt;/asfext:body&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;asfext:id&gt;XSL 1.1&lt;/asfext:id&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;asfext:url rdf:resource="http://www.w3.org/TR/xsl11/"/&gt;
+&nbsp;&nbsp;&lt;/asfext:Standard&gt;
+&lt;/asfext:implements&gt;
+</pre>
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>title</name>
+          <description><![CDATA[The expanded title of the standard. Required.
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <required>true</required>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>body</name>
+          <description><![CDATA[The body which published the standard (Example: "W3C", "OASIS", "ISO" etc.). Required.
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <required>true</required>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>id</name>
+          <description><![CDATA[An identifier for the standard (Example: ISO/IEC 15438, RFC2397, JSR206 etc.). Required.
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <required>true</required>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>url</name>
+          <description><![CDATA[An URL pointing to the standard (main website or specification document). Optional.
+@see <a href="http://projects.apache.org/docs/standards.html">http://projects.apache.org/docs/standards.html</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+    </class>
+  </classes>
+</model>

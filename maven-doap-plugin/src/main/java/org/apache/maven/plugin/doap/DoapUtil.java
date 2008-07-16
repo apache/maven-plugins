@@ -144,7 +144,7 @@ public class DoapUtil
         returnMap.put( "helpers", new ArrayList() );
         returnMap.put( "unknowns", new ArrayList() );
 
-        if ( developersOrContributors == null || developersOrContributors.size() == 0 )
+        if ( developersOrContributors == null || developersOrContributors.isEmpty() )
         {
             return returnMap;
         }
