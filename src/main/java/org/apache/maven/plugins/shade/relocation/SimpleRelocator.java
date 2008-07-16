@@ -19,9 +19,10 @@ package org.apache.maven.plugins.shade.relocation;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -40,7 +41,7 @@ public class SimpleRelocator
 
     private String shadedPathPattern;
 
-    private List excludes;
+    private Set excludes;
 
     public SimpleRelocator(String patt, String shadedPattern, List excludes)
     {
@@ -59,13 +60,20 @@ public class SimpleRelocator
 
         if ( excludes != null && !excludes.isEmpty() )
         {
-            this.excludes = new ArrayList();
+            this.excludes = new LinkedHashSet();
 
             for (Iterator i = excludes.iterator(); i.hasNext();)
             {
                 String e = (String) i.next();
 
-                this.excludes.add(e.replace('.', '/'));
+                String classExclude = e.replace( '.', '/' );
+                this.excludes.add( classExclude );
+
+                if ( classExclude.endsWith( "/*" ) )
+                {
+                    String packageExclude = classExclude.substring( 0, classExclude.lastIndexOf( '/' ) );
+                    this.excludes.add( packageExclude );
+                }
             }
         }
     }
