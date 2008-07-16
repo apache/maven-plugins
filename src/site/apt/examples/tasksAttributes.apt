@@ -28,7 +28,7 @@
 
 Using <<<\<tasks/\>>>> Attributes
 
- Since plugin version 1.2 you could specify attributes in the <<<\<tasks/\>>>> configuration to execute or not
+ Since plugin version 1.2 you can specify attributes in the <<<\<tasks/\>>>> configuration to execute or not
  Ant tasks depending some conditions. For example, to skip Ant call, you could add the following:
 
 ------
