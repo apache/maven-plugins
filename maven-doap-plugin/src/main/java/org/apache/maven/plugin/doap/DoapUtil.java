@@ -106,6 +106,36 @@ public class DoapUtil
     /**
      * @param writer not null
      * @param name not null
+     * @param lang not null
+     * @param value could be null. In this case, the element is not written.
+     * @throws IllegalArgumentException if name is null or empty
+     */
+    public static void writeElement( XMLWriter writer, String name, String value, String lang )
+        throws IllegalArgumentException
+    {
+        if ( StringUtils.isEmpty( lang ) )
+        {
+            writeElement( writer, name, value );
+            return;
+        }
+
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "name should be defined" );
+        }
+
+        if ( value != null )
+        {
+            writer.startElement( name );
+            writer.addAttribute( "xml:lang", lang );
+            writer.writeText( value );
+            writer.endElement();
+        }
+    }
+
+    /**
+     * @param writer not null
+     * @param name not null
      * @param value could be null. In this case, the element is not written.
      * @throws IllegalArgumentException if name is null or empty
      */

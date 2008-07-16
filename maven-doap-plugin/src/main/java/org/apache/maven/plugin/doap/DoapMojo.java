@@ -200,6 +200,14 @@ public class DoapMojo
      */
     private ASFExtOptions asfExtOptions;
 
+    /**
+     * The value for the <code>xml:lang</code> attribute used by the <code>rdf:RDF<code> element and
+     * <code>description</code>, <code>shortdesc</code> elements.
+     *
+     * @parameter expression="${lang}" default-value="en"
+     */
+    private String lang;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -234,7 +242,7 @@ public class DoapMojo
 
         // Heading
         writer.startElement( "rdf:RDF" );
-        writer.addAttribute( "xml:lang", "en" );
+        writer.addAttribute( "xml:lang", lang );
         writer.addAttribute( "xmlns", "http://usefulinc.com/ns/doap#" );
         writer.addAttribute( "xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
         writer.addAttribute( "xmlns:foaf", "http://xmlns.com/foaf/0.1/" );
@@ -363,14 +371,14 @@ public class DoapMojo
 
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "Plain text description of a project, of 2-4 sentences in length.", 2 );
-        DoapUtil.writeElement( writer, "description", project.getDescription() );
+        DoapUtil.writeElement( writer, "description", project.getDescription(), lang );
         if ( StringUtils.isNotEmpty( doapOptions.getShortdesc() ) )
         {
-            DoapUtil.writeElement( writer, "shortdesc", doapOptions.getShortdesc() );
+            DoapUtil.writeElement( writer, "shortdesc", doapOptions.getShortdesc(), lang );
         }
         else
         {
-            DoapUtil.writeElement( writer, "shortdesc", project.getDescription() );
+            DoapUtil.writeElement( writer, "shortdesc", project.getDescription(), lang );
         }
     }
 
