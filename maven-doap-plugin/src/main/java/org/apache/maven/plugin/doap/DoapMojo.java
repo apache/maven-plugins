@@ -205,6 +205,7 @@ public class DoapMojo
      * <code>description</code>, <code>shortdesc</code> elements.
      *
      * @parameter expression="${lang}" default-value="en"
+     * @since 1.0
      */
     private String lang;
 
