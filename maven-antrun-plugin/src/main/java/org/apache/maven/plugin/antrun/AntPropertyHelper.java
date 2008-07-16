@@ -72,9 +72,9 @@ public class AntPropertyHelper
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() +
-                ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) +
-                ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
+            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId()
+                + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
+                + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
 
             log.debug( "Storing: " + key + "=" + artifact.getFile().getPath() );
 
@@ -89,7 +89,7 @@ public class AntPropertyHelper
     {
         if ( log.isDebugEnabled() )
         {
-            log.debug( "getProperty(ns="+ns+", name="+name+", user="+user+")" );
+            log.debug( "getProperty(ns=" + ns + ", name=" + name + ", user=" + user + ")" );
         }
 
         /* keep old behaviour */
@@ -112,11 +112,11 @@ public class AntPropertyHelper
             {
                 val = exprEvaluator.evaluate( "${" + name + "}" );
             }
-            catch (ExpressionEvaluationException e)
+            catch ( ExpressionEvaluationException e )
             {
                 if ( log.isErrorEnabled() )
                 {
-                    log.error("Failed to evaluate expression" , e);
+                    log.error( "Failed to evaluate expression", e );
                 }
             }
         }
@@ -159,7 +159,7 @@ public class AntPropertyHelper
                     true
                 );
             }
-            else if ( name.equals("basedir") )
+            else if ( name.equals( "basedir" ) )
             {
                 val = ReflectionValueExtractor.evaluate(
                     "basedir.path",
@@ -188,7 +188,7 @@ public class AntPropertyHelper
 
         if ( val instanceof File )
         {
-            val = ((File) val).getAbsoluteFile();
+            val = ( (File) val ).getAbsoluteFile();
         }
 
         return val;
