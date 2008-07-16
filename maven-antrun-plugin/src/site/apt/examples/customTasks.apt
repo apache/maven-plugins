@@ -26,7 +26,7 @@
 Using tasks not included in Ant default jar
 
  To use ant tasks not included in the Ant jar, like Ant optional or custom tasks you need to add the dependencies needed for the task
- to run to the plugin classpath and use the {{maven.plugin.classpath}} reference if needed.
+ to run to the plugin classpath and use the <<<maven.plugin.classpath>>> reference if needed.
 
 ------
 <project>
