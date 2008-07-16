@@ -209,6 +209,14 @@ public class DoapMojo
      */
     private String lang;
 
+    /**
+     * The about which should be displayed in the DOAP file.
+     *
+     * @parameter expression="${about}"
+     * @since 1.0
+     */
+    private String about;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -254,7 +262,17 @@ public class DoapMojo
 
         // Project
         writer.startElement( "Project" );
-        writer.addAttribute( "rdf:about", "http://Maven.rdf.apache.org/" );
+        if ( asfExtOptions.isIncluded() )
+        {
+            writer.addAttribute( "rdf:about", "http://" + project.getArtifactId() + ".rdf.apache.org/" );
+        }
+        else
+        {
+            if ( StringUtils.isNotEmpty( about ) )
+            {
+                writer.addAttribute( "rdf:about", about );
+            }
+        }
 
         // name
         writeName( writer );
@@ -1438,5 +1456,15 @@ public class DoapMojo
         }
 
         return false;
+    }
+
+    private String detectHostServer()
+    {
+        if ( StringUtils.isNotEmpty( project.getUrl() ) )
+        {
+
+        }
+
+        return null;
     }
 }
