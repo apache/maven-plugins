@@ -807,23 +807,42 @@ public class ShadeMojo
             while ( it2.hasNext() ) 
             {
                 DependencyNode n3 = (DependencyNode) it2.next();
-                //anything two levels deep that is not marked "included"
+                //anything two levels deep that is marked "included"
                 //is stuff that was excluded by the original poms, make sure it
                 //remains excluded
                 if ( n3.getState() == DependencyNode.INCLUDED)
                 {
+                    //check if it really isn't in the list of direct dependencies.  Maven
+                    //prior to 2.0.8 may grab versions from transients instead of
+                    //from the direct deps in which case they would be marked included
+                    //instead of OMITTED_FOR_DUPLICATE
+                    boolean found = false;
                     for ( int x = 0; x < dependencies.size(); x++ ) 
                     {
                         Dependency dep = (Dependency) dependencies.get( x );
-                        if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
-                            && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) ) 
+                        if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
+                            && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) ) 
                         {
-                            Exclusion exclusion = new Exclusion();
-                            exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
-                            exclusion.setGroupId( n3.getArtifact().getGroupId() );
-                            dep.addExclusion( exclusion );
-                            modified = true;
-                            break;
+                            found = true;
+                        }
+                            
+                    }
+                    
+                    if ( !found ) 
+                    {
+                        for ( int x = 0; x < dependencies.size(); x++ ) 
+                        {
+                            Dependency dep = (Dependency) dependencies.get( x );
+                            if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
+                                && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) ) 
+                            {
+                                Exclusion exclusion = new Exclusion();
+                                exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
+                                exclusion.setGroupId( n3.getArtifact().getGroupId() );
+                                dep.addExclusion( exclusion );
+                                modified = true;
+                                break;
+                            }
                         }
                     }
                 }
