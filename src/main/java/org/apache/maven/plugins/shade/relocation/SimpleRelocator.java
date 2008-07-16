@@ -45,12 +45,12 @@ public class SimpleRelocator
 
     public SimpleRelocator(String patt, String shadedPattern, List excludes)
     {
-        this.pattern = patt;
+        this.pattern = patt.replace( '/', '.' );
         this.pathPattern = patt.replace('.', '/');
 
         if ( shadedPattern != null )
         {
-            this.shadedPattern = shadedPattern;
+            this.shadedPattern = shadedPattern.replace( '/', '.' );
             this.shadedPathPattern = shadedPattern.replace('.', '/');
         } else
         {
