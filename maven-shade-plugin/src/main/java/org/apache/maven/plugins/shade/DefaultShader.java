@@ -60,6 +60,7 @@ public class DefaultShader
 
         RelocatorRemapper remapper = new RelocatorRemapper( relocators );
 
+        uberJar.getParentFile().mkdirs();
         JarOutputStream jos = new JarOutputStream( new FileOutputStream( uberJar ) );
 
         for ( Iterator i = jars.iterator(); i.hasNext(); )
