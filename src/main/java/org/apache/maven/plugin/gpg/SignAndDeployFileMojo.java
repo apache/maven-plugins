@@ -19,7 +19,6 @@ package org.apache.maven.plugin.gpg;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -43,7 +42,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.deploy.DeployFileMojo;
 import org.apache.maven.project.artifact.AttachedArtifact;
 import org.apache.maven.settings.Settings;
-
 
 /**
  * Signs artifacts and installs the artifact in the remote repository.
