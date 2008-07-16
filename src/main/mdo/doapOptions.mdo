@@ -37,6 +37,14 @@ under the License.
       <version>1.0.0</version>
       <fields>
         <field>
+          <name>shortdesc</name>
+          <description><![CDATA[Short (8 or 9 words) plain text description of a project.
+@see <a href="http://usefulinc.com/ns/doap#shortdesc">http://usefulinc.com/ns/doap#shortdesc</a>]]></description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
           <name>category</name>
           <description><![CDATA[A category of project.<br/>
 <b>Note</b>: This string is comma separated to allow several categories.
