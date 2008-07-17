@@ -1948,8 +1948,10 @@ public abstract class AbstractJavadocMojo
                             try
                             {
                                 result = resolver.resolveTransitively( dependencyArtifacts, subProject.getArtifact(),
-                                                                       subProject.getRemoteArtifactRepositories(),
-                                                                       localRepository, artifactMetadataSource );
+                                                                       subProject.getManagedVersionMap(),
+                                                                       localRepository, subProject
+                                                                           .getRemoteArtifactRepositories(),
+                                                                       artifactMetadataSource );
                             }
                             catch ( MultipleArtifactsNotFoundException e )
                             {
