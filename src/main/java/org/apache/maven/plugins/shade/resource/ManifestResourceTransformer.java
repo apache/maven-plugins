@@ -67,6 +67,7 @@ public class ManifestResourceTransformer
         {
             manifest = new Manifest( is );
             manifestDiscovered = true;
+            IOUtil.close(  is );
         }
     }
 
@@ -109,6 +110,8 @@ public class ManifestResourceTransformer
         }       
         InputStream is = new StringInputStream( sb.toString() );
         IOUtil.copy( is, jos );
-        is.close();
+        
+        // Close up all the streams.
+        IOUtil.close( is );
     }    
 }
