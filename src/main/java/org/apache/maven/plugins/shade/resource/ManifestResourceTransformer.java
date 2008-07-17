@@ -100,18 +100,8 @@ public class ManifestResourceTransformer
                 attributes.put( new Attributes.Name( key ), additionalAttributes.get( key ) );                                    
             }
         }
-        
+                
         jos.putNextEntry( new JarEntry( MANIFEST_PATH ) );
-        StringBuffer sb = new StringBuffer();
-        for ( Iterator i = attributes.keySet().iterator(); i.hasNext(); )
-        {
-            Attributes.Name a = (Attributes.Name) i.next();
-            sb.append( a.toString() ).append(  ": " ).append( attributes.getValue(  a ) ).append( "\n" );
-        }       
-        InputStream is = new StringInputStream( sb.toString() );
-        IOUtil.copy( is, jos );
-        
-        // Close up all the streams.
-        IOUtil.close( is );
+        manifest.write( jos );        
     }    
 }
