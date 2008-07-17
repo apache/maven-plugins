@@ -353,3 +353,45 @@
   ...
 </project>
 +-----
+ 
+ * Shade Plugin with where a set of arbitrary attributes are added to the MANIFEST.MF
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>haven-1.0</finalName>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <additionalAttributes>
+                    <property>
+                      <name>Main-Class</name>
+                      <value>org.sonatype.haven.ExodusCli</value>
+                    </property>
+                    <property>
+                      <name>Build-Number</name>
+                      <value>123</value>
+                    </property>
+                  </additionalAttributes>
+                </transformer>
+              </transformers>
+            </configuration>          
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
