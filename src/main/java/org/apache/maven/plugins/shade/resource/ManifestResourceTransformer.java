@@ -15,8 +15,6 @@ package org.apache.maven.plugins.shade.resource;
  * the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -29,6 +27,13 @@ import java.util.jar.Manifest;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringInputStream;
 
+/**
+ * A resource processor that allows the arbitrary addition of attributes to
+ * the first MANIFEST.MF that is found in the set of JARs being processed, or
+ * to a newly created manifest for the shaded JAR.
+ *  
+ * @author Jason van Zyl
+ */
 public class ManifestResourceTransformer
     implements ResourceTransformer
 {
@@ -73,8 +78,6 @@ public class ManifestResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        System.out.println( additionalAttributes );
-        
         // If we didn't find a manifest, then let's create one.
         if ( manifest == null )
         {            
