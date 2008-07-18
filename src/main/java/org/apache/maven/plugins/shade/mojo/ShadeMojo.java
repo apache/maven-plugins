@@ -683,31 +683,34 @@ public class ShadeMojo
 
         boolean modified = false;
         
+        List transitiveDeps = new ArrayList();
+
+        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            //promote
+            Dependency dep = new Dependency();
+            dep.setArtifactId( artifact.getArtifactId() );
+            if (artifact.hasClassifier())
+            {
+                dep.setClassifier( artifact.getClassifier() );
+            }
+            dep.setGroupId( artifact.getGroupId() );
+            dep.setOptional( artifact.isOptional() );
+            dep.setScope( artifact.getScope() );
+            dep.setType( artifact.getType() );
+            dep.setVersion( artifact.getVersion() );
+
+            //we'll figure out the exclusions in a bit.
+            
+            transitiveDeps.add( dep );
+        }
         List origDeps = getProject().getDependencies();
+
         if ( promoteTransitiveDependencies )
         {
-            origDeps = new ArrayList();
-            for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
-            {
-                Artifact artifact = (Artifact) it.next();
-
-                //promote
-                Dependency dep = new Dependency();
-                dep.setArtifactId( artifact.getArtifactId() );
-                if (artifact.hasClassifier())
-                {
-                    dep.setClassifier( artifact.getClassifier() );
-                }
-                dep.setGroupId( artifact.getGroupId() );
-                dep.setOptional( artifact.isOptional() );
-                dep.setScope( artifact.getScope() );
-                dep.setType( artifact.getType() );
-                dep.setVersion( artifact.getVersion() );
-
-                //we'll figure out the exclusions in a bit.
-                
-                origDeps.add( dep );
-            }
+            origDeps = transitiveDeps;
         }
 
         for ( Iterator i = origDeps.iterator(); i.hasNext(); )
@@ -754,7 +757,7 @@ public class ShadeMojo
                 w.close();
     
                 MavenProject p2 = mavenProjectBuilder.build( f, localRepository, null );
-                modified = updateExcludesInDeps( p2, dependencies );
+                modified = updateExcludesInDeps( p2, dependencies, transitiveDeps );
     
             }
             
@@ -788,7 +791,9 @@ public class ShadeMojo
     }
     
     
-    public boolean updateExcludesInDeps( MavenProject project, List dependencies )
+    public boolean updateExcludesInDeps( MavenProject project, 
+                                         List dependencies,
+                                         List transitiveDeps )
         throws DependencyTreeBuilderException
     {
         DependencyNode node = dependencyTreeBuilder.buildDependencyTree(
@@ -809,17 +814,19 @@ public class ShadeMojo
                 DependencyNode n3 = (DependencyNode) it2.next();
                 //anything two levels deep that is marked "included"
                 //is stuff that was excluded by the original poms, make sure it
-                //remains excluded
+                //remains excluded IF promoting transitives.
                 if ( n3.getState() == DependencyNode.INCLUDED)
                 {
-                    //check if it really isn't in the list of direct dependencies.  Maven
+                    //check if it really isn't in the list of original dependencies.  Maven
                     //prior to 2.0.8 may grab versions from transients instead of
                     //from the direct deps in which case they would be marked included
                     //instead of OMITTED_FOR_DUPLICATE
+                    
+                    //also, if not promoting the transitives, level 2's would be included
                     boolean found = false;
-                    for ( int x = 0; x < dependencies.size(); x++ ) 
+                    for ( int x = 0; x < transitiveDeps.size(); x++ ) 
                     {
-                        Dependency dep = (Dependency) dependencies.get( x );
+                        Dependency dep = (Dependency) transitiveDeps.get( x );
                         if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
                             && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) ) 
                         {
