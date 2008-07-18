@@ -202,18 +202,36 @@ public class DoapMojo
     private ASFExtOptions asfExtOptions;
 
     /**
-     * The value for the <code>xml:lang</code> attribute used by the <code>rdf:RDF<code> element and
-     * <code>description</code>, <code>shortdesc</code> elements.
+     * The value for the <code>xml:lang</code> attribute used by the <code>&lt;rdf:RDF/&gt;<code>,
+     * <code>&lt;description/&gt;</code> and <code>&lt;shortdesc/&gt;</code> elements.
+     * <br/>
+     * POM doesn't have any notions about language.
+     * <br/>
+     * See <a href="http://www.w3.org/TR/REC-xml/#sec-lang-tag">http://www.w3.org/TR/REC-xml/#sec-lang-tag</a>
+     * <br/>
      *
      * @parameter expression="${lang}" default-value="en"
+     * @required
      * @since 1.0
      */
     private String lang;
 
     /**
-     * The about which should be displayed in the DOAP file.
+     * The <code>about</code> URI-reference which should be displayed in the DOAP file.
+     * Example:
+     * <pre>
+     * &lt;rdf:RDF&gt;
+     * &nbsp;&nbsp;&lt;Project rdf:about="http://maven.apache.org/"&gt;
+     * &nbsp;&nbsp;...
+     * &nbsp;&nbsp;&lt;/Project&gt;
+     * &lt;/rdf:RDF&gt;
+     * </pre>
+     * See <a href="http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr">
+     * http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/#aboutAttr</a>
+     * <br/>
      *
-     * @parameter expression="${about}"
+     * @parameter expression="${about}" default-value="${project.url}"
+     * @required
      * @since 1.0
      */
     private String about;
