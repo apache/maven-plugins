@@ -64,6 +64,7 @@ public class JavadocReport
 
     /**
      * The name of the destination directory.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${destDir}" default-value="apidocs"

@@ -99,6 +99,7 @@ public class JavadocJar
 
     /**
      * Specifies whether to attach the generated artifact to the project helper.
+     * <br/>
      *
      * @parameter expression="${attach}" default-value="true"
      */
@@ -126,6 +127,7 @@ public class JavadocJar
 
     /**
      * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
+     * <br/>
      *
      * @parameter default-value="false"
      * @since 2.5
