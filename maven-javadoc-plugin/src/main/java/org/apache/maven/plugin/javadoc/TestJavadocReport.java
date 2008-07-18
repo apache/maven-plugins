@@ -54,6 +54,7 @@ public class TestJavadocReport
      * Specifies the title to be placed near the top of the overview summary file.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * <br/>
      *
      * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} Test API"
      */
@@ -64,6 +65,7 @@ public class TestJavadocReport
      * specified by path/filename and place it on the Overview page (overview-summary.html).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * <br/>
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/test/javadoc/overview.html"
      */
@@ -73,6 +75,7 @@ public class TestJavadocReport
      * Specifies the title to be placed in the HTML title tag.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * <br/>
      *
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} Test API"
      */
@@ -92,6 +95,7 @@ public class TestJavadocReport
 
     /**
      * The name of the destination directory.
+     * <br/>
      *
      * @parameter expression="${destDir}" default-value="testapidocs"
      */
