@@ -802,8 +802,8 @@ public class DependenciesRenderer
                     Integer old = (Integer)totalByRepo.get( repokey );
                     if ( old == null )
                     {
-                        totalByRepo.put( repokey, Integer.valueOf( 0 ) );
-                        old = Integer.valueOf( 0 );
+                        totalByRepo.put( repokey, new Integer( 0 ) );
+                        old = new Integer( 0 );
                     }
 
                     boolean dependencyExists = false;
@@ -836,7 +836,7 @@ public class DependenciesRenderer
                         sink.link_();
                         sink.tableCell_();
 
-                        totalByRepo.put( repokey, Integer.valueOf( old.intValue() + 1 ) );
+                        totalByRepo.put( repokey, new Integer( old.intValue() + 1 ) );
                     }
                     else
                     {
