@@ -51,6 +51,7 @@ public class TestJavadocJar
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     * <br/>
      *
      * @parameter default-value="${project.build.directory}/testapidocs"
      * @required
@@ -61,6 +62,7 @@ public class TestJavadocJar
      * Specifies the title to be placed near the top of the overview summary file.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * <br/>
      *
      * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} Test API"
      */
@@ -71,6 +73,7 @@ public class TestJavadocJar
      * specified by path/filename and place it on the Overview page (overview-summary.html).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * <br/>
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/test/javadoc/overview.html"
      */
@@ -80,6 +83,7 @@ public class TestJavadocJar
      * Specifies the title to be placed in the HTML title tag.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * <br/>
      *
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} Test API"
      */
