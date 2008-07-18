@@ -286,16 +286,13 @@ public class DoapMojo
 
         // Project
         writer.startElement( "Project" );
-        if ( asfExtOptions.isIncluded() )
+        if ( StringUtils.isNotEmpty( about ) )
         {
-            writer.addAttribute( "rdf:about", "http://" + project.getArtifactId() + ".rdf.apache.org/" );
+            writer.addAttribute( "rdf:about", about );
         }
         else
         {
-            if ( StringUtils.isNotEmpty( about ) )
-            {
-                writer.addAttribute( "rdf:about", about );
-            }
+            getLog().warn( "rdf:about should be required" );
         }
 
         // name
@@ -1480,15 +1477,5 @@ public class DoapMojo
         }
 
         return false;
-    }
-
-    private String detectHostServer()
-    {
-        if ( StringUtils.isNotEmpty( project.getUrl() ) )
-        {
-
-        }
-
-        return null;
     }
 }
