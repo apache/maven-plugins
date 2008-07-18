@@ -252,6 +252,7 @@ public abstract class AbstractJavadocMojo
      * &lt;additionalJOption&gt;-J-Xss128m&lt;/additionalJOption&gt;
      * </pre>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
+     * <br/>
      * See <a href="http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp">vmoptions</a>.
      *
      * @since 2.3
@@ -304,6 +305,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
      * Since 2.5, you could use <code>javadoc:aggregate</code> goal as an alternative.
+     * <br/>
      *
      * @parameter expression="${aggregate}" default-value="false"
      */
@@ -311,6 +313,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Set this to 'true' to debug Javadoc plugin. With this, 'options' and 'files' files are provided.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${debug}" default-value="false"
@@ -338,6 +341,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies whether the javadoc generation should be skipped
+     * <br/>
      *
      * @since 2.5
      * @parameter expression="${maven.javadoc.skip}" default-value="false"
@@ -354,6 +358,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#breakiterator">breakiterator</a>.
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * <br/>
      *
      * @parameter expression="${breakiterator}" default-value="false"
      */
@@ -426,6 +431,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to better reproducing build,but
      * this was reverted in 2.5.
+     * <br/>
      *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
@@ -488,6 +494,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the proxy host where the javadoc web access in <code>-link</code> would pass through.
      * It defaults to the proxy host of the active proxy set in the <code>settings.xml</code>, otherwise it gets the proxy
      * configuration set in the pom.
+     * <br/>
      *
      * @parameter expression="${proxyHost}" default-value="${settings.activeProxy.host}"
      * @deprecated since 2.4. Instead of, configure an active proxy host in <code>settings.xml</code>.
@@ -498,6 +505,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the proxy port where the javadoc web access in <code>-link</code> would pass through.
      * It defaults to the proxy port of the active proxy set in the <code>settings.xml</code>, otherwise it gets the proxy
      * configuration set in the pom.
+     * <br/>
      *
      * @parameter expression="${proxyPort}" default-value="${settings.activeProxy.port}"
      * @deprecated since 2.4. Instead of, configure an active proxy port in <code>settings.xml</code>.
@@ -509,6 +517,7 @@ public abstract class AbstractJavadocMojo
      * Javadoc 1.1.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#1.1">1.1</a>.
+     * <br/>
      *
      * @parameter expression="${old}" default-value="false"
      */
@@ -521,6 +530,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: could be in conflict with &lt;nooverview/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
+     * <br/>
      *
      * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
      */
@@ -539,6 +549,7 @@ public abstract class AbstractJavadocMojo
      * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
      * (shows all classes and members)</li>
      * </ul>
+     * <br/>
      *
      * @parameter expression="${show}" default-value="protected"
      */
@@ -554,6 +565,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#quiet">quiet</a>.
      * <br/>
      * Since Java 5.0.
+     * <br/>
      *
      * @parameter expression="${quiet}" default-value="false"
      */
@@ -596,6 +608,7 @@ public abstract class AbstractJavadocMojo
      * Provides more detailed messages while javadoc is running.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#verbose">verbose</a>.
+     * <br/>
      *
      * @parameter expression="${verbose}" default-value="false"
      */
@@ -609,6 +622,7 @@ public abstract class AbstractJavadocMojo
      * Specifies whether or not the author text is included in the generated Javadocs.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#author">author</a>.
+     * <br/>
      *
      * @parameter expression="${author}" default-value="true"
      */
@@ -620,6 +634,7 @@ public abstract class AbstractJavadocMojo
      * eg. <code>&lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;</code>
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
+     * <br/>
      *
      * @parameter expression="${bottom}"
      * default-value="Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
@@ -630,6 +645,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the HTML character set for this document.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
+     * <br/>
      *
      * @parameter expression="${charset}" default-value="ISO-8859-1"
      */
@@ -639,6 +655,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     * <br/>
      *
      * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/apidocs"
      * @required
@@ -651,6 +668,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docfilessubdirs">docfilessubdirs</a>.
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * <br/>
      *
      * @parameter expression="${docfilessubdirs}" default-value="false"
      */
@@ -669,6 +687,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the title to be placed near the top of the overview summary file.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
+     * <br/>
      *
      * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} API"
      */
@@ -749,6 +768,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${keywords}" default-value="false"
@@ -791,6 +811,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linksource">linksource</a>.
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * <br/>
      *
      * @parameter expression="${linksource}" default-value="false"
      */
@@ -802,6 +823,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nocomment">nocomment</a>.
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * <br/>
      *
      * @parameter expression="${nocomment}" default-value="false"
      */
@@ -811,6 +833,7 @@ public abstract class AbstractJavadocMojo
      * Prevents the generation of any deprecated API at all in the documentation.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecated">nodeprecated</a>.
+     * <br/>
      *
      * @parameter expression="${nodeprecated}" default-value="false"
      */
@@ -822,6 +845,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nodeprecatedlist">
      * nodeprecatedlist</a>.
+     * <br/>
      *
      * @parameter expression="${nodeprecatedlist}" default-value="false"
      */
@@ -833,6 +857,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: could be in conflict with &lt;helpfile/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nohelp">nohelp</a>.
+     * <br/>
      *
      * @parameter expression="${nohelp}" default-value="false"
      */
@@ -844,6 +869,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: could be in conflict with &lt;splitindex/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#noindex">noindex</a>.
+     * <br/>
      *
      * @parameter expression="${noindex}" default-value="false"
      */
@@ -853,6 +879,7 @@ public abstract class AbstractJavadocMojo
      * Omits the navigation bar from the generated docs.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nonavbar">nonavbar</a>.
+     * <br/>
      *
      * @parameter expression="${nonavbar}" default-value="false"
      */
@@ -864,6 +891,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: could be in conflict with &lt;overview/&gt;.
      * <br/>
      * Standard Doclet undocumented option.
+     * <br/>
      *
      * @since 2.4
      * @parameter expression="${nooverview}" default-value="false"
@@ -885,6 +913,7 @@ public abstract class AbstractJavadocMojo
      * Omits from the generated docs the "Since" sections associated with the since tags.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#nosince">nosince</a>.
+     * <br/>
      *
      * @parameter expression="${nosince}" default-value="false"
      */
@@ -897,6 +926,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${notimestamp}" default-value="false"
@@ -907,6 +937,7 @@ public abstract class AbstractJavadocMojo
      * Omits the class/interface hierarchy pages from the generated docs.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#notree">notree</a>.
+     * <br/>
      *
      * @parameter expression="${notree}" default-value="false"
      */
@@ -927,6 +958,7 @@ public abstract class AbstractJavadocMojo
      * Generates compile-time warnings for missing serial tags.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#serialwarn">serialwarn</a>
+     * <br/>
      *
      * @parameter expression="${serialwarn}" default-value="false"
      */
@@ -956,6 +988,7 @@ public abstract class AbstractJavadocMojo
      * <b>Note</b>: could be in conflict with &lt;noindex/&gt;.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#splitindex">splitindex</a>.
+     * <br/>
      *
      * @parameter expression="${splitindex}" default-value="false"
      */
@@ -964,6 +997,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies whether the stylesheet to be used is the maven javadoc stylesheet or java's default stylesheet
      * when a <i>stylesheetfile</i> parameter is not specified. Possible values: "maven" or "java".
+     * <br/>
      *
      * @parameter expression="${stylesheet}" default-value="java"
      */
@@ -1087,6 +1121,7 @@ public abstract class AbstractJavadocMojo
      * Includes one "Use" page for each documented class and package.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#use">use</a>.
+     * <br/>
      *
      * @parameter expression="${use}" default-value="true"
      */
@@ -1096,6 +1131,7 @@ public abstract class AbstractJavadocMojo
      * Includes the version text in the generated docs.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#version">version</a>.
+     * <br/>
      *
      * @parameter expression="${version}" default-value="true"
      */
@@ -1105,6 +1141,7 @@ public abstract class AbstractJavadocMojo
      * Specifies the title to be placed in the HTML title tag.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * <br/>
      *
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} API"
      */
