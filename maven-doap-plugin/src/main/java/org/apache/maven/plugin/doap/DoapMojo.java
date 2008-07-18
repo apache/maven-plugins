@@ -118,7 +118,8 @@ public class DoapMojo
     /**
      * The name of the DOAP file that will be generated.
      *
-     * @parameter expression="${basedir}/doap_${project.artifactId}.rdf"
+     * @parameter expression="${doapFile}" default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
+     * @required
      */
     private File doapFile;
 
