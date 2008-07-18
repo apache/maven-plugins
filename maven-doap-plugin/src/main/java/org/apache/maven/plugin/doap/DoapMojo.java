@@ -156,7 +156,7 @@ public class DoapMojo
     private String category;
 
     /**
-     * The language which should be displayed in the DOAP file.
+     * The programming language which should be displayed in the DOAP file.
      *
      * @parameter expression="${language}"
      * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in <code>doapOptions</code> parameter.
@@ -172,6 +172,9 @@ public class DoapMojo
      * &nbsp;&nbsp;&lt;programmingLanguage&gt;java&lt;/programmingLanguage&gt;
      * &lt;/doapOptions&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/DoapOptions.html">Javadoc</a>
+     * <br/>
      *
      * @parameter expression="${doapOptions}"
      * @since 1.0
@@ -192,6 +195,9 @@ public class DoapMojo
      * &nbsp;&nbsp;...
      * &lt;/asfExtOptions&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a>
+     * <br/>
      *
      * @parameter expression="${asfExtOptions}"
      * @since 1.0
