@@ -53,6 +53,7 @@ import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -234,6 +235,11 @@ public class DoapMojo
         Writer w;
         try
         {
+            if ( !doapFile.getParentFile().exists() )
+            {
+                FileUtils.mkdir( doapFile.getParentFile().getAbsolutePath() );
+            }
+
             w = WriterFactory.newXmlWriter( doapFile );
         }
         catch ( IOException e )
