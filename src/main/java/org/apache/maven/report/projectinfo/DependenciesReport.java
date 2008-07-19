@@ -42,6 +42,7 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -274,7 +275,7 @@ public class DependenciesReport
 
         if ( resourceList != null )
         {
-            LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList ) );
+            LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
 
             String line = reader.readLine();
 
