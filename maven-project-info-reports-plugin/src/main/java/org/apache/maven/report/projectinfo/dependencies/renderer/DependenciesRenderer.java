@@ -447,45 +447,31 @@ public class DependenciesRenderer
                         // ignore
                     }
 
-                    if ( hasSealed )
+                    String sealedstr = "";
+                    if ( jarDetails.isSealed() )
                     {
-                        String sealedstr = "";
-                        if ( jarDetails.isSealed() )
-                        {
-                            sealedstr = "sealed";
-                            totalsealed.incrementTotal( artifact.getScope() );
-                        }
+                        sealedstr = "sealed";
+                        totalsealed.incrementTotal( artifact.getScope() );
+                    }
 
-                        tableRow( new String[] {
-                            artifactFile.getName(),
-                            FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
-                            jarDetails.getJdkRevision(),
-                            debugstr,
-                            sealedstr } );
-                    }
-                    else
-                    {
-                        tableRow( new String[] {
-                            artifactFile.getName(),
-                            FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
-                            DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
-                            jarDetails.getJdkRevision(),
-                            debugstr } );
-                    }
+                    tableRow( hasSealed, new String[] {
+                        artifactFile.getName(),
+                        FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
+                        jarDetails.getJdkRevision(),
+                        debugstr,
+                        sealedstr } );
                 }
                 catch ( IOException e )
                 {
-                    createExceptionInfoTableRow( artifact, artifactFile, e );
+                    createExceptionInfoTableRow( artifact, artifactFile, e, hasSealed );
                 }
             }
             else
             {
-                tableRow( new String[] { artifactFile.getName(),
+                tableRow( hasSealed, new String[] { artifactFile.getName(),
                     FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ), "", "", "", "", "", "" } );
             }
         }
@@ -494,29 +480,16 @@ public class DependenciesRenderer
 
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
-        if ( hasSealed )
-        {
-            tableRow( new String[] {
-                totaldeps.toString(),
-                totaldepsize.toString(),
-                totalentries.toString(),
-                totalclasses.toString(),
-                totalpackages.toString(),
-                String.valueOf( highestjdk ),
-                totaldebug.toString(),
-                totalsealed.toString()} );
-        }
-        else
-        {
-            tableRow( new String[] {
-                totaldeps.toString(),
-                totaldepsize.toString(),
-                totalentries.toString(),
-                totalclasses.toString(),
-                totalpackages.toString(),
-                String.valueOf( highestjdk ),
-                totaldebug.toString()} );
-        }
+
+        tableRow( hasSealed, new String[] {
+            totaldeps.toString(),
+            totaldepsize.toString(),
+            totalentries.toString(),
+            totalclasses.toString(),
+            totalpackages.toString(),
+            String.valueOf( highestjdk ),
+            totaldebug.toString(),
+            totalsealed.toString()} );
 
         sink.tableRows_();
 
@@ -524,9 +497,24 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e )
+    private void tableRow( boolean fullRow, String[] content )
     {
-        tableRow( new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
+        sink.tableRow();
+
+        int count = fullRow ? content.length : ( content.length - 1 );
+
+        for ( int i = 0; i < count; i++ )
+        {
+            tableCell( content[i] );
+        }
+
+        sink.tableRow_();
+    }
+
+    private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e, boolean hasSealed )
+    {
+        tableRow( hasSealed,
+                  new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
     }
 
     private void populateRepositoryMap( Map repos, List rowRepos )
@@ -862,7 +850,7 @@ public class DependenciesRenderer
             {
                 Artifact artifact = (Artifact) iterator.next();
 
-                tableRow( getArtifactRow( artifact, withClassifier, withOptional ) );
+                renderArtifactRow( artifact, withClassifier, withOptional );
             }
             endTable();
 
@@ -900,10 +888,9 @@ public class DependenciesRenderer
      * @param artifact not null
      * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
      * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
-     * @return the dependency row with/without classifier/optional column
      * @see #getDependencyTableHeader(boolean, boolean)
      */
-    private String[] getArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
+    private void renderArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
     {
         String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
             : getReportString( "report.dependencies.column.isNotOptional" );
@@ -911,42 +898,30 @@ public class DependenciesRenderer
         String url = ProjectInfoReportUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
+        String content[];
         if ( withClassifier )
         {
-            if ( withOptional )
-            {
-                return new String[] {
-                    artifact.getGroupId(),
-                    artifactIdCell,
-                    artifact.getVersion(),
-                    artifact.getClassifier(),
-                    artifact.getType(),
-                    isOptional };
-            }
-
-            return new String[] {
+            content = new String[] {
                 artifact.getGroupId(),
                 artifactIdCell,
                 artifact.getVersion(),
                 artifact.getClassifier(),
-                artifact.getType() };
+                artifact.getType(),
+                isOptional
+            };
         }
-
-        if ( withOptional )
+        else
         {
-            return new String[] {
+            content = new String[] {
                 artifact.getGroupId(),
                 artifactIdCell,
                 artifact.getVersion(),
                 artifact.getType(),
-                isOptional };
+                isOptional
+            };
         }
 
-        return new String[] {
-            artifact.getGroupId(),
-            artifactIdCell,
-            artifact.getVersion(),
-            artifact.getType()};
+        tableRow( withOptional, content );
     }
 
     private void printDependencyListing( DependencyNode node )
