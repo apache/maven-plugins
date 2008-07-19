@@ -340,7 +340,7 @@ public class DependenciesRenderer
 
     private void renderSectionDependencyTree()
     {
-        sink.rawText(  getJavascript() );
+        sink.rawText( JAVASCRIPT );
 
         // for Dependencies Graph Tree
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
@@ -1276,31 +1276,26 @@ public class DependenciesRenderer
     }
 
     /**
-     * @return an HTML script tag with the Javascript used by the dependencies report.
+     * an HTML script tag with the Javascript used by the dependencies report.
      */
-    private static String getJavascript()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( "\n" );
-        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( "\n" );
-        sb.append( "      {" ).append( "\n" );
-        sb.append( "        var div = document.getElementById( divId );" ).append( "\n" );
-        sb.append( "        var img = document.getElementById( imgId );" ).append( "\n" );
-        sb.append( "        if( div.style.display == '' )" ).append( "\n" );
-        sb.append( "        {" ).append( "\n" );
-        sb.append( "          div.style.display = 'none';" ).append( "\n" );
-        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( "\n" );
-        sb.append( "        }" ).append( "\n" );
-        sb.append( "        else" ).append( "\n" );
-        sb.append( "        {" ).append( "\n" );
-        sb.append( "          div.style.display = '';" ).append( "\n" );
-        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( "\n" );
-        sb.append( "        }" ).append( "\n" );
-        sb.append( "      }" ).append( "\n" );
-        sb.append( "</script>" ).append( "\n" );
-
-        return sb.toString();
-    }
+    private static final String JAVASCRIPT =
+        "<script language=\"javascript\" type=\"text/javascript\">\n" +
+        "      function toggleDependencyDetail( divId, imgId )\n" +
+        "      {\n" +
+        "        var div = document.getElementById( divId );\n" +
+        "        var img = document.getElementById( imgId );\n" +
+        "        if( div.style.display == '' )\n" +
+        "        {\n" +
+        "          div.style.display = 'none';\n"+
+        "          img.src='" + IMG_INFO_URL + "';\n" +
+        "        }\n" +
+        "        else\n" +
+        "        {\n" +
+        "          div.style.display = '';\n" +
+        "          img.src='" + IMG_CLOSE_URL + "';\n" +
+        "        }\n" +
+        "      }\n" +
+        "</script>\n";
 
     /**
      * @return a valid HTML ID respecting
