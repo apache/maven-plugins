@@ -149,8 +149,19 @@ public class JavadocUtil
     /**
      * Copy from {@link MavenProject#getCompileArtifacts()}
      * @param artifacts not null
+     * @return list of compile artifacts with compile scope
+     * @deprecated since 2.5, using {@link #getCompileArtifacts(Set, boolean)} instead of.
+     */
+    protected static List getCompileArtifacts( Set artifacts )
+    {
+        return getCompileArtifacts( artifacts, false );
+    }
+
+    /**
+     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * @param artifacts not null
      * @param withTestScope flag to include or not the artifacts with test scope
-     * @return list of compile artifacts
+     * @return list of compile artifacts with or without test scope.
      */
     protected static List getCompileArtifacts( Set artifacts, boolean withTestScope )
     {
@@ -259,8 +270,24 @@ public class JavadocUtil
      *
      * @param outputDirectory the output directory
      * @param javadocDir the javadoc directory
+     * @throws IOException if any
+     * @deprecated since 2.5, using {@link #copyJavadocResources(File, File, String)} instead of.
+     */
+    protected static void copyJavadocResources( File outputDirectory, File javadocDir )
+        throws IOException
+    {
+        copyJavadocResources( outputDirectory, javadocDir, null );
+    }
+
+    /**
+     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDir</code>
+     * to the <code>outputDirectory</code>.
+     *
+     * @param outputDirectory the output directory
+     * @param javadocDir the javadoc directory
      * @param excludedocfilessubdir the excludedocfilessubdir parameter
      * @throws IOException if any
+     * @since 2.5
      */
     protected static void copyJavadocResources( File outputDirectory, File javadocDir, String excludedocfilessubdir )
         throws IOException
