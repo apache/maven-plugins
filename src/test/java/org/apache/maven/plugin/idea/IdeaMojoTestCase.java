@@ -41,12 +41,36 @@ public class IdeaMojoTestCase
     {
         String relativePath;
 
-        relativePath = mojo.toRelative( new File( "C:/dev/voca/gateway/" ),
-                                               "C:/dev/voca/gateway/parser/gateway-parser.iml" );
-        assertEquals( "Test toRelative child", "parser/gateway-parser.iml", relativePath );
+        relativePath = mojo.toRelative( "C:\\dev\\voca\\gateway",
+                                        "C:/dev/voca/gateway/parser/gateway-parser.iml" );
+        assertEquals( "Test toRelative child, backslash", "parser/gateway-parser.iml", relativePath );
 
-        relativePath = mojo.toRelative( new File( "C:\\foo\\master " ),
-                                               "C:\\foo\\child" );
-        assertEquals( "Test toRelative sibling", "../child", relativePath );
+        relativePath = mojo.toRelative( "C:\\dev\\voca\\gateway\\",
+                                        "C:/dev/voca/gateway/parser/gateway-parser.iml" );
+        assertEquals( "Test toRelative child, trailing backslash", "parser/gateway-parser.iml", relativePath );
+
+        relativePath = mojo.toRelative( "C:/dev/voca/gateway",
+                                        "C:/dev/voca/gateway/parser/gateway-parser.iml" );
+        assertEquals( "Test toRelative child, slash", "parser/gateway-parser.iml", relativePath );
+
+        relativePath = mojo.toRelative( "C:/dev/voca/gateway/",
+                                        "C:/dev/voca/gateway/parser/gateway-parser.iml" );
+        assertEquals( "Test toRelative child, trailing slash", "parser/gateway-parser.iml", relativePath );
+
+        relativePath = mojo.toRelative( "C:\\foo\\master",
+                                        "C:\\foo\\child" );
+        assertEquals( "Test toRelative sibling, no trailing backspace", "../child", relativePath );
+
+        relativePath = mojo.toRelative( "C:\\foo\\master\\",
+                                        "C:\\foo\\child" );
+        assertEquals( "Test toRelative sibling, first trailing backspace", "../child", relativePath );
+
+        relativePath = mojo.toRelative( "C:\\foo\\master",
+                                        "C:\\foo\\child\\" );
+        assertEquals( "Test toRelative sibling, second trailing backspace", "../child", relativePath );
+
+        relativePath = mojo.toRelative( "C:\\foo\\master\\",
+                                        "C:\\foo\\child\\" );
+        assertEquals( "Test toRelative sibling, both trailing backspace", "../child", relativePath );
     }
 }
