@@ -67,7 +67,7 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  * @author Jason van Zyl
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 1.0
+ * @since 1.0-beta-1
  * @goal generate
  */
 public class DoapMojo
