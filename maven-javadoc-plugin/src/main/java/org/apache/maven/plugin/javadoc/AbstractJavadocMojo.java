@@ -274,6 +274,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/resourcesArtifact&gt;
      * &lt;/resourcesArtifacts&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/ResourcesArtifact.html">Javadoc</a>.
+     * <br/>
      *
      * @since 2.5
      * @parameter expression="${resourcesArtifacts}"
@@ -281,14 +284,14 @@ public abstract class AbstractJavadocMojo
     private ResourcesArtifact[] resourcesArtifacts;
 
     /**
-     * The local repository where the artifacts are located
+     * The local repository where the artifacts are located.
      *
      * @parameter expression="${localRepository}"
      */
     private ArtifactRepository localRepository;
 
     /**
-     * The remote repositories where artifacts are located
+     * The remote repositories where artifacts are located.
      *
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
@@ -397,6 +400,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
      * &lt;/docletArtifact&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/DocletArtifact.html">Javadoc</a>.
+     * <br/>
      *
      * @parameter expression="${docletArtifact}"
      */
@@ -418,6 +424,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/docletArtifact&gt;
      * &lt;/docletArtifacts&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/DocletArtifact.html">Javadoc</a>.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${docletArtifacts}"
@@ -732,6 +741,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/group&gt;
      * &lt;/groups&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Group.html">Javadoc</a>.
+     * <br/>
      *
      * @parameter expression="${groups}"
      */
@@ -799,6 +811,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/offlineLink&gt;
      * &lt;/offlineLinks&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/OfflineLink.html">Javadoc</a>.
+     * <br/>
      *
      * @parameter expression="${offlineLinks}"
      */
@@ -1030,6 +1045,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/tag&gt;
      * &lt;/tags&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Tag.html">Javadoc</a>.
+     * <br/>
      *
      * @parameter expression="${tags}"
      */
@@ -1072,6 +1090,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
      * &lt;/tagletArtifact&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/TagletArtifact.html">Javadoc</a>.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${tagletArtifact}"
@@ -1099,6 +1120,9 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/taglet&gt;
      * &lt;/taglets&gt;
      * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/Taglet.html">Javadoc</a>.
+     * <br/>
      *
      * @since 2.1
      * @parameter expression="${taglets}"
