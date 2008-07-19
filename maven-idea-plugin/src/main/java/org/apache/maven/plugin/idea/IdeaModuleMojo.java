@@ -866,7 +866,7 @@ public class IdeaModuleMojo
      */
     private String getModuleFileUrl( File basedir, String path )
     {
-        return "file://$MODULE_DIR$/" + toRelative( basedir, path );
+        return "file://$MODULE_DIR$/" + toRelative( basedir.getAbsolutePath(), path );
     }
 
     private String getModuleFileUrl( String file )
