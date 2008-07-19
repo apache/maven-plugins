@@ -91,9 +91,7 @@ public class JavadocReport
     // Report public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         if ( StringUtils.isEmpty( name ) )
@@ -104,9 +102,7 @@ public class JavadocReport
         return name;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         if ( StringUtils.isEmpty( description ) )
@@ -117,9 +113,7 @@ public class JavadocReport
         return description;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
@@ -128,25 +122,19 @@ public class JavadocReport
         executeReport( locale );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return destDir + "/index";
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#isExternalReport()
-     */
+    /** {@inheritDoc} */
     public boolean isExternalReport()
     {
         return true;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
-     */
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         boolean canGenerate;
@@ -165,17 +153,13 @@ public class JavadocReport
         return canGenerate;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
+    /** {@inheritDoc} */
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getReportOutputDirectory()
-     */
+    /** {@inheritDoc} */
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -203,9 +187,7 @@ public class JavadocReport
         }
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

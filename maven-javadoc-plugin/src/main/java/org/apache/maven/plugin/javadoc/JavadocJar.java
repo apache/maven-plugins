@@ -134,9 +134,7 @@ public class JavadocJar
      */
     private boolean useDefaultManifestFile;
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -146,10 +144,10 @@ public class JavadocJar
             return;
         }
 
-        File destDir = this.destDir;
-        if ( destDir == null )
+        File innerDestDir = this.destDir;
+        if ( innerDestDir == null )
         {
-            destDir = new File( getOutputDirectory() );
+            innerDestDir = new File( getOutputDirectory() );
         }
 
         // The JAR does not operate in aggregation mode - individual Javadoc JARs are always distributed.
@@ -170,9 +168,9 @@ public class JavadocJar
         {
             executeReport( Locale.getDefault() );
 
-            if ( destDir.exists() )
+            if ( innerDestDir.exists() )
             {
-                File outputFile = generateArchive( destDir, finalName + "-" + getClassifier() + ".jar" );
+                File outputFile = generateArchive( innerDestDir, finalName + "-" + getClassifier() + ".jar" );
 
                 if ( !attach )
                 {
@@ -199,7 +197,8 @@ public class JavadocJar
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException( "MavenReportException: Error while creating archive:" + e.getMessage(), e );
+            throw new MojoExecutionException( "MavenReportException: Error while creating archive:"
+                + e.getMessage(), e );
         }
     }
 
