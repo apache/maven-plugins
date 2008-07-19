@@ -110,7 +110,9 @@ public class TestJavadocJar
         return "test-javadoc";
     }
 
-    // Next methods should be inline with methods defined in TestJavadocReport
+    // ----------------------------------------------------------------------
+    // Important Note: should be inline with methods defined in TestJavadocReport
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     protected String getOutputDirectory()
