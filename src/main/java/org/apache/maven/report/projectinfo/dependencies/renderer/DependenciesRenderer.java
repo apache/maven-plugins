@@ -386,57 +386,7 @@ public class DependenciesRenderer
         TotalCell totaldebug = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalsealed = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
-        boolean hasSealed = false;
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-
-            // TODO site:run Why do we need to resolve this...
-            if ( artifact.getFile() == null && !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                try
-                {
-                    repoUtils.resolve( artifact );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    log.error( "Artifact: " + artifact.getId() + " has no file.", e );
-                    continue;
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
-                        && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
-                        && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
-                    {
-                        log.warn( "The artifact of this project has never been deployed." );
-                    }
-                    else
-                    {
-                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
-                    }
-
-                    continue;
-                }
-            }
-
-            if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
-            {
-                try
-                {
-                    JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
-                    if ( jarDetails.isSealed() )
-                    {
-                        hasSealed = true;
-                        break;
-                    }
-                }
-                catch ( IOException e )
-                {
-                    log.error( "IOException: " + e.getMessage(), e );
-                }
-            }
-        }
+        boolean hasSealed = hasSealed( alldeps );
 
         // Table header
 
@@ -1264,6 +1214,64 @@ public class DependenciesRenderer
             }
         }
 
+        return false;
+    }
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list is sealed, <code>false</code> otherwise.
+     */
+    private boolean hasSealed( List artifacts )
+    {
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            // TODO site:run Why do we need to resolve this...
+            if ( artifact.getFile() == null && !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                try
+                {
+                    repoUtils.resolve( artifact );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                    continue;
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
+                        && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
+                        && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                    {
+                        log.warn( "The artifact of this project has never been deployed." );
+                    }
+                    else
+                    {
+                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                    }
+
+                    continue;
+                }
+            }
+
+            if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
+            {
+                try
+                {
+                    JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
+                    if ( jarDetails.isSealed() )
+                    {
+                        return true;
+                    }
+                }
+                catch ( IOException e )
+                {
+                    log.error( "IOException: " + e.getMessage(), e );
+                }
+            }
+        }
         return false;
     }
 
