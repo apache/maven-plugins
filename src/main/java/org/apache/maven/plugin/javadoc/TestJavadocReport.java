@@ -187,7 +187,8 @@ public class TestJavadocReport
     }
 
     // ----------------------------------------------------------------------
-    // Protected methods (should be inline with methods defined in TestJavadocJar)
+    // Protected methods
+    // Important Note: should be inline with methods defined in TestJavadocJar
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
