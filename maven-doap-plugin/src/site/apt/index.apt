@@ -3,19 +3,44 @@
  ------
  Jason van Zyl
  ------
- 20 July 2006
+ 2008-07-18
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
 
 Maven 2 DOAP Plugin
 
-  This plugin generates a Description of a Project (DOAP) file from a POM. We would like to be able to provide
-  DOAP files for systems that use them as primary input but that would also alleviate the burden of maintaining
-  two sets of metadata.
+  Maven 2 DOAP Plugin is used to generate compliant {{{http://usefulinc.com/doap}Description of a Project (DOAP)}}
+  file from a POM. The main goal is to be able to provide DOAP files for Semantic Web systems that use them as
+  primary input but that would also alleviate the burden of maintaining two sets of metadata.
 
-  Version 1.0 of this plugin is specifically tailored for use by projects at Apache, but this will change in
-  subsequent versions as more people become interested in DOAP.
-  
-  
+  Version 1.0 of this plugin is specifically tailored for use by projects at
+  {{{http://projects.apache.org/doap.html}Apache}}, but this will change in subsequent versions as more people become
+  interested in DOAP.
+
+  If you are not aware about RDF or Semantic Web concepts, refer you to the {{{./links.html}Links part}} to getting started.
+
 * Goals Overview
+
+ The DOAP Plugin has one goal:
 
   * {{{generate-mojo.html}doap:generate}} Generates a DOAP file from the POM.
 
@@ -27,9 +52,11 @@ Maven 2 DOAP Plugin
 
 * Examples
 
-  To provide you with better understanding of some usages of the DOAP Plugin,
-  you can take a look at the following examples:
-  
-  * {{{examples/options.html}Setting the category and language options.}}
+  To provide you with better understanding of some usages of the DOAP Plugin, you can take a look at the following
+  examples:
+
+  * {{{examples/doap-in-use.html}Generated DOAP in use}}
+
+  * {{{examples/with-site-plugin.html}Integrated DOAP Plugin in the Site Plugin}}
 
   []

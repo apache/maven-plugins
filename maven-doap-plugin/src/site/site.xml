@@ -28,6 +28,9 @@
       <item name="FAQ" href="faq.html"/>
       <item name="Further Links" href="links.html"/>
     </menu>
-    <!-- TODO: examples of usage -->
+    <menu name="Examples">
+      <item name="Using DOAP File" href="examples/doap-in-use.html"/>
+      <item name="Integration With Site Plugin" href="examples/with-site-plugin.html"/>
+    </menu>
   </body>
 </project>

@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-07-03
+ 2008-07-18
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,19 @@
 
 Further Links
 
-* Articles
+* Definitions
+
+  * {{{http://en.wikipedia.org/wiki/Semantic_web}Semantic Web}}
+
+  * {{{http://en.wikipedia.org/wiki/DOAP}Wikipedia DOAP}}
+
+  * {{{http://semanticplanet.com/2003/05/parsingFOAFWithPHP#threeMinuteRdf}Three Minute RDF}}
+
+  * {{{http://semanticplanet.com/2003/05/parsingFOAFWithPHP#threeMinuteFoaf}Three Minute FOAF}}
+
+  []
+
+* Articles On DOAP
 
   * {{{http://www.ibm.com/developerworks/xml/library/x-osproj3/}XML Watch: Describe open source projects with XML, Part 3}}
 
