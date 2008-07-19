@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -84,7 +85,7 @@ public class DependenciesRenderer
     /** Used to format file length values */
     private static final DecimalFormat FILE_LENGTH_DECIMAL_FORMAT = new FileDecimalFormat();
 
-    private static final HashSet JAR_SUBTYPE = new HashSet();
+    private static final Set JAR_SUBTYPE = new HashSet();
 
     private final Locale locale;
 
@@ -1303,7 +1304,7 @@ public class DependenciesRenderer
     }
 
     /**
-     * Formats file length with the associated unity (Go, Mo, Ko, octets) and using the pattern
+     * Formats file length with the associated unit (GB, MB, KB) and using the pattern
      * <code>########.00</code> by default.
      */
     static class FileDecimalFormat extends DecimalFormat
@@ -1315,7 +1316,7 @@ public class DependenciesRenderer
          */
         public FileDecimalFormat()
         {
-            super( "########.00" );
+            super( "#,###.00" );
         }
 
         /** {@inheritDoc} */
@@ -1324,26 +1325,19 @@ public class DependenciesRenderer
             if ( fs > 1024 * 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
-                result.append( " Go" );
+                result.append( " GB" );
                 return result;
             }
 
             if ( fs > 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
-                result.append( " Mo" );
+                result.append( " MB" );
                 return result;
             }
 
-            if ( fs > 1024 )
-            {
-                result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
-                result.append( " Ko" );
-                return result;
-            }
-
-            result = super.format( fs, result, fieldPosition );
-            result.append( " octets" );
+            result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
+            result.append( " KB" );
             return result;
         }
     }
