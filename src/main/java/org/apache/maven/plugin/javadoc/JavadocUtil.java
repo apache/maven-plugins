@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
@@ -149,7 +148,8 @@ public class JavadocUtil
 
     /**
      * Copy from {@link MavenProject#getCompileArtifacts()}
-     * @param artifacts
+     * @param artifacts not null
+     * @param withTestScope flag to include or not the artifacts with test scope
      * @return list of compile artifacts
      */
     protected static List getCompileArtifacts( Set artifacts, boolean withTestScope )
@@ -166,8 +166,10 @@ public class JavadocUtil
                 // TODO: let the scope handler deal with this
                 if ( withTestScope )
                 {
-                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
-                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) || Artifact.SCOPE_TEST.equals( a.getScope() ))
+                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() )
+                        || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
+                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() )
+                        || Artifact.SCOPE_TEST.equals( a.getScope() ) )
                     {
                         list.add( a );
                     }
@@ -415,7 +417,7 @@ public class JavadocUtil
      * Convenience method that gets the files to be included in the javadoc.
      *
      * @param sourceDirectory the directory where the source files are located
-     * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
+     * @param files the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
      */
     protected static void addFilesFromSource( List files, File sourceDirectory, String[] excludePackages )
@@ -438,8 +440,8 @@ public class JavadocUtil
      * @return the javadoc version as float
      * @throws IOException if javadocExe is null, doesn't exist or is not a file
      * @throws CommandLineException if any
-     * @throws PatternSyntaxException if the output contains a syntax error in the regular-expression pattern.
      * @throws IllegalArgumentException if no output was found in the command line
+     * @throws PatternSyntaxException if the output contains a syntax error in the regular-expression pattern.
      * @see #parseJavadocVersion(String)
      */
     protected static float getJavadocVersion( File javadocExe )
@@ -517,7 +519,8 @@ public class JavadocUtil
      *
      * @param output for 'javadoc -J-version'
      * @return the version of the javadoc for the output.
-     * @throws PatternSyntaxException if the output doesn't match with the output pattern <tt>(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*</tt>.
+     * @throws PatternSyntaxException if the output doesn't match with the output pattern
+     * <tt>(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*</tt>.
      * @throws IllegalArgumentException if the output is null
      */
     protected static float parseJavadocVersion( String output )
@@ -720,6 +723,7 @@ public class JavadocUtil
      * Validate if a charset is supported on this platform.
      *
      * @param charsetName the charsetName to be check.
+     * @return <code>true</code> if the charset is supported by the JVM, <code>false</code> other wise.
      */
     protected static boolean validateEncoding( String charsetName )
     {
