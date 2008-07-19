@@ -210,26 +210,38 @@ public abstract class AbstractIdeaMojo
      * @param absolutePath The absolute path that must be translated to relative path.
      * @return relative  Relative path of the parameter absolute path.
      */
-    protected String toRelative( File basedir, String absolutePath )
+    protected String toRelative( String basedir, String absolutePath )
     {
         String relative;
-        String convertedBasedirAbsolutePath = convertDriveLetter( basedir.getAbsolutePath() );
+
+        // Convert drive letter
+        String convertedBasedir = convertDriveLetter( basedir );
         String convertedAbsolutePath = convertDriveLetter( absolutePath );
 
-        if ( convertedAbsolutePath.startsWith( convertedBasedirAbsolutePath )
-            && convertedAbsolutePath.length() > convertedBasedirAbsolutePath.length() )
+        // Normalize path separators
+        convertedBasedir = StringUtils.replace( convertedBasedir, "\\", "/" );
+        convertedAbsolutePath = StringUtils.replace( convertedAbsolutePath, "\\", "/" );
+
+        // Strip trailing slash
+        if( convertedBasedir.endsWith( "/" ) )
+        {
+            convertedBasedir = convertedBasedir.substring( 0, convertedBasedir.length() - 1 );
+        }
+        if( convertedAbsolutePath.endsWith( "/" ) )
+        {
+            convertedAbsolutePath = convertedAbsolutePath.substring( 0, convertedAbsolutePath.length() - 1 );
+        }
+
+        if ( convertedAbsolutePath.startsWith( convertedBasedir )
+            && convertedAbsolutePath.length() > convertedBasedir.length() )
         {
             // Simple case, path starts with basepath
-            relative = convertedAbsolutePath.substring( convertedBasedirAbsolutePath.length() + 1 );
-            relative = StringUtils.replace( relative, "\\", "/" );
+            relative = convertedAbsolutePath.substring( convertedBasedir.length() + 1 );
         }
         else
         {
             // It's more complex...
-            convertedAbsolutePath = StringUtils.replace( convertedAbsolutePath, "\\", "/" );
-            convertedBasedirAbsolutePath = StringUtils.replace( convertedBasedirAbsolutePath, "\\", "/" );
-
-            StringTokenizer baseTokens = new StringTokenizer( convertedBasedirAbsolutePath, "/", false );
+            StringTokenizer baseTokens = new StringTokenizer( convertedBasedir, "/", false );
 
             int baseCount = baseTokens.countTokens();
             List baseTokenList = new ArrayList( baseCount );
