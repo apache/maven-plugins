@@ -130,9 +130,7 @@ public class TestJavadocReport
     // Report public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         if ( StringUtils.isEmpty( name ) )
@@ -143,9 +141,7 @@ public class TestJavadocReport
         return name;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         if ( StringUtils.isEmpty( description ) )
@@ -156,17 +152,13 @@ public class TestJavadocReport
         return description;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.JavadocReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return destDir + "/index";
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getReportOutputDirectory()
-     */
+    /** {@inheritDoc} */
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -198,9 +190,7 @@ public class TestJavadocReport
     // Protected methods (should be inline with methods defined in TestJavadocJar)
     // ----------------------------------------------------------------------
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectBuildOutputDirs(org.apache.maven.project.MavenProject)
-     */
+    /** {@inheritDoc} */
     protected List getProjectBuildOutputDirs( MavenProject p )
     {
         List dirs = new ArrayList();
@@ -216,9 +206,7 @@ public class TestJavadocReport
         return dirs;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectSourceRoots(org.apache.maven.project.MavenProject)
-     */
+    /** {@inheritDoc} */
     protected List getProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getPackaging().toLowerCase() ) )
@@ -229,9 +217,7 @@ public class TestJavadocReport
         return p.getTestCompileSourceRoots();
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getExecutionProjectSourceRoots(org.apache.maven.project.MavenProject)
-     */
+    /** {@inheritDoc} */
     protected List getExecutionProjectSourceRoots( MavenProject p )
     {
         if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
@@ -242,49 +228,37 @@ public class TestJavadocReport
         return p.getExecutionProject().getTestCompileSourceRoots();
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectArtifacts(org.apache.maven.project.MavenProject)
-     */
+    /** {@inheritDoc} */
     protected List getProjectArtifacts( MavenProject p )
     {
         return p.getTestArtifacts();
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getJavadocDirectory()
-     */
+    /** {@inheritDoc} */
     protected File getJavadocDirectory()
     {
         return javadocDirectory;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getDoctitle()
-     */
+    /** {@inheritDoc} */
     protected String getDoctitle()
     {
         return doctitle;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getOverview()
-     */
+    /** {@inheritDoc} */
     protected File getOverview()
     {
         return overview;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getWindowtitle()
-     */
+    /** {@inheritDoc} */
     protected String getWindowtitle()
     {
         return windowtitle;
     }
 
-    /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getCompileArtifacts(org.apache.maven.artifact.resolver.ArtifactResolutionResult)
-     */
+    /** {@inheritDoc} */
     protected List getCompileArtifacts( ArtifactResolutionResult result )
     {
         return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
