@@ -39,9 +39,7 @@ import org.codehaus.doxia.sink.Sink;
 public class AggregatorJavadocReport
     extends JavadocReport
 {
-    /**
-     * @see org.apache.maven.plugin.javadoc.JavadocReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
