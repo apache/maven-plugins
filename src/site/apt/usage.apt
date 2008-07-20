@@ -6,22 +6,25 @@
  September 2006
  ------
 
-~~ Copyright 2006 The Apache Software Foundation.
-~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
-~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/doxia/references/apt-format.html
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 Usage
 
@@ -29,10 +32,10 @@ Usage
 
   The maven-antrun-plugin has only one goal, <<<run>>>.
 
-  This allows Maven 2 to run ant tasks. To do so, there must be an existing
-  project and the maven-antrun-plugin must have its <<<\<tasks\>>>> tag
+  This allows Maven 2 to run Ant tasks. To do so, there must be an existing
+  project and maven-antrun-plugin must have its <<<\<tasks\>>>> tag
   configured (although it would still execute without the <<<\<tasks\>>>> tag,
-  it would not do anything). Below is the template for the
+  it would not do anything). Below is the template for
   <<<maven-antrun-plugin>>>'s <<<pom.xml>>>.
 
 ------
@@ -49,7 +52,7 @@ Usage
               <tasks>
 
                 <!--
-                  Place any ant task here. You can add anything
+                  Place any Ant task here. You can add anything
                   you can add between <target> and </target> in a
                   build.xml.
                 -->
@@ -83,7 +86,7 @@ Usage
     description="A short description of this target's function">
 
     <!--
-      Place any ant task here. You can add anything
+      Place any Ant task here. You can add anything
       you can add between <target> and </target> in a
       build.xml.
     -->
@@ -93,7 +96,7 @@ Usage
 [...]
 ------
 
-  Below you can see how to indicate that ant has generated some more java
+  Below you can see how to indicate that Ant has generated some more java
   source that needs to be included in the compilation phase. Note that the
   compile phase follows the <<<generate-sources>>> phase in the lifecycle.
 
@@ -112,7 +115,7 @@ Usage
               <tasks>
 
                 <!--
-                  Place any ant task here. You can add anything
+                  Place any Ant task here. You can add anything
                   you can add between <target> and </target> in a
                   build.xml.
                 -->
@@ -150,7 +153,7 @@ Usage
 * Ant Expressions to Maven Expressions Mapping
 
   Some Ant expressions have their respective counterparts in Maven. Thus, one
-  can simply invoke the corresponding maven expression instead of using
+  can simply invoke the corresponding Maven expression instead of using
   maven-antrun-plugin to avoid the unneccessary overhead.
 
 *-----------------------------------+-----------------------------------+
