@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -104,18 +106,18 @@ public class DependenciesRenderer
     private final RepositoryUtils repoUtils;
 
     /**
-     * Will be filled with license name / list of projects.
+     * Will be filled with license name / set of projects.
      */
     private Map licenseMap = new HashMap()
     {
         /** {@inheritDoc} */
         public Object put( Object key, Object value )
         {
-            // handle multiple values as a list
-            List valueList = (List) get( key );
+            // handle multiple values as a set to avoid duplicates
+            SortedSet valueList = (SortedSet) get( key );
             if ( valueList == null )
             {
-                valueList = new ArrayList();
+                valueList = new TreeSet();
             }
             valueList.add( value );
             return super.put( key, valueList );
@@ -1140,8 +1142,7 @@ public class DependenciesRenderer
             sink.text( ": " );
             sink.bold_();
 
-            List projects = (List) licenseMap.get( licenseName );
-            Collections.sort( projects );
+            SortedSet projects = (SortedSet) licenseMap.get( licenseName );
 
             for ( Iterator iterator = projects.iterator(); iterator.hasNext(); )
             {
