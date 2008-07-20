@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 public class AntPropertyHelper
     extends PropertyHelper
 {
+    private static final String DEPENDENCY_PREFIX = "maven.dependency.";
     private Log log;
     private ExpressionEvaluator exprEvaluator;
     private MavenProject mavenProject;
@@ -83,7 +84,7 @@ public class AntPropertyHelper
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId()
+            String key = DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
                 + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
                 + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
 
@@ -112,7 +113,7 @@ public class AntPropertyHelper
 
         Object val = null;
 
-        if ( name.startsWith( "maven.dependency." ) )
+        if ( name.startsWith( DEPENDENCY_PREFIX ) )
         {
             val = (String) artifactMap.get( name );
         }
@@ -158,7 +159,7 @@ public class AntPropertyHelper
         Object val = null;
         try
         {
-            if ( name.startsWith( "maven.dependency." ) )
+            if ( name.startsWith( DEPENDENCY_PREFIX ) )
             {
                 val = (String) artifactMap.get( name );
             }
