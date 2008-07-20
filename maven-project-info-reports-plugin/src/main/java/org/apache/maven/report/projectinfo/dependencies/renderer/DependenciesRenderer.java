@@ -249,7 +249,7 @@ public class DependenciesRenderer
      * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
      * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
      * @return the dependency table header with/without classifier/optional column
-     * @see #getArtifactRow(Artifact, boolean, boolean)
+     * @see #renderArtifactRow(Artifact, boolean, boolean)
      */
     private String[] getDependencyTableHeader( boolean withClassifier, boolean withOptional )
     {
