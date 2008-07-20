@@ -476,20 +476,29 @@ public class DependenciesRenderer
             }
         }
 
-        // Total raw
+        // Total raws
 
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
 
-        tableRow( hasSealed, new String[] {
-            totaldeps.toString(),
-            totaldepsize.toString(),
-            totalentries.toString(),
-            totalclasses.toString(),
-            totalpackages.toString(),
-            String.valueOf( highestjdk ),
-            totaldebug.toString(),
-            totalsealed.toString()} );
+        justification[0] = Parser.JUSTIFY_RIGHT;
+        justification[6] = Parser.JUSTIFY_RIGHT;
+
+        for( int i = -1; i < TotalCell.SCOPES_COUNT; i++ )
+        {
+            if ( totaldeps.getTotal( i ) > 0 )
+            {
+                tableRow( hasSealed, new String[] {
+                    totaldeps.getTotalString( i ),
+                    totaldepsize.getTotalString( i ),
+                    totalentries.getTotalString( i ),
+                    totalclasses.getTotalString( i ),
+                    totalpackages.getTotalString( i ),
+                    ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                    totaldebug.getTotalString( i ),
+                    totalsealed.getTotalString( i )} );
+            }
+        }
 
         sink.tableRows_();
 
@@ -1140,9 +1149,8 @@ public class DependenciesRenderer
                 sink.text( projectName );
                 if ( iterator.hasNext() )
                 {
-                    sink.text( "," );
+                    sink.text( ", " );
                 }
-                sink.text( " " );
             }
 
             sink.paragraph_();
@@ -1325,6 +1333,8 @@ public class DependenciesRenderer
      */
     static class TotalCell
     {
+        static final int SCOPES_COUNT = 5;
+
         final DecimalFormat decimalFormat;
 
         long total = 0;
@@ -1347,6 +1357,62 @@ public class DependenciesRenderer
         void incrementTotal( String scope )
         {
             addTotal( 1, scope );
+        }
+
+        static String getScope( int index )
+        {
+            switch ( index )
+            {
+                case 0:
+                    return Artifact.SCOPE_COMPILE;
+                case 1:
+                    return Artifact.SCOPE_TEST;
+                case 2:
+                    return Artifact.SCOPE_RUNTIME;
+                case 3:
+                    return Artifact.SCOPE_PROVIDED;
+                case 4:
+                    return Artifact.SCOPE_SYSTEM;
+                default:
+                    return null;
+            }
+        }
+
+        long getTotal( int index )
+        {
+            switch ( index )
+            {
+                case 0:
+                    return totalCompileScope;
+                case 1:
+                    return totalTestScope;
+                case 2:
+                    return totalRuntimeScope;
+                case 3:
+                    return totalProvidedScope;
+                case 4:
+                    return totalSystemScope;
+                default:
+                    return total;
+            }
+        }
+
+        String getTotalString( int index )
+        {
+            long total = getTotal( index );
+
+            if ( total <= 0 )
+            {
+                return "";
+            }
+
+            StringBuffer sb = new StringBuffer();
+            if ( index >= 0 )
+            {
+                sb.append( getScope( index ) ).append( ": " );
+            }
+            sb.append( decimalFormat.format( getTotal( index ) ) );
+            return sb.toString();
         }
 
         void addTotal( long add, String scope )
@@ -1381,47 +1447,21 @@ public class DependenciesRenderer
             StringBuffer sb = new StringBuffer();
             sb.append( decimalFormat.format( total ) );
             sb.append( " (" );
-            if ( totalCompileScope > 0 )
+
+            boolean needSeparator = false;
+            for (int i = 0; i < SCOPES_COUNT; i++)
             {
-                sb.append( Artifact.SCOPE_COMPILE ).append( ": " );
-                sb.append( decimalFormat.format( totalCompileScope ) );
-            }
-            if ( totalTestScope > 0 )
-            {
-                if ( totalCompileScope > 0 )
+                if ( getTotal( i ) > 0 )
                 {
-                    sb.append( ", " );
+                    if (needSeparator)
+                    {
+                        sb.append( ", " );
+                    }
+                    sb.append( getTotalString( i ) );
+                    needSeparator = true;
                 }
-                sb.append( Artifact.SCOPE_TEST ).append( ": " );
-                sb.append( decimalFormat.format( totalTestScope ) );
             }
-            if ( totalRuntimeScope > 0 )
-            {
-                if ( totalCompileScope > 0 || totalTestScope > 0 )
-                {
-                    sb.append( ", " );
-                }
-                sb.append( Artifact.SCOPE_RUNTIME ).append( ": " );
-                sb.append( decimalFormat.format( totalRuntimeScope ) );
-            }
-            if ( totalProvidedScope > 0 )
-            {
-                if ( totalCompileScope > 0 || totalTestScope > 0 || totalRuntimeScope > 0 )
-                {
-                    sb.append( ", " );
-                }
-                sb.append( Artifact.SCOPE_PROVIDED ).append( ": " );
-                sb.append( decimalFormat.format( totalProvidedScope ) );
-            }
-            if ( totalSystemScope > 0 )
-            {
-                if ( totalCompileScope > 0 || totalTestScope > 0 || totalRuntimeScope > 0 || totalProvidedScope > 0 )
-                {
-                    sb.append( ", " );
-                }
-                sb.append( Artifact.SCOPE_SYSTEM ).append( ": " );
-                sb.append( decimalFormat.format( totalSystemScope ) );
-            }
+
             sb.append( ")" );
 
             return sb.toString();
