@@ -142,3 +142,11 @@ Referencing the Maven Classpaths
 
 </project>
 ------
+
+
+ You can also use the path to each dependency artifact
+
+------
+<property name="mvn.dependency.jar" refid="maven.dependency.my.group.id:my.artifact.id:classifier:jar.path"/>
+<echo message="My Dependency JAR-Path: ${mvn.dependency.jar}"/> 
+------
