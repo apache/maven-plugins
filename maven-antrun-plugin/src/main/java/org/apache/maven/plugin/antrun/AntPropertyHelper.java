@@ -20,6 +20,7 @@ package org.apache.maven.plugin.antrun;
  */
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,6 +56,16 @@ public class AntPropertyHelper
     {
         mavenProject = project;
         log = l;
+    }
+
+    /**
+     * @deprecated use {@link AntPropertyHelper(ExpressionEvaluator, Set, Log)} to resolve maven.dependency.* properties
+     * @param exprEvaluator
+     * @param l
+     */
+    public AntPropertyHelper( ExpressionEvaluator exprEvaluator, Log l )
+    {
+        this( exprEvaluator, Collections.EMPTY_SET, l );
     }
 
     /**
