@@ -27,7 +27,7 @@ under the License.
   <artifactId>maven-antrun-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven AntRun Plugin</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <description>Runs Ant scripts embedded in the POM</description>
   <prerequisites>
     <maven>2.0.1</maven>
@@ -39,9 +39,9 @@ under the License.
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-antrun-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-antrun-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-antrun-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-antrun-plugin-1.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-antrun-plugin-1.2</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-antrun-plugin-1.2</url>
   </scm>
 
   <build>
