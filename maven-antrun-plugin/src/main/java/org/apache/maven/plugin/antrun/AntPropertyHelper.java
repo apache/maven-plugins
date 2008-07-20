@@ -186,7 +186,6 @@ public class AntPropertyHelper
             {
                 log.warn( "Error evaluating expression '" + name + "'", e );
             }
-            e.printStackTrace();
         }
 
         if ( val == null )
