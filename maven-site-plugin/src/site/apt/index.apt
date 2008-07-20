@@ -56,7 +56,7 @@ Maven 2 Site Plugin
      installed/deployed. For more references of the site descriptor,
      {{{examples/sitedescriptor.html}here's a link}}.
 
-   * {{{site-jar.html}site:jar}} is used to bundle the site output into a jar.
+   * {{{jar-mojo.html}site:jar}} is used to bundle the site output into a jar.
 
 * Usage
 
