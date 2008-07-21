@@ -29,10 +29,10 @@ public interface Shader
 {
     String ROLE = Shader.class.getName();
 
-    public void shade(Set jars,
-                      File uberJar,
-                      List filters,
-                      List relocators,
-                      List resourceTransformers)
+    void shade( Set jars,
+                File uberJar,
+                List filters,
+                List relocators,
+                List resourceTransformers )
         throws IOException;
 }

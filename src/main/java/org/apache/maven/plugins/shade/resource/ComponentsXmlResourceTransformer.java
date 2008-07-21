@@ -107,7 +107,7 @@ public class ComponentsXmlResourceTransformer
 
             String roleHint = child != null ? child.getValue() : "";
 
-            String key = role+roleHint;
+            String key = role + roleHint;
             if ( components.containsKey( key ) )
             {
                 // TODO: use the tools in Plexus to merge these properly. For now, I just need an all-or-nothing
