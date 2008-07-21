@@ -33,6 +33,7 @@ import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -340,6 +341,7 @@ public abstract class AbstractWarPackagingTask
      * @return the converted filename of the artifact
      */
     protected String getArtifactFinalName( WarPackagingContext context, Artifact artifact )
+        throws InterpolationException
     {
         if ( context.getOutputFileNameMapping() != null )
         {
