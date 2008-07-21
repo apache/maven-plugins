@@ -22,7 +22,7 @@ package org.apache.maven.plugins.shade.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -36,6 +36,7 @@ import org.codehaus.plexus.util.IOUtil;
  * to a newly created manifest for the shaded JAR.
  *  
  * @author Jason van Zyl
+ * @since 1.2
  */
 public class ManifestResourceTransformer
     implements ResourceTransformer
@@ -44,7 +45,7 @@ public class ManifestResourceTransformer
 
     // Configuration
     private String mainClass;
-    private Properties additionalAttributes;
+    private Map manifestEntries;
     
     // Fields
     private boolean manifestDiscovered;
@@ -95,12 +96,12 @@ public class ManifestResourceTransformer
             attributes.put( Attributes.Name.MAIN_CLASS, mainClass );                    
         }
         
-        if ( additionalAttributes != null )
+        if ( manifestEntries != null )
         {
-            for ( Iterator i = additionalAttributes.keySet().iterator(); i.hasNext(); )
+            for ( Iterator i = manifestEntries.keySet().iterator(); i.hasNext(); )
             {
                 String key = (String) i.next();
-                attributes.put( new Attributes.Name( key ), additionalAttributes.get( key ) );
+                attributes.put( new Attributes.Name( key ), manifestEntries.get( key ) );
             }
         }
                 
