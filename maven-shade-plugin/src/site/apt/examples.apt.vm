@@ -331,7 +331,7 @@ Examples
 </project>
 +-----
 
-* Shade Plugin with where a Main-Class is added to the MANIFEST.MF
+* Shade Plugin where a Main-Class is added to the MANIFEST.MF
 
 +-----
 <project>
@@ -365,7 +365,7 @@ Examples
 </project>
 +-----
  
-* Shade Plugin with where a set of arbitrary attributes are added to the MANIFEST.MF
+* Shade Plugin where a set of manifest entries are added to the MANIFEST.MF
 
 +-----
 <project>
@@ -384,20 +384,15 @@ Examples
             </goals>
             <configuration>
               <finalName>haven-1.0</finalName>
+              <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <additionalAttributes>
-                    <property>
-                      <name>Main-Class</name>
-                      <value>org.sonatype.haven.ExodusCli</value>
-                    </property>
-                    <property>
-                      <name>Build-Number</name>
-                      <value>123</value>
-                    </property>
-                  </additionalAttributes>
+                  <manifestEntries>
+                    <Main-Class>org.sonatype.haven.ExodusCli</Main-Class>
+                    <Build-Number>123</Build-Number>
+                  </manifestEntries>
                 </transformer>
               </transformers>
-            </configuration>          
+            </configuration>
           </execution>
         </executions>
       </plugin>
