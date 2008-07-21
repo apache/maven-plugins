@@ -3,6 +3,8 @@
  ------
  Mauro Talevi
  ------
+ 2008-07-21
+ ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -42,7 +44,7 @@ mvn package
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.0.1</version>
+        <version>${currentVersion}</version>
         <configuration>
           <!-- put your configurations here -->
         </configuration>

@@ -1,7 +1,9 @@
  ------
- Maven 2 Shade Plugin
+ Examples
  ------
  Mauro Talevi
+ ------
+ 2008-07-21
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +23,9 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
- * Shade Plugin with no relocation
+Examples
+
+* Shade Plugin with no relocation
 
 +-----
 <project>
@@ -31,6 +35,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -59,7 +64,7 @@
 </project>
 +-----
 
- * Shade Plugin with shaded relocation
+* Shade Plugin with shaded relocation
 
 +-----
 <project>
@@ -69,6 +74,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -107,7 +113,7 @@
 </project>
 +-----
 
- * Shade Plugin with renamed but unattached artifact
+* Shade Plugin with renamed but unattached artifact
 
 +-----
 <project>
@@ -117,6 +123,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -155,7 +162,7 @@
 </project>
 +-----
 
- * Shade Plugin with renamed and attached artifact
+* Shade Plugin with renamed and attached artifact
 
 +-----
 <project>
@@ -165,6 +172,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -205,7 +213,7 @@
 </project>
 +-----
 
- * Shade Plugin with artifact filtering using includes
+* Shade Plugin with artifact filtering using includes
 
 +-----
 <project>
@@ -215,6 +223,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -241,7 +250,7 @@
 </project>
 +-----
 
- * Shade Plugin with artifact filtering using includes and excludes
+* Shade Plugin with artifact filtering using includes and excludes
 
 +-----
 <project>
@@ -251,6 +260,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -281,7 +291,7 @@
 </project>
 +-----
 
- * Shade Plugin with artifact filtering using excludes only
+* Shade Plugin with artifact filtering using excludes only
 
 +-----
 <project>
@@ -291,6 +301,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -320,7 +331,7 @@
 </project>
 +-----
 
- * Shade Plugin with where a Main-Class is added to the MANIFEST.MF
+* Shade Plugin with where a Main-Class is added to the MANIFEST.MF
 
 +-----
 <project>
@@ -330,7 +341,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.2</version>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -354,7 +365,7 @@
 </project>
 +-----
  
- * Shade Plugin with where a set of arbitrary attributes are added to the MANIFEST.MF
+* Shade Plugin with where a set of arbitrary attributes are added to the MANIFEST.MF
 
 +-----
 <project>
@@ -364,7 +375,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.2</version>
+        <version>${currentVersion}</version>
         <executions>
           <execution>
             <phase>package</phase>
