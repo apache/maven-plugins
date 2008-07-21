@@ -47,8 +47,8 @@ public class AppendingTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-        IOUtil.copy(is, data);
-        data.write('\n');
+        IOUtil.copy( is, data );
+        data.write( '\n' );
 
         is.close();
     }
@@ -63,7 +63,7 @@ public class AppendingTransformer
     {
         jos.putNextEntry( new JarEntry( resource ) );
 
-        IOUtil.copy(new ByteArrayInputStream(data.toByteArray()), jos);
+        IOUtil.copy( new ByteArrayInputStream( data.toByteArray() ), jos );
         data.reset();
     }
 }

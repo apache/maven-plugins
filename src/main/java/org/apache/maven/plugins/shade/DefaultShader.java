@@ -89,11 +89,11 @@ public class DefaultShader
                 InputStream is = jarFile.getInputStream( entry );
                 if ( !entry.isDirectory() && !isFiltered( jarFilters, name ) )
                 {
-                    int idx = mappedName.lastIndexOf('/');
+                    int idx = mappedName.lastIndexOf( '/' );
                     if ( idx != -1 )
                     {
                         //make sure dirs are created
-                        String dir = mappedName.substring(0, idx);
+                        String dir = mappedName.substring( 0, idx );
                         if ( !resources.contains( dir ) )
                         {
                             addDirectory( resources, jos, dir );
@@ -138,7 +138,7 @@ public class DefaultShader
         IOUtil.close( jos );
     }
 
-    private List getFilters(File jar, List filters)
+    private List getFilters( File jar, List filters )
     {
         List list = new ArrayList();
 
@@ -175,7 +175,8 @@ public class DefaultShader
         resources.add( name );
     }
 
-    private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name, InputStream is )
+    private void addRemappedClass( RelocatorRemapper remapper, JarOutputStream jos, File jar, String name,
+                                   InputStream is )
         throws IOException
     {
         if ( !remapper.hasRelocators() )

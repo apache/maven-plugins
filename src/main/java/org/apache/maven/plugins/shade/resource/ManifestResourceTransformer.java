@@ -29,7 +29,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringInputStream;
 
 /**
  * A resource processor that allows the arbitrary addition of attributes to
@@ -64,9 +63,9 @@ public class ManifestResourceTransformer
     public void processResource( InputStream is )
         throws IOException
     {
-        // We just want to take the first manifest we come across as that's our project's manifest. This is the behavior now
-        // which is situational at best. Right now there is no context passed in with the processing so we cannot tell what
-        // artifact is being processed.
+        // We just want to take the first manifest we come across as that's our project's manifest. This is the behavior
+        // now which is situational at best. Right now there is no context passed in with the processing so we cannot
+        // tell what artifact is being processed.
         if ( !manifestDiscovered )
         {
             manifest = new Manifest( is );
@@ -101,7 +100,7 @@ public class ManifestResourceTransformer
             for ( Iterator i = additionalAttributes.keySet().iterator(); i.hasNext(); )
             {
                 String key = (String) i.next();
-                attributes.put( new Attributes.Name( key ), additionalAttributes.get( key ) );                                    
+                attributes.put( new Attributes.Name( key ), additionalAttributes.get( key ) );
             }
         }
                 
