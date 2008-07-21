@@ -89,21 +89,25 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>        
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.5</version>
-    </dependency>
+
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <version>1.2.2</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.5</version>
+    </dependency>    
+        
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
       <version>1.0-alpha-1-SNAPSHOT</version>    
     </dependency>
+   
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -118,6 +122,16 @@ under the License.
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <!-- TODO: remove when parent pom 12 is released -->
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -146,21 +160,6 @@ under the License.
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>src/it</directory>
-              <includes>
-                <include>**/target</include>
-                <include>**/build.log</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -196,10 +195,10 @@ under the License.
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
-                <goal>${project.groupId}:${project.artifactId}:${project.version}:war</goal>
+                <goal>package</goal>
               </goals>
-              <installProjectArtifacts>true</installProjectArtifacts>
               <settingsFile>src/it/settings.xml</settingsFile>
+              <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>
             </configuration>
             <executions>
               <execution>
@@ -216,17 +215,18 @@ under the License.
       </build>
     </profile>
   </profiles>
-  <!-- TODO remove when invoker plugin 1.2 is released -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
+  <!-- remove when plexus-interpolation 1.2 is released -->
+  <repositories>
+    <repository>
+      <id>snapshots.codehaus.org</id>
+      <name>Codehaus Snapshot Development Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-    </pluginRepository>
-  </pluginRepositories>  
+    </repository>
+  </repositories>  
 </project>
