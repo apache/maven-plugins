@@ -58,14 +58,14 @@ public class XmlAppendingTransformer
         Document r;
         try
         {
-            r = new SAXBuilder().build(is);
+            r = new SAXBuilder().build( is );
         }
-        catch (JDOMException e)
+        catch ( JDOMException e )
         {
-            throw new RuntimeException(e);
+            throw new RuntimeException( e );
         }
 
-        if (doc == null)
+        if ( doc == null )
         {
             doc = r;
         }
@@ -73,25 +73,25 @@ public class XmlAppendingTransformer
         {
             Element root = r.getRootElement();
 
-            for (Iterator itr = root.getAttributes().iterator(); itr.hasNext();)
+            for ( Iterator itr = root.getAttributes().iterator(); itr.hasNext(); )
             {
                 Attribute a = (Attribute) itr.next();
                 itr.remove();
 
                 Element mergedEl = doc.getRootElement();
-                Attribute mergedAtt = mergedEl.getAttribute(a.getName(), a.getNamespace());
-                if (mergedAtt == null)
+                Attribute mergedAtt = mergedEl.getAttribute( a.getName(), a.getNamespace() );
+                if ( mergedAtt == null )
                 {
-                    mergedEl.setAttribute(a);
+                    mergedEl.setAttribute( a );
                 }
             }
 
-            for (Iterator itr = root.getChildren().iterator(); itr.hasNext();)
+            for ( Iterator itr = root.getChildren().iterator(); itr.hasNext(); )
             {
                 Content n = (Content) itr.next();
                 itr.remove();
 
-                doc.getRootElement().addContent(n);
+                doc.getRootElement().addContent( n );
             }
         }
     }
@@ -106,7 +106,7 @@ public class XmlAppendingTransformer
     {
         jos.putNextEntry( new JarEntry( resource ) );
 
-        new XMLOutputter(Format.getPrettyFormat()).output(doc, jos);
+        new XMLOutputter( Format.getPrettyFormat() ).output( doc, jos );
 
         doc = null;
     }

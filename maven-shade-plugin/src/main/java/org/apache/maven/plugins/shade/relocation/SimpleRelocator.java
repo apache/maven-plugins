@@ -43,16 +43,17 @@ public class SimpleRelocator
 
     private Set excludes;
 
-    public SimpleRelocator(String patt, String shadedPattern, List excludes)
+    public SimpleRelocator( String patt, String shadedPattern, List excludes )
     {
         this.pattern = patt.replace( '/', '.' );
-        this.pathPattern = patt.replace('.', '/');
+        this.pathPattern = patt.replace( '.', '/' );
 
         if ( shadedPattern != null )
         {
             this.shadedPattern = shadedPattern.replace( '/', '.' );
-            this.shadedPathPattern = shadedPattern.replace('.', '/');
-        } else
+            this.shadedPathPattern = shadedPattern.replace( '.', '/' );
+        }
+        else
         {
             this.shadedPattern = "hidden." + this.pattern;
             this.shadedPathPattern = "hidden/" + this.pathPattern;
@@ -62,7 +63,7 @@ public class SimpleRelocator
         {
             this.excludes = new LinkedHashSet();
 
-            for (Iterator i = excludes.iterator(); i.hasNext();)
+            for ( Iterator i = excludes.iterator(); i.hasNext(); )
             {
                 String e = (String) i.next();
 
@@ -107,11 +108,11 @@ public class SimpleRelocator
 
     public String relocatePath( String path )
     {
-        return path.replaceFirst(pathPattern, shadedPathPattern);
+        return path.replaceFirst( pathPattern, shadedPathPattern );
     }
 
     public String relocateClass( String clazz )
     {
-        return clazz.replaceFirst(pattern, shadedPattern);
+        return clazz.replaceFirst( pattern, shadedPattern );
     }
 }

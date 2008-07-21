@@ -21,8 +21,6 @@ package org.apache.maven.plugins.shade.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.JarOutputStream;
 
 /**
@@ -36,7 +34,8 @@ public class DontIncludeResourceTransformer
 
     public boolean canTransformResource( String r )
     {
-        if ( r.endsWith(resource) ) {
+        if ( r.endsWith( resource ) )
+        {
             return true;
         }
 
