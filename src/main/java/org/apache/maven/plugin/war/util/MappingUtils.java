@@ -19,12 +19,14 @@ package org.apache.maven.plugin.war.util;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
-import org.codehaus.plexus.util.interpolation.ValueSource;
-
 import java.util.Properties;
+
+import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.interpolation.ValueSource;
 
 /**
  * Utilities used to evaluate expression.
@@ -52,7 +54,7 @@ public class MappingUtils
      * @return expression the evaluated expression
      */
     public static String evaluateFileNameMapping( String expression, Artifact artifact )
-
+        throws InterpolationException
     {
         String value = expression;
 
@@ -66,7 +68,7 @@ public class MappingUtils
         Properties classifierMask = new Properties();
         classifierMask.setProperty( "classifier", "" );
 
-        interpolator.addValueSource( new PropertiesInterpolationValueSource( classifierMask ) );
+        interpolator.addValueSource( new PropertiesBasedValueSource ( classifierMask ) );
 
         value = interpolator.interpolate( value, "__artifact" );
 

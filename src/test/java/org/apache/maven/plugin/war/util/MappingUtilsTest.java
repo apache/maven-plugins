@@ -20,8 +20,10 @@ package org.apache.maven.plugin.war.util;
  */
 
 import junit.framework.TestCase;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.stub.AbstractArtifactStub;
+import org.codehaus.plexus.interpolation.InterpolationException;
 
 /**
  * Tests the mapping of file names.
@@ -33,7 +35,7 @@ public class MappingUtilsTest
 {
 
     public void testCompleteMapping()
-        throws MojoExecutionException
+        throws MojoExecutionException, InterpolationException
     {
         TestArtifactStub jar = new TestArtifactStub();
         jar.setGroupId( "org.apache.sample" );
@@ -45,7 +47,7 @@ public class MappingUtilsTest
     }
 
     public void testNoVersionMapping()
-        throws MojoExecutionException
+        throws MojoExecutionException, InterpolationException
     {
         TestArtifactStub jar = new TestArtifactStub();
         jar.setGroupId( "org.apache.sample" );
@@ -56,7 +58,7 @@ public class MappingUtilsTest
     }
 
     public void testMappingWithGroupId()
-        throws MojoExecutionException
+        throws MojoExecutionException, InterpolationException
     {
         TestArtifactStub jar = new TestArtifactStub();
         jar.setGroupId( "org.apache.sample" );
