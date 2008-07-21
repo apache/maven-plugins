@@ -21,7 +21,6 @@ package org.apache.maven.plugin.war;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,11 +48,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
-import org.apache.maven.shared.filtering.ReflectionProperties;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -277,6 +273,14 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
     private boolean filteringDeploymentDescriptors = false;
+    
+    /**
+     * To escape interpolated value with windows path 
+     * c:\foo\bar will be replace with c\:\\foo\\bar
+     * @parameter expression="${maven.war.escapedBackslashesInFilePath}" default-value="false"
+     * @since 2.1-alpha-2
+     */    
+    private boolean escapedBackslashesInFilePath = false;
 
     /**
      * The archive configuration to use.
@@ -410,21 +414,13 @@ public abstract class AbstractWarMojo
         final OverlayManager overlayManager =
             new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes );
         final List packagingTasks = getPackagingTasks( overlayManager );
-        List filterWrappers = new ArrayList( );
+        List defaultFilterWrappers = null;
         try
         {
-            List defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, true, this.session );
-
-            filterWrappers.addAll( defaultFilterWrappers );
-            FileUtils.FilterWrapper filterWrapper = new FileUtils.FilterWrapper()
-            {
-                public Reader getReader( Reader reader )
-                {
-                    ReflectionProperties reflectionProperties = new ReflectionProperties( getProject(), true );
-                    return new InterpolationFilterReader( reader, reflectionProperties, "@", "@" );
-                }
-            };
-            filterWrappers.add( filterWrapper );
+            defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
+                                                                                   escapedBackslashesInFilePath,
+                                                                                   this.session );
+            
         }
         catch ( MavenFilteringException e )
         {
@@ -433,7 +429,7 @@ public abstract class AbstractWarMojo
         }
 
         final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager,
-                                                                            filterWrappers,
+                                                                            defaultFilterWrappers,
                                                                             getNonFilteredFileExtensions(),
                                                                             filteringDeploymentDescriptors );
         final Iterator it = packagingTasks.iterator();

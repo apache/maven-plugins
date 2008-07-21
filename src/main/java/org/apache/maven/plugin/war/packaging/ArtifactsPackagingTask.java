@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
+import org.codehaus.plexus.interpolation.InterpolationException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,7 +61,8 @@ public class ArtifactsPackagingTask
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
-
+        try
+        {
         final ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
         final List duplicates = findDuplicates( context, artifacts );
 
@@ -124,6 +126,11 @@ public class ArtifactsPackagingTask
                 }
             }
         }
+        }
+        catch ( InterpolationException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
     }
 
     /**
@@ -134,7 +141,8 @@ public class ArtifactsPackagingTask
      * @param artifacts set of artifacts
      * @return List of duplicated artifacts as bundling file names
      */
-    private List findDuplicates( WarPackagingContext context, Set artifacts )
+    private List findDuplicates( WarPackagingContext context, Set artifacts ) 
+        throws InterpolationException
     {
         List duplicates = new ArrayList();
         List identifiers = new ArrayList();
