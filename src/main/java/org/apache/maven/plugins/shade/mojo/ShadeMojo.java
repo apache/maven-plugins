@@ -360,7 +360,7 @@ public class ShadeMojo
 
             shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
 
-            if (createSourcesJar)
+            if ( createSourcesJar )
             {
                 shader.shade( sourceArtifacts, sourcesJar, filters, relocators, resourceTransformers );
             }
@@ -404,9 +404,9 @@ public class ShadeMojo
         }
     }
 
-    private void replaceFile(File oldFile, File newFile) throws MojoExecutionException
+    private void replaceFile( File oldFile, File newFile ) throws MojoExecutionException
     {
-        getLog().info("Replacing " + oldFile + " with " + newFile);
+        getLog().info( "Replacing " + oldFile + " with " + newFile );
 
         File origFile = new File( outputDirectory, "original-" + oldFile.getName() );
         if ( oldFile.exists() && !oldFile.renameTo( origFile ) )
@@ -424,7 +424,7 @@ public class ShadeMojo
                     FileInputStream fin = new FileInputStream( oldFile );
                     try
                     {
-                        IOUtil.copy(fin, fout);
+                        IOUtil.copy( fin, fout );
                     }
                     finally
                     {
@@ -432,10 +432,10 @@ public class ShadeMojo
                         IOUtil.close( fout );
                     }
                 }
-                catch (IOException ex)
+                catch ( IOException ex )
                 {
                     //kind of ignorable here.   We're just trying to save the original
-                    getLog().warn(ex);
+                    getLog().warn( ex );
                 }
             }
         }
@@ -453,7 +453,7 @@ public class ShadeMojo
                     FileInputStream fin = new FileInputStream( newFile );
                     try
                     {
-                        IOUtil.copy(fin, fout);
+                        IOUtil.copy( fin, fout );
                     }
                     finally
                     {
@@ -461,22 +461,23 @@ public class ShadeMojo
                         IOUtil.close( fout );
                     }
                 }
-                catch (IOException ex)
+                catch ( IOException ex )
                 {
-                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!", ex);
+                    throw new MojoExecutionException( "Could not replace original artifact with shaded artifact!", ex );
                 }
             }
         }
     }
 
-    private File resolveArtifactSources(Artifact artifact) {
+    private File resolveArtifactSources( Artifact artifact )
+    {
 
         Artifact resolvedArtifact =
             artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
                                                           artifact.getArtifactId(),
                                                           artifact.getVersion(),
                                                           "java-source",
-                                                          "sources");
+                                                          "sources" );
 
         try
         {
@@ -504,7 +505,8 @@ public class ShadeMojo
 
         // This is the case where we have only stated artifacts to include and no exclusions
         // have been listed. We just want what we have asked to include.
-        if ( artifactSet != null && ( artifactSet.getExcludes() == null && artifactSet.getIncludes() != null ) && !includedArtifacts().contains( id ) )
+        if ( artifactSet != null && ( artifactSet.getExcludes() == null && artifactSet.getIncludes() != null )
+            && !includedArtifacts().contains( id ) )
         {
             return true;
         }
@@ -615,14 +617,16 @@ public class ShadeMojo
     {
         Artifact artifact = project.getArtifact();
         final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "." + artifact.getArtifactHandler().getExtension();
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
+                + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
     private File shadedSourceArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
         final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-sources." + artifact.getArtifactHandler().getExtension();
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-sources."
+                + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
@@ -638,7 +642,8 @@ public class ShadeMojo
         }
         else
         {
-            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "." + artifact.getArtifactHandler().getExtension();
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "."
+                + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
@@ -655,7 +660,8 @@ public class ShadeMojo
         }
         else
         {
-            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources." + artifact.getArtifactHandler().getExtension();
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources."
+                + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
@@ -692,7 +698,7 @@ public class ShadeMojo
             //promote
             Dependency dep = new Dependency();
             dep.setArtifactId( artifact.getArtifactId() );
-            if (artifact.hasClassifier())
+            if ( artifact.hasClassifier() )
             {
                 dep.setClassifier( artifact.getClassifier() );
             }
@@ -737,9 +743,9 @@ public class ShadeMojo
         }
 
         // Check to see if we have a reduction and if so rewrite the POM.
-        if (modified)
+        if ( modified )
         {
-            while (modified)
+            while ( modified )
             {
             
                 model.setDependencies( dependencies );
@@ -768,7 +774,7 @@ public class ShadeMojo
             //sure it gets cleaned up.
             File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
             File f2 = new File( outputDirectory, "dependency-reduced-pom.xml" );
-            if (f.exists() )
+            if ( f.exists() )
             {
                 f.delete();
             }
@@ -815,7 +821,7 @@ public class ShadeMojo
                 //anything two levels deep that is marked "included"
                 //is stuff that was excluded by the original poms, make sure it
                 //remains excluded IF promoting transitives.
-                if ( n3.getState() == DependencyNode.INCLUDED)
+                if ( n3.getState() == DependencyNode.INCLUDED )
                 {
                     //check if it really isn't in the list of original dependencies.  Maven
                     //prior to 2.0.8 may grab versions from transients instead of

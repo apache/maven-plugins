@@ -102,11 +102,11 @@ public class ApacheNoticeResourceTransformer
             }
             else
             {
-                entries.add("");
+                entries.add( "" );
             }
             //fake second entry, we'll look for a real one later
             entries.add( projectName + "\nCopyright " + year + " " + organizationName + "\n" );
-            entries.add( preamble3 + organizationName + " ("+ organizationURL +").\n" );
+            entries.add( preamble3 + organizationName + " (" + organizationURL + ").\n" );
         }
 
 
@@ -136,7 +136,7 @@ public class ApacheNoticeResourceTransformer
                     {
                         //resource-bundle 1.3 mode
                         if ( lineCount == 1
-                            && sb.toString().indexOf( "This product includes/uses software(s) developed by" ) != -1)
+                            && sb.toString().indexOf( "This product includes/uses software(s) developed by" ) != -1 )
                         {
                             currentOrg = (Set) organizationEntries.get( sb.toString().trim() );
                             if ( currentOrg == null )
@@ -219,7 +219,7 @@ public class ApacheNoticeResourceTransformer
         {
             ++count;
             String line = (String) itr.next();
-            if ( line.equals( copyright ) && count != 2)
+            if ( line.equals( copyright ) && count != 2 )
             {
                 continue;
             }
@@ -234,16 +234,16 @@ public class ApacheNoticeResourceTransformer
                 writer.print( line );
                 writer.print( '\n' );
             }
-            if (count == 3)
+            if ( count == 3 )
             {
                 //do org stuff
-                for (Iterator oit = organizationEntries.entrySet().iterator() ; oit.hasNext();)
+                for ( Iterator oit = organizationEntries.entrySet().iterator(); oit.hasNext(); )
                 {
                     Map.Entry entry = (Map.Entry) oit.next();
                     writer.print( entry.getKey().toString() );
                     writer.print( '\n' );
-                    Set entrySet = (Set)entry.getValue();
-                    for (Iterator eit = entrySet.iterator() ; eit.hasNext() ;)
+                    Set entrySet = (Set) entry.getValue();
+                    for ( Iterator eit = entrySet.iterator(); eit.hasNext(); )
                     {
                         writer.print( eit.next().toString() );
                     }

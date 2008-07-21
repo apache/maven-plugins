@@ -59,8 +59,8 @@ public class PomWriter
 
             if ( root.getAttribute( "schemaLocation", xsiNamespace ) == null )
             {
-                root.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion +
-                    " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+                root.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
+                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
             }
         }
 
