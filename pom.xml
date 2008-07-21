@@ -122,4 +122,8 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <properties>
+    <currentVersion>${project.version}</currentVersion>
+  </properties>
 </project>
