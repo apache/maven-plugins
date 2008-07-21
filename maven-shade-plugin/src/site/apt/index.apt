@@ -3,6 +3,8 @@
  ------
  Mauro Talevi
  ------
+ 2008-07-21
+ ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -23,7 +25,7 @@
 
 Maven 2 Shade Plugin
 
- This plugin provides the capability to package the artifact in a uber-jar, including its dependencies and
+ This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and
  to <shade> - i.e. rename - the packages of some of the dependencies.
 
 * Goals Overview
@@ -41,5 +43,5 @@ Maven 2 Shade Plugin
 * Examples
 
   To provide you with better understanding on some usages of the Shade
-  Plugin, you can take a look {{{examples.html}examples}} page.
+  Plugin, you can take a look at the {{{examples.html}examples}} page.
 
