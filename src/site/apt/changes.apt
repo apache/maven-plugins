@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2008-02-10
+ 2008-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -80,5 +80,8 @@ due-to-email         | Optional     |  Email of the person to be credited for th
 *--------------------+--------------*------------------------------------------------------------------------------------------+
 issue                | Optional     |  Id of the issue related to this change. This is the id in your issue tracking system.
                      |              |  The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the <<<issueLinkTemplate>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+system               | Optional     |  Id of issue tracking system. If empty 'default' value will be use.
+                     |              |  The Changes plugin will generate the URL out of this issue id. The URL is constructed using the value of the <<<issueLinkTemplatePerSystem>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
 *--------------------+--------------*------------------------------------------------------------------------------------------+
 
