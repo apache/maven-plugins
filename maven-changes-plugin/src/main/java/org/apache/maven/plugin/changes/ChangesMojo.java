@@ -19,14 +19,15 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -57,8 +58,24 @@ public class ChangesMojo
      *
      * @parameter expression="${changes.issueLinkTemplate}" default-value="%URL%/ViewIssue.jspa?key=%ISSUE%"
      * @since 2.0-beta-2
+     * @deprecated now use issueLinkTemplatePerSystem : this one will be with system default
      */
     private String issueLinkTemplate;
+    
+    /**
+     * Template strings per System that is used to discover the URL to use to display an issue report.
+     * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
+     * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
+     * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
+     * <p>
+     * <strong>Note:</strong>The deprecated issueLinkTemplate will used with system called default
+     * <code>link_template</code>.
+     * </p>
+     *
+     * @parameter
+     * @since 2.1
+     */    
+    private Map issueLinkTemplatePerSystem;
 
     /**
      * @parameter default-value="${project.issueManagement.url}"
@@ -101,8 +118,9 @@ public class ChangesMojo
         throws MavenReportException
     {
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
-
+        report.setIssueLinksPerSystem( issueLinkTemplatePerSystem ); 
         report.setIssueLink( issueLinkTemplate );
+        
         report.setUrl( url );
 
         if ( !report.canGenerateIssueLinks() )
