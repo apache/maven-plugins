@@ -29,6 +29,8 @@ import java.util.Properties;
 
 import org.apache.commons.validator.UrlValidator;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -142,23 +144,31 @@ public class ProjectInfoReportUtils
     }
 
     /**
+     * @param factory not null
      * @param artifact not null
      * @param mavenProjectBuilder not null
      * @param remoteRepositories not null
      * @param localRepository not null
      * @return the artifact url or null if an error occurred.
      */
-    public static String getArtifactUrl( Artifact artifact, MavenProjectBuilder mavenProjectBuilder,
-                                         List remoteRepositories, ArtifactRepository localRepository )
+    public static String getArtifactUrl( ArtifactFactory factory, Artifact artifact,
+                                         MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
+                                         ArtifactRepository localRepository )
     {
         if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {
             return null;
         }
 
+        Artifact copyArtifact = ArtifactUtils.copyArtifact( artifact );
+        if ( !"pom".equals( copyArtifact.getType() ) )
+        {
+            copyArtifact = factory.createProjectArtifact( copyArtifact.getGroupId(), copyArtifact.getArtifactId(),
+                                                             copyArtifact.getVersion(), copyArtifact.getScope() );
+        }
         try
         {
-            MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories,
+            MavenProject pluginProject = mavenProjectBuilder.buildFromRepository( copyArtifact, remoteRepositories,
                                                                                   localRepository );
 
             if ( isArtifactUrlValid( pluginProject.getUrl() ) )
