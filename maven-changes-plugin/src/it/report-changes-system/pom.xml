@@ -51,6 +51,7 @@
           <issueLinkTemplatePerSystem>
             <qc>http://localhost/%ISSUE%</qc>
           </issueLinkTemplatePerSystem>
+          <addActionDate>true</addActionDate>
         </configuration>
         <reportSets>
           <reportSet>

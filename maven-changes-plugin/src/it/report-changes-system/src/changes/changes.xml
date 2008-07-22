@@ -40,7 +40,7 @@ under the License.
     </release>
 
     <release version="1.0" date="2005-01-01" description="First release">
-      <action dev="me" type="update">
+      <action dev="me" type="update" date="2008-01-01">
         Uploaded documentation on how to use the plugin.
       </action>
     </release>
