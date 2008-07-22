@@ -85,9 +85,6 @@ public class DependenciesRenderer
     /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
 
-    /** Used to format file length values */
-    private static final DecimalFormat FILE_LENGTH_DECIMAL_FORMAT = new FileDecimalFormat();
-
     private static final Set JAR_SUBTYPE = new HashSet();
 
     /**
@@ -95,13 +92,13 @@ public class DependenciesRenderer
      */
     private static final String JAVASCRIPT;
 
-    private final Locale locale;
-
     private final DependencyNode dependencyTreeNode;
 
     private final Dependencies dependencies;
 
     private final DependenciesReportConfiguration configuration;
+
+    private final Locale locale;
 
     private final I18N i18n;
 
@@ -110,6 +107,9 @@ public class DependenciesRenderer
     private final Settings settings;
 
     private final RepositoryUtils repoUtils;
+
+    /** Used to format file length values */
+    private final DecimalFormat fileLengthDecimalFormat;
 
     /**
      * Will be filled with license name / set of projects.
@@ -219,7 +219,8 @@ public class DependenciesRenderer
         // Using the right set of symbols depending of the locale
         DEFAULT_DECIMAL_FORMAT.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
 
-        FILE_LENGTH_DECIMAL_FORMAT.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
+        this.fileLengthDecimalFormat = new FileDecimalFormat( i18n, locale );
+        this.fileLengthDecimalFormat.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
     }
 
     // ----------------------------------------------------------------------
@@ -411,7 +412,7 @@ public class DependenciesRenderer
         sink.tableRows( justification, true );
 
         TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
-        TotalCell totaldepsize = new TotalCell( FILE_LENGTH_DECIMAL_FORMAT );
+        TotalCell totaldepsize = new TotalCell( fileLengthDecimalFormat );
         TotalCell totalentries = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalclasses = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell  totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
@@ -489,7 +490,7 @@ public class DependenciesRenderer
 
                     tableRow( hasSealed, new String[] {
                         artifactFile.getName(),
-                        FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ),
+                        fileLengthDecimalFormat.format( artifactFile.length() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
@@ -505,7 +506,7 @@ public class DependenciesRenderer
             else
             {
                 tableRow( hasSealed, new String[] { artifactFile.getName(),
-                    FILE_LENGTH_DECIMAL_FORMAT.format( artifactFile.length() ), "", "", "", "", "", "" } );
+                    fileLengthDecimalFormat.format( artifactFile.length() ), "", "", "", "", "", "" } );
             }
         }
 
@@ -1322,19 +1323,36 @@ public class DependenciesRenderer
     }
 
     /**
-     * Formats file length with the associated unit (GB, MB, KB) and using the pattern
-     * <code>########.00</code> by default.
+     * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a>
+     * unit (GB, MB, kB) and using the pattern <code>########.00</code> by default.
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing>
+     * http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix">
+     * http://en.wikipedia.org/wiki/Binary_prefix</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)">
+     * http://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
     static class FileDecimalFormat extends DecimalFormat
     {
         private static final long serialVersionUID = 4062503546523610081L;
 
+        private final I18N i18n;
+
+        private final Locale locale;
+
         /**
          * Default constructor
+         *
+         * @param i18n
+         * @param locale
          */
-        public FileDecimalFormat()
+        public FileDecimalFormat( I18N i18n, Locale locale )
         {
             super( "#,###.00" );
+
+            this.i18n = i18n;
+            this.locale = locale;
         }
 
         /** {@inheritDoc} */
@@ -1343,19 +1361,19 @@ public class DependenciesRenderer
             if ( fs > 1024 * 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
-                result.append( " GB" );
+                result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.gb" ) );
                 return result;
             }
 
             if ( fs > 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
-                result.append( " MB" );
+                result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.mb" ) );
                 return result;
             }
 
             result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
-            result.append( " KB" );
+            result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.kb" ) );
             return result;
         }
     }
