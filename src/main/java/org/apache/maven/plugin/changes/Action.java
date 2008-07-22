@@ -38,6 +38,8 @@ public class Action
 
     private String type;
 
+    private String system;
+    
     public Action()
     {
     }
@@ -100,5 +102,15 @@ public class Action
     public String getType()
     {
         return type;
+    }
+
+    public String getSystem()
+    {
+        return system;
+    }
+
+    public void setSystem( String system )
+    {
+        this.system = system;
     }
 }

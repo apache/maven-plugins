@@ -19,14 +19,16 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.logging.Log;
-
-import java.io.File;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Generates a changes report.
@@ -45,30 +47,44 @@ public class ChangesReportGenerator
      * The token in {@link #issueLink} denoting the issue ID.
      */
     private static final String ISSUE_TOKEN = "%ISSUE%";
+    
+    private static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
 
     private ChangesXML report;
 
-    private String issueLink;
-
     private String url;
+    
+    private Map issueLinksPerSystem;
 
     public ChangesReportGenerator()
     {
+        issueLinksPerSystem = new HashMap();
     }
 
     public ChangesReportGenerator( File xmlPath, Log log )
     {
+        this();
         report = new ChangesXML( xmlPath, log );
     }
 
+    /**
+     * @deprecated
+     */
     public void setIssueLink( String issueLink )
     {
-        this.issueLink = issueLink;
+        if ( this.issueLinksPerSystem == null )
+        {
+            this.issueLinksPerSystem = new HashMap();
+        }
+        this.issueLinksPerSystem.put( DEFAULT_ISSUE_SYSTEM_KEY, issueLink );
     }
 
+    /**
+     * @deprecated
+     */    
     public String getIssueLink()
     {
-        return issueLink;
+        return (String) issueLinksPerSystem.get( DEFAULT_ISSUE_SYSTEM_KEY );
     }
 
     public void setUrl( String url )
@@ -80,18 +96,46 @@ public class ChangesReportGenerator
     {
         return url;
     }
+    
+    public Map getIssueLinksPerSystem()
+    {
+        return issueLinksPerSystem;
+    }
+
+    public void setIssueLinksPerSystem( Map issueLinksPerSystem )
+    {
+        if ( this.issueLinksPerSystem != null && issueLinksPerSystem == null )
+        {
+            return;
+        }
+        this.issueLinksPerSystem = issueLinksPerSystem;
+    }
 
     /**
      * Checks whether links to the issues can be generated.
      * 
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
-    public boolean canGenerateIssueLinks()
+    public boolean canGenerateIssueLinks(String system)
     {
-        return !StringUtils.isBlank( getIssueLink() )
-            && ( !StringUtils.isBlank( getUrl() ) || getIssueLink().indexOf( URL_TOKEN ) < 0 );
+        if ( !this.issueLinksPerSystem.containsKey( system ) )
+        {
+            return false;
+        }
+        String issueLink = (String) this.issueLinksPerSystem.get( system );
+        return !StringUtils.isBlank( issueLink )
+            && ( !StringUtils.isBlank( getUrl() ) || issueLink.indexOf( URL_TOKEN ) < 0 );
     }
 
+    public boolean canGenerateIssueLinks()
+    {
+        if (this.issueLinksPerSystem == null || this.issueLinksPerSystem.isEmpty() )
+        {
+            return false;
+        }
+        return this.issueLinksPerSystem.containsKey( DEFAULT_ISSUE_SYSTEM_KEY );
+    }    
+    
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink, String message )
     {
         sinkBeginReport( sink, bundle );
@@ -142,14 +186,16 @@ public class ChangesReportGenerator
             {
                 sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
-                if ( !canGenerateIssueLinks() )
+                String system = action.getSystem();
+                system = StringUtils.isEmpty( system ) ? DEFAULT_ISSUE_SYSTEM_KEY : system;
+                if ( !canGenerateIssueLinks( system ) )
                 {
                     sink.text( action.getIssue() );
 
                 }
                 else
                 {
-                    sink.link( parseIssueLink( action.getIssue() ) );
+                    sink.link( parseIssueLink( action.getIssue(), system ) );
 
                     sink.text( action.getIssue() );
 
@@ -254,11 +300,11 @@ public class ChangesReportGenerator
         }
     }
 
-    private String parseIssueLink( String issue )
+    private String parseIssueLink( String issue, String system )
     {
         String parseLink;
-
-        parseLink = this.issueLink.replaceFirst( ISSUE_TOKEN, issue );
+        String issueLink = (String) this.issueLinksPerSystem.get( system );
+        parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
 
         if ( parseLink.indexOf( URL_TOKEN ) >= 0 )
         {
