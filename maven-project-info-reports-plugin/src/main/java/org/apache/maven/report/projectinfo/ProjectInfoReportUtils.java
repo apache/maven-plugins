@@ -188,7 +188,7 @@ public class ProjectInfoReportUtils
      * @param artifactId not null
      * @param link could be null
      * @return the artifactId cell with or without a link pattern
-     * @see {@link AbstractMavenReportRenderer#linkPatternedText(String)}
+     * @see {@link org.apache.maven.reporting.AbstractMavenReportRenderer#linkPatternedText(String)}
      */
     public static String getArtifactIdCell( String artifactId, String link )
     {
