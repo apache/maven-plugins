@@ -416,7 +416,6 @@ public class RepositoryUtils
      * Convenience method to map a <code>Proxy</code> object from the user system settings to a <code>ProxyInfo</code>
      * object.
      *
-     * @param settings the system settings
      * @return a proxyInfo object instanced or null if no active proxy is define in the settings.xml
      */
     private ProxyInfo getProxyInfo()
