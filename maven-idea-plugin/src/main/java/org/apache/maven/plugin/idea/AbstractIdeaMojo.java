@@ -232,11 +232,13 @@ public abstract class AbstractIdeaMojo
             convertedAbsolutePath = convertedAbsolutePath.substring( 0, convertedAbsolutePath.length() - 1 );
         }
 
-        if ( convertedAbsolutePath.startsWith( convertedBasedir )
-            && convertedAbsolutePath.length() > convertedBasedir.length() )
+        // IDEA-103 Make sure that the basedir is appended with a / before we attempt to match it to the absolute path
+        String matchableBasedir = convertedBasedir + "/";
+        if ( convertedAbsolutePath.startsWith( matchableBasedir )
+            && convertedAbsolutePath.length() > matchableBasedir.length() )
         {
             // Simple case, path starts with basepath
-            relative = convertedAbsolutePath.substring( convertedBasedir.length() + 1 );
+            relative = convertedAbsolutePath.substring( matchableBasedir.length() );
         }
         else
         {

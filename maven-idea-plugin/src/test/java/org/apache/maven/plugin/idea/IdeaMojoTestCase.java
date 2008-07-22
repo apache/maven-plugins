@@ -57,6 +57,7 @@ public class IdeaMojoTestCase
                                         "C:/dev/voca/gateway/parser/gateway-parser.iml" );
         assertEquals( "Test toRelative child, trailing slash", "parser/gateway-parser.iml", relativePath );
 
+        // Tests for MIDEA-102
         relativePath = mojo.toRelative( "C:\\foo\\master",
                                         "C:\\foo\\child" );
         assertEquals( "Test toRelative sibling, no trailing backspace", "../child", relativePath );
@@ -72,5 +73,14 @@ public class IdeaMojoTestCase
         relativePath = mojo.toRelative( "C:\\foo\\master\\",
                                         "C:\\foo\\child\\" );
         assertEquals( "Test toRelative sibling, both trailing backspace", "../child", relativePath );
+
+        // Tests for MIDEA-103
+        relativePath = mojo.toRelative( "/myproject/myproject",
+                                        "/myproject/myproject-module1/myproject-module1.iml" );
+        assertEquals( "Test parent matches prefix of child, no trailing slash", "../myproject-module1/myproject-module1.iml", relativePath );
+
+        relativePath = mojo.toRelative( "/myproject/myproject/",
+                                        "/myproject/myproject-module1/myproject-module1.iml" );
+        assertEquals( "Test parent matches prefix of child, trailing slash", "../myproject-module1/myproject-module1.iml", relativePath );
     }
 }
