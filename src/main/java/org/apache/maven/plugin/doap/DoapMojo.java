@@ -53,6 +53,7 @@ import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -63,6 +64,8 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
 /**
  * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a>
  * file from the main information found in a POM.
+ * <br/>
+ * <b>Note</b>: The generated file is tailored for use by projects at {{{http://projects.apache.org/doap.html}Apache}}.
  *
  * @author Jason van Zyl
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -103,6 +106,14 @@ public class DoapMojo
      */
     private RepositoryMetadataManager repositoryMetadataManager;
 
+    /**
+     * Internationalization component.
+     *
+     * @component
+     * @since 1.0
+     */
+    private I18N i18n;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -118,7 +129,8 @@ public class DoapMojo
     /**
      * The name of the DOAP file that will be generated.
      *
-     * @parameter expression="${doapFile}" default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
+     * @parameter expression="${doapFile}"
+     * default-value="${project.reporting.outputDirectory}/doap_${project.artifactId}.rdf"
      * @required
      */
     private File doapFile;
@@ -151,7 +163,8 @@ public class DoapMojo
      * The category which should be displayed in the DOAP file.
      *
      * @parameter expression="${category}"
-     * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code> parameter.
+     * @deprecated Since 1.0. Instead of, configure <code>category</code> property in <code>doapOptions</code>
+     * parameter.
      */
     private String category;
 
@@ -159,7 +172,8 @@ public class DoapMojo
      * The programming language which should be displayed in the DOAP file.
      *
      * @parameter expression="${language}"
-     * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in <code>doapOptions</code> parameter.
+     * @deprecated Since 1.0. Instead of, configure <code>programmingLanguage</code> property in
+     * <code>doapOptions</code> parameter.
      */
     private String language;
 
@@ -195,6 +209,8 @@ public class DoapMojo
      * &nbsp;&nbsp;...
      * &lt;/asfExtOptions&gt;
      * </pre>
+     * <b>Note</b>: By default, <code>asfExtOptions/included</code> is set to <code>true</code> to include the ASF
+     * extensions.
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/doap/options/ASFExtOptions.html">Javadoc</a>
      * <br/>
@@ -247,9 +263,7 @@ public class DoapMojo
     // Public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -478,7 +492,8 @@ public class DoapMojo
      * Write DOAP programming-language.
      *
      * @param writer not null
-     * @see <a href="http://usefulinc.com/ns/doap#programming-language">http://usefulinc.com/ns/doap#programming-language</a>
+     * @see <a href="http://usefulinc.com/ns/doap#programming-language">
+     * http://usefulinc.com/ns/doap#programming-language</a>
      */
     private void writeProgrammingLanguage( XMLWriter writer )
     {
@@ -507,7 +522,8 @@ public class DoapMojo
             String[] languages = StringUtils.split( doapOptions.getProgrammingLanguage(), "," );
             for ( int i = 0; i < languages.length; i++ )
             {
-                if ( asfExtOptions.isIncluded() && !ASFExtOptions.isProgrammingLanguageSupportedByASF( languages[i].trim() ) )
+                if ( asfExtOptions.isIncluded()
+                    && !ASFExtOptions.isProgrammingLanguageSupportedByASF( languages[i].trim() ) )
                 {
                     getLog().warn(
                                    "The programming language '" + languages[i].trim() + "' is not supported by ASF. "
@@ -1015,20 +1031,13 @@ public class DoapMojo
             XmlWriterUtil.writeCommentText( writer, "Contributed persons", 2 );
         }
 
-        List maintainers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "maintainers" );
-        List developers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "developers" );
-        List documenters = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "documenters" );
-        List translators = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "translators" );
-        List testers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "testers" );
-        List helpers = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "helpers" );
-        List unknowns = (List) DoapUtil.filterDevelopersOrContributorsByDoapRoles( developersOrContributors )
-            .get( "unknowns" );
+        List maintainers =  DoapUtil.getDevelopersOrContributorsWithMaintainerRole( i18n, developersOrContributors );
+        List developers = DoapUtil.getDevelopersOrContributorsWithDeveloperRole( i18n, developersOrContributors );
+        List documenters = DoapUtil.getDevelopersOrContributorsWithDocumenterRole( i18n, developersOrContributors );
+        List translators = DoapUtil.getDevelopersOrContributorsWithTranslatorRole( i18n, developersOrContributors );
+        List testers = DoapUtil.getDevelopersOrContributorsWithTesterRole( i18n, developersOrContributors );
+        List helpers = DoapUtil.getDevelopersOrContributorsWithHelperRole( i18n, developersOrContributors );
+        List unknowns = DoapUtil.getDevelopersOrContributorsWithUnknownRole( i18n, developersOrContributors );
 
         // By default, all developers are maintainers and contributors are helpers
         if ( isDeveloper )
