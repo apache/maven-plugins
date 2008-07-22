@@ -27,10 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
@@ -44,17 +44,8 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  */
 public class DoapUtil
 {
-    /**
-     * I18N roles supported in DOAP, i.e. <code>maintainer</code>, <code>developer</code>, <code>documenter</code>,
-     * <code>translator</code>, <code>tester</code>, <code>helper</code>,
-     * <br/>
-     * <b>Note:</b> Actually, only English keys are used.
-     */
-    private static final ResourceBundle DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N = ResourceBundle.getBundle( "doap-person",
-                                                                                                        Locale.ENGLISH );
-
     /** RDF resource attribute */
-    private static final String RDF_RESOURCE = "rdf:resource";
+    protected static final String RDF_RESOURCE = "rdf:resource";
 
     /**
      * Write comments in the DOAP file header
@@ -157,14 +148,93 @@ public class DoapUtil
     }
 
     /**
-     * Filter the developers/contributors role by the keys in {@link #DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N}
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have a <code>developer</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithDeveloperRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "developers" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have a <code>documenter</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithDocumenterRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "documenters" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have an <code>helper</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithHelperRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "helpers" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have a <code>maintainer</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithMaintainerRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "maintainers" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have a <code>tester</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithTesterRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "testers" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have a <code>translator</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithTranslatorRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "translators" );
+    }
+
+    /**
+     * @param i18n the internationalization component
+     * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
+     * @return a none null list of developers or contributors which have an <code>unknown</code> DOAP role.
+     */
+    public static List getDevelopersOrContributorsWithUnknownRole( I18N i18n, List developersOrContributors )
+    {
+        return (List) filterDevelopersOrContributorsByDoapRoles( i18n, developersOrContributors ).get( "unknowns" );
+    }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Filter the developers/contributors roles by the keys from {@link I18N#getBundle()}.
+     * <br/>
+     * I18N roles supported in DOAP, i.e. <code>maintainer</code>, <code>developer</code>, <code>documenter</code>,
+     * <code>translator</code>, <code>tester</code>, <code>helper</code>.
+     * <br/>
+     * <b>Note:</b> Actually, only English keys are used.
      *
      * @param developersOrContributors list of <code>{@link Developer}/{@link Contributor}</code>
      * @return a none null map with <code>maintainers</code>, <code>developers</code>, <code>documenters</code>,
      * <code>translators</code>, <code>testers</code>, <code>helpers</code>, <code>unknowns</code> as keys and list of
      * <code>{@link Developer}/{@link Contributor}</code> as value.
      */
-    public static Map filterDevelopersOrContributorsByDoapRoles( List developersOrContributors )
+    private static Map filterDevelopersOrContributorsByDoapRoles( I18N i18n, List developersOrContributors )
     {
         Map returnMap = new HashMap( 7 );
         returnMap.put( "maintainers", new ArrayList() );
@@ -203,38 +273,38 @@ public class DoapUtil
                     String role = (String) it2.next();
 
                     if ( role.toLowerCase().indexOf(
-                                                     DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N.getString( "doap.maintainer" )
-                                                         .toLowerCase() ) != -1 )
+                                                     i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                     "doap.maintainer" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "maintainers" ) ).add( obj );
                     }
                     else if ( role.toLowerCase().indexOf(
-                                                           DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N
-                                                               .getString( "doap.developer" ).toLowerCase() ) != -1 )
+                                                          i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                          "doap.developer" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "developers" ) ).add( obj );
                     }
                     else if ( role.toLowerCase().indexOf(
-                                                           DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N
-                                                               .getString( "doap.documenter" ).toLowerCase() ) != -1 )
+                                                          i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                          "doap.documenter" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "documenters" ) ).add( obj );
                     }
                     else if ( role.toLowerCase().indexOf(
-                                                           DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N
-                                                               .getString( "doap.translator" ).toLowerCase() ) != -1 )
+                                                          i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                          "doap.translator" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "translators" ) ).add( obj );
                     }
                     else if ( role.toLowerCase().indexOf(
-                                                           DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N
-                                                               .getString( "doap.tester" ).toLowerCase() ) != -1 )
+                                                          i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                          "doap.tester" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "testers" ) ).add( obj );
                     }
                     else if ( role.toLowerCase().indexOf(
-                                                           DEVELOPER_OR_CONTRIBUTOR_ROLES_I18N
-                                                               .getString( "doap.helper" ).toLowerCase() ) != -1 )
+                                                          i18n.getString( "doap-person", Locale.ENGLISH,
+                                                                          "doap.helper" ).toLowerCase() ) != -1 )
                     {
                         ( (List) returnMap.get( "helpers" ) ).add( obj );
                     }
