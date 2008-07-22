@@ -993,7 +993,7 @@ public class IdeaModuleMojo
 
     private String getLibraryUrl( Artifact artifact )
     {
-        return "jar://" + artifact.getFile().getAbsolutePath().replace( '\\', '/' ) + "!/";
+        return "jar://" + convertDriveLetter(artifact.getFile().getAbsolutePath()).replace( '\\', '/' ) + "!/";
     }
 
     private Element addDeploymentDescriptor( Element component, String name, String version, String file )
