@@ -55,6 +55,8 @@ public class ChangesReportGenerator
     private String url;
     
     private Map issueLinksPerSystem;
+    
+    private boolean addActionDate;
 
     public ChangesReportGenerator()
     {
@@ -111,6 +113,16 @@ public class ChangesReportGenerator
         this.issueLinksPerSystem = issueLinksPerSystem;
     }
 
+    public boolean isAddActionDate()
+    {
+        return addActionDate;
+    }
+
+    public void setAddActionDate( boolean addActionDate )
+    {
+        this.addActionDate = addActionDate;
+    }
+
     /**
      * Checks whether links to the issues can be generated.
      * 
@@ -129,7 +141,7 @@ public class ChangesReportGenerator
 
     public boolean canGenerateIssueLinks()
     {
-        if (this.issueLinksPerSystem == null || this.issueLinksPerSystem.isEmpty() )
+        if ( this.issueLinksPerSystem == null || this.issueLinksPerSystem.isEmpty() )
         {
             return false;
         }
@@ -167,7 +179,11 @@ public class ChangesReportGenerator
         sinkHeader( sink, bundle.getString( "report.changes.label.changes" ) );
 
         sinkHeader( sink, bundle.getString( "report.changes.label.by" ) );
-
+        
+        if ( this.isAddActionDate() )
+        {
+            sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
+        }
         sink.tableRow_();
 
         for ( int idx = 0; idx < actionList.size(); idx++ )
@@ -224,7 +240,12 @@ public class ChangesReportGenerator
             sink.tableCell_();
 
             sinkCellLink( sink, action.getDev(), "team-list.html#" + action.getDev() );
-
+            
+            if ( this.isAddActionDate() )
+            {
+                sinkCell( sink, action.getDate() );
+            }
+            
             sink.tableRow_();
         }
 
