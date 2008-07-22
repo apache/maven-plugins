@@ -1073,7 +1073,17 @@ public class DependenciesRenderer
         sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
         sink.paragraph_();
 
-        List repoIdList = new ArrayList( repoMap.keySet() );
+        List repoIdList = new ArrayList();
+        // removed blacklisted repo
+        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        {
+            String repokey = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+            if ( !repo.isBlacklisted() )
+            {
+                repoIdList.add( repokey );
+            }
+        }
 
         String[] tableHeader = new String[repoIdList.size() + 1];
         int[] justificationRepo = new int[repoIdList.size() + 1];
