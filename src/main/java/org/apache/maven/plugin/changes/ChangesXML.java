@@ -189,6 +189,8 @@ public class ChangesXML
             action.setIssue( attrs.getValue( "issue" ) );
             
             action.setSystem( attrs.getValue( "system" ) );
+            
+            action.setDate( attrs.getValue( "date" ) );
         }
 
         currentName = qName;

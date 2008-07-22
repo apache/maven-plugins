@@ -82,6 +82,13 @@ public class ChangesMojo
      */
     private String url;
 
+ 
+    /**
+     * @parameter expression="${changes.addActionDate}" default-value="false"
+     * @since 2.0-beta-2  
+     */        
+    private boolean addActionDate;    
+    
     public boolean canGenerateReport()
     {
         return xmlPath.isFile();
@@ -117,11 +124,14 @@ public class ChangesMojo
         throws MavenReportException
     {
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
+        
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem ); 
         report.setIssueLink( issueLinkTemplate );
         
         report.setUrl( url );
 
+        report.setAddActionDate( addActionDate );
+        
         if ( !report.canGenerateIssueLinks() )
         {
             getLog().warn( "No issue management URL defined in POM. Links to your issues will not work correctly." );
