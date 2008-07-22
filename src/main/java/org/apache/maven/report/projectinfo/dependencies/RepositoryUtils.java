@@ -334,50 +334,73 @@ public class RepositoryUtils
         // Try to get the last artifact repo name depending the snapshot version
         if ( ( artifact.isSnapshot() && repo.getSnapshots().isEnabled() ) )
         {
-            for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
+            if ( artifact.getBaseVersion().equals( artifact.getVersion() ))
             {
-                ArtifactMetadata m = (ArtifactMetadata) it.next();
-                if ( m instanceof SnapshotArtifactRepositoryMetadata )
+                // Try to resolve it if not already done
+                if ( artifact.getMetadataList() == null || artifact.getMetadataList().isEmpty() )
                 {
-                    SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;
-
-                    // Removed not found log
-                    int oldThreshold = loggerManager.getThreshold();
-                    loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), Logger.LEVEL_DISABLED );
                     try
                     {
-                        repositoryMetadataManager.resolveAlways( snapshotMetadata, localRepository, repo );
+                        resolve( artifact );
                     }
-                    catch ( RepositoryMetadataResolutionException e )
+                    catch ( ArtifactResolutionException e )
                     {
-                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
-                        if ( log.isDebugEnabled() )
-                        {
-                            log.error( "Unable to connect to: " + repo.getUrl(), e );
-                        }
-                        else
-                        {
-                            log.error( "Unable to connect to: " + repo.getUrl() );
-                        }
-                        return artifact.getFile().getName();
+                        log.error( "Artifact: " + artifact.getId() + " could not be resolved." );
                     }
-                    finally
+                    catch ( ArtifactNotFoundException e )
                     {
-                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
+                        log.error( "Artifact: " + artifact.getId() + " was not found." );
                     }
+                }
 
-                    Metadata metadata = snapshotMetadata.getMetadata();
-                    if ( metadata.getVersioning() == null || metadata.getVersioning().getSnapshot() == null
-                        || metadata.getVersioning().getSnapshot().isLocalCopy()
-                        || metadata.getVersioning().getSnapshot().getTimestamp() == null )
-                    {
-                        continue;
-                    }
+                for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
+                {
+                    ArtifactMetadata m = (ArtifactMetadata) it.next();
 
-                    copyArtifact.setVersion( StringUtils
-                        .replace( artifact.getVersion(), Artifact.SNAPSHOT_VERSION, metadata.getVersioning()
-                            .getSnapshot().getTimestamp() )
-                        + "-" + metadata.getVersioning().getSnapshot().getBuildNumber() );
+                    if ( m instanceof SnapshotArtifactRepositoryMetadata )
+                    {
+                        SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;
+
+                        // Removed not found log
+                        int oldThreshold = loggerManager.getThreshold();
+                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), Logger.LEVEL_DISABLED );
+                        try
+                        {
+                            repositoryMetadataManager.resolveAlways( snapshotMetadata, localRepository, repo );
+                        }
+                        catch ( RepositoryMetadataResolutionException e )
+                        {
+                            loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
+                            if ( log.isDebugEnabled() )
+                            {
+                                log.error( "Unable to connect to: " + repo.getUrl(), e );
+                            }
+                            else
+                            {
+                                log.error( "Unable to connect to: " + repo.getUrl() );
+                            }
+                            return repo.getUrl() + "/" + repo.pathOf( copyArtifact );
+                        }
+                        finally
+                        {
+                            loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
+                        }
+
+                        Metadata metadata = snapshotMetadata.getMetadata();
+                        if ( metadata.getVersioning() == null || metadata.getVersioning().getSnapshot() == null
+                            || metadata.getVersioning().getSnapshot().isLocalCopy()
+                            || metadata.getVersioning().getSnapshot().getTimestamp() == null )
+                        {
+                            continue;
+                        }
+
+                        // create the version according SnapshotTransformation
+                        String version =
+                            StringUtils.replace( copyArtifact.getVersion(), Artifact.SNAPSHOT_VERSION,
+                                                 metadata.getVersioning().getSnapshot().getTimestamp() )
+                                + "-" + metadata.getVersioning().getSnapshot().getBuildNumber();
+                        copyArtifact.setVersion( version );
+                    }
                 }
             }
         }

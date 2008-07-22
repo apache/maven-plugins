@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
@@ -127,6 +128,14 @@ public class DependenciesReport
      */
     private RepositoryMetadataManager repositoryMetadataManager;
 
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     * @since 2.1
+     */
+    private ArtifactFactory artifactFactory;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -223,9 +232,10 @@ public class DependenciesReport
         DependenciesReportConfiguration config = new DependenciesReportConfiguration( dependencyDetailsEnabled,
                                                                                       dependencyLocationsEnabled );
 
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
-                                                           dependencyTreeNode, config, repoUtils, mavenProjectBuilder,
-                                                           remoteRepositories, localRepository );
+        DependenciesRenderer r =
+            new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
+                                      dependencyTreeNode, config, repoUtils, artifactFactory,
+                                      mavenProjectBuilder, remoteRepositories, localRepository );
         r.render();
     }
 
