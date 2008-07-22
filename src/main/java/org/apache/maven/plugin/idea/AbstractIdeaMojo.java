@@ -341,7 +341,7 @@ public abstract class AbstractIdeaMojo
      * @param absolutePath The path to convert
      * @return The path that came in with its drive letter converted to upper case
      */
-    private String convertDriveLetter( String absolutePath )
+    String convertDriveLetter( String absolutePath )
     {
         if ( absolutePath != null && absolutePath.length() >= 3 && !absolutePath.startsWith( "/" ) )
         {
