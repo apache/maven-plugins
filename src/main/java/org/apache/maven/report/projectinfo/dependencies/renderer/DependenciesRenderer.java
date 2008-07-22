@@ -41,6 +41,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -124,6 +125,8 @@ public class DependenciesRenderer
         }
     };
 
+    private final ArtifactFactory artifactFactory;
+
     private final MavenProjectBuilder mavenProjectBuilder;
 
     private final List remoteRepositories;
@@ -162,13 +165,15 @@ public class DependenciesRenderer
      * @param dependencyTreeNode
      * @param config
      * @param repoUtils
+     * @param artifactFactory
      * @param mavenProjectBuilder
      * @param remoteRepositories
      * @param localRepository
      */
-    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings, Dependencies dependencies,
-                                 DependencyNode dependencyTreeNode, DependenciesReportConfiguration config,
-                                 RepositoryUtils repoUtils, MavenProjectBuilder mavenProjectBuilder,
+    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings,
+                                 Dependencies dependencies, DependencyNode dependencyTreeNode,
+                                 DependenciesReportConfiguration config, RepositoryUtils repoUtils,
+                                 ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
                                  List remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink );
@@ -181,6 +186,7 @@ public class DependenciesRenderer
         this.dependencyTreeNode = dependencyTreeNode;
         this.repoUtils = repoUtils;
         this.configuration = config;
+        this.artifactFactory = artifactFactory;
         this.mavenProjectBuilder = mavenProjectBuilder;
         this.remoteRepositories = remoteRepositories;
         this.localRepository = localRepository;
@@ -906,7 +912,7 @@ public class DependenciesRenderer
         String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
             : getReportString( "report.dependencies.column.isNotOptional" );
 
-        String url = ProjectInfoReportUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String url = ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories, localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         String content[];
