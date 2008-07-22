@@ -68,8 +68,7 @@ public class ChangesMojo
      * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
      * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
      * <p>
-     * <strong>Note:</strong>The deprecated issueLinkTemplate will used with system called default
-     * <code>link_template</code>.
+     * <strong>Note:</strong>The deprecated issueLinkTemplate will used with system called default.
      * </p>
      *
      * @parameter
