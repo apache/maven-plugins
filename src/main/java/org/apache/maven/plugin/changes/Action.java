@@ -40,6 +40,8 @@ public class Action
 
     private String system;
     
+    private String date;
+    
     public Action()
     {
     }
@@ -112,5 +114,15 @@ public class Action
     public void setSystem( String system )
     {
         this.system = system;
+    }
+
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setDate( String date )
+    {
+        this.date = date;
     }
 }
