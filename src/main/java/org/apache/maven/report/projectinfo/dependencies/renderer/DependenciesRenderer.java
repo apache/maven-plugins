@@ -642,224 +642,13 @@ public class DependenciesRenderer
         List repoUrlBlackListed = new ArrayList();
         blacklistRepositoryMap( repoMap, repoUrlBlackListed );
 
-        // i18n
-        String repoid = getReportString( "report.dependencies.repo.locations.column.repoid" );
-        String url = getReportString( "report.dependencies.repo.locations.column.url" );
-        String release = getReportString( "report.dependencies.repo.locations.column.release" );
-        String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
-        String blacklisted = getReportString( "report.dependencies.repo.locations.column.blacklisted" );
-        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
-        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
-        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
-        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
-        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
-        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
-        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
-
         // Render Repository List
 
-        startTable();
+        printRepositories( repoMap, repoUrlBlackListed );
 
-        // Table header
+        // Render Artifacts locations
 
-        String[] tableHeader;
-        int[] justificationRepo;
-        if ( repoUrlBlackListed.isEmpty() )
-        {
-            tableHeader = new String[] { repoid, url, release, snapshot };
-            justificationRepo = new int[] {
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER };
-        }
-        else
-        {
-            tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
-            justificationRepo = new int[] {
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER };
-        }
-
-        sink.tableRows( justificationRepo, true );
-
-        tableHeader( tableHeader );
-
-        // Table rows
-
-        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
-        {
-            String key = (String) it.next();
-            ArtifactRepository repo = (ArtifactRepository) repoMap.get( key );
-
-            sink.tableRow();
-            tableCell( repo.getId() );
-
-            sink.tableCell();
-            if ( repo.isBlacklisted() )
-            {
-                sink.text( repo.getUrl() );
-            }
-            else
-            {
-                sink.link( repo.getUrl() );
-                sink.text( repo.getUrl() );
-                sink.link_();
-            }
-            sink.tableCell_();
-
-            ArtifactRepositoryPolicy releasePolicy = repo.getReleases();
-            tableCell( releasePolicy.isEnabled() ? releaseEnabled : releaseDisabled );
-
-            ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
-            tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
-
-            if ( !repoUrlBlackListed.isEmpty() )
-            {
-                tableCell( repo.isBlacklisted() ? blacklistedEnabled : blacklistedDisabled );
-            }
-            sink.tableRow_();
-        }
-
-        sink.tableRows_();
-
-        endTable();
-
-        // Render Artifact Breakdown.
-
-        sink.paragraph();
-        sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
-        sink.paragraph_();
-
-        List repoIdList = new ArrayList( repoMap.keySet() );
-
-        tableHeader = new String[repoIdList.size() + 1];
-        justificationRepo = new int[repoIdList.size() + 1];
-
-        tableHeader[0] = artifact;
-        justificationRepo[0] = Parser.JUSTIFY_LEFT;
-
-        int idnum = 1;
-        for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
-        {
-            String id = (String) it.next();
-            tableHeader[idnum] = id;
-            justificationRepo[idnum] = Parser.JUSTIFY_CENTER;
-            idnum++;
-        }
-
-        Map totalByRepo = new HashMap();
-        TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
-
-        startTable();
-
-        sink.tableRows( justificationRepo, true );
-
-        tableHeader( tableHeader );
-
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
-        {
-            Artifact dependency = (Artifact) it.next();
-
-            totaldeps.incrementTotal( dependency.getScope() );
-
-            sink.tableRow();
-
-            if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
-            {
-
-                tableCell( dependency.getId() );
-
-                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
-                {
-                    String repokey = (String) itrepo.next();
-                    ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
-
-                    String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
-
-                    Integer old = (Integer)totalByRepo.get( repokey );
-                    if ( old == null )
-                    {
-                        totalByRepo.put( repokey, new Integer( 0 ) );
-                        old = new Integer( 0 );
-                    }
-
-                    boolean dependencyExists = false;
-                    // check snapshots in snapshots repository only and releases in release repositories...
-                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
-                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
-                    {
-                        dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
-                    }
-
-                    if ( dependencyExists )
-                    {
-                        sink.tableCell();
-                        if ( StringUtils.isNotEmpty( depUrl ) )
-                        {
-                            sink.link( depUrl );
-                        }
-                        else
-                        {
-                            sink.text( depUrl );
-                        }
-
-                        sink.figure();
-                        sink.figureCaption();
-                        sink.text( "Found at " + repo.getUrl() );
-                        sink.figureCaption_();
-                        sink.figureGraphics( "images/icon_success_sml.gif" );
-                        sink.figure_();
-
-                        sink.link_();
-                        sink.tableCell_();
-
-                        totalByRepo.put( repokey, new Integer( old.intValue() + 1 ) );
-                    }
-                    else
-                    {
-                        tableCell( "-" );
-                    }
-                }
-            }
-            else
-            {
-                tableCell( dependency.getId() );
-
-                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
-                {
-                    itrepo.next();
-
-                    tableCell( "-" );
-                }
-            }
-
-            sink.tableRow_();
-        }
-
-        // Total row
-
-        //reused key
-        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
-        tableHeader( tableHeader );
-        String[] totalRow = new String[repoIdList.size() + 1];
-        totalRow[0] = totaldeps.toString();
-        idnum = 1;
-        for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
-        {
-            String repokey = (String) itrepo.next();
-
-            totalRow[idnum++] = totalByRepo.get( repokey ).toString();
-        }
-
-        tableRow( totalRow );
-
-        sink.tableRows_();
-
-        endTable();
+        printArtifactsLocations( repoMap, alldeps );
 
         endSection();
     }
@@ -1187,6 +976,229 @@ public class DependenciesRenderer
 
             sink.paragraph_();
         }
+    }
+
+    private void printRepositories( Map repoMap, List repoUrlBlackListed )
+    {
+        // i18n
+        String repoid = getReportString( "report.dependencies.repo.locations.column.repoid" );
+        String url = getReportString( "report.dependencies.repo.locations.column.url" );
+        String release = getReportString( "report.dependencies.repo.locations.column.release" );
+        String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
+        String blacklisted = getReportString( "report.dependencies.repo.locations.column.blacklisted" );
+        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
+        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
+        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
+        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
+        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
+        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
+
+        startTable();
+
+        // Table header
+
+        String[] tableHeader;
+        int[] justificationRepo;
+        if ( repoUrlBlackListed.isEmpty() )
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot };
+            justificationRepo = new int[] {
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER };
+        }
+        else
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
+            justificationRepo = new int[] {
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_LEFT,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER,
+                Parser.JUSTIFY_CENTER };
+        }
+
+        sink.tableRows( justificationRepo, true );
+
+        tableHeader( tableHeader );
+
+        // Table rows
+
+        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repoMap.get( key );
+
+            sink.tableRow();
+            tableCell( repo.getId() );
+
+            sink.tableCell();
+            if ( repo.isBlacklisted() )
+            {
+                sink.text( repo.getUrl() );
+            }
+            else
+            {
+                sink.link( repo.getUrl() );
+                sink.text( repo.getUrl() );
+                sink.link_();
+            }
+            sink.tableCell_();
+
+            ArtifactRepositoryPolicy releasePolicy = repo.getReleases();
+            tableCell( releasePolicy.isEnabled() ? releaseEnabled : releaseDisabled );
+
+            ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
+            tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
+
+            if ( !repoUrlBlackListed.isEmpty() )
+            {
+                tableCell( repo.isBlacklisted() ? blacklistedEnabled : blacklistedDisabled );
+            }
+            sink.tableRow_();
+        }
+
+        sink.tableRows_();
+
+        endTable();
+    }
+
+    private void printArtifactsLocations( Map repoMap, List alldeps )
+    {
+        // i18n
+        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
+
+        sink.paragraph();
+        sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
+        sink.paragraph_();
+
+        List repoIdList = new ArrayList( repoMap.keySet() );
+
+        String[] tableHeader = new String[repoIdList.size() + 1];
+        int[] justificationRepo = new int[repoIdList.size() + 1];
+
+        tableHeader[0] = artifact;
+        justificationRepo[0] = Parser.JUSTIFY_LEFT;
+
+        int idnum = 1;
+        for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
+        {
+            String id = (String) it.next();
+            tableHeader[idnum] = id;
+            justificationRepo[idnum] = Parser.JUSTIFY_CENTER;
+            idnum++;
+        }
+
+        Map totalByRepo = new HashMap();
+        TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+
+        startTable();
+
+        sink.tableRows( justificationRepo, true );
+
+        tableHeader( tableHeader );
+
+        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        {
+            Artifact dependency = (Artifact) it.next();
+
+            totaldeps.incrementTotal( dependency.getScope() );
+
+            sink.tableRow();
+
+            if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
+            {
+
+                tableCell( dependency.getId() );
+
+                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                {
+                    String repokey = (String) itrepo.next();
+                    ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+
+                    String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
+
+                    Integer old = (Integer)totalByRepo.get( repokey );
+                    if ( old == null )
+                    {
+                        totalByRepo.put( repokey, new Integer( 0 ) );
+                        old = new Integer( 0 );
+                    }
+
+                    boolean dependencyExists = false;
+                    // check snapshots in snapshots repository only and releases in release repositories...
+                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
+                    {
+                        dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
+                    }
+
+                    if ( dependencyExists )
+                    {
+                        sink.tableCell();
+                        if ( StringUtils.isNotEmpty( depUrl ) )
+                        {
+                            sink.link( depUrl );
+                        }
+                        else
+                        {
+                            sink.text( depUrl );
+                        }
+
+                        sink.figure();
+                        sink.figureCaption();
+                        sink.text( "Found at " + repo.getUrl() );
+                        sink.figureCaption_();
+                        sink.figureGraphics( "images/icon_success_sml.gif" );
+                        sink.figure_();
+
+                        sink.link_();
+                        sink.tableCell_();
+
+                        totalByRepo.put( repokey, new Integer( old.intValue() + 1 ) );
+                    }
+                    else
+                    {
+                        tableCell( "-" );
+                    }
+                }
+            }
+            else
+            {
+                tableCell( dependency.getId() );
+
+                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                {
+                    itrepo.next();
+
+                    tableCell( "-" );
+                }
+            }
+
+            sink.tableRow_();
+        }
+
+        // Total row
+
+        //reused key
+        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
+        tableHeader( tableHeader );
+        String[] totalRow = new String[repoIdList.size() + 1];
+        totalRow[0] = totaldeps.toString();
+        idnum = 1;
+        for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+        {
+            String repokey = (String) itrepo.next();
+
+            totalRow[idnum++] = totalByRepo.get( repokey ).toString();
+        }
+
+        tableRow( totalRow );
+
+        sink.tableRows_();
+
+        endTable();
     }
 
     private String getReportString( String key )
