@@ -42,6 +42,7 @@ under the License.
           <debug>true</debug>
           <encoding>wrong</encoding>
           <docencoding>wrong</docencoding>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

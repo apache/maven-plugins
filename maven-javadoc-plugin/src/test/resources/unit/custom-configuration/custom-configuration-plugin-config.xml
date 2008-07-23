@@ -100,6 +100,7 @@ under the License.
           <isOffline>true</isOffline>
           <excludePackageNames>*.exclude2:custom.configuration.exclude1.*</excludePackageNames>
           <debug>true</debug>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

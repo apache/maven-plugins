@@ -62,6 +62,7 @@ under the License.
           <docfilessubdirs>true</docfilessubdirs>
           <excludedocfilessubdir>excluded-dir1:excluded-dir2</excludedocfilessubdir>
           <debug>true</debug>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>
