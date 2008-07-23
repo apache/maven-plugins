@@ -19,15 +19,13 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugin.changes.AbstractChangesReport;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.settings.Settings;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.maven.plugin.changes.AbstractChangesReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Settings;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.
