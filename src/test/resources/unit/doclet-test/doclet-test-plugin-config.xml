@@ -68,6 +68,7 @@ under the License.
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Doclet Test 1.0-SNAPSHOT API</windowtitle>
           <debug>true</debug>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

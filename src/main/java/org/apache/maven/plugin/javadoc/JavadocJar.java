@@ -189,16 +189,41 @@ public class JavadocJar
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "ArchiverException: Error while creating archive:" + e.getMessage(), e );
+            if ( failOnError )
+            {
+                throw new MojoExecutionException( "ArchiverException: Error while creating archive:"
+                    + e.getMessage(), e );
+            }
+
+            getLog().error( "ArchiverException: Error while creating archive:" + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "IOException: Error while creating archive:" + e.getMessage(), e );
+            if ( failOnError )
+            {
+                throw new MojoExecutionException( "IOException: Error while creating archive:" + e.getMessage(), e );
+            }
+
+            getLog().error( "IOException: Error while creating archive:" + e.getMessage(), e );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException( "MavenReportException: Error while creating archive:"
-                + e.getMessage(), e );
+            if ( failOnError )
+            {
+                throw new MojoExecutionException( "MavenReportException: Error while creating archive:"
+                                                  + e.getMessage(), e );
+            }
+
+            getLog().error( "MavenReportException: Error while creating archive:" + e.getMessage(), e );
+        }
+        catch ( RuntimeException e )
+        {
+            if ( failOnError )
+            {
+                throw e;
+            }
+
+            getLog().error( e.getMessage(), e );
         }
     }
 
