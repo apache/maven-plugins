@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -3040,12 +3040,23 @@ public abstract class AbstractJavadocMojo
 
                 try
                 {
-                    // XXX links can be relative paths or files - they're not necessarily URLs.
-                    URL linkUrl = new URL( link + "/package-list" );
-                    JavadocUtil.fetchURL( settings, linkUrl );
+                    URI linkUri;
+                    if ( link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "http" )
+                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "https" )
+                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "ftp" )
+                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "file" ) )
+                    {
+                        linkUri = new URI( link + "/package-list" );
+                    }
+                    else
+                    {
+                        // links can be relative paths or files
+                        linkUri = new File( getOutputDirectory(), link + "/package-list" ).toURI();
+                    }
+                    JavadocUtil.fetchURL( settings, linkUri.toURL() );
                     addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
                 }
-                catch ( MalformedURLException e )
+                catch ( URISyntaxException e )
                 {
                     if ( getLog().isErrorEnabled() )
                     {
