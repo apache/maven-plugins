@@ -26,7 +26,8 @@ package org.apache.maven.plugin.jira;
  * @author jruiz@exist.com
  * @version $Id$
  */
-public final class JiraDownloader extends AbstractJiraDownloader
+public final class JiraDownloader
+    extends AbstractJiraDownloader
 {
     public JiraDownloader()
     {
