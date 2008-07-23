@@ -43,6 +43,7 @@ under the License.
           <quiet>true</quiet>
           <debug>true</debug>
           <docfilessubdirs>true</docfilessubdirs>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>

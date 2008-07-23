@@ -78,6 +78,7 @@ Copyright 2005,
           </bottom>
           <quiet>true</quiet>
           <debug>true</debug>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
     </plugins>
