@@ -224,7 +224,7 @@ public abstract class AbstractJavadocMojo
     protected MavenProject project;
 
     /**
-     * Specify if the javadoc should operate in offline mode.
+     * Specify if the Javadoc should operate in offline mode.
      *
      * @parameter default-value="${settings.offline}"
      * @required
@@ -233,7 +233,7 @@ public abstract class AbstractJavadocMojo
     private boolean isOffline;
 
     /**
-     * Specifies the Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
+     * Specifies the Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
      *
      * @since 2.1
      * @parameter expression="${basedir}/src/main/javadoc"
@@ -264,8 +264,8 @@ public abstract class AbstractJavadocMojo
     private String additionalJOption;
 
     /**
-     * A list of artifacts containing resources which sould be copied into the
-     * javadoc output directory (like stylesheets, icons, etc.).
+     * A list of artifacts containing resources which should be copied into the
+     * Javadoc output directory (like stylesheets, icons, etc.).
      * <br/>
      * Example:
      * <pre>
@@ -346,7 +346,7 @@ public abstract class AbstractJavadocMojo
     private float fJavadocVersion = 0.0f;
 
     /**
-     * Specifies whether the javadoc generation should be skipped.
+     * Specifies whether the Javadoc generation should be skipped.
      *
      * @since 2.5
      * @parameter expression="${maven.javadoc.skip}" default-value="false"
