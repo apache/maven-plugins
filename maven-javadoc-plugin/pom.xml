@@ -272,13 +272,11 @@
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
-              <installProjectArtifacts>true</installProjectArtifacts>
               <settingsFile>src/it/settings.xml</settingsFile>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>install</goal>
                   <goal>run</goal>
