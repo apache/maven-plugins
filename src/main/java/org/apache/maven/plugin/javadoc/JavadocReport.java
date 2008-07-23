@@ -206,8 +206,23 @@ public class JavadocReport
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation:" + e.getMessage(), e );
+            if ( failOnError )
+            {
+                throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                    + " report generation:" + e.getMessage(), e );
+            }
+
+            getLog().error( "An error has occurred in " + getName( Locale.ENGLISH )
+                    + " report generation:" + e.getMessage(), e );
+        }
+        catch ( RuntimeException e )
+        {
+            if ( failOnError )
+            {
+                throw e;
+            }
+
+            getLog().error( e.getMessage(), e );
         }
     }
 

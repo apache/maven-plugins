@@ -346,13 +346,20 @@ public abstract class AbstractJavadocMojo
     private float fJavadocVersion = 0.0f;
 
     /**
-     * Specifies whether the javadoc generation should be skipped
-     * <br/>
+     * Specifies whether the javadoc generation should be skipped.
      *
      * @since 2.5
      * @parameter expression="${maven.javadoc.skip}" default-value="false"
      */
     protected boolean skip;
+
+    /**
+     * Specifies whether the build will continue even if there are errors.
+     *
+     * @parameter expression="${maven.javadoc.failOnError}" default-value="true"
+     * @since 2.5
+     */
+    protected boolean failOnError;
 
     // ----------------------------------------------------------------------
     // Javadoc Options
