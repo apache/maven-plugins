@@ -58,17 +58,20 @@ public class ChangesMojo
      *
      * @parameter expression="${changes.issueLinkTemplate}" default-value="%URL%/ViewIssue.jspa?key=%ISSUE%"
      * @since 2.0-beta-2
-     * @deprecated now use issueLinkTemplatePerSystem : this one will be with system default
+     * @deprecated As of 2.1 use issueLinkTemplatePerSystem : this one will be with system default
      */
     private String issueLinkTemplate;
     
     /**
-     * Template strings per System that is used to discover the URL to use to display an issue report.
+     * Template strings per system that is used to discover the URL to use to display an issue report. Each key in this
+     * map denotes the (case-sensitive) identifier of the issue tracking system and its value gives the URL template.
+     * <p>
      * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
      * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
      * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
+     * </p>
      * <p>
-     * <strong>Note:</strong>The deprecated issueLinkTemplate will used with system called default.
+     * <strong>Note:</strong> The deprecated issueLinkTemplate will be used for a system called "default".
      * </p>
      *
      * @parameter
@@ -82,10 +85,12 @@ public class ChangesMojo
      */
     private String url;
 
- 
     /**
+     * A flag whether the report should also include the dates of individual actions. If set to <code>false</code>, only
+     * the dates of releases will be written to the report.
+     * 
      * @parameter expression="${changes.addActionDate}" default-value="false"
-     * @since 2.0-beta-2  
+     * @since 2.1
      */        
     private boolean addActionDate;    
     
