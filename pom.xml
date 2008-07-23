@@ -121,13 +121,11 @@ under the License.
                 <goal>clean</goal>
                 <goal>package</goal>
               </goals>
-              <installProjectArtifacts>true</installProjectArtifacts>
               <settingsFile>src/it/settings.xml</settingsFile>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>install</goal>
                   <goal>run</goal>
