@@ -119,11 +119,10 @@
     </dependency>
 
     <!-- test -->
-    <!-- TODO Change it with the new groupId -->
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
