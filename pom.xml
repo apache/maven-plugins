@@ -89,6 +89,73 @@ under the License.
           <artifactId>clirr-maven-plugin</artifactId>
           <version>2.2.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <taglets>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoAggregatorTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoComponentFieldTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoConfiguratorTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoExecuteTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoExecutionStrategyTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoGoalTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoInheritByDefaultTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoInstantiationStrategyTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoParameterFieldTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoPhaseTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoReadOnlyFieldTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiredFieldTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiresDependencyResolutionTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiresDirectInvocationTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiresOnLineTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiresProjectTypeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.apache.maven.tools.plugin.javadoc.MojoRequiresReportsTypeTaglet</tagletClass>
+              </taglet>
+            </taglets>
+
+            <tagletArtifact>
+              <groupId>org.apache.maven.plugin-tools</groupId>
+              <artifactId>maven-plugin-tools-javadoc</artifactId>
+              <version>2.4.2</version>
+            </tagletArtifact>
+
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
