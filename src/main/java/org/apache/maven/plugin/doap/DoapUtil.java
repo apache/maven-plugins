@@ -319,6 +319,6 @@ public class DoapUtil
      */
     private static String getLowerCaseString( I18N i18n, String key )
     {
-        return i18n.getString( "project-info-report", Locale.ENGLISH, key ).toLowerCase( Locale.ENGLISH );
+        return i18n.getString( "doap-person", Locale.ENGLISH, key ).toLowerCase( Locale.ENGLISH );
     }
 }
