@@ -5,7 +5,7 @@
  <jruiz@exist.com>
  Pete Marvin King
  ------
- 28 July 2006
+ 2008-07-24
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -35,4 +35,4 @@ Run Individual Reports
  complete list of goals.
 
  <<Note:>> The reports generated using this method does not contain any
- navigational links.
+ navigational links. Also, the locale used is the JVM locale.
