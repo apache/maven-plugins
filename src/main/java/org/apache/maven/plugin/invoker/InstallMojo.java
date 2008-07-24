@@ -20,6 +20,7 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -121,7 +122,10 @@ public class InstallMojo
     }
 
     /**
-     * Creates the local repository for the integration tests.
+     * Creates the local repository for the integration tests. If the user specified a custom repository location, the
+     * custom repository will have the same identifier, layout and policies as the real local repository. That means
+     * apart from the location, the custom repository will be indistinguishable from the real repository such that its
+     * usage is transparent to the integration tests.
      * 
      * @return The local repository for the integration tests, never <code>null</code>.
      * @throws MojoExecutionException If the repository could not be created.
@@ -135,13 +139,14 @@ public class InstallMojo
         {
             try
             {
-                if ( !localRepositoryPath.exists() )
+                if ( !localRepositoryPath.exists() && !localRepositoryPath.mkdirs() )
                 {
-                    localRepositoryPath.mkdirs();
+                    throw new IOException( "Failed to create directory: " + localRepositoryPath );
                 }
 
                 testRepository =
-                    repositoryFactory.createArtifactRepository( "it-repo", localRepositoryPath.toURL().toString(),
+                    repositoryFactory.createArtifactRepository( localRepository.getId(),
+                                                                localRepositoryPath.toURL().toExternalForm(),
                                                                 localRepository.getLayout(),
                                                                 localRepository.getSnapshots(),
                                                                 localRepository.getReleases() );
