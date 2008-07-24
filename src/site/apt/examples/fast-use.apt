@@ -28,7 +28,7 @@ Fast Invoker Plugin Configuration
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
         <configuration>
           ...
           <settingsFile>src/it/settings.xml</settingsFile>
@@ -41,7 +41,8 @@ Fast Invoker Plugin Configuration
 </project>
 -------------------
 
-  The settings must contain the following content:
+  The settings must contain the following content which effectively tells Maven to use the local repository as a remote
+  repository:
   
 -------------------
 <?xml version="1.0"?>
@@ -54,7 +55,7 @@ Fast Invoker Plugin Configuration
       </activation>
       <repositories>
         <repository>
-          <id>local.central</id>
+          <id>local</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
@@ -66,7 +67,7 @@ Fast Invoker Plugin Configuration
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local.central</id>
+          <id>local</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
@@ -80,4 +81,14 @@ Fast Invoker Plugin Configuration
   </profiles>
 </settings>
 -------------------  
-  
+
+  The token <<<@localRepository@>>> will be automatically replaced by the Invoker Plugin with the path to the local
+  repository used for the Maven invocation.
+
+  <<Warning:>> It is important to use the identifier "local" for the repositories. Otherwise, it is possible that Maven
+  downloads artifacts from an external repository instead of using the artifacts that have just been installed into the
+  testing repository. This imposes the risk of running the integration tests with outdated (snapshot) artifacts. The
+  reason for this is the way the repository metadata files are named: <<<maven-metadata-\<id\>.xml>>>. During staging
+  of the test artifacts into the local repository, <<<maven-metadata-local.xml>>> files will be created. If the
+  identifier "foo" would be used for the remote repository in the <<<settings.xml>>>, Maven would look for metadata in
+  <<<maven-metadata-foo.xml>>> and would as such miss the already existing metadata.
