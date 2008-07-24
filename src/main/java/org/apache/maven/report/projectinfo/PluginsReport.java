@@ -148,9 +148,9 @@ public class PluginsReport
          * @param artifactFactory
          * @param localRepository
          */
-        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set plugins, Set reports, MavenProject project,
-                                MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
-                                ArtifactRepository localRepository )
+        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set plugins, Set reports,
+                                MavenProject project, MavenProjectBuilder mavenProjectBuilder,
+                                ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
             super( sink );
 
