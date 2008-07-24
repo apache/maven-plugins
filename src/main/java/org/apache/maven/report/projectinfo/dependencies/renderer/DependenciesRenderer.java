@@ -403,9 +403,9 @@ public class DependenciesRenderer
         String debug = getReportString( "report.dependencies.file.details.column.debug" );
         String sealed = getReportString( "report.dependencies.file.details.column.sealed" );
 
-        int[] justification = new int[]{Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
-            Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
-            Parser.JUSTIFY_CENTER};
+        int[] justification =
+            new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
+                Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER };
 
         startTable();
 
@@ -415,7 +415,7 @@ public class DependenciesRenderer
         TotalCell totaldepsize = new TotalCell( fileLengthDecimalFormat );
         TotalCell totalentries = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalclasses = new TotalCell( DEFAULT_DECIMAL_FORMAT );
-        TotalCell  totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         double highestjdk = 0.0;
         TotalCell totaldebug = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalsealed = new TotalCell( DEFAULT_DECIMAL_FORMAT );
@@ -423,7 +423,6 @@ public class DependenciesRenderer
         boolean hasSealed = hasSealed( alldeps );
 
         // Table header
-
         String[] tableHeader;
         if ( hasSealed )
         {
@@ -436,7 +435,6 @@ public class DependenciesRenderer
         tableHeader( tableHeader );
 
         // Table rows
-
         for ( Iterator it = alldeps.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -488,15 +486,12 @@ public class DependenciesRenderer
                         totalsealed.incrementTotal( artifact.getScope() );
                     }
 
-                    tableRow( hasSealed, new String[] {
-                        artifactFile.getName(),
+                    tableRow( hasSealed, new String[] { artifactFile.getName(),
                         fileLengthDecimalFormat.format( artifactFile.length() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
                         DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
-                        jarDetails.getJdkRevision(),
-                        debugstr,
-                        sealedstr } );
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(),
+                        debugstr, sealedstr } );
                 }
                 catch ( IOException e )
                 {
@@ -511,26 +506,20 @@ public class DependenciesRenderer
         }
 
         // Total raws
-
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
 
         justification[0] = Parser.JUSTIFY_RIGHT;
         justification[6] = Parser.JUSTIFY_RIGHT;
 
-        for( int i = -1; i < TotalCell.SCOPES_COUNT; i++ )
+        for ( int i = -1; i < TotalCell.SCOPES_COUNT; i++ )
         {
             if ( totaldeps.getTotal( i ) > 0 )
             {
-                tableRow( hasSealed, new String[] {
-                    totaldeps.getTotalString( i ),
-                    totaldepsize.getTotalString( i ),
-                    totalentries.getTotalString( i ),
-                    totalclasses.getTotalString( i ),
-                    totalpackages.getTotalString( i ),
-                    ( i < 0 ) ? String.valueOf( highestjdk ) : "",
-                    totaldebug.getTotalString( i ),
-                    totalsealed.getTotalString( i )} );
+                tableRow( hasSealed, new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
+                    totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
+                    totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                    totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
 
@@ -556,8 +545,8 @@ public class DependenciesRenderer
 
     private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e, boolean hasSealed )
     {
-        tableRow( hasSealed,
-                  new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
+        tableRow( hasSealed, new String[] { artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "",
+            "", "", "" } );
     }
 
     private void populateRepositoryMap( Map repos, List rowRepos )
@@ -724,33 +713,27 @@ public class DependenciesRenderer
      */
     private void renderArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
     {
-        String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
-            : getReportString( "report.dependencies.column.isNotOptional" );
+        String isOptional =
+            artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
+                            : getReportString( "report.dependencies.column.isNotOptional" );
 
-        String url = ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String url =
+            ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
+                                                   localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         String content[];
         if ( withClassifier )
         {
-            content = new String[] {
-                artifact.getGroupId(),
-                artifactIdCell,
-                artifact.getVersion(),
-                artifact.getClassifier(),
-                artifact.getType(),
-                isOptional
-            };
+            content =
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getClassifier(),
+                    artifact.getType(), isOptional };
         }
         else
         {
-            content = new String[] {
-                artifact.getGroupId(),
-                artifactIdCell,
-                artifact.getVersion(),
-                artifact.getType(),
-                isOptional
-            };
+            content =
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getType(),
+                    isOptional };
         }
 
         tableRow( withOptional, content );
@@ -1003,21 +986,15 @@ public class DependenciesRenderer
         if ( repoUrlBlackListed.isEmpty() )
         {
             tableHeader = new String[] { repoid, url, release, snapshot };
-            justificationRepo = new int[] {
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER };
+            justificationRepo =
+                new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_LEFT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER };
         }
         else
         {
             tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
-            justificationRepo = new int[] {
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_LEFT,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER,
-                Parser.JUSTIFY_CENTER };
+            justificationRepo =
+                new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_LEFT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
+                    Parser.JUSTIFY_CENTER };
         }
 
         sink.tableRows( justificationRepo, true );
@@ -1130,7 +1107,7 @@ public class DependenciesRenderer
 
                     String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
 
-                    Integer old = (Integer)totalByRepo.get( repokey );
+                    Integer old = (Integer) totalByRepo.get( repokey );
                     if ( old == null )
                     {
                         totalByRepo.put( repokey, new Integer( 0 ) );
@@ -1192,7 +1169,7 @@ public class DependenciesRenderer
 
         // Total row
 
-        //reused key
+        // reused key
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
         String[] totalRow = new String[repoIdList.size() + 1];
@@ -1227,7 +1204,7 @@ public class DependenciesRenderer
         {
             Artifact artifact = (Artifact) iterator.next();
 
-            if ( StringUtils.isNotEmpty(  artifact.getClassifier() ) )
+            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
             {
                 return true;
             }
@@ -1333,7 +1310,8 @@ public class DependenciesRenderer
      * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)">
      * http://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
-    static class FileDecimalFormat extends DecimalFormat
+    static class FileDecimalFormat
+        extends DecimalFormat
     {
         private static final long serialVersionUID = 4062503546523610081L;
 
@@ -1361,20 +1339,25 @@ public class DependenciesRenderer
             if ( fs > 1024 * 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
-                result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.gb" ) );
+                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.gb" ) );
                 return result;
             }
 
             if ( fs > 1024 * 1024 )
             {
                 result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
-                result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.mb" ) );
+                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.mb" ) );
                 return result;
             }
 
             result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
-            result.append( " " ).append( i18n.getString( "project-info-report", locale, "report.dependencies.file.details.column.size.kb" ) );
+            result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.kb" ) );
             return result;
+        }
+
+        private String getString( I18N i18n, String key )
+        {
+            return i18n.getString( "project-info-report", locale, key );
         }
     }
 
@@ -1499,11 +1482,11 @@ public class DependenciesRenderer
             sb.append( " (" );
 
             boolean needSeparator = false;
-            for (int i = 0; i < SCOPES_COUNT; i++)
+            for ( int i = 0; i < SCOPES_COUNT; i++ )
             {
                 if ( getTotal( i ) > 0 )
                 {
-                    if (needSeparator)
+                    if ( needSeparator )
                     {
                         sb.append( ", " );
                     }
