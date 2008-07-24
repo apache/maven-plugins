@@ -241,7 +241,7 @@ public class LicenseReport
                         if ( licenseContent != null )
                         {
                             // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                            String licenseContentLC = licenseContent.toLowerCase();
+                            String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
                             int bodyStart = licenseContentLC.indexOf( "<body" );
                             int bodyEnd = licenseContentLC.indexOf( "</body>" );
                             if ( ( licenseContentLC.startsWith( "<!doctype html" )
