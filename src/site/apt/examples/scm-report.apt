@@ -41,15 +41,14 @@ SCM Report
 
 +-----------------+
 <project>
-  [...]
+  ...
   <scm>
     <connection>scm:svn:http://svn.example.org/repo/project/trunk/site</connection>
     <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk/site</developerConnection>
     <url>http://svn.example.org/viewvc/project/trunk/site</url>
   </scm>
-  [...]
+  ...
   <reporting>
-    [...]
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -60,10 +59,10 @@ SCM Report
           <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk</developerConnection>
         </configuration>
       </plugin>
+      ...
     </plugins>
-    [...]
   <reporting>
-  [...]
+  ...
 </project>
 +-----------------+
 
