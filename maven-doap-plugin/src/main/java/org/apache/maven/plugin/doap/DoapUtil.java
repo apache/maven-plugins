@@ -272,39 +272,28 @@ public class DoapUtil
                 {
                     String role = (String) it2.next();
 
-                    if ( role.toLowerCase().indexOf(
-                                                     i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                     "doap.maintainer" ).toLowerCase() ) != -1 )
+                    role = role.toLowerCase( Locale.ENGLISH );
+                    if ( role.indexOf( getLowerCaseString( i18n, "doap.maintainer" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "maintainers" ) ).add( obj );
                     }
-                    else if ( role.toLowerCase().indexOf(
-                                                          i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                          "doap.developer" ).toLowerCase() ) != -1 )
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.developer" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "developers" ) ).add( obj );
                     }
-                    else if ( role.toLowerCase().indexOf(
-                                                          i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                          "doap.documenter" ).toLowerCase() ) != -1 )
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.documenter" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "documenters" ) ).add( obj );
                     }
-                    else if ( role.toLowerCase().indexOf(
-                                                          i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                          "doap.translator" ).toLowerCase() ) != -1 )
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.translator" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "translators" ) ).add( obj );
                     }
-                    else if ( role.toLowerCase().indexOf(
-                                                          i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                          "doap.tester" ).toLowerCase() ) != -1 )
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.tester" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "testers" ) ).add( obj );
                     }
-                    else if ( role.toLowerCase().indexOf(
-                                                          i18n.getString( "doap-person", Locale.ENGLISH,
-                                                                          "doap.helper" ).toLowerCase() ) != -1 )
+                    else if ( role.indexOf( getLowerCaseString( i18n, "doap.helper" ) ) != -1 )
                     {
                         ( (List) returnMap.get( "helpers" ) ).add( obj );
                     }
@@ -321,5 +310,15 @@ public class DoapUtil
         }
 
         return returnMap;
+    }
+
+    /**
+     * @param i18n not null
+     * @param key not null
+     * @return lower case value for the key in the i18n bundle.
+     */
+    private static String getLowerCaseString( I18N i18n, String key )
+    {
+        return i18n.getString( "project-info-report", Locale.ENGLISH, key ).toLowerCase( Locale.ENGLISH );
     }
 }

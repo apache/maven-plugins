@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -65,7 +66,8 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  * Generate a <a href="http://usefulinc.com/ns/doap">Description of a Project (DOAP)</a>
  * file from the main information found in a POM.
  * <br/>
- * <b>Note</b>: The generated file is tailored for use by projects at {{{http://projects.apache.org/doap.html}Apache}}.
+ * <b>Note</b>: The generated file is tailored for use by projects at
+ * <a href="http://projects.apache.org/doap.html">Apache</a>.
  *
  * @author Jason van Zyl
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -406,7 +408,8 @@ public class DoapMojo
         XmlWriterUtil.writeLineBreak( writer );
         XmlWriterUtil.writeCommentText( writer, "A name of something.", 2 );
 
-        if ( asfExtOptions.isIncluded() && !project.getName().toLowerCase().trim().startsWith( "apache" ) )
+        if ( asfExtOptions.isIncluded()
+            && !project.getName().toLowerCase( Locale.ENGLISH ).trim().startsWith( "apache" ) )
         {
             DoapUtil.writeRdfResourceElement( writer, "name", "Apache " + project.getName() );
         }
