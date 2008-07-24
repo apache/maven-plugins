@@ -179,7 +179,7 @@ public class IssueTrackingReport
                 return false;
             }
 
-            return system.toLowerCase().startsWith( im.toLowerCase() );
+            return system.toLowerCase( Locale.ENGLISH ).startsWith( im.toLowerCase( Locale.ENGLISH ) );
         }
     }
 }

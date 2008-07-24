@@ -230,7 +230,7 @@ public class CimReport
                 return false;
             }
 
-            return connection.toLowerCase().startsWith( cim.toLowerCase() );
+            return connection.toLowerCase( Locale.ENGLISH ).startsWith( cim.toLowerCase( Locale.ENGLISH ) );
         }
     }
 }
