@@ -285,7 +285,8 @@ public class DependenciesReport
 
         if ( resourceList != null )
         {
-            LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
+            LineNumberReader reader =
+                new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
 
             String line = reader.readLine();
 
