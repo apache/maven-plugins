@@ -23,6 +23,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Organization;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Locale;
 
@@ -145,7 +146,8 @@ public class ProjectSummaryReport
                 startTable();
                 tableHeader( new String[]{getReportString( "report.summary.field" ),
                     getReportString( "report.summary.value" )} );
-                tableRow( new String[]{getReportString( "report.summary.organization.name" ), organization.getName()} );
+                tableRow( new String[] { getReportString( "report.summary.organization.name" ),
+                    organization.getName() } );
                 tableRowWithLink(
                     new String[]{getReportString( "report.summary.organization.url" ), organization.getUrl()} );
                 endTable();
@@ -179,24 +181,26 @@ public class ProjectSummaryReport
             for ( int ctr = 0; ctr < content.length; ctr++ )
             {
                 String cell = content[ctr];
-                if ( cell == null )
-                {
-                    cell = "";
-                }
 
                 sink.tableCell();
 
-                if ( ctr == content.length - 1 && cell.length() > 0 )
+                if ( StringUtils.isEmpty( cell ) )
                 {
-                    sink.link( cell );
-                    sink.text( cell );
-                    sink.link_();
+                    sink.text( "-" );
                 }
                 else
                 {
-                    sink.text( cell );
+                    if ( ctr == content.length - 1 && cell.length() > 0 )
+                    {
+                        sink.link( cell );
+                        sink.text( cell );
+                        sink.link_();
+                    }
+                    else
+                    {
+                        sink.text( cell );
+                    }
                 }
-
                 sink.tableCell_();
             }
 
