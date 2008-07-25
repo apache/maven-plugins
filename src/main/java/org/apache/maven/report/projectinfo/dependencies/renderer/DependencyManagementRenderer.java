@@ -206,7 +206,9 @@ public class DependencyManagementRenderer
     {
         Artifact artifact = artifactFactory.createParentArtifact( dependency.getGroupId(), dependency.getArtifactId(),
                                                                   dependency.getVersion() );
-        String url = ProjectInfoReportUtils.getArtifactUrl( artifact, mavenProjectBuilder, remoteRepositories, localRepository );
+        String url =
+            ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
+                                                   localRepository );
         String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
 
         if ( hasClassifier )

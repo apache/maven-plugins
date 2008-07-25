@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
@@ -42,6 +43,7 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -126,6 +128,14 @@ public class DependenciesReport
      */
     private RepositoryMetadataManager repositoryMetadataManager;
 
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     * @since 2.1
+     */
+    private ArtifactFactory artifactFactory;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -202,7 +212,7 @@ public class DependenciesReport
 
         try
         {
-            copyResources( outputDirectory );
+            copyResources( new File( getOutputDirectory() ) );
         }
         catch ( IOException e )
         {
@@ -222,9 +232,10 @@ public class DependenciesReport
         DependenciesReportConfiguration config = new DependenciesReportConfiguration( dependencyDetailsEnabled,
                                                                                       dependencyLocationsEnabled );
 
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
-                                                           dependencyTreeNode, config, repoUtils, mavenProjectBuilder,
-                                                           remoteRepositories, localRepository );
+        DependenciesRenderer r =
+            new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
+                                      dependencyTreeNode, config, repoUtils, artifactFactory,
+                                      mavenProjectBuilder, remoteRepositories, localRepository );
         r.render();
     }
 
@@ -274,7 +285,8 @@ public class DependenciesReport
 
         if ( resourceList != null )
         {
-            LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList ) );
+            LineNumberReader reader =
+                new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
 
             String line = reader.readLine();
 
