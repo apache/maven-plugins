@@ -96,13 +96,100 @@ public class LicenseReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        return !offline;
+        if ( !offline )
+        {
+            return true;
+        }
+
+        List licenses = project.getModel().getLicenses();
+        for ( Iterator i = licenses.iterator(); i.hasNext(); )
+        {
+            License license = (License) i.next();
+
+            String url = license.getUrl();
+
+            URL licenseUrl = null;
+            try
+            {
+                licenseUrl = getLicenseURL( project, url );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( e.getMessage() );
+            }
+            catch ( IOException e )
+            {
+                getLog().error( e.getMessage() );
+            }
+
+            if ( licenseUrl != null && licenseUrl.getProtocol().equals( "file" ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** {@inheritDoc} */
     public String getOutputName()
     {
         return "license";
+    }
+
+    /**
+     * @param project not null
+     * @param url not null
+     * @return a valid URL object from the url string
+     * @throws MalformedURLException if any
+     * @throws IOException if any
+     */
+    protected static URL getLicenseURL( MavenProject project, String url )
+        throws MalformedURLException, IOException
+    {
+        URL licenseUrl = null;
+        UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
+        // UrlValidator does not accept file URLs because the file
+        // URLs do not contain a valid authority (no hostname).
+        // As a workaround accept license URLs that start with the
+        // file scheme.
+        if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
+        {
+            try
+            {
+                licenseUrl = new URL( url );
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
+                    + e.getMessage() );
+            }
+        }
+        else
+        {
+            File licenseFile = new File( project.getBasedir(), url );
+            if ( !licenseFile.exists() )
+            {
+                // Workaround to allow absolute path names while
+                // staying compatible with the way it was...
+                licenseFile = new File( url );
+            }
+            if ( !licenseFile.exists() )
+            {
+                throw new IOException( "Maven can't find the file '" + licenseFile + "' on the system." );
+            }
+            try
+            {
+                licenseUrl = licenseFile.toURL();
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
+                    + e.getMessage() );
+            }
+        }
+
+        return licenseUrl;
     }
 
     // ----------------------------------------------------------------------
@@ -186,43 +273,19 @@ public class LicenseReport
                 if ( url != null )
                 {
                     URL licenseUrl = null;
-                    UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
-                    // UrlValidator does not accept file URLs because the file
-                    // URLs do not contain a valid authority (no hostname).
-                    // As a workaround accept license URLs that start with the
-                    // file scheme.
-                    if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
+                    try
                     {
-                        try
-                        {
-                            licenseUrl = new URL( url );
-                        }
-                        catch ( MalformedURLException e )
-                        {
-                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
-                        }
+                        licenseUrl = getLicenseURL( project, url );
                     }
-                    else
+                    catch ( MalformedURLException e )
                     {
-                        File licenseFile = new File( project.getBasedir(), url );
-                        if ( !licenseFile.exists() )
-                        {
-                            // Workaround to allow absolute path names while
-                            // staying compatible with the way it was...
-                            licenseFile = new File( url );
-                        }
-                        if ( !licenseFile.exists() )
-                        {
-                            paragraph( "Maven can't find the file " + licenseFile + " on the system." );
-                        }
-                        try
-                        {
-                            licenseUrl = licenseFile.toURL();
-                        }
-                        catch ( MalformedURLException e )
-                        {
-                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
-                        }
+                        // I18N message
+                        paragraph( e.getMessage() );
+                    }
+                    catch ( IOException e )
+                    {
+                        // I18N message
+                        paragraph( e.getMessage() );
                     }
 
                     if ( licenseUrl != null )
