@@ -21,25 +21,32 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -822,5 +829,117 @@ public class JavadocUtil
         }
 
         return cmdLine;
+    }
+
+    /**
+     * Auto-detect the class names of the implementation of <code>com.sun.tools.doclets.Taglet</code> class from a
+     * given jar file.
+     * <br/>
+     * <b>Note</b>: <code>JAVA_HOME/lib/tools.jar</code> is a requirement to find
+     * <code>com.sun.tools.doclets.Taglet</code> class.
+     *
+     * @param jarFile not null
+     * @return the list of <code>com.sun.tools.doclets.Taglet</code> class names from a given jarFile.
+     * @throws IOException if jarFile is invalid or not found, or if the <code>JAVA_HOME/lib/tools.jar</code>
+     * is not found.
+     * @throws ClassNotFoundException if any
+     * @throws NoClassDefFoundError if any
+     */
+    protected static List getTagletClassNames( File jarFile )
+        throws IOException, ClassNotFoundException, NoClassDefFoundError
+    {
+        File jdkHome = null;
+        if ( SystemUtils.IS_OS_MAC_OSX )
+        {
+            jdkHome = SystemUtils.getJavaHome();
+        }
+        else
+        {
+            jdkHome = SystemUtils.getJavaHome().getParentFile();
+        }
+
+        if ( !jdkHome.exists() || !jdkHome.isDirectory() )
+        {
+            Properties env = CommandLineUtils.getSystemEnvVars();
+            String javaHome = env.getProperty( "JAVA_HOME" );
+
+            if ( StringUtils.isEmpty( javaHome ) )
+            {
+                throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
+            }
+            jdkHome = new File( javaHome );
+            if ( !jdkHome.exists() || !jdkHome.isDirectory() )
+            {
+                throw new IOException( "The environment variable JAVA_HOME=" + javaHome
+                    + " doesn't exist or is not a valid directory." );
+            }
+        }
+
+        // Needed to find com.sun.tools.doclets.Taglet class
+        File tools = new File( jdkHome, "lib/tools.jar" );
+        if ( !tools.exists() || !tools.isFile() )
+        {
+            throw new IOException( "tools.jar '" + tools + "' was not found or is invalid." );
+        }
+
+        List classes = getClassNamesFromJar( jarFile );
+        ClassLoader cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL(), tools.toURI().toURL() }, null );
+
+        List tagletClasses = new ArrayList();
+
+        Class tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
+        for ( Iterator it = classes.iterator(); it.hasNext(); )
+        {
+            String s = (String) it.next();
+
+            Class c = cl.loadClass( s );
+
+            if ( tagletClass.isAssignableFrom( c ) && !Modifier.isAbstract( c.getModifiers() ) )
+            {
+                tagletClasses.add( c.getName() );
+            }
+        }
+
+        return tagletClasses;
+    }
+
+    // ----------------------------------------------------------------------
+    // private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @param jarFile not null
+     * @return all class names from the given jar file.
+     * @throws IOException if any or if the jarFile is null or doesn't exist.
+     */
+    private static List getClassNamesFromJar( File jarFile )
+        throws IOException
+    {
+        if ( jarFile == null || !jarFile.exists() || !jarFile.isFile() )
+        {
+            throw new IOException( "The jar '" + jarFile + "' doesn't exist or is not a file." );
+        }
+
+        List classes = new ArrayList();
+        JarInputStream jarStream = new JarInputStream( new FileInputStream( jarFile ) );
+        JarEntry jarEntry = jarStream.getNextJarEntry();
+        while ( jarEntry != null )
+        {
+            if ( jarEntry == null )
+            {
+                break;
+            }
+
+            if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
+            {
+                String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
+
+                classes.add( name.replaceAll( "/", "\\." ) );
+            }
+
+            jarEntry = jarStream.getNextJarEntry();
+        }
+
+        return classes;
     }
 }

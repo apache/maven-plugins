@@ -1,9 +1,9 @@
  ------
- Configuring Custom Taglet
+ Configuring Custom Taglets
  ------
  Vincent Siveton
  ------
- September 2006
+ 2008-07-26
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,15 +26,17 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Configuring Custom Taglet
+Configuring Custom Taglets
 
- You could configure any custom taglet used in your javadoc via the \<taglet\> or \<taglets\> elements, depending
- the number of taglet used.
+ You could configure any custom taglets in your Javadoc Plugin configuration via the \<taglet/\>, \<taglets/\>
+ or \<tagletArtifacts/\> elements, depending the number of taglets used.
 
  For more information about the taglet technology, please refer to
- {{http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/taglet/overview.html}}
+ {{http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/taglet/overview.html}}.
 
-* One taglet
+* One Taglet
+
+ For one known Taglet, just use the \<taglet/\> element:
 
 +-----+
 <project>
@@ -63,7 +65,9 @@ Configuring Custom Taglet
 </project>
 +-----+
 
-* Several taglets
+* Several Taglets
+
+ For several known Taglets, just use the \<taglets/\> element:
 
 +-----+
 <project>
@@ -77,14 +81,25 @@ Configuring Custom Taglet
           ...
           <taglets>
             <taglet>
-              <tagletClass>package.to.YourTagletClass</tagletClass>
+              <tagletClass>package.to.YourFirstTagletClass</tagletClass>
               <!-- <tagletpath>/path/to/taglet.jar</tagletpath> -->
               <tagletArtifact>
-                <groupId>group-Taglet</groupId>
-                <artifactId>artifact-Taglet</artifactId>
-                <version>version-Taglet</version>
+                <groupId>group-FirstTaglet</groupId>
+                <artifactId>artifact-FirstTaglet</artifactId>
+                <version>version-FirstTaglet</version>
               </tagletArtifact>
             </taglet>
+
+            <taglet>
+              <tagletClass>package.to.YourSecondTagletClass</tagletClass>
+              <!-- <tagletpath>/path/to/taglet.jar</tagletpath> -->
+              <tagletArtifact>
+                <groupId>group-SecondTaglet</groupId>
+                <artifactId>artifact-SecondTaglet</artifactId>
+                <version>version-SecondTaglet</version>
+              </tagletArtifact>
+            </taglet>
+            ...
           </taglets>
           ...
         </configuration>
@@ -95,3 +110,80 @@ Configuring Custom Taglet
   ...
 </project>
 +-----+
+
+ If it is several Taglets in the same Taglet artifact, you could use the \<taglets/\> and the \<tagletArtifact/\>
+ elements:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <taglets>
+            <taglet>
+              <tagletClass>package.to.YourFirstTagletClass</tagletClass>
+            </taglet>
+
+            <taglet>
+              <tagletClass>package.to.YourSecondTagletClass</tagletClass>
+            </taglet>
+            ...
+          </taglets>
+
+          <tagletArtifact>
+            <groupId>group-Taglet</groupId>
+            <artifactId>artifact-Taglet</artifactId>
+            <version>version-Taglet</version>
+          </tagletArtifact>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project>
++-----+
+
+ If you don't know the Taglets or if you want to auto-detect Taglet class names, you could use the
+ \<tagletArtifacts/\> element:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <tagletArtifacts>
+            <tagletArtifact>
+              <groupId>group-FirstTaglet</groupId>
+              <artifactId>artifact-FirstTaglet</artifactId>
+              <version>version-FirstTaglet</version>
+            </tagletArtifact>
+
+            <tagletArtifact>
+              <groupId>group-SecondTaglet</groupId>
+              <artifactId>artifact-SecondTaglet</artifactId>
+              <version>version-SecondTaglet</version>
+            </tagletArtifact>
+            ...
+          </tagletArtifacts>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project>
++-----+
+
