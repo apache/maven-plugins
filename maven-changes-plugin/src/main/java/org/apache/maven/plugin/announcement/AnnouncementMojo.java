@@ -28,6 +28,7 @@ import org.apache.maven.plugin.jira.JiraXML;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
@@ -155,7 +156,7 @@ public class AnnouncementMojo
      * Directory that contains the template.
      * <p>
      * <b>Note:</b> This directory must be a subdirectory of
-     * <code>/src/main/resources/ or System proerty : user.dir</code>.
+     * <code>/src/main/resources/ or System property : basedir</code>.
      * </p>
      *
      * @parameter default-value="org/apache/maven/plugin/announcement" expression="${changes.templateDirectory}"
@@ -163,6 +164,15 @@ public class AnnouncementMojo
      */
     private String templateDirectory;
 
+    /**
+     * The current project base directory.
+     *
+     * @parameter expression="${basedir}"
+     * @required
+     * @since 2.1
+     */    
+    private String basedir;
+    
     private ChangesXML xml;
 
     //=======================================//
@@ -250,6 +260,7 @@ public class AnnouncementMojo
     public void execute()
         throws MojoExecutionException
     {
+        
         if ( !generateJiraAnnouncement )
         {
             setXml( new ChangesXML( getXmlPath(), getLog() ) );
@@ -405,7 +416,11 @@ public class AnnouncementMojo
 
             Writer writer = new FileWriter( f );
 
-            getVelocity().getEngine().mergeTemplate( templateDirectory + "/" + template, context, writer );
+            VelocityEngine engine = velocity.getEngine();
+           
+            engine.setApplicationAttribute( "baseDirectory", basedir );
+            
+            engine.mergeTemplate( templateDirectory + "/" + template, context, writer );
 
             writer.flush();
 
