@@ -84,8 +84,7 @@ public class JiraReportGenerator
      * @param currentVersion The current version of the project
      * @param onlyCurrentVersion If only issues for the current version will be included in the report
      */
-    public JiraReportGenerator( File xmlFile, String columnNames, String currentVersion,
-                                boolean onlyCurrentVersion)
+    public JiraReportGenerator( File xmlFile, String columnNames, String currentVersion, boolean onlyCurrentVersion )
         throws MavenReportException
     {
         this.currentVersion = currentVersion;

@@ -166,8 +166,6 @@ public class ProjectResourceLoader
         try
         {
             File file = new File( path, template );
-
-            System.out.println(" search file " + file.getPath() );
             
             if ( file.canRead() )
             {
