@@ -186,6 +186,10 @@ under the License.
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-component-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>velocity</groupId>
+          <artifactId>velocity</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 

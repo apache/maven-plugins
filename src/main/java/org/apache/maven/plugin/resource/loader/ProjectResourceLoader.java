@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -57,30 +56,26 @@ public class ProjectResourceLoader
 
     public void init( ExtendedProperties configuration )
     {
-        rsvc.info( "ProjectResourceLoader : initialization starting." );
+        rsvc.getLog().info( "ProjectResourceLoader : initialization starting." );
 
         String separator = System.getProperty( "file.separator" );
 
         String path = System.getProperty( "user.dir" ) + separator + "src" + separator + "main" + separator
             + "resources" + separator;
 
-        rsvc.info( "path :" + path );
-
+        rsvc.getLog().info( "path :" + path );
+        
         paths = new ArrayList();
 
         paths.add( path );
         
-        // MCHANGES-118 adding the user.dir path
-        
-        paths.add( System.getProperty( "user.dir" ) );
-
         int sz = paths.size();
 
         for ( int i = 0; i < sz; i++ )
         {
-            rsvc.info( "ProjectResourceLoader : adding path '" + (String) paths.get( i ) + "'" );
+            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + (String) paths.get( i ) + "'" );
         }
-        rsvc.info( "ProjectResourceLoader : initialization complete." );
+        rsvc.getLog().info( "ProjectResourceLoader : initialization complete." );
     }
 
     /**
@@ -114,7 +109,7 @@ public class ProjectResourceLoader
             String msg = "Project Resource loader error : argument " + template
                 + " contains .. and may be trying to access " + "content outside of template root.  Rejected.";
 
-            rsvc.error( "ProjectResourceLoader : " + msg );
+            rsvc.getLog().error( "ProjectResourceLoader : " + msg );
 
             throw new ResourceNotFoundException( msg );
         }
@@ -126,6 +121,9 @@ public class ProjectResourceLoader
         {
             template = template.substring( 1 );
         }
+        
+        // MCHANGES-118 adding the basedir path
+        paths.add( rsvc.getApplicationAttribute( "baseDirectory" ) );
 
         int size = paths.size();
         for ( int i = 0; i < size; i++ )
