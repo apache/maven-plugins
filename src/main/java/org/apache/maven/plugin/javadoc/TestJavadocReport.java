@@ -51,42 +51,45 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
 
     /**
-     * Specifies the title to be placed near the top of the overview summary file.
+     * Specifies the Test title to be placed near the top of the overview summary file.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
-     * @parameter expression="${doctitle}" default-value="${project.name} ${project.version} Test API"
+     * @parameter expression="${testDoctitle}" alias="doctitle" default-value="${project.name} ${project.version} Test API"
+     * @since 2.5
      */
-    private String doctitle;
+    private String testDoctitle;
 
     /**
-     * Specifies that javadoc should retrieve the text for the overview documentation from the "source" file
+     * Specifies that Javadoc should retrieve the text for the Test overview documentation from the "source" file
      * specified by path/filename and place it on the Overview page (overview-summary.html).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
-     * @parameter expression="${overview}" default-value="${basedir}/src/test/javadoc/overview.html"
+     * @parameter expression="${testOverview}" alias="overview" default-value="${basedir}/src/test/javadoc/overview.html"
+     * @since 2.5
      */
-    private File overview;
+    private File testOverview;
 
     /**
-     * Specifies the title to be placed in the HTML title tag.
+     * Specifies the Test title to be placed in the HTML title tag.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
-     * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} Test API"
+     * @parameter expression="${testWindowtitle}" alias="windowtitle" default-value="${project.name} ${project.version} Test API"
+     * @since 2.5
      */
-    private String windowtitle;
+    private String testWindowtitle;
 
     // ----------------------------------------------------------------------
     // Mojo Parameters (should be inline with options defined in TestJavadocJar)
     // ----------------------------------------------------------------------
 
     /**
-     * Specifies the destination directory where test javadoc saves the generated HTML files.
+     * Specifies the destination directory where test Javadoc saves the generated HTML files.
      *
      * @parameter expression="${project.reporting.outputDirectory}/testapidocs"
      * @required
@@ -102,29 +105,32 @@ public class TestJavadocReport
     private String destDir;
 
     /**
-     * Specifies the test Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
+     * Specifies the Test Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
      *
-     * @parameter expression="${basedir}/src/test/javadoc"
+     * @parameter expression="${basedir}/src/test/javadoc" alias="javadocDirectory"
+     * @since 2.5
      */
-    private File javadocDirectory;
+    private File testJavadocDirectory;
 
     // ----------------------------------------------------------------------
     // Report Mojo Parameters
     // ----------------------------------------------------------------------
 
     /**
-     * The name of the test Javadoc report.
+     * The name of the Test Javadoc report.
      *
-     * @parameter expression="${name}"
+     * @parameter expression="${testName}" alias="name"
+     * @since 2.5
      */
-    private String name;
+    private String testName;
 
     /**
-     * The description of the test Javadoc report.
+     * The description of the Test Javadoc report.
      *
-     * @parameter expression="${description}"
+     * @parameter expression="${testDescription}" alias="description"
+     * @since 2.5
      */
-    private String description;
+    private String testDescription;
 
     // ----------------------------------------------------------------------
     // Report public methods
@@ -133,23 +139,23 @@ public class TestJavadocReport
     /** {@inheritDoc} */
     public String getName( Locale locale )
     {
-        if ( StringUtils.isEmpty( name ) )
+        if ( StringUtils.isEmpty( testName ) )
         {
             return getBundle( locale ).getString( "report.test-javadoc.name" );
         }
 
-        return name;
+        return testName;
     }
 
     /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
-        if ( StringUtils.isEmpty( description ) )
+        if ( StringUtils.isEmpty( testDescription ) )
         {
             return getBundle( locale ).getString( "report.test-javadoc.description" );
         }
 
-        return description;
+        return testDescription;
     }
 
     /** {@inheritDoc} */
@@ -238,25 +244,25 @@ public class TestJavadocReport
     /** {@inheritDoc} */
     protected File getJavadocDirectory()
     {
-        return javadocDirectory;
+        return testJavadocDirectory;
     }
 
     /** {@inheritDoc} */
     protected String getDoctitle()
     {
-        return doctitle;
+        return testDoctitle;
     }
 
     /** {@inheritDoc} */
     protected File getOverview()
     {
-        return overview;
+        return testOverview;
     }
 
     /** {@inheritDoc} */
     protected String getWindowtitle()
     {
-        return windowtitle;
+        return testWindowtitle;
     }
 
     /** {@inheritDoc} */
