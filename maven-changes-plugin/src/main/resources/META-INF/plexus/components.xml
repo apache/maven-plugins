@@ -16,11 +16,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<plexus>
+<component-set>
   <components>
     <component>
       <role>org.codehaus.plexus.velocity.VelocityComponent</role>
-      <role-hint>default</role-hint>
+      <role-hint>maven-changes-plugin</role-hint>
       <implementation>org.codehaus.plexus.velocity.DefaultVelocityComponent</implementation>
       <configuration>
         <properties>
@@ -40,4 +40,4 @@ under the License.
       </configuration>
     </component>
   </components>
-</plexus>
+</component-set>

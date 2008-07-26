@@ -243,6 +243,14 @@ under the License.
       <artifactId>velocity</artifactId>
       <version>1.5</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.maven.plugin-testing</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>    
+    
   </dependencies>
 
   <reporting>

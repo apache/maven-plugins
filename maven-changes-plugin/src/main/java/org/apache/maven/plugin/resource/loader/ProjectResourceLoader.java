@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.collections.ExtendedProperties;
@@ -44,7 +46,7 @@ public class ProjectResourceLoader
     /**
      * The paths to search for templates.
      */
-    private Vector paths = null;
+    private List paths = null;
 
     /**
      * Used to map the path that a template was found on
@@ -64,9 +66,13 @@ public class ProjectResourceLoader
 
         rsvc.info( "path :" + path );
 
-        paths = new Vector();
+        paths = new ArrayList();
 
         paths.add( path );
+        
+        // MCHANGES-118 adding the user.dir path
+        
+        paths.add( System.getProperty( "user.dir" ) );
 
         int sz = paths.size();
 
@@ -163,6 +169,8 @@ public class ProjectResourceLoader
         {
             File file = new File( path, template );
 
+            System.out.println(" search file " + file.getPath() );
+            
             if ( file.canRead() )
             {
                 return new BufferedInputStream( new FileInputStream( file.getAbsolutePath() ) );
