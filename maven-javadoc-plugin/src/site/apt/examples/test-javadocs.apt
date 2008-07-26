@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- May 2007
+ 2008-07-28
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -70,7 +70,7 @@ yourproject
                      `-- app.png
 +-----+
 
-* Using the javadoc:test-javadoc goal
+* Using the <javadoc:test-javadoc> goal
 
  You need to configure the Maven Javadoc plugin in your pom.xml, for instance:
 
@@ -84,6 +84,11 @@ yourproject
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <doctitle>My API for ${project.name} ${project.version}</doctitle> <!-- Used by javadoc:javadoc goal -->
+          <windowtitle>My API for ${project.name} ${project.version}</windowtitle> <!-- Used by javadoc:javadoc goal -->
+
+          <testDoctitle>My Test API for ${project.name} ${project.version}</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
+          <testWindowtitle>My Test API for ${project.name} ${project.version}</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
           ...
         </configuration>
       </plugin>
@@ -93,12 +98,14 @@ yourproject
 </project>
 +-----+
 
- You could call <mvn javadoc:test-javadoc> or <mvn site>.
+ You could call <mvn javadoc:test-javadoc> or <mvn site>. See
+ {{{../test-javadoc-mojo.html}javadoc:test-javadoc parameters}} for more informations.
 
- <<Note:>> In this case, the Javadoc report and the test Javadoc report use the same configuration.
+ <<Note>>: If you don't set \<testDoctitle/\> or \<testWindowtitle/\> parameters, the Test Javadoc report use the same
+ configuration (i.e. \<doctitle/\> or \<windowtitle/\> parameters) that Javadoc report (backward compatible reasons).
 
- <<Note:>> To run the reports selectively, you need to include only the reports that you prefer.
- Read the {{{selective-javadocs-report.html}Selective Javadocs Reports}} part for more information.
+ <<Note>>: To run the reports selectively, you need to include only the reports that you prefer.
+  Read the {{{selective-javadocs-report.html}Selective Javadocs Reports}} part for more information.
 
 * Using the \<reportSets/\> configuration parameter
 
@@ -119,6 +126,8 @@ yourproject
           <reportSet>
             <id>html</id>
             <configuration>
+              <doctitle>My API for ${project.name} ${project.version}</doctitle>
+              <windowtitle>My API for ${project.name} ${project.version}</windowtitle>
               ...
             </configuration>
             <reports>
@@ -128,6 +137,8 @@ yourproject
           <reportSet>
             <id>test-html</id>
             <configuration>
+              <testDoctitle>My Test API for ${project.name} ${project.version}</testDoctitle>
+              <testWindowtitle>My Test API for ${project.name} ${project.version}</testWindowtitle>
               ...
             </configuration>
             <reports>
