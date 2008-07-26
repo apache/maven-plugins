@@ -28,6 +28,7 @@ under the License.
   <name>MSITE-265 It</name>
   <properties>
     <currentVersion>2.0.7</currentVersion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <reporting>
     <plugins>
