@@ -214,7 +214,7 @@ public abstract class AbstractJiraDownloader
             // N.B. Add in reverse order (it's the way JIRA likes it!!)
             for ( int i = sortColumnNamesArray.length - 1; i >= 0; i-- )
             {
-                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase(Locale.ENGLISH);
+                String lowerColumnName = sortColumnNamesArray[i].trim().toLowerCase( Locale.ENGLISH );
                 boolean descending = false;
                 String fieldName = null;
                 if ( lowerColumnName.endsWith( "desc" ) )
