@@ -138,7 +138,7 @@ public class AnnouncementMojo
     /**
      * Velocity Component.
      *
-     * @parameter expression="${component.org.codehaus.plexus.velocity.VelocityComponent}"
+     * @component role="org.codehaus.plexus.velocity.VelocityComponent" roleHint="maven-changes-plugin"
      * @readonly
      */
     private VelocityComponent velocity;

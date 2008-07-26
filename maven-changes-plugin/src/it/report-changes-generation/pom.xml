@@ -40,6 +40,18 @@
     <system>jira</system>
     <url>http://localhost</url>
   </issueManagement>
+  <properties>
+    <changesPluginVersion>@pom.version@</changesPluginVersion>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${changesPluginVersion}</version>        
+      </plugin>
+    </plugins>
+  </build>  
   <reporting>
     <plugins>
       <plugin>
