@@ -1089,12 +1089,21 @@ public abstract class AbstractJavadocMojo
     private String tagletpath;
 
     /**
-     * Specifies the artifact containing the taglet class files (.class).
+     * Specifies the Taglet artifact containing the taglet class files (.class).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
+     * &lt;taglets&gt;
+     * &nbsp;&nbsp;&lt;taglet&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
+     * &nbsp;&nbsp;&lt;/taglet&gt;
+     * &nbsp;&nbsp;&lt;taglet&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;package.to.AnotherTagletClass&lt;/tagletClass&gt;
+     * &nbsp;&nbsp;&lt;/taglet&gt;
+     * &nbsp;&nbsp;...
+     * &lt;/taglets&gt;
      * &lt;tagletArtifact&gt;
      * &nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
      * &nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
@@ -1109,6 +1118,34 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${tagletArtifact}"
      */
     private TagletArtifact tagletArtifact;
+
+    /**
+     * Specifies several Taglet artifacts containing the taglet class files (.class). These taglets class names will be
+     * auto-detect and so no need to specify them.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;tagletArtifacts&gt;
+     * &nbsp;&nbsp;&lt;tagletArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/tagletArtifact&gt;
+     * &nbsp;&nbsp;...
+     * &lt;/tagletArtifacts&gt;
+     * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/TagletArtifact.html">Javadoc</a>.
+     * <br/>
+     *
+     * @since 2.5
+     * @parameter expression="${tagletArtifacts}"
+     */
+    private TagletArtifact[] tagletArtifacts;
 
     /**
      * Enables the Javadoc tool to interpret multiple taglets.
@@ -1641,6 +1678,7 @@ public abstract class AbstractJavadocMojo
                     }
                 }
             }
+            addTagletsFromTagletArtifacts( arguments );
             addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ),
                               SINCE_JAVADOC_1_4 );
 
@@ -2398,7 +2436,28 @@ public abstract class AbstractJavadocMojo
             path.append( StringUtils.join( getArtifactsAbsolutePath( tagletArtifact ).iterator(),
                                            File.pathSeparator ) );
         }
-        else if ( taglets != null )
+
+        if ( tagletArtifacts != null )
+        {
+            List tagletsPath = new ArrayList();
+            for ( int i = 0; i < tagletArtifacts.length; i++ )
+            {
+                TagletArtifact aTagletArtifact = tagletArtifacts[i];
+
+                if ( ( StringUtils.isNotEmpty( aTagletArtifact.getGroupId() ) )
+                    && ( StringUtils.isNotEmpty( aTagletArtifact.getArtifactId() ) )
+                    && ( StringUtils.isNotEmpty( aTagletArtifact.getVersion() ) ) )
+                {
+                    tagletsPath.addAll( getArtifactsAbsolutePath( aTagletArtifact ) );
+                }
+            }
+
+            tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
+
+            path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
+        }
+
+        if ( taglets != null )
         {
             List tagletsPath = new ArrayList();
             for ( int i = 0; i < taglets.length; i++ )
@@ -2427,7 +2486,8 @@ public abstract class AbstractJavadocMojo
 
             path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
         }
-        else
+
+        if ( StringUtils.isNotEmpty( tagletpath ) )
         {
             path.append( tagletpath );
         }
@@ -2511,16 +2571,23 @@ public abstract class AbstractJavadocMojo
      * @return a resolved {@link Artifact}
      * @throws ArtifactResolutionException if the resolution of the artifact failed.
      * @throws ArtifactNotFoundException if the artifact hasn't been found.
+     * @throws ProjectBuildingException if the artifact POM could not be build.
      */
     private Artifact createAndResolveArtifact( JavadocPathArtifact javadocArtifact )
-        throws ArtifactResolutionException, ArtifactNotFoundException
+        throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException
     {
         Artifact artifact =
-            factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
-                                    javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE, "jar" );
+            factory.createProjectArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
+                                           javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE );
 
-        // Find the Javadoc Artifact in the local repo
-        resolver.resolve( artifact, remoteRepositories, localRepository );
+        if ( artifact.getFile() == null )
+        {
+            MavenProject pluginProject =
+                mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+            artifact = pluginProject.getArtifact();
+
+            resolver.resolve( artifact, remoteRepositories, localRepository );
+        }
 
         return artifact;
     }
@@ -2677,7 +2744,7 @@ public abstract class AbstractJavadocMojo
             if ( !javadocExe.isFile() )
             {
                 throw new IOException( "The javadoc executable '" + javadocExe
-                    + "' doesn't exist or is not a file. " + "Verify the <javadocExecutable/> parameter." );
+                    + "' doesn't exist or is not a file. Verify the <javadocExecutable/> parameter." );
             }
 
             return javadocExe.getAbsolutePath();
@@ -2720,7 +2787,7 @@ public abstract class AbstractJavadocMojo
             if ( ( !new File( javaHome ).exists() ) || ( !new File( javaHome ).isDirectory() ) )
             {
                 throw new IOException( "The environment variable JAVA_HOME=" + javaHome
-                    + " doesn't exist or is " + "not a valid directory." );
+                    + " doesn't exist or is not a valid directory." );
             }
 
             javadocExe = new File( env.getProperty( "JAVA_HOME" ) + File.separator + "bin", javadocCommand );
@@ -2729,7 +2796,7 @@ public abstract class AbstractJavadocMojo
         if ( !javadocExe.exists() || !javadocExe.isFile() )
         {
             throw new IOException( "The javadoc executable '" + javadocExe
-                + "' doesn't exist or is not a file. " + "Verify the JAVA_HOME environment variable." );
+                + "' doesn't exist or is not a file. Verify the JAVA_HOME environment variable." );
         }
 
         return javadocExe.getAbsolutePath();
@@ -3207,6 +3274,11 @@ public abstract class AbstractJavadocMojo
                 {
                     throw new MavenReportException( "Unable to find artifact:" + item, e );
                 }
+                catch ( ProjectBuildingException e )
+                {
+                    throw new MavenReportException( "Unable to build the Maven project for the artifact:"
+                        + item, e );
+                }
 
                 unArchiver.setSourceFile( artifact.getFile() );
                 unArchiver.setDestDirectory( anOutputDirectory );
@@ -3527,5 +3599,124 @@ public abstract class AbstractJavadocMojo
 
         // if all of them have been found, we can continue.
         return foundInReactor.size() == missing.size();
+    }
+
+    /**
+     * Auto-detect taglets class name from <code>tagletArtifacts</code> and add them to arguments.
+     *
+     * @param arguments not null
+     * @throws MavenReportException if any
+     * @see JavadocUtil#getTagletClassNames(File)
+     */
+    private void addTagletsFromTagletArtifacts( List arguments )
+        throws MavenReportException
+    {
+        if ( tagletArtifacts == null )
+        {
+            return;
+        }
+
+        List tagletsPath = new ArrayList();
+        for ( int i = 0; i < tagletArtifacts.length; i++ )
+        {
+            TagletArtifact aTagletArtifact = tagletArtifacts[i];
+
+            if ( ( StringUtils.isNotEmpty( aTagletArtifact.getGroupId() ) )
+                && ( StringUtils.isNotEmpty( aTagletArtifact.getArtifactId() ) )
+                && ( StringUtils.isNotEmpty( aTagletArtifact.getVersion() ) ) )
+            {
+                Artifact artifact;
+                try
+                {
+                    artifact = createAndResolveArtifact( aTagletArtifact );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    throw new MavenReportException( "Unable to resolve artifact:" + aTagletArtifact, e );
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    throw new MavenReportException( "Unable to find artifact:" + aTagletArtifact, e );
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    throw new MavenReportException( "Unable to build the Maven project for the artifact:"
+                        + aTagletArtifact, e );
+                }
+
+                tagletsPath.add( artifact.getFile().getAbsolutePath() );
+            }
+        }
+
+        tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
+
+        for ( Iterator it = tagletsPath.iterator(); it.hasNext(); )
+        {
+            String tagletJar = (String) it.next();
+
+            if ( !tagletJar.toLowerCase( Locale.ENGLISH ).endsWith( ".jar" ) )
+            {
+                continue;
+            }
+
+            List tagletClasses;
+            try
+            {
+                tagletClasses = JavadocUtil.getTagletClassNames( new File( tagletJar ) );
+            }
+            catch ( IOException e )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn(
+                                   "Unable to auto-detect Taglet class names from '" + tagletJar
+                                       + "'. Try to specify them with <taglets/>." );
+                }
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "IOException: " + e.getMessage(), e );
+                }
+                continue;
+            }
+            catch ( ClassNotFoundException e )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn(
+                                   "Unable to auto-detect Taglet class names from '" + tagletJar
+                                       + "'. Try to specify them with <taglets/>." );
+                }
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "ClassNotFoundException: " + e.getMessage(), e );
+                }
+                continue;
+            }
+            catch ( NoClassDefFoundError e )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn(
+                                   "Unable to auto-detect Taglet class names from '" + tagletJar
+                                       + "'. Try to specify them with <taglets/>." );
+                }
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "NoClassDefFoundError: " + e.getMessage(), e );
+                }
+                continue;
+            }
+
+            if ( tagletClasses != null && !tagletClasses.isEmpty() )
+            {
+                for ( Iterator it2 = tagletClasses.iterator(); it2.hasNext(); )
+                {
+                    String tagletClass = (String) it2.next();
+
+                    addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( tagletClass ),
+                                      SINCE_JAVADOC_1_4 );
+                }
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -928,5 +929,49 @@ public class JavadocReportTest
         {
             assertTrue( "Not conflict catch", e.getMessage().indexOf( "Option <nohelp/> conflicts with <helpfile/>" ) != -1 );
         }
+    }
+
+    /**
+     * Method to test the <code>&lt;tagletArtifacts/&gt;</code> parameter.
+     *
+     * @throws Exception if any
+     */
+    public void testTagletArtifacts()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/tagletArtifacts-test/tagletArtifacts-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+
+        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+
+        mojo.execute();
+
+        File optionsFile = new File( mojo.getOutputDirectory(), "options" );
+        assertTrue( optionsFile.exists() );
+        String options = readFile( optionsFile );
+        // count -taglet
+        assertEquals( StringUtils.countMatches( options, LINE_SEPARATOR + "-taglet" + LINE_SEPARATOR ), 20 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoAggregatorTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoComponentFieldTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoConfiguratorTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoExecuteTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoExecutionStrategyTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoGoalTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoInheritByDefaultTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoInstantiationStrategyTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoParameterFieldTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoPhaseTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoReadOnlyFieldTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiredFieldTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDependencyResolutionTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDirectInvocationTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiresOnLineTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiresProjectTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.apache.maven.tools.plugin.javadoc.MojoRequiresReportsTypeTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusConfigurationTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusRequirementTaglet" ) != -1 );
+        assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusComponentTaglet" ) != -1 );
     }
 }
