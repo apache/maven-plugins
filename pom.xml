@@ -24,7 +24,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>11-SNAPSHOT</version>
+    <version>11</version>
   </parent>
 
   <artifactId>maven-resources-plugin</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.5</version>
     </dependency>
     
     <dependency>
