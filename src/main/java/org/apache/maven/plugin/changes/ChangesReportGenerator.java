@@ -128,7 +128,7 @@ public class ChangesReportGenerator
      * 
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
-    public boolean canGenerateIssueLinks(String system)
+    public boolean canGenerateIssueLinks( String system )
     {
         if ( !this.issueLinksPerSystem.containsKey( system ) )
         {
