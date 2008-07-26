@@ -1596,26 +1596,7 @@ public abstract class AbstractJavadocMojo
                                   JavadocUtil.quotedPathArgument( excludedocfilessubdir ), SINCE_JAVADOC_1_4 );
             }
             addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
-            if ( groups != null )
-            {
-                for ( int i = 0; i < groups.length; i++ )
-                {
-                    if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
-                        || StringUtils.isEmpty( groups[i].getPackages() ) )
-                    {
-                        if ( getLog().isWarnEnabled() )
-                        {
-                            getLog().warn( "A group option is empty. Ignore this option." );
-                        }
-                    }
-                    else
-                    {
-                        String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
-                        addArgIfNotEmpty( arguments, "-group", JavadocUtil.quotedArgument( groupTitle ) + " "
-                            + JavadocUtil.quotedArgument( groups[i].getPackages() ), true );
-                    }
-                }
-            }
+            addGroups( arguments );
             addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
             addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
             addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
@@ -1659,56 +1640,11 @@ public abstract class AbstractJavadocMojo
                               JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
             addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
-            if ( taglets != null )
-            {
-                for ( int i = 0; i < taglets.length; i++ )
-                {
-                    if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
-                    {
-                        if ( getLog().isWarnEnabled() )
-                        {
-                            getLog().warn( "A taglet option is empty. Ignore this option." );
-                        }
-                    }
-                    else
-                    {
-                        addArgIfNotEmpty( arguments, "-taglet",
-                                          JavadocUtil.quotedArgument( taglets[i].getTagletClass() ),
-                                          SINCE_JAVADOC_1_4 );
-                    }
-                }
-            }
+            addTaglets( arguments );
             addTagletsFromTagletArtifacts( arguments );
             addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ),
                               SINCE_JAVADOC_1_4 );
-
-            if ( tags != null )
-            {
-                for ( int i = 0; i < tags.length; i++ )
-                {
-                    if ( StringUtils.isEmpty( tags[i].getName() ) )
-                    {
-                        if ( getLog().isWarnEnabled() )
-                        {
-                            getLog().warn( "A tag name is empty. Ignore this option." );
-                        }
-                    }
-                    else
-                    {
-                        String value = "\"" + tags[i].getName();
-                        if ( StringUtils.isNotEmpty( tags[i].getPlacement() ) )
-                        {
-                            value += ":" + tags[i].getPlacement();
-                            if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
-                            {
-                                value += ":" + tags[i].getHead();
-                            }
-                        }
-                        value += "\"";
-                        addArgIfNotEmpty( arguments, "-tag", value, SINCE_JAVADOC_1_4 );
-                    }
-                }
-            }
+            addTags( arguments );
 
             addArgIfNotEmpty( arguments, "-top", JavadocUtil.quotedArgument( top ), false, false,
                               SINCE_JAVADOC_1_6 );
@@ -3599,6 +3535,105 @@ public abstract class AbstractJavadocMojo
 
         // if all of them have been found, we can continue.
         return foundInReactor.size() == missing.size();
+    }
+
+    /**
+     * Add <code>groups</code> parameter to arguments.
+     *
+     * @param arguments not null
+     */
+    private void addGroups( List arguments )
+    {
+        if ( groups == null )
+        {
+            return;
+
+        }
+
+        for ( int i = 0; i < groups.length; i++ )
+        {
+            if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
+                || StringUtils.isEmpty( groups[i].getPackages() ) )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "A group option is empty. Ignore this option." );
+                }
+            }
+            else
+            {
+                String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
+                addArgIfNotEmpty( arguments, "-group", JavadocUtil.quotedArgument( groupTitle ) + " "
+                    + JavadocUtil.quotedArgument( groups[i].getPackages() ), true );
+            }
+        }
+    }
+
+    /**
+     * Add <code>tags</code> parameter to arguments.
+     *
+     * @param arguments not null
+     */
+    private void addTags( List arguments )
+    {
+        if ( tags == null )
+        {
+            return;
+        }
+
+        for ( int i = 0; i < tags.length; i++ )
+        {
+            if ( StringUtils.isEmpty( tags[i].getName() ) )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "A tag name is empty. Ignore this option." );
+                }
+            }
+            else
+            {
+                String value = "\"" + tags[i].getName();
+                if ( StringUtils.isNotEmpty( tags[i].getPlacement() ) )
+                {
+                    value += ":" + tags[i].getPlacement();
+                    if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
+                    {
+                        value += ":" + tags[i].getHead();
+                    }
+                }
+                value += "\"";
+                addArgIfNotEmpty( arguments, "-tag", value, SINCE_JAVADOC_1_4 );
+            }
+        }
+    }
+
+    /**
+     * Add <code>taglets</code> parameter to arguments.
+     *
+     * @param arguments not null
+     */
+    private void addTaglets( List arguments )
+    {
+        if ( taglets == null )
+        {
+            return;
+        }
+
+        for ( int i = 0; i < taglets.length; i++ )
+        {
+            if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "A taglet option is empty. Ignore this option." );
+                }
+            }
+            else
+            {
+                addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglets[i].getTagletClass() ),
+                                  SINCE_JAVADOC_1_4 );
+            }
+        }
     }
 
     /**
