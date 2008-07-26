@@ -155,7 +155,7 @@ public class AnnouncementMojo
      * Directory that contains the template.
      * <p>
      * <b>Note:</b> This directory must be a subdirectory of
-     * <code>/src/main/resources/</code>.
+     * <code>/src/main/resources/ or System proerty : user.dir</code>.
      * </p>
      *
      * @parameter default-value="org/apache/maven/plugin/announcement" expression="${changes.templateDirectory}"
