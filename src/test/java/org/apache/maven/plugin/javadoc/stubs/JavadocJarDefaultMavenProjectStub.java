@@ -19,13 +19,11 @@ package org.apache.maven.plugin.javadoc.stubs;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileReader;
