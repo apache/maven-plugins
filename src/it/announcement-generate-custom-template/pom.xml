@@ -24,10 +24,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-changes-plugin-test</artifactId>
-  <version>99.0</version>
+  <version>1.1</version>
   <name>Maven</name>
   <packaging>jar</packaging>
-  <description>Test report.</description>
+  <description>Test Announcement Custom template</description>
+  <url>http://maven.apache.org/plugins/maven-changes-plugin/</url>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -51,27 +52,17 @@
         <version>${changesPluginVersion}</version>        
       </plugin>
     </plugins>
-  </build>  
+  </build>
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>${changesPluginVersion}</version>
         <configuration>
-          <issueLinkTemplate>myjira/browse/%ISSUE%</issueLinkTemplate>
-          <issueLinkTemplatePerSystem>
-            <qc>http://localhost/%ISSUE%</qc>
-          </issueLinkTemplatePerSystem>
-          <addActionDate>true</addActionDate>
+          <template>test-announce.vm</template>
+          <templateDirectory>template-directory</templateDirectory>
         </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
       </plugin>
     </plugins>
   </reporting>
