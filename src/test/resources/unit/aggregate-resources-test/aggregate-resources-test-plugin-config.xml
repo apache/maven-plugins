@@ -32,6 +32,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <encoding>ISO-8859-1</encoding>
           <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/aggregate-resources-test/target/site/apidocs</outputDirectory>
