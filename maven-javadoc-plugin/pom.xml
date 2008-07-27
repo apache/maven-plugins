@@ -269,6 +269,7 @@
                 <pomInclude>**/MJAVADOC-172/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-180/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-194/pom.xml</pomInclude>
+                <pomInclude>**/MJAVADOC-206/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
