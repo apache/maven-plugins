@@ -1543,7 +1543,7 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( encoding ) )
         {
             getLog().warn(
-                           "File encoding has not been set, using platform encoding "
+                           "Source files encoding has not been set, using platform encoding "
                                + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
         }
         addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
