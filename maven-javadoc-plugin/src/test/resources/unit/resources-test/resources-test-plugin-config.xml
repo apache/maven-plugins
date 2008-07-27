@@ -38,6 +38,7 @@ under the License.
           <windowtitle>Maven Javadoc Plugin resources 1.0-SNAPSHOT API</windowtitle>
           <javadocDirectory>${basedir}/src/test/resources/unit/resources-test/src/main/javadoc</javadocDirectory>
           <show>protected</show>
+          <encoding>ISO-8859-1</encoding>
           <groups/>
           <tags/>
           <quiet>true</quiet>
