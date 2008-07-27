@@ -448,7 +448,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
      * <br/>
-     * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to better reproducing build,but
+     * <b>Note</b>: In 2.4, the default value was locked to <code>ISO-8859-1</code> to ensure reproducing build, but
      * this was reverted in 2.5.
      * <br/>
      *
@@ -666,7 +666,7 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
      *
-     * @parameter expression="${charset}" default-value="ISO-8859-1"
+     * @parameter expression="${charset}" default-value="${project.reporting.outputEncoding}"
      */
     private String charset;
 
@@ -699,7 +699,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
      *
-     * @parameter expression="${docencoding}"
+     * @parameter expression="${docencoding}" default-value="${project.reporting.outputEncoding}"
      */
     private String docencoding;
 
@@ -1316,6 +1316,22 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * @return the charset attribute or <code>UTF-8</code> if <code>null</code>
+     */
+    private String getCharset()
+    {
+        return ( charset == null ) ? ReaderFactory.UTF_8 : charset;
+    }
+
+    /**
+     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code> 
+     */
+    private String getDocencoding()
+    {
+        return ( docencoding == null) ? ReaderFactory.UTF_8 : docencoding;
+    }
+
+    /**
      * @param unusedLocale the wanted locale (actually unused).
      * @throws MavenReportException if any
      */
@@ -1583,11 +1599,11 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false,
                               false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( charset ) );
+            addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( getCharset() ) );
             addArgIfNotEmpty( arguments, "-d",
                               JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( docencoding ) );
+            addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( getDocencoding() ) );
             addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false,
                               false );
             if ( docfilessubdirs )
@@ -3466,9 +3482,9 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         // docencoding
-        if ( StringUtils.isNotEmpty( docencoding ) && !JavadocUtil.validateEncoding( docencoding ) )
+        if ( StringUtils.isNotEmpty( getDocencoding() ) && !JavadocUtil.validateEncoding( getDocencoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + docencoding );
+            throw new MavenReportException( "Encoding not supported: " + getDocencoding() );
         }
 
         // helpfile
