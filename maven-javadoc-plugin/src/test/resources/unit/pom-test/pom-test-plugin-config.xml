@@ -43,6 +43,7 @@ under the License.
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/pom-test/target/site/apidocs</outputDirectory>
           <show>protected</show>
+          <encoding>ISO-8859-1</encoding>
           <groups/>
           <tags/>
           <windowtitle>Maven Pom 1.0-SNAPSHOT API</windowtitle>

@@ -37,6 +37,7 @@ under the License.
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/proxy-test/target/site/apidocs</outputDirectory>
           <show>protected</show>
+          <encoding>ISO-8859-1</encoding>
           <groups/>
           <tags/>
           <quiet>true</quiet>
