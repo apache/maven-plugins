@@ -263,11 +263,18 @@ public class AnnouncementMojo
         
         if ( !generateJiraAnnouncement )
         {
-            setXml( new ChangesXML( getXmlPath(), getLog() ) );
+            if ( getXmlPath().exists() )
+            {
+                setXml( new ChangesXML( getXmlPath(), getLog() ) );
 
-            getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
+                getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
 
-            doGenerate( getXml().getReleaseList() );
+                doGenerate( getXml().getReleaseList() );
+            }
+            else
+            {
+                getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
+            }
         }
         else
         {

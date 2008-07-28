@@ -6,9 +6,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
