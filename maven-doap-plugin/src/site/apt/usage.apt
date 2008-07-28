@@ -31,7 +31,7 @@ Usage
  The DOAP Plugin generates DOAP and ASF DOAP compliant files. The following examples describe the basic usage of
  the Plugin.
 
-* Pur DOAP Configuration
+* Pure DOAP Configuration
 
 +-----+
 <project>
@@ -109,7 +109,7 @@ mvn doap:generate
 
 * Further Links
 
- * {{{./generate-mojo.html}doap:generate parameters}}
+ * Parameters for the {{{./generate-mojo.html}doap:generate}} goal
 
  * {{{http://usefulinc.com/ns/doap#}http://usefulinc.com/ns/doap#}}
 
