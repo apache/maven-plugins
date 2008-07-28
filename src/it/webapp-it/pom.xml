@@ -38,41 +38,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <repositories>
-     <!-- Local repo defined by the maven-install-plugin in maven-ant-plugin pom -->
-    <repository>
-      <id>it-local-repo</id>
-      <url>file://${basedir}/../../../target/local-repo</url>
-    </repository>
-     <!-- Need Apache Snapshot -->
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Maven Snapshots</name>
-      <url>http://people.apache.org/maven-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <!-- No Plugin Snapshot -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Maven Plugin Snapshots</name>
-      <url>http://people.apache.org/maven-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <finalName>ant-webapp-test</finalName>
     <plugins>
