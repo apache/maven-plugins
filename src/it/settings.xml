@@ -8,7 +8,7 @@
       </activation>      
       <repositories>
         <repository>
-          <id>local.central</id>
+          <id>it-repo</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
@@ -20,7 +20,7 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local.central</id>
+          <id>it-repo</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
