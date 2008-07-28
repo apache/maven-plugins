@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.Release;
 
 /**
  * Generates a changes report.
@@ -315,7 +317,7 @@ public class ChangesReportGenerator
             sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
                 + release.getVersion() + " - " + release.getDateRelease(), HtmlTools.encodeId( release.getVersion() ) );
 
-            constructActions( sink, release.getAction(), bundle );
+            constructActions( sink, release.getActions(), bundle );
 
             sink.section2_();
         }
