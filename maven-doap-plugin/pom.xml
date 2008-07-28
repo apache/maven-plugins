@@ -185,6 +185,17 @@
       <id>reporting</id>
       <reporting>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <configuration>
+              <locales>
+                <locale>es</locale>
+                <locale>fr</locale>
+              </locales>
+            </configuration>
+          </plugin>
           <!-- TODO: remove when maven-plugins parent pom 12 is released -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -355,6 +366,25 @@
                 </taglet>
               </taglets>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <!-- For JIRA-report -->
+              <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+              <onlyCurrentVersion>true</onlyCurrentVersion>
+              <resolutionIds>Closed</resolutionIds>
+              <sortColumnNames>Type,Key</sortColumnNames>
+            </configuration>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>jira-report</report>
+                </reports>
+              </reportSet>
+            </reportSets>
           </plugin>
         </plugins>
       </reporting>
