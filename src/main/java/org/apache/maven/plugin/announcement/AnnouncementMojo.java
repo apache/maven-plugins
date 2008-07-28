@@ -19,12 +19,18 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.changes.Action;
 import org.apache.maven.plugin.changes.ChangesXML;
-import org.apache.maven.plugin.changes.Release;
 import org.apache.maven.plugin.jira.JiraXML;
+import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.velocity.VelocityContext;
@@ -33,12 +39,6 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.plexus.velocity.VelocityComponent;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Goal which generate the template for an announcement.
@@ -356,7 +356,7 @@ public class AnnouncementMojo
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getAction().size() + " actions." );
+                    + " has " + release.getActions().size() + " actions." );
             }
 
             if ( release.getVersion() != null && release.getVersion().equals( pomVersion ) )
@@ -382,7 +382,7 @@ public class AnnouncementMojo
     private void logRelease( Release release )
     {
         Action action;
-        for ( Iterator iterator = release.getAction().iterator(); iterator.hasNext(); )
+        for ( Iterator iterator = release.getActions().iterator(); iterator.hasNext(); )
         {
             action = (Action) iterator.next();
             getLog().debug( "o " + action.getType() );

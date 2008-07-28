@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+
+<model>
+  <id>changes</id>
+  <name>Changes</name>
+  <description>
+    A recording of changes made during each release of a project. This
+    file should record every changes made to the project.
+  </description>
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugins.changes.model</value>
+    </default>
+  </defaults>
+  <classes>
+    <class rootElement="true" xml.tagName="document">
+      <name>ChangesDocument</name>
+      <description>
+        Record every release with their subsequent changes.
+      </description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>properties</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Properties</type>
+            <multiplicity>1</multiplicity>
+          </association>
+          <description>
+            Contains the properties of this document.
+          </description>
+        </field> 
+        <field>
+          <name>body</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <association>
+            <type>Body</type>
+          </association>
+          <description>
+            Contains the releases of this project with the actions taken
+            for each of the releases.
+          </description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>Properties</name>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>title</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>Page Title.</description>
+        </field>
+        <field>
+          <name>author</name>
+          <version>1.0.0</version>
+          <description>Page Author</description>
+          <association>
+            <type>Author</type>
+            <multiplicity>1</multiplicity>
+          </association>          
+        </field>
+      </fields>
+    </class>
+    <class xsd.compositor="sequence">
+      <name>Body</name>
+      <version>1.0.0</version>
+      <fields>
+        <field xml.listStyle="flat">
+          <name>releases</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Release</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>The list of releases for this project.</description>
+        </field>
+      </fields>
+    </class>
+    <class xsd.compositor="sequence">
+      <name>Release</name>
+      <version>1.0.0</version>
+      <description>A single release of this project.</description>
+      <fields>
+        <field xml.attribute="true">
+          <name>version</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>
+            The version number associated with this release.
+          </description>
+        </field>
+        <field xml.attribute="true" xml.tagName="date">
+          <name>dateRelease</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            <p>The date of this release.</p>
+            <p>This field can be any String, such as "in SVN" when the version isn't yet released. </p>
+          ]]>
+          </description>
+        </field>
+        <field xml.attribute="true">
+          <name>description</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            A short description of this release.
+          </description>
+        </field>
+        <field xml.listStyle="flat">
+          <name>actions</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Action</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>The list of actions taken for this release.</description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>Author</name>
+      <version>1.0.0</version>
+      <description>
+        A description of the author page.
+      </description>
+      <fields>
+        <field>
+          <name>name</name>
+          <version>1.0.0</version>
+          <type>Content</type>
+          <description>
+            The page author name.
+          </description>
+        </field>    
+        <field xml.attribute="true" xml.tagName="email">
+          <name>authorEmail</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            The page author email.
+          </description>
+        </field>
+      </fields>
+    </class>        
+    <class>
+      <name>Action</name>
+      <version>1.0.0</version>
+      <description>
+        A single action done on the project, during this release.
+      </description>
+      <fields>
+        <field>
+          <name>action</name>
+          <version>1.0.0</version>
+          <type>Content</type>
+          <description>
+            A short description of the action taken.
+          </description>
+        </field>     
+        <field xml.attribute="true">
+          <name>dev</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            <p>Name of developer who committed the change.</p>
+            <p>This <b>MUST</b> be the name of the developer as described in the developers section of the pom.xml file.</p>
+            ]]>
+          </description>
+        </field>
+        <field xml.attribute="true">
+          <name>dueTo</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Name of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+          </description>
+        </field>
+        <field xml.attribute="true">
+          <name>dueToEmail</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Email of the person to be credited for this change.
+          </description>
+        </field>   
+        <field xml.attribute="true">
+          <name>issue</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>
+            <![CDATA[
+              <p>Id of the issue related to this change. This is the id in your issue tracking system.</p>
+              <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplate parameter.</p>
+              <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
+            ]]>
+          </description>
+        </field>                     
+        <field xml.attribute="true">
+          <name>type</name>
+          <version>1.0.0</version>
+          <required>true</required>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            Supported action types are the following:
+            <ul>
+              <li>add : added functionnality to the project.</li>
+              <li>fix : bug fix for the project.</li>
+              <li>update : updated some part of the project.</li>
+              <li>remove : removed some functionnality from the project.</li>
+            </ul>
+            ]]>
+          </description>
+        </field>
+        <field xml.attribute="true">
+          <name>system</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+              <p>Id of issue tracking system. If empty 'default' value will be use.</p>
+              <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplatePerSystem parameter.</p>
+              <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
+            ]]>
+          </description>
+        </field>    
+        <field xml.attribute="true">
+          <name>date</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>fix date</description>
+        </field>              
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.9+</version>
+          <code><![CDATA[
+            public static final String ADD_ACTION = "add";
+        
+            public static final String FIX_ACTION = "fix";
+        
+            public static final String UPDATE_ACTION = "update";
+        
+            public static final String REMOVE_ACTION = "remove";
+          ]]></code>
+        </codeSegment>
+      </codeSegments>      
+    </class>
+  </classes>
+</model>
+
