@@ -61,6 +61,37 @@ under the License.
   </scm>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.modello</groupId>
+          <artifactId>modello-maven-plugin</artifactId>
+          <version>1.0-alpha-21-SNAPSHOT</version>
+          <executions>
+            <execution>
+              <id>site-docs</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>xdoc</goal>
+                <goal>xsd</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>standard</id>
+              <goals>
+                <goal>java</goal>
+                <goal>xpp3-reader</goal>
+                <goal>xpp3-writer</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>  
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-7</version>
+        </plugin>      
+      </plugins>
+    </pluginManagement>    
     <plugins>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -85,6 +116,16 @@ under the License.
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <configuration>
+          <version>1.0.0</version>
+          <models>
+            <model>src/main/mdo/changes.mdo</model>
+          </models>
+        </configuration>
+      </plugin>      
     </plugins>
   </build>
 
@@ -334,4 +375,19 @@ under the License.
     <doxiaVersion>1.0-alpha-11</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
   </properties>
+  
+  <!-- remove when modello is released -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>snapshots.codehaus</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  
 </project>
