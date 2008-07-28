@@ -1324,7 +1324,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code> 
+     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code>
      */
     private String getDocencoding()
     {
@@ -1534,7 +1534,6 @@ public abstract class AbstractJavadocMojo
         // General javadoc arguments
         List arguments = new ArrayList();
 
-        addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
         if ( StringUtils.isNotEmpty( doclet ) )
         {
             addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
