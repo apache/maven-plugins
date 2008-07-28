@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<model>
+<model xsd.namespace="http://maven.apache.org/changes/1.0.0" xsd.target-namespace="http://maven.apache.org/changes/1.0.0">
   <id>changes</id>
   <name>Changes</name>
   <description>
@@ -180,7 +180,7 @@
             ]]>
           </description>
         </field>
-        <field xml.attribute="true">
+        <field xml.attribute="true" xml.tagName="due-to">
           <name>dueTo</name>
           <version>1.0.0</version>
           <type>String</type>
@@ -188,7 +188,7 @@
             Name of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
           </description>
         </field>
-        <field xml.attribute="true">
+        <field xml.attribute="true" xml.tagName="due-to-email">
           <name>dueToEmail</name>
           <version>1.0.0</version>
           <type>String</type>
