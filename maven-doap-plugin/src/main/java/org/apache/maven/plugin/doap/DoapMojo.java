@@ -24,11 +24,16 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -78,6 +83,24 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
 public class DoapMojo
     extends AbstractMojo
 {
+    /** UTC Time Zone */
+    private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone( "UTC" );
+
+    /** Date format for <lastUpdated/> tag in the repository metadata, i.e.: yyyyMMddHHmmss */
+    private static final DateFormat REPOSITORY_DATE_FORMAT;
+
+    /** Date format for DOAP file, i.e. ISO-8601 YYYY-MM-DD */
+    private static final DateFormat DOAP_DATE_FORMAT;
+
+    static
+    {
+        REPOSITORY_DATE_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss", Locale.ENGLISH );
+        REPOSITORY_DATE_FORMAT.setTimeZone( UTC_TIME_ZONE );
+
+        DOAP_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd", Locale.ENGLISH );
+        DOAP_DATE_FORMAT.setTimeZone( UTC_TIME_ZONE );
+    }
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -485,8 +508,10 @@ public class DoapMojo
         if ( StringUtils.isNotEmpty( doapOptions.getOldHomepage() ) )
         {
             XmlWriterUtil.writeLineBreak( writer );
-            XmlWriterUtil
-                .writeCommentText( writer, "URL of a project's past homepage, associated with exactly one project.", 2 );
+            XmlWriterUtil.writeCommentText(
+                                            writer,
+                                            "URL of a project's past homepage, associated with exactly one project.",
+                                            2 );
             DoapUtil.writeRdfResourceElement( writer, "old-homepage", doapOptions.getOldHomepage() );
         }
     }
@@ -813,14 +838,32 @@ public class DoapMojo
         Artifact artifact = artifactFactory.createArtifact( project.getGroupId(), project.getArtifactId(), project
             .getVersion(), null, project.getPackaging() );
         RepositoryMetadata metadata = new ArtifactRepositoryMetadata( artifact );
-        try
+
+        for ( Iterator it = remoteRepositories.iterator(); it.hasNext(); )
         {
-            repositoryMetadataManager.resolve( metadata, remoteRepositories, localRepository );
-        }
-        catch ( RepositoryMetadataResolutionException e )
-        {
-            throw new MojoExecutionException( metadata + " could not be retrieved from repositories due to an error: "
-                + e.getMessage(), e );
+            ArtifactRepository repo = (ArtifactRepository) it.next();
+
+            if ( repo.isBlacklisted() )
+            {
+                continue;
+            }
+            if ( repo.getSnapshots().isEnabled() )
+            {
+                continue;
+            }
+            if ( repo.getReleases().isEnabled() )
+            {
+                try
+                {
+                    repositoryMetadataManager.resolveAlways( metadata, localRepository, repo );
+                    break;
+                }
+                catch ( RepositoryMetadataResolutionException e )
+                {
+                    throw new MojoExecutionException( metadata
+                        + " could not be retrieved from repositories due to an error: " + e.getMessage(), e );
+                }
+            }
         }
 
         if ( metadata.getMetadata().getVersioning() == null )
@@ -830,24 +873,14 @@ public class DoapMojo
         }
 
         List versions = metadata.getMetadata().getVersioning().getVersions();
+
         // Recent releases in first
         Collections.reverse( versions );
         boolean addComment = false;
+        int i = 0;
         for ( Iterator it = versions.iterator(); it.hasNext(); )
         {
             String version = (String) it.next();
-
-            // we want only release
-            if ( StringUtils.isEmpty( metadata.getMetadata().getVersioning().getRelease() ) )
-            {
-                continue;
-            }
-
-            // we don't write the latest
-            if ( version.equals( metadata.getMetadata().getVersioning().getLatest() ) )
-            {
-                continue;
-            }
 
             if ( !addComment )
             {
@@ -860,7 +893,7 @@ public class DoapMojo
             writer.startElement( "Version" );
 
             writer.startElement( "name" );
-            if ( version.equals( metadata.getMetadata().getVersioning().getRelease() ))
+            if ( version.equals( metadata.getMetadata().getVersioning().getRelease() ) )
             {
                 writer.writeText( "Latest stable release" );
             }
@@ -909,12 +942,34 @@ public class DoapMojo
                 writer.startElement( "file-release" );
                 writer.writeText( fileRelease );
                 writer.endElement(); // file-release
-            }
 
-            // TODO: how to handle release date?
+                Date releaseDate = null;
+                try
+                {
+                    releaseDate =
+                        REPOSITORY_DATE_FORMAT.parse( metadata.getMetadata().getVersioning().getLastUpdated() );
+                }
+                catch ( ParseException e )
+                {
+                    getLog().error(
+                                    "Unable to parse date '"
+                                        + metadata.getMetadata().getVersioning().getLastUpdated() + "'" );
+                    continue;
+                }
+
+                // See MDOAP-11
+                if ( i == 0 )
+                {
+                    writer.startElement( "created" );
+                    writer.writeText( DOAP_DATE_FORMAT.format( releaseDate ) );
+                    writer.endElement(); // created
+                }
+            }
 
             writer.endElement(); // Version
             writer.endElement(); // release
+
+            i++;
         }
     }
 
@@ -1461,6 +1516,7 @@ public class DoapMojo
      *
      * @param base The base URL
      * @param path The file
+     * @return the url with base and path
      */
     private static String composeUrl( String base, String path )
     {
