@@ -29,7 +29,7 @@ boolean checkEncoding( String module, String encoding )
     File source = new File( basedir, module + "/src/main/java/Test.java" );
     File javadoc = new File( basedir, module + "/target/site/apidocs/Test.html" );
 
-    String java = IOUtil.toString( new FileInputStream( source ), encoding );
+    String java = IOUtil.toString( new FileInputStream( source ), "UTF-8" );
     String html = IOUtil.toString( new FileInputStream( javadoc ), encoding );
 
     if ( html.indexOf( "text/html; charset=" + encoding ) < 0 )
