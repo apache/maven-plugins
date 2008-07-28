@@ -32,5 +32,6 @@
 
   <properties>
     <project.reporting.outputEncoding>UTF-16</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-16</project.build.sourceEncoding>
   </properties>
 </project>
