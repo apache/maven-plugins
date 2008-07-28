@@ -26,6 +26,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.maven.plugins.changes.model.Release;
+
 public class ReleaseTest
     extends TestCase
 {
@@ -71,9 +73,9 @@ public class ReleaseTest
     {
         List actionList = new ArrayList();
 
-        release.setAction( actionList );
+        release.setActions( actionList );
 
-        assertEquals( actionList, release.getAction() );
+        assertEquals( actionList, release.getActions() );
     }
 
 }
