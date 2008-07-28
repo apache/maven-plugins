@@ -311,6 +311,15 @@ public class DoapMojo
             throw new MojoExecutionException( "Error creating DOAP file.", e );
         }
 
+        if ( asfExtOptions.isIncluded() )
+        {
+            getLog().info( "Generating an ASF DOAP file..." );
+        }
+        else
+        {
+            getLog().info( "Generating a pure DOAP file..." );
+        }
+
         XMLWriter writer = new PrettyPrintXMLWriter( w, project.getModel().getModelEncoding(), null );
 
         // ----------------------------------------------------------------------------
