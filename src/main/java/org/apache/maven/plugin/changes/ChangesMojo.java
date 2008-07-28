@@ -128,6 +128,13 @@ public class ChangesMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        
+        if ( !xmlPath.exists() )
+        {
+            getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
+            return;
+        }
+        
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
         
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem ); 
