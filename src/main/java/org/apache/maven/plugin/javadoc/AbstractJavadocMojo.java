@@ -3420,7 +3420,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Generate a file called "packages" to hold all package namesand add the "@packages" in the command line.
+     * Generate a file called "packages" to hold all package names and add the "@packages" in the command line.
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files</a>
@@ -3537,7 +3537,7 @@ public abstract class AbstractJavadocMojo
                     getLog().warn(
                                    "The dependency: ["
                                        + p.getId()
-                                       + "} can't be resolved but has been found in the reactor (probably snapshots).\n"
+                                       + "] can't be resolved but has been found in the reactor (probably snapshots).\n"
                                        + "This dependency has been excluded from the Javadoc classpath. "
                                        + "You should rerun javadoc after executing mvn install." );
 
