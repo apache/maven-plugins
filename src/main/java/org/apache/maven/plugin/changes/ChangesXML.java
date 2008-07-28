@@ -19,16 +19,16 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Body;
+import org.apache.maven.plugins.changes.model.ChangesDocument;
+import org.apache.maven.plugins.changes.model.Properties;
+import org.apache.maven.plugins.changes.model.io.xpp3.ChangesXpp3Reader;
 
 /**
  * XML Parser for changes.xml files.
@@ -36,39 +36,66 @@ import java.util.List;
  * @version $Id$
  */
 public class ChangesXML
-    extends DefaultHandler
 {
-    private Action action;
-
-    private List actionList;
-
-    private Release release;
-
-    private StringBuffer currentElement = new StringBuffer( 1024 );
-
-    private String currentName;
 
     private List releaseList;
 
     private String author;
 
-    private String authorEmail;
-
     private String title;
+    
+    private String authorEmail;
+    
+    private ChangesDocument changesDocument;
 
     public ChangesXML( File xmlPath, Log log )
     {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-
+        
+        if (xmlPath == null || !xmlPath.exists())
+        {
+            log.error( "changes xml file is null or not exists " );
+            return;
+        }
+        
         try
         {
-            SAXParser saxParser = factory.newSAXParser();
+            
+            ChangesXpp3Reader reader = new ChangesXpp3Reader();
 
-            saxParser.parse( xmlPath, this );
+            changesDocument = reader.read( new FileInputStream( xmlPath), false ); 
+            
+            if (changesDocument == null)
+            {
+                log.error( "cannot build changes from file " + xmlPath.getPath() );
+                return;
+            }
+            
+            Properties properties = changesDocument.getProperties();
+            
+            if (properties != null)
+            {
+                if ( properties.getAuthor() != null )
+                {
+                    this.author =properties.getAuthor().getName();
+                    this.authorEmail = properties.getAuthor().getName(); 
+                }
+                this.title = properties.getTitle();                  
+            }
+            
+            
+            Body body = changesDocument.getBody();
+            
+            
+            if ( body != null )
+            {
+                this.releaseList = changesDocument.getBody().getReleases();
+            }
+            
         }
-        catch ( Throwable t )
+        catch ( Throwable e )
         {
-            log.error( "An error occured when parsing the changes.xml file:", t );
+            // FIXME throw an Exception ?
+            log.error( "An error occured when parsing the changes.xml file:", e );
         }
     }
 
@@ -82,16 +109,6 @@ public class ChangesXML
         return author;
     }
 
-    public void setAuthorEmail( String authorEmail )
-    {
-        this.authorEmail = authorEmail;
-    }
-
-    public String getAuthorEmail()
-    {
-        return authorEmail;
-    }
-
     public void setReleaseList( List releaseList )
     {
         this.releaseList = releaseList;
@@ -99,7 +116,7 @@ public class ChangesXML
 
     public List getReleaseList()
     {
-        return releaseList;
+        return releaseList == null ? Collections.EMPTY_LIST : releaseList;
     }
 
     public void setTitle( String title )
@@ -112,87 +129,19 @@ public class ChangesXML
         return title;
     }
 
-    public void characters( char[] buf, int offset, int len )
-        throws SAXException
+    public ChangesDocument getChangesDocument()
     {
-        currentElement.append( buf, offset, len );
+        return changesDocument;
     }
 
-    public void endElement( String namespaceURI, String sName, String qName )
-        throws SAXException
+    public String getAuthorEmail()
     {
-        if ( qName.equals( "title" ) )
-        {
-            this.title = currentElement.toString().trim();
-        }
-        else if ( qName.equals( "author" ) )
-        {
-            this.author = currentElement.toString().trim();
-        }
-        else if ( qName.equals( "action" ) )
-        {
-            action.setAction( currentElement.toString().trim() );
-
-            actionList.add( action );
-        }
-        else if ( qName.equals( "release" ) )
-        {
-            release.setAction( actionList );
-
-            releaseList.add( release );
-        }
-
-        currentElement.setLength( 0 );
+        return authorEmail;
     }
 
-    public void startElement( String namespaceURI, String sName, String qName, Attributes attrs )
-        throws SAXException
+    public void setAuthorEmail( String authorEmail )
     {
-        if ( qName.equals( "title" ) )
-        {
-            this.title = "";
-        }
-        else if ( qName.equals( "author" ) )
-        {
-            this.authorEmail = attrs.getValue( "email" );
-
-            this.author = "";
-        }
-        else if ( qName.equals( "body" ) )
-        {
-            releaseList = new ArrayList();
-        }
-        else if ( qName.equals( "release" ) )
-        {
-            release = new Release();
-
-            release.setDateRelease( attrs.getValue( "date" ) );
-
-            release.setVersion( attrs.getValue( "version" ) );
-
-            release.setDescription( attrs.getValue( "description" ) );
-
-            actionList = new ArrayList();
-        }
-        else if ( qName.equals( "action" ) )
-        {
-            action = new Action();
-
-            action.setDev( attrs.getValue( "dev" ) );
-
-            action.setDueTo( attrs.getValue( "due-to" ) );
-
-            action.setDueToEmail( attrs.getValue( "due-to-email" ) );
-
-            action.setType( attrs.getValue( "type" ) );
-
-            action.setIssue( attrs.getValue( "issue" ) );
-            
-            action.setSystem( attrs.getValue( "system" ) );
-            
-            action.setDate( attrs.getValue( "date" ) );
-        }
-
-        currentName = qName;
+        this.authorEmail = authorEmail;
     }
+
 }
