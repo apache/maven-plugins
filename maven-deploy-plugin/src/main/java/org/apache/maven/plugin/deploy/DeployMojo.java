@@ -178,8 +178,8 @@ public class DeployMojo
                 }
                 else
                 {
-                    throw new MojoExecutionException(
-                                                      "The packaging for this project did not assign a file to the build artifact" );
+                    String message = "The packaging for this project did not assign a file to the build artifact";
+                    throw new MojoExecutionException( message );
                 }
             }
 
@@ -201,9 +201,8 @@ public class DeployMojo
     {
         if ( deploymentRepository == null && altDeploymentRepository == null )
         {
-            String msg =
-                "Deployment failed: repository element was not specified in the pom inside"
-                                + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
+            String msg = "Deployment failed: repository element was not specified in the pom inside"
+                + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
 
             throw new MojoExecutionException( msg );
         }
