@@ -242,6 +242,19 @@ mvn deploy:deploy-file \
         </p>
       </answer>
     </faq>
+    <faq id="How to use links option in Standard Doclet">
+      <question>How to use links option in Standard Doclet?</question>
+      <answer>
+        <p>
+          You need to configure the <i>&lt;links/&gt;</i> parameter. Also, you need to correctly write references in
+          your Javadoc, i.e.:
+          <ul>
+            <li><code>@see MyMojo</code> or <code>{@link MyMojo}</code> will <b>NOT work</b>.</li>
+            <li><code>@see com.mycompany.plugin.myplugin.MyMojo</code> or <code>{@link com.mycompany.myplugin.MyMojo}</code> will <b>work</b>.</li>
+          </ul>
+        </p>
+      </answer>
+    </faq>
     <faq id="On Sun JDK, why javadoc:javadoc goal blows up due to an IllegalArgumentException in sun.net.www.ParseUtil.decode()">
       <question>On Sun JDK, why <i>javadoc:javadoc</i> goal blows up due to an IllegalArgumentException in <i>sun.net.www.ParseUtil.decode()</i>?</question>
       <answer>
