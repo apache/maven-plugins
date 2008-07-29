@@ -137,29 +137,4 @@ under the License.
       </build>
     </profile>
   </profiles> 
-  <repositories>
-    <!-- TODO remove it when maven-plugin-plugin 2.4.2 is released -->
-    <repository>
-      <id>apache.snapshots</id>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>   
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>    
-    </pluginRepository>
-  </pluginRepositories>
 </project>
