@@ -360,6 +360,27 @@ public abstract class AbstractJavadocMojo
      */
     protected boolean failOnError;
 
+    /**
+     * Specifies to use the <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
+     * options provided by the Standard Doclet</a> for a custom doclet.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;docletArtifacts&gt;
+     * &nbsp;&nbsp;&lt;docletArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/docletArtifact&gt;
+     * &lt;/docletArtifacts&gt;
+     * &lt;useStandardDocletOptions&gt;true&lt;/useStandardDocletOptions&gt;
+     * </pre>
+     *
+     * @parameter expression="${useStandardDocletOptions}" default-value="true"
+     * @since 2.5
+     */
+    protected boolean useStandardDocletOptions;
+
     // ----------------------------------------------------------------------
     // Javadoc Options
     // ----------------------------------------------------------------------
@@ -1431,7 +1452,7 @@ public abstract class AbstractJavadocMojo
         // Wrap Standard doclet Options
         // ----------------------------------------------------------------------
 
-        if ( StringUtils.isEmpty( doclet ) )
+        if ( StringUtils.isEmpty( doclet ) || useStandardDocletOptions )
         {
             addStandardDocletOptions( javadocOutputDirectory, arguments );
         }
