@@ -103,8 +103,7 @@ public abstract class AbstractJavadocMojo
     /**
      * The current class directory
      */
-    private static final String RESOURCE_DIR =
-        ClassUtils.getPackageName( JavadocReport.class ).replace( '.', '/' );
+    private static final String RESOURCE_DIR = ClassUtils.getPackageName( JavadocReport.class ).replace( '.', '/' );
 
     /**
      * Default css file name
@@ -1328,10 +1327,13 @@ public abstract class AbstractJavadocMojo
      */
     private String getDocencoding()
     {
-        return ( docencoding == null) ? ReaderFactory.UTF_8 : docencoding;
+        return ( docencoding == null ) ? ReaderFactory.UTF_8 : docencoding;
     }
 
     /**
+     * The <a href="package-summary.html">package documentation</a> details the
+     * Javadoc Options used by this Plugin.
+     *
      * @param unusedLocale the wanted locale (actually unused).
      * @throws MavenReportException if any
      */
@@ -1349,20 +1351,15 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        validateJavadocOptions();
-
         List sourcePaths = getSourcePaths();
-
         List files = getFiles( sourcePaths );
-
-        List packageNames = getPackageNames( sourcePaths, files );
-
-        List filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
-
         if ( !canGenerateReport( files ) )
         {
             return;
         }
+
+        List packageNames = getPackageNames( sourcePaths, files );
+        List filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
 
         // ----------------------------------------------------------------------
         // Find the javadoc executable and version
@@ -1377,69 +1374,11 @@ public abstract class AbstractJavadocMojo
         {
             throw new MavenReportException( "Unable to find javadoc command: " + e.getMessage(), e );
         }
+        setFJavadocVersion( new File( jExecutable ) );
 
-        float jVersion;
-        try
-        {
-            jVersion = JavadocUtil.getJavadocVersion( new File( jExecutable ) );
-        }
-        catch ( IOException e )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
-            }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
-        }
-        catch ( CommandLineException e )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn(
-                               "Using the Java the version instead of, i.e. "
-                                   + SystemUtils.JAVA_VERSION_FLOAT );
-            }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
-        }
-        catch ( IllegalArgumentException e )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn(
-                               "Using the Java the version instead of, i.e. "
-                                   + SystemUtils.JAVA_VERSION_FLOAT );
-            }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
-        }
-
-        if ( StringUtils.isNotEmpty( javadocVersion ) )
-        {
-            try
-            {
-                fJavadocVersion = Float.parseFloat( javadocVersion );
-            }
-            catch ( NumberFormatException e )
-            {
-                throw new MavenReportException( "Unable to parse javadoc version: " + e.getMessage(), e );
-            }
-
-            if ( fJavadocVersion != jVersion )
-            {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn(
-                                   "Are you sure about the <javadocVersion/> parameter? It seems to be "
-                                       + jVersion );
-                }
-            }
-        }
-        else
-        {
-            fJavadocVersion = jVersion;
-        }
+        // ----------------------------------------------------------------------
+        // Javadoc output directory as File
+        // ----------------------------------------------------------------------
 
         File javadocOutputDirectory = new File( getOutputDirectory() );
         if ( javadocOutputDirectory.exists() && !javadocOutputDirectory.isDirectory() )
@@ -1453,65 +1392,13 @@ public abstract class AbstractJavadocMojo
         javadocOutputDirectory.mkdirs();
 
         // ----------------------------------------------------------------------
-        // Copy default resources
+        // Copy all resources
         // ----------------------------------------------------------------------
 
-        try
-        {
-            copyDefaultStylesheet( javadocOutputDirectory );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to copy default stylesheet: " + e.getMessage(), e );
-        }
+        copyAllResources( javadocOutputDirectory );
 
         // ----------------------------------------------------------------------
-        // Copy javadoc resources
-        // ----------------------------------------------------------------------
-
-        if ( docfilessubdirs )
-        {
-            /*
-             * Workaround since -docfilessubdirs doesn't seem to be used correctly by the javadoc tool
-             * (see other note about -sourcepath). Take care of the -excludedocfilessubdir option.
-             */
-            try
-            {
-                copyJavadocResources( javadocOutputDirectory );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
-            }
-        }
-
-        // ----------------------------------------------------------------------
-        // Copy additional javadoc resources in artifacts
-        // ----------------------------------------------------------------------
-        copyAdditionalJavadocResources( javadocOutputDirectory );
-
-        // ----------------------------------------------------------------------
-        // Wrap javadoc options
-        // ----------------------------------------------------------------------
-
-        StringBuffer options = new StringBuffer();
-        if ( StringUtils.isNotEmpty( this.locale ) )
-        {
-            options.append( "-locale " );
-            options.append( JavadocUtil.quotedArgument( this.locale ) );
-            options.append( SystemUtils.LINE_SEPARATOR );
-        }
-
-        String classpath = getClasspath();
-        if ( classpath.length() > 0 )
-        {
-            options.append( "-classpath " );
-            options.append( JavadocUtil.quotedPathArgument( classpath ) );
-            options.append( SystemUtils.LINE_SEPARATOR );
-        }
-
-        // ----------------------------------------------------------------------
-        // Wrap javadoc arguments
+        // Create command line for Javadoc
         // ----------------------------------------------------------------------
 
         Commandline cmd = new Commandline();
@@ -1519,11 +1406,12 @@ public abstract class AbstractJavadocMojo
         cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
         cmd.setExecutable( jExecutable );
 
-        // Javadoc JVM args
+        // ----------------------------------------------------------------------
+        // Wrap Javadoc JVM args
+        // ----------------------------------------------------------------------
+
         addMemoryArg( cmd, "-Xmx", this.maxmemory );
-
         addMemoryArg( cmd, "-Xms", this.minmemory );
-
         addProxyArg( cmd );
 
         if ( StringUtils.isNotEmpty( additionalJOption ) )
@@ -1531,151 +1419,30 @@ public abstract class AbstractJavadocMojo
             cmd.createArg().setValue( additionalJOption );
         }
 
-        // General javadoc arguments
         List arguments = new ArrayList();
 
-        if ( StringUtils.isNotEmpty( doclet ) )
-        {
-            addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
-            addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
-        }
-        if ( StringUtils.isEmpty( encoding ) )
-        {
-            getLog().warn(
-                           "Source files encoding has not been set, using platform encoding "
-                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-        }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
-        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
+        // ----------------------------------------------------------------------
+        // Wrap Javadoc options
+        // ----------------------------------------------------------------------
 
-        if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Javadoc 1.4+ doesn't support the -1.1 switch anymore. Ignore this option." );
-            }
-        }
-        else
-        {
-            addArgIf( arguments, old, "-1.1" );
-        }
-
-        if ( ( getOverview() != null ) && ( getOverview().exists() ) )
-        {
-            addArgIfNotEmpty( arguments, "-overview",
-                              JavadocUtil.quotedPathArgument( getOverview().getAbsolutePath() ) );
-        }
-        arguments.add( getAccessLevel() );
-        addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
-        addArgIfNotEmpty( arguments, "-source", JavadocUtil.quotedArgument( source ), SINCE_JAVADOC_1_4 );
-        addArgIf( arguments, verbose, "-verbose" );
-        addArgIfNotEmpty( arguments, null, additionalparam );
-
-        if ( ( StringUtils.isEmpty( sourcepath ) ) && ( StringUtils.isNotEmpty( subpackages ) ) )
-        {
-            sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
-        }
-
-        addArgIfNotEmpty( arguments, "-sourcepath",
-                          JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
-
-        if ( StringUtils.isNotEmpty( sourcepath ) )
-        {
-            addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_4 );
-        }
-
-        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
+        addJavadocOptions( arguments, sourcePaths );
 
         // ----------------------------------------------------------------------
-        // Wrap arguments for standard doclet
+        // Wrap Standard doclet Options
         // ----------------------------------------------------------------------
 
         if ( StringUtils.isEmpty( doclet ) )
         {
-            validateStandardDocletOptions();
-
-            addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false,
-                              false );
-            addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( getCharset() ) );
-            addArgIfNotEmpty( arguments, "-d",
-                              JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
-            addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( getDocencoding() ) );
-            addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false,
-                              false );
-            if ( docfilessubdirs )
-            {
-                addArgIfNotEmpty( arguments, "-excludedocfilessubdir",
-                                  JavadocUtil.quotedPathArgument( excludedocfilessubdir ), SINCE_JAVADOC_1_4 );
-            }
-            addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
-            addGroups( arguments );
-            addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
-            addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
-            addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
-
-            if ( !isOffline )
-            {
-                addLinkArguments( arguments );
-            }
-            addLinkofflineArguments( arguments );
-
-            addArgIf( arguments, nodeprecated, "-nodeprecated" );
-            addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
-            addArgIf( arguments, nocomment, "-nocomment", SINCE_JAVADOC_1_4 );
-            addArgIf( arguments, nohelp, "-nohelp" );
-            addArgIf( arguments, noindex, "-noindex" );
-            addArgIf( arguments, nonavbar, "-nonavbar" );
-            addArgIf( arguments, nooverview, "-nooverview" );
-            addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ),
-                              SINCE_JAVADOC_1_4 );
-            addArgIf( arguments, nosince, "-nosince" );
-            addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
-            addArgIf( arguments, notree, "-notree" );
-            addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ),
-                              SINCE_JAVADOC_1_4_2 );
-            if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
-            {
-                addArgIf( arguments, quiet, "-quiet" );
-            }
-            addArgIf( arguments, serialwarn, "-serialwarn" );
-            addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
-            if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
-            {
-                addArgIfNotEmpty( arguments, "-linksourcetab", sourcetab );
-            }
-            else
-            {
-                addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
-            }
-            addArgIf( arguments, splitindex, "-splitindex" );
-            addArgIfNotEmpty( arguments, "-stylesheetfile",
-                              JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
-
-            addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
-            addTaglets( arguments );
-            addTagletsFromTagletArtifacts( arguments );
-            addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ),
-                              SINCE_JAVADOC_1_4 );
-            addTags( arguments );
-
-            addArgIfNotEmpty( arguments, "-top", JavadocUtil.quotedArgument( top ), false, false,
-                              SINCE_JAVADOC_1_6 );
-            addArgIf( arguments, use, "-use" );
-            addArgIf( arguments, version, "-version" );
-            addArgIfNotEmpty( arguments, "-windowtitle", JavadocUtil.quotedArgument( getWindowtitle() ),
-                              false, false );
+            addStandardDocletOptions( javadocOutputDirectory, arguments );
         }
 
         // ----------------------------------------------------------------------
         // Write options file and include it in the command line
         // ----------------------------------------------------------------------
 
-        if ( options.length() > 0 || arguments.size() > 0 )
+        if ( arguments.size() > 0 )
         {
-            addCommandLineOptions( cmd, options, arguments, javadocOutputDirectory );
+            addCommandLineOptions( cmd, arguments, javadocOutputDirectory );
         }
 
         // ----------------------------------------------------------------------
@@ -1711,78 +1478,7 @@ public abstract class AbstractJavadocMojo
         // Execute command line
         // ----------------------------------------------------------------------
 
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) ); // no quoted
-                                                                                                        // arguments
-        }
-
-        if ( debug )
-        {
-            File commandLineFile =
-                new File( javadocOutputDirectory, "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
-
-            try
-            {
-                FileUtils.fileWrite( commandLineFile.getAbsolutePath(),
-                                     CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
-
-                if ( !SystemUtils.IS_OS_WINDOWS )
-                {
-                    Runtime.getRuntime().exec(
-                                               new String[] { "chmod", "a+x",
-                                                   commandLineFile.getAbsolutePath() } );
-                }
-            }
-            catch ( IOException e )
-            {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
-                }
-            }
-        }
-
-        CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
-        try
-        {
-            int exitCode = CommandLineUtils.executeCommandLine( cmd, new DefaultConsumer(), err );
-
-            if ( exitCode != 0 )
-            {
-                String cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
-                cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
-
-                StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
-                msg.append( '\n' );
-                msg.append( "Command line was:" + cmdLine );
-                throw new MavenReportException( msg.toString() );
-            }
-        }
-        catch ( CommandLineException e )
-        {
-            throw new MavenReportException( "Unable to execute javadoc command: " + e.getMessage(), e );
-        }
-
-        // ----------------------------------------------------------------------
-        // Handle Javadoc warnings
-        // ----------------------------------------------------------------------
-
-        if ( StringUtils.isNotEmpty( err.getOutput() ) )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Javadoc Warnings" );
-
-                StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
-                while ( token.hasMoreTokens() )
-                {
-                    String current = token.nextToken().trim();
-
-                    getLog().warn( current );
-                }
-            }
-        }
+        executeJavadocCommandLine( cmd, javadocOutputDirectory );
     }
 
     /**
@@ -1863,8 +1559,7 @@ public abstract class AbstractJavadocMojo
                         }
 
                         String javadocDirRelative =
-                            PathUtils.toRelative( project.getBasedir(),
-                                                  getJavadocDirectory().getAbsolutePath() );
+                            PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                         File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                         if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
@@ -2034,8 +1729,7 @@ public abstract class AbstractJavadocMojo
                             try
                             {
                                 result =
-                                    resolver.resolveTransitively( dependencyArtifacts,
-                                                                  subProject.getArtifact(),
+                                    resolver.resolveTransitively( dependencyArtifacts, subProject.getArtifact(),
                                                                   subProject.getManagedVersionMap(),
                                                                   localRepository,
                                                                   subProject.getRemoteArtifactRepositories(),
@@ -2043,11 +1737,9 @@ public abstract class AbstractJavadocMojo
                             }
                             catch ( MultipleArtifactsNotFoundException e )
                             {
-                                if ( checkMissingArtifactsInReactor( dependencyArtifacts,
-                                                                     e.getMissingArtifacts() ) )
+                                if ( checkMissingArtifactsInReactor( dependencyArtifacts, e.getMissingArtifacts() ) )
                                 {
-                                    getLog().warn(
-                                                   "IGNORED to add some artifacts in the classpath. See above." );
+                                    getLog().warn( "IGNORED to add some artifacts in the classpath. See above." );
                                 }
                                 else
                                 {
@@ -2227,14 +1919,13 @@ public abstract class AbstractJavadocMojo
                 {
                     theBottom =
                         StringUtils.replace( theBottom, "{organizationName}", "<a href=\""
-                            + project.getOrganization().getUrl() + "\">"
-                            + project.getOrganization().getName() + "</a>" );
+                            + project.getOrganization().getUrl() + "\">" + project.getOrganization().getName()
+                            + "</a>" );
                 }
                 else
                 {
                     theBottom =
-                        StringUtils.replace( theBottom, "{organizationName}",
-                                             project.getOrganization().getName() );
+                        StringUtils.replace( theBottom, "{organizationName}", project.getOrganization().getName() );
                 }
             }
             else
@@ -2363,9 +2054,9 @@ public abstract class AbstractJavadocMojo
             return true;
         }
 
-        return ( StringUtils.isEmpty( aDocletArtifact.getGroupId() )
+        return StringUtils.isEmpty( aDocletArtifact.getGroupId() )
             && StringUtils.isEmpty( aDocletArtifact.getArtifactId() )
-            && StringUtils.isEmpty( aDocletArtifact.getVersion() ) );
+            && StringUtils.isEmpty( aDocletArtifact.getVersion() );
     }
 
     /**
@@ -2563,9 +2254,7 @@ public abstract class AbstractJavadocMojo
             {
                 if ( getLog().isErrorEnabled() )
                 {
-                    getLog().error(
-                                    "Malformed memory pattern for '" + arg + memory
-                                        + "'. Ignore this option." );
+                    getLog().error( "Malformed memory pattern for '" + arg + memory + "'. Ignore this option." );
                 }
             }
         }
@@ -2635,9 +2324,7 @@ public abstract class AbstractJavadocMojo
 
                     if ( StringUtils.isNotEmpty( activeProxy.getPassword() ) )
                     {
-                        cmd.createArg().setValue(
-                                                  "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword()
-                                                      + "\"" );
+                        cmd.createArg().setValue( "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"" );
                     }
                 }
             }
@@ -2754,6 +2441,76 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * Set a new value for <code>fJavadocVersion</code>
+     *
+     * @param jExecutable not null
+     * @throws MavenReportException if not found
+     * @see JavadocUtil#getJavadocVersion(File)
+     */
+    private void setFJavadocVersion( File jExecutable )
+        throws MavenReportException
+    {
+        float jVersion;
+        try
+        {
+            jVersion = JavadocUtil.getJavadocVersion( jExecutable );
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+        }
+        catch ( CommandLineException e )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+        }
+        catch ( IllegalArgumentException e )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
+                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+            }
+            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+        }
+
+        if ( StringUtils.isNotEmpty( javadocVersion ) )
+        {
+            try
+            {
+                fJavadocVersion = Float.parseFloat( javadocVersion );
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new MavenReportException( "Unable to parse javadoc version: " + e.getMessage(), e );
+            }
+
+            if ( fJavadocVersion != jVersion )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn(
+                                   "Are you sure about the <javadocVersion/> parameter? It seems to be "
+                                       + jVersion );
+                }
+            }
+        }
+        else
+        {
+            fJavadocVersion = jVersion;
+        }
+    }
+
+    /**
      * Is the Javadoc version at least the requested version.
      *
      * @param requiredVersion the required version, for example 1.5f
@@ -2805,8 +2562,8 @@ public abstract class AbstractJavadocMojo
                 if ( getLog().isWarnEnabled() )
                 {
                     getLog().warn(
-                                   value + " option is not supported on Java version < "
-                                       + requiredJavaVersion + ". Ignore this option." );
+                                   value + " option is not supported on Java version < " + requiredJavaVersion
+                                       + ". Ignore this option." );
                 }
             }
         }
@@ -2876,8 +2633,7 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey repeat or not the key in the command line
      * @param splitValue if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey,
-                                   boolean splitValue )
+    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
         {
@@ -3019,9 +2775,8 @@ public abstract class AbstractJavadocMojo
             for ( int i = 0; i < offlineLinksList.size(); i++ )
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinksList.get( i );
-                addArgIfNotEmpty( arguments, "-linkoffline",
-                                  JavadocUtil.quotedPathArgument( offlineLink.getUrl() ) + " "
-                                      + JavadocUtil.quotedPathArgument( offlineLink.getLocation() ), true );
+                addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( offlineLink.getUrl() )
+                    + " " + JavadocUtil.quotedPathArgument( offlineLink.getLocation() ), true );
             }
         }
     }
@@ -3103,6 +2858,58 @@ public abstract class AbstractJavadocMojo
     private InputStream getStream( String resource )
     {
         return getClass().getClassLoader().getResourceAsStream( resource );
+    }
+
+    /**
+     * Coppy all resources to the output directory
+     *
+     * @param javadocOutputDirectory not null
+     * @throws MavenReportException if any
+     * @see #copyDefaultStylesheet(File)
+     * @see #copyJavadocResources(File)
+     * @see #copyAdditionalJavadocResources(File)
+     */
+    private void copyAllResources( File javadocOutputDirectory )
+        throws MavenReportException
+    {
+        // ----------------------------------------------------------------------
+        // Copy default resources
+        // ----------------------------------------------------------------------
+
+        try
+        {
+            copyDefaultStylesheet( javadocOutputDirectory );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to copy default stylesheet: " + e.getMessage(), e );
+        }
+
+        // ----------------------------------------------------------------------
+        // Copy javadoc resources
+        // ----------------------------------------------------------------------
+
+        if ( docfilessubdirs )
+        {
+            /*
+             * Workaround since -docfilessubdirs doesn't seem to be used correctly by the javadoc tool
+             * (see other note about -sourcepath). Take care of the -excludedocfilessubdir option.
+             */
+            try
+            {
+                copyJavadocResources( javadocOutputDirectory );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // Copy additional javadoc resources in artifacts
+        // ----------------------------------------------------------------------
+
+        copyAdditionalJavadocResources( javadocOutputDirectory );
     }
 
     /**
@@ -3227,8 +3034,8 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    throw new MavenReportException( "Unable to build the Maven project for the artifact:"
-                        + item, e );
+                    throw new MavenReportException( "Unable to build the Maven project for the artifact:" + item,
+                                                    e );
                 }
 
                 unArchiver.setSourceFile( artifact.getFile() );
@@ -3241,9 +3048,8 @@ public abstract class AbstractJavadocMojo
                 }
                 catch ( ArchiverException e )
                 {
-                    throw new MavenReportException(
-                                                    "Extraction of resources failed. Artifact that failed was: "
-                                                        + artifact.getArtifactId(), e );
+                    throw new MavenReportException( "Extraction of resources failed. Artifact that failed was: "
+                        + artifact.getArtifactId(), e );
                 }
             }
         }
@@ -3275,8 +3081,7 @@ public abstract class AbstractJavadocMojo
      * @param onlyPackageName boolean for only package name
      * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
      */
-    private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files,
-                                                            boolean onlyPackageName )
+    private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
     {
         List returnList = new ArrayList();
 
@@ -3331,18 +3136,16 @@ public abstract class AbstractJavadocMojo
      * Reference Guide, Command line argument files</a>
      *
      * @param cmd not null
-     * @param options not null
      * @param arguments not null
      * @param javadocOutputDirectory not null
      * @throws MavenReportException if any
      */
-    private void addCommandLineOptions( Commandline cmd, StringBuffer options, List arguments,
-                                        File javadocOutputDirectory )
+    private void addCommandLineOptions( Commandline cmd, List arguments, File javadocOutputDirectory )
         throws MavenReportException
     {
         File optionsFile = new File( javadocOutputDirectory, "options" );
 
-        options.append( " " );
+        StringBuffer options = new StringBuffer();
         options.append( StringUtils.join( arguments.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
 
         try
@@ -3550,6 +3353,166 @@ public abstract class AbstractJavadocMojo
 
         // if all of them have been found, we can continue.
         return foundInReactor.size() == missing.size();
+    }
+
+    /**
+     * Add Standard Javadoc Options.
+     * <br/>
+     * The <a href="package-summary.html#Standard_Javadoc_Options">package documentation</a> details the
+     * Standard Javadoc Options wrapped by this Plugin.
+     *
+     * @param arguments not null
+     * @param sourcePaths not null
+     * @throws MavenReportException if any
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">
+     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
+     */
+    private void addJavadocOptions( List arguments, List sourcePaths )
+        throws MavenReportException
+    {
+        validateJavadocOptions();
+
+        // see com.sun.tools.javadoc.Start#parseAndExecute(String argv[])
+        addArgIfNotEmpty( arguments, "-locale", JavadocUtil.quotedArgument( this.locale ) );
+
+        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
+
+        if ( StringUtils.isNotEmpty( doclet ) )
+        {
+            addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
+            addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
+        }
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn(
+                           "Source files encoding has not been set, using platform encoding "
+                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+        }
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
+
+        if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Javadoc 1.4+ doesn't support the -1.1 switch anymore. Ignore this option." );
+            }
+        }
+        else
+        {
+            addArgIf( arguments, old, "-1.1" );
+        }
+
+        if ( ( getOverview() != null ) && ( getOverview().exists() ) )
+        {
+            addArgIfNotEmpty( arguments, "-overview",
+                              JavadocUtil.quotedPathArgument( getOverview().getAbsolutePath() ) );
+        }
+        arguments.add( getAccessLevel() );
+        addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
+        addArgIfNotEmpty( arguments, "-source", JavadocUtil.quotedArgument( source ), SINCE_JAVADOC_1_4 );
+        addArgIf( arguments, verbose, "-verbose" );
+        addArgIfNotEmpty( arguments, null, additionalparam );
+
+        if ( ( StringUtils.isEmpty( sourcepath ) ) && ( StringUtils.isNotEmpty( subpackages ) ) )
+        {
+            sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
+        }
+
+        addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
+
+        if ( StringUtils.isNotEmpty( sourcepath ) )
+        {
+            addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_4 );
+        }
+
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
+    }
+
+    /**
+     * Add Standard Doclet Options.
+     * <br/>
+     * The <a href="package-summary.html#Standard_Doclet_Options">package documentation</a> details the
+     * Standard Doclet Options wrapped by this Plugin.
+     *
+     * @param javadocOutputDirectory not null
+     * @param arguments not null
+     * @throws MavenReportException if any
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard">
+     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard</a>
+     */
+    private void addStandardDocletOptions( File javadocOutputDirectory, List arguments )
+        throws MavenReportException
+    {
+        validateStandardDocletOptions();
+
+        addArgIf( arguments, author, "-author" );
+        addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false, false );
+        addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
+        addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( getCharset() ) );
+        addArgIfNotEmpty( arguments, "-d", JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
+        addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
+        addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( getDocencoding() ) );
+        addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false, false );
+        if ( docfilessubdirs )
+        {
+            addArgIfNotEmpty( arguments, "-excludedocfilessubdir",
+                              JavadocUtil.quotedPathArgument( excludedocfilessubdir ), SINCE_JAVADOC_1_4 );
+        }
+        addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
+        addGroups( arguments );
+        addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
+        addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
+        addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
+
+        if ( !isOffline )
+        {
+            addLinkArguments( arguments );
+        }
+        addLinkofflineArguments( arguments );
+
+        addArgIf( arguments, nodeprecated, "-nodeprecated" );
+        addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
+        addArgIf( arguments, nocomment, "-nocomment", SINCE_JAVADOC_1_4 );
+        addArgIf( arguments, nohelp, "-nohelp" );
+        addArgIf( arguments, noindex, "-noindex" );
+        addArgIf( arguments, nonavbar, "-nonavbar" );
+        addArgIf( arguments, nooverview, "-nooverview" );
+        addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
+        addArgIf( arguments, nosince, "-nosince" );
+        addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
+        addArgIf( arguments, notree, "-notree" );
+        addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ),
+                          SINCE_JAVADOC_1_4_2 );
+        if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
+        {
+            addArgIf( arguments, quiet, "-quiet" );
+        }
+        addArgIf( arguments, serialwarn, "-serialwarn" );
+        addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
+        if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
+        {
+            addArgIfNotEmpty( arguments, "-linksourcetab", sourcetab );
+        }
+        else
+        {
+            addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
+        }
+        addArgIf( arguments, splitindex, "-splitindex" );
+        addArgIfNotEmpty( arguments, "-stylesheetfile",
+                          JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
+
+        addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
+        addTaglets( arguments );
+        addTagletsFromTagletArtifacts( arguments );
+        addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ),
+                          SINCE_JAVADOC_1_4 );
+        addTags( arguments );
+
+        addArgIfNotEmpty( arguments, "-top", JavadocUtil.quotedArgument( top ), false, false, SINCE_JAVADOC_1_6 );
+        addArgIf( arguments, use, "-use" );
+        addArgIf( arguments, version, "-version" );
+        addArgIfNotEmpty( arguments, "-windowtitle", JavadocUtil.quotedArgument( getWindowtitle() ), false, false );
     }
 
     /**
@@ -3765,6 +3728,88 @@ public abstract class AbstractJavadocMojo
 
                     addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( tagletClass ),
                                       SINCE_JAVADOC_1_4 );
+                }
+            }
+        }
+    }
+
+    /**
+     * Execute the Javadoc command line
+     *
+     * @param cmd not null
+     * @param javadocOutputDirectory not null
+     * @throws MavenReportException if any errors occur
+     */
+    private void executeJavadocCommandLine( Commandline cmd, File javadocOutputDirectory )
+        throws MavenReportException
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            // no quoted arguments
+            getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+        }
+
+        if ( debug )
+        {
+            File commandLineFile =
+                new File( javadocOutputDirectory, "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
+
+            try
+            {
+                FileUtils.fileWrite( commandLineFile.getAbsolutePath(),
+                                     CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+
+                if ( !SystemUtils.IS_OS_WINDOWS )
+                {
+                    Runtime.getRuntime().exec( new String[] { "chmod", "a+x", commandLineFile.getAbsolutePath() } );
+                }
+            }
+            catch ( IOException e )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
+                }
+            }
+        }
+
+        CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
+        try
+        {
+            int exitCode = CommandLineUtils.executeCommandLine( cmd, new DefaultConsumer(), err );
+
+            if ( exitCode != 0 )
+            {
+                String cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
+                cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
+
+                StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
+                msg.append( '\n' );
+                msg.append( "Command line was:" + cmdLine );
+                throw new MavenReportException( msg.toString() );
+            }
+        }
+        catch ( CommandLineException e )
+        {
+            throw new MavenReportException( "Unable to execute javadoc command: " + e.getMessage(), e );
+        }
+
+        // ----------------------------------------------------------------------
+        // Handle Javadoc warnings
+        // ----------------------------------------------------------------------
+
+        if ( StringUtils.isNotEmpty( err.getOutput() ) )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "Javadoc Warnings" );
+
+                StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
+                while ( token.hasMoreTokens() )
+                {
+                    String current = token.nextToken().trim();
+
+                    getLog().warn( current );
                 }
             }
         }
