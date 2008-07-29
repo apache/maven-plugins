@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -135,6 +137,25 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
     // Report public methods
     // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( links == null )
+        {
+            links = new ArrayList();
+        }
+
+        // TODO the prerequisite is that the main report is in apidocs
+        File apidocs = new File( getReportOutputDirectory().getParentFile(), "apidocs" );
+        if ( apidocs.exists() && apidocs.isDirectory() && !links.contains( "../apidocs" ) )
+        {
+            links.add( "../apidocs" );
+        }
+
+        super.execute();
+    }
 
     /** {@inheritDoc} */
     public String getName( Locale locale )

@@ -804,7 +804,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter expression="${links}"
      */
-    private ArrayList links;
+    protected ArrayList links;
 
     /**
      * This option is a variation of -link; they both create links to javadoc-generated documentation for external
