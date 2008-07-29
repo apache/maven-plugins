@@ -36,8 +36,13 @@ under the License.
       <question>Where in the pom.xml do I configure the Javadoc Plugin?</question>
       <answer>
         <p>
-          Like all other site report plugins, the Javadoc Plugin goes in the
-          <i>&lt;reporting/&gt;</i> section of your pom.xml.
+          Like all other site report plugins, the Javadoc Plugin goes in the <i>&lt;reporting/&gt;</i> section
+          of your pom.xml. In this case, you will need to call <code>mvn site</code> to run reports.
+        </p>
+        <p>
+          You could also configure it in the &lt;plugins/&gt; or &lt;pluginsManagement/&gt; in &lt;build/&gt; tag
+          of your pom.xml. In this case, you will need to call <code>mvn javadoc:javadoc</code> to run the main
+          report.
         </p>
       </answer>
     </faq>
