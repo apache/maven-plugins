@@ -911,23 +911,33 @@ public class JavadocUtil
         }
 
         List classes = new ArrayList();
-        JarInputStream jarStream = new JarInputStream( new FileInputStream( jarFile ) );
-        JarEntry jarEntry = jarStream.getNextJarEntry();
-        while ( jarEntry != null )
+        JarInputStream jarStream = null;
+
+        try
         {
-            if ( jarEntry == null )
+            jarStream = new JarInputStream( new FileInputStream( jarFile ) );
+            JarEntry jarEntry = jarStream.getNextJarEntry();
+            while ( jarEntry != null )
             {
-                break;
+                if ( jarEntry == null )
+                {
+                    break;
+                }
+
+                if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
+                {
+                    String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
+
+                    classes.add( name.replaceAll( "/", "\\." ) );
+                }
+
+                jarStream.closeEntry();
+                jarEntry = jarStream.getNextJarEntry();
             }
-
-            if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
-            {
-                String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
-
-                classes.add( name.replaceAll( "/", "\\." ) );
-            }
-
-            jarEntry = jarStream.getNextJarEntry();
+        }
+        finally
+        {
+            IOUtil.close( jarStream );
         }
 
         return classes;
