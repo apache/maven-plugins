@@ -21,6 +21,17 @@ under the License.
 
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
+    <faq id="What are the Javadoc options supported by the Maven Javadoc Plugin">
+      <question>What are the Javadoc options supported by the Maven Javadoc Plugin?</question>
+      <answer>
+        <p>
+          All options provided by Sun on the Javadoc homepages are wrapped in the Maven Javadoc Plugin. This
+          plugin supports Javadoc 1.4, 1.5 and 6.0 options. Refer you to the
+          <a href="./apidocs/org/apache/maven/plugin/javadoc/package-summary.html">Package Summary</a> for
+          more information.
+        </p>
+      </answer>
+    </faq>
     <faq id="Where in the pom.xml do I configure the Javadoc Plugin">
       <question>Where in the pom.xml do I configure the Javadoc Plugin?</question>
       <answer>
