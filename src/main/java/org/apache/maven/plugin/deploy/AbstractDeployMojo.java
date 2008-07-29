@@ -25,6 +25,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+/**
+ * @version $Id$
+ */
 public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
@@ -52,7 +55,7 @@ public abstract class AbstractDeployMojo
         return deployer;
     }
 
-    public void setDeployer(ArtifactDeployer deployer)
+    public void setDeployer( ArtifactDeployer deployer )
     {
         this.deployer = deployer;
     }
@@ -62,7 +65,7 @@ public abstract class AbstractDeployMojo
         return localRepository;
     }
 
-    public void setLocalRepository(ArtifactRepository localRepository)
+    public void setLocalRepository( ArtifactRepository localRepository )
     {
         this.localRepository = localRepository;
     }
