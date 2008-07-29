@@ -136,7 +136,7 @@ public class AntBuildWriterUtilTest
     }
 
     /**
-     * Test method for {@link AntBuildWriterUtil#getSingularForm(String)}.
+     * Test method for <code>AntBuildWriterUtil.getSingularForm(String)}</code>.
      *
      * @throws Exception
      */
@@ -148,6 +148,28 @@ public class AntBuildWriterUtilTest
         assertEquals( "report", AntBuildWriterUtil.getSingularForm( "reports" ) );
         assertEquals( "", AntBuildWriterUtil.getSingularForm( "singular" ) );
         assertEquals( "", AntBuildWriterUtil.getSingularForm( null ) );
+    }
+
+    /**
+     * Test method for <code>AntBuildWriterUtil.toRelative(File, String)</code>.
+     * 
+     * @throws Exception
+     */
+    public static void testToRelative()
+        throws Exception
+    {
+        assertEquals( "relative", AntBuildWriterUtil.toRelative( new File( "/home" ), "relative" ) );
+        assertEquals( "dir", AntBuildWriterUtil.toRelative( new File( "home" ),
+                                                            new File( "home/dir" ).getAbsolutePath() ) );
+        assertEquals( "dir", AntBuildWriterUtil.toRelative( new File( "/home" ),
+                                                            new File( "/home/dir" ).getAbsolutePath() ) );
+        assertEquals( "dir/", AntBuildWriterUtil.toRelative( new File( "/home" ),
+                                                             new File( "/home/dir" ).getAbsolutePath() + "/" ) );
+        assertEquals( "dir/sub", AntBuildWriterUtil.toRelative( new File( "/home" ),
+                                                                new File( "/home/dir/sub" ).getAbsolutePath() ) );
+        assertEquals( ".", AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home" ).getAbsolutePath() ) );
+        assertEquals( "./", AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home" ).getAbsolutePath()
+            + "/" ) );
     }
 
 }
