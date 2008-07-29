@@ -37,8 +37,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.wagon.PathUtils;
 import org.apache.xpath.XPathAPI;
+import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
@@ -157,7 +157,7 @@ public class AntBuildWriterUtil
     {
         writer.startElement( "ant" );
         writer.addAttribute( "antfile", "build.xml" );
-        writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+        writer.addAttribute( "dir", toRelative( project.getBasedir(), moduleSubPath ) );
         writer.addAttribute( "target", tasks );
         writer.endElement(); // ant
     }
@@ -1267,6 +1267,69 @@ public class AntBuildWriterUtil
             }
         }
         return singularForm;
+    }
+
+    /**
+     * Relativizes the specified path against the given base directory (if possible). If the specified path is a
+     * subdirectory of the base directory, the base directory prefix will be chopped off. If the specified path is equal
+     * to the base directory, the path "." is returned. Otherwise, the path is returned as is. Examples:
+     * <table border="1">
+     * <tr>
+     * <td>basedir</td>
+     * <td>path</td>
+     * <td>result</td>
+     * </tr>
+     * <tr>
+     * <td>/home</td>
+     * <td>/home/dir</td>
+     * <td>dir</td>
+     * </tr>
+     * <tr>
+     * <td>/home</td>
+     * <td>/home/dir/</td>
+     * <td>dir/</td>
+     * </tr>
+     * <tr>
+     * <td>/home</td>
+     * <td>/home</td>
+     * <td>.</td>
+     * </tr>
+     * <tr>
+     * <td>/home</td>
+     * <td>/home/</td>
+     * <td>./</td>
+     * </tr>
+     * <tr>
+     * <td>/home</td>
+     * <td>dir</td>
+     * <td>dir</td>
+     * </tr>
+     * </table>
+     * The returned path will always use the forward slash ('/') as the file separator regardless of the current
+     * platform. Also, the result path will have a trailing slash if the input path has a trailing file separator.
+     * 
+     * @param basedir The base directory to relativize the path against, must not be <code>null</code>.
+     * @param path The path to relativize, must not be <code>null</code>.
+     * @return The relativized path, never <code>null</code>.
+     */
+    static String toRelative( File basedir, String path )
+    {
+        String result = null;
+        if ( new File( path ).isAbsolute() )
+        {
+            String pathNormalized = path.replace( '/', File.separatorChar ).replace( '\\', File.separatorChar );
+            result = PathTool.getRelativeFilePath( basedir.getAbsolutePath(), pathNormalized );
+        }
+        if ( result == null )
+        {
+            result = path;
+        }
+        result = result.replace( '\\', '/' );
+        if ( result.length() <= 0 || "/".equals( result ) )
+        {
+            result = '.' + result;
+        }
+        return result;
     }
 
 }

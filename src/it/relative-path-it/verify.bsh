@@ -1,0 +1,61 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+boolean checkValue( String expected, String key, Properties props )
+{
+    String actual = props.getProperty( key );
+    if ( !expected.equals( actual ) )
+    {
+        System.err.println( "Generated build properties contain bad value for key " + key + ": expected \"" + expected
+                            + "\" but was \"" + actual + "\"" );
+        return false;
+    }
+    return true;
+}
+
+try
+{
+    File propsFile = new File( basedir, "maven-build.properties" );
+    Properties props = new Properties();
+    InputStream in = null;
+    try
+    {
+        in = new FileInputStream( propsFile );
+        props.load( in );
+    }
+    finally
+    {
+        IOUtil.close( in );
+    }
+
+    if ( !checkValue( "target", "maven.build.dir", props ) )
+    {
+        return false;
+    }
+    if ( !checkValue( "src/main/java", "maven.build.srcDir.0", props ) )
+    {
+        return false;
+    }
+    if ( !checkValue( "src/test/java", "maven.build.testDir.0", props ) )
+    {
+        return false;
+    }
+    if ( !checkValue( "src/main/resources", "maven.build.resourceDir.0", props ) )
+    {
+        return false;
+    }
+    if ( !checkValue( ".", "maven.build.resourceDir.1", props ) )
+    {
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
