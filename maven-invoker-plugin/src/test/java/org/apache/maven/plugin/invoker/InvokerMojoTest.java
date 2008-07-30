@@ -67,7 +67,7 @@ public class InvokerMojoTest
         pomIncludes.add( "pom.xml" );
         setVariableValueToObject( invokerMojo, "pomIncludes", pomIncludes );
         setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
-        File cloneProjectsTo = new File( "target/goals-from-file/" );
+        File cloneProjectsTo = new File( getBasedir(), "target/unit/goals-from-file/" );
         // clean if exists
         if ( cloneProjectsTo.exists() )
         {
@@ -125,6 +125,48 @@ public class InvokerMojoTest
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
         String[] poms = invokerMojo.getPoms();
         System.out.println( Arrays.asList( poms ) );
-        assertEquals( 3, poms.length );
+        assertEquals( 4, poms.length );
     }
+
+    public void testAlreadyCloned()
+        throws Exception
+    {
+        assertFalse( InvokerMojo.alreadyCloned( "dir", Collections.EMPTY_LIST ) );
+        assertTrue( InvokerMojo.alreadyCloned( "dir", Collections.singletonList( "dir" ) ) );
+        assertTrue( InvokerMojo.alreadyCloned( "dir" + File.separator + "sub", Collections.singletonList( "dir" ) ) );
+        assertFalse( InvokerMojo.alreadyCloned( "dirs", Collections.singletonList( "dir" ) ) );
+    }    
+
+    public void testProjectCloning()
+        throws Exception
+    {
+        String dirPath = getBasedir() + "/src/test/resources/unit/nested-projects";
+
+        File cloneProjectsTo = new File( getBasedir(), "target/unit/nested-projects" );
+        if ( cloneProjectsTo.exists() )
+        {
+            FileUtils.deleteDirectory( cloneProjectsTo );
+        }
+
+        MavenProjectStub project = new MavenProjectStub();
+        project.setTestClasspathElements( Collections.EMPTY_LIST );
+
+        InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "goals", Collections.singletonList( "validate" ) );
+        setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
+        setVariableValueToObject( invokerMojo, "pomIncludes", Collections.singletonList( "**/pom.xml" ) );
+        setVariableValueToObject( invokerMojo, "pomExcludes", Collections.singletonList( "pom.xml" ) );
+        setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
+        setVariableValueToObject( invokerMojo, "project", project );
+        setVariableValueToObject( invokerMojo, "settings", new Settings() );
+        setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
+
+        invokerMojo.execute();
+
+        // NOTE: It is part of the test design that "module" is a prefix of "module-1"
+        assertTrue( new File( cloneProjectsTo, "module" ).isDirectory() );
+        assertTrue( new File( cloneProjectsTo, "module-1" ).isDirectory() );
+        assertTrue( new File( cloneProjectsTo, "module-1/sub-module" ).isDirectory() );
+    }
+
 }
