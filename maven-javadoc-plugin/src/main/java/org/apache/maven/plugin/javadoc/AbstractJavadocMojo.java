@@ -101,19 +101,33 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
-    /**
-     * The current class directory
-     */
+    /** The Javadoc script file name when <code>debug</code> parameter is on, i.e. javadoc.bat or javadoc.sh */
+    protected static final String DEBUG_JAVADOC_SCRIPT_NAME =
+        "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" );
+
+    /** The <code>options</code> file name in the output directory when calling:
+     * <code>javadoc.exe(or .sh) &#x40;options &#x40;packages | &#x40;argfile | &#x40;files</code> */
+    protected static final String OPTIONS_FILE_NAME = "options";
+
+    /** The <code>packages</code> file name in the output directory when calling:
+     * <code>javadoc.exe(or .sh) &#x40;options &#x40;packages | &#x40;argfile | &#x40;files</code> */
+    protected static final String PACKAGES_FILE_NAME = "packages";
+
+    /** The <code>argfile</code> file name in the output directory when calling:
+     * <code>javadoc.exe(or .sh) &#x40;options &#x40;packages | &#x40;argfile | &#x40;files</code> */
+    protected static final String ARGFILE_FILE_NAME = "argfile";
+
+    /** The <code>files</code> file name in the output directory when calling:
+     * <code>javadoc.exe(or .sh) &#x40;options &#x40;packages | &#x40;argfile | &#x40;files</code> */
+    protected static final String FILES_FILE_NAME = "files";
+
+    /** The current class directory */
     private static final String RESOURCE_DIR = ClassUtils.getPackageName( JavadocReport.class ).replace( '.', '/' );
 
-    /**
-     * Default css file name
-     */
+    /** Default css file name */
     private static final String DEFAULT_CSS_NAME = "stylesheet.css";
 
-    /**
-     * Default location for css
-     */
+    /** Default location for css */
     private static final String RESOURCE_CSS_DIR = RESOURCE_DIR + "/css";
 
     /**
@@ -3227,7 +3241,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Generate an "options" file for all options and arguments and add the "@options" in the command line.
+     * Generate an <code>options</code> file for all options and arguments and add the <code>@options</code> in the
+     * command line.
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files</a>
@@ -3236,11 +3251,12 @@ public abstract class AbstractJavadocMojo
      * @param arguments not null
      * @param javadocOutputDirectory not null
      * @throws MavenReportException if any
+     * @see #OPTIONS_FILE_NAME
      */
     private void addCommandLineOptions( Commandline cmd, List arguments, File javadocOutputDirectory )
         throws MavenReportException
     {
-        File optionsFile = new File( javadocOutputDirectory, "options" );
+        File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
 
         StringBuffer options = new StringBuffer();
         options.append( StringUtils.join( arguments.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
@@ -3255,7 +3271,7 @@ public abstract class AbstractJavadocMojo
                 + "' temporary file for command execution", e );
         }
 
-        cmd.createArg().setValue( "@options" );
+        cmd.createArg().setValue( "@" + OPTIONS_FILE_NAME );
 
         if ( !debug )
         {
@@ -3264,8 +3280,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Generate a file called "argfile" (or "files", depending the JDK) to hold files and add the "@argfile"
-     * (or "@file", depending the JDK) in the command line.
+     * Generate a file called <code>argfile</code> (or <code>files</code>, depending the JDK) to hold files and add
+     * the <code>@argfile</code> (or <code>@file</code>, depending the JDK) in the command line.
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files
@@ -3279,6 +3295,8 @@ public abstract class AbstractJavadocMojo
      * @param files not null
      * @throws MavenReportException if any
      * @see #isJavaDocVersionAtLeast(float)
+     * @see #ARGFILE_FILE_NAME
+     * @see #FILES_FILE_NAME
      */
     private void addCommandLineArgFile( Commandline cmd, File javadocOutputDirectory, List files )
         throws MavenReportException
@@ -3286,11 +3304,11 @@ public abstract class AbstractJavadocMojo
         File argfileFile;
         if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
-            argfileFile = new File( javadocOutputDirectory, "argfile" );
+            argfileFile = new File( javadocOutputDirectory, ARGFILE_FILE_NAME );
         }
         else
         {
-            argfileFile = new File( javadocOutputDirectory, "files" );
+            argfileFile = new File( javadocOutputDirectory, FILES_FILE_NAME );
         }
 
         try
@@ -3306,11 +3324,11 @@ public abstract class AbstractJavadocMojo
 
         if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
-            cmd.createArg().setValue( "@argfile" );
+            cmd.createArg().setValue( "@" + ARGFILE_FILE_NAME );
         }
         else
         {
-            cmd.createArg().setValue( "@files" );
+            cmd.createArg().setValue( "@" + FILES_FILE_NAME );
         }
 
         if ( !debug )
@@ -3320,7 +3338,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Generate a file called "packages" to hold all package names and add the "@packages" in the command line.
+     * Generate a file called <code>packages</code> to hold all package names and add the <code>@packages</code> in
+     * the command line.
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
      * Reference Guide, Command line argument files</a>
@@ -3329,11 +3348,12 @@ public abstract class AbstractJavadocMojo
      * @param javadocOutputDirectory not null
      * @param packageNames not null
      * @throws MavenReportException if any
+     * @see #PACKAGES_FILE_NAME
      */
     private void addCommandLinePackages( Commandline cmd, File javadocOutputDirectory, List packageNames )
         throws MavenReportException
     {
-        File packagesFile = new File( javadocOutputDirectory, "packages" );
+        File packagesFile = new File( javadocOutputDirectory, PACKAGES_FILE_NAME );
 
         try
         {
@@ -3347,7 +3367,7 @@ public abstract class AbstractJavadocMojo
                 + "' temporary file for command execution", e );
         }
 
-        cmd.createArg().setValue( "@packages" );
+        cmd.createArg().setValue( "@" + PACKAGES_FILE_NAME );
 
         if ( !debug )
         {
@@ -3852,7 +3872,7 @@ public abstract class AbstractJavadocMojo
         if ( debug )
         {
             File commandLineFile =
-                new File( javadocOutputDirectory, "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
+                new File( javadocOutputDirectory, DEBUG_JAVADOC_SCRIPT_NAME );
 
             try
             {

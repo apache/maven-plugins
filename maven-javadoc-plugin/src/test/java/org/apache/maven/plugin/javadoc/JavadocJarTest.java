@@ -93,6 +93,11 @@ public class JavadocJarTest
         assertTrue( set.contains( "javadocjar/def/AppSample.html" ) );
         assertTrue( set.contains( "javadocjar/def/class-use/App.html" ) );
 
+        assertFalse( set.contains( AbstractJavadocMojo.ARGFILE_FILE_NAME ) );
+        assertFalse( set.contains( AbstractJavadocMojo.FILES_FILE_NAME ) );
+        assertFalse( set.contains( AbstractJavadocMojo.OPTIONS_FILE_NAME ) );
+        assertFalse( set.contains( AbstractJavadocMojo.PACKAGES_FILE_NAME ) );
+
         //check if the javadoc files were created
         generatedFile =
             new File( getBasedir(), "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/App.html" );
