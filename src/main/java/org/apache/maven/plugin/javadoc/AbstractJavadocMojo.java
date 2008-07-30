@@ -3554,9 +3554,9 @@ public abstract class AbstractJavadocMojo
 
         addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
-        if ( StringUtils.isNotEmpty( sourcepath ) )
+        if ( StringUtils.isNotEmpty( sourcepath ) && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
         {
-            addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_4 );
+            addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_5 );
         }
 
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
@@ -3634,6 +3634,11 @@ public abstract class AbstractJavadocMojo
         addArgIf( arguments, splitindex, "-splitindex" );
         addArgIfNotEmpty( arguments, "-stylesheetfile",
                           JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
+
+        if ( StringUtils.isNotEmpty( sourcepath ) && !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
+        {
+            addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_4 );
+        }
 
         addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
         addTaglets( arguments );
