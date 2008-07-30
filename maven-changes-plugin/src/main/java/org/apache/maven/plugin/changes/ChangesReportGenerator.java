@@ -20,10 +20,12 @@ package org.apache.maven.plugin.changes;
  */
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
@@ -209,34 +211,17 @@ public class ChangesReportGenerator
                 if ( !canGenerateIssueLinks( system ) )
                 {
                     sink.text( action.getIssue() );
-
                 }
                 else
                 {
-                    sink.link( parseIssueLink( action.getIssue(), system ) );
-
-                    sink.text( action.getIssue() );
-
-                    sink.link_();
-
+                    constructIssueLink( action.getIssue(), system, sink );
                 }
                 sink.text( "." );
             }
 
             if ( StringUtils.isNotEmpty( action.getDueTo() ) )
             {
-                sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
-
-                if ( StringUtils.isNotEmpty( action.getDueToEmail() ) )
-                {
-                    sinkLink( sink, action.getDueTo(), "mailto:" + action.getDueToEmail() );
-                }
-                else
-                {
-                    sink.text( action.getDueTo() );
-                }
-
-                sink.text( "." );
+                constructDueTo( sink, action, bundle );
             }
 
             sink.tableCell_();
@@ -392,15 +377,6 @@ public class ChangesReportGenerator
         sink.close();
     }
 
-    private void sinkFigure( String image, Sink sink )
-    {
-        sink.figure();
-
-        sink.figureGraphics( image );
-
-        sink.figure_();
-    }
-
     private void sinkFigure( String image, Sink sink, String altText )
     {
         sink.figure();
@@ -488,6 +464,72 @@ public class ChangesReportGenerator
         sinkFigure( image, sink, altText );
 
         sink.tableCell_();
+    }
+    
+    /**
+     * MCHANGES-47 issue can be comma separated
+     * @param issue the current String
+     */
+    private void constructIssueLink( String issue, String system, Sink sink )
+    {
+        // null check has been done before
+        StringTokenizer tokenizer = new StringTokenizer( issue, "," );
+
+        while ( tokenizer.hasMoreTokens() )
+        {
+            String currentIssueId = tokenizer.nextToken();
+
+            sink.link( parseIssueLink( currentIssueId, system ) );
+
+            sink.text( currentIssueId );
+
+            sink.link_();
+
+        }
+    }
+    
+    /**
+     * MCHANGES-47 due-to can be comma separated (we will support due-to-email comma separated)
+     * 
+     * @param sink
+     * @param action
+     * @param bundle
+     */
+    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle )
+    {
+        // null check has been done before
+        StringTokenizer tokenizer = new StringTokenizer( action.getDueTo(), "," );  
+       
+        String[] emails = StringUtils.split( action.getDueToEmail(), ',' );
+        if (emails == null)
+        {
+            // NPE free
+            emails = new String[]{""};
+        }
+        sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
+        int i = 0;
+        while ( tokenizer.hasMoreTokens() )
+        {
+            String currentDueTo = tokenizer.nextToken();
+            String currentDueToEmail = emails.length > i ? emails[i] : null;
+            i++;
+
+            if ( StringUtils.isNotEmpty( currentDueToEmail ) )
+            {
+                sinkLink( sink, currentDueTo, "mailto:" + currentDueToEmail );
+            }
+            else
+            {
+                sink.text( currentDueTo );
+            }
+
+            if ( i <= tokenizer.countTokens() )
+            {
+                sink.text( "," );
+            }
+        }
+        
+        sink.text( " ." );
     }
 
 }

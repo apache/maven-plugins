@@ -28,8 +28,8 @@ under the License.
       </activation>      
       <repositories>
         <repository>
-          <id>local.central</id>
-          <url>file://@localRepository@</url>
+          <id>local</id>
+          <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -40,8 +40,8 @@ under the License.
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local.central</id>
-          <url>file://@localRepository@</url>
+          <id>local</id>
+          <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
