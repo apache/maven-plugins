@@ -589,13 +589,13 @@ public class InvokerMojo
         }
     }
 
-    private boolean alreadyCloned( String subpath, List clonedSubpaths )
+    static boolean alreadyCloned( String subpath, List clonedSubpaths )
     {
         for ( Iterator iter = clonedSubpaths.iterator(); iter.hasNext(); )
         {
             String path = (String) iter.next();
 
-            if ( ".".equals( path ) || subpath.startsWith( path ) )
+            if ( ".".equals( path ) || subpath.equals( path ) || subpath.startsWith( path + File.separator ) )
             {
                 return true;
             }
