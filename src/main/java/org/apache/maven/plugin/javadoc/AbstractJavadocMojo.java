@@ -1075,7 +1075,7 @@ public abstract class AbstractJavadocMojo
      * @since 2.1
      * @parameter expression="${sourcetab}" alias="linksourcetab"
      */
-    private String sourcetab;
+    private int sourcetab;
 
     /**
      * Splits the index file into multiple files, alphabetically, one file per letter, plus a file for any index
@@ -3628,9 +3628,9 @@ public abstract class AbstractJavadocMojo
         addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
         if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
         {
-            addArgIfNotEmpty( arguments, "-linksourcetab", sourcetab );
+            addArgIfNotEmpty( arguments, "-linksourcetab", String.valueOf( sourcetab ) );
         }
-        addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
+        addArgIfNotEmpty( arguments, "-sourcetab", String.valueOf( sourcetab ), SINCE_JAVADOC_1_5 );
         addArgIf( arguments, splitindex, "-splitindex" );
         addArgIfNotEmpty( arguments, "-stylesheetfile",
                           JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
