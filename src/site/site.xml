@@ -38,6 +38,7 @@ under the License.
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
       <item name="Specifying the Mail Sender" href="examples/specifying-mail-sender.html"/>
       <item name="Using a Custom Announcement Template" href="examples/using-a-custom-announcement-template.html"/>
+      <item name="Validate your changes file" href="examples/changes-file-validation.html"/>
     </menu>
   </body>
 </project>
