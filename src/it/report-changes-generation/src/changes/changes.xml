@@ -37,7 +37,7 @@ under the License.
     </release>
 
     <release version="1.0" date="2005-01-01" description="First release">
-      <action dev="me" type="update">
+      <action dev="me" type="update" issue="MCHANGES-47, MCHANGES-88" due-to="others,someone" due-to-email="others@users.com">
         Uploaded documentation on how to use the plugin.
       </action>
     </release>
