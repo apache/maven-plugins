@@ -1422,6 +1422,11 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
+        if ( getLog().isDebugEnabled() )
+        {
+            this.debug = true;
+        }
+
         List sourcePaths = getSourcePaths();
         List files = getFiles( sourcePaths );
         if ( !canGenerateReport( files ) )
