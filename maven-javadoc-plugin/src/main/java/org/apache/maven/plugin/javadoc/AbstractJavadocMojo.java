@@ -3497,6 +3497,10 @@ public abstract class AbstractJavadocMojo
 
         addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
 
+        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
+        {
+            addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
+        }
         if ( StringUtils.isNotEmpty( doclet ) )
         {
             addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
@@ -3529,7 +3533,11 @@ public abstract class AbstractJavadocMojo
                               JavadocUtil.quotedPathArgument( getOverview().getAbsolutePath() ) );
         }
         arguments.add( getAccessLevel() );
-        addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
+
+        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
+        {
+            addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
+        }
         addArgIfNotEmpty( arguments, "-source", JavadocUtil.quotedArgument( source ), SINCE_JAVADOC_1_4 );
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
@@ -3568,7 +3576,10 @@ public abstract class AbstractJavadocMojo
 
         addArgIf( arguments, author, "-author" );
         addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false, false );
-        addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
+        if ( !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
+        {
+            addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
+        }
         addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( getCharset() ) );
         addArgIfNotEmpty( arguments, "-d", JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
         addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
@@ -3604,9 +3615,9 @@ public abstract class AbstractJavadocMojo
         addArgIf( arguments, notree, "-notree" );
         addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ),
                           SINCE_JAVADOC_1_4_2 );
-        if ( fJavadocVersion >= SINCE_JAVADOC_1_4 && fJavadocVersion < SINCE_JAVADOC_1_5 ) // Sun bug: 4714350
+        if ( !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) ) // Sun bug: 4714350
         {
-            addArgIf( arguments, quiet, "-quiet" );
+            addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
         }
         addArgIf( arguments, serialwarn, "-serialwarn" );
         addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
@@ -3614,10 +3625,7 @@ public abstract class AbstractJavadocMojo
         {
             addArgIfNotEmpty( arguments, "-linksourcetab", sourcetab );
         }
-        else
-        {
-            addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
-        }
+        addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
         addArgIf( arguments, splitindex, "-splitindex" );
         addArgIfNotEmpty( arguments, "-stylesheetfile",
                           JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
