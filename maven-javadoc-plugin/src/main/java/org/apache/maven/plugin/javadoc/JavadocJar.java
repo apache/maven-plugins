@@ -50,6 +50,22 @@ import java.util.Iterator;
 public class JavadocJar
     extends AbstractJavadocMojo
 {
+    /** Includes all generated Javadoc files */
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+
+    /**
+     * Excludes all processing files.
+     *
+     * @see AbstractJavadocMojo#DEBUG_JAVADOC_SCRIPT_NAME
+     * @see AbstractJavadocMojo#OPTIONS_FILE_NAME
+     * @see AbstractJavadocMojo#PACKAGES_FILE_NAME
+     * @see AbstractJavadocMojo#ARGFILE_FILE_NAME
+     * @see AbstractJavadocMojo#FILES_FILE_NAME
+     */
+    private static final String[] DEFAULT_EXCLUDES =
+        new String[] { DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME,
+            FILES_FILE_NAME };
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -273,7 +289,7 @@ public class JavadocJar
         }
         else
         {
-            archiver.getArchiver().addDirectory( contentDirectory );
+            archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
         }
 
         List resources = project.getBuild().getResources();
