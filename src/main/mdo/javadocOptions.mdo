@@ -185,6 +185,13 @@ under the License.
     </class>
 
     <class>
+      <name>BootclasspathArtifact</name>
+      <description>A bootclasspath parameter as artifact.</description>
+      <version>1.0.0</version>
+      <superClass>JavadocPathArtifact</superClass>
+    </class>
+
+    <class>
       <name>Taglet</name>
       <description>A Taglet parameter.</description>
       <version>1.0.0</version>

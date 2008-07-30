@@ -56,6 +56,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
@@ -384,6 +385,41 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
     // Javadoc Options
     // ----------------------------------------------------------------------
+
+    /**
+     * Specifies the paths where the boot classes reside.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * <br/>
+     *
+     * @parameter expression="${bootclasspath}"
+     * @since 2.5
+     */
+    private String bootclasspath;
+
+    /**
+     * Specifies the artifacts where the boot classes reside.
+     * <br/>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;bootclasspathArtifacts&gt;
+     * &nbsp;&nbsp;&lt;bootclasspathArtifact&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;my-groupId&lt;/groupId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;my-artifactId&lt;/artifactId&gt;
+     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;my-version&lt;/version&gt;
+     * &nbsp;&nbsp;&lt;/bootclasspathArtifact&gt;
+     * &lt;/bootclasspathArtifacts&gt;
+     * </pre>
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/BootclasspathArtifact.html">Javadoc</a>.
+     * <br/>
+     *
+     * @parameter expression="${bootclasspathArtifacts}"
+     * @since 2.5
+     */
+    private BootclasspathArtifact[] bootclasspathArtifacts;
 
     /**
      * Uses the sentence break iterator to determine the end of the first sentence.
@@ -2007,6 +2043,46 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * Method to get the path of the bootclass artifacts used in the -bootclasspath option.
+     *
+     * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
+     * on Solaris and a semi-colon (<code>;</code>) on Windows
+     * @throws MavenReportException if any
+     */
+    private String getBootclassPath()
+        throws MavenReportException
+    {
+        StringBuffer path = new StringBuffer();
+
+        if ( bootclasspathArtifacts != null )
+        {
+            List bootclassPath = new ArrayList();
+            for ( int i = 0; i < bootclasspathArtifacts.length; i++ )
+            {
+                BootclasspathArtifact aBootclasspathArtifact = bootclasspathArtifacts[i];
+
+                if ( ( StringUtils.isNotEmpty( aBootclasspathArtifact.getGroupId() ) )
+                    && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getArtifactId() ) )
+                    && ( StringUtils.isNotEmpty( aBootclasspathArtifact.getVersion() ) ) )
+                {
+                    bootclassPath.addAll( getArtifactsAbsolutePath( aBootclasspathArtifact ) );
+                }
+            }
+
+            bootclassPath = JavadocUtil.pruneFiles( bootclassPath );
+
+            path.append( StringUtils.join( bootclassPath.iterator(), File.pathSeparator ) );
+        }
+
+        if ( StringUtils.isNotEmpty( bootclasspath ) )
+        {
+            path.append( bootclasspath );
+        }
+
+        return path.toString();
+    }
+
+    /**
      * Method to get the path of the doclet artifacts used in the -docletpath option.
      *
      * Either docletArtifact or doclectArtifacts can be defined and used, not both, docletArtifact
@@ -3395,6 +3471,9 @@ public abstract class AbstractJavadocMojo
 
         // see com.sun.tools.javadoc.Start#parseAndExecute(String argv[])
         addArgIfNotEmpty( arguments, "-locale", JavadocUtil.quotedArgument( this.locale ) );
+
+
+        addArgIfNotEmpty( arguments, "-bootclasspath", JavadocUtil.quotedPathArgument( getBootclassPath() ) );
 
         addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
 
