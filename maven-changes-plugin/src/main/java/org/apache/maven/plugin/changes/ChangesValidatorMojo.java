@@ -38,7 +38,6 @@ import org.xml.sax.SAXException;
  * @goal changes-validate
  * 
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @since 28 juil. 2008
  * @version $Id$
  * @since 2.1
  */
@@ -118,12 +117,12 @@ public class ChangesValidatorMojo
 
     private void logSchemaValidation( List /*SAXException*/errors )
     {
-        getLog().error( "failed to validate changes " + xmlPath.getAbsolutePath() );
-        getLog().error( "validation errors : " );
+        getLog().warn( "failed to validate changes " + xmlPath.getAbsolutePath() );
+        getLog().warn( "validation errors : " );
         for ( Iterator iterator = errors.iterator(); iterator.hasNext(); )
         {
             SAXException error = (SAXException) iterator.next();
-            getLog().error( error.getMessage() );
+            getLog().warn( error.getMessage() );
         }
     }
 

@@ -48,7 +48,19 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>${changesPluginVersion}</version>        
+        <version>${changesPluginVersion}</version>   
+        <executions>
+          <execution>
+            <id>validate-changes</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>changes-validate</goal>
+            </goals>
+            <configuration>
+              <failOnError>true</failOnError>
+            </configuration>
+          </execution>
+        </executions>     
       </plugin>
     </plugins>
   </build>  
