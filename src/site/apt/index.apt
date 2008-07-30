@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 16 July 2006
+ 31 July 2008
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -45,6 +45,8 @@ Maven 2 Changes Plugin
   * {{{changes-report-mojo.html}changes:changes-report}} create a report showing what has changed between different releases of the project.
 
   * {{{jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from JIRA.
+  
+  * {{{changes-validate-mojo.html.html}changes:changes-validate}} create a report from issues downloaded from JIRA.
 
   []
 
@@ -64,3 +66,5 @@ Maven 2 Changes Plugin
   * {{{examples/using-a-custom-announcement-template.html}Using a Custom Announcement Template}}
 
   * {{{examples/specifying-mail-sender.html}Specifying the mail sender}}
+  
+  * {{{examples/changes-file-validation.html}Validate your changes file}}
