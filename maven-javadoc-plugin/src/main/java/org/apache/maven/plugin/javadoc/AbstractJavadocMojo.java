@@ -357,6 +357,9 @@ public abstract class AbstractJavadocMojo
      */
     private String javadocVersion;
 
+    /**
+     * Version of the Javadoc Tool executable to use as float.
+     */
     private float fJavadocVersion = 0.0f;
 
     /**
@@ -397,7 +400,7 @@ public abstract class AbstractJavadocMojo
     protected boolean useStandardDocletOptions;
 
     // ----------------------------------------------------------------------
-    // Javadoc Options
+    // Javadoc Options - all alphabetical
     // ----------------------------------------------------------------------
 
     /**
@@ -704,7 +707,7 @@ public abstract class AbstractJavadocMojo
     private boolean verbose;
 
     // ----------------------------------------------------------------------
-    // Standard Doclet Options
+    // Standard Doclet Options - all alphabetical
     // ----------------------------------------------------------------------
 
     /**
@@ -3497,28 +3500,7 @@ public abstract class AbstractJavadocMojo
         // see com.sun.tools.javadoc.Start#parseAndExecute(String argv[])
         addArgIfNotEmpty( arguments, "-locale", JavadocUtil.quotedArgument( this.locale ) );
 
-
-        addArgIfNotEmpty( arguments, "-bootclasspath", JavadocUtil.quotedPathArgument( getBootclassPath() ) );
-
-        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
-
-        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
-        {
-            addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
-        }
-        if ( StringUtils.isNotEmpty( doclet ) )
-        {
-            addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
-            addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
-        }
-        if ( StringUtils.isEmpty( encoding ) )
-        {
-            getLog().warn(
-                           "Source files encoding has not been set, using platform encoding "
-                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-        }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
-        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
+        // all options in alphabetical order
 
         if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
@@ -3532,26 +3514,52 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, old, "-1.1" );
         }
 
+        addArgIfNotEmpty( arguments, "-bootclasspath", JavadocUtil.quotedPathArgument( getBootclassPath() ) );
+
+        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
+        {
+            addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
+        }
+
+        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
+
+        if ( StringUtils.isNotEmpty( doclet ) )
+        {
+            addArgIfNotEmpty( arguments, "-doclet", JavadocUtil.quotedArgument( doclet ) );
+            addArgIfNotEmpty( arguments, "-docletpath", JavadocUtil.quotedPathArgument( getDocletPath() ) );
+        }
+
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn(
+                           "Source files encoding has not been set, using platform encoding "
+                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+        }
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
+
+        addArgIfNotEmpty( arguments, "-extdirs", JavadocUtil.quotedPathArgument( extdirs ) );
+
         if ( ( getOverview() != null ) && ( getOverview().exists() ) )
         {
             addArgIfNotEmpty( arguments, "-overview",
                               JavadocUtil.quotedPathArgument( getOverview().getAbsolutePath() ) );
         }
+
         arguments.add( getAccessLevel() );
 
         if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
         {
             addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_5 );
         }
+
         addArgIfNotEmpty( arguments, "-source", JavadocUtil.quotedArgument( source ), SINCE_JAVADOC_1_4 );
-        addArgIf( arguments, verbose, "-verbose" );
-        addArgIfNotEmpty( arguments, null, additionalparam );
 
         if ( ( StringUtils.isEmpty( sourcepath ) ) && ( StringUtils.isNotEmpty( subpackages ) ) )
         {
             sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
-
         addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
         if ( StringUtils.isNotEmpty( sourcepath ) && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
@@ -3559,7 +3567,9 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_5 );
         }
 
-        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
+        addArgIf( arguments, verbose, "-verbose" );
+
+        addArgIfNotEmpty( arguments, null, additionalparam );
     }
 
     /**
@@ -3579,53 +3589,52 @@ public abstract class AbstractJavadocMojo
     {
         validateStandardDocletOptions();
 
+        // all options in alphabetical order
+
         addArgIf( arguments, author, "-author" );
+
         addArgIfNotEmpty( arguments, "-bottom", JavadocUtil.quotedArgument( getBottomText() ), false, false );
+
         if ( !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
         {
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
         }
+
         addArgIfNotEmpty( arguments, "-charset", JavadocUtil.quotedArgument( getCharset() ) );
+
         addArgIfNotEmpty( arguments, "-d", JavadocUtil.quotedPathArgument( javadocOutputDirectory.toString() ) );
-        addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
+
         addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( getDocencoding() ) );
+
+        addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
+
         addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false, false );
+
         if ( docfilessubdirs )
         {
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir",
                               JavadocUtil.quotedPathArgument( excludedocfilessubdir ), SINCE_JAVADOC_1_4 );
         }
+
         addArgIfNotEmpty( arguments, "-footer", JavadocUtil.quotedArgument( footer ), false, false );
+
         addGroups( arguments );
+
         addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
+
         addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
+
         addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
         if ( !isOffline )
         {
             addLinkArguments( arguments );
         }
+
         addLinkofflineArguments( arguments );
 
-        addArgIf( arguments, nodeprecated, "-nodeprecated" );
-        addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
-        addArgIf( arguments, nocomment, "-nocomment", SINCE_JAVADOC_1_4 );
-        addArgIf( arguments, nohelp, "-nohelp" );
-        addArgIf( arguments, noindex, "-noindex" );
-        addArgIf( arguments, nonavbar, "-nonavbar" );
-        addArgIf( arguments, nooverview, "-nooverview" );
-        addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
-        addArgIf( arguments, nosince, "-nosince" );
-        addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
-        addArgIf( arguments, notree, "-notree" );
-        addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ),
-                          SINCE_JAVADOC_1_4_2 );
-        if ( !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) ) // Sun bug: 4714350
-        {
-            addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
-        }
-        addArgIf( arguments, serialwarn, "-serialwarn" );
         addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
+
         if ( sourcetab > 0 )
         {
             if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
@@ -3634,7 +3643,41 @@ public abstract class AbstractJavadocMojo
             }
             addArgIfNotEmpty( arguments, "-sourcetab", String.valueOf( sourcetab ), SINCE_JAVADOC_1_5 );
         }
+
+        addArgIf( arguments, nocomment, "-nocomment", SINCE_JAVADOC_1_4 );
+
+        addArgIf( arguments, nodeprecated, "-nodeprecated" );
+
+        addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
+
+        addArgIf( arguments, nohelp, "-nohelp" );
+
+        addArgIf( arguments, noindex, "-noindex" );
+
+        addArgIf( arguments, nonavbar, "-nonavbar" );
+
+        addArgIf( arguments, nooverview, "-nooverview" );
+
+        addArgIfNotEmpty( arguments, "-noqualifier", JavadocUtil.quotedArgument( noqualifier ), SINCE_JAVADOC_1_4 );
+
+        addArgIf( arguments, nosince, "-nosince" );
+
+        addArgIf( arguments, notimestamp, "-notimestamp", SINCE_JAVADOC_1_5 );
+
+        addArgIf( arguments, notree, "-notree" );
+
+        addArgIfNotEmpty( arguments, "-packagesheader", JavadocUtil.quotedArgument( packagesheader ),
+                          SINCE_JAVADOC_1_4_2 );
+
+        if ( !isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) ) // Sun bug: 4714350
+        {
+            addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
+        }
+
+        addArgIf( arguments, serialwarn, "-serialwarn" );
+
         addArgIf( arguments, splitindex, "-splitindex" );
+
         addArgIfNotEmpty( arguments, "-stylesheetfile",
                           JavadocUtil.quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
@@ -3648,11 +3691,15 @@ public abstract class AbstractJavadocMojo
         addTagletsFromTagletArtifacts( arguments );
         addArgIfNotEmpty( arguments, "-tagletpath", JavadocUtil.quotedPathArgument( getTagletPath() ),
                           SINCE_JAVADOC_1_4 );
+
         addTags( arguments );
 
         addArgIfNotEmpty( arguments, "-top", JavadocUtil.quotedArgument( top ), false, false, SINCE_JAVADOC_1_6 );
+
         addArgIf( arguments, use, "-use" );
+
         addArgIf( arguments, version, "-version" );
+
         addArgIfNotEmpty( arguments, "-windowtitle", JavadocUtil.quotedArgument( getWindowtitle() ), false, false );
     }
 
