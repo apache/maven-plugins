@@ -32,7 +32,7 @@ under the License.
     </menu>
 
     <menu name="Examples">
-      <item name="Attach Library Sources And/Or Javadocs" href="examples/attach-library-src-doc.html"/>
+      <item name="Attach Library Sources and/or Javadocs" href="examples/attach-library-src-doc.html"/>
       <item name="Customize Your Libraries" href="examples/customize-libraries.html"/>
       <item name="Enable JVM 5 Features" href="examples/enable-jvm-5-features.html"/>
       <item name="Disable Links Between Modules" href="examples/prevent-module-references.html"/>
