@@ -54,8 +54,8 @@ mvn -DentityExpansionLimit=128000 ...
          Unfortunately we have not been able to set this in Java. If someone
          knows how to do this, then please reopen
          <a href="http://jira.codehaus.org/browse/MCHANGES-75">MCHANGES-75</a>,
-         and tell us how. It would be nicer is this could be set using a
-         parameter in the pom.
+         and tell us how. It would be nicer if this could be set using a
+         parameter in the POM.
        </p>
      </answer>
    </faq>
