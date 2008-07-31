@@ -2026,12 +2026,9 @@ public abstract class AbstractJavadocMojo
     private String getStylesheetFile( File javadocOutputDirectory )
     {
         String stylesheetfilePath = this.stylesheetfile;
-        if ( StringUtils.isEmpty( stylesheetfilePath ) )
+        if ( StringUtils.isEmpty( stylesheetfilePath ) && "maven".equals( stylesheet ) )
         {
-            if ( "maven".equals( stylesheet ) )
-            {
-                stylesheetfilePath = javadocOutputDirectory + File.separator + DEFAULT_CSS_NAME;
-            }
+            stylesheetfilePath = javadocOutputDirectory + File.separator + DEFAULT_CSS_NAME;
         }
 
         return stylesheetfilePath;
@@ -2146,14 +2143,11 @@ public abstract class AbstractJavadocMojo
             path.append( docletPath );
         }
 
-        if ( StringUtils.isEmpty( path.toString() ) )
+        if ( StringUtils.isEmpty( path.toString() ) && getLog().isWarnEnabled() )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn(
-                               "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
-                                   + " or <doclets/>." );
-            }
+            getLog().warn(
+                           "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
+                               + " or <doclets/>." );
         }
 
         return path.toString();
@@ -2613,14 +2607,9 @@ public abstract class AbstractJavadocMojo
                 throw new MavenReportException( "Unable to parse javadoc version: " + e.getMessage(), e );
             }
 
-            if ( fJavadocVersion != jVersion )
+            if ( fJavadocVersion != jVersion && getLog().isWarnEnabled() )
             {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn(
-                                   "Are you sure about the <javadocVersion/> parameter? It seems to be "
-                                       + jVersion );
-                }
+                getLog().warn( "Are you sure about the <javadocVersion/> parameter? It seems to be " + jVersion );
             }
         }
         else
@@ -3986,19 +3975,16 @@ public abstract class AbstractJavadocMojo
         // Handle Javadoc warnings
         // ----------------------------------------------------------------------
 
-        if ( StringUtils.isNotEmpty( err.getOutput() ) )
+        if ( StringUtils.isNotEmpty( err.getOutput() ) && getLog().isWarnEnabled() )
         {
-            if ( getLog().isWarnEnabled() )
+            getLog().warn( "Javadoc Warnings" );
+
+            StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
+            while ( token.hasMoreTokens() )
             {
-                getLog().warn( "Javadoc Warnings" );
+                String current = token.nextToken().trim();
 
-                StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
-                while ( token.hasMoreTokens() )
-                {
-                    String current = token.nextToken().trim();
-
-                    getLog().warn( current );
-                }
+                getLog().warn( current );
             }
         }
     }
