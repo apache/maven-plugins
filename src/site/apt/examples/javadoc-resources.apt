@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- May 2007
+ 2008-07-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -54,7 +54,7 @@ yourproject
                    `-- app.png
 +-----+
 
-* Overview comment files: <overview.html>
+* Overview Comment File: <overview.html>
 
  These contain comments about the set of packages. The <overview.html> is a general documentation that applies to
  the entire application or set of packages.
@@ -100,7 +100,7 @@ yourproject
 </project>
 +-----+
 
-* Package comment files: <package.html>
+* Package Comment File: <package.html>
 
  These contain package comments. The <package.html> is a brief summary of each packages in the list of all packages.
 

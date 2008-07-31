@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- September 2006
+ 2208-07-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -67,15 +67,15 @@ Using Alternate Doclet
    * \<additionalparam/\> is used to set additional parameters on the command line, specifically
      for doclet options.
 
-   * if you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
+   * If you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
 
  After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the
  destination directory.
 
- <<Note about UmlGraph>>: You must have the Graphviz binary on your PATH, or the images will not be generated.
+ <<Note about UmlGraph>>: You must have the Graphviz binary in your PATH, or the images will not be generated.
  For more information about Graphviz, please refer to {{http://www.graphviz.org/}}.
 
-Using Alternate Doclet in Addition to the Javadoc Doclet
+Using Alternate Doclet In Addition To The Javadoc Doclet
 
  To generate output from an alternate doclet in addition to the normal HTML Javadoc doclet, add configuration
  similar to the following to your POM.

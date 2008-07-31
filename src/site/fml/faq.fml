@@ -27,8 +27,8 @@ under the License.
         <p>
           All options provided by Sun on the Javadoc homepages are wrapped in the Maven Javadoc Plugin. This
           plugin supports Javadoc 1.4, 1.5 and 6.0 options. Refer you to the
-          <a href="./apidocs/org/apache/maven/plugin/javadoc/package-summary.html">Package Summary</a> for
-          more information.
+          <a href="./apidocs/org/apache/maven/plugin/javadoc/package-summary.html">Javadoc Package Summary</a>
+          for more information.
         </p>
       </answer>
     </faq>
@@ -75,8 +75,10 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
           when the Javadoc Plugin ended.
         </p>
         <p>
-          To preserve them, just add &lt;debug&gt;true&lt;debug&gt; in your Javadoc Plugin configuration. In this case,
-          an additional script file will be created.
+          To preserve them, just add &lt;debug&gt;true&lt;/debug&gt; in your Javadoc Plugin configuration or just call
+          <code>mvn javadoc:javadoc -Ddebug=true</code> or <code>mvn javadoc:javadoc -X</code>.
+          In this case, an additional script file (javadoc.bat (or .sh) will be created in the <code>apidocs</code>
+          directory.
         </p>
       </answer>
     </faq>
@@ -182,8 +184,8 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
         </p>
       </answer>
     </faq>
-    <faq id="How to deploy javadoc jar">
-      <question>How to deploy javadoc jar?</question>
+    <faq id="How to deploy Javadoc jar file">
+      <question>How to deploy Javadoc jar file?</question>
       <answer>
         <p>
           Basically, you need to call <i>mvn clean javadoc:jar deploy</i>. If you want to include the javadoc jar
@@ -211,6 +213,7 @@ ${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
         </plugins>
       </build>
     </profile>
+    ...
   </profiles>
   ...
 </project></source>
@@ -255,8 +258,8 @@ mvn deploy:deploy-file \
         </p>
       </answer>
     </faq>
-    <faq id="On Sun JDK, why javadoc:javadoc goal blows up due to an IllegalArgumentException in sun.net.www.ParseUtil.decode()">
-      <question>On Sun JDK, why <i>javadoc:javadoc</i> goal blows up due to an IllegalArgumentException in <i>sun.net.www.ParseUtil.decode()</i>?</question>
+    <faq id="On Windows with Sun JDK, why javadoc:javadoc goal blows up due to an IllegalArgumentException in sun.net.www.ParseUtil.decode()">
+      <question>On Windows with Sun JDK, why <i>javadoc:javadoc</i> goal blows up due to an IllegalArgumentException in <i>sun.net.www.ParseUtil.decode()</i>?</question>
       <answer>
         <p>
           You are on Windows XP with Sun JDK 5 or JDK 6 freshly installed, and when you run <i>mvn javadoc:javadoc</i>,
@@ -349,11 +352,13 @@ mvn deploy:deploy-file \
         <p>
           Your <i>CLASSPATH</i> environement variable is probably corrupted, i.e. something like:
           <source>CLASSPATH=.;C:\Java\jdk1.6.0_03\jre\lib\ext\QTJava.zip;%JAVAHOME%</source>
+          with <code>%JAVAHOME%</code> not a valid environment variable.
         </p>
         <p>
           To resolve it, just reset the <i>CLASSPATH</i> environement variable, i.e.: <source>set CLASSPATH=</source>
           or set a new <i>CLASSPATH</i> environement variable, i.e.:
           <source>set CLASSPATH=C:\Java\jdk1.6.0_03\jre\lib\ext\QTJava.zip</source>
+          or fix the wrong environment variable.
         </p>
         <p>
           Refer you to
