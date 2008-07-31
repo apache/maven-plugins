@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- June 2006
+ 2008-07-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,10 +28,10 @@
 
 Configuring Stylesheets
 
- If no custom stylesheet is specified in the \<stylesheetfile\> parameter, the \<stylesheet\> parameter will indicate
- which stylesheet will be used--the stylesheet included in the maven javadoc plugin or the default stylesheet used by
- the javadoc tool. <<maven>> indicates the maven javadoc plugin stylesheet, while <<java>> indicates the default javadoc
- tool stylesheet. The default is <<java>> if not specified.
+ If no custom stylesheet is specified in the \<stylesheetfile/\> parameter, the \<stylesheet/\> parameter will indicate
+ which stylesheet will be used -- the stylesheet included in the maven javadoc plugin or the default stylesheet used by
+ the javadoc tool. <<maven>> value indicates the maven javadoc plugin stylesheet, while <<java>> value indicates the
+ default javadoc tool stylesheet. The default is <<java>> value if not specified.
 
 +-----+
 <project>
