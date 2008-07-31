@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- June 2006
+ 2008-07-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
 
 Grouping Packages
 
- To set a grouping for different packages, use the \<groups\> configuration in your pom:
+ To set a grouping for different packages, use the \<groups/\> configuration in your pom:
 
 +-----+
 <project>
