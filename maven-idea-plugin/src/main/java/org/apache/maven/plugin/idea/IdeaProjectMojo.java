@@ -175,7 +175,8 @@ public class IdeaProjectMojo
                     new File( executedProject.getBasedir(),
                               executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
                 m.addAttribute( "filepath",
-                                "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(), projectPath ) );
+                                "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(),
+                                                               projectPath ) );
 
                 for ( Iterator i = executedProject.getCollectedProjects().iterator(); i.hasNext(); )
                 {
@@ -184,7 +185,8 @@ public class IdeaProjectMojo
                     m = createElement( modules, "module" );
                     String modulePath = new File( p.getBasedir(), p.getArtifactId() + ".iml" ).getAbsolutePath();
                     m.addAttribute( "filepath",
-                                    "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(), modulePath ) );
+                                    "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(),
+                                                                   modulePath ) );
                 }
             }
             else
@@ -193,7 +195,9 @@ public class IdeaProjectMojo
                 String modulePath =
                     new File( executedProject.getBasedir(),
                               executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(), modulePath ) );
+                m.addAttribute( "filepath",
+                                "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir().getAbsolutePath(),
+                                                               modulePath ) );
             }
 
             // add any PathMacros we've come across
