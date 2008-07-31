@@ -85,12 +85,9 @@ public class JavadocUtil
             }
 
             File directory = new File( dir );
-            if ( directory.exists() && directory.isDirectory() )
+            if ( directory.exists() && directory.isDirectory() && !pruned.contains( dir ) )
             {
-                if ( !pruned.contains( dir ) )
-                {
-                    pruned.add( dir );
-                }
+                pruned.add( dir );
             }
         }
 
@@ -116,12 +113,9 @@ public class JavadocUtil
             }
 
             File file = new File( f );
-            if ( file.exists() && file.isFile() )
+            if ( file.exists() && file.isFile() && !pruned.contains( f ) )
             {
-                if ( !pruned.contains( f ) )
-                {
-                    pruned.add( f );
-                }
+                pruned.add( f );
             }
         }
 
@@ -804,18 +798,15 @@ public class JavadocUtil
         }
 
         Proxy activeProxy = settings.getActiveProxy();
-        if ( activeProxy != null )
+        if ( activeProxy != null && StringUtils.isNotEmpty( activeProxy.getHost() )
+            && StringUtils.isNotEmpty( activeProxy.getUsername() )
+            && StringUtils.isNotEmpty( activeProxy.getPassword() ) )
         {
-            if ( ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
-                && ( StringUtils.isNotEmpty( activeProxy.getUsername() ) )
-                && ( StringUtils.isNotEmpty( activeProxy.getPassword() ) ) )
-            {
-                String pass = "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"";
-                String hidepass = "-J-Dhttp.proxyPassword=\""
-                    + StringUtils.repeat( "*", activeProxy.getPassword().length() ) + "\"";
+            String pass = "-J-Dhttp.proxyPassword=\"" + activeProxy.getPassword() + "\"";
+            String hidepass =
+                "-J-Dhttp.proxyPassword=\"" + StringUtils.repeat( "*", activeProxy.getPassword().length() ) + "\"";
 
-                return StringUtils.replace( cmdLine, pass, hidepass );
-            }
+            return StringUtils.replace( cmdLine, pass, hidepass );
         }
 
         return cmdLine;
