@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 
 /**
  * 
- * Goal which validate changes file
+ * Goal which validate the <code>changes.xml</code> file.
  * 
  * @goal changes-validate
  * 
@@ -90,18 +90,18 @@ public class ChangesValidatorMojo
         {
             XmlValidationHandler xmlValidationHandler = changesSchemaValidator
                 .validateXmlWithSchema( xmlPath, changesXsdVersion, failOnError );
-            boolean hasErrros = !xmlValidationHandler.getErrors().isEmpty();
-            if ( hasErrros )
+            boolean hasErrors = !xmlValidationHandler.getErrors().isEmpty();
+            if ( hasErrors )
             {
                 logSchemaValidation( xmlValidationHandler.getErrors() );
                 if ( failOnError )
                 {
                     throw new MojoExecutionException( "changes.xml file " + xmlPath.getAbsolutePath()
-                        + " is not valid see previous errors" );
+                        + " is not valid, see previous errors." );
                 }
                 else
                 {
-                    getLog().info( " skip previous validation errors due failOnError false " );
+                    getLog().info( " skip previous validation errors due to failOnError=false." );
                 }
             }
         }
@@ -110,15 +110,15 @@ public class ChangesValidatorMojo
             if ( failOnError )
             {
                 throw new MojoExecutionException( "failed to validate changes.xml file " + xmlPath.getAbsolutePath()
-                    + " : " + e.getMessage(), e );
+                    + ": " + e.getMessage(), e );
             }
         }
     }
 
     private void logSchemaValidation( List /*SAXException*/errors )
     {
-        getLog().warn( "failed to validate changes " + xmlPath.getAbsolutePath() );
-        getLog().warn( "validation errors : " );
+        getLog().warn( "failed to validate changes.xml file " + xmlPath.getAbsolutePath() );
+        getLog().warn( "validation errors: " );
         for ( Iterator iterator = errors.iterator(); iterator.hasNext(); )
         {
             SAXException error = (SAXException) iterator.next();
