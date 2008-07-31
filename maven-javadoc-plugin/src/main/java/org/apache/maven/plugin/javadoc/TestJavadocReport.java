@@ -58,7 +58,8 @@ public class TestJavadocReport
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#doctitle">doctitle</a>.
      * <br/>
      *
-     * @parameter expression="${testDoctitle}" alias="doctitle" default-value="${project.name} ${project.version} Test API"
+     * @parameter expression="${testDoctitle}" alias="doctitle"
+     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
     private String testDoctitle;
@@ -70,7 +71,8 @@ public class TestJavadocReport
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      * <br/>
      *
-     * @parameter expression="${testOverview}" alias="overview" default-value="${basedir}/src/test/javadoc/overview.html"
+     * @parameter expression="${testOverview}" alias="overview"
+     * default-value="${basedir}/src/test/javadoc/overview.html"
      * @since 2.5
      */
     private File testOverview;
@@ -81,7 +83,8 @@ public class TestJavadocReport
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
-     * @parameter expression="${testWindowtitle}" alias="windowtitle" default-value="${project.name} ${project.version} Test API"
+     * @parameter expression="${testWindowtitle}" alias="windowtitle"
+     * default-value="${project.name} ${project.version} Test API"
      * @since 2.5
      */
     private String testWindowtitle;
