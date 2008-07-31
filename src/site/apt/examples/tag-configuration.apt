@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- June 2006
+ 2008-07-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
 
 Configuring Custom Javadoc Tags
 
- You can configure any custom tags used in your javadoc via the \<tags\> element:
+ You can configure any custom tags used in your javadoc via the \<tags/\> element:
 
 +-----+
 <project>
