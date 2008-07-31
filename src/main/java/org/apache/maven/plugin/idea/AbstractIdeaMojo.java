@@ -223,11 +223,11 @@ public abstract class AbstractIdeaMojo
         convertedAbsolutePath = StringUtils.replace( convertedAbsolutePath, "\\", "/" );
 
         // Strip trailing slash
-        if( convertedBasedir.endsWith( "/" ) )
+        if ( convertedBasedir.endsWith( "/" ) )
         {
             convertedBasedir = convertedBasedir.substring( 0, convertedBasedir.length() - 1 );
         }
-        if( convertedAbsolutePath.endsWith( "/" ) )
+        if ( convertedAbsolutePath.endsWith( "/" ) )
         {
             convertedAbsolutePath = convertedAbsolutePath.substring( 0, convertedAbsolutePath.length() - 1 );
         }

@@ -980,7 +980,7 @@ public class IdeaModuleMojo
     }
 
     /**
-     * Returns a an Xpp3Dom element (setting).
+     * Returns an Xpp3Dom element (setting).
      *
      * @param component Xpp3Dom element
      * @param name      Setting attribute to find
@@ -993,7 +993,7 @@ public class IdeaModuleMojo
 
     private String getLibraryUrl( Artifact artifact )
     {
-        return "jar://" + convertDriveLetter(artifact.getFile().getAbsolutePath()).replace( '\\', '/' ) + "!/";
+        return "jar://" + convertDriveLetter( artifact.getFile().getAbsolutePath() ).replace( '\\', '/' ) + "!/";
     }
 
     private Element addDeploymentDescriptor( Element component, String name, String version, String file )
