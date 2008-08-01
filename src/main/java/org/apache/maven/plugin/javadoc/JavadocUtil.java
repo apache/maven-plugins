@@ -829,42 +829,19 @@ public class JavadocUtil
     protected static List getTagletClassNames( File jarFile )
         throws IOException, ClassNotFoundException, NoClassDefFoundError
     {
-        File jdkHome = null;
-        if ( SystemUtils.IS_OS_MAC_OSX )
+        List classes = getClassNamesFromJar( jarFile );
+        ClassLoader cl;
+
+        // Needed to find com.sun.tools.doclets.Taglet class
+        File tools = new File( System.getProperty( "java.home" ), "../lib/tools.jar" );
+        if ( tools.exists() && tools.isFile() )
         {
-            jdkHome = SystemUtils.getJavaHome();
+            cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL(), tools.toURI().toURL() }, null );
         }
         else
         {
-            jdkHome = SystemUtils.getJavaHome().getParentFile();
+            cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() }, null );
         }
-
-        if ( !jdkHome.exists() || !jdkHome.isDirectory() )
-        {
-            Properties env = CommandLineUtils.getSystemEnvVars();
-            String javaHome = env.getProperty( "JAVA_HOME" );
-
-            if ( StringUtils.isEmpty( javaHome ) )
-            {
-                throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
-            }
-            jdkHome = new File( javaHome );
-            if ( !jdkHome.exists() || !jdkHome.isDirectory() )
-            {
-                throw new IOException( "The environment variable JAVA_HOME=" + javaHome
-                    + " doesn't exist or is not a valid directory." );
-            }
-        }
-
-        // Needed to find com.sun.tools.doclets.Taglet class
-        File tools = new File( jdkHome, "lib/tools.jar" );
-        if ( !tools.exists() || !tools.isFile() )
-        {
-            throw new IOException( "tools.jar '" + tools + "' was not found or is invalid." );
-        }
-
-        List classes = getClassNamesFromJar( jarFile );
-        ClassLoader cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL(), tools.toURI().toURL() }, null );
 
         List tagletClasses = new ArrayList();
 
