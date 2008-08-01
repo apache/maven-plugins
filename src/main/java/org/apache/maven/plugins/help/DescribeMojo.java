@@ -22,14 +22,22 @@ package org.apache.maven.plugins.help;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
+import org.apache.maven.lifecycle.Lifecycle;
+import org.apache.maven.lifecycle.LifecycleExecutionException;
+import org.apache.maven.lifecycle.LifecycleExecutor;
+import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.InvalidPluginException;
@@ -48,6 +56,8 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
@@ -188,6 +198,15 @@ public class DescribeMojo
      */
     private boolean medium;
 
+    /**
+     * A Maven command like a single goal or a single phase following the Maven command line:
+     * <code>mvn [options] [<goal(s)>] [<phase(s)>]</code>
+     *
+     * @parameter expression="${cmd}"
+     * @since 2.1
+     */
+    private String cmd;
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -204,21 +223,30 @@ public class DescribeMojo
             }
         }
 
-        PluginInfo pi = new PluginInfo();
-
-        parsePluginLookupInfo( pi );
-
-        PluginDescriptor descriptor = lookupPluginDescriptor( pi );
-
         StringBuffer descriptionBuffer = new StringBuffer();
 
-        if ( mojo != null && mojo.length() > 0 )
+        boolean describePlugin = true;
+        if ( StringUtils.isNotEmpty( cmd ) )
         {
-            describeMojo( descriptor.getMojo( mojo ), descriptionBuffer );
+            describePlugin = describeCommand( descriptionBuffer );
         }
-        else
+
+        if ( describePlugin )
         {
-            describePlugin( descriptor, descriptionBuffer );
+            PluginInfo pi = new PluginInfo();
+
+            parsePluginLookupInfo( pi );
+
+            PluginDescriptor descriptor = lookupPluginDescriptor( pi );
+
+            if ( mojo != null && mojo.length() > 0 )
+            {
+                describeMojo( descriptor.getMojo( mojo ), descriptionBuffer );
+            }
+            else
+            {
+                describePlugin( descriptor, descriptionBuffer );
+            }
         }
 
         writeDescription( descriptionBuffer );
@@ -904,7 +932,178 @@ public class DescribeMojo
         this.version = version;
     }
 
-    private static class PluginInfo
+    /**
+     * Describe the <code>cmd</code> parameter
+     *
+     * @param descriptionBuffer not null
+     * @return <code>true</code> if it implies to describe a plugin, <code>false</code> otherwise.
+     * @throws MojoFailureException if any
+     */
+    private boolean describeCommand( StringBuffer descriptionBuffer )
+        throws MojoFailureException
+    {
+        if ( cmd.indexOf( ":" ) == -1 )
+        {
+            // phase
+            try
+            {
+                DefaultLifecycleExecutor lifecycleExecutor =
+                    (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
+
+                Lifecycle lifecycle = (Lifecycle) lifecycleExecutor.getPhaseToLifecycleMap().get( cmd );
+
+                LifecycleMapping lifecycleMapping =
+                    (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, project.getPackaging() );
+                if ( lifecycle.getDefaultPhases() == null )
+                {
+                    descriptionBuffer.append( "'" + cmd + "' is a phase corresponding to this plugin:\n" );
+                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    {
+                        String key = (String) it.next();
+
+                        if ( !key.equals( cmd ) )
+                        {
+                            continue;
+                        }
+
+                        if ( lifecycleMapping.getPhases( "default" ).get( key ) != null )
+                        {
+                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) ).append( "\n" );
+                        }
+                    }
+
+                    descriptionBuffer.append( "\n" );
+                    descriptionBuffer.append(
+                                              "It is a part of the lifecycle for the POM packaging '"
+                                                  + project.getPackaging() + "'. This lifecycle includes the following phases:" ).append( "\n" );
+                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    {
+                        String key = (String) it.next();
+
+                        descriptionBuffer.append( "* " + key + ": ");
+                        String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
+                        if ( value != null )
+                        {
+                            for ( StringTokenizer tok = new StringTokenizer( value, "," ); tok.hasMoreTokens(); )
+                            {
+                                descriptionBuffer.append( tok.nextToken().trim() );
+
+                                if (!tok.hasMoreTokens())
+                                {
+                                    descriptionBuffer.append( "\n" );
+                                }
+                                else
+                                {
+                                    descriptionBuffer.append( ", " );
+                                }
+                            }
+                        }
+                        else
+                        {
+                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                        }
+                    }
+                }
+                else
+                {
+                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " ).append( "\n" );
+                    for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
+                    {
+                        String key = (String) it.next();
+
+                        descriptionBuffer.append( "* " + key + ": ");
+                        if ( lifecycle.getDefaultPhases().get( key ) != null )
+                        {
+                            descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( "\n" );
+                        }
+                        else
+                        {
+                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                        }
+                    }
+                }
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoFailureException( "ComponentLookupException: " + e.getMessage() );
+            }
+            catch ( LifecycleExecutionException e )
+            {
+                throw new MojoFailureException( "LifecycleExecutionException: " + e.getMessage() );
+            }
+
+            return false;
+        }
+
+        // goals
+        MojoDescriptor mojoDescriptor = getMojoDescriptor( cmd, session, project, cmd, true, false );
+
+        descriptionBuffer.append(  "'" + cmd + "' is a plugin" ).append( ".\n" );
+        plugin = mojoDescriptor.getPluginDescriptor().getId();
+
+        return true;
+    }
+
+    /**
+     * Invoke the following private method
+     * <code>DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
+     *
+     * @param task not null
+     * @param session not null
+     * @param project not null
+     * @param invokedVia not null
+     * @param canUsePrefix not null
+     * @param isOptionalMojo not null
+     * @return MojoDescriptor for the task
+     * @throws MojoFailureException if any
+     * @see DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
+     */
+    private MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
+                                              String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
+        throws MojoFailureException
+    {
+        try
+        {
+            DefaultLifecycleExecutor lifecycleExecutor =
+                (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
+
+            Method m =
+                lifecycleExecutor.getClass().getDeclaredMethod(
+                                                                "getMojoDescriptor",
+                                                                new Class[] { String.class, MavenSession.class,
+                                                                    MavenProject.class, String.class,
+                                                                    Boolean.TYPE, Boolean.TYPE } );
+            m.setAccessible( true );
+            return (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project,
+                invokedVia, Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
+        }
+        catch ( SecurityException e )
+        {
+            throw new MojoFailureException( "SecurityException: " + e.getMessage() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new MojoFailureException( "IllegalArgumentException: " + e.getMessage() );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new MojoFailureException( "ComponentLookupException: " + e.getMessage() );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new MojoFailureException( "NoSuchMethodException: " + e.getMessage() );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new MojoFailureException( "IllegalAccessException: " + e.getMessage() );
+        }
+        catch ( InvocationTargetException e )
+        {
+            throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() );
+        }
+    }
+
+    protected static class PluginInfo
     {
         String prefix;
 
@@ -920,5 +1119,4 @@ public class DescribeMojo
 
         PluginDescriptor pluginDescriptor;
     }
-
 }
