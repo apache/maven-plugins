@@ -399,7 +399,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.2</version>
+      <version>2.4-SNAPSHOT</version>
     </dependency>
     <!-- FIXME: I'm specifying a dependency on plexus-container-default
                 in order to force the version to be compatible with maven
@@ -410,12 +410,6 @@
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9-stable-1</version>
     </dependency>
-        <!-- FIXME: upgrade to p-u 1.4 when available, to fix
-         workaround in DefaultAssemblyReader for NPE caused
-         by DirectoryScanner.scandir(..) and UnixFileSystem's
-         implementation of File.list().
-
-    -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
