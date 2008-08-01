@@ -24,7 +24,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
@@ -309,9 +308,9 @@ public class DependenciesRenderer
         String[] tableHeader = new String[]{filename, size, entries, classes, packages, jdkrev, debug, sealed};
         tableHeader( tableHeader );
 
-        int[] justification = new int[]{Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
-            Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
-            Parser.JUSTIFY_CENTER};
+        int[] justification = new int[]{Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
+            Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
+            Sink.JUSTIFY_CENTER};
         sink.tableRows( justification, true );
 
         int totaldeps = 0;
