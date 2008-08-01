@@ -167,11 +167,6 @@ public class JavadocReport
             return outputDirectory;
         }
 
-        if ( !reportOutputDirectory.exists() )
-        {
-            reportOutputDirectory.mkdirs();
-        }
-
         return reportOutputDirectory;
     }
 
