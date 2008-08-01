@@ -260,6 +260,7 @@
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
+              <debug>true</debug>
             </configuration>
             <executions>
               <execution>
