@@ -280,11 +280,9 @@ public class DependenciesRenderer
     {
         // for Dependencies Graph Tree
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
-        sink.paragraph();
         sink.list();
         printDependencyListing( dependencyTree.getRootNode() );
         sink.list_();
-        sink.paragraph_();
         endSection();
     }
 
@@ -295,7 +293,12 @@ public class DependenciesRenderer
         List alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
-        startTable();
+        int[] justification = new int[]{Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
+            Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
+            Sink.JUSTIFY_CENTER};
+
+        startTable( justification, false );
+
         String filename = getReportString( "report.dependencies.file.details.column.file" );
         String size = getReportString( "report.dependencies.file.details.column.size" );
         String entries = getReportString( "report.dependencies.file.details.column.entries" );
@@ -307,11 +310,6 @@ public class DependenciesRenderer
 
         String[] tableHeader = new String[]{filename, size, entries, classes, packages, jdkrev, debug, sealed};
         tableHeader( tableHeader );
-
-        int[] justification = new int[]{Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
-            Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
-            Sink.JUSTIFY_CENTER};
-        sink.tableRows( justification, true );
 
         int totaldeps = 0;
         long totaldepsize = 0;
@@ -692,6 +690,8 @@ public class DependenciesRenderer
         sink.text( id );
         sink.link_();
 
+        sink.paragraph_();
+
         if ( !node.getChildren().isEmpty() )
         {
             sink.list();
@@ -703,7 +703,6 @@ public class DependenciesRenderer
             sink.list_();
         }
 
-        sink.paragraph_();
         sink.listItem_();
     }
 
