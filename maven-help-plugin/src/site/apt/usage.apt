@@ -4,7 +4,7 @@
  John Casey
  Maria Odea Ching
  ------
- January 2008
+ 2008-08-01
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -38,7 +38,7 @@ Usage
   You can execute this mojo using the following command:
 
 +-----+
-mvn help:active-profiles
+# mvn help:active-profiles
 +-----+
 
 
@@ -51,23 +51,89 @@ mvn help:active-profiles
   This mojo requires either the <<<groupId>>> and <<<artifactId>>> parameters or the <<<plugin>>> parameter to be specified:
 
 +-----+
-mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0.0
+# mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0.0
 +-----+
 
  or
 
 +-----+
-mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
+# mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
 +-----+
 
  Here is an example with the <<<mojo>>> parameter specified:
 
 +-----+
-mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin -Dmojo=describe
+# mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin -Dmojo=describe
 +-----+
 
  <<Note:>> <<<version>>> is always optional here.
 
+ You could also asking for a single Maven command, i.e. a goal, a phase or a lifecycle:
+
++-----+
+# mvn help:describe -Dcmd=clean
+...
+[INFO] [help:describe]
+[INFO] 'clean' is a lifecycle with the following phases:
+* pre-clean: NOT DEFINED
+* clean: org.apache.maven.plugins:maven-clean-plugin:clean
+* post-clean: NOT DEFINED
+...
++-----+
+
+or
+
++-----+
+# mvn help:describe -Dcmd=compile
+...
+[INFO] [help:describe]
+[INFO] 'compile' is a phase corresponding to this plugin:
+org.apache.maven.plugins:maven-compiler-plugin:compile
+
+It is a part of the lifecycle for the POM packaging 'jar'. This lifecycle includes the following phases:
+* validate: NOT DEFINED
+* initialize: NOT DEFINED
+* generate-sources: NOT DEFINED
+* process-sources: NOT DEFINED
+* generate-resources: NOT DEFINED
+* process-resources: org.apache.maven.plugins:maven-resources-plugin:resources
+* compile: org.apache.maven.plugins:maven-compiler-plugin:compile
+* process-classes: NOT DEFINED
+* generate-test-sources: NOT DEFINED
+* process-test-sources: NOT DEFINED
+* generate-test-resources: NOT DEFINED
+* process-test-resources: org.apache.maven.plugins:maven-resources-plugin:testResources
+* test-compile: org.apache.maven.plugins:maven-compiler-plugin:testCompile
+* process-test-classes: NOT DEFINED
+* test: org.apache.maven.plugins:maven-surefire-plugin:test
+* package: org.apache.maven.plugins:maven-jar-plugin:jar
+* pre-integration-test: NOT DEFINED
+* integration-test: NOT DEFINED
+* post-integration-test: NOT DEFINED
+* verify: NOT DEFINED
+* install: org.apache.maven.plugins:maven-install-plugin:install
+* deploy: org.apache.maven.plugins:maven-deploy-plugin:deploy
+...
++-----+
+
+or
+
++-----+
+# mvn help:describe -Dcmd=compiler:compile
+...
+[INFO] [help:describe]
+[INFO] 'compiler:compile' is a plugin.
+Plugin: 'org.apache.maven.plugins:maven-compiler-plugin:2.0.2'
+-----------------------------------------------
+Group Id:  org.apache.maven.plugins
+Artifact Id: maven-compiler-plugin
+Version:     2.0.2
+Goal Prefix: compiler
+Description:
+
+Maven Plugins
+...
++-----+
 
 * The <<<help:effective-pom>>> Mojo
 
@@ -78,7 +144,7 @@ mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin -Dmojo=des
   The mojo can be executed using the following command:
 
 +-----+
-mvn help:effective-pom
+# mvn help:effective-pom
 +-----+
 
 
@@ -90,7 +156,7 @@ mvn help:effective-pom
   The mojo can be executed using the following command:
 
 +-----+
-mvn help:effective-settings
+# mvn help:effective-settings
 +-----+
 
 * The <<<help:system>>> Mojo
@@ -100,7 +166,7 @@ mvn help:effective-settings
   The mojo can be executed using the following command:
 
 +-----+
-mvn help:system
+# mvn help:system
 +-----+
 
 * Redirecting output to a file
@@ -109,5 +175,5 @@ mvn help:system
   divert the output to a file. Here is an example of that:
 
 +-----+
-mvn help:active-profiles -Doutput=/path/to/file
+# mvn help:active-profiles -Doutput=/path/to/file
 +-----+
