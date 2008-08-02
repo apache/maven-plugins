@@ -231,27 +231,4 @@ public class DependenciesAnalysisPackagingTask
 
     }
 
-    private Artifact getArtifact( MavenProject project, Dependency dependency )
-    {
-        final Iterator it = project.getArtifacts().iterator();
-        while ( it.hasNext() )
-        {
-            Artifact artifact = (Artifact) it.next();
-            if ( artifact.getGroupId().equals( dependency.getGroupId() )
-                && artifact.getArtifactId().equals( dependency.getArtifactId() )
-                && artifact.getType().equals( dependency.getType() ) )
-            {
-                if ( artifact.getClassifier() == null && dependency.getClassifier() == null )
-                {
-                    return artifact;
-                }
-                else if ( dependency.getClassifier() != null
-                    && dependency.getClassifier().equals( artifact.getClassifier() ) )
-                {
-                    return artifact;
-                }
-            }
-        }
-        return null;
-    }
 }
