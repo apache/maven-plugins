@@ -379,7 +379,8 @@ public class InvokerMojo
     {
         if ( skipInvocation )
         {
-            getLog().info( "Skipping invocation per configuration. If this is incorrect, ensure the skipInvocation parameter is not set to true." );
+            getLog().info( "Skipping invocation per configuration."
+                + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
             return;
         }
 
@@ -392,8 +393,8 @@ public class InvokerMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter. Reason: "
-                    + e.getMessage(), e );
+                throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter."
+                    + " Reason: " + e.getMessage(), e );
             }
 
             includedPoms = new String[]{ pom.getName() };
@@ -555,7 +556,8 @@ public class InvokerMojo
                 }
                 else
                 {
-                    copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo, subpath ) );
+                    copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo,
+                                                                                              subpath ) );
                 }
 
                 clonedSubpaths.add( subpath );
@@ -1224,8 +1226,8 @@ public class InvokerMojo
         try
         {
             // interpolation with token @...@
-            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ), composite, "@",
-                                                                        "@" ) );
+            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
+                                                                        composite, "@", "@" ) );
             writer = WriterFactory.newXmlWriter( interpolatedFile );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
@@ -1285,7 +1287,8 @@ public class InvokerMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "error reading profile in file " + projectProfilesFile + " not found ", e );
+            throw new MojoExecutionException( "error reading profile in file " + projectProfilesFile + " not found ",
+                                              e );
         }
         finally
         {
