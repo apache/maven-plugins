@@ -94,8 +94,8 @@ public class ArtifactsPackagingTask
                     {
                         copyFile( id, context, artifact.getFile(), SERVICES_PATH + targetFileName );
                     }
-                    else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
-                        "test-jar".equals( type ) )
+                    else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
+                        || "test-jar".equals( type ) )
                     {
                         copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
                     }
