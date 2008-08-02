@@ -49,7 +49,7 @@ Cloning Projects
               <goal>run</goal>
             </goals>
             <configuration>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <cloneProjectsTo>\${project.build.directory}/it</cloneProjectsTo>
               <projectsDirectory>src/it</projectsDirectory>
             </configuration>
           </execution>
