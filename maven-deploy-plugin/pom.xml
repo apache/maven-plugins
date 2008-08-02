@@ -115,13 +115,14 @@ under the License.
                 <pomInclude>**/**/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>
               <goals>
                 <goal>clean</goal>
                 <goal>package</goal>
               </goals>
               <settingsFile>src/it/settings.xml</settingsFile>
+              <debug>true</debug>
             </configuration>
             <executions>
               <execution>
@@ -130,6 +131,33 @@ under the License.
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- TODO: Remove this plugin execution once MINVOKER-43 is released -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>it-preparation</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <packaging>${project.packaging}</packaging>
+                  <pomFile>${basedir}/pom.xml</pomFile>
+                  <createChecksum>true</createChecksum>
+                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                  <!-- NOTE: must match identifier of real local repository or metadata lookup during ITs will misbehave -->
+                  <localRepositoryId>local</localRepositoryId>
+                </configuration>
               </execution>
             </executions>
           </plugin>
