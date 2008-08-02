@@ -118,7 +118,8 @@ public abstract class AbstractWarPackagingTask
      * @param sourceFilesSet the files to be copied
      * @throws IOException if an error occured while copying the files
      */
-    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet, boolean filtered )
+    protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
+                              boolean filtered )
         throws IOException, MojoExecutionException
     {
         copyFiles( sourceId, context, sourceBaseDir, sourceFilesSet, null, filtered );
@@ -158,15 +159,15 @@ public abstract class AbstractWarPackagingTask
             public void refused( String ownerId, String targetFilename, String actualOwnerId )
                 throws IOException
             {
-                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has " +
-                    "already been packaged for overlay[" + actualOwnerId + "]." );
+                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has "
+                    + "already been packaged for overlay[" + actualOwnerId + "]." );
             }
 
             public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
                 throws IOException
             {
-                context.getLog().info( "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId +
-                    "] so it will be overwritten." );
+                context.getLog().info( "File[" + targetFilename + "] belonged to overlay[" + deprecatedOwnerId
+                    + "] so it will be overwritten." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
 
@@ -174,9 +175,9 @@ public abstract class AbstractWarPackagingTask
                 throws IOException
             {
                 context.getLog()
-                    .warn( "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId +
-                        "] which does not exist anymore in the current project. It is recommended to invoke " +
-                        "clean if the dependencies of the project changed." );
+                    .warn( "File[" + targetFilename + "] belonged to overlay[" + unknownOwnerId
+                        + "] which does not exist anymore in the current project. It is recommended to invoke "
+                        + "clean if the dependencies of the project changed." );
                 copyFile( context, file, targetFile, targetFilename, false );
             }
         } );
@@ -197,7 +198,8 @@ public abstract class AbstractWarPackagingTask
      * @throws IOException            if an error occured while copying
      * @throws MojoExecutionException if an error occured while retrieving the filter properties
      */
-    protected boolean copyFilteredFile( String sourceId, final WarPackagingContext context, File file, String targetFilename )
+    protected boolean copyFilteredFile( String sourceId, final WarPackagingContext context, File file,
+                                        String targetFilename )
         throws IOException, MojoExecutionException
     {
 
@@ -250,13 +252,13 @@ public abstract class AbstractWarPackagingTask
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to[" +
-                unpackDirectory.getAbsolutePath() + "]", e );
+            throw new MojoExecutionException( "Error unpacking file[" + file.getAbsolutePath() + "]" + "to["
+                + unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( NoSuchArchiverException e )
         {
-            context.getLog().warn( "Skip unpacking dependency file[" + file.getAbsolutePath() +
-                " with unknown extension[" + archiveExt + "]" );
+            context.getLog().warn( "Skip unpacking dependency file[" + file.getAbsolutePath()
+                + " with unknown extension[" + archiveExt + "]" );
         }
     }
 

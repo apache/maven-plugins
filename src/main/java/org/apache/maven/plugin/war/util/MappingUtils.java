@@ -61,7 +61,7 @@ public class MappingUtils
         // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
         artifact.isSnapshot();
 
-        RegexBasedInterpolator interpolator = new RegexBasedInterpolator("\\@\\{(", ")?([^}]+)\\}@");
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator( "\\@\\{(", ")?([^}]+)\\}@" );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
 

@@ -136,8 +136,8 @@ public class OverlayManager
                 it.set( overlay );
             }
             // default includes/excludes - only if the overlay uses the default settings
-            if ( Arrays.equals( Overlay.DEFAULT_INCLUDES, overlay.getIncludes() ) &&
-                Arrays.equals( Overlay.DEFAULT_EXCLUDES, overlay.getExcludes() ) )
+            if ( Arrays.equals( Overlay.DEFAULT_INCLUDES, overlay.getIncludes() )
+                && Arrays.equals( Overlay.DEFAULT_EXCLUDES, overlay.getExcludes() ) )
             {
                 overlay.setIncludes( defaultIncludes );
                 overlay.setExcludes( defaultExcludes );
@@ -233,10 +233,10 @@ public class OverlayManager
      */
     private boolean compareOverlayWithArtifact( Overlay overlay, Artifact artifact )
     {
-        return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() ) &&
-            StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() ) &&
-            StringUtils.equals( overlay.getType(), artifact.getType() ) &&
-            StringUtils.equals( overlay.getClassifier(), artifact.getClassifier() ) );
+        return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
+            && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
+            && StringUtils.equals( overlay.getType(), artifact.getType() )
+            && StringUtils.equals( overlay.getClassifier(), artifact.getClassifier() ) );
     }
 
     /**
