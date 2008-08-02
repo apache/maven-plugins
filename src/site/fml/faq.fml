@@ -382,5 +382,23 @@ mvn deploy:deploy-file \
         </script>
       </answer>
     </faq>
+    <faq id="What are the values of encoding, docencoding and charset parameters">
+      <question>What are the values of <code>encoding</code>, <code>docencoding</code> and <code>charset</code> parameters?</question>
+      <answer>
+        <p>
+          By default, these parameters have the following values:
+          <dl>
+            <dt><code>encoding</code></dt>
+            <dd>Value of <code>${project.build.sourceEncoding}</code> property or the value of the
+              <code>file.encoding</code> system property if not specified.</dd>
+            <dt><code>docencoding</code></dt>
+            <dd>Value of <code>${project.reporting.outputEncoding}</code> property or the value of <code>encoding</code>
+              parameter if not specified.</dd>
+            <dt><code>charset</code></dt>
+            <dd>Value of <code>docencoding</code> parameter if not specified.</dd>
+          </dl>
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
