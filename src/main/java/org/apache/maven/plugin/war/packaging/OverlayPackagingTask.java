@@ -116,8 +116,8 @@ public class OverlayPackagingTask
         final File tmpDir = getOverlayTempDirectory( context, overlay );
 
         // TODO: not sure it's good, we should reuse the markers of the dependency plugin
-        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0 ||
-            overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
+        if ( FileUtils.sizeOfDirectory( tmpDir ) == 0
+            || overlay.getArtifact().getFile().lastModified() > tmpDir.lastModified() )
         {
             doUnpack( context, overlay.getArtifact().getFile(), tmpDir );
         }
