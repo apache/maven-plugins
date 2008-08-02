@@ -83,15 +83,19 @@ public class WarProjectPackagingTask
         File metainfDir = new File( context.getWebappDirectory(), META_INF_PATH );
         metainfDir.mkdirs();
 
-        handleWebResources( context );        
-        
+        handleWebResources( context );
+
         handeWebAppSourceDirectory( context );
+
+        // Debug mode: dump the path set for the current build
         PathSet pathSet = context.getWebappStructure().getStructure( "currentBuild" );
-        context.getLog().debug( "currentBuild pathSet content dump" );
+        context.getLog().debug( "Dump of the current build pathSet content -->" );
         for ( Iterator iterator = pathSet.iterator(); iterator.hasNext(); )
         {
-            context.getLog().debug( "pathSet content " + iterator.next() );
+            context.getLog().debug(""+ iterator.next() );
         }
+        context.getLog().debug( "-- end of dump --");
+
         handleDeploymentDescriptors( context, webinfDir, metainfDir );
 
         handleClassesDirectory( context );
@@ -149,7 +153,7 @@ public class WarProjectPackagingTask
         else
         if ( !context.getWebappSourceDirectory().getAbsolutePath().equals( context.getWebappDirectory().getPath() ) )
         {
-            
+            context.getLog().info("Copying webapp resources[" + context.getWebappSourceDirectory() + "]");
             final PathSet sources = getFilesToIncludes( context.getWebappSourceDirectory(),
                                                         context.getWebappSourceIncludes(),
                                                         context.getWebappSourceExcludes() );
@@ -286,13 +290,12 @@ public class WarProjectPackagingTask
         }
 
         context.getLog().info(
-                               "Copy webapp webResources[" + resource.getDirectory() + "] to["
+                               "Copying webapp webResources[" + resource.getDirectory() + "] to["
                                    + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
         for ( int i = 0; i < fileNames.length; i++ )
         {
             String targetFileName = fileNames[i];
-            context.getLog().debug( "copy targetFileName " + targetFileName );
             if ( resource.getTargetPath() != null )
             {
                 //TODO make sure this thing is 100% safe
@@ -305,7 +308,6 @@ public class WarProjectPackagingTask
                     targetFileName = resource.getTargetPath() + File.separator + targetFileName;
                 }
             }
-            context.getLog().debug( "copy targetFileName with targetPath " + targetFileName );
             if ( resource.isFiltering() && !context.isNonFilteredExtension( fileNames[i] ) )
             {
                 copyFilteredFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
