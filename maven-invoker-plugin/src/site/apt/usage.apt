@@ -3,7 +3,7 @@
  ------
  Jason van Zyl
  ------
- 27 November 2006
+ 2008-08-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -37,7 +37,7 @@ Usage
 * Basic Example
 
   The following example shows basic plugin configuration for running integration tests.
-  The projects directory (<<<src/it>>>) is the location where the plugin will look for test projects
+  The project's directory (<<<src/it>>>) is the location where the plugin will look for test projects
   to execute.  The plugin is set to find and run all <<<pom.xml>>> files in this directory.
   
 -------------------
