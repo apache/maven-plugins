@@ -125,18 +125,21 @@ public class InvokerMojo
     private File projectsDirectory;
 
     /**
-     * Directory to which projects should be cloned prior to execution.
-     *
+     * Directory to which projects should be cloned prior to execution. If not specified, each integration test will be
+     * run in the directory in which the corresponding IT POM was found. In this case, you most likely want to configure
+     * your SCM to ignore <code>target</code> and <code>build.log</code> in the test's base directory.
+     * 
      * @parameter
      * @since 1.1
      */
     private File cloneProjectsTo;
 
     /**
-     * Some files are normally excluded when copying from the projectsDirectory
-     * to the "cloneProjectsTo" directory (.svn, CVS, *~, etc).  Setting this parameter to true
-     * will cause all files to be copied to the cloneProjectsTo directory.
-     *
+     * Some files are normally excluded when copying the IT projects from the directory specified by the parameter
+     * projectsDirectory to the directory given by cloneProjectsTo (e.g. <code>.svn</code>, <code>CVS</code>,
+     * <code>*~</code>, etc). Setting this parameter to <code>true</code> will cause all files to be copied to the
+     * cloneProjectsTo directory.
+     * 
      * @parameter default-value="false"
      * @since 1.2
      */
@@ -159,14 +162,15 @@ public class InvokerMojo
     private List pomIncludes = Collections.singletonList( "*/pom.xml" );
 
     /**
-     * Excludes for searching the integration test directory. This parameter is meant to be set from the POM.
-     *
+     * Excludes for searching the integration test directory. This parameter is meant to be set from the POM. By
+     * default, no POM files are excluded.
+     * 
      * @parameter
      */
     private List pomExcludes = Collections.EMPTY_LIST;
 
     /**
-     * The comma-separated list of goals to execute on each project. Default is 'package'.
+     * The list of goals to execute on each project. Default value is: <code>package</code>.
      *
      * @parameter
      */
@@ -245,7 +249,7 @@ public class InvokerMojo
     private boolean noLog;
 
     /**
-     * List of profileId's to explicitly trigger in the build.
+     * List of profile identifiers to explicitly trigger in the build.
      * 
      * @parameter
      * @since 1.1
@@ -253,7 +257,7 @@ public class InvokerMojo
     private List profiles;
 
     /**
-     * List properties which will be used to interpolate goal files.
+     * List of properties which will be used to interpolate goal files.
      *
      * @parameter
      * @since 1.1
