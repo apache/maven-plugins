@@ -734,12 +734,12 @@ public abstract class AbstractJavadocMojo
     private String bottom;
 
     /**
-     * Specifies the HTML character set for this document.
+     * Specifies the HTML character set for this document. Defaults to the value specified by <code>docencoding</code>.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
      *
-     * @parameter expression="${charset}" default-value="${project.reporting.outputEncoding}"
+     * @parameter expression="${charset}"
      */
     private String charset;
 
@@ -1389,11 +1389,11 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return the charset attribute or <code>UTF-8</code> if <code>null</code>
+     * @return the charset attribute or the value of {@link #getDocencoding()} if <code>null</code>
      */
     private String getCharset()
     {
-        return ( charset == null ) ? ReaderFactory.UTF_8 : charset;
+        return ( charset == null ) ? getDocencoding() : charset;
     }
 
     /**

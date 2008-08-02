@@ -27,6 +27,7 @@
   <modules>
     <module>default</module>
     <module>encoding</module>
+    <module>docencoding</module>
   </modules>
   <build>
     <pluginManagement>
