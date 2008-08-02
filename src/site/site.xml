@@ -30,12 +30,11 @@ under the License.
     </menu>
     
     <menu name="Examples">
-      <item name="Basic Example" href="usage.html"/>
       <item name="Clone Projects" href="examples/clone-projects.html"/>
       <item name="Install Artifacts" href="examples/install-artifacts.html"/>
       <item name="Post Build Script" href="examples/post-build-script.html"/>
       <item name="Fast Use" href="examples/fast-use.html"/>
-      <item name="Access Test Classes" href="examples/access-test-classes.html"/>
+      <item name="Accessing Test Classes" href="examples/access-test-classes.html"/>
     </menu>
     
   </body>
