@@ -517,7 +517,8 @@ public abstract class AbstractJavadocMojo
     private String docletPath;
 
     /**
-     * Specifies the encoding name of the source files.
+     * Specifies the encoding name of the source files. If not specificed, the encoding value will be the value of the
+     * <code>file.encoding</code> system property.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
      * <br/>
@@ -734,7 +735,8 @@ public abstract class AbstractJavadocMojo
     private String bottom;
 
     /**
-     * Specifies the HTML character set for this document. Defaults to the value specified by <code>docencoding</code>.
+     * Specifies the HTML character set for this document. If not specificed, the charset value will be the value of
+     * the <code>docencoding</code> parameter.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
@@ -744,7 +746,8 @@ public abstract class AbstractJavadocMojo
     private String charset;
 
     /**
-     * Specifies the encoding of the generated HTML files.
+     * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be the value
+     * of the <code>encoding</code> parameter.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
      *
@@ -1389,19 +1392,27 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return the charset attribute or the value of {@link #getDocencoding()} if <code>null</code>
+     * @return the charset attribute or the value of {@link #getDocencoding()} if <code>null</code>.
      */
     private String getCharset()
     {
-        return ( charset == null ) ? getDocencoding() : charset;
+        return ( StringUtils.isEmpty( charset ) ) ? getDocencoding() : charset;
     }
 
     /**
-     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code>
+     * @return the docencoding attribute or the value of {@link #getEncoding()} if <code>null</code>.
      */
     private String getDocencoding()
     {
-        return ( docencoding == null ) ? ReaderFactory.UTF_8 : docencoding;
+        return ( StringUtils.isEmpty( docencoding ) ) ? getEncoding() : docencoding;
+    }
+
+    /**
+     * @return the encoding attribute or the value of <code>file.encoding</code> system property if <code>null</code>.
+     */
+    private String getEncoding()
+    {
+        return ( StringUtils.isEmpty( encoding ) ) ? ReaderFactory.FILE_ENCODING : encoding;
     }
 
     /**
@@ -3381,9 +3392,9 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         // encoding
-        if ( StringUtils.isNotEmpty( encoding ) && !JavadocUtil.validateEncoding( encoding ) )
+        if ( StringUtils.isNotEmpty( getEncoding() ) && !JavadocUtil.validateEncoding( getEncoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + encoding );
+            throw new MavenReportException( "Encoding not supported: " + getEncoding() );
         }
     }
 
@@ -3524,7 +3535,7 @@ public abstract class AbstractJavadocMojo
                            "Source files encoding has not been set, using platform encoding "
                                + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
         }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
 
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
