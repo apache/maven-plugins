@@ -3,7 +3,7 @@
  ------
  Olivier Lamy
  ------
- 24 November 2007
+ 2008-08-02
  ------
  
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@ Advanced Usage
   
   * Values from the project POM (you must use <<<$\{pom.groupId}>>> notation in your goals file)
   
-  * In the plugin configuration you can add some properties in a <<<\<interpolationsProperties\>>>> element
+  * In the plugin configuration you can add some properties in an <<<\<interpolationsProperties\>>>> element
 
 * IT POM Interpolation 
 
@@ -42,7 +42,7 @@ Advanced Usage
     
   * Values from the project POM (you must use <<<@pom.groupId@>>> notation in your POM file)
   
-  * In the plugin configuration you can add some properties in a <<<\<interpolationsProperties\>>>> element
+  * In the plugin configuration you can add some properties in an <<<\<interpolationsProperties\>>>> element
   
   * Properties from <<<pom.properties>>>
 
