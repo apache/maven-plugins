@@ -3,7 +3,7 @@
  ------
  Benjamin Bentmann
  ------
- 03 May 2008
+ 2008-08-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -48,7 +48,7 @@ Accessing Test Classes
               <addTestClassPath>true</addTestClassPath>
             </configuration>
           </execution>
-       </executions>
+        </executions>
       </plugin>
     </plugins>
   </build>
