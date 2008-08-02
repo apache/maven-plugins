@@ -52,8 +52,8 @@ public class DependenciesAnalysisPackagingTask
     protected void handleDependency( WarPackagingContext context, Dependency dependency, String notBundledMessage,
                                      String warOrZipMessage, String standardMessage, boolean removeFile )
     {
-        if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() ) ||
-            Artifact.SCOPE_TEST.equals( dependency.getScope() ) || dependency.isOptional() )
+        if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() )
+            || Artifact.SCOPE_TEST.equals( dependency.getScope() ) || dependency.isOptional() )
         {
             context.getLog().debug( notBundledMessage );
         }
@@ -61,10 +61,10 @@ public class DependenciesAnalysisPackagingTask
         {
             context.getLog().warn( warOrZipMessage );
         }
-        else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() ) ||
-            "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() ) ||
-            "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() ) ||
-            "par".equals( dependency.getType() ) )
+        else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() )
+            || "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() )
+            || "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() )
+            || "par".equals( dependency.getType() ) )
         {
             context.getLog().info( standardMessage );
             if ( removeFile )
@@ -81,10 +81,10 @@ public class DependenciesAnalysisPackagingTask
         {
             context.getLog().warn( warOrZipMessage );
         }
-        else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() ) ||
-            "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() ) ||
-            "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() ) ||
-            "par".equals( dependency.getType() ) )
+        else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() )
+            || "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() )
+            || "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() )
+            || "par".equals( dependency.getType() ) )
         {
             context.getLog().info( standardMessage );
             if ( removeFile )
@@ -110,8 +110,8 @@ public class DependenciesAnalysisPackagingTask
                 targetFile =
                     new File( context.getWebappDirectory(), ArtifactsPackagingTask.SERVICES_PATH + targetFileName );
             }
-            else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
-                "test-jar".equals( type ) )
+            else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
+                || "test-jar".equals( type ) )
             {
                 targetFile = new File( context.getWebappDirectory(), LIB_PATH + targetFileName );
             }
@@ -165,39 +165,40 @@ public class DependenciesAnalysisPackagingTask
 
         public void removedDependency( Dependency dependency )
         {
-            handleDependency( context, dependency, "Dependency[" + dependency +
-                "] has been removed from the project but it was not bundled anyway.", "Dependency[" + dependency +
-                "] has been removed from the project. If it was included in the build as an overlay, " +
-                "consider cleaning the target directory of the project (mvn clean)", "Dependency[" + dependency +
-                "] has been removed from the project.", true );
+            handleDependency( context, dependency, "Dependency[" + dependency
+                + "] has been removed from the project but it was not bundled anyway.", "Dependency[" + dependency
+                + "] has been removed from the project. If it was included in the build as an overlay, "
+                + "consider cleaning the target directory of the project (mvn clean)", "Dependency[" + dependency
+                + "] has been removed from the project.", true );
         }
 
         public void updatedVersion( Dependency dependency, String previousVersion )
         {
-            handleDependency( context, dependency, "Version of dependency[" + dependency + "] has changed (" +
-                previousVersion + " -> " + dependency.getVersion() + ") but it was not bundled anyway.",
-                                                   "Version of dependency[" + dependency + "] has changed (" +
-                                                       previousVersion + " -> " + dependency.getVersion() +
-                                                       "). If it was included in the build as an overlay, " +
-                                                       "consider " +
-                                                       "cleaning the target directory of the project (mvn clean)",
-                                                   "Version of dependency[" + dependency + "] has changed (" +
-                                                       previousVersion + " -> " + dependency.getVersion() + ").",
+            handleDependency( context, dependency, "Version of dependency[" + dependency + "] has changed ("
+                + previousVersion + " -> " + dependency.getVersion() + ") but it was not bundled anyway.",
+                                                   "Version of dependency[" + dependency + "] has changed ("
+                                                       + previousVersion + " -> " + dependency.getVersion()
+                                                       + "). If it was included in the build as an overlay, "
+                                                       + "consider "
+                                                       + "cleaning the target directory of the project (mvn clean)",
+                                                   "Version of dependency[" + dependency + "] has changed ("
+                                                       + previousVersion + " -> " + dependency.getVersion() + ").",
                                                    true );
         }
 
         public void updatedScope( Dependency dependency, String previousScope )
         {
             if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() ) || Artifact.SCOPE_TEST.equals(
-                dependency.getScope() ) &&
-                ( !Artifact.SCOPE_PROVIDED.equals( previousScope ) && !Artifact.SCOPE_TEST.equals( previousScope ) ) )
+                dependency.getScope() )
+                && ( !Artifact.SCOPE_PROVIDED.equals( previousScope )
+                && !Artifact.SCOPE_TEST.equals( previousScope ) ) )
             {
                 // It's now provided or test so it should be removed
-                handleDependencyScope( context, dependency, "Scope of dependency[" + dependency + "] has changed (" +
-                    previousScope + " -> " + dependency.getScope() +
-                    "). If it was included in the build as an overlay, " +
-                    "consider cleaning the target directory of the project (mvn clean)", "Scope of dependency[" +
-                    dependency + "] has changed (" + previousScope + " -> " + dependency.getScope() + ").", true );
+                handleDependencyScope( context, dependency, "Scope of dependency[" + dependency + "] has changed ("
+                    + previousScope + " -> " + dependency.getScope()
+                    + "). If it was included in the build as an overlay, "
+                    + "consider cleaning the target directory of the project (mvn clean)", "Scope of dependency["
+                    + dependency + "] has changed (" + previousScope + " -> " + dependency.getScope() + ").", true );
             }
 
         }
@@ -210,9 +211,9 @@ public class DependenciesAnalysisPackagingTask
                 // It wasn't optional but now it is anymore
                 handleDependency( context, dependency,
                                   "Dependency[" + dependency + "] is now optional but it was not bundled anyway.",
-                                  "Dependency[" + dependency +
-                                      "] is now optional. If it was included in the build as an overlay, " +
-                                      "consider cleaning the target directory of the project (mvn clean)",
+                                  "Dependency[" + dependency
+                                      + "] is now optional. If it was included in the build as an overlay, "
+                                      + "consider cleaning the target directory of the project (mvn clean)",
                                   "Dependency[" + dependency + "] is now optional", true );
 
 
@@ -221,11 +222,11 @@ public class DependenciesAnalysisPackagingTask
 
         public void updatedUnknown( Dependency dependency, Dependency previousDep )
         {
-            handleDependency( context, dependency, "Dependency[" + dependency + "] has changed (was " + previousDep +
-                ") but it was not bundled anyway.", "Dependency[" + dependency + "] has changed (was " + previousDep +
-                "). If it was included in the build as an overlay, " + "consider " +
-                "cleaning the target directory of the project (mvn clean)", "Dependency[" + dependency +
-                "] has changed (was " + previousDep + ").", true );
+            handleDependency( context, dependency, "Dependency[" + dependency + "] has changed (was " + previousDep
+                + ") but it was not bundled anyway.", "Dependency[" + dependency + "] has changed (was " + previousDep
+                + "). If it was included in the build as an overlay, " + "consider "
+                + "cleaning the target directory of the project (mvn clean)", "Dependency[" + dependency
+                + "] has changed (was " + previousDep + ").", true );
         }
 
     }
@@ -236,16 +237,16 @@ public class DependenciesAnalysisPackagingTask
         while ( it.hasNext() )
         {
             Artifact artifact = (Artifact) it.next();
-            if ( artifact.getGroupId().equals( dependency.getGroupId() ) &&
-                artifact.getArtifactId().equals( dependency.getArtifactId() ) &&
-                artifact.getType().equals( dependency.getType() ) )
+            if ( artifact.getGroupId().equals( dependency.getGroupId() )
+                && artifact.getArtifactId().equals( dependency.getArtifactId() )
+                && artifact.getType().equals( dependency.getType() ) )
             {
                 if ( artifact.getClassifier() == null && dependency.getClassifier() == null )
                 {
                     return artifact;
                 }
-                else if ( dependency.getClassifier() != null &&
-                    dependency.getClassifier().equals( artifact.getClassifier() ) )
+                else if ( dependency.getClassifier() != null
+                    && dependency.getClassifier().equals( artifact.getClassifier() ) )
                 {
                     return artifact;
                 }

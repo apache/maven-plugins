@@ -92,9 +92,9 @@ public class WarProjectPackagingTask
         context.getLog().debug( "Dump of the current build pathSet content -->" );
         for ( Iterator iterator = pathSet.iterator(); iterator.hasNext(); )
         {
-            context.getLog().debug(""+ iterator.next() );
+            context.getLog().debug( "" + iterator.next() );
         }
-        context.getLog().debug( "-- end of dump --");
+        context.getLog().debug( "-- end of dump --" );
 
         handleDeploymentDescriptors( context, webinfDir, metainfDir );
 
@@ -153,7 +153,7 @@ public class WarProjectPackagingTask
         else
         if ( !context.getWebappSourceDirectory().getAbsolutePath().equals( context.getWebappDirectory().getPath() ) )
         {
-            context.getLog().info("Copying webapp resources[" + context.getWebappSourceDirectory() + "]");
+            context.getLog().info( "Copying webapp resources[" + context.getWebappSourceDirectory() + "]" );
             final PathSet sources = getFilesToIncludes( context.getWebappSourceDirectory(),
                                                         context.getWebappSourceIncludes(),
                                                         context.getWebappSourceExcludes() );
@@ -246,7 +246,7 @@ public class WarProjectPackagingTask
             if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
             {
                 String xmlFileName = containerConfigXML.getName();
-                if (context.isFilteringDeploymentDescriptors())
+                if ( context.isFilteringDeploymentDescriptors() )
                 {
                     context.getMavenFileFilter().copyFile( containerConfigXML, new File( metainfDir, xmlFileName ),
                                                            true, context.getFilterWrappers(), null );
