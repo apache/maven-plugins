@@ -1,7 +1,7 @@
  ------
- Accessing Test Classes
+ Clone Projects Example
  ------
- Benjamin Bentmann
+ Paul Gier
  ------
  2008-08-02
  ------
@@ -26,18 +26,22 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Accessing Test Classes
- 
-  In case your pre-/post-build scripts perform complex operations that you would rather like to refactor out into some
-  utility class instead of copy&pasting them in each script, you can use the parameter <<<addTestClassPath>>>:
+Clone Projects Example
 
-+----
+  By default the projects will be executed in the same directory where they are found.
+  This means that build output will be generated with the project files.  It may be
+  helpful to copy the projects to another directory before running them, for example
+  <<<target/it>>>.  This will allow <<<mvn clean>>> to remove the output generated
+  by all of the test projects.
+  
+-------------------
 <project>
+  ...
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.2</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -45,19 +49,16 @@ Accessing Test Classes
               <goal>run</goal>
             </goals>
             <configuration>
-              <addTestClassPath>true</addTestClassPath>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <projectsDirectory>src/it</projectsDirectory>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+  ...
 </project>
-+----
+-------------------
 
-  Setting <<<addTestClassPath>>> to <<<true>>> will prepend the directory <<<$\{project.build.testOutputDirectory\}>>>
-  and all dependencies of your project to the class path of the script interpreter. Among others, this allows you to
-  create some utility classes in your test source tree and use this code for the integration tests.
-  
-  <Note:> Of course, this requires your test classes to be compiled before running the integration tests but this is
-  usually the case if you employ the Invoker Plugin during the lifecycle phase <<<integration-test>>>.
+          

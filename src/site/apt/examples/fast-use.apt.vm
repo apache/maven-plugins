@@ -3,7 +3,7 @@
  ------
  Olivier Lamy
  ------
- 01 May 2008
+ 2008-08-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -48,7 +48,7 @@ Fast Invoker Plugin Configuration
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.3</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <settingsFile>src/it/settings.xml</settingsFile>
