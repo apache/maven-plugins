@@ -49,7 +49,7 @@ boolean checkEncoding( String module, String encoding )
 
 try
 {
-    result = checkEncoding( "default", "UTF-8") && checkEncoding( "encoding", "UTF-16" );
+    result = checkEncoding( "default", "UTF-8") && checkEncoding( "encoding", "UTF-16" ) && checkEncoding( "docencoding", "UTF-16" );
 }
 catch( IOException e )
 {

@@ -46,7 +46,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -148,7 +147,7 @@ public class JavadocUtil
     }
 
     /**
-     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
      * @param artifacts not null
      * @return list of compile artifacts with compile scope
      * @deprecated since 2.5, using {@link #getCompileArtifacts(Set, boolean)} instead of.
@@ -159,7 +158,7 @@ public class JavadocUtil
     }
 
     /**
-     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
      * @param artifacts not null
      * @param withTestScope flag to include or not the artifacts with test scope
      * @return list of compile artifacts with or without test scope.
