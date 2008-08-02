@@ -1,7 +1,7 @@
  ------
- Usage
+ Installing Artifacts Example
  ------
- Jason van Zyl
+ Paul Gier
  ------
  2008-08-02
  ------
@@ -26,28 +26,19 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Usage
-  
-* How to use the Invoker Plugin
+Example using postBuildHookScript
  
-  This page provides general usage information along with some basic examples.  The plugin
-  is commonly used to run and verify integration tests for a project.  This is done using
-  the <<<{{{run-mojo.html} invoker:run }}>>> goal.
+  Here is an example of how the Invoker Plugin can be used to run a set
+  of Maven projects and then verify their output with a BeanShell script.
+  The name of the script file in this case is <<<verify.bsh>>>.
 
-* Basic Example
-
-  The following example shows basic plugin configuration for running integration tests.
-  The project's directory (<<<src/it>>>) is the location where the plugin will look for test projects
-  to execute.  The plugin is set to find and run all <<<pom.xml>>> files in this directory.
-  
 -------------------
 <project>
-  ...
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.2</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -55,17 +46,49 @@ Usage
               <goal>run</goal>
             </goals>
             <configuration>
+              <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
+              <pomExcludes>
+                <pomExclude>**/child*/pom.xml</pomExclude>
+                <pomExclude>**/module*/pom.xml</pomExclude>
+              </pomExcludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
             </configuration>
           </execution>
-        </executions>
+       </executions>
       </plugin>
     </plugins>
   </build>
-  ...
 </project>
 -------------------
- 
+
+  Here is an example post build script (<<<verify.bsh>>>) that checks for the existence 
+  of a jar file after the build has run.  If the jar file does not exist, the
+  script returns <<<false>>> which causes the Invoker Plugin to log that the build failed.
+  The global variable <<<basedir>>> of type <<<java.io.File>>> can be used to refer to the
+  base directory of the current integration test.
+          
+-------------------
+import java.io.*;
+
+try
+{
+    File file = new File( basedir, "target/my-test-project-1.0-SNAPSHOT.jar" );
+    if ( !file.isFile() )
+    {
+        System.err.println( "Could not find generated jar: " + file );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
+-------------------
+
