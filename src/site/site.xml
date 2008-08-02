@@ -21,16 +21,10 @@ under the License.
 
 <project>
   <body>
-    <!-- TODO: use breadcrumbs more structure, links for links, and inherit subprojects as a menu or not at all -->
-    <links>
-      <item name="Apache" href="http://www.apache.org/"/>
-      <item name="Maven 1.x" href="http://maven.apache.org/maven-1.x"/>
-      <item name="Maven 2.x" href="http://maven.apache.org/"/>
-      <item name="Maven 2.x Plugins" href="http://maven.apache.org/plugins/"/>
-      <item name="SCM" href="http://maven.apache.org/scm"/>
-      <item name="Wagon" href="http://maven.apache.org/wagon"/>
-      <item name="JXR" href="http://maven.apache.org/jxr"/>
-      <item name="Doxia" href="http://maven.apache.org/doxia"/>
-    </links>
+    <breadcrumbs>
+      <!-- TODO: This breadcrumb should be removed when it has been solved in the parent -->
+      <item name="Maven" href="http://maven.apache.org/index.html" />
+      <item name="Plugins" href="http://maven.apache.org/plugins/index.html" />
+    </breadcrumbs>
   </body>
 </project>
