@@ -1,9 +1,9 @@
  ------
- Clone Projects Example
+ Usage
  ------
- Paul Gier
+ Jason van Zyl
  ------
- 18 April 2008
+ 2008-08-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,13 +26,19 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Clone Projects Example
+Usage
+  
+* How to use the Invoker Plugin
+ 
+  This page provides general usage information along with some basic examples.  The plugin
+  is commonly used to run and verify integration tests for a project.  This is done using
+  the <<<{{{run-mojo.html} invoker:run }}>>> goal.
 
-  By default the projects will be executed in the same directory where they are found.
-  This means that build output will be generated with the project files.  It may be
-  helpful to copy the projects to another directory before running them, for example
-  <<<target/it>>>.  This will allow <<<mvn clean>>> to remove the output generated
-  by all of the test projects.
+* Basic Example
+
+  The following example shows basic plugin configuration for running integration tests.
+  The project's directory (<<<src/it>>>) is the location where the plugin will look for test projects
+  to execute.  The plugin is set to find and run all <<<pom.xml>>> files in this directory.
   
 -------------------
 <project>
@@ -41,7 +47,7 @@ Clone Projects Example
     <plugins>
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.2</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -49,8 +55,10 @@ Clone Projects Example
               <goal>run</goal>
             </goals>
             <configuration>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <projectsDirectory>src/it</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>**/pom.xml</pomInclude>
+              </pomIncludes>
             </configuration>
           </execution>
         </executions>
@@ -60,5 +68,4 @@ Clone Projects Example
   ...
 </project>
 -------------------
-
-          
+ 
