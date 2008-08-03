@@ -4,7 +4,7 @@
  Johnny R. Ruiz III
  <jruiz@exist.com>
  ------
- January 2008
+ 2008-07-24
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -84,10 +84,12 @@ Maven Project Info Reports Plugin
 
   * {{{project-info.html}Overview of the reports generated for this plugin}}
 
+  []
+
 * Related Links
 
   * {{{http://maven.apache.org/plugins/maven-site-plugin/i18n.html}Internationalization}}
 
   * {{{http://maven.apache.org/plugins/maven-site-plugin/examples/creatingskins.html}Skinning}}
 
-
+  []

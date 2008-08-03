@@ -24,23 +24,17 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +49,10 @@ import java.util.regex.Pattern;
 public class LicenseReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The Maven Settings.
      *
@@ -90,16 +88,47 @@ public class LicenseReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
+        LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
+
+        r.render();
+    }
+
+    /** {@inheritDoc} */
+    public boolean canGenerateReport()
+    {
         if ( !offline )
         {
-            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
+            return true;
+        }
 
-            r.render();
-        }
-        else
+        List licenses = project.getModel().getLicenses();
+        for ( Iterator i = licenses.iterator(); i.hasNext(); )
         {
-            getLog().info( "Not generating license report while offline." );
+            License license = (License) i.next();
+
+            String url = license.getUrl();
+
+            URL licenseUrl = null;
+            try
+            {
+                licenseUrl = getLicenseURL( project, url );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( e.getMessage() );
+            }
+            catch ( IOException e )
+            {
+                getLog().error( e.getMessage() );
+            }
+
+            if ( licenseUrl != null && licenseUrl.getProtocol().equals( "file" ) )
+            {
+                return true;
+            }
         }
+
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -108,10 +137,68 @@ public class LicenseReport
         return "license";
     }
 
+    /**
+     * @param project not null
+     * @param url not null
+     * @return a valid URL object from the url string
+     * @throws MalformedURLException if any
+     * @throws IOException if any
+     */
+    protected static URL getLicenseURL( MavenProject project, String url )
+        throws MalformedURLException, IOException
+    {
+        URL licenseUrl = null;
+        UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
+        // UrlValidator does not accept file URLs because the file
+        // URLs do not contain a valid authority (no hostname).
+        // As a workaround accept license URLs that start with the
+        // file scheme.
+        if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
+        {
+            try
+            {
+                licenseUrl = new URL( url );
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
+                    + e.getMessage() );
+            }
+        }
+        else
+        {
+            File licenseFile = new File( project.getBasedir(), url );
+            if ( !licenseFile.exists() )
+            {
+                // Workaround to allow absolute path names while
+                // staying compatible with the way it was...
+                licenseFile = new File( url );
+            }
+            if ( !licenseFile.exists() )
+            {
+                throw new IOException( "Maven can't find the file '" + licenseFile + "' on the system." );
+            }
+            try
+            {
+                licenseUrl = licenseFile.toURL();
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MalformedURLException( "The license url '" + url + "' seems to be invalid: "
+                    + e.getMessage() );
+            }
+        }
+
+        return licenseUrl;
+    }
+
     // ----------------------------------------------------------------------
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class LicenseRenderer
         extends AbstractMavenReportRenderer
     {
@@ -186,43 +273,19 @@ public class LicenseReport
                 if ( url != null )
                 {
                     URL licenseUrl = null;
-                    UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
-                    // UrlValidator does not accept file URLs because the file
-                    // URLs do not contain a valid authority (no hostname).
-                    // As a workaround accept license URLs that start with the
-                    // file scheme.
-                    if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
+                    try
                     {
-                        try
-                        {
-                            licenseUrl = new URL( url );
-                        }
-                        catch ( MalformedURLException e )
-                        {
-                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
-                        }
+                        licenseUrl = getLicenseURL( project, url );
                     }
-                    else
+                    catch ( MalformedURLException e )
                     {
-                        File licenseFile = new File( project.getBasedir(), url );
-                        if ( !licenseFile.exists() )
-                        {
-                            // Workaround to allow absolute path names while
-                            // staying compatible with the way it was...
-                            licenseFile = new File( url );
-                        }
-                        if ( !licenseFile.exists() )
-                        {
-                            paragraph( "Maven can't find the file " + licenseFile + " on the system." );
-                        }
-                        try
-                        {
-                            licenseUrl = licenseFile.toURL();
-                        }
-                        catch ( MalformedURLException e )
-                        {
-                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
-                        }
+                        // I18N message
+                        paragraph( e.getMessage() );
+                    }
+                    catch ( IOException e )
+                    {
+                        // I18N message
+                        paragraph( e.getMessage() );
                     }
 
                     if ( licenseUrl != null )
@@ -230,7 +293,8 @@ public class LicenseReport
                         String licenseContent = null;
                         try
                         {
-                            licenseContent = getLicenseInputStream( licenseUrl );
+                            // All licenses are supposed in English...
+                            licenseContent = ProjectInfoReportUtils.getInputStream( licenseUrl, settings );
                         }
                         catch ( IOException e )
                         {
@@ -240,7 +304,7 @@ public class LicenseReport
                         if ( licenseContent != null )
                         {
                             // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                            String licenseContentLC = licenseContent.toLowerCase();
+                            String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
                             int bodyStart = licenseContentLC.indexOf( "<body" );
                             int bodyEnd = licenseContentLC.indexOf( "</body>" );
                             if ( ( licenseContentLC.startsWith( "<!doctype html" )
@@ -267,75 +331,6 @@ public class LicenseReport
             }
 
             endSection();
-        }
-
-        /**
-         * Get the content of the license Url
-         *
-         * @param licenseUrl
-         * @return the content of the licenseUrl
-         */
-        private String getLicenseInputStream( URL licenseUrl )
-            throws IOException
-        {
-            String scheme = licenseUrl.getProtocol();
-            if ( !"file".equals( scheme ) )
-            {
-                Proxy proxy = settings.getActiveProxy();
-                if ( proxy != null )
-                {
-                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
-                    {
-                        scheme = "http.";
-                    }
-                    else if ( "ftp".equals( scheme ) )
-                    {
-                        scheme = "ftp.";
-                    }
-                    else
-                    {
-                        scheme = "";
-                    }
-
-                    String host = proxy.getHost();
-                    if ( !StringUtils.isEmpty( host ) )
-                    {
-                        Properties p = System.getProperties();
-                        p.setProperty( scheme + "proxySet", "true" );
-                        p.setProperty( scheme + "proxyHost", host );
-                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
-                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
-                        {
-                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
-                        }
-
-                        final String userName = proxy.getUsername();
-                        if ( !StringUtils.isEmpty( userName ) )
-                        {
-                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
-                            Authenticator.setDefault( new Authenticator()
-                            {
-                                protected PasswordAuthentication getPasswordAuthentication()
-                                {
-                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
-                                }
-                            } );
-                        }
-                    }
-                }
-            }
-
-            InputStream in = null;
-            try
-            {
-                in = licenseUrl.openStream();
-                // All licenses are supposed in English...
-                return IOUtil.toString( in, "ISO-8859-1" );
-            }
-            finally
-            {
-                IOUtil.close( in );
-            }
         }
 
         private static URL baseURL( URL aUrl )

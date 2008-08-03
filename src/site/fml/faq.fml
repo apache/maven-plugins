@@ -29,5 +29,37 @@ under the License.
         </p>
       </answer>
     </faq>
+
+    <faq id="How to exclude SCM anonymous access info">
+      <question>How to exclude SCM access info?</question>
+      <answer>
+        <p>
+          See the <a href="examples/scm-report.html#How_to_exclude_SCM_anonymous_access_info">SCM report documentation</a>.
+        </p>
+      </answer>
+    </faq>
+
+    <faq id="How to hide developer/contributor addresses">
+      <question>How to hide developer/contributor email addresses?</question>
+      <answer>
+        <p>
+          You could use services such as <a href="http://mailhide.recaptcha.net/">reCAPTCHA Mailhide</a>.
+          In this case, just replace email by the given URL, for instance:
+          <source>
+<project>
+  ...
+  <developers>
+    <developer>
+      <id>foo</id>
+      <email>http://mailhide.recaptcha.net/d?k=01ebFB9eM2hZL-T96IpUgRmA==&amp;c=AI-pouLFNTr5xMTBVDaj8iKeIFI5dy9Wj5cxSY0Nuhw=</email>
+        ...
+    </developer>
+    ...
+  </developers>
+  ...
+</project></source>
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>

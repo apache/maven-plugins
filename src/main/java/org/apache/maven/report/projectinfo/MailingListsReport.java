@@ -77,6 +77,9 @@ public class MailingListsReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     protected static class MailingListsRenderer
         extends AbstractMavenReportRenderer
     {

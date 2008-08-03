@@ -19,8 +19,11 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManagementRenderer;
 
@@ -37,6 +40,41 @@ import org.apache.maven.report.projectinfo.dependencies.renderer.DependencyManag
 public class DependencyManagementReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * Maven Project Builder component.
+     *
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
+    /**
+     * Lazy instantiation for management dependencies.
+     */
+    private ManagementDependencies managementDependencies;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -56,13 +94,10 @@ public class DependencyManagementReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-
-        ManagementDependencies dependencies =
-            new ManagementDependencies( project.getDependencyManagement().getDependencies() );
-
-        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, dependencies );
-
-        r.setLog( getLog() );
+        DependencyManagementRenderer r = new DependencyManagementRenderer( getSink(), locale, i18n, getLog(),
+                                                                           getManagementDependencies(),
+                                                                           artifactFactory, mavenProjectBuilder,
+                                                                           remoteRepositories, localRepository );
         r.render();
     }
 
@@ -72,9 +107,32 @@ public class DependencyManagementReport
         return "dependency-management";
     }
 
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
+        return getManagementDependencies().hasDependencies();
+    }
 
-        return project.getDependencyManagement() != null;
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
+    private ManagementDependencies getManagementDependencies()
+    {
+        if ( managementDependencies != null )
+        {
+            return managementDependencies;
+        }
+
+        if ( project.getDependencyManagement() == null )
+        {
+            managementDependencies = new ManagementDependencies( null );
+        }
+        else
+        {
+            managementDependencies = new ManagementDependencies( project.getDependencyManagement().getDependencies() );
+        }
+
+        return managementDependencies;
     }
 }

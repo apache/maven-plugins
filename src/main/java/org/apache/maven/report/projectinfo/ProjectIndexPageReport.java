@@ -81,6 +81,9 @@ public class ProjectIndexPageReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class ProjectIndexRenderer
         extends AbstractMavenReportRenderer
     {

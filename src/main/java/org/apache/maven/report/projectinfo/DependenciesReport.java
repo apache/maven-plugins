@@ -19,20 +19,39 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.dependency.tree.DependencyTree;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -47,7 +66,15 @@ import java.util.Locale;
  */
 public class DependenciesReport
     extends AbstractProjectInfoReport
+    implements Contextualizable
 {
+    /** Images resources dir */
+    private static final String RESOURCES_DIR = "org/apache/maven/report/projectinfo/resources";
+
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
     /**
      * Maven Project Builder component.
      *
@@ -86,12 +113,32 @@ public class DependenciesReport
     private DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
-     * Jar classes analyser component.
+     * Jar classes analyzer component.
      *
      * @since 2.1
      * @component
      */
     private JarClassesAnalysis classesAnalyzer;
+
+    /**
+     * Repository metadata component.
+     *
+     * @since 2.1
+     * @component
+     */
+    private RepositoryMetadataManager repositoryMetadataManager;
+
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     * @since 2.1
+     */
+    private ArtifactFactory artifactFactory;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
 
     /**
      * The current user system settings for use in Maven.
@@ -104,6 +151,16 @@ public class DependenciesReport
     private Settings settings;
 
     /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
+
+    /**
      * Display file details for each dependency, such as: file size, number of
      * classes, number of packages etc.
      *
@@ -113,12 +170,20 @@ public class DependenciesReport
     private boolean dependencyDetailsEnabled;
 
     /**
-     * Display the repository locations of the dependencies. Requires Maven 2.0.5+.
+     * Display the repository locations of the dependencies. If Maven is configured to be offline, this parameter
+     * will be ignored.
      *
      * @since 2.1
-     * @parameter expression="${dependency.locations.enabled}" default-value="false"
+     * @parameter expression="${dependency.locations.enabled}" default-value="true"
      */
     private boolean dependencyLocationsEnabled;
+
+    /**
+     * Plexus container to play with logger manager.
+     *
+     * @since 2.1
+     */
+    private PlexusContainer container;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -139,22 +204,38 @@ public class DependenciesReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        RepositoryUtils repoUtils = new RepositoryUtils( wagonManager, settings, mavenProjectBuilder, factory, resolver,
-                                                         project.getRemoteArtifactRepositories(),
-                                                         project.getPluginArtifactRepositories(), localRepository );
+        if ( settings.isOffline() && dependencyLocationsEnabled )
+        {
+            getLog().warn( "The parameter 'dependencyLocationsEnabled' is ignored in offline mode." );
+            dependencyLocationsEnabled = false;
+        }
 
-        DependencyTree dependencyTree = resolveProject();
+        try
+        {
+            copyResources( new File( getOutputDirectory() ) );
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Cannot copy ressources", e );
+        }
 
-        Dependencies dependencies = new Dependencies( project, dependencyTree, classesAnalyzer );
+        RepositoryUtils repoUtils = new RepositoryUtils( getLog(), container.getLoggerManager(), wagonManager,
+                                                         settings, mavenProjectBuilder, factory, resolver, project
+                                                             .getRemoteArtifactRepositories(), project
+                                                             .getPluginArtifactRepositories(), localRepository,
+                                                         repositoryMetadataManager );
 
-        DependenciesReportConfiguration config =
-            new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
+        DependencyNode dependencyTreeNode = resolveProject();
+
+        Dependencies dependencies = new Dependencies( project, dependencyTreeNode, classesAnalyzer );
+
+        DependenciesReportConfiguration config = new DependenciesReportConfiguration( dependencyDetailsEnabled,
+                                                                                      dependencyLocationsEnabled );
 
         DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTree, config, repoUtils );
-
-        repoUtils.setLog( getLog() );
-        r.setLog( getLog() );
+            new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
+                                      dependencyTreeNode, config, repoUtils, artifactFactory,
+                                      mavenProjectBuilder, remoteRepositories, localRepository );
         r.render();
     }
 
@@ -164,21 +245,77 @@ public class DependenciesReport
         return "dependencies";
     }
 
+    /** {@inheritDoc} */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        this.container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
 
-    private DependencyTree resolveProject()
+    /**
+     * @return resolve the dependency tree
+     */
+    private DependencyNode resolveProject()
     {
         try
         {
-            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory, artifactMetadataSource,
-                                                              collector );
+            ArtifactFilter artifactFilter = new ScopeArtifactFilter( Artifact.SCOPE_TEST );
+            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory,
+                                                              artifactMetadataSource, artifactFilter, collector );
         }
         catch ( DependencyTreeBuilderException e )
         {
             getLog().error( "Unable to build dependency tree.", e );
             return null;
+        }
+    }
+
+    /**
+     * @param outputDirectory the wanted output directory
+     * @throws IOException if any
+     */
+    private void copyResources( File outputDirectory )
+        throws IOException
+    {
+        InputStream resourceList = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
+
+        if ( resourceList != null )
+        {
+            LineNumberReader reader =
+                new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
+
+            String line = reader.readLine();
+
+            while ( line != null )
+            {
+                InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
+
+                if ( is == null )
+                {
+                    throw new IOException( "The resource " + line + " doesn't exist." );
+                }
+
+                File outputFile = new File( outputDirectory, line );
+
+                if ( !outputFile.getParentFile().exists() )
+                {
+                    outputFile.getParentFile().mkdirs();
+                }
+
+                FileOutputStream w = new FileOutputStream( outputFile );
+
+                IOUtil.copy( is, w );
+
+                IOUtil.close( is );
+
+                IOUtil.close( w );
+
+                line = reader.readLine();
+            }
         }
     }
 }

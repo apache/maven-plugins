@@ -25,13 +25,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -41,15 +41,15 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Generates the Project Plugin Management report.
+ * Generates the Project Plugins report.
  *
- * @author Nick Stolwijk
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.1
- * @goal plugin-management
+ * @goal plugins
  * @requiresDependencyResolution test
  */
-public class PluginManagementReport
+public class PluginsReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------
@@ -77,34 +77,35 @@ public class PluginManagementReport
     /** {@inheritDoc} */
     public String getName( Locale locale )
     {
-        return i18n.getString( "project-info-report", locale, "report.pluginManagement.name" );
+        return i18n.getString( "project-info-report", locale, "report.plugins.name" );
     }
 
     /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
-        return i18n.getString( "project-info-report", locale, "report.pluginManagement.description" );
+        return i18n.getString( "project-info-report", locale, "report.plugins.description" );
     }
 
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        PluginManagementRenderer r = new PluginManagementRenderer( getLog(), getSink(), locale, i18n, project
-            .getPluginManagement().getPlugins(), project, mavenProjectBuilder, artifactFactory, localRepository );
+        PluginsRenderer r = new PluginsRenderer( getLog(), getSink(), locale, i18n, project.getPluginArtifacts(),
+                                                 project.getReportArtifacts(), project, mavenProjectBuilder,
+                                                 artifactFactory, localRepository );
         r.render();
     }
 
     /** {@inheritDoc} */
     public String getOutputName()
     {
-        return "plugin-management";
+        return "plugins";
     }
 
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        return project.getPluginManagement() != null && project.getPluginManagement().getPlugins() != null
-            && !project.getPluginManagement().getPlugins().isEmpty();
+        return ( project.getPluginArtifacts() != null && !project.getPluginArtifacts().isEmpty() )
+            || ( project.getReportArtifacts() != null && !project.getReportArtifacts().isEmpty() );
     }
 
     // ----------------------------------------------------------------------
@@ -113,15 +114,15 @@ public class PluginManagementReport
 
     /**
      * Internal renderer class
-     *
-     * @author Nick Stolwijk
      */
-    protected static class PluginManagementRenderer
+    protected static class PluginsRenderer
         extends AbstractMavenReportRenderer
     {
         private final Log log;
 
-        private final List pluginManagement;
+        private final List plugins;
+
+        private final List reports;
 
         private final Locale locale;
 
@@ -141,14 +142,15 @@ public class PluginManagementReport
          * @param locale
          * @param i18n
          * @param plugins
+         * @param reports
          * @param project
          * @param mavenProjectBuilder
          * @param artifactFactory
          * @param localRepository
          */
-        public PluginManagementRenderer( Log log, Sink sink, Locale locale, I18N i18n, List plugins,
-                                         MavenProject project, MavenProjectBuilder mavenProjectBuilder,
-                                         ArtifactFactory artifactFactory, ArtifactRepository localRepository )
+        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set plugins, Set reports,
+                                MavenProject project, MavenProjectBuilder mavenProjectBuilder,
+                                ArtifactFactory artifactFactory, ArtifactRepository localRepository )
         {
             super( sink );
 
@@ -156,7 +158,9 @@ public class PluginManagementReport
 
             this.locale = locale;
 
-            this.pluginManagement = plugins;
+            this.plugins = new ArrayList( plugins );
+
+            this.reports = new ArrayList( reports );
 
             this.i18n = i18n;
 
@@ -169,46 +173,65 @@ public class PluginManagementReport
             this.localRepository = localRepository;
         }
 
-
         /** {@inheritDoc} */
         public String getTitle()
         {
-            return getReportString( "report.pluginManagement.title" );
+            return getReportString( "report.plugins.title" );
         }
 
         /** {@inheritDoc} */
         public void renderBody()
         {
-            // === Section: Project PluginManagement.
-            renderSectionPluginManagement();
+            // === Section: Project Plugins.
+            renderSectionPlugins( true );
+
+            // === Section: Project Reports.
+            renderSectionPlugins( false );
         }
 
-        private void renderSectionPluginManagement()
+        /**
+         * @param isPlugins <code>true</code> to use <code>plugins</code> variable, <code>false</code> to use
+         * <code>reports</code> variable.
+         */
+        private void renderSectionPlugins( boolean isPlugins )
         {
+            List list = ( isPlugins ? plugins : reports );
             String[] tableHeader = getPluginTableHeader();
 
-            startSection( getTitle() );
+            startSection( ( isPlugins ? getReportString( "report.plugins.title" )
+                                     : getReportString( "report.plugins.report.title" ) ) );
 
-            // can't use straight artifact comparison because we want optional last
-            Collections.sort( pluginManagement, getPluginComparator() );
+            if ( list == null || list.isEmpty() )
+            {
+
+                paragraph(  ( isPlugins ? getReportString( "report.plugins.nolist" )
+                                        : getReportString( "report.plugins.report.nolist" ) ) );
+
+                endSection();
+
+                return;
+            }
+
+            Collections.sort( list, getArtifactComparator() );
 
             startTable();
             tableHeader( tableHeader );
 
-            for ( Iterator iterator = pluginManagement.iterator(); iterator.hasNext(); )
+            for ( Iterator iterator = list.iterator(); iterator.hasNext(); )
             {
-                Plugin plugin = (Plugin) iterator.next();
+                Artifact artifact = (Artifact) iterator.next();
+
                 VersionRange versionRange;
-                if ( StringUtils.isEmpty( plugin.getVersion() ) )
+                if ( StringUtils.isEmpty( artifact.getVersion() ) )
                 {
                     versionRange = VersionRange.createFromVersion( Artifact.RELEASE_VERSION );
                 }
                 else
                 {
-                    versionRange = VersionRange.createFromVersion( plugin.getVersion() );
+                    versionRange = VersionRange.createFromVersion( artifact.getVersion() );
                 }
 
-                Artifact pluginArtifact = artifactFactory.createParentArtifact( plugin.getGroupId(), plugin
+                Artifact pluginArtifact = artifactFactory.createParentArtifact( artifact.getGroupId(), artifact
                     .getArtifactId(), versionRange.toString() );
                 List artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
@@ -221,12 +244,13 @@ public class PluginManagementReport
                                                                                           artifactRepositories,
                                                                                           localRepository );
                     tableRow( getPluginRow( pluginProject.getGroupId(), pluginProject.getArtifactId(), pluginProject
-                        .getVersion(), pluginProject.getUrl() ) );
+                                            .getVersion(), pluginProject.getUrl() ) );
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    log.info( "Could not build project for: " + plugin.getArtifactId() + ":" + e.getMessage(), e );
-                    tableRow( getPluginRow( plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion(), null ) );
+                    log.info( "Could not build project for: " + artifact.getArtifactId() + ":" + e.getMessage(), e );
+                    tableRow( getPluginRow( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                            null ) );
                 }
 
             }
@@ -254,15 +278,15 @@ public class PluginManagementReport
             return new String[] { groupId, artifactId, version };
         }
 
-        private Comparator getPluginComparator()
+        private Comparator getArtifactComparator()
         {
             return new Comparator()
             {
                 /** {@inheritDoc} */
                 public int compare( Object o1, Object o2 )
                 {
-                    Plugin a1 = (Plugin) o1;
-                    Plugin a2 = (Plugin) o2;
+                    Artifact a1 = (Artifact) o1;
+                    Artifact a2 = (Artifact) o2;
 
                     int result = a1.getGroupId().compareTo( a2.getGroupId() );
                     if ( result == 0 )

@@ -20,6 +20,8 @@ package org.apache.maven.report.projectinfo.dependencies;
  */
 
 /**
+ * Wrap DependenciesReport Mojo parameters.
+ *
  * @version $Id$
  * @since 2.1
  */
@@ -29,21 +31,29 @@ public class DependenciesReportConfiguration
 
     private boolean dependencyLocationsEnabled;
 
+    /**
+     * @param detailsEnabled
+     * @param locationEnabled
+     */
     public DependenciesReportConfiguration( boolean detailsEnabled, boolean locationEnabled )
     {
         this.dependencyDetailsEnabled = detailsEnabled;
         this.dependencyLocationsEnabled = locationEnabled;
     }
 
+    /**
+     * @return value of Mojo dependencyDetailsEnabled parameter.
+     */
     public boolean getDependencyDetailsEnabled()
     {
         return dependencyDetailsEnabled;
     }
 
+    /**
+     * @return value of Mojo dependencyLocationsEnabled parameter.
+     */
     public boolean getDependencyLocationsEnabled()
     {
-        //TODO:
-        //   ( !settings.isOffline() && dependencyLocationsEnabled )
         return dependencyLocationsEnabled;
     }
 }

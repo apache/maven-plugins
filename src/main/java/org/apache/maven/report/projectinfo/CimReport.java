@@ -76,6 +76,9 @@ public class CimReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class CimRenderer
         extends AbstractMavenReportRenderer
     {
@@ -180,9 +183,11 @@ public class CimReport
             }
             else
             {
-                startTable();
+                sink.paragraph();
+                sink.text( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
+                sink.paragraph_();
 
-                tableCaption( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
+                startTable();
 
                 String type = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.type" );
                 String address = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.address" );
@@ -209,8 +214,9 @@ public class CimReport
         /**
          * Checks if a CIM system is bugzilla, continium...
          *
-         * @return true if the CIM system is bugzilla, continium..., false
-         *         otherwise.
+         * @param connection
+         * @param cim
+         * @return true if the CIM system is bugzilla, continium..., false otherwise.
          */
         private boolean isCimSystem( String connection, String cim )
         {
@@ -224,7 +230,7 @@ public class CimReport
                 return false;
             }
 
-            return connection.toLowerCase().startsWith( cim.toLowerCase() );
+            return connection.toLowerCase( Locale.ENGLISH ).startsWith( cim.toLowerCase( Locale.ENGLISH ) );
         }
     }
 }

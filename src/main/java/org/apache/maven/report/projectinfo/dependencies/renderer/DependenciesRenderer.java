@@ -19,30 +19,14 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.model.License;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.report.projectinfo.dependencies.Dependencies;
-import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
-import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTree;
-import org.apache.maven.shared.jar.JarData;
-import org.apache.maven.wagon.Wagon;
-import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.FieldPosition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,17 +36,106 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.License;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
+import org.apache.maven.report.projectinfo.dependencies.Dependencies;
+import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
+import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.jar.JarData;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * Renderer the dependencies report.
+ *
  * @version $Id$
  * @since 2.1
  */
 public class DependenciesRenderer
     extends AbstractMavenReportRenderer
 {
+    /** URL for the 'icon_info_sml.gif' image */
+    private static final String IMG_INFO_URL = "./images/icon_info_sml.gif";
+
+    /** URL for the 'close.gif' image */
+    private static final String IMG_CLOSE_URL = "./images/close.gif";
+
+    /** Random used to generate a UID */
+    private static final SecureRandom RANDOM;
+
+    /** Used to format decimal values in the "Dependency File Details" table */
+    protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
+
+    private static final Set JAR_SUBTYPE = new HashSet();
+
+    /**
+     * An HTML script tag with the Javascript used by the dependencies report.
+     */
+    private static final String JAVASCRIPT;
+
+    private final DependencyNode dependencyTreeNode;
+
+    private final Dependencies dependencies;
+
+    private final DependenciesReportConfiguration configuration;
+
     private final Locale locale;
 
-    static HashSet JAR_SUBTYPE = new HashSet();
+    private final I18N i18n;
+
+    private final Log log;
+
+    private final Settings settings;
+
+    private final RepositoryUtils repoUtils;
+
+    /** Used to format file length values */
+    private final DecimalFormat fileLengthDecimalFormat;
+
+    /**
+     * Will be filled with license name / set of projects.
+     */
+    private Map licenseMap = new HashMap()
+    {
+        /** {@inheritDoc} */
+        public Object put( Object key, Object value )
+        {
+            // handle multiple values as a set to avoid duplicates
+            SortedSet valueList = (SortedSet) get( key );
+            if ( valueList == null )
+            {
+                valueList = new TreeSet();
+            }
+            valueList.add( value );
+            return super.put( key, valueList );
+        }
+    };
+
+    private final ArtifactFactory artifactFactory;
+
+    private final MavenProjectBuilder mavenProjectBuilder;
+
+    private final List remoteRepositories;
+
+    private final ArtifactRepository localRepository;
 
     static
     {
@@ -73,66 +146,85 @@ public class DependenciesRenderer
         JAR_SUBTYPE.add( "rar" );
         JAR_SUBTYPE.add( "par" );
         JAR_SUBTYPE.add( "ejb" );
+
+        try
+        {
+            RANDOM = SecureRandom.getInstance( "SHA1PRNG" );
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        StringBuffer sb = new StringBuffer();
+        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( "\n" );
+        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( "\n" );
+        sb.append( "      {" ).append( "\n" );
+        sb.append( "        var div = document.getElementById( divId );" ).append( "\n" );
+        sb.append( "        var img = document.getElementById( imgId );" ).append( "\n" );
+        sb.append( "        if( div.style.display == '' )" ).append( "\n" );
+        sb.append( "        {" ).append( "\n" );
+        sb.append( "          div.style.display = 'none';" ).append( "\n" );
+        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( "\n" );
+        sb.append( "        }" ).append( "\n" );
+        sb.append( "        else" ).append( "\n" );
+        sb.append( "        {" ).append( "\n" );
+        sb.append( "          div.style.display = '';" ).append( "\n" );
+        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( "\n" );
+        sb.append( "        }" ).append( "\n" );
+        sb.append( "      }" ).append( "\n" );
+        sb.append( "</script>" ).append( "\n" );
+        JAVASCRIPT = sb.toString();
     }
 
-    private final DependencyTree dependencyTree;
-
-    private Dependencies dependencies;
-
-    private DependenciesReportConfiguration configuration;
-
-    private I18N i18n;
-
-    private Log log;
-
-    private RepositoryUtils repoUtils;
-
     /**
-     * Will be filled with license name / list of projects.
+     * Default constructor.
+     *
+     * @param sink
+     * @param locale
+     * @param i18n
+     * @param log
+     * @param settings
+     * @param dependencies
+     * @param dependencyTreeNode
+     * @param config
+     * @param repoUtils
+     * @param artifactFactory
+     * @param mavenProjectBuilder
+     * @param remoteRepositories
+     * @param localRepository
      */
-    private Map licenseMap = new HashMap()
-    {
-        /** {@inheritDoc} */
-        public Object put( Object key, Object value )
-        {
-            // handle multiple values as a list
-            List valueList = (List) get( key );
-            if ( valueList == null )
-            {
-                valueList = new ArrayList();
-            }
-            valueList.add( value );
-            return super.put( key, valueList );
-        }
-    };
-
-    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Dependencies dependencies,
-                                 DependencyTree depTree, DependenciesReportConfiguration config,
-                                 RepositoryUtils repoUtils )
+    public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings,
+                                 Dependencies dependencies, DependencyNode dependencyTreeNode,
+                                 DependenciesReportConfiguration config, RepositoryUtils repoUtils,
+                                 ArtifactFactory artifactFactory, MavenProjectBuilder mavenProjectBuilder,
+                                 List remoteRepositories, ArtifactRepository localRepository )
     {
         super( sink );
 
         this.locale = locale;
-
-        this.dependencyTree = depTree;
-
-        this.repoUtils = repoUtils;
-
-        this.dependencies = dependencies;
-
         this.i18n = i18n;
-
+        this.log = log;
+        this.settings = settings;
+        this.dependencies = dependencies;
+        this.dependencyTreeNode = dependencyTreeNode;
+        this.repoUtils = repoUtils;
         this.configuration = config;
+        this.artifactFactory = artifactFactory;
+        this.mavenProjectBuilder = mavenProjectBuilder;
+        this.remoteRepositories = remoteRepositories;
+        this.localRepository = localRepository;
+
+        // Using the right set of symbols depending of the locale
+        DEFAULT_DECIMAL_FORMAT.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
+
+        this.fileLengthDecimalFormat = new FileDecimalFormat( i18n, locale );
+        this.fileLengthDecimalFormat.setDecimalFormatSymbols( new DecimalFormatSymbols( locale ) );
     }
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
-
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
 
     /** {@inheritDoc} */
     public String getTitle()
@@ -177,21 +269,6 @@ public class DependenciesRenderer
 
         if ( configuration.getDependencyLocationsEnabled() )
         {
-            // this reports requires Wagon 1.0-beta-2 and will not work with maven <= 2.0.4
-            // since we don't want to make maven 2.0.5 a requirements for the whole project info report plugin
-            // let's do a check here
-
-            // org.apache.maven.wagon.Wagon.resourceExists(Ljava/lang/String;)Z
-            try
-            {
-                Wagon.class.getDeclaredMethod( "resourceExists", new Class[]{String.class} );
-            }
-            catch ( NoSuchMethodException e )
-            {
-                log.warn( "Dependency Locations report will not be enabled: it requires wagon 1.0-beta-2" );
-                return;
-            }
-
             // === Section: Dependency Repository Locations.
             renderSectionDependencyRepositoryLocations();
         }
@@ -201,7 +278,13 @@ public class DependenciesRenderer
     // Private methods
     // ----------------------------------------------------------------------
 
-    private String[] getDependencyTableHeader()
+    /**
+     * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @return the dependency table header with/without classifier/optional column
+     * @see #renderArtifactRow(Artifact, boolean, boolean)
+     */
+    private String[] getDependencyTableHeader( boolean withClassifier, boolean withOptional )
     {
         String groupId = getReportString( "report.dependencies.column.groupId" );
         String artifactId = getReportString( "report.dependencies.column.artifactId" );
@@ -209,55 +292,70 @@ public class DependenciesRenderer
         String classifier = getReportString( "report.dependencies.column.classifier" );
         String type = getReportString( "report.dependencies.column.type" );
         String optional = getReportString( "report.dependencies.column.optional" );
-        return new String[]{groupId, artifactId, version, classifier, type, optional};
+
+        if ( withClassifier )
+        {
+            if ( withOptional )
+            {
+                return new String[] { groupId, artifactId, version, classifier, type, optional };
+            }
+
+            return new String[] { groupId, artifactId, version, classifier, type };
+        }
+
+        if ( withOptional )
+        {
+            return new String[] { groupId, artifactId, version, type, optional };
+        }
+
+        return new String[] { groupId, artifactId, version, type };
     }
 
     private void renderSectionProjectDependencies()
     {
-        String[] tableHeader = getDependencyTableHeader();
-
         startSection( getTitle() );
 
         // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getDependenciesByScope();
+        Map dependenciesByScope = dependencies.getDependenciesByScope( false );
 
-        renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
+        renderDependenciesForAllScopes( dependenciesByScope );
 
         endSection();
     }
 
-    private void renderDependenciesForAllScopes( String[] tableHeader, Map dependenciesByScope )
+    /**
+     * @param dependenciesByScope map with supported scopes as key and a list of <code>Artifact</code> as values.
+     * @see Artifact#SCOPE_COMPILE
+     * @see Artifact#SCOPE_PROVIDED
+     * @see Artifact#SCOPE_RUNTIME
+     * @see Artifact#SCOPE_SYSTEM
+     * @see Artifact#SCOPE_TEST
+     */
+    private void renderDependenciesForAllScopes( Map dependenciesByScope )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
-                                    tableHeader );
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
     }
 
     private void renderSectionProjectTransitiveDependencies()
     {
-        List artifacts = dependencies.getTransitiveDependencies();
+        Map dependenciesByScope = dependencies.getDependenciesByScope( true );
 
         startSection( getReportString( "report.transitivedependencies.title" ) );
 
-        if ( artifacts.isEmpty() )
+        if ( dependenciesByScope.values().isEmpty() )
         {
             paragraph( getReportString( "report.transitivedependencies.nolist" ) );
         }
         else
         {
-            String[] tableHeader = getDependencyTableHeader();
-            Map dependenciesByScope = dependencies.getDependenciesByScope();
-
             paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
-            renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
+            renderDependenciesForAllScopes( dependenciesByScope );
         }
 
         endSection();
@@ -267,22 +365,23 @@ public class DependenciesRenderer
     {
         startSection( getReportString( "report.dependencies.graph.title" ) );
 
-        // === Section: Dependency Tree
+        // === SubSection: Dependency Tree
         renderSectionDependencyTree();
-
-        // === Section: Dependency Listings
-        renderSectionDependencyListing();
 
         endSection();
     }
 
     private void renderSectionDependencyTree()
     {
+        sink.rawText( JAVASCRIPT );
+
         // for Dependencies Graph Tree
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
+
         sink.list();
-        printDependencyListing( dependencyTree.getRootNode() );
+        printDependencyListing( dependencyTreeNode );
         sink.list_();
+
         endSection();
     }
 
@@ -293,12 +392,7 @@ public class DependenciesRenderer
         List alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
-        int[] justification = new int[]{Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
-            Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
-            Sink.JUSTIFY_CENTER};
-
-        startTable( justification, false );
-
+        // i18n
         String filename = getReportString( "report.dependencies.file.details.column.file" );
         String size = getReportString( "report.dependencies.file.details.column.size" );
         String entries = getReportString( "report.dependencies.file.details.column.entries" );
@@ -308,126 +402,123 @@ public class DependenciesRenderer
         String debug = getReportString( "report.dependencies.file.details.column.debug" );
         String sealed = getReportString( "report.dependencies.file.details.column.sealed" );
 
-        String[] tableHeader = new String[]{filename, size, entries, classes, packages, jdkrev, debug, sealed};
+        int[] justification =
+            new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
+                Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
+
+        startTable( justification, true );
+
+        TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totaldepsize = new TotalCell( fileLengthDecimalFormat );
+        TotalCell totalentries = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totalclasses = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        double highestjdk = 0.0;
+        TotalCell totaldebug = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totalsealed = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+
+        boolean hasSealed = hasSealed( alldeps );
+
+        // Table header
+        String[] tableHeader;
+        if ( hasSealed )
+        {
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug, sealed };
+        }
+        else
+        {
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug };
+        }
         tableHeader( tableHeader );
 
-        int totaldeps = 0;
-        long totaldepsize = 0;
-        int totalentries = 0;
-        int totalclasses = 0;
-        int totalpackages = 0;
-        double highestjdk = 0.0;
-        int totaldebug = 0;
-        int totalsealed = 0;
-
-        DecimalFormat decFormat = new DecimalFormat( "#,##0" );
-
+        // Table rows
         for ( Iterator it = alldeps.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
 
-            if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            if ( artifact.getFile() == null )
             {
-                // TODO site:run Why do we need to resolve this...
-                if ( artifact.getFile() == null )
+                log.error( "Artifact: " + artifact.getId() + " has no file." );
+                continue;
+            }
+
+            File artifactFile = artifact.getFile();
+
+            totaldeps.incrementTotal( artifact.getScope() );
+            totaldepsize.addTotal( artifactFile.length(), artifact.getScope() );
+
+            if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
+            {
+                try
                 {
+                    JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
+
+                    String debugstr = "release";
+                    if ( jarDetails.isDebugPresent() )
+                    {
+                        debugstr = "debug";
+                        totaldebug.incrementTotal( artifact.getScope() );
+                    }
+
+                    totalentries.addTotal( jarDetails.getNumEntries(), artifact.getScope() );
+                    totalclasses.addTotal( jarDetails.getNumClasses(), artifact.getScope() );
+                    totalpackages.addTotal( jarDetails.getNumPackages(), artifact.getScope() );
+
                     try
                     {
-                        repoUtils.resolve( artifact );
-                    }
-                    catch ( ArtifactResolutionException e )
-                    {
-                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
-                        continue;
-                    }
-                    catch ( ArtifactNotFoundException e )
-                    {
-                        if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
-                            && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
-                            && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                        if ( jarDetails.getJdkRevision() != null )
                         {
-                            log.warn( "The artifact of this project has never been deployed." );
+                            highestjdk = Math.max( highestjdk, Double.parseDouble( jarDetails.getJdkRevision() ) );
                         }
-                        else
-                        {
-                            log.error( "Artifact: " + artifact.getId() + " has no file.", e );
-                        }
+                    }
+                    catch ( NumberFormatException e )
+                    {
+                        // ignore
+                    }
 
-                        continue;
+                    String sealedstr = "";
+                    if ( jarDetails.isSealed() )
+                    {
+                        sealedstr = "sealed";
+                        totalsealed.incrementTotal( artifact.getScope() );
                     }
+
+                    tableRow( hasSealed, new String[] { artifactFile.getName(),
+                        fileLengthDecimalFormat.format( artifactFile.length() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
+                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(),
+                        debugstr, sealedstr } );
                 }
-
-                if ( artifact.getFile() == null )
+                catch ( IOException e )
                 {
-                    log.error( "Artifact: " + artifact.getId() + " has no file." );
-                    continue;
+                    createExceptionInfoTableRow( artifact, artifactFile, e, hasSealed );
                 }
-
-                File artifactFile = artifact.getFile();
-
-                totaldeps++;
-                totaldepsize += artifactFile.length();
-
-                if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
-                {
-                    try
-                    {
-                        JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
-
-                        String debugstr = "release";
-                        if ( jarDetails.isDebugPresent() )
-                        {
-                            debugstr = "debug";
-                            totaldebug++;
-                        }
-
-                        String sealedstr = "";
-                        if ( jarDetails.isSealed() )
-                        {
-                            sealedstr = "sealed";
-                            totalsealed++;
-                        }
-
-                        totalentries += jarDetails.getNumEntries();
-                        totalclasses += jarDetails.getNumClasses();
-                        totalpackages += jarDetails.getNumPackages();
-
-                        try
-                        {
-                            if ( jarDetails.getJdkRevision() != null )
-                            {
-                                highestjdk = Math.max( highestjdk, Double.parseDouble( jarDetails.getJdkRevision() ) );
-                            }
-                        }
-                        catch ( NumberFormatException e )
-                        {
-                            // ignore
-                        }
-
-                        tableRow( new String[]{artifactFile.getName(), decFormat.format( artifactFile.length() ),
-                            decFormat.format( jarDetails.getNumEntries() ),
-                            decFormat.format( jarDetails.getNumClasses() ),
-                            decFormat.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(), debugstr,
-                            sealedstr} );
-                    }
-                    catch ( IOException e )
-                    {
-                        createExceptionInfoTableRow( artifact, artifactFile, e );
-                    }
-                }
-                else
-                {
-                    tableRow( new String[]{artifactFile.getName(), decFormat.format( artifactFile.length() ), "", "",
-                        "", "", "", ""} );
-                }
+            }
+            else
+            {
+                tableRow( hasSealed, new String[] { artifactFile.getName(),
+                    fileLengthDecimalFormat.format( artifactFile.length() ), "", "", "", "", "", "" } );
             }
         }
 
-        tableHeader[0] = "Total";
+        // Total raws
+        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
-        tableRow( new String[]{"" + totaldeps + " total dependencies", decFormat.format( totaldepsize ),
-            decFormat.format( totalentries ), decFormat.format( totalclasses ), decFormat.format( totalpackages ),
-            String.valueOf( highestjdk ), decFormat.format( totaldebug ), decFormat.format( totalsealed )} );
+
+        justification[0] = Sink.JUSTIFY_RIGHT;
+        justification[6] = Sink.JUSTIFY_RIGHT;
+
+        for ( int i = -1; i < TotalCell.SCOPES_COUNT; i++ )
+        {
+            if ( totaldeps.getTotal( i ) > 0 )
+            {
+                tableRow( hasSealed, new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
+                    totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
+                    totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                    totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
+            }
+        }
 
         sink.tableRows_();
 
@@ -435,18 +526,77 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e )
+    private void tableRow( boolean fullRow, String[] content )
     {
-        tableRow( new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
+        sink.tableRow();
+
+        int count = fullRow ? content.length : ( content.length - 1 );
+
+        for ( int i = 0; i < count; i++ )
+        {
+            tableCell( content[i] );
+        }
+
+        sink.tableRow_();
     }
 
-    private void populateRepositoryMap( Map repos, List rawRepos )
+    private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e, boolean hasSealed )
     {
-        Iterator it = rawRepos.iterator();
+        tableRow( hasSealed, new String[] { artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "",
+            "", "", "" } );
+    }
+
+    private void populateRepositoryMap( Map repos, List rowRepos )
+    {
+        Iterator it = rowRepos.iterator();
         while ( it.hasNext() )
         {
             ArtifactRepository repo = (ArtifactRepository) it.next();
+
             repos.put( repo.getId(), repo );
+        }
+    }
+
+    private void blacklistRepositoryMap( Map repos, List repoUrlBlackListed )
+    {
+        for ( Iterator it = repos.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repos.get( key );
+
+            // ping repo
+            if ( !repo.isBlacklisted() )
+            {
+                if ( !repoUrlBlackListed.contains( repo.getUrl() ) )
+                {
+                    try
+                    {
+                        URL repoUrl = new URL( repo.getUrl() );
+                        if ( ProjectInfoReportUtils.getInputStream( repoUrl, settings ) == null )
+                        {
+                            log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '"
+                                + repo.getId() + "' will be blacklisted." );
+                            repo.setBlacklisted( true );
+                            repoUrlBlackListed.add( repo.getUrl() );
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        log.warn( "The repository url '" + repo.getUrl() + "' is invalid - Repository '" + repo.getId()
+                            + "' will be blacklisted." );
+                        repo.setBlacklisted( true );
+                        repoUrlBlackListed.add( repo.getUrl() );
+                    }
+                }
+                else
+                {
+                    repo.setBlacklisted( true );
+                }
+            }
+            else
+            {
+                repoUrlBlackListed.add( repo.getUrl() );
+            }
         }
     }
 
@@ -462,15 +612,12 @@ public class DependenciesRenderer
         Map repoMap = new HashMap();
 
         populateRepositoryMap( repoMap, repoUtils.getRemoteArtifactRepositories() );
-
         for ( Iterator it = alldeps.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
             {
-                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
-                    .getLocalRepository() );
-
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
                 populateRepositoryMap( repoMap, artifactProject.getRemoteArtifactRepositories() );
             }
             catch ( ProjectBuildingException e )
@@ -479,131 +626,17 @@ public class DependenciesRenderer
             }
         }
 
+        List repoUrlBlackListed = new ArrayList();
+        blacklistRepositoryMap( repoMap, repoUrlBlackListed );
+
         // Render Repository List
 
-        startTable();
-        String repoid = getReportString( "report.dependencies.repo.locations.column.repoid" );
-        String url = getReportString( "report.dependencies.repo.locations.column.url" );
-        String release = getReportString( "report.dependencies.repo.locations.column.release" );
-        String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
+        printRepositories( repoMap, repoUrlBlackListed );
 
-        String[] tableHeader = new String[]{repoid, url, release, snapshot};
-        tableHeader( tableHeader );
+        // Render Artifacts locations
 
-        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
-        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
+        printArtifactsLocations( repoMap, alldeps );
 
-        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
-        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
-
-        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
-        {
-            String key = (String) it.next();
-            ArtifactRepository repo = (ArtifactRepository) repoMap.get( key );
-
-            sink.tableRow();
-            tableCell( repo.getId() );
-
-            sink.tableCell();
-            sink.link( repo.getUrl() );
-            sink.text( repo.getUrl() );
-            sink.link_();
-            sink.tableCell_();
-
-            ArtifactRepositoryPolicy releasePolicy = repo.getReleases();
-            tableCell( releasePolicy.isEnabled() ? releaseEnabled : releaseDisabled );
-
-            ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
-            tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
-            sink.tableRow_();
-        }
-
-        endTable();
-
-        // Render Artifact Breakdown.
-
-        sink.paragraph();
-        sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
-        sink.paragraph_();
-
-        List repoIdList = new ArrayList( repoMap.keySet() );
-
-        startTable();
-        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
-        tableHeader = new String[repoIdList.size() + 1];
-        tableHeader[0] = artifact;
-        int idnum = 1;
-
-        for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
-        {
-            String id = (String) it.next();
-            tableHeader[idnum++] = id;
-        }
-
-        tableHeader( tableHeader );
-
-        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
-        {
-            Artifact dependency = (Artifact) it.next();
-
-            if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
-            {
-                sink.tableRow();
-
-                tableCell( dependency.getId() );
-
-                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
-                {
-                    String repokey = (String) itrepo.next();
-                    ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
-
-                    String depUrl = repo.getUrl() + "/" + repo.pathOf( dependency );
-
-                    boolean dependencyExists = false;
-
-                    // check snapshots in snapshots repository only and releases in release repositories...
-                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
-                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
-                    {
-                        dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
-                    }
-
-                    if ( dependencyExists )
-                    {
-                        sink.tableCell();
-                        sink.link( depUrl );
-
-                        sink.figure();
-                        sink.figureCaption();
-                        sink.text( "Found at " + repo.getUrl() );
-                        sink.figureCaption_();
-                        sink.figureGraphics( "images/icon_success_sml.gif" );
-                        sink.figure_();
-
-                        sink.link_();
-                        sink.tableCell_();
-                    }
-                    else
-                    {
-                        sink.tableCell();
-                        sink.text( "-" );
-                        sink.tableCell_();
-                    }
-                }
-
-                sink.tableRow_();
-            }
-        }
-
-        endTable();
-
-        endSection();
-    }
-
-    private void renderSectionDependencyListing()
-    {
-        startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-        printDescriptionsAndURLs( dependencyTree.getRootNode() );
         endSection();
     }
 
@@ -614,23 +647,28 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
+    private void renderDependenciesForScope( String scope, List artifacts )
     {
         if ( artifacts != null )
         {
+            boolean withClassifier = hasClassifier( artifacts );
+            boolean withOptional = hasOptional( artifacts );
+            String[] tableHeader = getDependencyTableHeader( withClassifier, withOptional );
+
             // can't use straight artifact comparison because we want optional last
             Collections.sort( artifacts, getArtifactComparator() );
 
             startSection( scope );
 
             paragraph( getReportString( "report.dependencies.intro." + scope ) );
+
             startTable();
             tableHeader( tableHeader );
-
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
-                tableRow( getArtifactRow( artifact ) );
+
+                renderArtifactRow( artifact, withClassifier, withOptional );
             }
             endTable();
 
@@ -664,99 +702,157 @@ public class DependenciesRenderer
         };
     }
 
-    private String[] getArtifactRow( Artifact artifact )
+    /**
+     * @param artifact not null
+     * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @see #getDependencyTableHeader(boolean, boolean)
+     */
+    private void renderArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
     {
-        String isOptional = artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
-            : getReportString( "report.dependencies.column.isNotOptional" );
+        String isOptional =
+            artifact.isOptional() ? getReportString( "report.dependencies.column.isOptional" )
+                            : getReportString( "report.dependencies.column.isNotOptional" );
 
-        return new String[] {
-            artifact.getGroupId(),
-            artifact.getArtifactId(),
-            artifact.getVersion(),
-            artifact.getClassifier(),
-            artifact.getType(),
-            isOptional };
+        String url =
+            ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
+                                                   localRepository );
+        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+
+        String content[];
+        if ( withClassifier )
+        {
+            content =
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getClassifier(),
+                    artifact.getType(), isOptional };
+        }
+        else
+        {
+            content =
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getType(),
+                    isOptional };
+        }
+
+        tableRow( withOptional, content );
     }
 
     private void printDependencyListing( DependencyNode node )
     {
         Artifact artifact = node.getArtifact();
-        String id = artifact.getDependencyConflictId();
+        String id = artifact.getId();
+        String dependencyDetailId = getUUID();
+        String imgId = getUUID();
 
         sink.listItem();
+
         sink.paragraph();
-
-        sink.link( "#" + id );
-        sink.text( id );
-        sink.link_();
-
+        sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
+        sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL
+            + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '" + imgId
+            + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
         sink.paragraph_();
+
+        printDescriptionsAndURLs( node, dependencyDetailId );
 
         if ( !node.getChildren().isEmpty() )
         {
-            sink.list();
+            boolean toBeIncluded = false;
+            List subList = new ArrayList();
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
                 DependencyNode dep = (DependencyNode) deps.next();
-                printDependencyListing( dep );
+
+                if ( !dependencies.getAllDependencies().contains( dep.getArtifact() ) )
+                {
+                    continue;
+                }
+
+                subList.add( dep );
+                toBeIncluded = true;
             }
-            sink.list_();
+
+            if ( toBeIncluded )
+            {
+                sink.list();
+                for ( Iterator deps = subList.iterator(); deps.hasNext(); )
+                {
+                    DependencyNode dep = (DependencyNode) deps.next();
+
+                    printDependencyListing( dep );
+                }
+                sink.list_();
+            }
         }
 
         sink.listItem_();
     }
 
-    private void printDescriptionsAndURLs( DependencyNode node )
+    private void printDescriptionsAndURLs( DependencyNode node, String uid )
     {
         Artifact artifact = node.getArtifact();
-        String id = artifact.getDependencyConflictId();
-
+        String id = artifact.getId();
         String unknownLicenseMessage = getReportString( "report.dependencies.graph.tables.unknown" );
+
+        sink.rawText( "<div id=\"" + uid + "\" style=\"display:none\">" );
+
+        startTable();
 
         if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {
             try
             {
-                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
-                    .getLocalRepository() );
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();
                 List licenses = artifactProject.getLicenses();
 
-                sink.paragraph();
-                if ( id != null )
-                {
-                    sink.anchor( id );
-                }
-                // startSection( artifactName );
-                sink.bold();
+                sink.tableRow();
+                sink.tableHeaderCell();
                 sink.text( artifactName );
+                sink.tableHeaderCell_();
+                sink.tableRow_();
+
+                sink.tableRow();
+                sink.tableCell();
+
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.description" ) + ": " );
                 sink.bold_();
-                if ( id != null )
+                if ( StringUtils.isNotEmpty( artifactDescription ) )
                 {
-                    sink.anchor_();
+                    sink.text( artifactDescription );
+                }
+                else
+                {
+                    sink.text( getReportString( "report.index.nodescription" ) );
                 }
                 sink.paragraph_();
 
-                if ( artifactDescription != null )
+                if ( StringUtils.isNotEmpty( artifactUrl ) )
                 {
                     sink.paragraph();
-                    sink.text( artifactDescription );
-                    sink.paragraph_();
-                }
-
-                if ( artifactUrl != null )
-                {
-                    sink.paragraph();
-                    sink.link( artifactUrl );
-                    sink.text( artifactUrl );
-                    sink.link_();
+                    sink.bold();
+                    sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
+                    sink.bold_();
+                    if ( ProjectInfoReportUtils.isArtifactUrlValid( artifactUrl ) )
+                    {
+                        sink.link( artifactUrl );
+                        sink.text( artifactUrl );
+                        sink.link_();
+                    }
+                    else
+                    {
+                        sink.text( artifactUrl );
+                    }
                     sink.paragraph_();
                 }
 
                 sink.paragraph();
+                sink.bold();
                 sink.text( getReportString( "report.license.title" ) + ": " );
+                sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
                     for ( Iterator iter = licenses.iterator(); iter.hasNext(); )
@@ -777,7 +873,6 @@ public class DependenciesRenderer
                         }
 
                         licenseMap.put( licenseName, artifactName );
-
                     }
                 }
                 else
@@ -785,38 +880,49 @@ public class DependenciesRenderer
                     sink.text( getReportString( "report.license.nolicense" ) );
 
                     licenseMap.put( unknownLicenseMessage, artifactName );
-
                 }
                 sink.paragraph_();
-
-                // endSection();
-                sink.horizontalRule();
             }
             catch ( ProjectBuildingException e )
             {
                 log.error( "ProjectBuildingException error : ", e );
             }
-
-            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
-            {
-                DependencyNode dep = (DependencyNode) deps.next();
-                printDescriptionsAndURLs( dep );
-            }
         }
         else
         {
-            sink.paragraph();
-            sink.anchor( id );
-            sink.bold();
+            sink.tableRow();
+            sink.tableHeaderCell();
             sink.text( id );
-            sink.bold_();
-            sink.anchor_();
-            sink.paragraph_();
+            sink.tableHeaderCell_();
+            sink.tableRow_();
+
+            sink.tableRow();
+            sink.tableCell();
 
             sink.paragraph();
-            sink.text( artifact.getFile().toString() );
+            sink.bold();
+            sink.text( getReportString( "report.dependencies.column.description" ) + ": " );
+            sink.bold_();
+            sink.text( getReportString( "report.index.nodescription" ) );
             sink.paragraph_();
+
+            if ( artifact.getFile() != null )
+            {
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.url" ) + ": " );
+                sink.bold_();
+                sink.text( artifact.getFile().getAbsolutePath() );
+                sink.paragraph_();
+            }
         }
+
+        sink.tableCell_();
+        sink.tableRow_();
+
+        sink.table_();
+
+        sink.rawText( "</div>" );
     }
 
     private void printGroupedLicenses()
@@ -837,8 +943,7 @@ public class DependenciesRenderer
             sink.text( ": " );
             sink.bold_();
 
-            List projects = (List) licenseMap.get( licenseName );
-            Collections.sort( projects );
+            SortedSet projects = (SortedSet) licenseMap.get( licenseName );
 
             for ( Iterator iterator = projects.iterator(); iterator.hasNext(); )
             {
@@ -846,17 +951,550 @@ public class DependenciesRenderer
                 sink.text( projectName );
                 if ( iterator.hasNext() )
                 {
-                    sink.text( "," );
+                    sink.text( ", " );
                 }
-                sink.text( " " );
             }
 
             sink.paragraph_();
         }
     }
 
+    private void printRepositories( Map repoMap, List repoUrlBlackListed )
+    {
+        // i18n
+        String repoid = getReportString( "report.dependencies.repo.locations.column.repoid" );
+        String url = getReportString( "report.dependencies.repo.locations.column.url" );
+        String release = getReportString( "report.dependencies.repo.locations.column.release" );
+        String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
+        String blacklisted = getReportString( "report.dependencies.repo.locations.column.blacklisted" );
+        String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
+        String releaseDisabled = getReportString( "report.dependencies.repo.locations.cell.release.disabled" );
+        String snapshotEnabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.enabled" );
+        String snapshotDisabled = getReportString( "report.dependencies.repo.locations.cell.snapshot.disabled" );
+        String blacklistedEnabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.enabled" );
+        String blacklistedDisabled = getReportString( "report.dependencies.repo.locations.cell.blacklisted.disabled" );
+
+        startTable();
+
+        // Table header
+
+        String[] tableHeader;
+        int[] justificationRepo;
+        if ( repoUrlBlackListed.isEmpty() )
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot };
+            justificationRepo =
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
+        }
+        else
+        {
+            tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
+            justificationRepo =
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
+                    Sink.JUSTIFY_CENTER };
+        }
+
+        sink.tableRows( justificationRepo, true );
+
+        tableHeader( tableHeader );
+
+        // Table rows
+
+        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repoMap.get( key );
+
+            sink.tableRow();
+            tableCell( repo.getId() );
+
+            sink.tableCell();
+            if ( repo.isBlacklisted() )
+            {
+                sink.text( repo.getUrl() );
+            }
+            else
+            {
+                sink.link( repo.getUrl() );
+                sink.text( repo.getUrl() );
+                sink.link_();
+            }
+            sink.tableCell_();
+
+            ArtifactRepositoryPolicy releasePolicy = repo.getReleases();
+            tableCell( releasePolicy.isEnabled() ? releaseEnabled : releaseDisabled );
+
+            ArtifactRepositoryPolicy snapshotPolicy = repo.getSnapshots();
+            tableCell( snapshotPolicy.isEnabled() ? snapshotEnabled : snapshotDisabled );
+
+            if ( !repoUrlBlackListed.isEmpty() )
+            {
+                tableCell( repo.isBlacklisted() ? blacklistedEnabled : blacklistedDisabled );
+            }
+            sink.tableRow_();
+        }
+
+        sink.tableRows_();
+
+        endTable();
+    }
+
+    private void printArtifactsLocations( Map repoMap, List alldeps )
+    {
+        // i18n
+        String artifact = getReportString( "report.dependencies.repo.locations.column.artifact" );
+
+        sink.paragraph();
+        sink.text( getReportString( "report.dependencies.repo.locations.artifact.breakdown" ) );
+        sink.paragraph_();
+
+        List repoIdList = new ArrayList();
+        // removed blacklisted repo
+        for ( Iterator it = repoMap.keySet().iterator(); it.hasNext(); )
+        {
+            String repokey = (String) it.next();
+            ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+            if ( !repo.isBlacklisted() )
+            {
+                repoIdList.add( repokey );
+            }
+        }
+
+        String[] tableHeader = new String[repoIdList.size() + 1];
+        int[] justificationRepo = new int[repoIdList.size() + 1];
+
+        tableHeader[0] = artifact;
+        justificationRepo[0] = Sink.JUSTIFY_LEFT;
+
+        int idnum = 1;
+        for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
+        {
+            String id = (String) it.next();
+            tableHeader[idnum] = id;
+            justificationRepo[idnum] = Sink.JUSTIFY_CENTER;
+            idnum++;
+        }
+
+        Map totalByRepo = new HashMap();
+        TotalCell totaldeps = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+
+        startTable();
+
+        sink.tableRows( justificationRepo, true );
+
+        tableHeader( tableHeader );
+
+        for ( Iterator it = alldeps.iterator(); it.hasNext(); )
+        {
+            Artifact dependency = (Artifact) it.next();
+
+            totaldeps.incrementTotal( dependency.getScope() );
+
+            sink.tableRow();
+
+            if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
+            {
+
+                tableCell( dependency.getId() );
+
+                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                {
+                    String repokey = (String) itrepo.next();
+                    ArtifactRepository repo = (ArtifactRepository) repoMap.get( repokey );
+
+                    String depUrl = repoUtils.getDependencyUrlFromRepository( dependency, repo );
+
+                    Integer old = (Integer) totalByRepo.get( repokey );
+                    if ( old == null )
+                    {
+                        totalByRepo.put( repokey, new Integer( 0 ) );
+                        old = new Integer( 0 );
+                    }
+
+                    boolean dependencyExists = false;
+                    // check snapshots in snapshots repository only and releases in release repositories...
+                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
+                    {
+                        dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
+                    }
+
+                    if ( dependencyExists )
+                    {
+                        sink.tableCell();
+                        if ( StringUtils.isNotEmpty( depUrl ) )
+                        {
+                            sink.link( depUrl );
+                        }
+                        else
+                        {
+                            sink.text( depUrl );
+                        }
+
+                        sink.figure();
+                        sink.figureCaption();
+                        sink.text( "Found at " + repo.getUrl() );
+                        sink.figureCaption_();
+                        sink.figureGraphics( "images/icon_success_sml.gif" );
+                        sink.figure_();
+
+                        sink.link_();
+                        sink.tableCell_();
+
+                        totalByRepo.put( repokey, new Integer( old.intValue() + 1 ) );
+                    }
+                    else
+                    {
+                        tableCell( "-" );
+                    }
+                }
+            }
+            else
+            {
+                tableCell( dependency.getId() );
+
+                for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+                {
+                    itrepo.next();
+
+                    tableCell( "-" );
+                }
+            }
+
+            sink.tableRow_();
+        }
+
+        // Total row
+
+        // reused key
+        tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
+        tableHeader( tableHeader );
+        String[] totalRow = new String[repoIdList.size() + 1];
+        totalRow[0] = totaldeps.toString();
+        idnum = 1;
+        for ( Iterator itrepo = repoIdList.iterator(); itrepo.hasNext(); )
+        {
+            String repokey = (String) itrepo.next();
+
+            totalRow[idnum++] = totalByRepo.get( repokey ).toString();
+        }
+
+        tableRow( totalRow );
+
+        sink.tableRows_();
+
+        endTable();
+    }
+
     private String getReportString( String key )
     {
         return i18n.getString( "project-info-report", locale, key );
+    }
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list has a classifier, <code>false</code> otherwise.
+     */
+    private boolean hasClassifier( List artifacts )
+    {
+        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iterator.next();
+
+            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list is optional, <code>false</code> otherwise.
+     */
+    private boolean hasOptional( List artifacts )
+    {
+        for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iterator.next();
+
+            if ( artifact.isOptional() )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param artifacts not null
+     * @return <code>true</code> if one artifact in the list is sealed, <code>false</code> otherwise.
+     */
+    private boolean hasSealed( List artifacts )
+    {
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            // TODO site:run Why do we need to resolve this...
+            if ( artifact.getFile() == null && !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                try
+                {
+                    repoUtils.resolve( artifact );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                    continue;
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
+                        && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
+                        && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                    {
+                        log.warn( "The artifact of this project has never been deployed." );
+                    }
+                    else
+                    {
+                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                    }
+
+                    continue;
+                }
+            }
+
+            if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
+            {
+                try
+                {
+                    JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
+                    if ( jarDetails.isSealed() )
+                    {
+                        return true;
+                    }
+                }
+                catch ( IOException e )
+                {
+                    log.error( "IOException: " + e.getMessage(), e );
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return a valid HTML ID respecting
+     * <a href="http://www.w3.org/TR/xhtml1/#C_8">XHTML 1.0 section C.8. Fragment Identifiers</a>
+     */
+    private static String getUUID()
+    {
+        return "_" + Math.abs( RANDOM.nextInt() );
+    }
+
+    /**
+     * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a>
+     * unit (GB, MB, kB) and using the pattern <code>########.00</code> by default.
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing>
+     * http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix">
+     * http://en.wikipedia.org/wiki/Binary_prefix</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)">
+     * http://en.wikipedia.org/wiki/Octet_(computing)</a>
+     */
+    static class FileDecimalFormat
+        extends DecimalFormat
+    {
+        private static final long serialVersionUID = 4062503546523610081L;
+
+        private final I18N i18n;
+
+        private final Locale locale;
+
+        /**
+         * Default constructor
+         *
+         * @param i18n
+         * @param locale
+         */
+        public FileDecimalFormat( I18N i18n, Locale locale )
+        {
+            super( "#,###.00" );
+
+            this.i18n = i18n;
+            this.locale = locale;
+        }
+
+        /** {@inheritDoc} */
+        public StringBuffer format( long fs, StringBuffer result, FieldPosition fieldPosition )
+        {
+            if ( fs > 1024 * 1024 * 1024 )
+            {
+                result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
+                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.gb" ) );
+                return result;
+            }
+
+            if ( fs > 1024 * 1024 )
+            {
+                result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
+                result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.mb" ) );
+                return result;
+            }
+
+            result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
+            result.append( " " ).append( getString( i18n, "report.dependencies.file.details.column.size.kb" ) );
+            return result;
+        }
+
+        private String getString( I18N i18n, String key )
+        {
+            return i18n.getString( "project-info-report", locale, key );
+        }
+    }
+
+    /**
+     * Combine total and total by scope in a cell.
+     */
+    static class TotalCell
+    {
+        static final int SCOPES_COUNT = 5;
+
+        final DecimalFormat decimalFormat;
+
+        long total = 0;
+
+        long totalCompileScope = 0;
+
+        long totalTestScope = 0;
+
+        long totalRuntimeScope = 0;
+
+        long totalProvidedScope = 0;
+
+        long totalSystemScope = 0;
+
+        TotalCell( DecimalFormat decimalFormat )
+        {
+            this.decimalFormat = decimalFormat;
+        }
+
+        void incrementTotal( String scope )
+        {
+            addTotal( 1, scope );
+        }
+
+        static String getScope( int index )
+        {
+            switch ( index )
+            {
+                case 0:
+                    return Artifact.SCOPE_COMPILE;
+                case 1:
+                    return Artifact.SCOPE_TEST;
+                case 2:
+                    return Artifact.SCOPE_RUNTIME;
+                case 3:
+                    return Artifact.SCOPE_PROVIDED;
+                case 4:
+                    return Artifact.SCOPE_SYSTEM;
+                default:
+                    return null;
+            }
+        }
+
+        long getTotal( int index )
+        {
+            switch ( index )
+            {
+                case 0:
+                    return totalCompileScope;
+                case 1:
+                    return totalTestScope;
+                case 2:
+                    return totalRuntimeScope;
+                case 3:
+                    return totalProvidedScope;
+                case 4:
+                    return totalSystemScope;
+                default:
+                    return total;
+            }
+        }
+
+        String getTotalString( int index )
+        {
+            long total = getTotal( index );
+
+            if ( total <= 0 )
+            {
+                return "";
+            }
+
+            StringBuffer sb = new StringBuffer();
+            if ( index >= 0 )
+            {
+                sb.append( getScope( index ) ).append( ": " );
+            }
+            sb.append( decimalFormat.format( getTotal( index ) ) );
+            return sb.toString();
+        }
+
+        void addTotal( long add, String scope )
+        {
+            total += add;
+
+            if ( Artifact.SCOPE_COMPILE.equals( scope ) )
+            {
+                totalCompileScope += add;
+            }
+            else if ( Artifact.SCOPE_TEST.equals( scope ) )
+            {
+                totalTestScope += add;
+            }
+            else if ( Artifact.SCOPE_RUNTIME.equals( scope ) )
+            {
+                totalRuntimeScope += add;
+            }
+            else if ( Artifact.SCOPE_PROVIDED.equals( scope ) )
+            {
+                totalProvidedScope += add;
+            }
+            else if ( Artifact.SCOPE_SYSTEM.equals( scope ) )
+            {
+                totalSystemScope += add;
+            }
+        }
+
+        /** {@inheritDoc} */
+        public String toString()
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append( decimalFormat.format( total ) );
+            sb.append( " (" );
+
+            boolean needSeparator = false;
+            for ( int i = 0; i < SCOPES_COUNT; i++ )
+            {
+                if ( getTotal( i ) > 0 )
+                {
+                    if ( needSeparator )
+                    {
+                        sb.append( ", " );
+                    }
+                    sb.append( getTotalString( i ) );
+                    needSeparator = true;
+                }
+            }
+
+            sb.append( ")" );
+
+            return sb.toString();
+        }
     }
 }

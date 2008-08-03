@@ -22,6 +22,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -34,10 +35,13 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 /**
- * Generates the Project Source Code Management report.
+ * Generates the Project Source Code Management (SCM) report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
@@ -47,6 +51,10 @@ import java.util.Locale;
 public class ScmReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * Maven SCM Manager.
      *
@@ -57,7 +65,7 @@ public class ScmReport
     protected ScmManager scmManager;
 
     /**
-     * The directory name to checkout right after the scm url
+     * The directory name to checkout right after the SCM url.
      *
      * @parameter expression="${project.artifactId}"
      * @required
@@ -65,23 +73,25 @@ public class ScmReport
     private String checkoutDirectoryName;
 
     /**
-     * The scm anonymous connection url.
+     * The SCM anonymous connection url respecting the SCM URL Format.
      *
      * @parameter default-value="${project.scm.connection}"
      * @since 2.1
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
      */
     private String anonymousConnection;
 
     /**
-     * The scm developer connection url.
+     * The SCM developer connection url respecting the SCM URL Format.
      *
      * @parameter default-value="${project.scm.developerConnection}"
      * @since 2.1
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
      */
     private String developerConnection;
 
     /**
-     * The scm web access url.
+     * The SCM web access url.
      *
      * @parameter default-value="${project.scm.url}"
      * @since 2.1
@@ -107,9 +117,9 @@ public class ScmReport
     /** {@inheritDoc} */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r =
-            new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName,
-                    webAccessUrl, anonymousConnection, developerConnection );
+        ScmRenderer r = new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), i18n, locale,
+                                         checkoutDirectoryName, webAccessUrl, anonymousConnection,
+                                         developerConnection );
 
         r.render();
     }
@@ -124,9 +134,14 @@ public class ScmReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class ScmRenderer
         extends AbstractMavenReportRenderer
     {
+        private Log log;
+
         private Model model;
 
         private I18N i18n;
@@ -146,10 +161,12 @@ public class ScmReport
 
         private String webAccessUrl;
 
-        ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName,
-                     String webAccessUrl, String anonymousConnection, String devConnection )
+        ScmRenderer( Log log, ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale,
+                     String checkoutDirName, String webAccessUrl, String anonymousConnection, String devConnection )
         {
             super( sink );
+
+            this.log = log;
 
             this.scmManager = scmManager;
 
@@ -286,7 +303,7 @@ public class ScmReport
 
         /**
          * Render the anonymous access section depending the repository.
-         * <p>Note: ClearCase, Starteam et Perforce seems to have no anonymous access.</>
+         * <p>Note: ClearCase, Starteam et Perforce seems to have no anonymous access.</p>
          *
          * @param anonymousRepository the anonymous repository
          */
@@ -302,27 +319,22 @@ public class ScmReport
 
             if ( anonymousRepository != null && isScmSystem( anonymousRepository, "cvs" ) )
             {
-                CvsScmProviderRepository cvsRepo =
-                    (CvsScmProviderRepository) anonymousRepository.getProviderRepository();
+                CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessCVS( cvsRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
-                SvnScmProviderRepository svnRepo =
-                    (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
+                SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessSVN( svnRepo );
             }
             else
             {
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
-
-                if ( anonymousConnection.length() < 4 )
-                {
-                    throw new IllegalArgumentException( "The source repository connection is too short." );
-                }
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.anonymousaccess.general.intro" ) );
 
                 verbatimText( anonymousConnection.substring( 4 ) );
             }
@@ -356,15 +368,15 @@ public class ScmReport
             }
             else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
-                PerforceScmProviderRepository perforceRepo =
-                    (PerforceScmProviderRepository) devRepository.getProviderRepository();
+                PerforceScmProviderRepository perforceRepo = (PerforceScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessPerforce( perforceRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "starteam" ) )
             {
-                StarteamScmProviderRepository starteamRepo =
-                    (StarteamScmProviderRepository) devRepository.getProviderRepository();
+                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessStarteam( starteamRepo );
             }
@@ -377,11 +389,6 @@ public class ScmReport
             else
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.general.intro" ) );
-
-                if ( devConnection.length() < 4 )
-                {
-                    throw new IllegalArgumentException( "The source repository connection is too short." );
-                }
 
                 verbatimText( devConnection.substring( 4 ) );
             }
@@ -402,22 +409,23 @@ public class ScmReport
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
-                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
+                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() );
+                sb.append( " " ).append( checkoutDirectoryName );
                 verbatimText( sb.toString() );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
-                linkPatternedText(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale,
+                                                   "report.scm.accessbehindfirewall.cvs.intro" ) );
             }
             else
             {
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessbehindfirewall.general.intro" ) );
             }
 
             endSection();
@@ -427,20 +435,21 @@ public class ScmReport
          * Render the access from behind a firewall section
          *
          * @param anonymousRepository the anonymous repository
-         * @param devRepository       the dev repository
+         * @param devRepository the dev repository
          */
         private void renderAccessThroughProxySection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
             if ( isScmSystem( anonymousRepository, "svn" ) || isScmSystem( devRepository, "svn" ) )
             {
-                startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
+                startSection( i18n.getString( "project-info-report", locale,
+                                              "report.scm.accessthroughtproxy.title" ) );
 
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
-                paragraph(
-                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro1" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro2" ) );
+                paragraph( i18n.getString( "project-info-report", locale,
+                                           "report.scm.accessthroughtproxy.svn.intro3" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
@@ -624,7 +633,8 @@ public class ScmReport
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn://" ) )
                 {
-                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svn" ) );
+                    paragraph( i18n.getString( "project-info-report", locale,
+                                               "report.scm.devaccess.svn.intro1.svn" ) );
                 }
                 else if ( svnRepo.getUrl().startsWith( "svn+ssh://" ) )
                 {
@@ -660,22 +670,84 @@ public class ScmReport
          */
         public ScmRepository getScmRepository( String scmUrl )
         {
-            ScmRepository repo = null;
-            if ( !StringUtils.isEmpty( scmUrl ) )
+            if ( StringUtils.isEmpty( scmUrl ) )
             {
-                try
+                return null;
+            }
+
+            ScmRepository repo = null;
+            List messages = new ArrayList();
+            try
+            {
+                messages.addAll( scmManager.validateScmRepository( scmUrl ) );
+            }
+            catch ( Exception e )
+            {
+                messages.add( e.getMessage() );
+            }
+
+            if ( messages.size() > 0 )
+            {
+                StringBuffer sb = new StringBuffer();
+                boolean isIntroAdded = false;
+                for ( Iterator it = messages.iterator(); it.hasNext(); )
                 {
-                    repo = scmManager.makeScmRepository( scmUrl );
+                    String msg = it.next().toString();
+
+                    // Ignore NoSuchScmProviderException msg
+                    // See impl of AbstractScmManager#validateScmRepository()
+                    if ( msg.startsWith( "No such provider" ) )
+                    {
+                        continue;
+                    }
+
+                    if ( !isIntroAdded )
+                    {
+                        sb.append( "This SCM url '" + scmUrl + "' is invalid due to the following errors:" );
+                        sb.append( "\n" );
+                        isIntroAdded = true;
+                    }
+                    sb.append( " * " );
+                    sb.append( msg );
+                    sb.append( "\n" );
                 }
-                catch ( NoSuchScmProviderException e )
+
+                if ( StringUtils.isNotEmpty( sb.toString() ) )
                 {
-                    // ignore
-                }
-                catch ( ScmRepositoryException e )
-                {
-                    // ignore
+                    sb.append( "For more information about SCM URL Format, please refer to: "
+                        + "http://maven.apache.org/scm/scm-url-format.html" );
+
+                    throw new IllegalArgumentException( sb.toString() );
                 }
             }
+
+            try
+            {
+                repo = scmManager.makeScmRepository( scmUrl );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
+                }
+            }
+            catch ( ScmRepositoryException e )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
+                }
+            }
+            catch ( Exception e )
+            {
+                // Should be already catched
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( e.getMessage(), e );
+                }
+            }
+
             return repo;
         }
 
@@ -686,7 +758,7 @@ public class ScmReport
          * </p>
          *
          * @param scmRepository a SCM repository
-         * @param scmProvider   a SCM provider name
+         * @param scmProvider a SCM provider name
          * @return true if the provider of the given SCM repository is equal to the given scm provider.
          * @see <a href="http://svn.apache.org/repos/asf/maven/scm/trunk/maven-scm-providers/">maven-scm-providers</a>
          */

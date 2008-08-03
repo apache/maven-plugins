@@ -3,7 +3,7 @@
  ------
  The Maven Team
  ------
- 12 March 2007
+ 2008-07-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -41,15 +41,14 @@ SCM Report
 
 +-----------------+
 <project>
-  [...]
+  ...
   <scm>
     <connection>scm:svn:http://svn.example.org/repo/project/trunk/site</connection>
     <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk/site</developerConnection>
     <url>http://svn.example.org/viewvc/project/trunk/site</url>
   </scm>
-  [...]
+  ...
   <reporting>
-    [...]
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -60,9 +59,28 @@ SCM Report
           <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk</developerConnection>
         </configuration>
       </plugin>
+      ...
     </plugins>
-    [...]
   <reporting>
-  [...]
+  ...
 </project>
 +-----------------+
+
+* {How to exclude SCM anonymous access info?}
+
+ Just do not specify the \<connection/\> tag in the \<scm/\> tag. For instance, you could have:
+
++-----------------+
+<project>
+  ...
+  <scm>
+    <!-- Unspecified <connection/> tag -->
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-project-info-reports-plugin/</url>
+  </scm>
+  ...
+</project>
++-----------------+
+
+  <<Note>>: Due to {{{http://plexus.codehaus.org}Plexus}} design, it is not possible to specify an empty value using
+  the \<anonymousConnection/\> configuration element.

@@ -80,6 +80,9 @@ public class TeamListReport
     // Private
     // ----------------------------------------------------------------------
 
+    /**
+     * Internal renderer class
+     */
     private static class TeamListRenderer
         extends AbstractMavenReportRenderer
     {

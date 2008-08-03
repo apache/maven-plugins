@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<plexus xmlns="http://plexus.codehaus.org/xml/ns/plexus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<plexus>
   <components>
     <component>
       <role>org.codehaus.plexus.i18n.I18N</role>

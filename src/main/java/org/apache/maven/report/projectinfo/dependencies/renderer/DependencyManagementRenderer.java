@@ -27,12 +27,17 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.report.projectinfo.ProjectInfoReportUtils;
 import org.apache.maven.report.projectinfo.dependencies.ManagementDependencies;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author Nick Stolwijk
@@ -42,34 +47,55 @@ import org.codehaus.plexus.i18n.I18N;
 public class DependencyManagementRenderer
     extends AbstractMavenReportRenderer
 {
-    private ManagementDependencies dependencies;
+    private final ManagementDependencies dependencies;
 
     private final Locale locale;
 
-    private I18N i18n;
+    private final I18N i18n;
 
-    private Log log;
+    private final Log log;
 
-    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, ManagementDependencies dependencies )
+    private final ArtifactFactory artifactFactory;
+
+    private final MavenProjectBuilder mavenProjectBuilder;
+
+    private final List remoteRepositories;
+
+    private final ArtifactRepository localRepository;
+
+    /**
+     * Default constructor
+     *
+     * @param sink
+     * @param locale
+     * @param i18n
+     * @param log
+     * @param artifactFactory
+     * @param dependencies
+     * @param mavenProjectBuilder
+     * @param remoteRepositories
+     * @param localRepository
+     */
+    public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
+                                         ManagementDependencies dependencies, ArtifactFactory artifactFactory,
+                                         MavenProjectBuilder mavenProjectBuilder, List remoteRepositories,
+                                         ArtifactRepository localRepository )
     {
         super( sink );
 
         this.locale = locale;
-
-        this.dependencies = dependencies;
-
         this.i18n = i18n;
-
+        this.log = log;
+        this.dependencies = dependencies;
+        this.artifactFactory = artifactFactory;
+        this.mavenProjectBuilder = mavenProjectBuilder;
+        this.remoteRepositories = remoteRepositories;
+        this.localRepository = localRepository;
     }
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
-
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
 
     /** {@inheritDoc} */
     public String getTitle()
@@ -86,7 +112,6 @@ public class DependencyManagementRenderer
         {
             startSection( getTitle() );
 
-            // TODO: should the report just be excluded?
             paragraph( getReportString( "report.dependencyManagement.nolist" ) );
 
             endSection();
@@ -98,39 +123,33 @@ public class DependencyManagementRenderer
         renderSectionProjectDependencies();
     }
 
-    private void renderSectionProjectDependencies()
-    {
-        String[] tableHeader = getDependencyTableHeader();
-
-        startSection( getTitle() );
-
-        // collect dependencies by scope
-        Map dependenciesByScope = dependencies.getDependenciesByScope();
-
-        renderDependenciesForAllScopes( tableHeader, dependenciesByScope );
-
-        endSection();
-    }
-
-    private void renderDependenciesForAllScopes( String[] tableHeader, Map dependenciesByScope )
-    {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
-                                    tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
-                                    tableHeader );
-    }
-
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
 
-    private String[] getDependencyTableHeader()
+    private void renderSectionProjectDependencies()
+    {
+        startSection( getTitle() );
+
+        // collect dependencies by scope
+        Map dependenciesByScope = dependencies.getManagementDependenciesByScope();
+
+        renderDependenciesForAllScopes( dependenciesByScope );
+
+        endSection();
+    }
+
+    private void renderDependenciesForAllScopes( Map dependenciesByScope )
+    {
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
+    }
+
+    private String[] getDependencyTableHeader( boolean hasClassifier )
     {
         String groupId = getReportString( "report.dependencyManagement.column.groupId" );
         String artifactId = getReportString( "report.dependencyManagement.column.artifactId" );
@@ -138,10 +157,15 @@ public class DependencyManagementRenderer
         String classifier = getReportString( "report.dependencyManagement.column.classifier" );
         String type = getReportString( "report.dependencyManagement.column.type" );
 
-        return new String[] { groupId, artifactId, version, classifier, type };
+        if ( hasClassifier )
+        {
+            return new String[] { groupId, artifactId, version, classifier, type };
+        }
+
+        return new String[] { groupId, artifactId, version, type };
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
+    private void renderDependenciesForScope( String scope, List artifacts )
     {
         if ( artifacts != null )
         {
@@ -152,12 +176,25 @@ public class DependencyManagementRenderer
 
             paragraph( getReportString( "report.dependencyManagement.intro." + scope ) );
             startTable();
+
+            boolean hasClassifier = false;
+            for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+            {
+                Dependency dependency = (Dependency) iterator.next();
+                if ( StringUtils.isNotEmpty( dependency.getClassifier() ) )
+                {
+                    hasClassifier = true;
+                    break;
+                }
+            }
+
+            String[] tableHeader = getDependencyTableHeader( hasClassifier );
             tableHeader( tableHeader );
 
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Dependency dependency = (Dependency) iterator.next();
-                tableRow( getDependencyRow( dependency ) );
+                tableRow( getDependencyRow( dependency, hasClassifier ) );
             }
             endTable();
 
@@ -165,10 +202,23 @@ public class DependencyManagementRenderer
         }
     }
 
-    private String[] getDependencyRow( Dependency dependency )
+    private String[] getDependencyRow( Dependency dependency, boolean hasClassifier )
     {
-        return new String[] { dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
-            dependency.getClassifier(), dependency.getType() };
+        Artifact artifact = artifactFactory.createParentArtifact( dependency.getGroupId(), dependency.getArtifactId(),
+                                                                  dependency.getVersion() );
+        String url =
+            ProjectInfoReportUtils.getArtifactUrl( artifactFactory, artifact, mavenProjectBuilder, remoteRepositories,
+                                                   localRepository );
+        String artifactIdCell = ProjectInfoReportUtils.getArtifactIdCell( artifact.getArtifactId(), url );
+
+        if ( hasClassifier )
+        {
+            return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
+                dependency.getClassifier(), dependency.getType() };
+        }
+
+        return new String[] { dependency.getGroupId(), artifactIdCell, dependency.getVersion(),
+            dependency.getType() };
     }
 
     private Comparator getDependencyComparator()
@@ -215,6 +265,7 @@ public class DependencyManagementRenderer
                         }
                     }
                 }
+
                 return result;
             }
         };
