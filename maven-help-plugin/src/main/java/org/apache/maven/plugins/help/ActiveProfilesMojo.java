@@ -31,11 +31,13 @@ import java.util.List;
 /**
  * Lists the profiles which are currently active for this build.
  *
+ * @version $Id: $
  * @since 2.0
  * @goal active-profiles
  * @aggregator
  */
-public class ActiveProfilesMojo extends AbstractHelpMojo
+public class ActiveProfilesMojo
+    extends AbstractHelpMojo
 {
     /**
      * This is the list of projects currently slated to be built by Maven.
@@ -117,10 +119,9 @@ public class ActiveProfilesMojo extends AbstractHelpMojo
             {
                 Profile profile = (Profile) it.next();
 
-                message.append( "\n - " )
-                       .append( profile.getId() )
-                       .append( " (source: " )
-                       .append( profile.getSource() ).append( ")" );
+                message.append( "\n - " ).append( profile.getId() ).append( " (source: " ).append(
+                                                                                                   profile.getSource() ).append(
+                                                                                                                                 ")" );
             }
 
         }
