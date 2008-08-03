@@ -177,3 +177,30 @@ Maven Plugins
 +-----+
 # mvn help:active-profiles -Doutput=/path/to/file
 +-----+
+
+* Display the Plugin expressions used by Maven
+
+  All mojos could use some expressions given by Maven. To list them, just call:
+
++-----+
+# mvn help:expressions
+...
+[INFO] [help:expressions]
+[INFO] Maven supports the following Plugin expressions:
+
+${project}: No description available.
+
+${settings}: No description available.
+
+${session}: No description available.
+
+${plugin}: No description available.
+
+${rootless}: No description available.
+
+${settings.interactiveMode}: If false, flags the system to skip prompting the
+user for any information, or holding up the build waiting for any input. NOTE:
+It's also possible to switch to batch (ie. non-interactive) mode using the '-B'
+command-line option.
+...
++-----+
