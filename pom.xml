@@ -28,7 +28,7 @@
   <artifactId>maven-idea-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven IDEA Plugin</name>
-  <version>2.3-SNAPSHOT</version>
+  <version>2.2-SNAPSHOT</version>
 
   <prerequisites>
     <maven>2.0.1</maven>
