@@ -20,14 +20,10 @@ package org.apache.maven.plugins.help;
  */
 
 import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.WriterFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +35,7 @@ import java.util.List;
  * @goal active-profiles
  * @aggregator
  */
-public class ActiveProfilesMojo extends AbstractMojo
+public class ActiveProfilesMojo extends AbstractHelpMojo
 {
     /**
      * This is the list of projects currently slated to be built by Maven.
@@ -49,14 +45,6 @@ public class ActiveProfilesMojo extends AbstractMojo
      * @readonly
      */
     private List projects;
-
-    /**
-     * This is an optional parameter for a file destination for the output
-     * of this mojo.
-     *
-     * @parameter expression="${output}"
-     */
-    private File output;
 
     /** {@inheritDoc} */
     public void execute()
@@ -75,67 +63,30 @@ public class ActiveProfilesMojo extends AbstractMojo
 
         if ( output != null )
         {
-            writeFile( message );
-        }
-        else
-        {
-            if ( getLog().isInfoEnabled() )
+            StringBuffer sb = new StringBuffer();
+            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
+            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
+            sb.append( message.toString() );
+
+            try
             {
-                getLog().info( message );
+                writeFile( output, sb );
             }
-        }
-    }
-
-    /**
-     * Method for writing the output file of the active profiles information.
-     *
-     * @param message   the output to be written to the file
-     * @throws MojoExecutionException
-     */
-    private void writeFile( StringBuffer message )
-        throws MojoExecutionException
-    {
-        Writer writer = null;
-        try
-        {
-            File dir = output.getParentFile();
-
-            if ( !dir.exists() )
+            catch ( IOException e )
             {
-                dir.mkdirs();
+                throw new MojoExecutionException( "Cannot write active profiles to output: " + output, e );
             }
-
-            writer = WriterFactory.newPlatformWriter( output );
-
-            writer.write( "Created by: " + getClass().getName() + "\n" );
-            writer.write( "Created on: " + new Date() + "\n\n" );
-            writer.write( message.toString() );
-            writer.flush();
 
             if ( getLog().isInfoEnabled() )
             {
                 getLog().info( "Active profile report written to: " + output );
             }
         }
-        catch ( IOException e )
+        else
         {
-            throw new MojoExecutionException( "Cannot write output to file: " + output, e );
-        }
-        finally
-        {
-            if ( writer != null )
+            if ( getLog().isInfoEnabled() )
             {
-                try
-                {
-                    writer.close();
-                }
-                catch ( IOException e )
-                {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().debug( "Failed to close output file writer.", e );
-                    }
-                }
+                getLog().info( message );
             }
         }
     }
@@ -194,15 +145,5 @@ public class ActiveProfilesMojo extends AbstractMojo
         }
 
         return profiles;
-    }
-
-    /**
-     * Setter method for the list of projects.
-     *
-     * @param projects
-     */
-    public final void setProjects( List projects )
-    {
-        this.projects = projects;
     }
 }
