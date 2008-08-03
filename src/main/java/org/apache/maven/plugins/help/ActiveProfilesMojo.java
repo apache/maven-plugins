@@ -19,15 +19,15 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.model.Profile;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Lists the profiles which are currently active for this build.
@@ -102,10 +102,9 @@ public class ActiveProfilesMojo
      */
     private void getActiveProfileStatement( MavenProject project, StringBuffer message )
     {
-        List profiles = new ArrayList();
         // Get active profiles into our own list,
         // since we'll be modifying it, further below
-        profiles.addAll(project.getActiveProfiles());
+        List profiles = new ArrayList( project.getActiveProfiles() );
 
         message.append( "\n" );
 
