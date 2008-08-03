@@ -31,6 +31,10 @@ under the License.
   </prerequisites>
   <packaging>maven-plugin</packaging>
   <name>Maven Invoker Plugin</name>
+  <description>
+    The Maven Invoker Plugin is used to run a set of Maven projects. The plugin can determine whether each project
+    execution is successful, and optionally can verify the output generated from a given project execution.
+  </description>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-invoker-plugin/</connection>
@@ -101,7 +105,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.6</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
