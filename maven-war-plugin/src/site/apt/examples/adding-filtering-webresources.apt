@@ -3,8 +3,9 @@
  ------
  Pete Marvin King
  ------
- 19 June 2006
- 
+ 2008-08-03
+ ------
+
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
 ~~ distributed with this work for additional information
@@ -27,7 +28,7 @@
 
 Adding and Filtering External Web Resources
 
- The default resource directory for all maven2 projects is <<<src/main/resources>>> which
+ The default resource directory for all Maven 2 projects is <<<src/main/resources>>> which
  will end up in <<<target/classes>>> and in <<<WEB-INF/classes>>> in the war. The directory
  structure will be preserved in the process.
  
@@ -38,7 +39,7 @@ Adding and Filtering External Web Resources
  
 +-------+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
       <plugin>
@@ -52,16 +53,16 @@ Adding and Filtering External Web Resources
               <directory>resource2</directory>
             </resource>
           </webResources>
-         </configuration>
-       </plugin>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  [...]  
+  ...
 </project>
 +-------+
 
- Using our sample project in the usage section with an added external resource
- 
+ Using our sample project in the {{{../usage.html}usage section}} with an added external resource, like this:
+
 +----------+
  .
  |-- pom.xml
@@ -88,10 +89,10 @@ Adding and Filtering External Web Resources
                  `-- websource.jsp
 +----------+
 
- would end up in the war as
- 
+ would end up in the war as:
+
 +----------+
-documentedproject-1.0-SNAPSHOT.war 
+documentedproject-1.0-SNAPSHOT.war
  |-- META-INF
  |   |-- MANIFEST.MF
  |   `-- maven
@@ -115,47 +116,47 @@ documentedproject-1.0-SNAPSHOT.war
  `-- jsp
      `-- websource.jsp
 +----------+
- 
+
  <<<external-resource2.jpg>>> and <<<image2>>> are copied to the root of the war, preserving the
  directory structure.
- 
-*Configuring webResources
- 
- <<<webResources>>> is a list of resources. All options of resource is supported.
- 
- A web resource
- 
-  * can have inclusion/exclusion 
-    
-  * can be filtered  
-  
-  * is not limited to the default destination - the root of the war.  
-  
-**Inclusion/Exclusion for webResources
 
- Using our pom configuration above we can add
- 
-+----------+  
- [..]
+*Configuring webResources
+
+ <<<webResources>>> is a list of resources. All options of resource are supported.
+
+ A web resource
+
+  * can have includes/excludes
+
+  * can be filtered
+
+  * is not limited to the default destination - the root of the war
+
+**Includes/Excludes
+
+ To include all jpgs to the war we can add the following to our POM configuration from above:
+
++----------+
+      ...
       <configuration>
-        <webResources>        
+        <webResources>
           <resource>
             <!-- this is relative to the pom.xml directory -->
             <directory>resource2</directory>
             <!-- the list has a default value of ** -->
             <includes>
-               <include>**/*.jpg</include>
-            <includes>                  
+              <include>**/*.jpg</include>
+            <includes>
           </resource>
         </webResources>
-      </configuration  
-  [...]
-+----------+  
-  
-  to include all jpgs to the war or
-  
-+----------+  
- [..]
+      </configuration>
+      ...
++----------+
+
+ To exclude the <<<image2>>> directory from the the war add this:
+
++----------+
+      ...
       <configuration>
         <webResources>
           <resource>
@@ -163,62 +164,68 @@ documentedproject-1.0-SNAPSHOT.war
             <directory>resource2</directory>
             <!-- there's no default value for this -->
             <excludes>
-               <exclude>**/image2</exclude>                     
+              <exclude>**/image2</exclude>
             </excludes>
           </resource>
         </webResources>
-  [...]
-+----------+    
-  
- to exclude the image2 directory from the the war. Be careful when mixing include and exclude,
- exclude will have a higher priority. Include can not override exclude if a resource matches
- both.
-  
- Having this configuration 
-  
-+----------+  
- [...]
-    <configuration>
-      <webResources>
-        <resource>
-          <!-- this is relative to the pom.xml directory -->
-          <directory>resource2/</directory>
-          <!-- the list has a default value of ** -->
-          <includes>
-             <include>image2/*.jpg</include>
-          <includes>          
-          <!-- there's no default value for this -->
-          <excludes>
-             <exclude>**/*.jpg</exclude>
-          </excludes>
-        </resource>
-      </webResources>
-    </configuration>  
-  [...]
-+----------+    
-  
-  will exclude all jpgs from the war. Another example of how to specify include and exclude patterns :
-  
-+----------+  
-  [...]   
-    <!-- the default value is ** -->
-    <includes>
-       <include>**/pattern1</include>
-       <include>*pattern2</include>
-    <includes>   
-    <!-- there's no default value for this -->
-    <excludes>
-       <exclude>*pattern3/pattern3</exclude>
-       <exclude>pattern4/pattern4</exclude>
-    </excludes>
-  [...]
-+----------+      
-  
-**Filtering webResources
+      </configuration>
+      ...
++----------+
+
+ Be careful when mixing includes and excludes, excludes will have a higher priority.
+ Includes can not override excludes if a resource matches both.
+
+ Having this configuration will exclude all jpgs from the war:
+
++----------+
+      ...
+      <configuration>
+        <webResources>
+          <resource>
+            <!-- this is relative to the pom.xml directory -->
+            <directory>resource2/</directory>
+            <!-- the list has a default value of ** -->
+            <includes>
+              <include>image2/*.jpg</include>
+            <includes>
+            <!-- there's no default value for this -->
+            <excludes>
+              <exclude>**/*.jpg</exclude>
+            </excludes>
+          </resource>
+        </webResources>
+      </configuration>
+      ...
++----------+
+
+ Here's another example of how to specify include and exclude patterns:
+
++----------+
+      ...
+      <configuration>
+        <webResources>
+          <resource>
+            <!-- the default value is ** -->
+            <includes>
+              <include>**/pattern1</include>
+              <include>*pattern2</include>
+            <includes>
+            <!-- there's no default value for this -->
+            <excludes>
+              <exclude>*pattern3/pattern3</exclude>
+              <exclude>pattern4/pattern4</exclude>
+            </excludes>
+          </resource>
+        </webResources>
+      </configuration>
+      ...
++----------+
+
+**Filtering
 
   Using our example above, we can also configure filters for our resources.
-  We will add a hypothetical configurations directory on our project
-  
+  We will add a hypothetical <<<configurations>>> directory to our project:
+
 +----------+
  .
  |-- configurations
@@ -246,61 +253,59 @@ documentedproject-1.0-SNAPSHOT.war
              |   `-- web.xml
              |-- index.jsp
              `-- jsp
-                 `-- websource.jsp  
-+----------+    
+                 `-- websource.jsp
++----------+
 
-***with the following in our pom.xml :
-  
-  To prevent corrupting your binaries files where filtering is enabled, you can configure a list of file extensions to not filtering.
-  
-+----------+    
- [...]
-    <configuration>
-       <!-- the default value is the filter list under build -->
-       <!-- specifying a filter will override the filter list under build -->    
-       <filters>
-         <filter>properties/config.prop</filter>
-       </filters>
-       <nonFilteredFileExtensions>
-         <nonFilteredFileExtension>pdf</nonFilteredFileExtensions>
-         <!-- default value contains jpg,jpeg,gif,bmp,png -->
-       </nonFilteredFileExtensions>
-       <webResources>
-         <resource>
-           <directory>resource2</directory>
-           <!-- it's not a good idea to filter binary files -->
-           <filtering>false</filtering>
-         </resource>
-         <resource>
-           <directory>configurations</directory>
-           <!-- enable filtering -->
-           <filtering>true</filtering>
-           <excludes>
+  To prevent corrupting your binary files where filtering is enabled, you can configure a list of file extensions to not filter.
+
++----------+
+      ...
+      <configuration>
+        <!-- the default value is the filter list under build -->
+        <!-- specifying a filter will override the filter list under build -->
+        <filters>
+          <filter>properties/config.prop</filter>
+        </filters>
+        <nonFilteredFileExtensions>
+          <!-- default value contains jpg,jpeg,gif,bmp,png -->
+          <nonFilteredFileExtension>pdf</nonFilteredFileExtensions>
+        </nonFilteredFileExtensions>
+        <webResources>
+          <resource>
+            <directory>resource2</directory>
+            <!-- it's not a good idea to filter binary files -->
+            <filtering>false</filtering>
+          </resource>
+          <resource>
+            <directory>configurations</directory>
+            <!-- enable filtering -->
+            <filtering>true</filtering>
+            <excludes>
               <exclude>**/properties</exclude>
-           </excludes>
-         </resource>
-       </webResources>
-    </configuration>
- [...]
-+----------+    
+            </excludes>
+          </resource>
+        </webResources>
+      </configuration>
+      ...
++----------+
 
-***with <<<config.prop>>>
+*** <<<config.prop>>>
 
-+----------+    
-   interpolated_property=some_config_value
-+----------+      
++----------+
+interpolated_property=some_config_value
++----------+
 
-***with <<<configuration.cfg>>>
- 
-+----------+      
+*** <<<config.cfg>>>
+
++----------+
 <another_ioc_container>
    <configuration>${interpolated_property}</configuration>
-</another_ioc_container>   
-+----------+      
+</another_ioc_container>
++----------+
 
- the resulting war would be
- 
-+----------+      
+ The resulting war would be:
+
++----------+
 documentedproject-1.0-SNAPSHOT.war
  |-- META-INF
  |   |-- MANIFEST.MF
@@ -324,10 +329,10 @@ documentedproject-1.0-SNAPSHOT.war
  |   `-- external-resource2.jpg
  |-- index.jsp
  `-- jsp
-     `-- websource.jsp 
-+----------+       
+     `-- websource.jsp
++----------+
 
- with <<<config.cfg>>> content of
+ and the content of <<<config.cfg>>> would be:
 
 +----------+
 <another_ioc_container>
@@ -335,36 +340,36 @@ documentedproject-1.0-SNAPSHOT.war
 </another_ioc_container>   
 +----------+
 
-**Overriding the default destination directory of a web resource
+**Overriding the default destination directory
 
  By default web resources are copied to the root of the war, as shown in the previous example. 
  To override the default destination directory, specify the target path.
- 
-+----------+  
- [...]
-    <configuration>
-      <webResources>
-        <resource>
-         [...]
-         <resource>
-           <directory>configurations</directory>
-           <!-- override the destination directory for this resource -->   
-           <targetPath>WEB-INF</targetPath>
-           <!-- enable filtering -->
-           <filtering>true</filtering>
-           <excludes>
-              <exclude>**/properties</exclude>
-           </excludes>
-         </resource>        
-        </resource>
-      </webResources>
-    </configuration>  
-  [...]
-+----------+    
 
- using the sample project the resulting war would look like this
- 
-+----------+      
++----------+
+      ...
+      <configuration>
+        <webResources>
+          <resource>
+            ...
+          </resource>
+          <resource>
+            <directory>configurations</directory>
+            <!-- override the destination directory for this resource -->
+            <targetPath>WEB-INF</targetPath>
+            <!-- enable filtering -->
+            <filtering>true</filtering>
+            <excludes>
+              <exclude>**/properties</exclude>
+            </excludes>
+          </resource>
+        </webResources>
+      </configuration>
+      ...
++----------+
+
+ Using the sample project the resulting war would look like this:
+
++----------+
 documentedproject-1.0-SNAPSHOT.war
  |-- META-INF
  |   |-- MANIFEST.MF
@@ -389,13 +394,4 @@ documentedproject-1.0-SNAPSHOT.war
  |-- index.jsp
  `-- jsp
      `-- websource.jsp
-+----------+       
-
-  
- 
-  
-  
- 
- 
- 
- 
++----------+
