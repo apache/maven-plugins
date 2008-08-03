@@ -60,9 +60,10 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.interpolation.Interpolator;
-import org.codehaus.plexus.util.interpolation.MapBasedValueSource;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 
 import bsh.EvalError;
 import bsh.Interpreter;
@@ -632,7 +633,7 @@ public class InvokerMojo
                 {
                     String key = (String) it.next();
                     String value = invokerProperties.getProperty( key );
-                    getLog().debug( "  " + key + ": " + value );
+                    getLog().debug( "  " + key + " = " + value );
                 }
             }
 
@@ -1339,7 +1340,15 @@ public class InvokerMojo
             {
                 String key = (String) it.next();
                 String value = props.getProperty( key );
-                value = interpolator.interpolate( value, "" );
+                try
+                {
+                    value = interpolator.interpolate( value, "" );
+                }
+                catch ( InterpolationException e )
+                {
+                    throw new MojoExecutionException( "Failed to interpolate invoker properties: " + propertiesFile,
+                                                      e );
+                }
                 props.setProperty( key, value );
             }
         }
