@@ -24,20 +24,18 @@ under the License.
    <faq id="filtering">
      <question>How is filtering done in the war plugin?</question>
      <answer>
-       <p>To enable filtering of web.xml you must configure the war plugin as this :
-         <source>
-<![CDATA[
-  <plugin>
-    <artifactId>maven-war-plugin</artifactId>
-    <version>2.1-alpha-2</version>
-    <configuration>
-      <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-    </configuration>
-  </plugin>
-]]>         
-         </source> 
+       <p>To enable filtering of <code>web.xml</code> you must configure the war plugin as this:
+         <source><![CDATA[
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-2</version>
+        <configuration>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+        </configuration>
+      </plugin>
+]]></source>
        </p>
-       <p>Examples can be found <a href="examples/adding-filtering-webresources.html">here</a></p>
+       <p>Examples can be found <a href="examples/adding-filtering-webresources.html">here</a>.</p>
      </answer>
    </faq>
    <faq id="classifieruse">
@@ -54,54 +52,56 @@ under the License.
      </answer>
    </faq>
    <faq id="dependentwarexclude">
-     <question>What's the difference in using dependentWarExclude and provided scope?</question>
+     <question>What's the difference between using dependentWarExclude and provided scope?</question>
      <answer>
-       <p>dependentWarExclude is used in <a href="examples/war-overlay.html">war overlays</a> for excluding dependent
+       <p><code>dependentWarExclude</code> is used in <a href="overlays.html">war overlays</a> for excluding dependent
        war files from being included in the exploded war.</p>
      </answer>
    </faq>
    <faq id="webresourcesexclude">
-     <question>How do I exclude files in my web rources?</question>
+     <question>How do I exclude files in my web resources?</question>
      <answer>
-       <p>Use the webResources exclude parameter to identify the tokens to use for the filtering.</p>
+       <p>Use the <code>webResources</code> <code>exclude</code> parameter to identify the tokens to use for the filtering.</p>
      </answer>
    </faq>
    <faq id="waroverlaysexclude">
      <question>How do I exclude files when doing war overlays?</question>
      <answer>
-       <p>Use the dependentWarExcludes parameter to identify the tokens to use for the filtering.</p>
+       <p>Use the <code>dependentWarExcludes</code> parameter to identify the tokens to use for the filtering.</p>
        <p>For more information refer to <a href="examples/adding-filtering-webresources.html">Adding and Filtering
-       External Web Resources</a></p>
+       External Web Resources</a>.</p>
      </answer>
    </faq>
    <faq id="configurationdoc">
      <question>Where can I find the documentation for the plugin's configuration?</question>
      <answer>
        <p>
-         For each goal, you can use the documentation from the <a href="http://maven.apache.org/plugins/maven-war-plugin/plugin-info.html">plugin site</a>.
+         For each goal, you can use the documentation from the <a href="plugin-info.html">plugin site</a>.
        </p>
        <p>
-         If you need a specific version, generate it using site:site or use mvn help:describe \\ <br/>
-         -DgroupId=org.apache.maven.plugins -DartifactId=maven-war-plugin -Dfull=true \\ <br/>
-         -Dversion&gt;your-plugin-version-here&lt;
+         If you need a specific version, generate it using <code>mvn site:site</code> or use:
+         <source><![CDATA[
+mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-war-plugin \
+  -Dfull=true -Dversion=<your-plugin-version-here>
+]]></source>
        </p>
      </answer>
    </faq>
    <faq id="attached">
      <question>How do I create a jar containing the classes in my webapp?</question>
        <answer>
-       <p>If you would simply like to package the classes and resources  as a jar in WEB-INF/lib
-           rather than as loose files under WEB-INF/classes, use the following configuration:</p>
+       <p>If you would simply like to package the classes and resources as a jar in <code>WEB-INF/lib</code>
+           rather than as loose files under <code>WEB-INF/classes</code>, use the following configuration:</p>
        <p>
-         <source>
-           <plugin>
-             <artifactId>maven-war-plugin</artifactId>
-             <version>X.Y</version>
-             <configuration>
-               <archiveClasses>true</archiveClasses>
-             </configuration>
-           </plugin>
-         </source>
+         <source><![CDATA[
+       <plugin>
+         <artifactId>maven-war-plugin</artifactId>
+         <version>X.Y</version>
+         <configuration>
+           <archiveClasses>true</archiveClasses>
+         </configuration>
+       </plugin>
+]]></source>
        </p>
        <p>If you need to re-use this jar in another project, the recommended approach is to move the classes to a
        separate module that builds a jar, and then declare a dependency on that jar from your webapp as well as from
@@ -109,25 +109,29 @@ under the License.
        <p>If you can't move the classes to another project, you can deploy the classes and resources included in
            your webapp as an "attached" artifact, with a classifier, by using the following configuration:</p>
        <p>
-         <source>
-         <project>
-           ...
-           <artifactId>mywebapp</artifactId>
-           <version>1.0-SNAPSHOT</version>
-           ...
-               <plugin>
-                 <artifactId>maven-war-plugin</artifactId>
-                 <version>X.Y</version>
-                 <configuration>
-                   <attachClasses>true</attachClasses>
-                 </configuration>
-               </plugin>
-             ...
-           </project>
-         </source>
+         <source><![CDATA[
+<project>
+  ...
+  <artifactId>mywebapp</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>X.Y</version>
+        <configuration>
+          <attachClasses>true</attachClasses>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+]]></source>
        </p>
-       <p>This will result in two artifacts being deployed:  mywebapp-1.0-SNAPSHOT.war
-       and mywebapp-1.0-SNAPSHOT-classes.jar</p>
+       <p>This will result in two artifacts being deployed: <code>mywebapp-1.0-SNAPSHOT.war</code>
+       and <code>mywebapp-1.0-SNAPSHOT-classes.jar</code>.</p>
      </answer>
    </faq>
  </part>
