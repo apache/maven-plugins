@@ -19,7 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -316,7 +315,7 @@ public class DescribeMojo
         else
         {
             throw new MojoFailureException(
-                "You must either specify \'groupId\' and \'artifactId\', or a valid \'plugin\' parameter." );
+                                            "You must either specify \'groupId\' and \'artifactId\', or a valid \'plugin\' parameter." );
         }
 
         if ( descriptor == null && forLookup != null )
@@ -327,18 +326,18 @@ public class DescribeMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
-                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
+                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginManagerException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
-                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
+                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
-                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
+                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( ArtifactNotFoundException e )
             {
@@ -346,13 +345,13 @@ public class DescribeMojo
             }
             catch ( InvalidVersionSpecificationException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
-                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
+                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( InvalidPluginException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'" + groupId
-                    + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
+                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
             }
             catch ( PluginNotFoundException e )
             {
@@ -412,7 +411,7 @@ public class DescribeMojo
                         break;
                     default:
                         throw new MojoFailureException(
-                            "plugin parameter must be a plugin prefix, or conform to: 'groupId:artifactId[:version]." );
+                                                        "plugin parameter must be a plugin prefix, or conform to: 'groupId:artifactId[:version]." );
                 }
             }
             else
@@ -717,7 +716,8 @@ public class DescribeMojo
 
                 if ( deprecation != null )
                 {
-                    buffer.append( "\n\nNOTE: This parameter is deprecated.\n" ).append( deprecation ).append( "\n" );
+                    buffer.append( "\n\nNOTE: This parameter is deprecated.\n" ).append( deprecation ).append(
+                                                                                                               "\n" );
                 }
 
                 buffer.append( "\n" );
@@ -764,19 +764,22 @@ public class DescribeMojo
 
                         if ( lifecycleMapping.getPhases( "default" ).get( key ) != null )
                         {
-                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) ).append( "\n" );
+                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) ).append(
+                                                                                                                   "\n" );
                         }
                     }
 
                     descriptionBuffer.append( "\n" );
                     descriptionBuffer.append(
                                               "It is a part of the lifecycle for the POM packaging '"
-                                                  + project.getPackaging() + "'. This lifecycle includes the following phases:" ).append( "\n" );
+                                                  + project.getPackaging()
+                                                  + "'. This lifecycle includes the following phases:" ).append(
+                                                                                                                 "\n" );
                     for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
                     {
                         String key = (String) it.next();
 
-                        descriptionBuffer.append( "* " + key + ": ");
+                        descriptionBuffer.append( "* " + key + ": " );
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
                         if ( value != null )
                         {
@@ -784,7 +787,7 @@ public class DescribeMojo
                             {
                                 descriptionBuffer.append( tok.nextToken().trim() );
 
-                                if (!tok.hasMoreTokens())
+                                if ( !tok.hasMoreTokens() )
                                 {
                                     descriptionBuffer.append( "\n" );
                                 }
@@ -802,12 +805,13 @@ public class DescribeMojo
                 }
                 else
                 {
-                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " ).append( "\n" );
+                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " ).append(
+                                                                                                                   "\n" );
                     for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
                     {
                         String key = (String) it.next();
 
-                        descriptionBuffer.append( "* " + key + ": ");
+                        descriptionBuffer.append( "* " + key + ": " );
                         if ( lifecycle.getDefaultPhases().get( key ) != null )
                         {
                             descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( "\n" );
@@ -834,7 +838,7 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append(  "'" + cmd + "' is a plugin" ).append( ".\n" );
+        descriptionBuffer.append( "'" + cmd + "' is a plugin" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
 
         return true;
@@ -871,8 +875,9 @@ public class DescribeMojo
                                                                     MavenProject.class, String.class,
                                                                     Boolean.TYPE, Boolean.TYPE } );
             m.setAccessible( true );
-            MojoDescriptor mojoDescriptor = (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project,
-                invokedVia, Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
+            MojoDescriptor mojoDescriptor =
+                (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project, invokedVia,
+                    Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
             if ( mojoDescriptor == null )
             {
                 throw new MojoExecutionException( "No MOJO exists for '" + task + "'." );
