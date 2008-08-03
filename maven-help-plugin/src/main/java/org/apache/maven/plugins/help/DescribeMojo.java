@@ -21,7 +21,6 @@ package org.apache.maven.plugins.help;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -40,7 +39,6 @@ import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -58,9 +56,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Describes the attributes of a plugin and/or plugin mojo.
@@ -72,7 +68,7 @@ import org.codehaus.plexus.util.WriterFactory;
  * @aggregator
  */
 public class DescribeMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
     /**
      * The plugin/mojo to describe. This must be specified in one of three ways:
@@ -177,14 +173,6 @@ public class DescribeMojo
     private ArtifactRepository localRepository;
 
     /**
-     * If specified, this parameter will cause the plugin/mojo descriptions
-     * to be written to the path specified, instead of writing to the console.
-     *
-     * @parameter expression="${output}"
-     */
-    private File output;
-
-    /**
      * This flag specifies that full (verbose) information should be
      * given. Use true/false.
      *
@@ -266,24 +254,13 @@ public class DescribeMojo
     {
         if ( output != null )
         {
-            Writer out = null;
             try
             {
-                output.getParentFile().mkdirs();
-
-                out = WriterFactory.newPlatformWriter( output );
-
-                out.write( descriptionBuffer.toString() );
-
-                out.flush();
+                writeFile( output, descriptionBuffer );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Cannot write plugin/mojo description.", e );
-            }
-            finally
-            {
-                IOUtil.close( out );
+                throw new MojoExecutionException( "Cannot write plugin/mojo description to output: " + output, e );
             }
 
             if ( getLog().isInfoEnabled() )
@@ -748,178 +725,6 @@ public class DescribeMojo
 
             buffer.append( line );
         }
-    }
-
-    /**
-     *
-     * @return a String of the plugin parameter value
-     */
-    public final String getPlugin()
-    {
-        return plugin;
-    }
-
-    /**
-     *
-     * @param plugin    the plugin value to be set
-     */
-    public final void setPlugin( String plugin )
-    {
-        this.plugin = plugin;
-    }
-
-    /**
-     *
-     * @return a PluginManager object
-     */
-    public final PluginManager getPluginManager()
-    {
-        return pluginManager;
-    }
-
-    /**
-     *
-     * @param pluginManager the plugin manager to be set
-     */
-    public final void setPluginManager( PluginManager pluginManager )
-    {
-        this.pluginManager = pluginManager;
-    }
-
-    /**
-     *
-     * @return a String that contains the artifactId
-     */
-    public final String getArtifactId()
-    {
-        return artifactId;
-    }
-
-    /**
-     *
-     * @param artifactId    the artifactId to be set
-     */
-    public final void setArtifactId( String artifactId )
-    {
-        this.artifactId = artifactId;
-    }
-
-    /**
-     *
-     * @return a String that contains the groupId
-     */
-    public final String getGroupId()
-    {
-        return groupId;
-    }
-
-    /**
-     *
-     * @param groupId   the groupId value to be set
-     */
-    public final void setGroupId( String groupId )
-    {
-        this.groupId = groupId;
-    }
-
-    /**
-     *
-     * @return an ArtifactRepository object of the local repository
-     */
-    public final ArtifactRepository getLocalRepository()
-    {
-        return localRepository;
-    }
-
-    /**
-     *
-     * @param localRepository   the local repository value to be set
-     */
-    public final void setLocalRepository( ArtifactRepository localRepository )
-    {
-        this.localRepository = localRepository;
-    }
-
-    /**
-     *
-     * @return a String of the mojo parameter value
-     */
-    public final String getMojo()
-    {
-        return mojo;
-    }
-
-    /**
-     *
-     * @param mojo  the mojo parameter value to be set
-     */
-    public final void setMojo( String mojo )
-    {
-        this.mojo = mojo;
-    }
-
-    /**
-     *
-     * @return a File object where the description will be written to
-     */
-    public final File getOutput()
-    {
-        return output;
-    }
-
-    /**
-     *
-     * @param output    the output file value to be set
-     */
-    public final void setOutput( File output )
-    {
-        this.output = output;
-    }
-
-    /**
-     *
-     * @return a MavenProject object of the current build
-     */
-    public final MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     *
-     * @param project   the project value to be set
-     */
-    public final void setProject( MavenProject project )
-    {
-        this.project = project;
-    }
-
-    public final Settings getSettings()
-    {
-        return settings;
-    }
-
-    public final void setSettings( Settings settings )
-    {
-        this.settings = settings;
-    }
-
-    /**
-     *
-     * @return a String that contains the value of the version parameter
-     */
-    public final String getVersion()
-    {
-        return version;
-    }
-
-    /**
-     *
-     * @param version   the version parameter value to be set
-     */
-    public final void setVersion( String version )
-    {
-        this.version = version;
     }
 
     /**

@@ -19,16 +19,12 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
@@ -41,15 +37,8 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
  * @requiresProject false
  */
 public class SystemMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
-    /**
-     * Optional parameter for a file destination for the output of this mojo.
-     *
-     * @parameter expression="${output}"
-     */
-    private File output;
-
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
@@ -92,66 +81,30 @@ public class SystemMojo
 
         if ( output != null )
         {
-            writeFile( message );
-        }
-        else
-        {
-            if ( getLog().isInfoEnabled() )
+            StringBuffer sb = new StringBuffer();
+            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
+            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
+            sb.append( message.toString() );
+
+            try
             {
-                getLog().info( message );
+                writeFile( output, sb );
             }
-        }
-    }
-
-    /**
-     * Method for writing the output file of the active profiles information.
-     *
-     * @param message the output to be written to the file
-     * @throws MojoExecutionException if any
-     */
-    private void writeFile( StringBuffer message )
-        throws MojoExecutionException
-    {
-        Writer writer = null;
-        try
-        {
-            File dir = output.getParentFile();
-            if ( !dir.exists() )
+            catch ( IOException e )
             {
-                dir.mkdirs();
+                throw new MojoExecutionException( "Cannot write system report to output: " + output, e );
             }
-
-            writer = WriterFactory.newPlatformWriter( output );
-
-            writer.write( "Created by: " + getClass().getName() + "\n" );
-            writer.write( "Created on: " + new Date() + "\n\n" );
-            writer.write( message.toString() );
-            writer.flush();
 
             if ( getLog().isInfoEnabled() )
             {
                 getLog().info( "System report written to: " + output );
             }
         }
-        catch ( IOException e )
+        else
         {
-            throw new MojoExecutionException( "Cannot write output to file: " + output, e );
-        }
-        finally
-        {
-            if ( writer != null )
+            if ( getLog().isInfoEnabled() )
             {
-                try
-                {
-                    writer.close();
-                }
-                catch ( IOException e )
-                {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().debug( "Failed to close output file writer.", e );
-                    }
-                }
+                getLog().info( message );
             }
         }
     }
