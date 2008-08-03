@@ -24,7 +24,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
@@ -34,6 +33,7 @@ import java.util.List;
 /**
  * Display the effective POM for this build, with the active profiles factored in.
  *
+ * @version $Id: $
  * @since 2.0
  * @goal effective-pom
  * @aggregator
@@ -153,6 +153,5 @@ public class EffectivePomMojo
         {
             throw new MojoExecutionException( "Cannot serialize POM to XML.", e );
         }
-
     }
 }
