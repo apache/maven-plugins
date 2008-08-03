@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 27 June 2006
+ 2008-08-03
  ------
  
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,10 +33,10 @@ Maven WAR Plugin
  
 * Goals Overview
 
- * {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of war.
+ * {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of <<<war>>>.
  
  * {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
- an exploded war in a specified directory.    
+ an exploded war in a specified directory.
  
  * {{{inplace-mojo.html}war:inplace}} another variation of the war:explode where the war is instead generated in the web source directory
  which is <<<src/main/webapp>>> by default.
@@ -44,7 +44,7 @@ Maven WAR Plugin
 * Usage
 
   Instructions on how to use the Maven WAR Plugin can be found {{{usage.html}here}}. Specific documentation
-  regarding overlays can be found {{{overlays.html}here}}  
+  regarding overlays can be found {{{overlays.html}here}}.
 
 * Examples
  
@@ -59,6 +59,8 @@ Maven WAR Plugin
 
  * {{{examples/skinny-wars.html}Creating Skinny WARs}}
  
+ * {{{examples/file-name-mapping.html}Using File Name Mapping}}
+
 * Related links
  
   * {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
