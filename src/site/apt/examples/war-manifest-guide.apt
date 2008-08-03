@@ -3,8 +3,9 @@
  ------
  Pete Marvin King
  ------
- 19 June 2006
- 
+ 2008-08-03
+ ------
+
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
 ~~ distributed with this work for additional information
@@ -27,11 +28,13 @@
 
 War Manifest Customization
 
- The manifest can be customized by configuring the war plugin's archiver.
-    
+ The manifest can be customized by configuring the war plugin's archiver. For full information on the different
+ configuration options available check the documentation for
+ {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}}.
+
 +--------------------+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
       <plugin>
@@ -46,36 +49,33 @@ War Manifest Customization
           </archive>
         </configuration>
       </plugin>
-      [...]
+      ...
     </plugins>
   </build>
-  [...]  
+  ...
 </project>
-+--------------------+   
- 
++--------------------+
+
   The <<<pom.xml>>> would generate this <<<META-INF/MANIFEST.MF>>> in your war.
-  
-+--------------------+   
+
++--------------------+
 Manifest-Version: 1.0
 Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
-Built-By: <current_user>
-Build-Jdk: <jdk version>
-Extension-Name: <artifactId>
-Specification-Vendor: MyCompany Inc
-Implementation-Vendor: MyCompany Inc
-Implementation-Title: <artifactId>
-Implementation-Version: <version>
+Built-By: ${user.name}
+Build-Jdk: ${java.version}
 manifest_entry: value
 +--------------------+
 
-Generating a manifest classpath
+*Generating a manifest classpath
 
-  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since you normally don't want a jar in both the manifest classpath and the WEB-INF/lib.  Customize the war plugin's archiver:
+  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since
+  you normally don't want a jar in both the manifest classpath and the <<<WEB-INF/lib>>>.  Customize the war plugin's
+  archiver:
 
 +--------------------+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
       <plugin>
@@ -90,18 +90,20 @@ Generating a manifest classpath
           </archive>
         </configuration>
       </plugin>
-      [...]
+      ...
     </plugins>
   </build>
-  [...]  
+  ...
 </project>
 +--------------------+
 
-  Now, you can control which dependencies are included in WEB-INF/lib and in the manifest classpath by following these examples.  Maven will follow the transitive dependency tree until it gets to artifacts scoped as "provided".  Note that no way is shown to include a dependency in WEB-INF/lib but not the manifest classpath.
+  Now, you can control which dependencies are included in <<<WEB-INF/lib>>> and in the manifest classpath by following
+  these examples.  Maven will follow the transitive dependency tree until it gets to artifacts scoped as "provided".
+  Note that no way is shown to include a dependency in <<<WEB-INF/lib>>> but not the manifest classpath.
 
 +--------------------+
 <project>
-  [...]
+  ...
   <dependencies>
     <dependency>
       <groupId>org.foo</groupId>
@@ -118,17 +120,16 @@ Generating a manifest classpath
     </dependency>
     <dependency>
       <groupId>org.foo</groupId>
-      <artifactId>bar-jar1</artifactId>
+      <artifactId>bar-jar3</artifactId>
       <version>${pom.version}</version>
       <scope>provided</scope>
       <!-- excluded from manifest classpath, and excluded from WEB-INF/lib -->
     </dependency>
-    [...]
+    ...
   </dependencies>
-  [...]
+  ...
 </project>
 +--------------------+
 
-
- 
-  Check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more examples.
+  Check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more
+  examples.
