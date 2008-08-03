@@ -65,6 +65,7 @@ import org.codehaus.plexus.util.WriterFactory;
 /**
  * Describes the attributes of a plugin and/or plugin mojo.
  *
+ * @version $Id$
  * @since 2.0
  * @goal describe
  * @requiresProject false
