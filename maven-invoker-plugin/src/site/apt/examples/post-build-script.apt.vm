@@ -39,24 +39,24 @@ Using a Post Build Script
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
         <version>${project.version}</version>
+        <configuration>
+          <debug>true</debug>
+          <projectsDirectory>src/it</projectsDirectory>
+          <pomIncludes>
+            <pomInclude>**/pom.xml</pomInclude>
+          </pomIncludes>
+          <pomExcludes>
+            <pomExclude>**/child*/pom.xml</pomExclude>
+            <pomExclude>**/module*/pom.xml</pomExclude>
+          </pomExcludes>
+          <postBuildHookScript>verify.bsh</postBuildHookScript>
+        </configuration>
         <executions>
           <execution>
             <id>integration-test</id>
             <goals>
               <goal>run</goal>
             </goals>
-            <configuration>
-              <debug>true</debug>
-              <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/pom.xml</pomInclude>
-              </pomIncludes>
-              <pomExcludes>
-                <pomExclude>**/child*/pom.xml</pomExclude>
-                <pomExclude>**/module*/pom.xml</pomExclude>
-              </pomExcludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-            </configuration>
           </execution>
        </executions>
       </plugin>
@@ -66,7 +66,7 @@ Using a Post Build Script
 -------------------
 
   Here is an example post build script (<<<verify.bsh>>>) that checks for the existence 
-  of a jar file after the build has run.  If the jar file does not exist, the
+  of a JAR file after the build has run.  If the JAR file does not exist, the
   script returns <<<false>>> which causes the Invoker Plugin to log that the build failed.
   The global variable <<<basedir>>> of type <<<java.io.File>>> can be used to refer to the
   base directory of the current integration test.
@@ -79,7 +79,7 @@ try
     File file = new File( basedir, "target/my-test-project-1.0-SNAPSHOT.jar" );
     if ( !file.isFile() )
     {
-        System.err.println( "Could not find generated jar: " + file );
+        System.err.println( "Could not find generated JAR: " + file );
         return false;
     }
 }
