@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Lists the profiles which are currently active for this build.
  *
- * @version $Id: $
+ * @version $Id$
  * @since 2.0
  * @goal active-profiles
  * @aggregator
