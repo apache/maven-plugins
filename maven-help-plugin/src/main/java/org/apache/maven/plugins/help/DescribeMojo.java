@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -57,6 +58,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -280,20 +282,7 @@ public class DescribeMojo
             }
             finally
             {
-                if ( out != null )
-                {
-                    try
-                    {
-                        out.close();
-                    }
-                    catch ( IOException e )
-                    {
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().debug( "Error closing file output.", e );
-                        }
-                    }
-                }
+                IOUtil.close( out );
             }
 
             if ( getLog().isInfoEnabled() )
@@ -937,10 +926,11 @@ public class DescribeMojo
      *
      * @param descriptionBuffer not null
      * @return <code>true</code> if it implies to describe a plugin, <code>false</code> otherwise.
-     * @throws MojoFailureException if any
+     * @throws MojoFailureException if any reflection exceptions occur or missing components.
+     * @throws MojoExecutionException if any
      */
     private boolean describeCommand( StringBuffer descriptionBuffer )
-        throws MojoFailureException
+        throws MojoFailureException, MojoExecutionException
     {
         if ( cmd.indexOf( ":" ) == -1 )
         {
@@ -1055,12 +1045,13 @@ public class DescribeMojo
      * @param canUsePrefix not null
      * @param isOptionalMojo not null
      * @return MojoDescriptor for the task
-     * @throws MojoFailureException if any
+     * @throws MojoFailureException if any can not invoke the method
+     * @throws MojoExecutionException if no descriptor was found for <code>task</code>
      * @see DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
      */
     private MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
                                               String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
-        throws MojoFailureException
+        throws MojoFailureException, MojoExecutionException
     {
         try
         {
@@ -1074,8 +1065,13 @@ public class DescribeMojo
                                                                     MavenProject.class, String.class,
                                                                     Boolean.TYPE, Boolean.TYPE } );
             m.setAccessible( true );
-            return (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project,
+            MojoDescriptor mojoDescriptor = (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project,
                 invokedVia, Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
+            if ( mojoDescriptor == null )
+            {
+                throw new MojoExecutionException( "No MOJO exists for '" + task + "'." );
+            }
+            return mojoDescriptor;
         }
         catch ( SecurityException e )
         {
@@ -1099,6 +1095,21 @@ public class DescribeMojo
         }
         catch ( InvocationTargetException e )
         {
+            Throwable cause = e.getCause();
+
+            if ( cause instanceof BuildFailureException )
+            {
+                throw new MojoFailureException( "BuildFailureException: " + cause.getMessage() );
+            }
+            else if ( cause instanceof LifecycleExecutionException )
+            {
+                throw new MojoFailureException( "LifecycleExecutionException: " + cause.getMessage() );
+            }
+            else if ( cause instanceof PluginNotFoundException )
+            {
+                throw new MojoFailureException( "PluginNotFoundException: " + cause.getMessage() );
+            }
+
             throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() );
         }
     }
