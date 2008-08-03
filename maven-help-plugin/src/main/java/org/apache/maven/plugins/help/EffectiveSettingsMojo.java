@@ -19,16 +19,12 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.codehaus.plexus.util.WriterFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 
 /**
  * Print out the calculated settings for this project, given any profile enhancement and
@@ -39,7 +35,7 @@ import java.io.Writer;
  * @requiresProject false
  */
 public class EffectiveSettingsMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
     /**
      * The system settings for Maven. This is the instance resulting from
@@ -50,13 +46,6 @@ public class EffectiveSettingsMojo
      * @required
      */
     private Settings settings;
-
-    /**
-     * If specified write the effective settings file out to this path.
-     *
-     * @parameter expression="${output}"
-     */
-    private String output;
 
     /** {@inheritDoc} */
     public void execute()
@@ -75,50 +64,20 @@ public class EffectiveSettingsMojo
             throw new MojoExecutionException( "Cannot serialize Settings to XML.", e );
         }
 
-        if ( output != null && output.trim().length() > 0 )
+        if ( output != null )
         {
-            Writer fWriter = null;
             try
             {
-                File outFile = new File( output ).getAbsoluteFile();
-
-                File dir = outFile.getParentFile();
-
-                if ( !dir.exists() )
-                {
-                    dir.mkdirs();
-                }
-
-                fWriter = WriterFactory.newPlatformWriter( outFile );
-                fWriter.write( sWriter.toString() );
-
-                fWriter.flush();
-
-                if ( getLog().isInfoEnabled() )
-                {
-                    getLog().info( "Effective-settings written to: " + output );
-                }
+                writeFile( output, sWriter.toString() );
             }
             catch ( IOException e )
             {
                 throw new MojoExecutionException( "Cannot write effective-settings to output: " + output, e );
             }
-            finally
+
+            if ( getLog().isInfoEnabled() )
             {
-                if ( fWriter != null )
-                {
-                    try
-                    {
-                        fWriter.close();
-                    }
-                    catch ( IOException e )
-                    {
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().debug( "Cannot close FileWriter to output location: " + output, e );
-                        }
-                    }
-                }
+                getLog().info( "Effective-settings written to: " + output );
             }
         }
         else
@@ -131,15 +90,5 @@ public class EffectiveSettingsMojo
 
             getLog().info( message );
         }
-    }
-
-    public final void setOutput( String output )
-    {
-        this.output = output;
-    }
-
-    public final void setSettings( Settings settings )
-    {
-        this.settings = settings;
     }
 }

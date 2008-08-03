@@ -21,15 +21,12 @@ package org.apache.maven.plugins.help;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +39,7 @@ import java.util.List;
  * @aggregator
  */
 public class EffectivePomMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
     /**
      * The Maven project.
@@ -63,13 +60,6 @@ public class EffectivePomMojo
      * @readonly
      */
     private List projects;
-
-    /**
-     * If specified, write the output to this path.
-     *
-     * @parameter expression="${output}"
-     */
-    private File output;
 
     /** {@inheritDoc} */
     public void execute()
@@ -98,49 +88,23 @@ public class EffectivePomMojo
 
         if ( output != null )
         {
-            Writer fWriter = null;
+            StringBuffer sb = new StringBuffer();
+            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
+            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
+            sb.append( message.toString() );
+
             try
             {
-                File dir = output.getParentFile();
-
-                if ( !dir.exists() )
-                {
-                    dir.mkdirs();
-                }
-
-                fWriter = WriterFactory.newPlatformWriter( output );
-
-                fWriter.write( "Created by: " + getClass().getName() + "\n" );
-                fWriter.write( "Created on: " + new Date() + "\n\n" );
-                fWriter.write( message.toString() );
-
-                fWriter.flush();
-
-                if ( getLog().isInfoEnabled() )
-                {
-                    getLog().info( "Effective-POM written to: " + output );
-                }
+                writeFile( output, sb );
             }
             catch ( IOException e )
             {
                 throw new MojoExecutionException( "Cannot write effective-POM to output: " + output, e );
             }
-            finally
+
+            if ( getLog().isInfoEnabled() )
             {
-                if ( fWriter != null )
-                {
-                    try
-                    {
-                        fWriter.close();
-                    }
-                    catch ( IOException e )
-                    {
-                        if ( getLog().isDebugEnabled() )
-                        {
-                            getLog().debug( "Cannot close FileWriter to output location: " + output, e );
-                        }
-                    }
-                }
+                getLog().info( "Effective-POM written to: " + output );
             }
         }
         else
@@ -190,15 +154,5 @@ public class EffectivePomMojo
             throw new MojoExecutionException( "Cannot serialize POM to XML.", e );
         }
 
-    }
-
-    protected final void setOutput( File output )
-    {
-        this.output = output;
-    }
-
-    protected final void setProjects( List projects )
-    {
-        this.projects = projects;
     }
 }
