@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Display the effective POM for this build, with the active profiles factored in.
  *
- * @version $Id: $
+ * @version $Id$
  * @since 2.0
  * @goal effective-pom
  * @aggregator
