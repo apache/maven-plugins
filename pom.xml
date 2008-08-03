@@ -35,7 +35,7 @@ under the License.
   </description>
 
   <prerequisites>
-    <maven>2.0.10-SNAPSHOT</maven>
+    <maven>2.0.11-SNAPSHOT</maven>
   </prerequisites>
 
   <issueManagement>
