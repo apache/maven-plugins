@@ -1,9 +1,9 @@
  ------
- Using the file name mapping
+ Using File Name Mapping
  ------
  Stephane Nicoll
  ------
- 31 Jan 2008
+ 2008-08-03
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -25,15 +25,27 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Using the file name mapping
+Using File Name Mapping
 
  It might be necessary to customize the file name of libraries and TLD. By default, those resources are stored
- using the following pattern: <<<@\{artifactId\}@-@\{version\}@.@\{extension\}@>>> (if the artifact has
- a classifier it is <<<@\{artifactId\}@-@\{version\}@-@\{classifier\}@.@\{extension\}@>>> of course).
+ using the following pattern:
+
++-----
+@{artifactId}@-@{version}@.@{extension}@
++-----
+
+ If the artifact has a classifier it is of course:
+
++-----
+@{artifactId}@-@{version}@-@{classifier}@.@{extension}@
++-----
 
  The <<<outputFileNameMapping>>> parameter allows you to give a custom pattern. Each token defined in the
  pattern will be replaced with the value for the current Artifact. You can use any property of Artifact and
  ArtifactHandler as a token.
 
- For instance, to store the libraries and TLDs with no versionning, use the following pattern:
- <<<@\{artifactId\}@.@\{extension\}@>>>.
+ For instance, to store the libraries and TLDs with no versioning, use the following pattern:
+
++-----
+@{artifactId}@.@{extension}@
++-----
