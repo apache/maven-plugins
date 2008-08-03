@@ -3,7 +3,8 @@
  ------
  Pete Marvin King
  ------
- 27 June 2006
+ 2008-08-03
+ ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -27,40 +28,40 @@
 
 Usage
 
- There are 4 ways to use the war plugin :
+ There are 4 ways to use the war plugin:
  
- *using the package phase with the project package type as war
+ * using the <<<package>>> phase with the project package type as <<<war>>>
  
- *invocation of the <<<war:war>>> goal.
+ * invocation of the <<<war:war>>> goal
  
- *invocation of the <<<war:exploded>>> goal
+ * invocation of the <<<war:exploded>>> goal
  
- *invocation of the <<<war:inplace>>> goal
+ * invocation of the <<<war:inplace>>> goal
 
  []
 
- <<When using the war goals it is assumed that the compile phase is already done. The war plugin is not responsible
-   for compiling the java sources or copying of the resources.>> 
+ <<Note:>> When using the <<<war:>>> goals it is assumed that the <<<compile>>> phase is already done.
+ The war plugin is not responsible for compiling the java sources or copying of the resources. 
 
-*Using the package phase with the project package type as war / invocation of the <<<war:war>>> goal
+*Using the <<<package>>> phase with the project package type as war / invocation of the <<<war:war>>> goal
 
  This is the common way of using the war plugin. 
- To illustrate, given the <<<pom.xml>>>
+ To illustrate, here's the <<<pom.xml>>> for our project:
     
 +----------+
 <project>
-  [...]
+  ...
   <groupId>com.example.projects</groupId>
   <artifactId>documentedproject</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Documented Project</name>
   <url>http://example.com</url>
-  [...]
+  ...
 </project>
 +----------+
 
- with a project structure
+ The project's structure looks like this:
  
 +----------+
  .
@@ -84,19 +85,19 @@ Usage
                  `-- websource.jsp
 +----------+
 
- and invoking
+ Invoking
  
 +----------+
-   mvn package
+mvn package
 +----------+
 
  or
 
 +----------+
-   mvn compile war:war
+mvn compile war:war
 +----------+ 
 
- generates the war file <<<target/documentedproject-1.0-SNAPSHOT.war>>>.
+ will generate the war file <<<target/documentedproject-1.0-SNAPSHOT.war>>>. Here are the contents of that war file: 
   
 +----------+
 documentedproject-1.0-SNAPSHOT.war
@@ -119,44 +120,45 @@ documentedproject-1.0-SNAPSHOT.war
   |-- index.jsp
   `-- jsp
       `-- websource.jsp
-+----------+    
++----------+
 
 *Invocation of <<<war:exploded>>> goal
  
- To speed up testing during the developement phase, war:explode can be use to generate the war in exploded
+ To speed up testing during the developement phase, <<<war:explode>>> can be use to generate the war in exploded
  form.
- Using the same project above and invoking 
+ Use the same project as above and invoke:
  
 +----------+
-   mvn compile war:exploded
+mvn compile war:exploded
 +----------+
 
- would generate an exploded version of the war in <<<target/documentedproject-1.0-SNAPSHOT>>>
+ This will generate an exploded version of the war in <<<target/documentedproject-1.0-SNAPSHOT>>>.
+ The contents of that directory looks like this:
  
 +----------+
-   documentedproject-1.0-SNAPSHOT
-   |-- META-INF
-   |-- WEB-INF
-   |   |-- classes
-   |   |   |-- com
-   |   |   |   `-- example
-   |   |   |       `-- projects
-   |   |   |           `-- SampleAction.class
-   |   |   `-- images
-   |   |       `-- sampleimage.jpg
-   |   `-- web.xml
-   |-- index.jsp
-   `-- jsp
-       `-- websource.jsp
-+----------+ 
+ documentedproject-1.0-SNAPSHOT
+ |-- META-INF
+ |-- WEB-INF
+ |   |-- classes
+ |   |   |-- com
+ |   |   |   `-- example
+ |   |   |       `-- projects
+ |   |   |           `-- SampleAction.class
+ |   |   `-- images
+ |   |       `-- sampleimage.jpg
+ |   `-- web.xml
+ |-- index.jsp
+ `-- jsp
+     `-- websource.jsp
++----------+
 
- The default directory for the exploded war is <<<target/\<finalName\>>>>. The finalName is usually in the form
- of \<artifact\>-\<version\>. 
- This default directory can be overridden by specifying the webappDirectory plugin parameter.
+ The default directory for the exploded war is <<<target/\<finalName\>>>>. The <<<finalName>>> is usually in the form
+ of <<<\<artifactId\>-\<version\>>>>.
+ This default directory can be overridden by specifying the <<<webappDirectory>>> plugin parameter.
   
 +-------+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
       <plugin>
@@ -164,26 +166,26 @@ documentedproject-1.0-SNAPSHOT.war
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0</version>
         <configuration>
-           <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>    
+          <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>    
         </configuration>
       </plugin>
     </plugins>
   </build>
-  [...]  
+  ...
 </project>
-+-------+  
++-------+
 
 *Invocation of <<<war:inplace>>> goal
  
- Another variation of the <<<war:exploded>>> is the <<<war:inplace>>>. In <<<war:inplace>>> the exploded war is created
- in the webapp source which defaults to <<<src/main/webapp>>>. 
- Using our sample project above, invoking
+ Another variation of <<<war:exploded>>> is <<<war:inplace>>>. With <<<war:inplace>>> the exploded war is created
+ in the webapp source, which defaults to <<<src/main/webapp>>>. 
+ Use our sample project above, and invoke:
  
 +----------+
-   mvn compile war:exploded
+mvn compile war:inplace
 +----------+
 
- would result to
+ This will result to:
  
 +----------+
  .
@@ -192,7 +194,7 @@ documentedproject-1.0-SNAPSHOT.war
  |   `-- main
  |       |-- java
  |       |   `-- com
- |       |       `-- ideal
+ |       |       `-- example
  |       |           `-- projects
  |       |               `-- SampleAction.java
  |       |-- resources
@@ -204,7 +206,7 @@ documentedproject-1.0-SNAPSHOT.war
  |           |-- WEB-INF
  |           |   |-- classes
  |           |   |   |-- com
- |           |   |   |   `-- ideal
+ |           |   |   |   `-- example
  |           |   |   |       `-- projects
  |           |   |   |           `-- SampleAction.class
  |           |   |   `-- images
@@ -216,12 +218,9 @@ documentedproject-1.0-SNAPSHOT.war
  `-- target
      `-- classes
          |-- com
-         |   `-- ideal
+         |   `-- example
          |       `-- projects
          |           `-- SampleAction.class
          `-- images
              `-- sampleimage.jpg
-+----------+ 
- 
- 
-  
++----------+
