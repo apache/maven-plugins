@@ -30,7 +30,7 @@ import java.io.StringWriter;
  * Print out the calculated settings for this project, given any profile enhancement and
  *  the inheritance of the global settings into the user-level settings.
  *
- * @version $Id: $
+ * @version $Id$
  * @since 2.0
  * @goal effective-settings
  * @requiresProject false
