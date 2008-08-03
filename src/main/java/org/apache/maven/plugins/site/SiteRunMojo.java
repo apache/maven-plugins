@@ -45,7 +45,8 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
- * Start the site up, rendering documents as requested for fast editing.
+ * Starts the site up, rendering documents as requested for faster editing.
+ * It uses Jetty as the web server.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

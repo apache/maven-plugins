@@ -19,18 +19,17 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>10</version>
+    <version>11</version>
   </parent>
 
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-site-plugin</artifactId>
-  <version>2.0-beta-8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Site Plugin</name>
+  <version>2.0-beta-8-SNAPSHOT</version>
   <description>
     The Maven Site Plugin is a plugin that generates a site for the current project.
   </description>
@@ -148,6 +147,102 @@ under the License.
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-site-plugin/</url>
   </scm>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- TODO: remove when maven-plugins parent pom 12 is released -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.2.1-SNAPSHOT</version>
+            <configuration>
+              <projectsDirectory>src/it</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>**/**/pom.xml</pomInclude>
+              </pomIncludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <goals>
+                <goal>clean</goal>
+                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
+              </goals>
+              <settingsFile>src/it/settings.xml</settingsFile>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+           </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <configuration>
+              <locales>
+                <locale>ca</locale>
+                <locale>cs</locale>
+                <locale>da</locale>
+                <locale>de</locale>
+                <locale>es</locale>
+                <locale>fr</locale>
+                <locale>hu</locale>
+                <locale>it</locale>
+                <locale>ja</locale>
+                <locale>ko</locale>
+                <locale>nl</locale>
+                <locale>no</locale>
+                <locale>pl</locale>
+                <locale>pt_BR</locale>
+                <locale>sk</locale>
+                <locale>sv</locale>
+                <locale>tr</locale>
+                <locale>zh_CN</locale>
+              </locales>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+  </profiles>
+
   <dependencies>
     <!-- Maven -->
     <dependency>
@@ -249,7 +344,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.0</version>
+      <version>1.0.1</version>
     </dependency>
 
     <!-- Wagon -->
@@ -295,101 +390,16 @@ under the License.
 
     <!-- test -->
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
+      <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>maven.test.skip</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
-            <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
-              <pomIncludes>
-                <pomInclude>**/**/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
-              <goals>
-                <goal>clean</goal>
-                <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
-              </goals>
-              <settingsFile>src/it/settings.xml</settingsFile>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-           </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <properties>
     <doxiaVersion>1.0-beta-1-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-beta-1-SNAPSHOT</doxiaSitetoolsVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
   </properties>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>l10n-maven-plugin</artifactId>
-        <version>1.0-alpha-1</version>
-        <configuration>
-          <locales>
-            <locale>ca</locale>
-            <locale>cs</locale>
-            <locale>da</locale>
-            <locale>de</locale>
-            <locale>es</locale>
-            <locale>fr</locale>
-            <locale>hu</locale>
-            <locale>it</locale>
-            <locale>ja</locale>
-            <locale>ko</locale>
-            <locale>nl</locale>
-            <locale>no</locale>
-            <locale>pl</locale>
-            <locale>pt_BR</locale>
-            <locale>sk</locale>
-            <locale>sv</locale>
-            <locale>tr</locale>
-            <locale>zh_CN</locale>
-          </locales>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

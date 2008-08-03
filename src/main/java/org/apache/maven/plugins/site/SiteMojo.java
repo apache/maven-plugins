@@ -34,7 +34,11 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Generates the project site.
+ * Generates the site for a single project.
+ * <p>
+ * Note that links between module sites in a multi module build will <b>not</b>
+ * work.
+ * </p>
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>

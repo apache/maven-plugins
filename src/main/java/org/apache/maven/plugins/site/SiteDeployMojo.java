@@ -56,16 +56,18 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Deploys the site using scp/file protocol.
- * For scp protocol, website files are packaged into zip archive,
+ * Deploys the generated site using <code>scp</code> or <code>file</code>
+ * protocol to the site specified in the
+ * <code>&lt;distributionManagement&gt;</code> section of the POM.
+ * <p>
+ * For <code>scp</code> protocol, the website files are packaged into zip archive,
  * then the archive is transfered to the remote host, next it is un-archived.
  * This method of deployment should normally be much faster
- * than making a file by file copy.  For file protocol, the files are copied
+ * than making a file by file copy.  For <code>file</code> protocol, the files are copied
  * directly to the destination directory.
+ * </p>
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
  * @version $Id$
@@ -266,20 +268,20 @@ public class SiteDeployMojo
                 String nonProxyHostPrefix = StringUtils.substringBefore( nonProxyHost, "*" );
                 String nonProxyHostSuffix = StringUtils.substringAfter( nonProxyHost, "*" );
                 // prefix*
-                if ( StringUtils.isNotEmpty(nonProxyHostPrefix) && host.startsWith( nonProxyHostPrefix )
-                    && StringUtils.isEmpty(nonProxyHostSuffix) )
+                if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+                    && StringUtils.isEmpty( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
                 // *suffix
-                if ( StringUtils.isEmpty(nonProxyHostPrefix)
-                    && StringUtils.isNotEmpty(nonProxyHostSuffix) && host.endsWith( nonProxyHostSuffix ))
+                if ( StringUtils.isEmpty( nonProxyHostPrefix )
+                    && StringUtils.isNotEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
                 // prefix*suffix
-                if ( StringUtils.isNotEmpty(nonProxyHostPrefix) && host.startsWith( nonProxyHostPrefix )
-                    && StringUtils.isNotEmpty(nonProxyHostSuffix) && host.endsWith( nonProxyHostSuffix ))
+                if ( StringUtils.isNotEmpty( nonProxyHostPrefix ) && host.startsWith( nonProxyHostPrefix )
+                    && StringUtils.isNotEmpty( nonProxyHostSuffix ) && host.endsWith( nonProxyHostSuffix ) )
                 {
                     return null;
                 }
@@ -303,7 +305,8 @@ public class SiteDeployMojo
      * @param log
      * @throws WagonConfigurationException
      */
-    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container, Log log )
+    static void configureWagon( Wagon wagon, String repositoryId, Settings settings, PlexusContainer container,
+                                Log log )
         throws WagonConfigurationException
     {
         // MSITE-25: Make sure that the server settings are inserted
@@ -326,11 +329,13 @@ public class SiteDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator. Wagon configuration cannot be applied.", e );
+                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator." 
+                            + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
+                        throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.",
+                                                               e );
                     }
                     finally
                     {

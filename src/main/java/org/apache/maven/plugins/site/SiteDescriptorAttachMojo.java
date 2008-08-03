@@ -72,7 +72,9 @@ public class SiteDescriptorAttachMojo
         {
             Locale locale = (Locale) iterator.next();
 
-            File descriptorFile = siteTool.getSiteDescriptorFromBasedir( toRelative( project.getBasedir(), siteDirectory.getAbsolutePath() ), basedir, locale );
+            File descriptorFile = siteTool.getSiteDescriptorFromBasedir( toRelative( project.getBasedir(),
+                                                                                     siteDirectory.getAbsolutePath() ),
+                                                                         basedir, locale );
 
             if ( descriptorFile.exists() )
             {
@@ -86,7 +88,8 @@ public class SiteDescriptorAttachMojo
                     String siteDescriptorContent = IOUtil.toString( ReaderFactory.newXmlReader( descriptorFile ) );
 
                     siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent, getInputEncoding(), outputEncoding );
+                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
+                                                                       getInputEncoding(), outputEncoding );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
