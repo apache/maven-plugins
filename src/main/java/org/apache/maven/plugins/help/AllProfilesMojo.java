@@ -266,6 +266,21 @@ public class AllProfilesMojo
             profilesManager.addProfile( profile );
             profilesManager.explicitlyActivate( profile.getId() );
         }
+
+        MavenProject parent = project.getParent();
+        while( parent != null )
+        {
+            Iterator it2 = parent.getModel().getProfiles().iterator();
+            while ( it2.hasNext() )
+            {
+                Profile profile = (Profile) it2.next();
+
+                profilesManager.addProfile( profile );
+                profilesManager.explicitlyActivate( profile.getId() );
+            }
+
+            parent = parent.getParent();
+        }
     }
 
     /**
