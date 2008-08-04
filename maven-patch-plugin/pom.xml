@@ -58,7 +58,8 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.6</version>
+      <!-- NOTE: Can't use newer versions which escape the "<" redirection for patch input on Unix due to PLXUTILS-78 -->
+      <version>1.5.1</version>
     </dependency>
 
     <!-- Others -->
