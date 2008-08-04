@@ -51,6 +51,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  * @since 2.1
  * @goal all-profiles
+ * @requiresProject false
  */
 public class AllProfilesMojo
     extends AbstractHelpMojo
