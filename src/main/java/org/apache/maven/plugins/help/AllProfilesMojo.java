@@ -41,8 +41,8 @@ import org.apache.maven.settings.SettingsUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Displays a list of available profiles under the current project. <p>
- *
+ * Displays a list of available profiles under the current project.
+ * <br/>
  * <b>Note</b>: this Mojo lists <b>all</b> profiles for a project. If a
  * profile comes up with a status <b>inactive</b> then there might be a need to
  * set profile activation switches/property. <p>
@@ -66,8 +66,7 @@ public class AllProfilesMojo
     private List projects;
 
     /**
-     * The current build session instance. This is used for plugin manager API
-     * calls.
+     * The current build session instance. This is used for plugin manager API calls.
      *
      * @parameter expression="${session}"
      * @required
@@ -75,12 +74,7 @@ public class AllProfilesMojo
      */
     private MavenSession session;
 
-    /**
-     * Lists details for all profiles discovered.
-     *
-     * @throws MojoExecutionException if there was a <em>unexpected</em> build error.
-     * @throws MojoFailureException if there was an <em>expected</em> error leading to build failure.
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -182,11 +176,11 @@ public class AllProfilesMojo
     }
 
     /**
-     * Loads up external Profiles using <code>profiles.xml</code> (if any)
-     * located in the current project's <code>${basedir}</code>.
+     * Loads up external Profiles using <code>profiles.xml</code> (if any) located in the current
+     * project's <code>${basedir}</code>.
      *
      * @param profileManager ProfileManager instance to use to load profiles from external Profiles.
-     * @param projectDir location of the current project.
+     * @param projectDir location of the current project, could be null.
      * @throws ProfileActivationException, if there was an error loading profiles.
      */
     private void loadProjectExternalProfiles( ProfileManager profileManager, File projectDir )
@@ -235,10 +229,10 @@ public class AllProfilesMojo
     }
 
     /**
-     * Load profiles from pom.xml.
+     * Load profiles from <code>pom.xml</code>.
      *
-     * @param profilesManager
-     * @param projectDir
+     * @param profilesManager not null
+     * @param project could be null
      */
     private void loadProjectPomProfiles( ProfileManager profilesManager, MavenProject project )
     {
@@ -285,10 +279,10 @@ public class AllProfilesMojo
     }
 
     /**
-     * Load profiles from settings.xml.
+     * Load profiles from <code>settings.xml</code>.
      *
-     * @param profileManager
-     * @param settings
+     * @param profileManager not null
+     * @param settings could be null
      */
     private void loadSettingsProfiles( ProfileManager profileManager, Settings settings )
     {

@@ -38,6 +38,7 @@ public abstract class AbstractHelpMojo
 {
     /**
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
+     * <br/>
      * <b>Note</b>: Could be a relative path.
      *
      * @parameter expression="${output}"
