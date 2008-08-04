@@ -21,7 +21,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>10</version>
+    <version>11</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
@@ -44,16 +44,7 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3.1</version>
         <configuration>
           <excludes>
             <exclude>**/Abstract*TestCase.java</exclude>
@@ -68,6 +59,21 @@
           </systemProperties>
           <argLine>${maven.test.jvmargs}</argLine>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.4.2</version>
+        <executions>
+          <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
+          <execution>
+            <id>generated-helpmojo</id>
+            <configuration>
+              <extractors>
+                <extractor/>
+              </extractors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -135,7 +141,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.5</version>
+      <version>1.5.6</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
