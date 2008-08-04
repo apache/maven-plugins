@@ -600,7 +600,7 @@ public class ApplyMojo
             cli.createArg().setValue( "-E" );
         }
 
-        cli.createArg().setValue( "<" );
+        cli.createArg().setValue( "-i" );
         cli.createArg().setFile( patchFile );
 
         return cli;
