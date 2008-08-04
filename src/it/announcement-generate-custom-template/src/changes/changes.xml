@@ -17,7 +17,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<document>
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <properties>
     <title>Changes report Project</title>
     <author email="zloug@toto.com">Mr Zloug</author>
@@ -37,8 +38,12 @@ under the License.
     </release>
 
     <release version="1.0" date="2005-01-01" description="First release">
-      <action dev="me" type="update">
+      <action dev="me" type="update" issue="MCHANGES-47" due-to="others" due-to-email="others@users.com">
         Uploaded documentation on how to use the plugin.
+        <fixes issue="MCHANGES-88"/>
+        <fixes issue="JIRA-YYY"/>
+        <dueto name="John Doe" email="john@doe.com"/>
+        <dueto name="Jane Doe"/>
       </action>
     </release>
   </body>

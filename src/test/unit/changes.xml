@@ -41,6 +41,10 @@ under the License.
 		<release version="1.0" date="2005-01-01" description="First release">
 			<action dev="me" type="update" date="2008-01-01">
         Uploaded documentation on how to use the plugin.
+        <fixes issue="JIRA-XXX"/>
+        <fixes issue="JIRA-YYY"/>
+        <dueto name="John Doe" email="john@doe.com"/>
+        <dueto name="Jane Doe"/>        
       </action>
 		</release>
 	</body>

@@ -38,12 +38,21 @@
   </dependencies>
   <issueManagement>
     <system>jira</system>
-    <url>http://localhost</url>
+    <url>http://localhost/bla</url>
   </issueManagement>
   <properties>
     <changesPluginVersion>@pom.version@</changesPluginVersion>
   </properties>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>${changesPluginVersion}</version>          
+        </plugin>
+      </plugins>
+    </pluginManagement>    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -71,7 +80,7 @@
         <artifactId>maven-changes-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <issueLinkTemplate>myjira/browse/%ISSUE%</issueLinkTemplate>
+          <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
         </configuration>
         <reportSets>
           <reportSet>

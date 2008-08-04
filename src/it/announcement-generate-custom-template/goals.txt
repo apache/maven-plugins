@@ -1,1 +1,1 @@
-changes:announcement-generate
+changes:changes-validate changes:announcement-generate
