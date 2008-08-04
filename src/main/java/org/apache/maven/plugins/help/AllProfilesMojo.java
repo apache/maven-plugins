@@ -44,27 +44,18 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Displays a list of available profiles under the current project. <p>
  *
- * Note that this Mojo lists <b>all</b> profiles for a project. If a
+ * <b>Note</b>: this Mojo lists <b>all</b> profiles for a project. If a
  * profile comes up with a status <b>inactive</b> then there might be a need to
  * set profile activation switches/property. <p>
  *
- * To view description of this Mojo/Goal.<br>
- * <code>mvn help:describe -Dplugin=help -Dmojo=all-profiles</code> <br>
- * Usage examples:<br>
- * <code><br>mvn help:all-profiles<br></code>
- * <code><br>mvn help:all-profiles -DsomeActivationProperty=activationValue<br></code>
- * <code><br>mvn help:all-profiles -P profile1,profile2,profile3<br></code>
- *
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @version $Id$
+ * @since 2.1
  * @goal all-profiles
- * @description Displays a list of available targets under the current BARE
- *              automated project
  */
 public class AllProfilesMojo
     extends AbstractMojo
 {
-
     /**
      * This is the list of projects currently slated to be built by Maven.
      *
@@ -93,7 +84,6 @@ public class AllProfilesMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
         for ( Iterator iter = projects.iterator(); iter.hasNext(); )
         {
             MavenProject project = (MavenProject) iter.next();
@@ -153,7 +143,6 @@ public class AllProfilesMojo
                     Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
                     getLog().info( "\tProfile Id: " + p.getId() + " (Active: false , Source: " + p.getSource() + ")" );
                 }
-
             }
         }
     }
@@ -162,13 +151,9 @@ public class AllProfilesMojo
      * Loads up external Profiles using <code>profiles.xml</code> (if any)
      * located in the current project's <code>${basedir}</code>.
      *
-     * @param profileManager
-     *            ProfileManager instance to use to load profiles from external
-     *            Profiles.
-     * @param projectDir
-     *            location of the current project.
-     * @throws ProfileActivationException,
-     *             if there was an error loading profiles.
+     * @param profileManager ProfileManager instance to use to load profiles from external Profiles.
+     * @param projectDir location of the current project.
+     * @throws ProfileActivationException, if there was an error loading profiles.
      */
     private void loadProjectExternalProfiles( ProfileManager profileManager, File projectDir )
         throws ProfileActivationException
@@ -211,6 +196,7 @@ public class AllProfilesMojo
 
     /**
      * Load profiles from pom.xml.
+     *
      * @param profilesManager
      * @param projectDir
      */
@@ -239,6 +225,7 @@ public class AllProfilesMojo
 
     /**
      * Load profiles from settings.xml.
+     *
      * @param profileManager
      * @param settings
      */
@@ -262,6 +249,5 @@ public class AllProfilesMojo
             if ( getLog().isDebugEnabled() )
                 getLog().debug( "No settings.xml detected." );
         }
-
     }
 }
