@@ -18,20 +18,25 @@
   under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>11</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-eclipse-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven Eclipse Plugin</name>
   <version>2.5.2-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven Eclipse Plugin</name>
+
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</developerConnection>
@@ -41,42 +46,11 @@
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MECLIPSE</url>
   </issueManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/Abstract*TestCase.java</exclude>
-            <exclude>**/InstallPluginsMojoTest.java</exclude>
-            <exclude>**/projects/**</exclude>
-          </excludes>
-          <systemProperties>
-            <property>
-              <name>maven.home</name>
-              <value>${maven.home}</value>
-            </property>
-          </systemProperties>
-          <argLine>${maven.test.jvmargs}</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.2</version>
-        <executions>
-          <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
-          <execution>
-            <id>generated-helpmojo</id>
-            <configuration>
-              <extractors>
-                <extractor/>
-              </extractors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+
+  <properties>
+    <maven.test.jvmargs>-Xmx256m</maven.test.jvmargs>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -216,7 +190,41 @@
       </exclusions>
     </dependency>
   </dependencies>
-  <properties>
-    <maven.test.jvmargs>-Xmx256m</maven.test.jvmargs>
-  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Abstract*TestCase.java</exclude>
+            <exclude>**/InstallPluginsMojoTest.java</exclude>
+            <exclude>**/projects/**</exclude>
+          </excludes>
+          <systemProperties>
+            <property>
+              <name>maven.home</name>
+              <value>${maven.home}</value>
+            </property>
+          </systemProperties>
+          <argLine>${maven.test.jvmargs}</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.4.2</version>
+        <executions>
+          <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
+          <execution>
+            <id>generated-helpmojo</id>
+            <configuration>
+              <extractors>
+                <extractor/>
+              </extractors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
