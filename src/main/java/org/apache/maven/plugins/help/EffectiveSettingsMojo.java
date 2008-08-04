@@ -19,12 +19,16 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Iterator;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Print out the calculated settings for this project, given any profile enhancement and
@@ -48,17 +52,36 @@ public class EffectiveSettingsMojo
      */
     private Settings settings;
 
+    /**
+     * For security reasons, all passwords are hidden by default. Set this to 'true' to show all passwords.
+     *
+     * @since 2.1
+     * @parameter expression="${showPasswords}" default-value="false"
+     */
+    private boolean showPasswords;
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
+        Settings copySettings;
+        if ( showPasswords )
+        {
+            copySettings = settings;
+        }
+        else
+        {
+            copySettings = copySettings( settings );
+            hidePasswords( copySettings );
+        }
+
         StringWriter sWriter = new StringWriter();
 
         SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
 
         try
         {
-            settingsWriter.write( sWriter, settings );
+            settingsWriter.write( sWriter, copySettings );
         }
         catch ( IOException e )
         {
@@ -91,5 +114,63 @@ public class EffectiveSettingsMojo
 
             getLog().info( message );
         }
+    }
+
+    /**
+     * Hide proxy and server passwords.
+     *
+     * @param aSettings not null
+     */
+    private void hidePasswords( Settings aSettings )
+    {
+        for ( Iterator it = aSettings.getProxies().iterator(); it.hasNext(); )
+        {
+            Proxy proxy = (Proxy) it.next();
+
+            if ( StringUtils.isNotEmpty( proxy.getPassword() ) )
+            {
+                proxy.setPassword( StringUtils.repeat( "*", proxy.getPassword().length() ) );
+            }
+        }
+
+        for ( Iterator it = aSettings.getServers().iterator(); it.hasNext(); )
+        {
+            Server server = (Server) it.next();
+
+            if ( StringUtils.isNotEmpty( server.getPassword() ) )
+            {
+                server.setPassword( StringUtils.repeat( "*", server.getPassword().length() ) );
+            }
+        }
+    }
+
+    /**
+     * TODO: should be replaced by SettingsUtils#copySettings()
+     *
+     * @param settings could be null
+     * @return a new instance of settings or null if settings was null.
+     */
+    public static Settings copySettings( Settings settings )
+    {
+        if ( settings == null )
+        {
+            return null;
+        }
+
+        Settings clone = new Settings();
+        clone.setActiveProfiles( settings.getActiveProfiles() );
+        clone.setInteractiveMode( settings.isInteractiveMode() );
+        clone.setLocalRepository( settings.getLocalRepository() );
+        clone.setMirrors( settings.getMirrors() );
+        clone.setOffline( settings.isOffline() );
+        clone.setPluginGroups( settings.getPluginGroups() );
+        clone.setProfiles( settings.getProfiles() );
+        clone.setProxies( settings.getProxies() );
+        clone.setRuntimeInfo( settings.getRuntimeInfo() );
+        clone.setServers( settings.getServers() );
+        clone.setSourceLevel( settings.getSourceLevel() );
+        clone.setUsePluginRegistry( settings.isUsePluginRegistry() );
+
+        return clone;
     }
 }
