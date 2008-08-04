@@ -449,4 +449,17 @@ public class EarMojoTest
         doTestProject( "project-042", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
     }
 
+
+    /**
+     * Builds an EAR with a custom descriptor location (generatedDescriptorLocation setting).
+     */
+    public void testProject043()
+            throws Exception
+    {
+        final File baseDir = doTestProject("project-043", new String[]{"ejb-sample-one-1.0.jar"});
+        final File expectedApplicationXml = new File(baseDir, "target/custom-descriptor-dir/application.xml");
+        assertTrue("Application.xml file not found", expectedApplicationXml.exists());
+        assertFalse("Application.xml file should not be empty", expectedApplicationXml.length() == 0);
+    }
+
 }
