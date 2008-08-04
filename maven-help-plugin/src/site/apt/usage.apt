@@ -4,7 +4,7 @@
  John Casey
  Maria Odea Ching
  ------
- 2008-08-01
+ 2008-08-04
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -203,4 +203,10 @@ user for any information, or holding up the build waiting for any input. NOTE:
 It's also possible to switch to batch (ie. non-interactive) mode using the '-B'
 command-line option.
 ...
++-----+
+
+* Display all profiles used by Maven
+
++-----+
+# mvn help:all-profiles
 +-----+
