@@ -18,6 +18,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
@@ -25,25 +26,25 @@
   </parent>
 
   <artifactId>maven-patch-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
   <version>1.1-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
   <name>Maven Patch Plugin</name>
   <url>http://maven.apache.org/plugins/maven-patch-plugin/</url>
 
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MPATCH</url>
-  </issueManagement>
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</developerConnection>
     <url>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-patch-plugin/</url>
   </scm>
-
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MPATCH</url>
+  </issueManagement>
 
   <dependencies> 
     <!-- Maven -->
