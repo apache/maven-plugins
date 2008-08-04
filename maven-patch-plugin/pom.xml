@@ -30,7 +30,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>Maven Patch Plugin</name>
-  <url>http://maven.apache.org/plugins/maven-patch-plugin/</url>
+  <description>The Patch Plugin is used to apply patches to source files.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.6</version>
     </dependency>
 
     <!-- Others -->
