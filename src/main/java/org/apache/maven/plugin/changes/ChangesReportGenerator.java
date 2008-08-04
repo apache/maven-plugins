@@ -21,16 +21,19 @@ package org.apache.maven.plugin.changes;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.DueTo;
+import org.apache.maven.plugins.changes.model.FixedIssue;
 import org.apache.maven.plugins.changes.model.Release;
 
 /**
@@ -192,7 +195,7 @@ public class ChangesReportGenerator
         for ( int idx = 0; idx < actionList.size(); idx++ )
         {
             Action action = (Action) actionList.get( idx );
-
+           
             sink.tableRow();
 
             sinkShowTypeIcon( sink, action.getType() );
@@ -201,7 +204,8 @@ public class ChangesReportGenerator
 
             sink.rawText( action.getAction() );
 
-            if ( StringUtils.isNotEmpty( action.getIssue() ) )
+            // no null check needed classes from modello return a new ArrayList
+            if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
             {
                 sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
@@ -213,14 +217,14 @@ public class ChangesReportGenerator
                 }
                 else
                 {
-                    constructIssueLink( action.getIssue(), system, sink );
+                    constructIssueLink( action.getIssue(), system, sink, action.getFixedIssues() );
                 }
                 sink.text( "." );
             }
 
-            if ( StringUtils.isNotEmpty( action.getDueTo() ) )
+            if ( StringUtils.isNotEmpty( action.getDueTo() ) || ( !action.getDueTos().isEmpty() ) )
             {
-                constructDueTo( sink, action, bundle );
+                constructDueTo( sink, action, bundle, action.getDueTos() );
             }
 
             sink.tableCell_();
@@ -466,65 +470,82 @@ public class ChangesReportGenerator
     }
     
     /**
-     * MCHANGES-47 issue can be comma separated
      * @param issue the current String
      */
-    private void constructIssueLink( String issue, String system, Sink sink )
+    private void constructIssueLink( String issue, String system, Sink sink, List fixes )
     {
-        // null check has been done before
-        StringTokenizer tokenizer = new StringTokenizer( issue, "," );
-
-        while ( tokenizer.hasMoreTokens() )
+        
+        if ( StringUtils.isNotEmpty( issue ) )
         {
-            String currentIssueId = tokenizer.nextToken();
+            sink.link( parseIssueLink( issue, system ) );
 
-            sink.link( parseIssueLink( currentIssueId, system ) );
-
-            sink.text( currentIssueId );
+            sink.text( issue );
 
             sink.link_();
+        }
+
+        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        {
+
+            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+            String currentIssueId = fixedIssue.getIssue();
+            if ( StringUtils.isNotEmpty( currentIssueId ) )
+            {
+
+                sink.link( parseIssueLink( currentIssueId, system ) );
+
+                sink.text( currentIssueId );
+
+                sink.link_();
+            }
 
         }
     }
     
     /**
-     * MCHANGES-47 due-to can be comma separated (we will support due-to-email comma separated)
      * 
      * @param sink
      * @param action
      * @param bundle
      */
-    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle )
+    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
     {
-        // null check has been done before
-        StringTokenizer tokenizer = new StringTokenizer( action.getDueTo(), "," );  
        
-        String[] emails = StringUtils.split( action.getDueToEmail(), ',' );
-        if (emails == null)
+        // creat a Map which key : dueTo name, value : dueTo email
+        Map namesEmailMap = new LinkedHashMap();
+        namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
+        
+        for (Iterator iterator = dueTos.iterator();iterator.hasNext();)
         {
-            // NPE free
-            emails = new String[]{""};
+            DueTo dueTo = (DueTo) iterator.next();
+            namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
         }
+        
+        if (namesEmailMap.isEmpty())
+        {
+            return;
+        }
+        
         sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
         int i = 0;
-        while ( tokenizer.hasMoreTokens() )
+        for (Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext();)
         {
-            String currentDueTo = tokenizer.nextToken();
-            String currentDueToEmail = emails.length > i ? emails[i] : null;
+            String currentDueTo = (String) iterator.next();
+            String currentDueToEmail = (String) namesEmailMap.get( currentDueTo );
             i++;
 
             if ( StringUtils.isNotEmpty( currentDueToEmail ) )
             {
                 sinkLink( sink, currentDueTo, "mailto:" + currentDueToEmail );
             }
-            else
+            else if ( StringUtils.isNotEmpty( currentDueTo ) )
             {
                 sink.text( currentDueTo );
             }
 
-            if ( i <= tokenizer.countTokens() )
+            if ( i < namesEmailMap.size() )
             {
-                sink.text( "," );
+                sink.text( ", " );
             }
         }
         

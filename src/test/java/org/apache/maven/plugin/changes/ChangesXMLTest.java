@@ -1,8 +1,13 @@
 package org.apache.maven.plugin.changes;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Action;
+import org.apache.maven.plugins.changes.model.FixedIssue;
+import org.apache.maven.plugins.changes.model.Release;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -139,6 +144,21 @@ public class ChangesXMLTest
         ChangesXML changesXML = new ChangesXML( changesFile, new MockLog() );
         assertNotNull( changesXML.getChangesDocument() );
         assertEquals( "Changes report Project", changesXML.getTitle() );
+
+        List releases = changesXML.getReleaseList();
+        assertEquals( 2, releases.size() );
+        for ( Iterator iterator = releases.iterator(); iterator.hasNext(); )
+        {
+            Release release = (Release) iterator.next();
+            if ( "1.0".equals( release.getVersion() ) )
+            {
+                Action action = (Action) release.getActions().get( 0 );
+                assertEquals( 2, action.getFixedIssues().size() );
+                assertEquals( "JIRA-XXX", ( (FixedIssue) action.getFixedIssues().get( 0 ) ).getIssue() );
+                assertEquals( "JIRA-YYY", ( (FixedIssue) action.getFixedIssues().get( 1 ) ).getIssue() );
+                assertEquals( 2, action.getDueTos().size() );
+            }
+        }
     }
     
 }

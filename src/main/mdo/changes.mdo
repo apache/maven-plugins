@@ -89,7 +89,7 @@ under the License.
       <name>Body</name>
       <version>1.0.0</version>
       <fields>
-        <field xml.listStyle="flat">
+        <field xml.listStyle="flat" xml.tagName="release">
           <name>releases</name>
           <version>1.0.0</version>
           <association>
@@ -134,7 +134,7 @@ under the License.
             A short description of this release.
           </description>
         </field>
-        <field xml.listStyle="flat">
+        <field xml.listStyle="flat" xml.tagName="action">
           <name>actions</name>
           <version>1.0.0</version>
           <association>
@@ -170,7 +170,7 @@ under the License.
         </field>
       </fields>
     </class>        
-    <class>
+    <class xsd.compositor="sequence">
       <name>Action</name>
       <version>1.0.0</version>
       <description>
@@ -260,7 +260,25 @@ under the License.
           <version>1.0.0</version>
           <type>String</type>
           <description>fix date</description>
-        </field>              
+        </field>     
+        <field xml.listStyle="flat" xml.tagName="fixes" xml.associationTagName="fixes">
+          <name>fixedIssues</name>
+          <version>1.0.0</version>
+          <association>
+            <type>FixedIssue</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>A list of fix issues.</description>
+        </field>
+        <field xml.listStyle="flat" xml.tagName="dueto" xml.associationTagName="dueto">
+          <name>dueTos</name>
+          <version>1.0.0</version>
+          <association>
+            <type>DueTo</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>A list of contibutors for this issue.</description>
+        </field>                                 
       </fields>
       <codeSegments>
         <codeSegment>
@@ -277,6 +295,48 @@ under the License.
         </codeSegment>
       </codeSegments>      
     </class>
+    <class xsd.compositor="sequence">
+      <name>DueTo</name>
+      <version>1.0.0</version>
+      <description>
+        Extras Name and Email of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+      </description>
+      <fields>
+        <field xml.attribute="true">
+          <name>name</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>Name of the person to be credited for this change.</description>
+        </field>
+        <field xml.attribute="true">
+          <name>email</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>Name of the person to be credited for this change.</description>
+        </field>        
+      </fields>
+    </class>
+    <class xsd.compositor="sequence">
+      <name>FixedIssue</name>
+      <version>1.0.0</version>
+      <description>
+        A fixed issue.
+      </description>
+      <fields>
+        <field xml.attribute="true">
+          <name>issue</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+              <p>Id of the issue related to this change. This is the id in your issue tracking system.</p>
+              <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplate parameter.</p>
+              <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
+            ]]>
+          </description>          
+        </field>
+      </fields>
+    </class>          
   </classes>
 </model>
 

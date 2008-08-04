@@ -51,6 +51,7 @@ public class ChangesValidatorMojoTest
         File changesXml = new File( getBasedir(), "/src/test/unit/changes.xml" );
         setVariableValueToObject( mojo, "xmlPath", changesXml );
         setVariableValueToObject( mojo, "changesXsdVersion", "1.0.0" );
+        setVariableValueToObject( mojo, "failOnError", Boolean.TRUE );
         mojo.execute();
     }
 
