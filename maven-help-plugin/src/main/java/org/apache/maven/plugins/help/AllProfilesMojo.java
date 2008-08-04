@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.profiles.DefaultMavenProfilesBuilder;
@@ -54,7 +53,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @goal all-profiles
  */
 public class AllProfilesMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
     /**
      * This is the list of projects currently slated to be built by Maven.
@@ -84,11 +83,14 @@ public class AllProfilesMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        StringBuffer descriptionBuffer = new StringBuffer();
+
         for ( Iterator iter = projects.iterator(); iter.hasNext(); )
         {
             MavenProject project = (MavenProject) iter.next();
-            if ( getLog().isInfoEnabled() )
-                getLog().info( "Listing Profiles for Project: " + project.getId() );
+
+            descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( "\n" );
+
             DefaultProfileManager pm = new DefaultProfileManager( session.getContainer() );
 
             // Obtain Profiles from external profiles.xml
@@ -134,15 +136,43 @@ public class AllProfilesMojo
                 for ( Iterator it = activeProfiles.iterator(); it.hasNext(); )
                 {
                     Profile p = (Profile) it.next();
-                    getLog().info( "\tProfile Id: " + p.getId() + " (Active: true , Source: " + p.getSource() + ")" );
+
+                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
                 // display inactive profiles
                 Iterator it = allProfilesByIds.keySet().iterator();
                 while ( it.hasNext() )
                 {
                     Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
-                    getLog().info( "\tProfile Id: " + p.getId() + " (Active: false , Source: " + p.getSource() + ")" );
+
+                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append(  " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
+            }
+        }
+
+        if ( output != null )
+        {
+            try
+            {
+                writeFile( output, descriptionBuffer );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Cannot write profiles description to output: " + output, e );
+            }
+
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Wrote descriptions to: " + output );
+            }
+        }
+        else
+        {
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( descriptionBuffer.toString() );
             }
         }
     }
