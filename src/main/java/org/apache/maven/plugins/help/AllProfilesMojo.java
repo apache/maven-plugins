@@ -100,10 +100,7 @@ public class AllProfilesMojo
             }
             catch ( ProfileActivationException e )
             {
-                String error = "Error obtaining external Profiles.";
-                if ( getLog().isErrorEnabled() )
-                    getLog().error( error, e );
-                throw new MojoExecutionException( error, e );
+                throw new MojoExecutionException( "Error obtaining external Profiles:" + e.getMessage(), e );
             }
 
             // Attempt to obtain settings profiles
@@ -116,19 +113,24 @@ public class AllProfilesMojo
             if ( null == pm.getExplicitlyActivatedIds() || pm.getExplicitlyActivatedIds().size() == 0 )
             {
                 if ( getLog().isWarnEnabled() )
+                {
                     getLog().warn( "No profiles detected!" );
+                }
             }
             else
             {
                 // This feels more like a hack to filter out inactive profiles, there is no 'direct'
                 // way to query activation status on a Profile instance.
                 Map allProfilesByIds = pm.getProfilesById();
+
                 // active Profiles will be a subset of *all* profiles
                 List activeProfiles = project.getActiveProfiles();
                 for ( Iterator itr = activeProfiles.iterator(); itr.hasNext(); )
                 {
                     Profile activeProfile = (Profile) itr.next();
-                    // we already have the active profiles for the project, so remove them from the list of all profiles.
+
+                    // we already have the active profiles for the project, so remove them from the list of all
+                    // profiles.
                     allProfilesByIds.remove( activeProfile.getId() );
                 }
 
@@ -140,6 +142,7 @@ public class AllProfilesMojo
                     descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
+
                 // display inactive profiles
                 Iterator it = allProfilesByIds.keySet().iterator();
                 while ( it.hasNext() )
@@ -147,7 +150,7 @@ public class AllProfilesMojo
                     Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
 
                     descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
-                    descriptionBuffer.append(  " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
+                    descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
             }
         }
@@ -188,39 +191,45 @@ public class AllProfilesMojo
     private void loadProjectExternalProfiles( ProfileManager profileManager, File projectDir )
         throws ProfileActivationException
     {
-        if ( projectDir != null )
+        if ( projectDir == null )
         {
-            if ( getLog().isDebugEnabled() )
-                getLog().debug( "Attempting to read profiles from external profiles.xml..." );
-            try
+            return;
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Attempting to read profiles from external profiles.xml..." );
+        }
+
+        try
+        {
+            DefaultMavenProfilesBuilder profilesBuilder = new DefaultMavenProfilesBuilder();
+            ProfilesRoot root = profilesBuilder.buildProfiles( projectDir );
+            if ( root != null )
             {
-                ProfilesRoot root = null;
-                DefaultMavenProfilesBuilder profilesBuilder = new DefaultMavenProfilesBuilder();
-                root = profilesBuilder.buildProfiles( projectDir );
-                if ( root != null )
+                for ( Iterator it = root.getProfiles().iterator(); it.hasNext(); )
                 {
-                    for ( Iterator it = root.getProfiles().iterator(); it.hasNext(); )
-                    {
-                        org.apache.maven.profiles.Profile rawProfile = (org.apache.maven.profiles.Profile) it.next();
-                        Profile converted = ProfilesConversionUtils.convertFromProfileXmlProfile( rawProfile );
-                        profileManager.addProfile( converted );
-                        profileManager.explicitlyActivate( converted.getId() );
-                    }
+                    org.apache.maven.profiles.Profile rawProfile = (org.apache.maven.profiles.Profile) it.next();
+
+                    Profile converted = ProfilesConversionUtils.convertFromProfileXmlProfile( rawProfile );
+                    profileManager.addProfile( converted );
+                    profileManager.explicitlyActivate( converted.getId() );
                 }
-                else if ( getLog().isDebugEnabled() )
-                    getLog().debug( "ProfilesRoot was found to be NULL" );
             }
-            catch ( IOException e )
+            else if ( getLog().isDebugEnabled() )
             {
-                throw new ProfileActivationException(
-                                                      "Cannot read profiles.xml resource from directory: " + projectDir,
-                                                      e );
+                getLog().debug( "ProfilesRoot was found to be NULL" );
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new ProfileActivationException( "Cannot parse profiles.xml resource from directory: "
-                    + projectDir, e );
-            }
+        }
+        catch ( IOException e )
+        {
+            throw new ProfileActivationException( "Cannot read profiles.xml resource from directory: "
+                + projectDir, e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new ProfileActivationException( "Cannot parse profiles.xml resource from directory: "
+                + projectDir, e );
         }
     }
 
@@ -232,24 +241,30 @@ public class AllProfilesMojo
      */
     private void loadProjectPomProfiles( ProfileManager profilesManager, MavenProject project )
     {
-        if ( null != project )
-        {
-            if ( getLog().isDebugEnabled() )
-                getLog().debug( "Attempting to read profiles from pom.xml..." );
-            // Attempt to obtain the list of profiles from  pom.xml
-            Iterator it = project.getModel().getProfiles().iterator();
-            while ( it.hasNext() )
-            {
-                Profile profile = (Profile) it.next();
-                profilesManager.addProfile( profile );
-                profilesManager.explicitlyActivate( profile.getId() );
-            }
-        }
-        else
+        if ( project == null )
         {
             // shouldn't happen as this mojo requires a project
             if ( getLog().isDebugEnabled() )
+            {
                 getLog().debug( "No pom.xml found to read Profiles from." );
+            }
+
+            return;
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Attempting to read profiles from pom.xml..." );
+        }
+
+        // Attempt to obtain the list of profiles from pom.xml
+        Iterator it = project.getModel().getProfiles().iterator();
+        while ( it.hasNext() )
+        {
+            Profile profile = (Profile) it.next();
+
+            profilesManager.addProfile( profile );
+            profilesManager.explicitlyActivate( profile.getId() );
         }
     }
 
@@ -261,23 +276,29 @@ public class AllProfilesMojo
      */
     private void loadSettingsProfiles( ProfileManager profileManager, Settings settings )
     {
-        if ( null != settings )
+        if ( settings == null )
         {
             if ( getLog().isDebugEnabled() )
-                getLog().debug( "Attempting to read profiles from settings.xml..." );
-            Iterator it = settings.getProfiles().iterator();
-            while ( it.hasNext() )
             {
-                Profile profile = SettingsUtils.convertFromSettingsProfile( (org.apache.maven.settings.Profile) it
-                    .next() );
-                profileManager.addProfile( profile );
-                profileManager.explicitlyActivate( profile.getId() );
-            }
-        }
-        else
-        {
-            if ( getLog().isDebugEnabled() )
                 getLog().debug( "No settings.xml detected." );
+            }
+
+            return;
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Attempting to read profiles from settings.xml..." );
+        }
+
+        Iterator it = settings.getProfiles().iterator();
+        while ( it.hasNext() )
+        {
+            org.apache.maven.settings.Profile rawProfile = (org.apache.maven.settings.Profile) it.next();
+
+            Profile profile = SettingsUtils.convertFromSettingsProfile( rawProfile );
+            profileManager.addProfile( profile );
+            profileManager.explicitlyActivate( profile.getId() );
         }
     }
 }
