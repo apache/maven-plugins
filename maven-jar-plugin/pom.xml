@@ -119,33 +119,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-alpha-3</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <id>ensure-no-container-api</id>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <exclude>org.codehaus.plexus:plexus-component-api</exclude>
-                  </excludes>
-                  <message>The new containers are not supported. You probably added a dependency that is missing the exclusions.</message>
-                </bannedDependencies>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      
-    </plugins>
-  </build>
   <profiles>
     <profile>
       <id>integration-tests</id>
@@ -160,7 +133,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
@@ -200,17 +172,4 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
-  <!-- TODO remove when invoker plugin 1.2 is released -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-    </pluginRepository>
-  </pluginRepositories>   
 </project>
