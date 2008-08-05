@@ -60,7 +60,7 @@ public class AntPropertyHelper
     }
 
     /**
-     * @deprecated use {@link AntPropertyHelper(ExpressionEvaluator, Set, Log)} to resolve maven.dependency.* properties
+     * @deprecated use {@link #AntPropertyHelper(ExpressionEvaluator, Set, Log)} to resolve maven.dependency.* properties
      * @param exprEvaluator
      * @param l
      */
@@ -152,7 +152,7 @@ public class AntPropertyHelper
      * @param name
      * @param user
      * @param mavenProject
-     * @return
+     * @return The property value.
      */
     private Object getPropertyHook( String ns, String name, boolean user, MavenProject mavenProject )
     {
