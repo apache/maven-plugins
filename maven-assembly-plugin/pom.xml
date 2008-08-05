@@ -173,13 +173,6 @@
   <profiles>
     <profile>
       <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>integration-tests</name>
-          <value>true</value>
-        </property>
-      </activation>
-
       <pluginRepositories>
         <pluginRepository>
           <id>apache.snapshots</id>
