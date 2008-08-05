@@ -45,34 +45,6 @@
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-repository-plugin/</url>
   </scm>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-alpha-3</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <id>ensure-no-container-api</id>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <exclude>org.codehaus.plexus:plexus-component-api</exclude>
-                  </excludes>
-                  <message>The new containers are not supported. You probably added a dependency that is missing the exclusions.</message>
-                </bannedDependencies>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
