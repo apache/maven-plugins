@@ -60,8 +60,8 @@ Usage
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -78,7 +78,7 @@ Usage
                   <artifactId>[ artifactId ]</artifactId>
                   <version>[ version ]</version>
                   <type>[ packaging ]</type>
-				  <classifier> [classifier - optional] </classifier>
+                  <classifier> [classifier - optional] </classifier>
                   <overWrite>[ true or false ]</overWrite>
                   <outputDirectory>[ output directory ]</outputDirectory>
                   <destFileName>[ filename ]</destFileName>
@@ -95,20 +95,20 @@ Usage
 </project>
 +---+
   
-	If you intend to configure this mojo for execution on the command line using:
+  If you intend to configure this mojo for execution on the command line using:
 
 +---+
 mvn dependency:copy
 +---+
 
-	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
-		
+  you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+
 +---+
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
@@ -118,7 +118,7 @@ mvn dependency:copy
               <artifactId>[ artifactId ]</artifactId>
               <version>[ version ]</version>
               <type>[ packaging ]</type>
-			  <classifier> [classifier - optional] </classifier>
+              <classifier> [classifier - optional] </classifier>
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
@@ -131,7 +131,7 @@ mvn dependency:copy
   </build>
   [...]
 </project>
-+---+	
++---+
 
 * The <<<dependency:copy-dependencies>>> mojo
 
@@ -159,9 +159,9 @@ mvn dependency:copy
    <<<mvn dependency:copy-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and copy them.
 
-   	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
-   	
-   	NOTE: As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
+  Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
+
+  <<Note:>> As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
    See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
@@ -173,8 +173,8 @@ mvn dependency:copy
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -185,7 +185,7 @@ mvn dependency:copy
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-                <!-- configure the plugin here -->
+              <!-- configure the plugin here -->
             </configuration>
           </execution>
         </executions>
@@ -219,8 +219,8 @@ mvn dependency:copy
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -231,7 +231,7 @@ mvn dependency:copy
               <goal>unpack</goal>
             </goals>
             <configuration>
-                <!-- configure the plugin here -->
+              <!-- configure the plugin here -->
             </configuration>
           </execution>
         </executions>
@@ -242,20 +242,20 @@ mvn dependency:copy
 </project>
 +---+
 
-	If you intend to configure this mojo for execution on the command line using:
+  If you intend to configure this mojo for execution on the command line using:
 
 +---+
 mvn dependency:unpack
 +---+
 
-	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
-	
+  you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+
 +---+
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
@@ -265,7 +265,7 @@ mvn dependency:unpack
               <artifactId>[ artifactId ]</artifactId>
               <version>[ version ]</version>
               <type>[ packaging ]</type>
-			  <classifier> [classifier - optional] </classifier>
+              <classifier> [classifier - optional] </classifier>
               <overWrite>[ true or false ]</overWrite>
               <outputDirectory>[ output directory ]</outputDirectory>
               <destFileName>[ filename ]</destFileName>
@@ -280,7 +280,7 @@ mvn dependency:unpack
   </build>
   [...]
 </project>
-+---+	
++---+
 
 
 * The <<<dependency:unpack-dependencies>>> mojo
@@ -317,9 +317,9 @@ mvn dependency:unpack
    
    Filters can be applied to include or exclude certain file or filesets as necessary
    
-      	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
-      	
-      	NOTE: As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
+   Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc), groupId, artifactId, or a combination of them. 
+
+   <<Note:>> As of 2.0-alpha-5, you may mix includes and excludes of the same category (ie scope). Includes are processed before excludes.
 
    See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
                                       
@@ -330,8 +330,8 @@ mvn dependency:unpack
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -342,7 +342,7 @@ mvn dependency:unpack
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-                <!-- configure the plugin here -->
+              <!-- configure the plugin here -->
             </configuration>
           </execution>
         </executions>
@@ -455,7 +455,7 @@ mvn dependency:purge-local-repository
 mvn dependency:purge-local-repository -Dexclude=org.apache.maven:maven-plugin-api
 +---+
 
-  <<NOTE:>> The <<<exclude>>> parameter is a comma-delimited list of 
+  <<Note:>> The <<<exclude>>> parameter is a comma-delimited list of 
   groupId:artifactId pairs. It has a corresponding List-based parameter -
   <<<excludes>>> - for convenient use inside the POM.
 
@@ -527,8 +527,8 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
   <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -539,7 +539,7 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
               <goal>build-classpath</goal>
             </goals>
             <configuration>
-                <!-- configure the plugin here -->
+              <!-- configure the plugin here -->
             </configuration>
           </execution>
         </executions>
@@ -552,16 +552,16 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 
 * The <<<dependency:analyze>>> mojo
 
-	This mojo performs byte code analysis to determine missing or unused dependencies. This goal is meant to be launched from the command line. It will fork the build and execute test-compile so there are class files to analyze.
-	If you want to bind analyze in your pom, use the <<<dependency:analyze-only>>> mojo instead.
+  This mojo performs byte code analysis to determine missing or unused dependencies. This goal is meant to be launched from the command line. It will fork the build and execute test-compile so there are class files to analyze.
+  If you want to bind analyze in your pom, use the <<<dependency:analyze-only>>> mojo instead.
 
-	This mojo can be executed from the command line:
-	
+  This mojo can be executed from the command line:
+
 +---+
 mvn dependency:analyze
 +---+
-	
-	Sample output:
+
+  Sample output:
 
 +---+
 [INFO] [dependency:analyze]
@@ -572,22 +572,22 @@ mvn dependency:analyze
 
 * The <<<dependency:analyze-dep-mgt>>> mojo
 
-	This mojo looks at the dependencies after final resolution and looks for mismatches in your dependencyManagement section. 
-	In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See {{{http://jira.codehaus.org/browse/MNG-1577}MNG-1577}} for more info.
-	
-	If this mojo detects issues, you should attempt to resolve the discrepancies before upgrading to 2.0.6 to avoid any surprises. This can be done by upgrading or downgrading the version in dependencyManagement to match what is actually
-	being included at runtime, or you can specify a dependency in your project to override what is being included. You can check the results by rerunning this mojo.
-	If you decide to override by using a dependency, be sure to note it so you can remove it later after upgrading to 2.0.6. You could also use the dependency:analyze mojo to uncover this unused direct dependency.
-	
-	This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
-	
-	This mojo can be executed from the command line:
-	
+  This mojo looks at the dependencies after final resolution and looks for mismatches in your dependencyManagement section. 
+  In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See {{{http://jira.codehaus.org/browse/MNG-1577}MNG-1577}} for more info.
+
+  If this mojo detects issues, you should attempt to resolve the discrepancies before upgrading to 2.0.6 to avoid any surprises. This can be done by upgrading or downgrading the version in dependencyManagement to match what is actually
+  being included at runtime, or you can specify a dependency in your project to override what is being included. You can check the results by rerunning this mojo.
+  If you decide to override by using a dependency, be sure to note it so you can remove it later after upgrading to 2.0.6. You could also use the dependency:analyze mojo to uncover this unused direct dependency.
+
+  This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
+
+  This mojo can be executed from the command line:
+
 +---+
 mvn dependency:analyze-dep-mgt
 +---+
 
-	Sample output:
+  Sample output:
 
 +---+
 [INFO] Found Resolved Dependency / DependencyManagement mismatches:
@@ -605,16 +605,16 @@ mvn dependency:analyze-dep-mgt
  
 * The <<<dependency:tree>>> Mojo
 
-	This mojo is used to view the dependency hierarchy of the project currently being built.
-	It will output the resolved tree of dependencies that the Maven build process actually uses.
+  This mojo is used to view the dependency hierarchy of the project currently being built.
+  It will output the resolved tree of dependencies that the Maven build process actually uses.
 
-	This mojo can be executed from the command line:
+  This mojo can be executed from the command line:
 
 +-----+
 mvn dependency:tree
 +-----+
 
-	Optionally, the <<<output>>> parameter can be specified to divert the output to a file:
+  Optionally, the <<<output>>> parameter can be specified to divert the output to a file:
 
 +-----+
 mvn dependency:tree -Doutput=/path/to/file
