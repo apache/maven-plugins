@@ -48,7 +48,7 @@ under the License.
           <description>
             Contains the properties of this document.
           </description>
-        </field> 
+        </field>
         <field>
           <name>body</name>
           <version>1.0.0</version>
@@ -81,7 +81,7 @@ under the License.
           <association>
             <type>Author</type>
             <multiplicity>1</multiplicity>
-          </association>          
+          </association>
         </field>
       </fields>
     </class>
@@ -159,7 +159,7 @@ under the License.
           <description>
             The page author name.
           </description>
-        </field>    
+        </field>
         <field xml.attribute="true" xml.tagName="email">
           <name>authorEmail</name>
           <version>1.0.0</version>
@@ -169,7 +169,7 @@ under the License.
           </description>
         </field>
       </fields>
-    </class>        
+    </class>
     <class xsd.compositor="sequence">
       <name>Action</name>
       <version>1.0.0</version>
@@ -184,7 +184,7 @@ under the License.
           <description>
             A short description of the action taken.
           </description>
-        </field>     
+        </field>
         <field xml.attribute="true">
           <name>dev</name>
           <version>1.0.0</version>
@@ -212,7 +212,7 @@ under the License.
           <description>
             Email of the person to be credited for this change.
           </description>
-        </field>   
+        </field>
         <field xml.attribute="true">
           <name>issue</name>
           <version>1.0.0</version>
@@ -225,7 +225,7 @@ under the License.
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
           </description>
-        </field>                     
+        </field>
         <field xml.attribute="true">
           <name>type</name>
           <version>1.0.0</version>
@@ -254,13 +254,13 @@ under the License.
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
           </description>
-        </field>    
+        </field>
         <field xml.attribute="true">
           <name>date</name>
           <version>1.0.0</version>
           <type>String</type>
           <description>fix date</description>
-        </field>     
+        </field>
         <field xml.listStyle="flat" xml.tagName="fixes" xml.associationTagName="fixes">
           <name>fixedIssues</name>
           <version>1.0.0</version>
@@ -278,28 +278,28 @@ under the License.
             <multiplicity>*</multiplicity>
           </association>
           <description>A list of contibutors for this issue.</description>
-        </field>                                 
+        </field>
       </fields>
       <codeSegments>
         <codeSegment>
           <version>1.0.9+</version>
           <code><![CDATA[
             public static final String ADD_ACTION = "add";
-        
+
             public static final String FIX_ACTION = "fix";
-        
+
             public static final String UPDATE_ACTION = "update";
-        
+
             public static final String REMOVE_ACTION = "remove";
           ]]></code>
         </codeSegment>
-      </codeSegments>      
+      </codeSegments>
     </class>
     <class xsd.compositor="sequence">
       <name>DueTo</name>
       <version>1.0.0</version>
       <description>
-        Extras Name and Email of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+        Name and Email of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
       </description>
       <fields>
         <field xml.attribute="true">
@@ -312,8 +312,8 @@ under the License.
           <name>email</name>
           <version>1.0.0</version>
           <type>String</type>
-          <description>Name of the person to be credited for this change.</description>
-        </field>        
+          <description>Email of the person to be credited for this change.</description>
+        </field>
       </fields>
     </class>
     <class xsd.compositor="sequence">
@@ -333,10 +333,10 @@ under the License.
               <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplate parameter.</p>
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
-          </description>          
+          </description>
         </field>
       </fields>
-    </class>          
+    </class>
   </classes>
 </model>
 
