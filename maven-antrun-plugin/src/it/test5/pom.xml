@@ -22,6 +22,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
+        <version>@pom.version@</version>
         <executions>
           <execution>
             <phase>test</phase>
