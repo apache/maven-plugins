@@ -861,26 +861,25 @@ public class InvokerMojo
     private Properties loadTestProperties( final File basedir )
         throws IOException
     {
-        if ( testProperties == null )
-        {
-            return new Properties();
-        }
-        final File testProperties = new File( basedir, testPropertiesFile );
-
         final Properties testProps = new Properties();
 
-        if ( testProperties.exists() )
+        if ( testPropertiesFile != null )
         {
-            FileInputStream fin = null;
-            try
-            {
-                fin = new FileInputStream( testProperties );
+            final File testProperties = new File( basedir, testPropertiesFile );
 
-                testProps.load( fin );
-            }
-            finally
+            if ( testProperties.exists() )
             {
-                IOUtil.close( fin );
+                InputStream fin = null;
+                try
+                {
+                    fin = new FileInputStream( testProperties );
+
+                    testProps.load( fin );
+                }
+                finally
+                {
+                    IOUtil.close( fin );
+                }
             }
         }
 
