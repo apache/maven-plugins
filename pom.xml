@@ -97,12 +97,6 @@ under the License.
   <profiles>
     <profile>
       <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>!true</value>
-        </property>
-      </activation>
       <build>
         <plugins>
           <plugin>
