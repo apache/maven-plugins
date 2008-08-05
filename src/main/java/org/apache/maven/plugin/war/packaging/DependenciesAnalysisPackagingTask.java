@@ -24,13 +24,11 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.war.util.WebappStructure;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.util.Iterator;
 
 /**
- * Analyses the dependencies of the project with its previous state and update
+ * Analyzes the dependencies of the project with its previous state and update
  * the target directory accordingly.
  *
  * @author Stephane Nicoll
