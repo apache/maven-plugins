@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 Usage
- 
+
   This page provides general usage information along with a basic example.  The plugin
   is commonly used to run and verify integration tests for a project, say a Maven plugin.  This is done using
   the <<<{{{run-mojo.html} invoker:run }}>>> goal. And as a preparation for the integration tests, one usually wants to
@@ -107,9 +107,9 @@ Usage
   Next up, the <<<invoker:run>>> goal will execute during the phase <<<integration-test>>> and will use the configured
   include/exclude patterns to search the directory <<<src/it>>> for IT POMs. Every directory where an IT POM is found
   will be copied over to <<<target/it>>>. Additionally, the IT POMs will be filtered, i.e. expressions like
-  <<<@pom.version@>>> will be replaced with the corresponding values from the POM. This is especially handy to make
-  sure your IT POMs always reference the currently build version of the project artifact. You can also define other
-  properties via the plugin configuration that you which to use for filtering.
+  <<<@pom.version@>>> will be replaced with the corresponding values from the project's POM. This is especially handy to make
+  sure your IT POMs always reference the currently built version of the project artifact. You can also define other
+  properties via the plugin configuration that you wish to use for filtering.
 
   Once the IT POMs have been filtered, a Maven build will be started on them. By default, the Invoker Plugin will execute the
   phase <<<package>>> on the IT POMs but that can be changed globally in the plugin configuration or for an individual
@@ -119,7 +119,7 @@ Usage
   tests use your local repository as a remote repository, avoiding time-consuming downloads from <<<central>>> in order
   to fill up the initially empty staging repository. Please see the example {{{examples/fast-use.html}Fast Invoker Plugin Configuration}}
   for more details on this technique. The output of the IT builds is written to a log file named <<<build.log>>> (e.g.
-  <<<target/it/first-it/build.log>>>) and allows diagnostics in case an integration test failed.
+  <<<target/it/first-it/build.log>>>) and allows diagnostics in case an integration test fails.
 
   When an integration test has finished, the plugin will invoke an optional post build hook script. In the example,
   this is the case for <<<second-it>>> where <<<verify.bsh>>> will be run. The purpose of this script is usally to
