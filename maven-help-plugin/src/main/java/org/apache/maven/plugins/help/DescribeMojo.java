@@ -483,6 +483,12 @@ public class DescribeMojo
                 }
             }
         }
+        else
+        {
+            buffer.append( "\n" );
+            buffer.append( "For more information, use 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "\n" );
+        }
     }
 
     /**
