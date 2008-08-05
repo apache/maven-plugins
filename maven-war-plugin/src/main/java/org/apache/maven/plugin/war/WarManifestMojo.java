@@ -56,7 +56,7 @@ public class WarManifestMojo
     /**
      * Executes the WarMojo on the current project.
      *
-     * @throws MojoExecutionException if an error occured while building the webapp
+     * @throws MojoExecutionException if an error occurred while building the webapp
      */
     public void execute()
         throws MojoExecutionException

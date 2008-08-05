@@ -57,7 +57,7 @@ public class ClassesPackager
      * @param jarArchiver          the jar archiver to use
      * @param project              the related project
      * @param archiveConfiguration the archive configuration to use
-     * @throws MojoExecutionException if an error occured while creating the archive
+     * @throws MojoExecutionException if an error occurred while creating the archive
      */
     public void packageClasses( File classesDirectory, File targetFile, JarArchiver jarArchiver, MavenProject project,
                                 MavenArchiveConfiguration archiveConfiguration )

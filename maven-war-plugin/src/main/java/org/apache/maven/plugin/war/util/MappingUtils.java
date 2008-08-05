@@ -33,7 +33,7 @@ import org.codehaus.plexus.interpolation.ValueSource;
  * <p/>
  * TODO: this comes from the assembly plugin; refactor when it's shared.
  * <p/>
- * The expression might use any fied of the {@link Artifact} interface. Some
+ * The expression might use any field of the {@link Artifact} interface. Some
  * examples might be:
  * <ul>
  * <li>@{artifactId}@-@{version}@.@{extension}@</li>
