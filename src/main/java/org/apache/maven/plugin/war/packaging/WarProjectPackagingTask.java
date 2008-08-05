@@ -205,7 +205,7 @@ public class WarProjectPackagingTask
      * @param webinfDir  the web-inf directory
      * @param metainfDir the meta-inf directory
      * @throws MojoFailureException   if the web.xml is specified but does not exist
-     * @throws MojoExecutionException if an error occured while copying the descriptors
+     * @throws MojoExecutionException if an error occurred while copying the descriptors
      */
     protected void handleDeploymentDescriptors( WarPackagingContext context, File webinfDir, File metainfDir )
         throws MojoFailureException, MojoExecutionException
@@ -275,8 +275,8 @@ public class WarProjectPackagingTask
      *
      * @param context  the war packaging context to use
      * @param resource the resource to copy
-     * @throws IOException            if an error occured while copying the resources
-     * @throws MojoExecutionException if an error occured while retrieving the filter properties
+     * @throws IOException            if an error occurred while copying the resources
+     * @throws MojoExecutionException if an error occurred while retrieving the filter properties
      */
     public void copyResources( WarPackagingContext context, Resource resource )
         throws IOException, MojoExecutionException

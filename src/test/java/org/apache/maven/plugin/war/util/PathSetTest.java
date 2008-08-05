@@ -221,7 +221,7 @@ public class PathSetTest
     /**
      * Test method for 'org.apache.maven.plugin.war.PathSet.addAllFilesInDirectory(File, String)'
      *
-     * @throws IOException if an io error occured
+     * @throws IOException if an io error occurred
      */
     public void testAddAllFilesInDirectory()
         throws IOException
