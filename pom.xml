@@ -23,7 +23,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>12-SNAPSHOT</version>
+    <version>11</version>
   </parent>
 
   <artifactId>maven-invoker-plugin</artifactId>
