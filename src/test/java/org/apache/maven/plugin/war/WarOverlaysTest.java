@@ -572,7 +572,7 @@ public class WarOverlaysTest
      * @param webAppDirectory the webapp directory
      * @param overlayId       the id of the overlay
      * @param filePath        the relative path
-     * @throws IOException if an error occured while reading the files
+     * @throws IOException if an error occurred while reading the files
      */
     protected void assertOverlayedFile( File webAppDirectory, String overlayId, String filePath )
         throws IOException
@@ -594,7 +594,7 @@ public class WarOverlaysTest
      * @param testId          te id of the test
      * @param webAppDirectory the webapp directory
      * @param filePath        the relative path
-     * @throws IOException if an error occured while reading the files
+     * @throws IOException if an error occurred while reading the files
      */
     protected void assertDefaultFileContent( String testId, File webAppDirectory, String filePath )
         throws Exception

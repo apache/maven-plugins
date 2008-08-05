@@ -71,7 +71,7 @@ public abstract class AbstractWarPackagingTask
      * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
      * @param targetPrefix   the prefix to add to the target file name
-     * @throws IOException if an error occured while copying the files
+     * @throws IOException if an error occurred while copying the files
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
                               String targetPrefix, boolean filtered )
@@ -116,7 +116,7 @@ public abstract class AbstractWarPackagingTask
      * @param context        the context to use
      * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
-     * @throws IOException if an error occured while copying the files
+     * @throws IOException if an error occurred while copying the files
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
                               boolean filtered )
@@ -135,7 +135,7 @@ public abstract class AbstractWarPackagingTask
      * @param context        the context to use
      * @param file           the file to copy
      * @param targetFilename the relative path according to the root of the webapp
-     * @throws IOException if an error occured while copying
+     * @throws IOException if an error occurred while copying
      */
     protected void copyFile( String sourceId, final WarPackagingContext context, final File file,
                              String targetFilename )
@@ -185,7 +185,7 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Copy the specified file if the target location has not yet already been
-     * used and filter its content with the configureed filter properties.
+     * used and filter its content with the configured filter properties.
      * <p/>
      * The <tt>targetFileName</tt> is the relative path according to the root of
      * the generated web application.
@@ -195,8 +195,8 @@ public abstract class AbstractWarPackagingTask
      * @param file           the file to copy
      * @param targetFilename the relative path according to the root of the webapp
      * @return true if the file has been copied, false otherwise
-     * @throws IOException            if an error occured while copying
-     * @throws MojoExecutionException if an error occured while retrieving the filter properties
+     * @throws IOException            if an error occurred while copying
+     * @throws MojoExecutionException if an error occurred while retrieving the filter properties
      */
     protected boolean copyFilteredFile( String sourceId, final WarPackagingContext context, File file,
                                         String targetFilename )
@@ -235,7 +235,7 @@ public abstract class AbstractWarPackagingTask
      * @param context         the packaging context
      * @param file            the file to unpack
      * @param unpackDirectory the directory to use for th unpacked file
-     * @throws MojoExecutionException if an error occured while unpacking the file
+     * @throws MojoExecutionException if an error occurred while unpacking the file
      */
     protected void doUnpack( WarPackagingContext context, File file, File unpackDirectory )
         throws MojoExecutionException
