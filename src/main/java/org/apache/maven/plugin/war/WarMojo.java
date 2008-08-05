@@ -131,7 +131,7 @@ public class WarMojo
     /**
      * Executes the WarMojo on the current project.
      *
-     * @throws MojoExecutionException if an error occured while building the webapp
+     * @throws MojoExecutionException if an error occurred while building the webapp
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -164,13 +164,13 @@ public class WarMojo
      * Generates the webapp according to the <tt>mode</tt> attribute.
      *
      * @param warFile the target war file
-     * @throws IOException            if an error occured while copying files
+     * @throws IOException            if an error occurred while copying files
      * @throws ArchiverException      if the archive could not be created
      * @throws ManifestException      if the manifest could not be created
      * @throws DependencyResolutionRequiredException
-     *                                if an error occured while resolving the dependencies
+     *                                if an error occurred while resolving the dependencies
      * @throws MojoExecutionException if the execution failed
-     * @throws MojoFailureException   if a fatal exception occured
+     * @throws MojoFailureException   if a fatal exception occurred
      */
     private void performPackaging( File warFile )
         throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
