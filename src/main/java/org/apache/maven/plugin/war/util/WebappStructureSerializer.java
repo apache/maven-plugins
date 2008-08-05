@@ -57,7 +57,7 @@ public class WebappStructureSerializer
      *
      * @param file the file containing the webapp structure
      * @return the webapp structure
-     * @throws IOException if an error occured while reading the structure
+     * @throws IOException if an error occurred while reading the structure
      */
     public WebappStructure fromXml( File file )
         throws IOException
@@ -83,7 +83,7 @@ public class WebappStructureSerializer
      *
      * @param webappStructure the structure to save
      * @param targetFile      the file to use to save the structure
-     * @throws IOException if an error occured while saving the webapp structure
+     * @throws IOException if an error occurred while saving the webapp structure
      */
     public void toXml( WebappStructure webappStructure, File targetFile )
         throws IOException
