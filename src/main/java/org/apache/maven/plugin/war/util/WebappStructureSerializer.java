@@ -21,11 +21,14 @@ package org.apache.maven.plugin.war.util;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.maven.model.Dependency;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * Serializes {@link WebappStructure} back and forth.
@@ -62,19 +65,16 @@ public class WebappStructureSerializer
     public WebappStructure fromXml( File file )
         throws IOException
     {
-        FileReader reader = null;
+        Reader reader = null;
 
         try
         {
-            reader = new FileReader( file );
+            reader = ReaderFactory.newXmlReader( file );
             return (WebappStructure) xStream.fromXML( reader );
         }
         finally
         {
-            if ( reader != null )
-            {
-                reader.close();
-            }
+            IOUtil.close( reader );
         }
     }
 
@@ -88,7 +88,7 @@ public class WebappStructureSerializer
     public void toXml( WebappStructure webappStructure, File targetFile )
         throws IOException
     {
-        FileWriter writer = null;
+        Writer writer = null;
         try
         {
             if ( !targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs() )
@@ -101,15 +101,12 @@ public class WebappStructureSerializer
             {
                 throw new IOException( "Could not create file[" + targetFile.getAbsolutePath() + "]" );
             }
-            writer = new FileWriter( targetFile );
+            writer = WriterFactory.newXmlWriter( targetFile );
             xStream.toXML( webappStructure, writer );
         }
         finally
         {
-            if ( writer != null )
-            {
-                writer.close();
-            }
+            IOUtil.close( writer );
         }
     }
 }
