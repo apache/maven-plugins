@@ -36,6 +36,9 @@ import org.codehaus.plexus.util.WriterFactory;
 public abstract class AbstractHelpMojo
     extends AbstractMojo
 {
+    /** The maximum length of a display line. */
+    protected static final int LINE_LENGTH = 79;
+
     /**
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
      * <br/>

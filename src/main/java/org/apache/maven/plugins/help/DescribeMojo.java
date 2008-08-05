@@ -442,7 +442,7 @@ public class DescribeMojo
         }
 
         buffer.append( "Plugin: \'" ).append( name ).append( '\'' );
-        buffer.append( "\n-----------------------------------------------" );
+        buffer.append( "\n" ).append( StringUtils.repeat( "-", LINE_LENGTH ) );
         buffer.append( "\nGroup Id:  " ).append( pd.getGroupId() );
         buffer.append( "\nArtifact Id: " ).append( pd.getArtifactId() );
         buffer.append( "\nVersion:     " ).append( pd.getVersion() );
@@ -456,7 +456,7 @@ public class DescribeMojo
         {
             buffer.append( "\nMojos:\n" );
 
-            String line = "\n===============================================";
+            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
 
             for ( Iterator it = pd.getMojos().iterator(); it.hasNext(); )
             {
@@ -538,7 +538,7 @@ public class DescribeMojo
      */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
     {
-        String line = "\n===============================================";
+        String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
 
         buffer.append( "Mojo: \'" ).append( md.getFullGoalName() ).append( '\'' );
         buffer.append( line );
@@ -634,7 +634,7 @@ public class DescribeMojo
         {
             buffer.append( "\nComponent Requirements:\n" );
 
-            String line = "\n-----------------------------------------------";
+            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
 
             int idx = 0;
             for ( Iterator it = reqs.iterator(); it.hasNext(); idx++ )
@@ -679,7 +679,7 @@ public class DescribeMojo
         {
             buffer.append( "\nParameters:" );
 
-            String line = "\n-----------------------------------------------";
+            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
 
             int idx = 0;
             for ( Iterator it = params.iterator(); it.hasNext(); )
