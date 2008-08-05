@@ -38,7 +38,7 @@ public interface WarPackagingTask
      * with the files that have been copied.
      *
      * @param context the packaging context
-     * @throws MojoExecutionException if an error occured
+     * @throws MojoExecutionException if an error occurred
      * @throws MojoFailureException   if the project configuration is invalid
      */
     void performPackaging( WarPackagingContext context )
