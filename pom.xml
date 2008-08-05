@@ -31,8 +31,6 @@ under the License.
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
-    <!-- Not inherited correctly
-  -->
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MDOCCK</url>
