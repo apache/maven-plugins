@@ -200,16 +200,6 @@ under the License.
   <profiles>
 
     <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>integration-tests</name>
-          <value>true</value>
-        </property>
-      </activation>
-    </profile>
-
-    <profile>
       <id>ciProfile</id>
       <activation>
         <property>
