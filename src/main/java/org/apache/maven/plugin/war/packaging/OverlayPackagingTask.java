@@ -108,7 +108,7 @@ public class OverlayPackagingTask
      * @param context the packaging context
      * @param overlay the overlay
      * @return the directory containing the unpacked overlay
-     * @throws MojoExecutionException if an error occured while unpacking the overlay
+     * @throws MojoExecutionException if an error occurred while unpacking the overlay
      */
     protected File unpackOverlay( WarPackagingContext context, Overlay overlay )
         throws MojoExecutionException
