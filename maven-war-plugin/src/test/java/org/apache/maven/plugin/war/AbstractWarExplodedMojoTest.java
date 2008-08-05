@@ -138,7 +138,7 @@ public abstract class AbstractWarExplodedMojoTest
      * Cleans up a directory.
      *
      * @param directory the directory to remove
-     * @throws IOException if an error occured while removing the directory
+     * @throws IOException if an error occurred while removing the directory
      */
     protected void cleanDirectory( File directory )
         throws IOException
