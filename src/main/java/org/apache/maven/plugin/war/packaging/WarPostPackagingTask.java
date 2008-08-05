@@ -38,8 +38,8 @@ public interface WarPostPackagingTask
      * has been packaged.
      *
      * @param context the packaging context
-     * @throws MojoExecutionException if an error occured
-     * @throws MojoFailureException   if a falure occured
+     * @throws MojoExecutionException if an error occurred
+     * @throws MojoFailureException   if a failure occurred
      */
     void performPostPackaging( WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException;
