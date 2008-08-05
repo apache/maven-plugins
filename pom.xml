@@ -118,7 +118,10 @@ under the License.
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>pom.xml</pomExclude>
+                <!-- FIXME: enable this next one once MINVOKER-45 is released -->
+                <pomExclude>tasksattributes-test/pom.xml</pomExclude>
               </pomExcludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
             </configuration>
