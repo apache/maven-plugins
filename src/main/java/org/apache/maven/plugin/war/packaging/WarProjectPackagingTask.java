@@ -220,8 +220,9 @@ public class WarProjectPackagingTask
                 }
                 if ( context.isFilteringDeploymentDescriptors() )
                 {
+                    // TODO: web.xml encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( webXml, new File( webinfDir, "web.xml" ), true,
-                                                           context.getFilterWrappers(), null );
+                                                           context.getFilterWrappers(), "UTF-8" );
                 }
                 else
                 {
@@ -237,8 +238,9 @@ public class WarProjectPackagingTask
                 // if exists we can filter it
                 if ( defaultWebXml.exists() && context.isFilteringDeploymentDescriptors() )
                 {
+                    // TODO: web.xml encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( defaultWebXml, new File( webinfDir, "web.xml" ), true,
-                                                           context.getFilterWrappers(), null );
+                                                           context.getFilterWrappers(), "UTF-8" );
                     context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
                 }
             }
@@ -248,13 +250,14 @@ public class WarProjectPackagingTask
                 String xmlFileName = containerConfigXML.getName();
                 if ( context.isFilteringDeploymentDescriptors() )
                 {
+                    // TODO: XML config file encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( containerConfigXML, new File( metainfDir, xmlFileName ),
-                                                           true, context.getFilterWrappers(), null );
+                                                           true, context.getFilterWrappers(), "UTF-8" );
                 }
                 else
                 {
-                copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ), "META-INF/" + xmlFileName,
-                          true );
+                    copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ),
+                              "META-INF/" + xmlFileName, true );
                 }
                 context.getWebappStructure().getFullStructure().add( META_INF_PATH + "/" + xmlFileName );
             }
