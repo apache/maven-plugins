@@ -35,8 +35,8 @@ Unpacking specific artifacts
  <project>
    [...]
    <build>
-    <plugins>
-      <plugin>
+     <plugins>
+       <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-dependency-plugin</artifactId>
          <executions>
@@ -92,8 +92,8 @@ mvn dependency:unpack
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
