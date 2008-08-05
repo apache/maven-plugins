@@ -210,6 +210,7 @@ public abstract class AbstractWarPackagingTask
             {
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
+                // TODO: add encoding support (null mean platform encoding)
                 context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), null );
             }
             catch ( MavenFilteringException e )
