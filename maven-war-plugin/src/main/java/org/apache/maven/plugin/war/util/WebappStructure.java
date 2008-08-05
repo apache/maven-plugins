@@ -38,7 +38,7 @@ import java.util.Set;
  * set of files it holds.
  * <p/>
  * Note that this structure is persisted to disk at each invocation to
- * store wich owner holds which path (file).
+ * store which owner holds which path (file).
  *
  * @author Stephane Nicoll
  * @version $Id$
@@ -225,7 +225,7 @@ public class WebappStructure
 
     /**
      * Returns the owners. Note that this the returned {@link Set} may be
-     * inconsistent since it represents a persistent cache accross multiple
+     * inconsistent since it represents a persistent cache across multiple
      * invocations.
      * <p/>
      * For instance, if an overlay was removed in this execution, it will be
@@ -268,7 +268,7 @@ public class WebappStructure
 
 
     /**
-     * Analyse the dependencies of the project using the specified callback.
+     * Analyze the dependencies of the project using the specified callback.
      *
      * @param callback the callback to use to report the result of the analysis
      */
@@ -280,7 +280,7 @@ public class WebappStructure
         }
         if ( cache == null )
         {
-            // Could not analyse dependencies without a cache
+            // Could not analyze dependencies without a cache
             return;
         }
 
@@ -492,7 +492,7 @@ public class WebappStructure
          *
          * @param ownerId        the ownerId
          * @param targetFilename the relative path according to the root of the webapp
-         * @throws IOException if an error occured while handling this event
+         * @throws IOException if an error occurred while handling this event
          */
         void registered( String ownerId, String targetFilename )
             throws IOException;
@@ -506,7 +506,7 @@ public class WebappStructure
          *
          * @param ownerId        the ownerId
          * @param targetFilename the relative path according to the root of the webapp
-         * @throws IOException if an error occured while handling this event
+         * @throws IOException if an error occurred while handling this event
          */
         void alreadyRegistered( String ownerId, String targetFilename )
             throws IOException;
@@ -522,7 +522,7 @@ public class WebappStructure
          * @param ownerId        the ownerId
          * @param targetFilename the relative path according to the root of the webapp
          * @param actualOwnerId  the actual owner
-         * @throws IOException if an error occured while handling this event
+         * @throws IOException if an error occurred while handling this event
          */
         void refused( String ownerId, String targetFilename, String actualOwnerId )
             throws IOException;
@@ -539,7 +539,7 @@ public class WebappStructure
          * @param ownerId           the ownerId
          * @param targetFilename    the relative path according to the root of the webapp
          * @param deprecatedOwnerId the previous owner that does not exist anymore
-         * @throws IOException if an error occured while handling this event
+         * @throws IOException if an error occurred while handling this event
          */
         void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
             throws IOException;
@@ -556,7 +556,7 @@ public class WebappStructure
          * @param ownerId        the ownerId
          * @param targetFilename the relative path according to the root of the webapp
          * @param unknownOwnerId the previous owner that does not exist anymore
-         * @throws IOException if an error occured while handling this event
+         * @throws IOException if an error occurred while handling this event
          */
         void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
             throws IOException;
