@@ -26,9 +26,9 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -75,7 +75,7 @@ public class WarManifestMojo
         try
         {
             Manifest mf = ma.getManifest( getProject(), getArchive().getManifest() );
-            printWriter = new PrintWriter( new FileWriter( manifestFile ) );
+            printWriter = new PrintWriter( WriterFactory.newWriter( manifestFile, WriterFactory.UTF_8 ) );
             mf.write( printWriter );
         }
         catch ( ManifestException e )
