@@ -14,7 +14,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -23,6 +23,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
+        <version>@pom.version@</version>
         <executions>
           <execution>
             <phase>test</phase>
