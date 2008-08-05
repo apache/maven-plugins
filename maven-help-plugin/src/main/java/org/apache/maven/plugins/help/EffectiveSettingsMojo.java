@@ -31,8 +31,8 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Print out the calculated settings for this project, given any profile enhancement and
- *  the inheritance of the global settings into the user-level settings.
+ * Displays the calculated settings for this project, given any profile enhancement and the inheritance
+ * of the global settings into the user-level settings.
  *
  * @version $Id$
  * @since 2.0

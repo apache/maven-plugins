@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Lists the profiles which are currently active for this build.
+ * Displays a list of the profiles which are currently active for this build.
  *
  * @version $Id$
  * @since 2.0

@@ -34,7 +34,7 @@ import org.apache.maven.usability.plugin.ExpressionDocumenter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Describes the supported Plugin expressions used by Maven.
+ * Displays the supported Plugin expressions used by Maven.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

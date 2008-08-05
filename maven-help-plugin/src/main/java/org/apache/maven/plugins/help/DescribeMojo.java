@@ -58,64 +58,62 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Describes the attributes of a plugin and/or plugin mojo.
+ * Displays a list of the attributes for a Maven Plugin and/or Mojo (Maven plain Old Java Object).
  *
  * @version $Id$
  * @since 2.0
  * @goal describe
  * @requiresProject false
  * @aggregator
+ * @see <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo?</a>
  */
 public class DescribeMojo
     extends AbstractHelpMojo
 {
     /**
-     * The plugin/mojo to describe. This must be specified in one of three ways:
+     * The Maven Plugin to describe. This must be specified in one of three ways:
      * <br/>
-     * 1. plugin-prefix
-     * 2. groupId:artifactId
-     * 3. groupId:artifactId:version
+     * <ol>
+     * <li>plugin-prefix</li>
+     * <li>groupId:artifactId</li>
+     * <li>groupId:artifactId:version</li>
+     * </ol>
      *
      * @parameter expression="${plugin}" alias="prefix"
      */
     private String plugin;
 
     /**
-     * The plugin groupId to describe.
-     * (Used with artifactId specification).
+     * The Maven Plugin <code>groupId</code> to describe. (Used with artifactId specification).
      *
      * @parameter expression="${groupId}"
      */
     private String groupId;
 
     /**
-     * The plugin artifactId to describe.
-     * (Used with groupId specification).
+     * The Maven Plugin <code>artifactId</code> to describe. (Used with groupId specification).
      *
      * @parameter expression="${artifactId}"
      */
     private String artifactId;
 
     /**
-     * The plugin version to describe.
-     * <br/>
-     * (Used with groupId/artifactId specification).
+     * The Maven Plugin <code>version</code> to describe. (Used with groupId/artifactId specification).
      *
      * @parameter expression="${version}"
      */
     private String version;
 
     /**
-     * The goal name of a mojo to describe within the specified plugin.
-     * If this parameter is specified, only the corresponding mojo will
-     * be described, rather than the whole plugin.
+     * The goal name of a Mojo to describe within the specified Maven Plugin.
+     * If this parameter is specified, only the corresponding Mojo will be described, rather than the whole Plugin.
      *
      * @parameter expression="${mojo}"
      */
     private String mojo;
 
     /**
-     * The plugin manager instance used to resolve plugin descriptors.
+     * The Plugin manager instance used to resolve Plugin descriptors.
      *
      * @component role="org.apache.maven.plugin.PluginManager"
      */
