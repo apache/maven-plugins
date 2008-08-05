@@ -213,7 +213,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.2</version>
         <executions>
           <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
           <execution>
