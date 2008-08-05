@@ -390,9 +390,9 @@ public abstract class AbstractWarMojo
      *
      * @param project         the maven project
      * @param webappDirectory the target directory
-     * @throws MojoExecutionException if an error occured while packaging the webapp
-     * @throws MojoFailureException   if an unexpected error occured while packaging the webapp
-     * @throws IOException            if an error occured while copying the files
+     * @throws MojoExecutionException if an error occurred while packaging the webapp
+     * @throws MojoFailureException   if an unexpected error occurred while packaging the webapp
+     * @throws IOException            if an error occurred while copying the files
      */
     public void buildWebapp( MavenProject project, File webappDirectory )
         throws MojoExecutionException, MojoFailureException, IOException
