@@ -23,6 +23,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -77,13 +78,13 @@ public class EffectivePomMojo
 
                 getEffectivePom( project, message );
 
-                message.append( "\n\n" );
+                message.append( "\n" );
             }
         }
         else
         {
             getEffectivePom( project, message );
-            message.append( "\n\n" );
+            message.append( "\n" );
         }
 
         if ( output != null )
@@ -142,12 +143,12 @@ public class EffectivePomMojo
         {
             pomWriter.write( sWriter, pom );
 
-            message.append( "\n************************************************************************************" );
+            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
             message.append( "\nEffective POM for project \'" + project.getId() + "\'" );
-            message.append( "\n************************************************************************************" );
+            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
             message.append( "\n" );
             message.append( sWriter.toString() );
-            message.append( "\n************************************************************************************" );
+            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
         }
         catch ( IOException e )
         {

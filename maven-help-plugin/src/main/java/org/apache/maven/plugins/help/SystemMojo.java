@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
@@ -45,9 +46,17 @@ public class SystemMojo
     {
         StringBuffer message = new StringBuffer();
 
-        message.append( "===== Platform Details =====" ).append( '\n' );
         message.append( '\n' );
-        message.append( "===== System Properties =====" ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( StringUtils.repeat( "=", 25 ) );
+        message.append( " Platform Properties Details " );
+        message.append( StringUtils.repeat( "=", 25 ) ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( '\n' );
+
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( "System Properties" ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
 
         Properties systemProperties = System.getProperties();
         for ( Iterator it = systemProperties.keySet().iterator(); it.hasNext(); )
@@ -58,7 +67,9 @@ public class SystemMojo
         }
 
         message.append( '\n' ).append( '\n' );
-        message.append( "===== Environment Variables =====" ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( "Environment Variables" ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
         try
         {
             Properties envVars = CommandLineUtils.getSystemEnvVars();
