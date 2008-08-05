@@ -70,7 +70,7 @@ Usage
         <version>${project.version}</version>
         <configuration>
           <projectsDirectory>src/it</projectsDirectory>
-          <cloneProjectsTo>\${project.build.directory}/it</cloneProjectsTo>
+          <cloneProjectsTo>target/it</cloneProjectsTo>
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
