@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
- * Lists the platform details like system properties and environment variables.
+ * Displays a list of the platform details like system properties and environment variables.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Display the effective POM for this build, with the active profiles factored in.
+ * Displays the effective POM for this build, with the active profiles factored in.
  *
  * @version $Id$
  * @since 2.0
