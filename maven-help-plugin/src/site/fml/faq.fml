@@ -30,5 +30,13 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="What_is_a_Mojo">
+      <question>What is a Mojo?</question>
+      <answer>
+        <p>
+          See the Maven FAQ: <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo</a>.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
