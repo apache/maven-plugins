@@ -53,15 +53,15 @@ public class ChangesReportGenerator
      * The token in {@link #issueLink} denoting the issue ID.
      */
     private static final String ISSUE_TOKEN = "%ISSUE%";
-    
+
     private static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
 
     private ChangesXML report;
 
     private String url;
-    
+
     private Map issueLinksPerSystem;
-    
+
     private boolean addActionDate;
 
     public ChangesReportGenerator()
@@ -89,7 +89,7 @@ public class ChangesReportGenerator
 
     /**
      * @deprecated
-     */    
+     */
     public String getIssueLink()
     {
         return (String) issueLinksPerSystem.get( DEFAULT_ISSUE_SYSTEM_KEY );
@@ -104,7 +104,7 @@ public class ChangesReportGenerator
     {
         return url;
     }
-    
+
     public Map getIssueLinksPerSystem()
     {
         return issueLinksPerSystem;
@@ -131,7 +131,7 @@ public class ChangesReportGenerator
 
     /**
      * Checks whether links to the issues can be generated.
-     * 
+     *
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
     public boolean canGenerateIssueLinks( String system )
@@ -152,8 +152,8 @@ public class ChangesReportGenerator
             return false;
         }
         return this.issueLinksPerSystem.containsKey( DEFAULT_ISSUE_SYSTEM_KEY );
-    }    
-    
+    }
+
     public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink, String message )
     {
         sinkBeginReport( sink, bundle );
@@ -185,7 +185,7 @@ public class ChangesReportGenerator
         sinkHeader( sink, bundle.getString( "report.changes.label.changes" ) );
 
         sinkHeader( sink, bundle.getString( "report.changes.label.by" ) );
-        
+
         if ( this.isAddActionDate() )
         {
             sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
@@ -195,7 +195,7 @@ public class ChangesReportGenerator
         for ( int idx = 0; idx < actionList.size(); idx++ )
         {
             Action action = (Action) actionList.get( idx );
-           
+
             sink.tableRow();
 
             sinkShowTypeIcon( sink, action.getType() );
@@ -213,7 +213,7 @@ public class ChangesReportGenerator
                 system = StringUtils.isEmpty( system ) ? DEFAULT_ISSUE_SYSTEM_KEY : system;
                 if ( !canGenerateIssueLinks( system ) )
                 {
-                    sink.text( action.getIssue() );
+                    constructIssueText( action.getIssue(), sink, action.getFixedIssues() );
                 }
                 else
                 {
@@ -230,12 +230,12 @@ public class ChangesReportGenerator
             sink.tableCell_();
 
             sinkCellLink( sink, action.getDev(), "team-list.html#" + action.getDev() );
-            
+
             if ( this.isAddActionDate() )
             {
                 sinkCell( sink, action.getDate() );
             }
-            
+
             sink.tableRow_();
         }
 
@@ -468,13 +468,13 @@ public class ChangesReportGenerator
 
         sink.tableCell_();
     }
-    
+
     /**
-     * @param issue the current String
+     * @param issue The issue specified by attributes
+     * @param fixes The List of issues specified as fixes elements
      */
     private void constructIssueLink( String issue, String system, Sink sink, List fixes )
     {
-        
         if ( StringUtils.isNotEmpty( issue ) )
         {
             sink.link( parseIssueLink( issue, system ) );
@@ -482,16 +482,19 @@ public class ChangesReportGenerator
             sink.text( issue );
 
             sink.link_();
+
+            if ( !fixes.isEmpty() )
+            {
+                sink.text( ", " );
+            }
         }
 
         for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
         {
-
             FixedIssue fixedIssue = (FixedIssue) iterator.next();
             String currentIssueId = fixedIssue.getIssue();
             if ( StringUtils.isNotEmpty( currentIssueId ) )
             {
-
                 sink.link( parseIssueLink( currentIssueId, system ) );
 
                 sink.text( currentIssueId );
@@ -499,33 +502,75 @@ public class ChangesReportGenerator
                 sink.link_();
             }
 
+            if ( iterator.hasNext() )
+            {
+                sink.text( ", " );
+            }
         }
     }
-    
+
     /**
-     * 
+     * @param issue The issue specified by attributes
+     * @param fixes The List of issues specified as fixes elements
+     */
+    private void constructIssueText( String issue, Sink sink, List fixes )
+    {
+        if ( StringUtils.isNotEmpty( issue ) )
+        {
+            sink.text( issue );
+
+            if ( !fixes.isEmpty() )
+            {
+                sink.text( ", " );
+            }
+        }
+
+        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        {
+            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+
+            String currentIssueId = fixedIssue.getIssue();
+            if ( StringUtils.isNotEmpty( currentIssueId ) )
+            {
+                sink.text( currentIssueId );
+            }
+
+            if ( iterator.hasNext() )
+            {
+                sink.text( ", " );
+            }
+        }
+    }
+
+    /**
+     *
      * @param sink
      * @param action
      * @param bundle
      */
     private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
     {
-       
-        // creat a Map which key : dueTo name, value : dueTo email
+
+        // Create a Map with key : dueTo name, value : dueTo email
         Map namesEmailMap = new LinkedHashMap();
-        namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
-        
+
+        // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
+        if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
+        {
+            namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
+        }
+
         for (Iterator iterator = dueTos.iterator();iterator.hasNext();)
         {
             DueTo dueTo = (DueTo) iterator.next();
             namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
         }
-        
+
         if (namesEmailMap.isEmpty())
         {
             return;
         }
-        
+
         sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
         int i = 0;
         for (Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext();)
@@ -548,8 +593,8 @@ public class ChangesReportGenerator
                 sink.text( ", " );
             }
         }
-        
-        sink.text( " ." );
+
+        sink.text( "." );
     }
 
 }

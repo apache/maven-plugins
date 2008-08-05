@@ -37,7 +37,17 @@ under the License.
         <fixes issue="MCHANGES-1"/>
         <fixes issue="JIRA-12"/>
         <dueto name="John Doe" email="john@doe.com"/>
-        <dueto name="Jane Doe"/>        
+        <dueto name="Jane Doe"/>
+      </action>
+      <action dev="you" type="update" system="bugzilla">
+        Handle different issue systems.
+        <fixes issue="bug-12345"/>
+        <dueto name="John Doe" email="john@doe.com"/>
+      </action>
+      <action dev="him" type="update">
+        Updated dependencies.
+        <dueto name="John Doe" email="john@doe.com"/>
+        <dueto name="Jane Doe"/>
       </action>
     </release>
 
