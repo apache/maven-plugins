@@ -43,9 +43,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Displays a list of available profiles under the current project.
  * <br/>
- * <b>Note</b>: this Mojo lists <b>all</b> profiles for a project. If a
+ * <b>Note</b>: it will list <b>all</b> profiles for a project. If a
  * profile comes up with a status <b>inactive</b> then there might be a need to
- * set profile activation switches/property. <p>
+ * set profile activation switches/property.
  *
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @version $Id$
