@@ -34,8 +34,7 @@ How to prepare your dependencies before updating to Maven 2.0.6:
 [INFO] Used declared dependencies:
 [INFO]    org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7:compile
 [INFO]    junit:junit:jar:3.8.1:test
-[INFO]
-org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
+[INFO]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
 [INFO]    org.apache.maven:maven-model:jar:2.0.5:compile
 [INFO]    org.apache.maven:maven-project:jar:2.0.5:compile
 [INFO]    org.apache.maven.shared:file-management:jar:1.1:compile
