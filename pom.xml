@@ -222,10 +222,10 @@ under the License.
   <profiles>
 
     <profile>
-      <id>ciProfile</id>
+      <id>quality-checks</id>
       <activation>
         <property>
-          <name>enableCiProfile</name>
+          <name>quality-checks</name>
           <value>true</value>
         </property>
       </activation>
@@ -236,6 +236,8 @@ under the License.
             <artifactId>maven-docck-plugin</artifactId>
             <executions>
               <execution>
+                <id>docck-check</id>
+                <phase>verify</phase>
                 <goals>
                   <goal>check</goal>
                 </goals>
