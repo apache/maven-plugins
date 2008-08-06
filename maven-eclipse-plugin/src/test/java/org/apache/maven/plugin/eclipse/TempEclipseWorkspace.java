@@ -13,7 +13,7 @@ import org.eclipse.core.internal.localstore.ILocalStoreConstants;
 public class TempEclipseWorkspace
 {
 
-    File workspaceLocation;
+    public File workspaceLocation;
 
     public TempEclipseWorkspace( String testWorkspaceName, boolean usePathToProject )
         throws Exception
