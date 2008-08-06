@@ -103,32 +103,6 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <id>ensure-no-container-api</id>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <exclude>org.codehaus.plexus:plexus-component-api</exclude>
-                  </excludes>
-                  <message>The new containers are not supported. You
-                    probably added a dependency that is missing the exclusions.</message>
-                </bannedDependencies>
-                <!--
-                  <requirePluginVersions><banSnapshots>false</banSnapshots></requirePluginVersions>
-                -->
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <executions>
