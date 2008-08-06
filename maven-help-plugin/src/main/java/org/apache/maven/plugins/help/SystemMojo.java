@@ -40,6 +40,10 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 public class SystemMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
