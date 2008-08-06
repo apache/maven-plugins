@@ -1222,7 +1222,7 @@ public class EclipsePlugin
         if ( getWorkspaceConfiguration().getDefaultClasspathContainer() != null )
         {
             getLog().info(
-                           "Adding default classpath contaigner: " +
+                           "Adding default classpath container: " +
                                getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
         }
