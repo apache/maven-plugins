@@ -19,34 +19,31 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-antrun-plugin</artifactId>
-  <version>1.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-
   <name>Maven AntRun Plugin</name>
+  <version>1.3-SNAPSHOT</version>
   <description>Runs Ant scripts embedded in the POM</description>
-
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MANTRUN</url>
+  </issueManagement>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-antrun-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-antrun-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-antrun-plugin/</url>
   </scm>
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MANTRUN</url>
-  </issueManagement>
 
   <dependencies>
     <dependency>
@@ -60,16 +57,6 @@ under the License.
       <version>2.0.4</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
       <groupId>ant</groupId>
       <artifactId>ant-launcher</artifactId>
       <version>1.6.5</version>
@@ -80,25 +67,12 @@ under the License.
       <artifactId>ant</artifactId>
       <version>1.6.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-embedder</artifactId>
+      <version>2.0.4</version>
+    </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <!-- TODO: remove when maven-plugins parent pom 12 is released -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.4.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-7</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
   <profiles>
     <profile>
@@ -113,56 +87,25 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>pom.xml</pomExclude>
-                <!-- FIXME: enable this next one once MINVOKER-45 is released -->
-                <pomExclude>tasksattributes-test/pom.xml</pomExclude>
+                <pomExclude>test1/pom.xml</pomExclude>
+                <pomExclude>test3/pom.xml</pomExclude>
               </pomExcludes>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
+                <phase>integration-test</phase>
                 <goals>
-                  <goal>install</goal>
                   <goal>run</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- TODO: Remove this plugin execution once MINVOKER-43 is released -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>it-preparation</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <configuration>
-                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <packaging>${project.packaging}</packaging>
-                  <pomFile>${basedir}/pom.xml</pomFile>
-                  <createChecksum>true</createChecksum>
-                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                  <!-- NOTE: must match identifier of real local repository or metadata lookup during ITs will misbehave -->
-                  <localRepositoryId>local</localRepositoryId>
-                </configuration>
               </execution>
             </executions>
           </plugin>
