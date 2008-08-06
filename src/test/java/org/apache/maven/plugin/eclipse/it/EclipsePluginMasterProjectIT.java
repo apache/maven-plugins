@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.it;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,14 +64,14 @@ import org.codehaus.plexus.util.IOUtil;
  * @author Fabrizio Giustina
  * @version $Id$
  */
-public class EclipsePluginMasterProjectTest
-    extends AbstractEclipsePluginTestCase
+public class EclipsePluginMasterProjectIT
+    extends AbstractEclipsePluginIT
 {
 
     protected File basedir;
 
     /**
-     * @see org.apache.maven.plugin.eclipse.AbstractEclipsePluginTestCase#setUp()
+     * @see org.apache.maven.plugin.eclipse.it.AbstractEclipsePluginIT#setUp()
      */
     protected void setUp()
         throws Exception

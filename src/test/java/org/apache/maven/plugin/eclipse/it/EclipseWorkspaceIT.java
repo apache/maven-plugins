@@ -12,7 +12,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.it;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +25,8 @@ import org.codehaus.plexus.util.FileUtils;
 /**
  * @version $Id: $
  */
-public class EclipseWorkspaceTest
-    extends AbstractEclipsePluginTestCase
+public class EclipseWorkspaceIT
+    extends AbstractEclipsePluginIT
 {
 
     private static final String ECLIPSE_JDT_CORE_PREFS_PATH =
