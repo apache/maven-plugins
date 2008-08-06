@@ -155,7 +155,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
@@ -190,33 +189,6 @@ under the License.
                     <pomInclude>ear-it/pom.xml</pomInclude>
                   </pomIncludes>
                   <goalsFile>goals-2.txt</goalsFile>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- TODO: Remove this plugin execution once MINVOKER-43 is released -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>2.2</version>
-            <executions>
-              <execution>
-                <id>it-preparation</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <configuration>
-                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <packaging>${project.packaging}</packaging>
-                  <pomFile>${basedir}/pom.xml</pomFile>
-                  <createChecksum>true</createChecksum>
-                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                  <!-- NOTE: must match identifier of real local repository or metadata lookup during ITs will misbehave -->
-                  <localRepositoryId>local</localRepositoryId>
                 </configuration>
               </execution>
             </executions>
