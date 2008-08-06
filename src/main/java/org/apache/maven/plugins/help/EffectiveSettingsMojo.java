@@ -42,6 +42,10 @@ import org.codehaus.plexus.util.StringUtils;
 public class EffectiveSettingsMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The system settings for Maven. This is the instance resulting from
      * merging global- and user-level settings files.
@@ -59,6 +63,10 @@ public class EffectiveSettingsMojo
      * @parameter expression="${showPasswords}" default-value="false"
      */
     private boolean showPasswords;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -116,6 +124,10 @@ public class EffectiveSettingsMojo
         }
     }
 
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
+
     /**
      * Hide proxy and server passwords.
      *
@@ -150,7 +162,7 @@ public class EffectiveSettingsMojo
      * @param settings could be null
      * @return a new instance of settings or null if settings was null.
      */
-    public static Settings copySettings( Settings settings )
+    private static Settings copySettings( Settings settings )
     {
         if ( settings == null )
         {

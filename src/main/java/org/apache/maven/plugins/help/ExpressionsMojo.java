@@ -47,6 +47,10 @@ public class ExpressionsMojo
 {
     private static final String NO_DESCRIPTION_AVAILABLE = "No description available.";
 
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -105,6 +109,10 @@ public class ExpressionsMojo
             }
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * @return the value of the private static field <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>.
