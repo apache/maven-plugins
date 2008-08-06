@@ -20,16 +20,12 @@ package org.apache.maven.plugin.ant;
  */
 
 import java.io.File;
-import java.io.StringWriter;
 import java.util.Map;
 
 import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
-import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Test cases for 'org.apache.maven.plugin.ant.AntBuildWriterUtil'
@@ -57,7 +53,7 @@ public class AntBuildWriterUtilTest
         maven.setOffline( true );
         maven.start();
 
-        MavenProject project = maven.readProjectWithDependencies( testPom );
+        MavenProject project = maven.readProject( testPom );
 
         assertEquals( AntBuildWriterUtil.getMavenCompilerPluginBasicOption( project, "debug", null ), "true" );
 
@@ -86,7 +82,7 @@ public class AntBuildWriterUtilTest
         maven.setOffline( true );
         maven.start();
 
-        MavenProject project = maven.readProjectWithDependencies( testPom );
+        MavenProject project = maven.readProject( testPom );
 
         assertEquals( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "warName", null ), "mywebapp" );
         assertTrue( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "webXml", null )
@@ -112,7 +108,7 @@ public class AntBuildWriterUtilTest
         maven.setOffline( true );
         maven.start();
 
-        MavenProject project = maven.readProjectWithDependencies( testPom );
+        MavenProject project = maven.readProject( testPom );
 
         assertEquals( AntBuildWriterUtil.getMavenJavadocPluginBasicOption( project, "doclet", null ), "gr.spinellis.umlgraph.doclet.UmlGraphDoc" );
 
