@@ -149,10 +149,10 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getCompileArtifacts()
     {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
                                               Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
                                               false );
-        junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
+        junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );
     }
@@ -162,10 +162,10 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getTestArtifacts()
     {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
                                               Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
                                               false );
-        junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
+        junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );
     }
