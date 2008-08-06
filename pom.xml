@@ -199,9 +199,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>**/Abstract*TestCase.java</exclude>
+            <exclude>**/Abstract*.java</exclude>
             <exclude>**/InstallPluginsMojoTest.java</exclude>
-            <exclude>**/projects/**</exclude>
           </excludes>
           <systemProperties>
             <property>
@@ -212,20 +211,44 @@
           <argLine>${maven.test.jvmargs}</argLine>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
-          <execution>
-            <id>generated-helpmojo</id>
-            <configuration>
-              <extractors>
-                <extractor/>
-              </extractors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/*IT.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <executions>
+              <!-- FIXME: Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
+              <execution>
+                <id>generated-helpmojo</id>
+                <configuration>
+                  <extractors>
+                    <extractor/>
+                  </extractors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

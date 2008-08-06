@@ -1,12 +1,12 @@
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.it;
 
 /**
  * Unit Tests for MyEclipse plugin
  * 
  * @author <a href="mailto:olivier.jacob@gmail.com">Olivier Jacob</a>
  */
-public class MyEclipsePluginTest
-    extends AbstractEclipsePluginTestCase
+public class MyEclipsePluginIT
+    extends AbstractEclipsePluginIT
 {
     /**
      * Web project, no spring/struts/hibernate capability, J2EE 1.3

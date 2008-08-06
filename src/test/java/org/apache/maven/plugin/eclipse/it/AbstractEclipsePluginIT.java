@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.it;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.maven.plugin.eclipse.ExecutionFailedException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
@@ -52,7 +53,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
-public abstract class AbstractEclipsePluginTestCase
+public abstract class AbstractEclipsePluginIT
     extends PlexusTestCase
 {
 
@@ -128,7 +129,7 @@ public abstract class AbstractEclipsePluginTestCase
 
         System.setProperty( "MAVEN_TERMINATE_CMD", "on" );
 
-        synchronized ( AbstractEclipsePluginTestCase.class )
+        synchronized ( AbstractEclipsePluginIT.class )
         {
             if ( !installed )
             {

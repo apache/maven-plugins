@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.it;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
@@ -34,8 +35,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  */
-public class RadPluginTest
-    extends AbstractEclipsePluginTestCase
+public class RadPluginIT
+    extends AbstractEclipsePluginIT
 {
 
     private static final String PROJECTS_BASEDIR = "target/test-classes/projects";
