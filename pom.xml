@@ -82,6 +82,20 @@
   <properties>
     <maven.version>2.0.8</maven.version>
   </properties>
+ 
+   <!--remove when SHITTY is released-->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
   
   <build>
     <plugins>
@@ -249,17 +263,4 @@
     </dependency>
   </dependencies>
 
-  <!--remove when SHITTY is released-->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 </project>
