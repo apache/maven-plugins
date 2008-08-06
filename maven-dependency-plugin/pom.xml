@@ -249,16 +249,6 @@
     </dependency>
   </dependencies>
 
-  <reporting>
-    <outputDirectory>target/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.2</version>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <!--remove when SHITTY is released-->
   <pluginRepositories>
     <pluginRepository>
