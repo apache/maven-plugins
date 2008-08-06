@@ -40,6 +40,10 @@ import org.apache.maven.project.MavenProject;
 public class ActiveProfilesMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * This is the list of projects currently slated to be built by Maven.
      *
@@ -48,6 +52,10 @@ public class ActiveProfilesMojo
      * @readonly
      */
     private List projects;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -93,6 +101,10 @@ public class ActiveProfilesMojo
             }
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Method to get the active profiles for the project
