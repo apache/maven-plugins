@@ -312,8 +312,15 @@ public class DescribeMojo
         }
         else
         {
-            throw new MojoFailureException(
-                                            "You must either specify \'groupId\' and \'artifactId\', or a valid \'plugin\' parameter." );
+            StringBuffer msg = new StringBuffer();
+            msg.append( "You must either specify 'groupId' and 'artifactId' both parameters, or a valid 'plugin' " +
+                    "parameter. For instance:\n" );
+            msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
+            msg.append( "or\n" );
+            msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
+            msg.append( "Try 'mvn help:help -Ddetail=true' for more informations." );
+
+            throw new MojoFailureException( msg.toString() );
         }
 
         if ( descriptor == null && forLookup != null )
