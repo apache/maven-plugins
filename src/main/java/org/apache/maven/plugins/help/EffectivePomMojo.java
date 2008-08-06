@@ -42,6 +42,10 @@ import java.util.List;
 public class EffectivePomMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The Maven project.
      *
@@ -61,6 +65,10 @@ public class EffectivePomMojo
      * @readonly
      */
     private List projects;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -122,6 +130,10 @@ public class EffectivePomMojo
             }
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Method for displaying the effective pom information of the current build

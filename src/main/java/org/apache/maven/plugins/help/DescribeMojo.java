@@ -70,6 +70,71 @@ import org.codehaus.plexus.util.StringUtils;
 public class DescribeMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * The Plugin manager instance used to resolve Plugin descriptors.
+     *
+     * @component role="org.apache.maven.plugin.PluginManager"
+     */
+    private PluginManager pluginManager;
+
+    /**
+     * The project builder instance used to retrieve the super-project instance
+     * in the event there is no current MavenProject instance. Some MavenProject
+     * instance has to be present to use in the plugin manager APIs.
+     *
+     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     */
+    private MavenProjectBuilder projectBuilder;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * The current project, if there is one. This is listed as optional, since
+     * the help plugin should be able to function on its own. If this
+     * parameter is empty at execution time, this Mojo will instead use the
+     * super-project.
+     *
+     * @parameter expression="${project}"
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * The current user system settings for use in Maven. This is used for
+     * plugin manager API calls.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    /**
+     * The current build session instance. This is used for
+     * plugin manager API calls.
+     *
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    private MavenSession session;
+
+    /**
+     * The local repository ArtifactRepository instance. This is used
+     * for plugin manager API calls.
+     *
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
     /**
      * The Maven Plugin to describe. This must be specified in one of three ways:
      * <br/>
@@ -119,63 +184,6 @@ public class DescribeMojo
     private String mojo;
 
     /**
-     * The Plugin manager instance used to resolve Plugin descriptors.
-     *
-     * @component role="org.apache.maven.plugin.PluginManager"
-     */
-    private PluginManager pluginManager;
-
-    /**
-     * The project builder instance used to retrieve the super-project instance
-     * in the event there is no current MavenProject instance. Some MavenProject
-     * instance has to be present to use in the plugin manager APIs.
-     *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
-     */
-    private MavenProjectBuilder projectBuilder;
-
-    /**
-     * The current project, if there is one. This is listed as optional, since
-     * the help plugin should be able to function on its own. If this
-     * parameter is empty at execution time, this Mojo will instead use the
-     * super-project.
-     *
-     * @parameter expression="${project}"
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * The current user system settings for use in Maven. This is used for
-     * plugin manager API calls.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
-
-    /**
-     * The current build session instance. This is used for
-     * plugin manager API calls.
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
-     */
-    private MavenSession session;
-
-    /**
-     * The local repository ArtifactRepository instance. This is used
-     * for plugin manager API calls.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
      * This flag specifies that full (verbose) information should be given.
      *
      * @parameter expression="${full}" default-value="false"
@@ -199,6 +207,10 @@ public class DescribeMojo
      * @since 2.1
      */
     private String cmd;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -244,6 +256,10 @@ public class DescribeMojo
 
         writeDescription( descriptionBuffer );
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Method to write the Mojo description into the output file

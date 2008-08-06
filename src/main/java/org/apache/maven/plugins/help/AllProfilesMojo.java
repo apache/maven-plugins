@@ -56,6 +56,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class AllProfilesMojo
     extends AbstractHelpMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * This is the list of projects currently slated to be built by Maven.
      *
@@ -73,6 +77,10 @@ public class AllProfilesMojo
      * @readonly
      */
     private MavenSession session;
+
+    // ----------------------------------------------------------------------
+    // Public methods
+    // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
     public void execute()
@@ -174,6 +182,10 @@ public class AllProfilesMojo
             }
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
     /**
      * Loads up external Profiles using <code>profiles.xml</code> (if any) located in the current
