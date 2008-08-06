@@ -144,6 +144,11 @@ under the License.
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.1</version>
       </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.2</version>
+        </plugin>
     </plugins>
   </reporting>
 </project>
