@@ -161,8 +161,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <!-- Must be set in maven-parent when released -->
-            <version>1.2.1-SNAPSHOT</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
