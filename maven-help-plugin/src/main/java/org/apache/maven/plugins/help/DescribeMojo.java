@@ -74,9 +74,9 @@ public class DescribeMojo
      * The Maven Plugin to describe. This must be specified in one of three ways:
      * <br/>
      * <ol>
-     * <li>plugin-prefix</li>
-     * <li>groupId:artifactId</li>
-     * <li>groupId:artifactId:version</li>
+     * <li>plugin-prefix, i.e. 'help'</li>
+     * <li>groupId:artifactId, i.e. 'org.apache.maven.plugins:maven-help-plugin'</li>
+     * <li>groupId:artifactId:version, i.e. 'org.apache.maven.plugins:maven-help-plugin:2.0'</li>
      * </ol>
      *
      * @parameter expression="${plugin}" alias="prefix"
@@ -84,21 +84,27 @@ public class DescribeMojo
     private String plugin;
 
     /**
-     * The Maven Plugin <code>groupId</code> to describe. (Used with artifactId specification).
+     * The Maven Plugin <code>groupId</code> to describe.
+     * <br/>
+     * <b>Note</b>: Should be used with <code>artifactId</code> parameter.
      *
      * @parameter expression="${groupId}"
      */
     private String groupId;
 
     /**
-     * The Maven Plugin <code>artifactId</code> to describe. (Used with groupId specification).
+     * The Maven Plugin <code>artifactId</code> to describe.
+     * <br/>
+     * <b>Note</b>: Should be used with <code>groupId</code> parameter.
      *
      * @parameter expression="${artifactId}"
      */
     private String artifactId;
 
     /**
-     * The Maven Plugin <code>version</code> to describe. (Used with groupId/artifactId specification).
+     * The Maven Plugin <code>version</code> to describe.
+     * <br/>
+     * <b>Note</b>: Should be used with <code>groupId/artifactId</code> parameters.
      *
      * @parameter expression="${version}"
      */
@@ -106,7 +112,7 @@ public class DescribeMojo
 
     /**
      * The goal name of a Mojo to describe within the specified Maven Plugin.
-     * If this parameter is specified, only the corresponding Mojo will be described, rather than the whole Plugin.
+     * If this parameter is specified, only the corresponding Mojo (goal) will be described, rather than the whole Plugin.
      *
      * @parameter expression="${mojo}"
      */
@@ -131,7 +137,7 @@ public class DescribeMojo
     /**
      * The current project, if there is one. This is listed as optional, since
      * the help plugin should be able to function on its own. If this
-     * parameter is empty at execution time, this mojo will instead use the
+     * parameter is empty at execution time, this Mojo will instead use the
      * super-project.
      *
      * @parameter expression="${project}"
@@ -170,16 +176,14 @@ public class DescribeMojo
     private ArtifactRepository localRepository;
 
     /**
-     * This flag specifies that full (verbose) information should be
-     * given. Use true/false.
+     * This flag specifies that full (verbose) information should be given.
      *
      * @parameter expression="${full}" default-value="false"
      */
     private boolean full;
 
     /**
-     * This flag specifies that a short list of mojo information should be
-     * given. Use true/false.
+     * This flag specifies that a short list of Mojo information should be given.
      *
      * @parameter expression="${medium}" default-value="false"
      * @since 2.0.2
@@ -188,7 +192,8 @@ public class DescribeMojo
 
     /**
      * A Maven command like a single goal or a single phase following the Maven command line:
-     * <code>mvn [options] [<goal(s)>] [<phase(s)>]</code>
+     * <br/>
+     * <code>mvn [options] [&lt;goal(s)&gt;] [&lt;phase(s)&gt;]</code>
      *
      * @parameter expression="${cmd}"
      * @since 2.1
@@ -241,7 +246,7 @@ public class DescribeMojo
     }
 
     /**
-     * Method to write the mojo description into the output file
+     * Method to write the Mojo description into the output file
      *
      * @param descriptionBuffer contains the description to be written to the file
      * @throws MojoExecutionException
@@ -536,10 +541,10 @@ public class DescribeMojo
     }
 
     /**
-     * Displays information about the plugin mojo
+     * Displays information about the Plugin Mojo
      *
-     * @param md        contains the description of the plugin mojo
-     * @param buffer    the displayed output
+     * @param md contains the description of the Plugin Mojo
+     * @param buffer the displayed output
      */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
     {
@@ -556,11 +561,11 @@ public class DescribeMojo
     }
 
     /**
-     * Displays detailed information about the plugin mojo
+     * Displays detailed information about the Plugin Mojo
      *
-     * @param md                contains the description of the plugin mojo
-     * @param buffer            contains information to be printed or displayed
-     * @param fullDescription   specifies whether all the details about the plugin mojo is to  be displayed
+     * @param md contains the description of the Plugin Mojo
+     * @param buffer contains information to be printed or displayed
+     * @param fullDescription specifies whether all the details about the Plugin Mojo is to  be displayed
      */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
     {
@@ -620,10 +625,10 @@ public class DescribeMojo
     }
 
     /**
-     * Method for displaying the component requirements of the plugin mojo
+     * Method for displaying the component requirements of the Plugin Mojo
      *
-     * @param md        contains the description of the plugin mojo
-     * @param buffer    contains information to be printed or displayed
+     * @param md contains the description of the Plugin Mojo
+     * @param buffer contains information to be printed or displayed
      */
     private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
     {
@@ -665,10 +670,10 @@ public class DescribeMojo
     }
 
     /**
-     * Displays parameter information of the plugin mojo
+     * Displays parameter information of the Plugin Mojo
      *
-     * @param md        contains the description of the plugin mojo
-     * @param buffer    contains information to be printed or displayed
+     * @param md contains the description of the Plugin Mojo
+     * @param buffer contains information to be printed or displayed
      */
     private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
     {
