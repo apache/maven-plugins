@@ -67,16 +67,6 @@ under the License.
   </scm>
   
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.modello</groupId>
-          <artifactId>modello-maven-plugin</artifactId>
-          <!-- Version to bump in parent when released -->
-          <version>1.0-alpha-21-SNAPSHOT</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.codehaus.modello</groupId>
