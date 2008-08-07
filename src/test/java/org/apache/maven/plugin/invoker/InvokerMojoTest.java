@@ -125,7 +125,7 @@ public class InvokerMojoTest
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
         String[] poms = invokerMojo.getPoms();
         System.out.println( Arrays.asList( poms ) );
-        assertEquals( 4, poms.length );
+        assertEquals( 6, poms.length );
     }
 
     public void testAlreadyCloned()
@@ -167,6 +167,37 @@ public class InvokerMojoTest
         assertTrue( new File( cloneProjectsTo, "module" ).isDirectory() );
         assertTrue( new File( cloneProjectsTo, "module-1" ).isDirectory() );
         assertTrue( new File( cloneProjectsTo, "module-1/sub-module" ).isDirectory() );
+    }
+
+    public void testPomLessMavenInvocation()
+        throws Exception
+    {
+        String dirPath = getBasedir() + "/src/test/resources/unit";
+
+        File cloneProjectsTo = new File( getBasedir(), "target/unit" );
+        if ( cloneProjectsTo.exists() )
+        {
+            FileUtils.deleteDirectory( cloneProjectsTo );
+        }
+
+        MavenProjectStub project = new MavenProjectStub();
+        project.setTestClasspathElements( Collections.EMPTY_LIST );
+
+        String pomIndependentMojo = "org.apache.maven.plugins:maven-deploy-plugin:2.4:help";
+
+        InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "goals", Collections.singletonList( pomIndependentMojo ) );
+        setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
+        setVariableValueToObject( invokerMojo, "pomIncludes", Collections.singletonList( "no-pom" ) );
+        setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
+        setVariableValueToObject( invokerMojo, "project", project );
+        setVariableValueToObject( invokerMojo, "settings", new Settings() );
+        setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
+
+        invokerMojo.execute();
+
+        assertTrue( new File( cloneProjectsTo, "no-pom" ).isDirectory() );
+        assertTrue( new File( cloneProjectsTo, "no-pom/build.log" ).isFile() );
     }
 
 }

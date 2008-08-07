@@ -154,17 +154,22 @@ public class InvokerMojo
     private File pom;
 
     /**
-     * Includes for searching the integration test directory. This parameter is meant to be set from the POM.
-     * If this parameter is not set, the plugin will search for all <code>pom.xml</code> files one directory below
-     * {@link #projectsDirectory} (<code>*&#47;pom.xml</code>).
-     *
+     * Include patterns for searching the integration test directory for projects. This parameter is meant to be set
+     * from the POM. If this parameter is not set, the plugin will search for all <code>pom.xml</code> files one
+     * directory below {@link #projectsDirectory} (i.e. <code>*&#47;pom.xml</code>).<br>
+     * <br>
+     * Starting with version 1.3, mere directories can also be matched by these patterns. For example, the include
+     * pattern <code>*</code> will run Maven builds on all immediate sub directories of {@link #projectsDirectory},
+     * regardless if they contain a <code>pom.xml</code>. This allows to perform builds that need/should not depend on
+     * the existence of a POM.
+     * 
      * @parameter
      */
     private List pomIncludes = Collections.singletonList( "*/pom.xml" );
 
     /**
-     * Excludes for searching the integration test directory. This parameter is meant to be set from the POM. By
-     * default, no POM files are excluded.
+     * Exclude patterns for searching the integration test directory. This parameter is meant to be set from the POM.
+     * By default, no POM files are excluded.
      * 
      * @parameter
      */
@@ -279,7 +284,7 @@ public class InvokerMojo
      * Specify this parameter to run individual tests by file name, overriding the <code>pomIncludes</code>
      * and <code>pomExcludes</code> parameters.  Each pattern you specify here will be used to create an 
      * include pattern formatted like <code>${projectsDirectory}/${invoker.test}</code>, 
-     * so you can just type "-Dinvoker.test=MyTest" to run a single it in ${projectsDirectory}/${invoker.test}".  
+     * so you can just type "-Dinvoker.test=MyTest" to run a single build in ${projectsDirectory}/MyTest".  
      * 
      * @parameter expression="${invoker.test}"
      * @since 1.1
@@ -514,23 +519,33 @@ public class InvokerMojo
         }
     }
 
-    private void cloneProjects( String[] includedPoms )
+    /**
+     * Copies the specified IT projects to the directory given by {@link #cloneProjectsTo}. A project may either be
+     * denoted by a path to a POM file or merely by a path to a base directory.
+     * 
+     * @param includedProjects The paths to the IT projects, relative to the projects directory, must not be
+     *            <code>null</code>.
+     * @throws IOException The the projects could not be copied.
+     */
+    private void cloneProjects( String[] includedProjects )
         throws IOException
     {
         List clonedSubpaths = new ArrayList();
 
-        for ( int i = 0; i < includedPoms.length; i++ )
+        for ( int i = 0; i < includedProjects.length; i++ )
         {
-            String subpath = includedPoms[i];
-            int lastSep = subpath.lastIndexOf( File.separator );
-
-            if ( lastSep > -1 )
+            String subpath = includedProjects[i];
+            if ( !new File( projectsDirectory, subpath ).isDirectory() )
             {
-                subpath = subpath.substring( 0, lastSep );
-            }
-            else
-            {
-                subpath = ".";
+                int lastSep = subpath.lastIndexOf( File.separator );
+                if ( lastSep > -1 )
+                {
+                    subpath = subpath.substring( 0, lastSep );
+                }
+                else
+                {
+                    subpath = ".";
+                }
             }
 
             // avoid copying subdirs that are already cloned.
@@ -586,8 +601,13 @@ public class InvokerMojo
             scanner.addDefaultExcludes();
         }
         scanner.scan();
-        
-        String [] includedFiles = scanner.getIncludedFiles();
+
+        /*
+         * NOTE: Make sure the destination directory is always there (even if empty) to support POM-less ITs.
+         */
+        destDir.mkdirs();
+
+        String[] includedFiles = scanner.getIncludedFiles();
         for ( int i = 0; i < includedFiles.length; ++i )
         {
             File sourceFile = new File( sourceDir, includedFiles[ i ] );
@@ -611,17 +631,47 @@ public class InvokerMojo
         return false;
     }
 
-    private void runBuild( final File projectsDir, final String pom, final List failures )
+    /**
+     * Runs the specified IT project.
+     * 
+     * @param projectsDir The base directory of all IT projects, must not be <code>null</code>.
+     * @param project The relative path to the IT project, either to a POM file or merely to a directory, must not be
+     *            <code>null</code>.
+     * @param failures The list to record build failures in, must not be <code>null</code>.
+     * @throws MojoExecutionException If the IT project could not be launched.
+     */
+    private void runBuild( final File projectsDir, String project, final List failures )
         throws MojoExecutionException
     {
+        File pomFile = new File( projectsDir, project );
+        File basedir;
+        if ( pomFile.isDirectory() )
+        {
+            basedir = pomFile;
+            pomFile = new File( basedir, "pom.xml" );
+            if ( !pomFile.exists() )
+            {
+                pomFile = null;
+            }
+            else
+            {
+                project += File.separator + "pom.xml";
+            }
+        }
+        else
+        {
+            basedir = pomFile.getParentFile();
+        }
+        File interpolatedPomFile = null;
+        if ( pomFile != null )
+        {
+            interpolatedPomFile = buildInterpolatedFile( pomFile, basedir, "interpolated-pom.xml" );
+        }
 
-        File pomFile = new File( projectsDir, pom );
-        final File basedir = pomFile.getParentFile();
-        File interpolatedPomFile = buildInterpolatedFile( pomFile, basedir, "interpolated-pom.xml" );
         FileLogger logger = null;
         try
         {
-            getLog().info( "Building: " + pom );
+            getLog().info( "Building: " + project );
 
             final File outputLog = new File( basedir, "build.log" );
 
@@ -659,17 +709,17 @@ public class InvokerMojo
                     getLog().debug( "Error initializing build logfile in: " + outputLog, e );
                     getLog().info( "...FAILED[could not initialize logfile in: " + outputLog + "]" );
 
-                    failures.add( pom );
+                    failures.add( project );
 
                     return;
                 }
             }
 
-            if ( !prebuild( basedir, interpolatedPomFile, failures, logger ) )
+            if ( !prebuild( basedir, logger ) )
             {
                 getLog().info( "...FAILED[pre-build script returned false]" );
 
-                failures.add( pom );
+                failures.add( project );
 
                 return;
             }
@@ -680,11 +730,11 @@ public class InvokerMojo
 
             if ( ( invocationGoals.size() == 1 ) && "_default".equals( invocationGoals.get( 0 ) ) )
             {
-                getLog().debug( "Executing default goal for project in: " + pom );
+                getLog().debug( "Executing default goal for project in: " + project );
             }
             else
             {
-                getLog().debug( "Executing goals: " + invocationGoals + " for project in: " + pom );
+                getLog().debug( "Executing goals: " + invocationGoals + " for project in: " + project );
 
                 request.setGoals( invocationGoals );
             }
@@ -717,7 +767,7 @@ public class InvokerMojo
                 getLog().debug( "Error reading test-properties file in: " + testPropertiesFile, e );
                 getLog().info( "...FAILED[error reading test properties in: " + testPropertiesFile + "]" );
 
-                failures.add( pom );
+                failures.add( project );
 
                 return;
             }
@@ -751,7 +801,10 @@ public class InvokerMojo
                 request.setOutputHandler( logger );
             }
 
-            request.setPomFile( interpolatedPomFile );
+            if ( interpolatedPomFile != null )
+            {
+                request.setPomFile( interpolatedPomFile );
+            }
 
             request.setProfiles( getProfiles( basedir ) );
 
@@ -788,7 +841,7 @@ public class InvokerMojo
                 getLog().debug( "Error invoking Maven: " + e.getMessage(), e );
                 getLog().info( "...FAILED[error invoking Maven]" );
 
-                failures.add( pom );
+                failures.add( project );
 
                 return;
             }
@@ -814,7 +867,7 @@ public class InvokerMojo
                     getLog().info( buffer.toString() );
                 }
 
-                failures.add( pom );
+                failures.add( project );
             }
             else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
             {
@@ -833,16 +886,16 @@ public class InvokerMojo
                     getLog().info( buffer.toString() );
                 }
 
-                failures.add( pom );
+                failures.add( project );
             }
-            else if ( !verify( basedir, interpolatedPomFile, failures, logger ) )
+            else if ( !verify( basedir, logger ) )
             {
                 if ( !suppressSummaries )
                 {
                     getLog().info( "...FAILED[verify script returned false]." );
                 }
 
-                failures.add( pom );
+                failures.add( project );
             }
             else if ( !suppressSummaries )
             {
@@ -886,7 +939,7 @@ public class InvokerMojo
         return testProps;
     }
 
-    private boolean verify( final File basedir, final File pom, final List failures, final FileLogger logger )
+    private boolean verify( final File basedir, final FileLogger logger )
     {
         boolean result = true;
 
@@ -988,7 +1041,7 @@ public class InvokerMojo
         return scriptResult;
     }
 
-    private boolean prebuild( final File basedir, final File pom, final List failures, final FileLogger logger )
+    private boolean prebuild( final File basedir, final FileLogger logger )
     {
         boolean result = true;
 
@@ -1054,8 +1107,7 @@ public class InvokerMojo
             for ( int i = 0, size = testRegexes.length; i < size; i++ )
             {
                 // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
-                includes.add( testRegexes[i].endsWith( "pom.xml" ) ? testRegexes[i] : testRegexes[i]
-                    + File.separatorChar + "pom.xml" );
+                includes.add( testRegexes[i] );
             }
 
             final FileSet fs = new FileSet();
@@ -1064,11 +1116,14 @@ public class InvokerMojo
             //fs.setExcludes( pomExcludes );
             fs.setDirectory( projectsDirectory.getCanonicalPath() );
             fs.setFollowSymlinks( false );
-            fs.setUseDefaultExcludes( false );
+            fs.setUseDefaultExcludes( true );
 
             final FileSetManager fsm = new FileSetManager( getLog() );
 
-            poms = fsm.getIncludedFiles( fs );
+            List included = new ArrayList();
+            included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
+            included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
+            poms = (String[]) included.toArray( new String[included.size()] );
         }
         else
         {
@@ -1078,11 +1133,14 @@ public class InvokerMojo
             fs.setExcludes( pomExcludes );
             fs.setDirectory( projectsDirectory.getCanonicalPath() );
             fs.setFollowSymlinks( false );
-            fs.setUseDefaultExcludes( false );
+            fs.setUseDefaultExcludes( true );
 
             final FileSetManager fsm = new FileSetManager( getLog() );
 
-            poms = fsm.getIncludedFiles( fs );
+            List included = new ArrayList();
+            included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
+            included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
+            poms = (String[]) included.toArray( new String[included.size()] );
         }
 
         poms = normalizePomPaths( poms );
