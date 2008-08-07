@@ -91,14 +91,7 @@
 
   <profiles>
     <profile>
-      <id>integration-tests</id>
-
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>!true</value>
-        </property>
-      </activation>
+      <id>run-its</id>
 
       <properties>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>

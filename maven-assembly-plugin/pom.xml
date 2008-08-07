@@ -168,13 +168,7 @@
 
   <profiles>
     <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>!true</value>
-        </property>
-      </activation>
+      <id>run-its</id>
       <pluginRepositories>
         <pluginRepository>
           <id>apache.snapshots</id>
