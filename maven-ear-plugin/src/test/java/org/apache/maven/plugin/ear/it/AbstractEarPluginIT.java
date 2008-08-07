@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ear;
+package org.apache.maven.plugin.ear.it;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,7 +40,7 @@ import java.util.Properties;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-public abstract class AbstractEarPluginTestCase
+public abstract class AbstractEarPluginIT
     extends TestCase
 {
 
