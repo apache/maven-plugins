@@ -149,13 +149,7 @@ under the License.
 
   <profiles>
     <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>!true</value>
-        </property>
-      </activation>
+      <id>run-its</id>
       <build>
         <plugins>
           <plugin>
