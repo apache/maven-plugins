@@ -53,6 +53,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
@@ -70,6 +71,9 @@ import org.codehaus.plexus.util.StringUtils;
 public class DescribeMojo
     extends AbstractHelpMojo
 {
+    /** The default indent size when writing description's Mojo. */
+    private static final int INDENT_SIZE = 2;
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -244,7 +248,7 @@ public class DescribeMojo
 
             PluginDescriptor descriptor = lookupPluginDescriptor( pi );
 
-            if ( mojo != null && mojo.length() > 0 )
+            if ( StringUtils.isNotEmpty( mojo ) )
             {
                 describeMojo( descriptor.getMojo( mojo ), descriptionBuffer );
             }
@@ -310,23 +314,22 @@ public class DescribeMojo
 
         Plugin forLookup = null;
 
-        if ( pi.prefix != null )
+        if ( StringUtils.isNotEmpty( pi.prefix ) )
         {
             descriptor = pluginManager.getPluginDescriptorForPrefix( pi.prefix );
-
             if ( descriptor == null )
             {
                 forLookup = pluginManager.getPluginDefinitionForPrefix( pi.prefix, session, project );
             }
         }
-        else if ( pi.groupId != null && pi.artifactId != null )
+        else if ( StringUtils.isNotEmpty( pi.groupId ) && StringUtils.isNotEmpty( pi.artifactId ) )
         {
             forLookup = new Plugin();
 
             forLookup.setGroupId( pi.groupId );
             forLookup.setArtifactId( pi.artifactId );
 
-            if ( pi.version != null )
+            if ( StringUtils.isNotEmpty( pi.version ) )
             {
                 forLookup.setVersion( pi.version );
             }
@@ -352,18 +355,18 @@ public class DescribeMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
-                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
+                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginManagerException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
-                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
+                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
-                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
+                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( ArtifactNotFoundException e )
             {
@@ -371,13 +374,13 @@ public class DescribeMojo
             }
             catch ( InvalidVersionSpecificationException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
-                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
+                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( InvalidPluginException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: \'"
-                    + groupId + "\'\nartifactId: \'" + artifactId + "\'\nversion: \'" + version + "\'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '"
+                    + groupId + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginNotFoundException e )
             {
@@ -415,7 +418,7 @@ public class DescribeMojo
     private void parsePluginLookupInfo( PluginInfo pi )
         throws MojoFailureException
     {
-        if ( plugin != null && plugin.length() > 0 )
+        if ( StringUtils.isNotEmpty( plugin ) )
         {
             if ( plugin.indexOf( ":" ) > -1 )
             {
@@ -467,22 +470,18 @@ public class DescribeMojo
             name = pd.getId();
         }
 
-        buffer.append( "Plugin: \'" ).append( name ).append( '\'' );
-        buffer.append( "\n" ).append( StringUtils.repeat( "-", LINE_LENGTH ) );
-        buffer.append( "\nGroup Id:  " ).append( pd.getGroupId() );
-        buffer.append( "\nArtifact Id: " ).append( pd.getArtifactId() );
-        buffer.append( "\nVersion:     " ).append( pd.getVersion() );
-        buffer.append( "\nGoal Prefix: " ).append( pd.getGoalPrefix() );
-
-        buffer.append( "\nDescription:\n\n" );
-        prettyAppend( formatDescription( pd.getDescription() ), buffer );
+        append( buffer, name, 0 );
+        append( buffer, "Group Id", pd.getGroupId(), 0 );
+        append( buffer, "Artifact Id", pd.getArtifactId(), 0 );
+        append( buffer, "Version", pd.getVersion(), 0 );
+        append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
+        appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         buffer.append( "\n" );
 
         if ( full || medium )
         {
-            buffer.append( "\nMojos:\n" );
-
-            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
+            append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
+            buffer.append( "\n" );
 
             for ( Iterator it = pd.getMojos().iterator(); it.hasNext(); )
             {
@@ -490,69 +489,20 @@ public class DescribeMojo
 
                 if ( full )
                 {
-                    buffer.append( line );
-                    buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
-                    buffer.append( line );
-
                     describeMojoGuts( md, buffer, true );
-
-                    buffer.append( line );
-                    buffer.append( "\n\n" );
                 }
                 else
                 {
-                    buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( '\'' );
-
                     describeMojoGuts( md, buffer, false );
-
-                    buffer.append( "\n" );
                 }
+
+                buffer.append( "\n" );
             }
         }
         else
         {
+            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
             buffer.append( "\n" );
-            buffer.append( "For more information, use 'mvn help:describe [...] -Dfull'" );
-            buffer.append( "\n" );
-        }
-    }
-
-    /**
-     * Convenience method for formatting the description.
-     *
-     * @param description   the plugin description
-     * @return a String of the formatted plugin description
-     */
-    private String formatDescription( String description )
-    {
-        if ( description == null )
-        {
-            return null;
-        }
-
-        String result = description.replaceAll( " ?\\<br\\/?\\> ?", "\n" );
-
-        result = result.replaceAll( " ?\\<p\\> ?", "" );
-        result = result.replaceAll( " ?\\</p\\> ?", "\n\n" );
-
-        return result;
-    }
-
-    /**
-     * Convenience method for putting the appropriate value to the plugin description
-     *
-     * @param messagePart   the plugin description
-     * @param buffer        contains information to be printed or displayed
-     */
-    private void prettyAppend( String messagePart, StringBuffer buffer )
-    {
-        if ( messagePart != null && messagePart.length() > 0 )
-        {
-            buffer.append( messagePart );
-        }
-        else
-        {
-            buffer.append( "Unknown" );
         }
     }
 
@@ -564,16 +514,17 @@ public class DescribeMojo
      */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
     {
-        String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
-
-        buffer.append( "Mojo: \'" ).append( md.getFullGoalName() ).append( '\'' );
-        buffer.append( line );
-        buffer.append( "\nGoal: \'" ).append( md.getGoal() ).append( "\'" );
+        buffer.append( "Mojo: '" ).append( md.getFullGoalName() ).append( "'" );
+        buffer.append( '\n' );
 
         describeMojoGuts( md, buffer, full );
+        buffer.append( "\n" );
 
-        buffer.append( line );
-        buffer.append( "\n\n" );
+        if ( !( full || medium ) )
+        {
+            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "\n" );
+        }
     }
 
     /**
@@ -585,59 +536,65 @@ public class DescribeMojo
      */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
     {
-        buffer.append( "\nDescription:\n" );
-        prettyAppend( formatDescription( md.getDescription() ), buffer );
-        if ( fullDescription )
-        {
-            buffer.append( "\n" );
-        }
+        append( buffer, "Goal", "'" + md.getGoal() + "'", 0 );
+
+        // indent 1
+        append( buffer, "Full Goal Name", "'" + md.getFullGoalName() + "'", 1 );
+        appendAsParagraph( buffer, "Description", toDescription( md.getDescription() ), 1 );
 
         String deprecation = md.getDeprecated();
-
-        if ( deprecation != null )
+        if ( StringUtils.isNotEmpty( deprecation ) )
         {
-            buffer.append( "\n\nNOTE: This mojo is deprecated.\n" ).append( deprecation ).append( "\n" );
+            append( buffer, "NOTE: This mojo is deprecated. " + deprecation, 1 );
         }
 
-        if ( fullDescription )
+        if ( !fullDescription )
         {
-            buffer.append( "\nImplementation: " ).append( md.getImplementation() );
-            buffer.append( "\nLanguage: " ).append( md.getLanguage() );
-
-            String phase = md.getPhase();
-            if ( phase != null )
-            {
-                buffer.append( "\nBound to Phase: " ).append( phase );
-            }
-
-            String eGoal = md.getExecuteGoal();
-            String eLife = md.getExecuteLifecycle();
-            String ePhase = md.getExecutePhase();
-
-            if ( eGoal != null || ePhase != null )
-            {
-                buffer.append( "\n\nBefore this mojo executes, it will call:\n" );
-
-                if ( eGoal != null )
-                {
-                    buffer.append( "\nSingle mojo: \'" ).append( eGoal ).append( "\'" );
-                }
-
-                if ( ePhase != null )
-                {
-                    buffer.append( "\nPhase: \'" ).append( ePhase ).append( "\'" );
-
-                    if ( eLife != null )
-                    {
-                        buffer.append( " in Lifecycle Overlay: \'" ).append( eLife ).append( "\'" );
-                    }
-                }
-            }
-
-            describeMojoParameters( md, buffer );
-
-            describeMojoRequirements( md, buffer );
+            return;
         }
+
+        append( buffer, "Implementation", md.getImplementation(), 1 );
+        append( buffer, "Language", md.getLanguage(), 1 );
+
+        String phase = md.getPhase();
+        if ( StringUtils.isNotEmpty( phase ) )
+        {
+            append( buffer, "Bound to phase", phase, 1 );
+        }
+
+        String eGoal = md.getExecuteGoal();
+        String eLife = md.getExecuteLifecycle();
+        String ePhase = md.getExecutePhase();
+
+        if ( StringUtils.isNotEmpty( eGoal ) || StringUtils.isNotEmpty( ePhase ) )
+        {
+            append( buffer, "Before this mojo executes, it will call:", 1);
+
+            if ( StringUtils.isNotEmpty( eGoal ) )
+            {
+                append( buffer, "Single mojo", "'" + eGoal + "'", 2 );
+            }
+
+            if ( StringUtils.isNotEmpty( ePhase ) )
+            {
+                String s = "Phase: '" + ePhase + "'";
+
+                if ( StringUtils.isNotEmpty( eLife ) )
+                {
+                    s += " in Lifecycle Overlay: '" + eLife + "'";
+                }
+
+                append( buffer, s, 2 );
+            }
+        }
+
+        buffer.append( "\n" );
+
+        describeMojoParameters( md, buffer );
+
+        buffer.append( "\n" );
+
+        describeMojoRequirements( md, buffer );
     }
 
     /**
@@ -648,40 +605,31 @@ public class DescribeMojo
      */
     private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
     {
-        buffer.append( "\n" );
-
         List reqs = md.getRequirements();
 
         if ( reqs == null || reqs.isEmpty() )
         {
-            buffer.append( "\nThis mojo doesn't have any component requirements." );
+            append( buffer, "This mojo doesn't have any component requirements.", 1 );
+            return;
         }
-        else
+
+        append( buffer, "Component Requirements:", 1 );
+
+        // indent 2
+        int idx = 0;
+        for ( Iterator it = reqs.iterator(); it.hasNext(); idx++ )
         {
-            buffer.append( "\nComponent Requirements:\n" );
+            ComponentRequirement req = (ComponentRequirement) it.next();
 
-            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
+            buffer.append( "\n" );
 
-            int idx = 0;
-            for ( Iterator it = reqs.iterator(); it.hasNext(); idx++ )
+            append( buffer, "[" + idx + "] Role", req.getRole(), 2 );
+
+            String hint = req.getRoleHint();
+            if ( StringUtils.isNotEmpty( hint ) )
             {
-                ComponentRequirement req = (ComponentRequirement) it.next();
-
-                buffer.append( line );
-
-                buffer.append( "\n[" ).append( idx ).append( "] " );
-                buffer.append( "Role: " ).append( req.getRole() );
-
-                String hint = req.getRoleHint();
-                if ( hint != null )
-                {
-                    buffer.append( "\nRole-Hint: " ).append( hint );
-                }
-
-                buffer.append( "\n" );
+                append( buffer, "Role-Hint", hint, 2 );
             }
-
-            buffer.append( line );
         }
     }
 
@@ -693,69 +641,52 @@ public class DescribeMojo
      */
     private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
     {
-        buffer.append( "\n" );
-
         List params = md.getParameters();
 
         if ( params == null || params.isEmpty() )
         {
-            buffer.append( "\nThis mojo doesn't use any parameters." );
+            append( buffer, "This mojo doesn't use any parameters.", 1 );
+            return;
         }
-        else
+
+        append( buffer, "Parameters:", 1 );
+
+        // indent 2
+        int idx = 0;
+        for ( Iterator it = params.iterator(); it.hasNext(); )
         {
-            buffer.append( "\nParameters:" );
+            Parameter parameter = (Parameter) it.next();
 
-            String line = "\n" + StringUtils.repeat( "=", LINE_LENGTH );
+            buffer.append( "\n" );
 
-            int idx = 0;
-            for ( Iterator it = params.iterator(); it.hasNext(); )
+            append( buffer, "[" + idx++ + "] Name", parameter.getName()
+                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
+                    2 );
+
+            append( buffer, "Type", parameter.getType(), 2 );
+
+            String expression = parameter.getExpression();
+            if ( StringUtils.isNotEmpty( expression ) )
             {
-                Parameter parameter = (Parameter) it.next();
-
-                buffer.append( line );
-                buffer.append( "\n\n[" ).append( idx++ ).append( "] " );
-                buffer.append( "Name: " );
-                prettyAppend( parameter.getName(), buffer );
-
-                String alias = parameter.getAlias();
-                if ( alias != null )
-                {
-                    buffer.append( " (Alias: " ).append( alias ).append( ")" );
-                }
-
-                buffer.append( "\nType: " );
-                prettyAppend( parameter.getType(), buffer );
-
-                String expression = parameter.getExpression();
-                if ( expression != null )
-                {
-                    buffer.append( "\nExpression: " ).append( expression );
-                }
-
-                String defaultVal = parameter.getDefaultValue();
-                if ( defaultVal != null )
-                {
-                    buffer.append( "\nDefault value: \'" ).append( defaultVal );
-                }
-
-                buffer.append( "\nRequired: " ).append( parameter.isRequired() );
-                buffer.append( "\nDirectly editable: " ).append( parameter.isEditable() );
-
-                buffer.append( "\nDescription:\n" );
-                prettyAppend( formatDescription( parameter.getDescription() ), buffer );
-
-                String deprecation = parameter.getDeprecated();
-
-                if ( deprecation != null )
-                {
-                    buffer.append( "\n\nNOTE: This parameter is deprecated.\n" ).append( deprecation ).append(
-                                                                                                               "\n" );
-                }
-
-                buffer.append( "\n" );
+                append( buffer, "Expression", expression, 2 );
             }
 
-            buffer.append( line );
+            String defaultVal = parameter.getDefaultValue();
+            if ( StringUtils.isNotEmpty( defaultVal ) )
+            {
+                append( buffer, "Default value", "'" + defaultVal + "'", 2 );
+            }
+
+            append( buffer, "Required", parameter.isRequired() + "", 2 );
+            append( buffer, "Directly editable", parameter.isEditable() + "", 2 );
+
+            appendAsParagraph( buffer, "Description", toDescription( parameter.getDescription() ), 2 );
+
+            String deprecation = parameter.getDeprecated();
+            if ( StringUtils.isNotEmpty( deprecation ) )
+            {
+                append( buffer, "NOTE: This parameter is deprecated." + deprecation, 2 );
+            }
         }
     }
 
@@ -813,7 +744,7 @@ public class DescribeMojo
 
                         descriptionBuffer.append( "* " + key + ": " );
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
-                        if ( value != null )
+                        if ( StringUtils.isNotEmpty( value ) )
                         {
                             for ( StringTokenizer tok = new StringTokenizer( value, "," ); tok.hasMoreTokens(); )
                             {
@@ -837,8 +768,9 @@ public class DescribeMojo
                 }
                 else
                 {
-                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " ).append(
-                                                                                                                   "\n" );
+                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " );
+                    descriptionBuffer.append( "\n" );
+
                     for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
                     {
                         String key = (String) it.next();
@@ -955,6 +887,104 @@ public class DescribeMojo
 
             throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() );
         }
+    }
+
+    /**
+     * Append a description to the buffer by respecting the indentSize and lineLength parameters.
+     * <b>Note</b>: The last character is always a new line.
+     *
+     * @param sb The buffer to append the description, not <code>null</code>.
+     * @param description The description, not <code>null</code>.
+     * @param indent The base indentation level of each line, must not be negative.
+     */
+    private static void append( StringBuffer sb, String description, int indent )
+    {
+        if ( StringUtils.isEmpty( description ) )
+        {
+            sb.append( "Unknown" ).append( '\n' );
+            return;
+        }
+
+        for ( Iterator it = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        {
+            sb.append( it.next().toString() ).append( '\n' );
+        }
+    }
+
+    /**
+     * Append a description to the buffer by respecting the indentSize and lineLength parameters.
+     * <b>Note</b>: The last character is always a new line.
+     *
+     * @param sb The buffer to append the description, not <code>null</code>.
+     * @param key The key, not <code>null</code>.
+     * @param value The value associated to the key, could be <code>null</code>.
+     * @param indent The base indentation level of each line, must not be negative.
+     */
+    private static void append( StringBuffer sb, String key, String value, int indent )
+    {
+        if ( StringUtils.isEmpty( key ) )
+        {
+            throw new IllegalArgumentException( "Key is required!" );
+        }
+
+        if ( StringUtils.isEmpty( value ) )
+        {
+            value = "Unknown";
+        }
+
+        String description = key + ": " + value;
+        for ( Iterator it = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        {
+            sb.append( it.next().toString() ).append( '\n' );
+        }
+    }
+
+    /**
+     * Append a description to the buffer by respecting the indentSize and lineLength parameters for the first line,
+     * and append the next lines with <code>indent + 1</code> like a paragraph.
+     * <b>Note</b>: The last character is always a new line.
+     *
+     * @param sb The buffer to append the description, not <code>null</code>.
+     * @param description The description, not <code>null</code>.
+     * @param indent The base indentation level of each line, must not be negative.
+     */
+    private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
+    {
+        if ( StringUtils.isEmpty( key ) )
+        {
+            throw new IllegalArgumentException( "Key is required!" );
+        }
+
+        if ( StringUtils.isEmpty( value ) )
+        {
+            value = "Unknown";
+        }
+
+        String description = key + ": " + value;
+
+        List l1 = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
+        List l2 = HelpMojo.toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
+        l2.set( 0, l1.get( 0 ) );
+        for ( Iterator it = l2.iterator(); it.hasNext(); )
+        {
+            sb.append( it.next().toString() ).append( '\n' );
+        }
+    }
+
+    /**
+     * Gets the effective string to use for the plugin/mojo/parameter description.
+     *
+     * @param description The description of the element, may be <code>null</code>.
+     * @return The effective description string, never <code>null</code>.
+     */
+    private static String toDescription( String description )
+    {
+        if ( StringUtils.isNotEmpty( description ) )
+        {
+            return PluginUtils.toText( description );
+        }
+
+        return "(no description available)";
     }
 
     protected static class PluginInfo
