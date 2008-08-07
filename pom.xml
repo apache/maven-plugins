@@ -198,6 +198,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
           <excludes>
             <exclude>**/Abstract*.java</exclude>
             <exclude>**/InstallPluginsMojoTest.java</exclude>
@@ -230,6 +233,7 @@
             <configuration>
               <includes>
                 <include>**/*IT.java</include>
+                <include>**/*Test.java</include>
               </includes>
             </configuration>
           </plugin>
