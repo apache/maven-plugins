@@ -112,8 +112,10 @@ public class InvokerMojo
     private boolean streamLogs;
 
     /**
-     * The local repository for caching artifacts.
-     *
+     * The local repository for caching artifacts. It is strongly recommended to specify a path to an isolated
+     * repository like <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary local repository will
+     * be used, potentially soiling it with broken artifacts.
+     * 
      * @parameter expression="${invoker.localRepositoryPath}"
      */
     private File localRepositoryPath;
@@ -281,10 +283,11 @@ public class InvokerMojo
     private MavenProject project;
 
     /**
-     * Specify this parameter to run individual tests by file name, overriding the <code>pomIncludes</code>
-     * and <code>pomExcludes</code> parameters.  Each pattern you specify here will be used to create an 
-     * include pattern formatted like <code>${projectsDirectory}/${invoker.test}</code>, 
-     * so you can just type "-Dinvoker.test=MyTest" to run a single build in ${projectsDirectory}/MyTest".  
+     * A comma separated list of project names to run. Specify this parameter to run individual tests by file name,
+     * overriding the <code>pomIncludes</code> and <code>pomExcludes</code> parameters. Each pattern you specify here
+     * will be used to create an include pattern formatted like <code>${projectsDirectory}/<i>pattern</i></code>, so
+     * you can just type "-Dinvoker.test=FirstTest,SecondTest" to run builds in "${projectsDirectory}/FirstTest" and
+     * "${projectsDirectory}/SecondTest".
      * 
      * @parameter expression="${invoker.test}"
      * @since 1.1
