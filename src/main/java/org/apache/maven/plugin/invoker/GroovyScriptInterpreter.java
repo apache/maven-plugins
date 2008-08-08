@@ -43,6 +43,9 @@ class GroovyScriptInterpreter
     implements ScriptInterpreter
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public Object evaluateScript( String script, List classPath, Map globalVariables, PrintStream scriptOutput )
         throws ScriptEvaluationException
     {
