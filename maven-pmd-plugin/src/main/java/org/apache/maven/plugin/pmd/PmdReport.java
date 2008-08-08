@@ -100,7 +100,8 @@ public class PmdReport
 
     /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
-     * list of some included. Defaults to the basic, imports and unusedcode rulesets.
+     * list of some included. Since version 2.5, the ruleset "rulesets/maven.xml" is also available. Defaults to the
+     * basic, imports and unusedcode rulesets.
      *
      * @parameter
      */
