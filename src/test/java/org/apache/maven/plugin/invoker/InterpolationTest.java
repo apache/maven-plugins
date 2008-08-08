@@ -19,7 +19,7 @@
 package org.apache.maven.plugin.invoker;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -29,6 +29,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
@@ -91,7 +92,7 @@ public class InterpolationTest
     public void testPomInterpolation()
         throws Exception
     {
-        FileReader fileReader = null;
+        Reader reader = null;
         File interpolatedPomFile = null;
         try
         {
@@ -105,31 +106,23 @@ public class InterpolationTest
             setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
             String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test"
                 + File.separatorChar + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
-            interpolatedPomFile = invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ),
-                                                                        new File( getBasedir() + File.separatorChar
-                                                                            + "target" ), "interpolated-pom.xml"  );
-            fileReader = new FileReader( interpolatedPomFile );
-            String content = IOUtil.toString( fileReader );
+            
+            interpolatedPomFile = new File( getBasedir(), "target/interpolated-pom.xml" );
+            invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ), interpolatedPomFile );
+            reader = ReaderFactory.newXmlReader( interpolatedPomFile );
+            String content = IOUtil.toString( reader );
             assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
-            fileReader.close();
+            reader.close();
             // recreate it to test delete if exists before creation
-            interpolatedPomFile = invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ),
-                                                                        new File( getBasedir() + File.separatorChar
-                                                                            + "target" ), "interpolated-pom.xml"  );
-            fileReader = new FileReader( interpolatedPomFile );
-            content = IOUtil.toString( fileReader );
+            invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ), interpolatedPomFile );
+            reader = ReaderFactory.newXmlReader( interpolatedPomFile );
+            content = IOUtil.toString( reader );
             assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
-            fileReader.close();
-        } catch (Exception e)
-        {
-            throw e;
+            reader.close();
         }
         finally
         {
-            if ( fileReader != null )
-            {
-                fileReader.close();
-            }
+            IOUtil.close( reader );
         }
     }
 
@@ -137,6 +130,7 @@ public class InterpolationTest
         throws Exception
     {
         InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
         setVariableValueToObject( invokerMojo, "profilesFile", "profiles.txt" );
         String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
             + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
@@ -150,6 +144,7 @@ public class InterpolationTest
     {
 
         InvokerMojo invokerMojo = new InvokerMojo();
+        setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
         setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( new String[] { "zloug" } ) );
         setVariableValueToObject( invokerMojo, "profilesFile", "emptyProfiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
