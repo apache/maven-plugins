@@ -47,8 +47,12 @@ public class InvokerMojoTest
     public void testReadGoalsFromFile()
         throws Exception
     {
+        MavenProjectStub project = new MavenProjectStub();
+        project.setTestClasspathElements( Collections.EMPTY_LIST );
+
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
+        setVariableValueToObject( invokerMojo, "project", project );
         String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 3, goals.size() );
@@ -57,8 +61,12 @@ public class InvokerMojoTest
     public void testSimpleRunValidate()
         throws Exception
     {
+        MavenProjectStub project = new MavenProjectStub();
+        project.setTestClasspathElements( Collections.EMPTY_LIST );
+
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
+        setVariableValueToObject( invokerMojo, "project", project );
         String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
@@ -74,9 +82,6 @@ public class InvokerMojoTest
             FileUtils.deleteDirectory( cloneProjectsTo );
         }
         //cloneProjectsTo.getParent()
-        MavenProjectStub project = new MavenProjectStub();
-        project.setTestClasspathElements( Collections.EMPTY_LIST );
-        setVariableValueToObject( invokerMojo, "project", project );
         setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
         setVariableValueToObject( invokerMojo, "postBuildHookScript", "verify.bsh" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );

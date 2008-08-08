@@ -28,6 +28,8 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 /**
+ * A map-like source to interpolate expressions.
+ * 
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 22 nov. 07
  * @version $Id$
@@ -36,12 +38,29 @@ class CompositeMap
     implements Map
 {
 
+    /**
+     * The Maven project from which to extract interpolated values, never <code>null</code>.
+     */
     private MavenProject mavenProject;
 
+    /**
+     * The set of additional properties from which to extract interpolated values, never <code>null</code>.
+     */
     private Properties properties;
 
+    /**
+     * Creates a new interpolation source backed by the specified Maven project and some user-specified properties.
+     * 
+     * @param mavenProject The Maven project from which to extract interpolated values, must not be <code>null</code>.
+     * @param properties The set of additional properties from which to extract interpolated values, may be
+     *            <code>null</code>.
+     */
     protected CompositeMap( MavenProject mavenProject, Properties properties )
     {
+        if ( mavenProject == null )
+        {
+            throw new IllegalArgumentException( "no project specified" );
+        }
         this.mavenProject = mavenProject;
         this.properties = properties == null ? new Properties() : properties;
     }
