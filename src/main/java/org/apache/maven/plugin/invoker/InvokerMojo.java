@@ -1098,7 +1098,7 @@ public class InvokerMojo
         return interpreter;
     }
 
-    protected List getGoals( final File basedir )
+    List getGoals( final File basedir )
     {
         List invocationGoals = goals;
 
@@ -1121,7 +1121,7 @@ public class InvokerMojo
         return invocationGoals;
     }
 
-    protected String[] getPoms()
+    String[] getPoms()
         throws IOException
     {
         String[] poms;
@@ -1281,7 +1281,7 @@ public class InvokerMojo
         return result;
     }
 
-    protected File buildInterpolatedFile( File originalFile, File targetDirectory, String targetFileName )
+    File buildInterpolatedFile( File originalFile, File targetDirectory, String targetFileName )
         throws MojoExecutionException
     {
         File interpolatedFile = new File( targetDirectory, targetFileName );
@@ -1349,7 +1349,7 @@ public class InvokerMojo
         return interpolatedFile;
     }
 
-    protected List getProfiles( File projectDirectory )
+    List getProfiles( File projectDirectory )
         throws MojoExecutionException
     {
         if ( profilesFile == null )
