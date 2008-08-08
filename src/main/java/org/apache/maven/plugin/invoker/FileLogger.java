@@ -35,23 +35,45 @@ public class FileLogger
     implements InvocationOutputHandler
 {
 
+    /**
+     * The underlying file stream this logger writes to.
+     */
     private PrintStream stream;
 
+    /**
+     * A flag whether the output stream should be closed during finalization of this logger.
+     */
     private boolean shouldFinalize = true;
 
+    /**
+     * The optional mojo logger to additionally write messages to, can be <code>nulll</code>.
+     */
     private final Log log;
 
+    /**
+     * Creates a new logger that writes to the specified file.
+     * 
+     * @param outputFile The path to the output file, must not be <code>null</code>.
+     * @throws IOException If the output file could not be created.
+     */
     public FileLogger( File outputFile )
         throws IOException
     {
         this( outputFile, null );
     }
 
+    /**
+     * Creates a new logger that writes to the specified file and optionally mirrors messages to the given mojo logger.
+     * 
+     * @param outputFile The path to the output file, must not be <code>null</code>.
+     * @param log The mojo logger to additionally output messages to, may be <code>null</code> if not used.
+     * @throws IOException If the output file could not be created.
+     */
     public FileLogger( File outputFile, Log log )
         throws IOException
     {
         this.log = log;
-        stream = new PrintStream( new FileOutputStream( outputFile  ) );
+        stream = new PrintStream( new FileOutputStream( outputFile ) );
 
         Runnable finalizer = new Runnable()
         {
@@ -71,11 +93,21 @@ public class FileLogger
         Runtime.getRuntime().addShutdownHook( new Thread( finalizer ) );
     }
 
+    /**
+     * Gets the underlying stream used to write message to the log file.
+     * 
+     * @return The underlying stream used to write message to the log file, never <code>null</code>.
+     */
     public PrintStream getPrintStream()
     {
         return stream;
     }
 
+    /**
+     * Writes the specified line to the log file and optionally to the mojo logger.
+     * 
+     * @param line The message to log.
+     */
     public void consumeLine( String line )
     {
         stream.println( line );
@@ -87,6 +119,9 @@ public class FileLogger
         }
     }
 
+    /**
+     * Closes the underlying file stream.
+     */
     public void close()
     {
         if ( stream != null )
@@ -97,7 +132,10 @@ public class FileLogger
         IOUtil.close( stream );
     }
 
-    public void finalize()
+    /**
+     * Closes the underlying file stream.
+     */
+    protected void finalize()
     {
         if ( shouldFinalize )
         {
