@@ -55,7 +55,7 @@ Maven 2 Invoker Plugin
 
   * {{{examples/install-artifacts.html}Install}} projects artifacts to a local repository before running.
   
-  * {{{examples/post-build-script.html}Run a BeanShell script}} to verify project output.
+  * {{{examples/post-build-script.html}Run a BeanShell or Groovy script}} to verify project output.
   
   * {{{examples/fast-use.html}Fast Invoker Plugin configuration}} to accelerate test execution.
   
