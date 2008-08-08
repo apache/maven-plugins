@@ -29,7 +29,7 @@
 Using a Post Build Script
  
   Here is an example of how the Invoker Plugin can be used to run a set
-  of Maven projects and then verify their output with a BeanShell script.
+  of Maven projects and then verify their output with a BeanShell or Groovy script.
   The name of the script file in this case is <<<verify.bsh>>>.
 
 -------------------
@@ -65,7 +65,7 @@ Using a Post Build Script
 </project>
 -------------------
 
-  Here is an example post build script (<<<verify.bsh>>>) that checks for the existence 
+  Here is an example post build BeanShell script (<<<verify.bsh>>>) that checks for the existence 
   of a JAR file after the build has run.  If the JAR file does not exist, the
   script returns <<<false>>> which causes the Invoker Plugin to log that the build failed.
   The global variable <<<basedir>>> of type <<<java.io.File>>> can be used to refer to the
