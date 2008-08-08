@@ -31,8 +31,11 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -64,9 +67,6 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
-
-import bsh.EvalError;
-import bsh.Interpreter;
 
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
@@ -199,15 +199,23 @@ public class InvokerMojo
     private Invoker invoker;
 
     /**
-     * Relative path of a pre-build hook BeanShell script to run prior to executing the build.
-     *
+     * Relative path of a pre-build hook BeanShell or Groovy script to run prior to executing the build. If the file
+     * extension is omitted (e.g. "prebuild"), the plugin searches for the file by trying out the known extensions
+     * ".bsh" and ".groovy".<br>
+     * <br>
+     * <em>Note:</em> Support for Groovy was added in version 1.3 of the plugin.
+     * 
      * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild.bsh"
      */
     private String preBuildHookScript;
 
     /**
-     * Relative path of a cleanup/verification BeanShell script to run after executing the build.
-     *
+     * Relative path of a cleanup/verification BeanShell or Groovy script to run after executing the build. If the file
+     * extension is omitted (e.g. "verify"), the plugin searches for the file by trying out the known extensions
+     * ".bsh" and ".groovy".<br>
+     * <br>
+     * <em>Note:</em> Support for Groovy was added in version 1.3 of the plugin.
+     * 
      * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
      */
     private String postBuildHookScript;
@@ -353,6 +361,14 @@ public class InvokerMojo
     private boolean addTestClassPath;
 
     /**
+     * The test class path of the project under test.
+     * 
+     * @parameter default-value="${project.testClasspathElements}"
+     * @readonly
+     */
+    private List testClassPath;
+
+    /**
      * The name of an optional test-specific file that contains properties used to configure the invocation of an
      * integration test. This properties file may be used to specify settings for an individual test invocation. Any
      * property present in the file will override the corresponding setting from the plugin configuration. The values of
@@ -385,6 +401,11 @@ public class InvokerMojo
      * @since 1.2
      */
     private String invokerPropertiesFile;
+
+    /**
+     * The supported script interpreters, indexed by the file extension of their associated script files.
+     */
+    private Map scriptInterpreters;
 
 
     public void execute()
@@ -438,6 +459,10 @@ public class InvokerMojo
                            "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
                                + ", i.e. build is platform dependent!" );
         }
+
+        scriptInterpreters = new LinkedHashMap();
+        scriptInterpreters.put( "bsh", new BeanShellScriptInterpreter() );
+        scriptInterpreters.put( "groovy", new GroovyScriptInterpreter() );
 
         File projectsDir = projectsDirectory;
 
@@ -942,27 +967,25 @@ public class InvokerMojo
         return testProps;
     }
 
+    private boolean prebuild( final File basedir, final FileLogger logger )
+    {
+        boolean result = true;
+
+        if ( preBuildHookScript != null )
+        {
+            result = runScript( "pre-build script", basedir, preBuildHookScript, logger );
+        }
+
+        return result;
+    }
+
     private boolean verify( final File basedir, final FileLogger logger )
     {
         boolean result = true;
 
         if ( postBuildHookScript != null )
         {
-            try
-            {
-                result = runScript( "verification script", basedir, postBuildHookScript, logger );
-            }
-            catch ( final IOException e )
-            {
-                result = false;
-            }
-            catch ( final EvalError e )
-            {
-                String errorMessage = "error evaluating script " + basedir.getPath() + File.separatorChar
-                    + postBuildHookScript + ", " + e.getMessage();
-                getLog().error( errorMessage, e );
-                result = false;
-            }
+            result = runScript( "verification script", basedir, postBuildHookScript, logger );
         }
 
         return result;
@@ -970,104 +993,109 @@ public class InvokerMojo
 
     private boolean runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
                                final FileLogger logger )
-        throws IOException, EvalError
     {
-        final File script = new File( basedir, relativeScriptPath );
+        final File scriptFile = resolveScript( new File( basedir, relativeScriptPath ) );
 
-        boolean scriptResult = false;
-
-        if ( script.exists() )
+        if ( scriptFile.exists() )
         {
-            final Interpreter engine = new Interpreter();
+            List classPath = addTestClassPath ? testClassPath : Collections.EMPTY_LIST;
 
-            if ( addTestClassPath )
+            Map globalVariables = new HashMap();
+            globalVariables.put( "basedir", basedir );
+
+            PrintStream out = noLog ? null : logger.getPrintStream();
+
+            ScriptInterpreter interpreter = getInterpreter( scriptFile );
+            if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( "Adding test class path to BeanShell interpreter:" );
-                try
-                {
-                    List testClassPath = project.getTestClasspathElements();
-                    for ( Iterator it = testClassPath.iterator(); it.hasNext(); )
-                    {
-                        String path = (String) it.next();
-                        getLog().debug( "  " + path );
-                        engine.getClassManager().addClassPath( new File( path ).toURI().toURL() );
-                    }
-                }
-                catch ( Exception e )
-                {
-                    getLog().error( "Failed to add test class path to BeanShell interpreter", e );
-                }
+                String name = interpreter.getClass().getName();
+                name = name.substring( name.lastIndexOf( '.' ) + 1 );
+                getLog().debug( "Running script with " + name );
             }
 
-            PrintStream origOut = System.out;
-            PrintStream origErr = System.err;
+            String script;
+            try
+            {
+                script = FileUtils.fileRead( scriptFile, encoding );
+            }
+            catch ( IOException e )
+            {
+                String errorMessage =
+                    "error reading " + scriptDescription + " " + basedir.getPath() + File.separatorChar
+                        + postBuildHookScript + ", " + e.getMessage();
+                getLog().error( errorMessage, e );
+                return false;
+            }
 
-            Reader reader = null;
             try
             {
                 if ( !noLog )
                 {
-                    logger.consumeLine( "Running " + scriptDescription + " in: " + script );
-
-                    System.setErr( logger.getPrintStream() );
-                    System.setOut( logger.getPrintStream() );
-
-                    engine.setErr( logger.getPrintStream() );
-                    engine.setOut( logger.getPrintStream() );
+                    logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
                 }
-
-                engine.set( "basedir", basedir );
-
-                reader = newReader( script );
-
-                final Object result = engine.eval( reader );
-
-                scriptResult = Boolean.TRUE.equals( result ) || "true".equals( result );
+                Object result = interpreter.evaluateScript( script, classPath, globalVariables, out );
+                if ( !noLog )
+                {
+                    logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
+                }
+                return Boolean.TRUE.equals( result ) || "true".equals( result );
             }
-            finally
+            catch ( Exception e )
             {
-                IOUtil.close( reader );
-                System.setErr( origErr );
-                System.setOut( origOut );
+                String errorMessage =
+                    "error evaluating " + scriptDescription + " " + basedir.getPath() + File.separatorChar
+                        + postBuildHookScript + ", " + e.getMessage();
+                getLog().error( errorMessage, e );
+                return false;
             }
 
-            if ( !noLog )
-            {
-                logger.consumeLine( "Finished " + scriptDescription + " in: " + script );
-            }
-        }
-        else
-        {
-            scriptResult = true;
         }
 
-        return scriptResult;
+        return true;
     }
 
-    private boolean prebuild( final File basedir, final FileLogger logger )
+    /**
+     * Gets the effective path to the specified script. For convenience, we allow to specify a script path as "verify"
+     * and have the plugin auto-append the file extension to search for "verify.bsh" and "verify.groovy".
+     * 
+     * @param scriptFile The script file to resolve, may be <code>null</code>.
+     * @return The effective path to the script file or <code>null</code> if the input was <code>null</code>.
+     */
+    private File resolveScript( File scriptFile )
     {
-        boolean result = true;
-
-        if ( preBuildHookScript != null )
+        if ( scriptFile != null && !scriptFile.exists() )
         {
-            try
+            for ( Iterator it = this.scriptInterpreters.keySet().iterator(); it.hasNext(); )
             {
-                result = runScript( "pre-build script", basedir, preBuildHookScript, logger );
-            }
-            catch ( final IOException e )
-            {
-                result = false;
-            }
-            catch ( final EvalError e )
-            {
-                String errorMessage = "error evaluating script " + basedir.getPath() + File.separatorChar
-                    + postBuildHookScript + ", " + e.getMessage();
-                getLog().error( errorMessage, e );
-                result = false;
+                String ext = (String) it.next();
+                File candidateFile = new File( scriptFile.getPath() + '.' + ext );
+                if ( candidateFile.exists() )
+                {
+                    scriptFile = candidateFile;
+                    break;
+                }
             }
         }
+        return scriptFile;
+    }
 
-        return result;
+    /**
+     * Determines the script interpreter for the specified script file by looking at its file extension. In this
+     * context, file extensions are considered case-insensitive. For backward compatibility with plugin versions 1.2-,
+     * the BeanShell interpreter will be used for any unrecognized extension.
+     * 
+     * @param scriptFile The script file for which to determine an interpreter, must not be <code>null</code>.
+     * @return The script interpreter for the file, never <code>null</code>.
+     */
+    private ScriptInterpreter getInterpreter( File scriptFile )
+    {
+        String ext = FileUtils.extension( scriptFile.getName() ).toLowerCase( Locale.ENGLISH );
+        ScriptInterpreter interpreter = (ScriptInterpreter) scriptInterpreters.get( ext );
+        if ( interpreter == null )
+        {
+            interpreter = (ScriptInterpreter) scriptInterpreters.get( "bsh" );
+        }
+        return interpreter;
     }
 
     protected List getGoals( final File basedir )
