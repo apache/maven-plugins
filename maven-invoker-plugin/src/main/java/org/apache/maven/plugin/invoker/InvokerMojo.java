@@ -22,7 +22,6 @@ package org.apache.maven.plugin.invoker;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -408,6 +407,12 @@ public class InvokerMojo
     private Map scriptInterpreters;
 
 
+    /**
+     * Invokes Maven on the configured test projects.
+     * 
+     * @throws MojoExecutionException If the goal encountered severe errors.
+     * @throws MojoFailureException If any of the Maven builds failed.
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -449,7 +454,7 @@ public class InvokerMojo
 
         if ( ( includedPoms == null ) || ( includedPoms.length < 1 ) )
         {
-            getLog().info( "No test-projects were selected for execution." );
+            getLog().info( "No test projects were selected for execution." );
             return;
         }
 
@@ -468,8 +473,6 @@ public class InvokerMojo
 
         if ( cloneProjectsTo != null )
         {
-            cloneProjectsTo.mkdirs();
-
             try
             {
                 cloneProjects( includedPoms );
@@ -558,6 +561,8 @@ public class InvokerMojo
     private void cloneProjects( String[] includedProjects )
         throws IOException
     {
+        cloneProjectsTo.mkdirs();
+
         List clonedSubpaths = new ArrayList();
 
         for ( int i = 0; i < includedProjects.length; i++ )
@@ -612,7 +617,7 @@ public class InvokerMojo
             }
         }
     }
-    
+
     /**
      * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
      * 
@@ -620,11 +625,12 @@ public class InvokerMojo
      * @param destDir
      * @throws IOException
      */
-    private void copyDirectoryStructure( File sourceDir, File destDir ) throws IOException
+    private void copyDirectoryStructure( File sourceDir, File destDir )
+        throws IOException
     {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( sourceDir );
-        if ( ! cloneAllFiles )
+        if ( !cloneAllFiles )
         {
             scanner.addDefaultExcludes();
         }
@@ -638,8 +644,8 @@ public class InvokerMojo
         String[] includedFiles = scanner.getIncludedFiles();
         for ( int i = 0; i < includedFiles.length; ++i )
         {
-            File sourceFile = new File( sourceDir, includedFiles[ i ] );
-            File destFile = new File( destDir, includedFiles[ i ] );
+            File sourceFile = new File( sourceDir, includedFiles[i] );
+            File destFile = new File( destDir, includedFiles[i] );
             FileUtils.copyFile( sourceFile, destFile );
         }
     }
@@ -690,59 +696,33 @@ public class InvokerMojo
         {
             basedir = pomFile.getParentFile();
         }
+
+        getLog().info( "Building: " + project );
+
+        final Properties invokerProperties = getInvokerProperties( basedir );
+        if ( getLog().isDebugEnabled() && !invokerProperties.isEmpty() )
+        {
+            getLog().debug( "Using invoker properties:" );
+            for ( Iterator it = new TreeSet( invokerProperties.keySet() ).iterator(); it.hasNext(); )
+            {
+                String key = (String) it.next();
+                String value = invokerProperties.getProperty( key );
+                getLog().debug( "  " + key + " = " + value );
+            }
+        }
+
         File interpolatedPomFile = null;
         if ( pomFile != null )
         {
-            interpolatedPomFile = buildInterpolatedFile( pomFile, basedir, "interpolated-pom.xml" );
+            interpolatedPomFile = new File( basedir, "interpolated-pom.xml" );
+            buildInterpolatedFile( pomFile, interpolatedPomFile );
         }
 
-        FileLogger logger = null;
+        final Properties loadedProperties = loadTestProperties( basedir );
+
+        FileLogger logger = setupLogger( basedir );
         try
         {
-            getLog().info( "Building: " + project );
-
-            final File outputLog = new File( basedir, "build.log" );
-
-            final Properties invokerProperties = getInvokerProperties( basedir );
-            if ( getLog().isDebugEnabled() && !invokerProperties.isEmpty() )
-            {
-                getLog().debug( "Using invoker properties:" );
-                for ( Iterator it = new TreeSet( invokerProperties.keySet() ).iterator(); it.hasNext(); )
-                {
-                    String key = (String) it.next();
-                    String value = invokerProperties.getProperty( key );
-                    getLog().debug( "  " + key + " = " + value );
-                }
-            }
-
-            if ( !noLog )
-            {
-                outputLog.getParentFile().mkdirs();
-
-                try
-                {
-                    if ( streamLogs )
-                    {
-                        logger = new FileLogger( outputLog, getLog() );
-                    }
-                    else
-                    {
-                        logger = new FileLogger( outputLog );
-                    }
-
-                    getLog().debug( "build log initialized in: " + outputLog );
-                }
-                catch ( final IOException e )
-                {
-                    getLog().debug( "Error initializing build logfile in: " + outputLog, e );
-                    getLog().info( "...FAILED[could not initialize logfile in: " + outputLog + "]" );
-
-                    failures.add( project );
-
-                    return;
-                }
-            }
-
             if ( !prebuild( basedir, logger ) )
             {
                 getLog().info( "...FAILED[pre-build script returned false]" );
@@ -756,7 +736,8 @@ public class InvokerMojo
 
             final List invocationGoals = getGoals( basedir );
 
-            if ( ( invocationGoals.size() == 1 ) && "_default".equals( invocationGoals.get( 0 ) ) )
+            if ( invocationGoals.isEmpty()
+                || ( invocationGoals.size() == 1 && "_default".equals( invocationGoals.get( 0 ) ) ) )
             {
                 getLog().debug( "Executing default goal for project in: " + project );
             }
@@ -767,38 +748,20 @@ public class InvokerMojo
                 request.setGoals( invocationGoals );
             }
 
-            try
+            Properties collectedTestProperties = new Properties();
+            if ( testProperties != null )
             {
-                Properties collectedTestProperties = new Properties();
-
-                if ( testProperties != null )
-                {
-                    collectedTestProperties.putAll( testProperties );
-                }
-
-                if ( properties != null )
-                {
-                    collectedTestProperties.putAll( properties );
-                }
-
-                final Properties loadedProperties = loadTestProperties( basedir );
-
-                if ( loadedProperties != null )
-                {
-                    collectedTestProperties.putAll( loadedProperties );
-                }
-
-                request.setProperties( collectedTestProperties );
+                collectedTestProperties.putAll( testProperties );
             }
-            catch ( final IOException e )
+            if ( properties != null )
             {
-                getLog().debug( "Error reading test-properties file in: " + testPropertiesFile, e );
-                getLog().info( "...FAILED[error reading test properties in: " + testPropertiesFile + "]" );
-
-                failures.add( project );
-
-                return;
+                collectedTestProperties.putAll( properties );
             }
+            if ( loadedProperties != null )
+            {
+                collectedTestProperties.putAll( loadedProperties );
+            }
+            request.setProperties( collectedTestProperties );
 
             if ( localRepositoryPath != null )
             {
@@ -822,7 +785,7 @@ public class InvokerMojo
 
             request.setBaseDirectory( basedir );
 
-            if ( !noLog )
+            if ( logger != null )
             {
                 request.setErrorHandler( logger );
 
@@ -838,10 +801,10 @@ public class InvokerMojo
 
             if ( settingsFile != null )
             {
-                buildInterpolatedFile( settingsFile, settingsFile.getParentFile(), settingsFile.getName()
-                    + ".interpolated" );
-                request.setUserSettingsFile( new File( settingsFile.getParentFile(), settingsFile.getName()
-                    + ".interpolated" ) );
+                File interpolatedSettingsFile =
+                    new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
+                buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
+                request.setUserSettingsFile( interpolatedSettingsFile );
             }
 
             request.setMavenOpts( mavenOpts );
@@ -884,9 +847,11 @@ public class InvokerMojo
                 {
                     StringBuffer buffer = new StringBuffer( 256 );
                     buffer.append( "...FAILED. " );
-                    if ( !noLog )
+                    if ( logger != null )
                     {
-                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                        buffer.append( "See " );
+                        buffer.append( logger.getOutputFile().getAbsolutePath() );
+                        buffer.append( " for details." );
                     }
                     else
                     {
@@ -903,9 +868,11 @@ public class InvokerMojo
                 {
                     StringBuffer buffer = new StringBuffer( 256 );
                     buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
-                    if ( !noLog )
+                    if ( logger != null )
                     {
-                        buffer.append( "See " ).append( outputLog.getAbsolutePath() ).append( " for details." );
+                        buffer.append( "See " );
+                        buffer.append( logger.getOutputFile().getAbsolutePath() );
+                        buffer.append( " for details." );
                     }
                     else
                     {
@@ -939,8 +906,52 @@ public class InvokerMojo
         }
     }
 
+    /**
+     * Initializes the build logger for the specified project.
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @return The build logger or <code>null</code> if logging has been disabled.
+     * @throws MojoExecutionException If the log file could not be created.
+     */
+    private FileLogger setupLogger( File basedir )
+        throws MojoExecutionException
+    {
+        FileLogger logger = null;
+
+        if ( !noLog )
+        {
+            File outputLog = new File( basedir, "build.log" );
+            try
+            {
+                if ( streamLogs )
+                {
+                    logger = new FileLogger( outputLog, getLog() );
+                }
+                else
+                {
+                    logger = new FileLogger( outputLog );
+                }
+
+                getLog().debug( "build log initialized in: " + outputLog );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error initializing build logfile in: " + outputLog, e );
+            }
+        }
+
+        return logger;
+    }
+
+    /**
+     * Reads the system properties to use for the specified project (if any).
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @return The system properties to use, may be empty but never <code>null</code>.
+     * @throws MojoExecutionException If the properties file exists but could not be read.
+     */
     private Properties loadTestProperties( final File basedir )
-        throws IOException
+        throws MojoExecutionException
     {
         final Properties testProps = new Properties();
 
@@ -957,6 +968,11 @@ public class InvokerMojo
 
                     testProps.load( fin );
                 }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error reading system properties for test: "
+                        + testPropertiesFile );
+                }
                 finally
                 {
                     IOUtil.close( fin );
@@ -967,7 +983,16 @@ public class InvokerMojo
         return testProps;
     }
 
+    /**
+     * Runs the pre-build-hook script of the specified project (if any).
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
+     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
+     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
+     */
     private boolean prebuild( final File basedir, final FileLogger logger )
+        throws MojoExecutionException
     {
         boolean result = true;
 
@@ -979,7 +1004,16 @@ public class InvokerMojo
         return result;
     }
 
+    /**
+     * Runs the post-build-hook script of the specified project (if any).
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
+     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
+     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
+     */
     private boolean verify( final File basedir, final FileLogger logger )
+        throws MojoExecutionException
     {
         boolean result = true;
 
@@ -991,8 +1025,20 @@ public class InvokerMojo
         return result;
     }
 
+    /**
+     * Runs the specified hook script of the specified project (if any).
+     * 
+     * @param scriptDescription The description of the script to use for logging, must not be <code>null</code>.
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param relativeScriptPath The path to the script relative to the project base directory, must not be
+     *            <code>null</code>.
+     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
+     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
+     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
+     */
     private boolean runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
                                final FileLogger logger )
+        throws MojoExecutionException
     {
         final File scriptFile = resolveScript( new File( basedir, relativeScriptPath ) );
 
@@ -1003,7 +1049,7 @@ public class InvokerMojo
             Map globalVariables = new HashMap();
             globalVariables.put( "basedir", basedir );
 
-            PrintStream out = noLog ? null : logger.getPrintStream();
+            PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
 
             ScriptInterpreter interpreter = getInterpreter( scriptFile );
             if ( getLog().isDebugEnabled() )
@@ -1023,18 +1069,17 @@ public class InvokerMojo
                 String errorMessage =
                     "error reading " + scriptDescription + " " + basedir.getPath() + File.separatorChar
                         + postBuildHookScript + ", " + e.getMessage();
-                getLog().error( errorMessage, e );
-                return false;
+                throw new MojoExecutionException( errorMessage, e );
             }
 
             try
             {
-                if ( !noLog )
+                if ( logger != null )
                 {
                     logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
                 }
                 Object result = interpreter.evaluateScript( script, classPath, globalVariables, out );
-                if ( !noLog )
+                if ( logger != null )
                 {
                     logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
                 }
@@ -1098,27 +1143,44 @@ public class InvokerMojo
         return interpreter;
     }
 
+    /**
+     * Gets the goal list for the specified project.
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @return The list of goals to run when building the project, may be empty but never <code>null</code>.
+     * @throws MojoExecutionException If the profile file could not be read.
+     */
     List getGoals( final File basedir )
+        throws MojoExecutionException
     {
-        List invocationGoals = goals;
-
-        if ( goalsFile != null )
+        try
         {
-            final File projectGoalList = new File( basedir, goalsFile );
-
-            if ( projectGoalList.exists() )
-            {
-                final List goals = readFromFile( projectGoalList );
-
-                if ( ( goals != null ) && !goals.isEmpty() )
-                {
-                    getLog().debug( "Using goals specified in file: " + projectGoalList );
-                    invocationGoals = goals;
-                }
-            }
+            return getTokens( basedir, goalsFile, goals );
         }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "error reading goals", e );
+        }
+    }
 
-        return invocationGoals;
+    /**
+     * Gets the profile list for the specified project.
+     * 
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @return The list of profiles to activate when building the project, may be empty but never <code>null</code>.
+     * @throws MojoExecutionException If the profile file could not be read.
+     */
+    List getProfiles( File basedir )
+        throws MojoExecutionException
+    {
+        try
+        {
+            return getTokens( basedir, profilesFile, profiles );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "error reading profiles", e );
+        }
     }
 
     String[] getPoms()
@@ -1230,31 +1292,60 @@ public class InvokerMojo
         }
     }
 
-    private List readFromFile( final File projectGoalList )
+    /**
+     * Gets goal/profile names for the specified project, either directly from the plugin configuration or from an
+     * external token file.
+     * 
+     * @param basedir The base directory of the test project, must not be <code>null</code>.
+     * @param filename The (simple) name of an optional file in the project base directory from which to read
+     *            goals/profiles, may be <code>null</code>.
+     * @param defaultTokens The list of tokens to return in case the specified token file does not exist, may be
+     *            <code>null</code>.
+     * @return The list of goal/profile names, may be empty but never <code>null</code>.
+     * @throws IOException If the token file exists but could not be parsed.
+     */
+    private List getTokens( File basedir, String filename, List defaultTokens )
+        throws IOException
     {
+        List tokens = ( defaultTokens != null ) ? defaultTokens : new ArrayList();
+
+        if ( StringUtils.isNotEmpty( filename ) )
+        {
+            File tokenFile = new File( basedir, filename );
+
+            if ( tokenFile.exists() )
+            {
+                tokens = readTokens( tokenFile );
+            }
+        }
+
+        return tokens;
+    }
+
+    /**
+     * Reads the tokens from the specified file. Tokens are separated either by line terminators or commas. During
+     * parsing, the file contents will be interpolated.
+     * 
+     * @param tokenFile The file to read the tokens from, must not be <code>null</code>.
+     * @return The list of tokens, may be empty but never <code>null</code>.
+     * @throws IOException If the token file could not be read.
+     */
+    private List readTokens( final File tokenFile )
+        throws IOException
+    {
+        List result = new ArrayList();
+
         BufferedReader reader = null;
-
-        List result = null;
-
         try
         {
             Map composite = new CompositeMap( this.project, this.interpolationsProperties );
-            reader = new BufferedReader( new InterpolationFilterReader( newReader( projectGoalList ), composite ) );
-
-            result = new ArrayList();
+            reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
                 result.addAll( collectListFromCSV( line ) );
             }
-        }
-        catch ( final IOException e )
-        {
-            getLog().warn(
-                           "Failed to load goal list from file: " + projectGoalList
-                               + ". Using 'goal' parameter configured on this plugin instead." );
-            getLog().debug( "Error reading goals file: " + projectGoalList, e );
         }
         finally
         {
@@ -1264,6 +1355,12 @@ public class InvokerMojo
         return result;
     }
 
+    /**
+     * Gets a list of comma separated tokens from the specified line.
+     * 
+     * @param csv The line with comma separated tokens, may be <code>null</code>.
+     * @return The list of tokens from the line, may be empty but never <code>null</code>.
+     */
     private List collectListFromCSV( final String csv )
     {
         final List result = new ArrayList();
@@ -1281,15 +1378,35 @@ public class InvokerMojo
         return result;
     }
 
-    File buildInterpolatedFile( File originalFile, File targetDirectory, String targetFileName )
+    /**
+     * Interpolates the specified POM/settings file to a temporary file.
+     * 
+     * @param originalFile The XML file to interpolate, must not be <code>null</code>.
+     * @param interpolatedFile The target file to write the interpolated contents of the original file to, must not be
+     *            <code>null</code>.
+     * @throws MojoExecutionException If the target file could not be created.
+     */
+    void buildInterpolatedFile( File originalFile, File interpolatedFile )
         throws MojoExecutionException
     {
-        File interpolatedFile = new File( targetDirectory, targetFileName );
         if ( interpolatedFile.exists() )
         {
             interpolatedFile.delete();
         }
         interpolatedFile.deleteOnExit();
+        try
+        {
+            if ( !interpolatedFile.createNewFile() )
+            {
+                throw new MojoExecutionException( "failed to create file " + interpolatedFile.getPath() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "failed to create file " + interpolatedFile.getPath(), e );
+        }
+        getLog().debug( "interpolate file to create interpolated in " + interpolatedFile.getPath() );
+
         if ( settings.getLocalRepository() != null )
         {
             if ( this.interpolationsProperties == null )
@@ -1300,27 +1417,14 @@ public class InvokerMojo
         }
         Map composite = new CompositeMap( this.project, this.interpolationsProperties );
 
-        try
-        {
-            boolean created = interpolatedFile.createNewFile();
-            if ( !created )
-            {
-                throw new MojoExecutionException( "fail to create file " + interpolatedFile.getPath() );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "fail to create file " + interpolatedFile.getPath() );
-        }
-        getLog().debug( "interpolate it pom to create interpolated in " + interpolatedFile.getPath() );
-
         BufferedReader reader = null;
         Writer writer = null;
         try
         {
             // interpolation with token @...@
-            reader = new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
-                                                                        composite, "@", "@" ) );
+            reader =
+                new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
+                                                                   composite, "@", "@" ) );
             writer = WriterFactory.newXmlWriter( interpolatedFile );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
@@ -1331,61 +1435,13 @@ public class InvokerMojo
         }
         catch ( IOException e )
         {
-            String message = "error when interpolating it pom";
-            throw new MojoExecutionException( message, e );
+            throw new MojoExecutionException( "failed to interpolate file " + originalFile.getPath(), e );
         }
         finally
         {
             // IOUtil in p-u is null check and silently NPE
             IOUtil.close( reader );
             IOUtil.close( writer );
-        }
-
-        if ( interpolatedFile == null )
-        {
-            // null check : normally impossibe but :-)
-            throw new MojoExecutionException( "pom file is null after interpolation" );
-        }
-        return interpolatedFile;
-    }
-
-    List getProfiles( File projectDirectory )
-        throws MojoExecutionException
-    {
-        if ( profilesFile == null )
-        {
-            return profiles == null ? Collections.EMPTY_LIST : profiles;
-        }
-        File projectProfilesFile = new File( projectDirectory, profilesFile );
-        if ( !projectProfilesFile.exists() )
-        {
-            return profiles == null ? Collections.EMPTY_LIST : profiles;
-        }
-        BufferedReader reader = null;
-        try
-        {
-            List profilesInFiles = new ArrayList();
-            reader = new BufferedReader( newReader( projectProfilesFile ) );
-            String line = null;
-            while ( ( line = reader.readLine() ) != null )
-            {
-                profilesInFiles.addAll( collectListFromCSV( line ) );
-            }
-            return profilesInFiles;
-        }
-        catch ( FileNotFoundException e )
-        {
-            // as we check first if the file it should not happened
-            throw new MojoExecutionException( projectProfilesFile + " not found ", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "error reading profile in file " + projectProfilesFile + " not found ",
-                                              e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
         }
     }
 
@@ -1394,7 +1450,7 @@ public class InvokerMojo
      * 
      * @param projectDirectory The base directory of the IT project, must not be <code>null</code>.
      * @return The invoker properties, may be empty but never <code>null</code>.
-     * @throws MojoExecutionException If an error occurred.
+     * @throws MojoExecutionException If an I/O error occurred during reading the properties.
      */
     private Properties getInvokerProperties( final File projectDirectory )
         throws MojoExecutionException
