@@ -302,10 +302,10 @@ public class DescribeMojo
     /**
      * Method for retrieving the description of the plugin
      *
-     * @param pi    holds information of the plugin whose description is to be retrieved
+     * @param pi holds information of the plugin whose description is to be retrieved
      * @return  a PluginDescriptor where the plugin description is to be retrieved
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
+     * @throws MojoExecutionException if the plugin could not be verify
+     * @throws MojoFailureException if groupId or artifactId is empty
      */
     private PluginDescriptor lookupPluginDescriptor( PluginInfo pi )
         throws MojoExecutionException, MojoFailureException
@@ -412,8 +412,9 @@ public class DescribeMojo
     /**
      * Method for parsing the plugin parameter
      *
-     * @param pi    contains information about the plugin whose description is to be retrieved
-     * @throws MojoFailureException
+     * @param pi contains information about the plugin whose description is to be retrieved
+     * @throws MojoFailureException if <code>plugin<*code> parameter is not conform to
+     * <code>groupId:artifactId[:version]</code>
      */
     private void parsePluginLookupInfo( PluginInfo pi )
         throws MojoFailureException
@@ -439,8 +440,8 @@ public class DescribeMojo
                         pi.version = pluginParts[2];
                         break;
                     default:
-                        throw new MojoFailureException(
-                                                        "plugin parameter must be a plugin prefix, or conform to: 'groupId:artifactId[:version]." );
+                        throw new MojoFailureException( "plugin parameter must be a plugin prefix,"
+                            + " or conform to: 'groupId:artifactId[:version]'." );
                 }
             }
             else
@@ -459,10 +460,13 @@ public class DescribeMojo
     /**
      * Method for retrieving the plugin description
      *
-     * @param pd        contains the plugin description
-     * @param buffer    contains the information to be displayed or printed
+     * @param pd contains the plugin description
+     * @param buffer contains the information to be displayed or printed
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
      */
     private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
+        throws MojoFailureException, MojoExecutionException
     {
         String name = pd.getName();
         if ( name == null )
@@ -511,8 +515,11 @@ public class DescribeMojo
      *
      * @param md contains the description of the Plugin Mojo
      * @param buffer the displayed output
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
      */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
+        throws MojoFailureException, MojoExecutionException
     {
         buffer.append( "Mojo: '" ).append( md.getFullGoalName() ).append( "'" );
         buffer.append( '\n' );
@@ -533,8 +540,11 @@ public class DescribeMojo
      * @param md contains the description of the Plugin Mojo
      * @param buffer contains information to be printed or displayed
      * @param fullDescription specifies whether all the details about the Plugin Mojo is to  be displayed
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
      */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
+        throws MojoFailureException, MojoExecutionException
     {
         append( buffer, "Goal", "'" + md.getGoal() + "'", 0 );
 
@@ -602,8 +612,11 @@ public class DescribeMojo
      *
      * @param md contains the description of the Plugin Mojo
      * @param buffer contains information to be printed or displayed
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
      */
     private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
+        throws MojoFailureException, MojoExecutionException
     {
         List reqs = md.getRequirements();
 
@@ -638,8 +651,11 @@ public class DescribeMojo
      *
      * @param md contains the description of the Plugin Mojo
      * @param buffer contains information to be printed or displayed
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
      */
     private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
+        throws MojoFailureException, MojoExecutionException
     {
         List params = md.getParameters();
 
@@ -823,7 +839,7 @@ public class DescribeMojo
      * @throws MojoExecutionException if no descriptor was found for <code>task</code>
      * @see DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
      */
-    private MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
+    private static MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
                                               String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
         throws MojoFailureException, MojoExecutionException
     {
@@ -842,10 +858,12 @@ public class DescribeMojo
             MojoDescriptor mojoDescriptor =
                 (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project, invokedVia,
                     Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
+
             if ( mojoDescriptor == null )
             {
                 throw new MojoExecutionException( "No MOJO exists for '" + task + "'." );
             }
+
             return mojoDescriptor;
         }
         catch ( SecurityException e )
@@ -890,14 +908,80 @@ public class DescribeMojo
     }
 
     /**
+     * Invoke the following private method
+     * <code>HelpMojo#toLines(String, int, int, int)</code>
+     *
+     * @param text The text to split into lines, must not be <code>null</code>.
+     * @param indent The base indentation level of each line, must not be negative.
+     * @param indentSize The size of each indentation, must not be negative.
+     * @param lineLength The length of the line, must not be negative.
+     * @return The sequence of display lines, never <code>null</code>.
+     * @throws MojoFailureException if any can not invoke the method
+     * @throws MojoExecutionException if no line was found for <code>text</code>
+     * @see HelpMojo#toLines(String, int, int, int)
+     */
+    private static List toLines( String text, int indent, int indentSize, int lineLength )
+        throws MojoFailureException, MojoExecutionException
+    {
+        try
+        {
+            Method m =
+                HelpMojo.class.getDeclaredMethod( "toLines", new Class[] { String.class, Integer.TYPE,
+                    Integer.TYPE, Integer.TYPE } );
+            m.setAccessible( true );
+            List output =
+                (List) m.invoke( HelpMojo.class, new Object[] { text, new Integer( indent ),
+                    new Integer( indentSize ), new Integer( lineLength ) } );
+
+            if ( output == null )
+            {
+                throw new MojoExecutionException( "No output was exist '." );
+            }
+
+            return output;
+        }
+        catch ( SecurityException e )
+        {
+            throw new MojoFailureException( "SecurityException: " + e.getMessage() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new MojoFailureException( "IllegalArgumentException: " + e.getMessage() );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            throw new MojoFailureException( "NoSuchMethodException: " + e.getMessage() );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new MojoFailureException( "IllegalAccessException: " + e.getMessage() );
+        }
+        catch ( InvocationTargetException e )
+        {
+            Throwable cause = e.getCause();
+
+            if ( cause instanceof NegativeArraySizeException )
+            {
+                throw new MojoFailureException( "NegativeArraySizeException: " + cause.getMessage() );
+            }
+
+            throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() );
+        }
+    }
+
+    /**
      * Append a description to the buffer by respecting the indentSize and lineLength parameters.
      * <b>Note</b>: The last character is always a new line.
      *
      * @param sb The buffer to append the description, not <code>null</code>.
      * @param description The description, not <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
+     * @see #toLines(String, int, int, int)
      */
     private static void append( StringBuffer sb, String description, int indent )
+        throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( description ) )
         {
@@ -905,7 +989,7 @@ public class DescribeMojo
             return;
         }
 
-        for ( Iterator it = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        for ( Iterator it = toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
         {
             sb.append( it.next().toString() ).append( '\n' );
         }
@@ -919,8 +1003,12 @@ public class DescribeMojo
      * @param key The key, not <code>null</code>.
      * @param value The value associated to the key, could be <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
+     * @see #toLines(String, int, int, int)
      */
     private static void append( StringBuffer sb, String key, String value, int indent )
+        throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( key ) )
         {
@@ -933,7 +1021,7 @@ public class DescribeMojo
         }
 
         String description = key + ": " + value;
-        for ( Iterator it = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
+        for ( Iterator it = toLines( description, indent, INDENT_SIZE, LINE_LENGTH ).iterator(); it.hasNext(); )
         {
             sb.append( it.next().toString() ).append( '\n' );
         }
@@ -947,8 +1035,12 @@ public class DescribeMojo
      * @param sb The buffer to append the description, not <code>null</code>.
      * @param description The description, not <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
+     * @throws MojoFailureException if any reflection exceptions occur.
+     * @throws MojoExecutionException if any
+     * @see #toLines(String, int, int, int)
      */
     private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
+        throws MojoFailureException, MojoExecutionException
     {
         if ( StringUtils.isEmpty( key ) )
         {
@@ -962,8 +1054,8 @@ public class DescribeMojo
 
         String description = key + ": " + value;
 
-        List l1 = HelpMojo.toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
-        List l2 = HelpMojo.toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
+        List l1 = toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
+        List l2 = toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
         l2.set( 0, l1.get( 0 ) );
         for ( Iterator it = l2.iterator(); it.hasNext(); )
         {
