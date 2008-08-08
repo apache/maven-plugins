@@ -50,15 +50,17 @@ Maven 2 Invoker Plugin
 * Examples
 
   The following example configurations are available:
-  
+
   * {{{examples/clone-projects.html}Clone projects}} to a new directory before running.
 
   * {{{examples/install-artifacts.html}Install}} projects artifacts to a local repository before running.
-  
+
   * {{{examples/post-build-script.html}Run a BeanShell or Groovy script}} to verify project output.
-  
+
   * {{{examples/fast-use.html}Fast Invoker Plugin configuration}} to accelerate test execution.
-  
+
   * {{{examples/access-test-classes.html}Access test classes}} to share code between IT scripts.
-  
+
+  * {{{examples/invoker-properties.html}Using Invoker Properties}} to configure goals, profiles etc. for individual projects.
+
   []

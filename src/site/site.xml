@@ -34,6 +34,7 @@ under the License.
       <item name="Cloning Projects" href="examples/clone-projects.html"/>
       <item name="Fast Build Configuration" href="examples/fast-use.html"/>
       <item name="Installing Artifacts" href="examples/install-artifacts.html"/>
+      <item name="Invoker Properties" href="examples/invoker-properties.html"/>
       <item name="Using a Post Build Script" href="examples/post-build-script.html"/>
     </menu>
     
