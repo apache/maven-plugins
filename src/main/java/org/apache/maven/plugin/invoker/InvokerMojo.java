@@ -666,15 +666,15 @@ public class InvokerMojo
     }
 
     /**
-     * Runs the specified IT project.
+     * Runs the specified project.
      * 
-     * @param projectsDir The base directory of all IT projects, must not be <code>null</code>.
-     * @param project The relative path to the IT project, either to a POM file or merely to a directory, must not be
+     * @param projectsDir The base directory of all projects, must not be <code>null</code>.
+     * @param project The relative path to the project, either to a POM file or merely to a directory, must not be
      *            <code>null</code>.
      * @param failures The list to record build failures in, must not be <code>null</code>.
-     * @throws MojoExecutionException If the IT project could not be launched.
+     * @throws MojoExecutionException If the project could not be launched.
      */
-    private void runBuild( final File projectsDir, String project, final List failures )
+    private void runBuild( File projectsDir, String project, List failures )
         throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, project );
@@ -699,7 +699,40 @@ public class InvokerMojo
 
         getLog().info( "Building: " + project );
 
-        final Properties invokerProperties = getInvokerProperties( basedir );
+        File interpolatedPomFile = null;
+        if ( pomFile != null )
+        {
+            interpolatedPomFile = new File( basedir, "interpolated-" + pomFile.getName() );
+            buildInterpolatedFile( pomFile, interpolatedPomFile );
+        }
+
+        try
+        {
+            runBuild( project, basedir, interpolatedPomFile, failures );
+        }
+        finally
+        {
+            if ( interpolatedPomFile != null )
+            {
+                interpolatedPomFile.delete();
+            }
+        }
+    }
+
+    /**
+     * Runs the specified project.
+     * 
+     * @param project The relative path to the project, either to a POM file or merely to a directory, must not be
+     *            <code>null</code>.
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param pomFile The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
+     * @param failures The list to record build failures in, must not be <code>null</code>.
+     * @throws MojoExecutionException If the project could not be launched.
+     */
+    private void runBuild( String project, File basedir, File pomFile, List failures )
+        throws MojoExecutionException
+    {
+        Properties invokerProperties = getInvokerProperties( basedir );
         if ( getLog().isDebugEnabled() && !invokerProperties.isEmpty() )
         {
             getLog().debug( "Using invoker properties:" );
@@ -711,14 +744,7 @@ public class InvokerMojo
             }
         }
 
-        File interpolatedPomFile = null;
-        if ( pomFile != null )
-        {
-            interpolatedPomFile = new File( basedir, "interpolated-pom.xml" );
-            buildInterpolatedFile( pomFile, interpolatedPomFile );
-        }
-
-        final Properties loadedProperties = loadTestProperties( basedir );
+        Properties systemProperties = getTestProperties( basedir );
 
         FileLogger logger = setupLogger( basedir );
         try
@@ -748,20 +774,7 @@ public class InvokerMojo
                 request.setGoals( invocationGoals );
             }
 
-            Properties collectedTestProperties = new Properties();
-            if ( testProperties != null )
-            {
-                collectedTestProperties.putAll( testProperties );
-            }
-            if ( properties != null )
-            {
-                collectedTestProperties.putAll( properties );
-            }
-            if ( loadedProperties != null )
-            {
-                collectedTestProperties.putAll( loadedProperties );
-            }
-            request.setProperties( collectedTestProperties );
+            request.setProperties( systemProperties );
 
             if ( localRepositoryPath != null )
             {
@@ -792,9 +805,9 @@ public class InvokerMojo
                 request.setOutputHandler( logger );
             }
 
-            if ( interpolatedPomFile != null )
+            if ( pomFile != null )
             {
-                request.setPomFile( interpolatedPomFile );
+                request.setPomFile( pomFile );
             }
 
             request.setProfiles( getProfiles( basedir ) );
@@ -944,16 +957,26 @@ public class InvokerMojo
     }
 
     /**
-     * Reads the system properties to use for the specified project (if any).
+     * Gets the system properties to use for the specified project.
      * 
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @return The system properties to use, may be empty but never <code>null</code>.
      * @throws MojoExecutionException If the properties file exists but could not be read.
      */
-    private Properties loadTestProperties( final File basedir )
+    private Properties getTestProperties( final File basedir )
         throws MojoExecutionException
     {
-        final Properties testProps = new Properties();
+        Properties collectedTestProperties = new Properties();
+
+        if ( testProperties != null )
+        {
+            collectedTestProperties.putAll( testProperties );
+        }
+
+        if ( properties != null )
+        {
+            collectedTestProperties.putAll( properties );
+        }
 
         if ( testPropertiesFile != null )
         {
@@ -966,7 +989,9 @@ public class InvokerMojo
                 {
                     fin = new FileInputStream( testProperties );
 
-                    testProps.load( fin );
+                    Properties loadedProperties = new Properties();
+                    loadedProperties.load( fin );
+                    collectedTestProperties.putAll( loadedProperties );
                 }
                 catch ( IOException e )
                 {
@@ -980,7 +1005,7 @@ public class InvokerMojo
             }
         }
 
-        return testProps;
+        return collectedTestProperties;
     }
 
     /**
