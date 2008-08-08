@@ -36,6 +36,11 @@ class FileLogger
 {
 
     /**
+     * The path to the log file.
+     */
+    private File file;
+
+    /**
      * The underlying file stream this logger writes to.
      */
     private PrintStream stream;
@@ -72,7 +77,10 @@ class FileLogger
     public FileLogger( File outputFile, Log log )
         throws IOException
     {
+        this.file = outputFile;
         this.log = log;
+
+        outputFile.getParentFile().mkdirs();
         stream = new PrintStream( new FileOutputStream( outputFile ) );
 
         Runnable finalizer = new Runnable()
@@ -91,6 +99,16 @@ class FileLogger
         };
 
         Runtime.getRuntime().addShutdownHook( new Thread( finalizer ) );
+    }
+
+    /**
+     * Gets the path to the output file.
+     * 
+     * @return The path to the output file, never <code>null</code>.
+     */
+    public File getOutputFile()
+    {
+        return file;
     }
 
     /**
