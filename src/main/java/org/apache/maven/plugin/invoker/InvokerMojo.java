@@ -61,7 +61,6 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -378,7 +377,10 @@ public class InvokerMojo
      * <pre>
      * # A comma or space separated list of goals/phases to execute, may
      * # specify an empty list to execute the default goal of the IT project
-     * invoker.goals=clean package site
+     * invoker.goals=clean install
+     * 
+     * # Optionally, a list of goals to run during further invocations of Maven
+     * invoker.goals.2=${project.groupId}:${project.artifactId}:${project.version}:run
      * 
      * # A comma or space separated list of profiles to activate
      * invoker.profiles=its,jdk15
@@ -486,6 +488,16 @@ public class InvokerMojo
             projectsDir = cloneProjectsTo;
         }
 
+        if ( localRepositoryPath != null )
+        {
+            getLog().debug( "Using local repository: " + localRepositoryPath );
+
+            if ( !localRepositoryPath.exists() )
+            {
+                localRepositoryPath.mkdirs();
+            }
+        }
+
         final List failures = new ArrayList();
 
         for ( int i = 0; i < includedPoms.length; i++ )
@@ -494,7 +506,6 @@ public class InvokerMojo
 
             runBuild( projectsDir, pom, failures );
         }
-
 
         if ( !suppressSummaries )
         {
@@ -744,6 +755,10 @@ public class InvokerMojo
             }
         }
 
+        List goals = getGoals( basedir );
+
+        List profiles = getProfiles( basedir );
+
         Properties systemProperties = getTestProperties( basedir );
 
         FileLogger logger = setupLogger( basedir );
@@ -760,57 +775,10 @@ public class InvokerMojo
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
-            final List invocationGoals = getGoals( basedir );
-
-            if ( invocationGoals.isEmpty()
-                || ( invocationGoals.size() == 1 && "_default".equals( invocationGoals.get( 0 ) ) ) )
-            {
-                getLog().debug( "Executing default goal for project in: " + project );
-            }
-            else
-            {
-                getLog().debug( "Executing goals: " + invocationGoals + " for project in: " + project );
-
-                request.setGoals( invocationGoals );
-            }
-
-            request.setProperties( systemProperties );
-
             if ( localRepositoryPath != null )
             {
-                File localRepoDir = localRepositoryPath;
-
-                getLog().debug( "Using local repository: " + localRepoDir );
-
-                if ( ! localRepositoryPath.exists() )
-                {
-                    localRepositoryPath.mkdirs();
-                }
-                
-                request.setLocalRepositoryDirectory( localRepoDir );
+                request.setLocalRepositoryDirectory( localRepositoryPath );
             }
-
-            request.setInteractive( false );
-
-            request.setShowErrors( showErrors );
-
-            request.setDebug( debug );
-
-            request.setBaseDirectory( basedir );
-
-            if ( logger != null )
-            {
-                request.setErrorHandler( logger );
-
-                request.setOutputHandler( logger );
-            }
-
-            if ( pomFile != null )
-            {
-                request.setPomFile( pomFile );
-            }
-
-            request.setProfiles( getProfiles( basedir ) );
 
             if ( settingsFile != null )
             {
@@ -820,83 +788,123 @@ public class InvokerMojo
                 request.setUserSettingsFile( interpolatedSettingsFile );
             }
 
-            request.setMavenOpts( mavenOpts );
+            request.setProperties( systemProperties );
 
-            configureInvocation( request, invokerProperties );
+            request.setInteractive( false );
 
-            try
+            request.setShowErrors( showErrors );
+
+            request.setDebug( debug );
+
+            if ( logger != null )
             {
-                getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
-                getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
-            }
-            catch ( CommandLineConfigurationException e )
-            {
-                getLog().debug( "Failed to display command line: " + e.getMessage() );
-            }
+                request.setErrorHandler( logger );
 
-            InvocationResult result = null;
-
-            try
-            {
-                result = invoker.execute( request );
-            }
-            catch ( final MavenInvocationException e )
-            {
-                getLog().debug( "Error invoking Maven: " + e.getMessage(), e );
-                getLog().info( "...FAILED[error invoking Maven]" );
-
-                failures.add( project );
-
-                return;
+                request.setOutputHandler( logger );
             }
 
-            final CommandLineException executionException = result.getExecutionException();
-            final boolean nonZeroExit =
-                "failure".equalsIgnoreCase( invokerProperties.getProperty( "invoker.buildResult" ) );
+            request.setBaseDirectory( basedir );
 
-            if ( executionException != null )
+            if ( pomFile != null )
             {
-                if ( !suppressSummaries )
+                request.setPomFile( pomFile );
+            }
+
+            for ( int invocationIndex = 1;; invocationIndex++ )
+            {
+                if ( invocationIndex > 1
+                    && invokerProperties.getProperty( "invoker.goals." + invocationIndex ) == null )
                 {
-                    StringBuffer buffer = new StringBuffer( 256 );
-                    buffer.append( "...FAILED. " );
-                    if ( logger != null )
-                    {
-                        buffer.append( "See " );
-                        buffer.append( logger.getOutputFile().getAbsolutePath() );
-                        buffer.append( " for details." );
-                    }
-                    else
-                    {
-                        buffer.append( "See console output for details." );
-                    }
-                    getLog().info( buffer.toString() );
+                    break;
                 }
 
-                failures.add( project );
-            }
-            else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
-            {
-                if ( !suppressSummaries )
+                request.setGoals( goals );
+
+                request.setProfiles( profiles );
+
+                request.setMavenOpts( mavenOpts );
+
+                configureInvocation( request, invocationIndex, invokerProperties );
+
+                try
                 {
-                    StringBuffer buffer = new StringBuffer( 256 );
-                    buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
-                    if ( logger != null )
-                    {
-                        buffer.append( "See " );
-                        buffer.append( logger.getOutputFile().getAbsolutePath() );
-                        buffer.append( " for details." );
-                    }
-                    else
-                    {
-                        buffer.append( "See console output for details." );
-                    }
-                    getLog().info( buffer.toString() );
+                    getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
+                    getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
+                }
+                catch ( CommandLineConfigurationException e )
+                {
+                    getLog().debug( "Failed to display command line: " + e.getMessage() );
                 }
 
-                failures.add( project );
+                InvocationResult result;
+
+                try
+                {
+                    result = invoker.execute( request );
+                }
+                catch ( final MavenInvocationException e )
+                {
+                    getLog().debug( "Error invoking Maven: " + e.getMessage(), e );
+                    getLog().info( "...FAILED[error invoking Maven]" );
+
+                    failures.add( project );
+
+                    return;
+                }
+
+                final boolean nonZeroExit =
+                    "failure".equalsIgnoreCase( getInvokerProperty( invokerProperties, "invoker.buildResult",
+                                                                    invocationIndex ) );
+
+                if ( result.getExecutionException() != null )
+                {
+                    if ( !suppressSummaries )
+                    {
+                        StringBuffer buffer = new StringBuffer( 256 );
+                        buffer.append( "...FAILED. " );
+                        if ( logger != null )
+                        {
+                            buffer.append( "See " );
+                            buffer.append( logger.getOutputFile().getAbsolutePath() );
+                            buffer.append( " for details." );
+                        }
+                        else
+                        {
+                            buffer.append( "See console output for details." );
+                        }
+                        getLog().info( buffer.toString() );
+                    }
+
+                    failures.add( project );
+
+                    return;
+                }
+                else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
+                {
+                    if ( !suppressSummaries )
+                    {
+                        StringBuffer buffer = new StringBuffer( 256 );
+                        buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
+                        if ( logger != null )
+                        {
+                            buffer.append( "See " );
+                            buffer.append( logger.getOutputFile().getAbsolutePath() );
+                            buffer.append( " for details." );
+                        }
+                        else
+                        {
+                            buffer.append( "See console output for details." );
+                        }
+                        getLog().info( buffer.toString() );
+                    }
+
+                    failures.add( project );
+
+                    return;
+                }
             }
-            else if ( !verify( basedir, logger ) )
+
+            if ( !verify( basedir, logger ) )
             {
                 if ( !suppressSummaries )
                 {
@@ -1529,42 +1537,66 @@ public class InvokerMojo
      * invoker properties will be left unchanged in the invocation request.
      * 
      * @param request The invocation request to configure, must not be <code>null</code>.
+     * @param index The one-based index of the invocation to configure, must be positive.
      * @param properties The invoker properties used to configure the invocation, must not be <code>null</code>.
-     * @return The configured invocation request.
      */
-    private InvocationRequest configureInvocation( InvocationRequest request, Properties properties )
+    private void configureInvocation( InvocationRequest request, int index, Properties properties )
     {
-        String goals = properties.getProperty( "invoker.goals" );
+        if ( index < 1 )
+        {
+            throw new IllegalArgumentException( "invalid invocation index: " + index );
+        }
+
+        String goals = getInvokerProperty( properties, "invoker.goals", index );
         if ( goals != null )
         {
             request.setGoals( new ArrayList( Arrays.asList( goals.split( "[,\\s]+" ) ) ) );
         }
 
-        String profiles = properties.getProperty( "invoker.profiles" );
+        String profiles = getInvokerProperty( properties, "invoker.profiles", index );
         if ( profiles != null )
         {
             request.setProfiles( new ArrayList( Arrays.asList( profiles.split( "[,\\s]+" ) ) ) );
         }
 
-        String opts = properties.getProperty( "invoker.mavenOpts" );
-        if ( opts != null )
+        String mvnOpts = getInvokerProperty( properties, "invoker.mavenOpts", index );
+        if ( mvnOpts != null )
         {
-            request.setMavenOpts( opts );
+            request.setMavenOpts( mvnOpts );
         }
 
-        String failureBehavior = properties.getProperty( "invoker.failureBehavior" );
+        String failureBehavior = getInvokerProperty( properties, "invoker.failureBehavior", index );
         if ( failureBehavior != null )
         {
             request.setFailureBehavior( failureBehavior );
         }
 
-        String nonRecursive = properties.getProperty( "invoker.nonRecursive" );
+        String nonRecursive = getInvokerProperty( properties, "invoker.nonRecursive", index );
         if ( nonRecursive != null )
         {
             request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
         }
+    }
 
-        return request;
+    /**
+     * Gets a value from the invoker properties. The invoker properties are intended to describe the invocation settings
+     * for multiple builds of the same project. For this reason, the properties are indexed. First, a property named
+     * <code>key.index</code> will be queried. If this property does not exist, the value of the property named
+     * <code>key</code> will finally be returned.
+     * 
+     * @param properties The invoker properties from which to lookup the value, must not be <code>null</code>.
+     * @param key The (base) key for the invoker property to lookup, must not be <code>null</code>.
+     * @param index The index of the invocation for which to retrieve the value, must not be negative.
+     * @return The value for the requested invoker property or <code>null</code> if not defined.
+     */
+    static String getInvokerProperty( Properties properties, String key, int index )
+    {
+        String value = properties.getProperty( key + '.' + index );
+        if ( value == null )
+        {
+            value = properties.getProperty( key );
+        }
+        return value;
     }
 
 }
