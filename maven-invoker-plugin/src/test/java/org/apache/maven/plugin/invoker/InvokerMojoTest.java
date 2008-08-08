@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -203,6 +204,20 @@ public class InvokerMojoTest
 
         assertTrue( new File( cloneProjectsTo, "no-pom" ).isDirectory() );
         assertTrue( new File( cloneProjectsTo, "no-pom/build.log" ).isFile() );
+    }
+
+    public void testGetInvokerProperty()
+    {
+        Properties props = new Properties();
+
+        assertNull( InvokerMojo.getInvokerProperty( props, "undefined-key", 0 ) );
+
+        props.setProperty( "key", "value" );
+        assertEquals( "value", InvokerMojo.getInvokerProperty( props, "key", 1 ) );
+
+        props.setProperty( "key.1", "another-value" );
+        assertEquals( "another-value", InvokerMojo.getInvokerProperty( props, "key", 1 ) );
+        assertEquals( "value", InvokerMojo.getInvokerProperty( props, "key", 2 ) );
     }
 
 }
