@@ -31,7 +31,7 @@ import java.io.PrintStream;
 /**
  * @version $Id$
  */
-public class FileLogger
+class FileLogger
     implements InvocationOutputHandler
 {
 
