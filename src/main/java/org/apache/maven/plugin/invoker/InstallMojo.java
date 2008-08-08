@@ -79,7 +79,7 @@ public class InstallMojo
      * @required
      * @readonly
      */
-    protected ArtifactRepository localRepository;
+    private ArtifactRepository localRepository;
 
     /**
      * The path to the local repository into which the project artifacts should be installed for the integration tests.
