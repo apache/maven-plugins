@@ -114,7 +114,7 @@ public class InvokerMojo
      * repository like <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary local repository will
      * be used, potentially soiling it with broken artifacts.
      * 
-     * @parameter expression="${invoker.localRepositoryPath}"
+     * @parameter expression="${invoker.localRepositoryPath}" default-value="${settings.localRepository}"
      */
     private File localRepositoryPath;
 
@@ -312,7 +312,9 @@ public class InvokerMojo
     private String profilesFile;
 
     /**
-     * Path to an alternate <code>settings.xml</code> to use for Maven invocation with all ITs.
+     * Path to an alternate <code>settings.xml</code> to use for Maven invocation with all ITs. Note that the
+     * <code>&lt;localRepository&gt;</code> element of this settings file is always ignored, i.e. the path given by the
+     * parameter <code>localRepositoryPath</code> is dominant.
      * 
      * @parameter expression="${invoker.settingsFile}"
      * @since 1.2
@@ -488,14 +490,9 @@ public class InvokerMojo
             projectsDir = cloneProjectsTo;
         }
 
-        if ( localRepositoryPath != null )
+        if ( !localRepositoryPath.exists() )
         {
-            getLog().debug( "Using local repository: " + localRepositoryPath );
-
-            if ( !localRepositoryPath.exists() )
-            {
-                localRepositoryPath.mkdirs();
-            }
+            localRepositoryPath.mkdirs();
         }
 
         final List failures = new ArrayList();
@@ -776,10 +773,7 @@ public class InvokerMojo
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
-            if ( localRepositoryPath != null )
-            {
-                request.setLocalRepositoryDirectory( localRepositoryPath );
-            }
+            request.setLocalRepositoryDirectory( localRepositoryPath );
 
             if ( settingsFile != null )
             {
