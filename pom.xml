@@ -28,12 +28,12 @@ under the License.
   <artifactId>maven-war-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven War Plugin</name>
-  <version>2.1-alpha-2-SNAPSHOT</version>
+  <version>2.1-alpha-2</version>
   
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-war-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-war-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-war-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.1-alpha-2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.1-alpha-2</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-war-plugin-2.1-alpha-2</url>
   </scm>  
   
   <prerequisites>
