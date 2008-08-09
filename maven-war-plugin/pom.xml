@@ -8,7 +8,7 @@
   <artifactId>maven-war-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven War Plugin</name>
-  <version>2.1-beta-1-SNAPSHOT</version>
+  <version>2.1-alpha-2-SNAPSHOT</version>
   
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-war-plugin/</connection>
