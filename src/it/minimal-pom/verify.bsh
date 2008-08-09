@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    File siteDir = new File( basedir, "target/site" );
+    if ( !siteDir.isDirectory() )
+    {
+        System.out.println( "Site directory not existent: " + siteDir );
+        return false;
+    }
+
+    String[] reports = { "dependencies", 
+                         "index", 
+                         "integration", 
+                         "issue-tracking", 
+                         "license", 
+                         "mail-lists", 
+                         "plugin-management",
+                         "plugins", 
+                         "project-info", 
+                         "project-summary", 
+                         "source-repository", 
+                         "team-list"
+                       };
+    for ( String report : reports )
+    {
+        File reportFile = new File( siteDir, report + ".html" );
+        if ( !reportFile.isFile() )
+        {
+            System.out.println( "Report file not existent: " + reportFile );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
