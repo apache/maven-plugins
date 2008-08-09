@@ -20,16 +20,12 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.invoker.Invoker;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
@@ -55,36 +51,6 @@ public class InvokerMojoTest
         String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 3, goals.size() );
-    }
-
-    public void testSimpleRunValidate()
-        throws Exception
-    {
-        MavenProjectStub project = new MavenProjectStub();
-        project.setTestClasspathElements( Collections.EMPTY_LIST );
-
-        InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
-        setVariableValueToObject( invokerMojo, "project", project );
-        String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
-        List goals = invokerMojo.getGoals( new File( dirPath ) );
-        assertEquals( 1, goals.size() );
-        setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
-        List pomIncludes = new ArrayList();
-        pomIncludes.add( "pom.xml" );
-        setVariableValueToObject( invokerMojo, "pomIncludes", pomIncludes );
-        setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
-        File cloneProjectsTo = new File( getBasedir(), "target/unit/goals-from-file/" );
-        // clean if exists
-        if ( cloneProjectsTo.exists() )
-        {
-            FileUtils.deleteDirectory( cloneProjectsTo );
-        }
-        //cloneProjectsTo.getParent()
-        setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
-        setVariableValueToObject( invokerMojo, "postBuildHookScript", "verify.bsh" );
-        setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        invokerMojo.execute();
     }
 
     public void testSingleInvokerTest()
@@ -140,68 +106,5 @@ public class InvokerMojoTest
         assertTrue( InvokerMojo.alreadyCloned( "dir" + File.separator + "sub", Collections.singletonList( "dir" ) ) );
         assertFalse( InvokerMojo.alreadyCloned( "dirs", Collections.singletonList( "dir" ) ) );
     }    
-
-    public void testProjectCloning()
-        throws Exception
-    {
-        String dirPath = getBasedir() + "/src/test/resources/unit/nested-projects";
-
-        File cloneProjectsTo = new File( getBasedir(), "target/unit/nested-projects" );
-        if ( cloneProjectsTo.exists() )
-        {
-            FileUtils.deleteDirectory( cloneProjectsTo );
-        }
-
-        MavenProjectStub project = new MavenProjectStub();
-        project.setTestClasspathElements( Collections.EMPTY_LIST );
-
-        InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goals", Collections.singletonList( "validate" ) );
-        setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
-        setVariableValueToObject( invokerMojo, "pomIncludes", Collections.singletonList( "**/pom.xml" ) );
-        setVariableValueToObject( invokerMojo, "pomExcludes", Collections.singletonList( "pom.xml" ) );
-        setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
-        setVariableValueToObject( invokerMojo, "project", project );
-        setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
-
-        invokerMojo.execute();
-
-        // NOTE: It is part of the test design that "module" is a prefix of "module-1"
-        assertTrue( new File( cloneProjectsTo, "module" ).isDirectory() );
-        assertTrue( new File( cloneProjectsTo, "module-1" ).isDirectory() );
-        assertTrue( new File( cloneProjectsTo, "module-1/sub-module" ).isDirectory() );
-    }
-
-    public void testPomLessMavenInvocation()
-        throws Exception
-    {
-        String dirPath = getBasedir() + "/src/test/resources/unit";
-
-        File cloneProjectsTo = new File( getBasedir(), "target/unit" );
-        if ( cloneProjectsTo.exists() )
-        {
-            FileUtils.deleteDirectory( cloneProjectsTo );
-        }
-
-        MavenProjectStub project = new MavenProjectStub();
-        project.setTestClasspathElements( Collections.EMPTY_LIST );
-
-        String pomIndependentMojo = "org.apache.maven.plugins:maven-deploy-plugin:2.4:help";
-
-        InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goals", Collections.singletonList( pomIndependentMojo ) );
-        setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
-        setVariableValueToObject( invokerMojo, "pomIncludes", Collections.singletonList( "no-pom" ) );
-        setVariableValueToObject( invokerMojo, "cloneProjectsTo", cloneProjectsTo );
-        setVariableValueToObject( invokerMojo, "project", project );
-        setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        setVariableValueToObject( invokerMojo, "invoker", getContainer().lookup( Invoker.ROLE ) );
-
-        invokerMojo.execute();
-
-        assertTrue( new File( cloneProjectsTo, "no-pom" ).isDirectory() );
-        assertTrue( new File( cloneProjectsTo, "no-pom/build.log" ).isFile() );
-    }
 
 }
