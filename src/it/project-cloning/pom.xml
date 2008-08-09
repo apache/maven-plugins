@@ -26,6 +26,7 @@
   <groupId>org.apache.maven.plugins.invoker</groupId>
   <artifactId>project-cloning</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <description>Test to check for proper project cloning</description>
 
