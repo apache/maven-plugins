@@ -1077,6 +1077,7 @@ public class InvokerMojo
 
             Map globalVariables = new HashMap();
             globalVariables.put( "basedir", basedir );
+            globalVariables.put( "localRepositoryPath", localRepositoryPath );
 
             PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
 
