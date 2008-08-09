@@ -1,0 +1,27 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    System.out.println( basedir );
+    if ( !( basedir instanceof File ) )
+    {
+        System.out.println( "Global script variable not defined: basedir" );
+        return false;
+    }
+
+    System.out.println( localRepositoryPath );
+    if ( !( localRepositoryPath instanceof File ) )
+    {
+        System.out.println( "Global script variable not defined: localRepositoryPath" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
