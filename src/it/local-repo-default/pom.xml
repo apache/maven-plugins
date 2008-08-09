@@ -24,11 +24,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.invoker</groupId>
-  <artifactId>pom-less-invocation</artifactId>
+  <artifactId>local-repo-settings</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <description>Test to check for support to launch Maven on a mere directory, i.e. without a POM</description>
+  <description>
+    Test to check for MINVOKER-47, i.e. local repo path given by IT settings.xml must be ignored even if
+    plugin configuration does not specify a custom location.
+  </description>
 
   <build>
     <plugins>
@@ -38,12 +41,12 @@
         <version>@pom.version@</version>
         <configuration>
           <projectsDirectory>src/it</projectsDirectory>
-          <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
-            <pomInclude>no-pom</pomInclude>
+            <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
+          <settingsFile>src/it/settings.xml</settingsFile>
           <goals>
-            <goal>--version</goal>
+            <goal>install</goal>
           </goals>
         </configuration>
         <executions>
