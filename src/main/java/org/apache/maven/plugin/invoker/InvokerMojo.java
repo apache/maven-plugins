@@ -648,6 +648,12 @@ public class InvokerMojo
          * NOTE: Make sure the destination directory is always there (even if empty) to support POM-less ITs.
          */
         destDir.mkdirs();
+        String[] includedDirs = scanner.getIncludedDirectories();
+        for ( int i = 0; i < includedDirs.length; ++i )
+        {
+            File clonedDir = new File( destDir, includedDirs[i] );
+            clonedDir.mkdirs();
+        }
 
         String[] includedFiles = scanner.getIncludedFiles();
         for ( int i = 0; i < includedFiles.length; ++i )
