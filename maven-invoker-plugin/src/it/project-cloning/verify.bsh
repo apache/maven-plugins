@@ -17,6 +17,7 @@ try
             "module/pom.xml", 
             "module-1", 
             "module-1/pom.xml",
+            "module-1/empty-dir",
             "module-1/sub-module",
             "module-1/sub-module/pom.xml",
     };
