@@ -743,14 +743,15 @@ public class InvokerMojo
     private void runBuild( String project, File basedir, File pomFile, List failures )
         throws MojoExecutionException
     {
-        Properties invokerProperties = getInvokerProperties( basedir );
-        if ( getLog().isDebugEnabled() && !invokerProperties.isEmpty() )
+        InvokerProperties invokerProperties = getInvokerProperties( basedir );
+        if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
         {
+            Properties props = invokerProperties.getProperties();
             getLog().debug( "Using invoker properties:" );
-            for ( Iterator it = new TreeSet( invokerProperties.keySet() ).iterator(); it.hasNext(); )
+            for ( Iterator it = new TreeSet( props.keySet() ).iterator(); it.hasNext(); )
             {
                 String key = (String) it.next();
-                String value = invokerProperties.getProperty( key );
+                String value = props.getProperty( key );
                 getLog().debug( "  " + key + " = " + value );
             }
         }
@@ -812,8 +813,7 @@ public class InvokerMojo
 
             for ( int invocationIndex = 1;; invocationIndex++ )
             {
-                if ( invocationIndex > 1
-                    && invokerProperties.getProperty( "invoker.goals." + invocationIndex ) == null )
+                if ( invocationIndex > 1 && !invokerProperties.isInvocationDefined( invocationIndex ) )
                 {
                     break;
                 }
@@ -824,7 +824,7 @@ public class InvokerMojo
 
                 request.setMavenOpts( mavenOpts );
 
-                configureInvocation( request, invocationIndex, invokerProperties );
+                invokerProperties.configureInvocation( request, invocationIndex );
 
                 try
                 {
@@ -852,10 +852,6 @@ public class InvokerMojo
                     return;
                 }
 
-                final boolean nonZeroExit =
-                    "failure".equalsIgnoreCase( getInvokerProperty( invokerProperties, "invoker.buildResult",
-                                                                    invocationIndex ) );
-
                 if ( result.getExecutionException() != null )
                 {
                     if ( !suppressSummaries )
@@ -879,7 +875,7 @@ public class InvokerMojo
 
                     return;
                 }
-                else if ( ( result.getExitCode() != 0 ) != nonZeroExit )
+                else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
                 {
                     if ( !suppressSummaries )
                     {
@@ -1485,7 +1481,7 @@ public class InvokerMojo
      * @return The invoker properties, may be empty but never <code>null</code>.
      * @throws MojoExecutionException If an I/O error occurred during reading the properties.
      */
-    private Properties getInvokerProperties( final File projectDirectory )
+    private InvokerProperties getInvokerProperties( final File projectDirectory )
         throws MojoExecutionException
     {
         Properties props = new Properties();
@@ -1529,74 +1525,7 @@ public class InvokerMojo
                 props.setProperty( key, value );
             }
         }
-        return props;
-    }
-
-    /**
-     * Configures the specified invocation request from the given invoker properties. Settings not present in the
-     * invoker properties will be left unchanged in the invocation request.
-     * 
-     * @param request The invocation request to configure, must not be <code>null</code>.
-     * @param index The one-based index of the invocation to configure, must be positive.
-     * @param properties The invoker properties used to configure the invocation, must not be <code>null</code>.
-     */
-    private void configureInvocation( InvocationRequest request, int index, Properties properties )
-    {
-        if ( index < 1 )
-        {
-            throw new IllegalArgumentException( "invalid invocation index: " + index );
-        }
-
-        String goals = getInvokerProperty( properties, "invoker.goals", index );
-        if ( goals != null )
-        {
-            request.setGoals( new ArrayList( Arrays.asList( goals.split( "[,\\s]+" ) ) ) );
-        }
-
-        String profiles = getInvokerProperty( properties, "invoker.profiles", index );
-        if ( profiles != null )
-        {
-            request.setProfiles( new ArrayList( Arrays.asList( profiles.split( "[,\\s]+" ) ) ) );
-        }
-
-        String mvnOpts = getInvokerProperty( properties, "invoker.mavenOpts", index );
-        if ( mvnOpts != null )
-        {
-            request.setMavenOpts( mvnOpts );
-        }
-
-        String failureBehavior = getInvokerProperty( properties, "invoker.failureBehavior", index );
-        if ( failureBehavior != null )
-        {
-            request.setFailureBehavior( failureBehavior );
-        }
-
-        String nonRecursive = getInvokerProperty( properties, "invoker.nonRecursive", index );
-        if ( nonRecursive != null )
-        {
-            request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
-        }
-    }
-
-    /**
-     * Gets a value from the invoker properties. The invoker properties are intended to describe the invocation settings
-     * for multiple builds of the same project. For this reason, the properties are indexed. First, a property named
-     * <code>key.index</code> will be queried. If this property does not exist, the value of the property named
-     * <code>key</code> will finally be returned.
-     * 
-     * @param properties The invoker properties from which to lookup the value, must not be <code>null</code>.
-     * @param key The (base) key for the invoker property to lookup, must not be <code>null</code>.
-     * @param index The index of the invocation for which to retrieve the value, must not be negative.
-     * @return The value for the requested invoker property or <code>null</code> if not defined.
-     */
-    static String getInvokerProperty( Properties properties, String key, int index )
-    {
-        String value = properties.getProperty( key + '.' + index );
-        if ( value == null )
-        {
-            value = properties.getProperty( key );
-        }
-        return value;
+        return new InvokerProperties( props );
     }
 
 }
