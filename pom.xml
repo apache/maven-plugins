@@ -30,7 +30,7 @@ under the License.
   <version>2.5-SNAPSHOT</version>
   <inceptionYear>2004</inceptionYear>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
@@ -69,6 +69,11 @@ under the License.
       <artifactId>maven-artifact</artifactId>
       <version>2.0.6</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.6</version>
+    </dependency>    
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
