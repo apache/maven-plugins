@@ -151,6 +151,7 @@ under the License.
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
+              <preBuildHookScript>setup.bsh</preBuildHookScript>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
