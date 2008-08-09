@@ -29,21 +29,13 @@ under the License.
   <artifactId>maven-project-info-reports-plugin</artifactId>
   <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Project Info Reports Plugin</name>
   <description>
     The Maven Project Info Reports Plugin is a plugin that generates standard reports
     for the specified project.
   </description>
   <inceptionYear>2005</inceptionYear>
-
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
-
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MPIR</url>
-  </issueManagement>
 
   <contributors>
     <contributor>
@@ -59,11 +51,26 @@ under the License.
     </contributor>
   </contributors>
 
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-project-info-reports-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MPIR</url>
+  </issueManagement>
+
+  <properties>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
+    <scmVersion>1.0</scmVersion>
+  </properties>
 
   <dependencies>
     <!-- Maven -->
@@ -517,11 +524,4 @@ under the License.
       </reporting>
     </profile>
   </profiles>
-
-  <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
-    <wagonVersion>1.0-beta-3</wagonVersion>
-    <scmVersion>1.0</scmVersion>
-  </properties>
 </project>
