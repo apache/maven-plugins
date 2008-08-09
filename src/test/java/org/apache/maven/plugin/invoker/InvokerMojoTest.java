@@ -95,7 +95,7 @@ public class InvokerMojoTest
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
         String[] poms = invokerMojo.getPoms();
         System.out.println( Arrays.asList( poms ) );
-        assertEquals( 6, poms.length );
+        assertEquals( 4, poms.length );
     }
 
     public void testAlreadyCloned()
