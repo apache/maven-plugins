@@ -106,6 +106,7 @@ public abstract class AbstractSourceJarMojo
      * Contains the full list of projects in the reactor.
      *
      * @parameter expression="${reactorProjects}"
+     * @readonly
      */
     protected List reactorProjects;
 
