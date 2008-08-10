@@ -45,7 +45,7 @@ interface ScriptInterpreter
      * @param scriptOutput A print stream to redirect any output from the script to, may be <code>null</code> to use
      *            stdout/stderr.
      * @return The return value from the script, can be <code>null</code>
-     * @throws ScriptEvaluationException If the script could not be evaluated.
+     * @throws ScriptEvaluationException If the script evaluation produced an error.
      */
     Object evaluateScript( String script, List classPath, Map globalVariables, PrintStream scriptOutput )
         throws ScriptEvaluationException;
