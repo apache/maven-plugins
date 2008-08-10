@@ -30,6 +30,10 @@
 
   <description>Test to check for support to launch Maven on a mere directory, i.e. without a POM</description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
