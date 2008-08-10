@@ -50,7 +50,7 @@ under the License.
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-clean-plugin</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-clean-plugin</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/maven-clean-plugin</url>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-clean-plugin</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
