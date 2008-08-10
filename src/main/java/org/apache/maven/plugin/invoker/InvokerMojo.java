@@ -770,7 +770,7 @@ public class InvokerMojo
         {
             if ( !prebuild( basedir, logger ) )
             {
-                getLog().info( "...FAILED[pre-build script returned false]" );
+                getLog().info( "...FAILED[pre-build script did not succeed]" );
 
                 failures.add( project );
 
@@ -904,7 +904,7 @@ public class InvokerMojo
             {
                 if ( !suppressSummaries )
                 {
-                    getLog().info( "...FAILED[verify script returned false]." );
+                    getLog().info( "...FAILED[verify script did not succeed]." );
                 }
 
                 failures.add( project );
@@ -1121,6 +1121,10 @@ public class InvokerMojo
                     "error evaluating " + scriptDescription + " " + basedir.getPath() + File.separatorChar
                         + postBuildHookScript + ", " + e.getMessage();
                 getLog().error( errorMessage, e );
+                if ( logger != null )
+                {
+                    e.printStackTrace( logger.getPrintStream() );
+                }
                 return false;
             }
 
