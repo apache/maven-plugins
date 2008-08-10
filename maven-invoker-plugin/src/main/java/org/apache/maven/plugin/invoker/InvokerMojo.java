@@ -629,9 +629,9 @@ public class InvokerMojo
     /**
      * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
      * 
-     * @param sourceDir
-     * @param destDir
-     * @throws IOException
+     * @param sourceDir The source directory to copy, must not be <code>null</code>.
+     * @param destDir The target directory to copy to, must not be <code>null</code>.
+     * @throws IOException If the directory structure could not be copied.
      */
     private void copyDirectoryStructure( File sourceDir, File destDir )
         throws IOException
@@ -768,14 +768,7 @@ public class InvokerMojo
         FileLogger logger = setupLogger( basedir );
         try
         {
-            if ( !prebuild( basedir, logger ) )
-            {
-                getLog().info( "...FAILED[pre-build script did not succeed]" );
-
-                failures.add( project );
-
-                return;
-            }
+            runScript( "pre-build script", basedir, preBuildHookScript, logger );
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
@@ -845,74 +838,26 @@ public class InvokerMojo
                 catch ( final MavenInvocationException e )
                 {
                     getLog().debug( "Error invoking Maven: " + e.getMessage(), e );
-                    getLog().info( "...FAILED[error invoking Maven]" );
-
-                    failures.add( project );
-
-                    return;
+                    throw new BuildFailureException( "Maven invocation failed. " + e.getMessage() );
                 }
 
-                if ( result.getExecutionException() != null )
-                {
-                    if ( !suppressSummaries )
-                    {
-                        StringBuffer buffer = new StringBuffer( 256 );
-                        buffer.append( "...FAILED. " );
-                        if ( logger != null )
-                        {
-                            buffer.append( "See " );
-                            buffer.append( logger.getOutputFile().getAbsolutePath() );
-                            buffer.append( " for details." );
-                        }
-                        else
-                        {
-                            buffer.append( "See console output for details." );
-                        }
-                        getLog().info( buffer.toString() );
-                    }
-
-                    failures.add( project );
-
-                    return;
-                }
-                else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
-                {
-                    if ( !suppressSummaries )
-                    {
-                        StringBuffer buffer = new StringBuffer( 256 );
-                        buffer.append( "...FAILED[code=" ).append( result.getExitCode() ).append( "]. " );
-                        if ( logger != null )
-                        {
-                            buffer.append( "See " );
-                            buffer.append( logger.getOutputFile().getAbsolutePath() );
-                            buffer.append( " for details." );
-                        }
-                        else
-                        {
-                            buffer.append( "See console output for details." );
-                        }
-                        getLog().info( buffer.toString() );
-                    }
-
-                    failures.add( project );
-
-                    return;
-                }
+                verify( result, invocationIndex, invokerProperties, logger );
             }
 
-            if ( !verify( basedir, logger ) )
-            {
-                if ( !suppressSummaries )
-                {
-                    getLog().info( "...FAILED[verify script did not succeed]." );
-                }
+            runScript( "post-build script", basedir, postBuildHookScript, logger );
 
-                failures.add( project );
-            }
-            else if ( !suppressSummaries )
+            if ( !suppressSummaries )
             {
                 getLog().info( "...SUCCESS." );
             }
+        }
+        catch ( BuildFailureException e )
+        {
+            if ( !suppressSummaries )
+            {
+                getLog().info( "...FAILED. " + e.getMessage() );
+            }
+            failures.add( project );
         }
         finally
         {
@@ -1013,45 +958,39 @@ public class InvokerMojo
     }
 
     /**
-     * Runs the pre-build-hook script of the specified project (if any).
+     * Verifies the invocation result.
      * 
-     * @param basedir The base directory of the project, must not be <code>null</code>.
-     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
-     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
-     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
+     * @param result The invocation result to check, must not be <code>null</code>.
+     * @param invocationIndex The index of the invocation for which to check the exit code, must not be negative.
+     * @param invokerProperties The invoker properties used to check the exit code, must not be <code>null</code>.
+     * @param logger The build logger, may be <code>null</code> if logging is disabled.
+     * @throws BuildFailureException If the invocation result indicates a build failure.
      */
-    private boolean prebuild( final File basedir, final FileLogger logger )
-        throws MojoExecutionException
+    private void verify( InvocationResult result, int invocationIndex, InvokerProperties invokerProperties,
+                         FileLogger logger )
+        throws BuildFailureException
     {
-        boolean result = true;
-
-        if ( preBuildHookScript != null )
+        if ( result.getExecutionException() != null )
         {
-            result = runScript( "pre-build script", basedir, preBuildHookScript, logger );
+            throw new BuildFailureException( "The Maven invocation failed. "
+                + result.getExecutionException().getMessage() );
         }
-
-        return result;
-    }
-
-    /**
-     * Runs the post-build-hook script of the specified project (if any).
-     * 
-     * @param basedir The base directory of the project, must not be <code>null</code>.
-     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
-     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
-     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
-     */
-    private boolean verify( final File basedir, final FileLogger logger )
-        throws MojoExecutionException
-    {
-        boolean result = true;
-
-        if ( postBuildHookScript != null )
+        else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
         {
-            result = runScript( "verification script", basedir, postBuildHookScript, logger );
+            StringBuffer buffer = new StringBuffer( 256 );
+            buffer.append( "The build exited with code " ).append( result.getExitCode() ).append( ". " );
+            if ( logger != null )
+            {
+                buffer.append( "See " );
+                buffer.append( logger.getOutputFile().getAbsolutePath() );
+                buffer.append( " for details." );
+            }
+            else
+            {
+                buffer.append( "See console output for details." );
+            }
+            throw new BuildFailureException( buffer.toString() );
         }
-
-        return result;
     }
 
     /**
@@ -1059,16 +998,21 @@ public class InvokerMojo
      * 
      * @param scriptDescription The description of the script to use for logging, must not be <code>null</code>.
      * @param basedir The base directory of the project, must not be <code>null</code>.
-     * @param relativeScriptPath The path to the script relative to the project base directory, must not be
-     *            <code>null</code>.
+     * @param relativeScriptPath The path to the script relative to the project base directory, may be <code>null</code>
+     *            to skip the script execution.
      * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
-     * @return <code>true</code> if the script does not exist or completed successfully, <code>false</code> otherwise.
      * @throws MojoExecutionException If an I/O error occurred while reading the script file.
+     * @throws BuildFailureException If the script did not return <code>true</code> of threw an exception.
      */
-    private boolean runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
-                               final FileLogger logger )
-        throws MojoExecutionException
+    private void runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
+                            final FileLogger logger )
+        throws MojoExecutionException, BuildFailureException
     {
+        if ( relativeScriptPath == null )
+        {
+            return;
+        }
+
         final File scriptFile = resolveScript( new File( basedir, relativeScriptPath ) );
 
         if ( scriptFile.exists() )
@@ -1086,7 +1030,7 @@ public class InvokerMojo
             {
                 String name = interpreter.getClass().getName();
                 name = name.substring( name.lastIndexOf( '.' ) + 1 );
-                getLog().debug( "Running script with " + name );
+                getLog().debug( "Running script with " + name + ": " + scriptFile );
             }
 
             String script;
@@ -1097,40 +1041,41 @@ public class InvokerMojo
             catch ( IOException e )
             {
                 String errorMessage =
-                    "error reading " + scriptDescription + " " + basedir.getPath() + File.separatorChar
-                        + postBuildHookScript + ", " + e.getMessage();
+                    "error reading " + scriptDescription + " " + scriptFile.getPath() + ", " + e.getMessage();
                 throw new MojoExecutionException( errorMessage, e );
             }
 
+            Object result;
             try
             {
                 if ( logger != null )
                 {
                     logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
                 }
-                Object result = interpreter.evaluateScript( script, classPath, globalVariables, out );
+                result = interpreter.evaluateScript( script, classPath, globalVariables, out );
                 if ( logger != null )
                 {
                     logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
                 }
-                return Boolean.TRUE.equals( result ) || "true".equals( result );
             }
-            catch ( Exception e )
+            catch ( ScriptEvaluationException e )
             {
+                Throwable t = ( e.getCause() != null ) ? e.getCause() : e;
                 String errorMessage =
-                    "error evaluating " + scriptDescription + " " + basedir.getPath() + File.separatorChar
-                        + postBuildHookScript + ", " + e.getMessage();
-                getLog().error( errorMessage, e );
+                    "error evaluating " + scriptDescription + " " + scriptFile.getPath() + ", " + t.getMessage();
+                getLog().debug( errorMessage, t );
                 if ( logger != null )
                 {
-                    e.printStackTrace( logger.getPrintStream() );
+                    t.printStackTrace( logger.getPrintStream() );
                 }
-                return false;
+                throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + t.getMessage() );
             }
 
+            if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
+            {
+                throw new BuildFailureException( "The " + scriptDescription + " returned " + result + "." );
+            }
         }
-
-        return true;
     }
 
     /**
