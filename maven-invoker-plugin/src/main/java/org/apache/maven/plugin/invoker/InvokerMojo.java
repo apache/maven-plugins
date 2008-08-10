@@ -506,28 +506,24 @@ public class InvokerMojo
 
         if ( !suppressSummaries )
         {
-            final StringBuffer summary = new StringBuffer();
-            summary.append( "\n\n" );
-            summary.append( "---------------------------------------\n" );
-            summary.append( "Execution Summary:\n" );
-            summary.append( "Builds Passing: " ).append( includedPoms.length - failures.size() ).append( "\n" );
-            summary.append( "Builds Failing: " ).append( failures.size() ).append( "\n" );
-            summary.append( "---------------------------------------\n" );
+            getLog().info( "---------------------------------------" );
+            getLog().info( "Execution Summary:" );
+            getLog().info( "  Builds Passing: " + ( includedPoms.length - failures.size() ) );
+            getLog().info( "  Builds Failing: " + failures.size() );
+            getLog().info( "---------------------------------------" );
 
             if ( !failures.isEmpty() )
             {
-                summary.append( "\nThe following builds failed:\n" );
+                getLog().error( "The following builds failed:" );
 
                 for ( final Iterator it = failures.iterator(); it.hasNext(); )
                 {
-                    final String pom = ( String ) it.next();
-                    summary.append( "\n*  " ).append( pom );
+                    final String pom = (String) it.next();
+                    getLog().error( "*  " + pom );
                 }
 
-                summary.append( "\n" );
+                getLog().info( "---------------------------------------" );
             }
-
-            getLog().info( summary.toString() );
         }
 
         if ( !failures.isEmpty() )
