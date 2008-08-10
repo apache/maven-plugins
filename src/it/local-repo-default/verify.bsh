@@ -7,7 +7,39 @@ try
     File badRepoDir = new File( basedir, "target/bad-repo" );
     if ( badRepoDir.exists() )
     {
-        System.out.println( "IT used wrong local repository: " + badRepoDir );
+        System.out.println( "Sub build used wrong local repository (from its settings.xml): " + badRepoDir );
+        return false;
+    }
+
+    /*
+     * NOTE: This relies heavily on the Invoker Plugin's configuration of our parent build, not nice but until MINVOKER-49
+     * is available here, we have no other way of getting the path.
+     */
+    File localRepoPathOfThisBuild = new File( basedir.getParentFile().getParentFile(), "local-repo" );
+    System.out.println("Local repository of this build: " + localRepoPathOfThisBuild);
+
+    File textFile = new File( basedir, "src/it/project/target/local-repo-path.txt" );
+    BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( textFile ), "UTF-8" ) );
+    File localRepoPathOfSubBuild = new File ( reader.readLine() );
+    reader.close();
+    System.out.println("Local repository of sub build: " + localRepoPathOfSubBuild);
+
+    /*
+     * This is partly a sanity check of the Maven core (i.e. its MavenSettingsBuilder) which should ensure
+     *   ${settings.localRepository} == ${maven.repo.local}
+     * This IT is run with maven.repo.local but the Invoker Plugin passes settings.localRepository down to the sub build
+     * so these paths must match.
+     */
+    if ( !localRepoPathOfThisBuild.equals( localRepoPathOfSubBuild ) )
+    {
+        System.out.println( "Sub build used wrong local repository: " + localRepoPathOfSubBuild );
+        return false;
+    }
+
+    File installedFile = new File( localRepoPathOfThisBuild, "test/local-repo-default/0.1-SNAPSHOT/local-repo-default-0.1-SNAPSHOT.pom" );
+    if ( !installedFile.isFile() )
+    {
+        System.out.println( "Installed file missing in local repo: " + installedFile );
         return false;
     }
 }
