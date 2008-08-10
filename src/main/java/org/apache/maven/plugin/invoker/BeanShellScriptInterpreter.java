@@ -28,6 +28,7 @@ import java.util.Map;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import bsh.TargetError;
 
 /**
  * Provides a facade to evaluate BeanShell scripts.
@@ -88,8 +89,7 @@ class BeanShellScriptInterpreter
                     }
                     catch ( EvalError e )
                     {
-                        throw new ScriptEvaluationException( "Illegal global variable: " + variable + " = " + value,
-                                                             e );
+                        throw new RuntimeException( e );
                     }
                 }
             }
@@ -98,9 +98,13 @@ class BeanShellScriptInterpreter
             {
                 return engine.eval( script );
             }
-            catch ( EvalError e )
+            catch ( TargetError e )
             {
-                throw new ScriptEvaluationException( "script evaluation error", e );
+                throw new ScriptEvaluationException( e.getTarget() );
+            }
+            catch ( Exception e )
+            {
+                throw new ScriptEvaluationException( e );
             }
         }
         finally
