@@ -1598,7 +1598,8 @@ public abstract class AbstractJavadocMojo
      * Method to get the source paths. If no source path is specified in the parameter, the compile source roots
      * of the project will be used.
      *
-     * @return a List of the project source paths
+     * @return a List of the project absolute source paths as <code>String</code>
+     * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
     protected List getSourcePaths()
     {
@@ -1606,11 +1607,11 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList( getProjectSourceRoots( project ) );
+            sourcePaths = new ArrayList( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
 
             if ( project.getExecutionProject() != null )
             {
-                sourcePaths.addAll( getExecutionProjectSourceRoots( project ) );
+                sourcePaths.addAll( JavadocUtil.pruneDirs( project, getExecutionProjectSourceRoots( project ) ) );
             }
 
             /*
@@ -1623,7 +1624,10 @@ public abstract class AbstractJavadocMojo
                 File javadocDir = getJavadocDirectory();
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
+                    List l =
+                        JavadocUtil.pruneDirs( project,
+                                               Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
+                    sourcePaths.addAll( l );
                 }
             }
 
@@ -1645,7 +1649,7 @@ public abstract class AbstractJavadocMojo
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                         if ( "java".equals( artifactHandler.getLanguage() ) )
                         {
-                            sourcePaths.addAll( sourceRoots );
+                            sourcePaths.addAll( JavadocUtil.pruneDirs( subProject, sourceRoots ) );
                         }
 
                         String javadocDirRelative =
@@ -1653,7 +1657,10 @@ public abstract class AbstractJavadocMojo
                         File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                         if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
-                            sourcePaths.add( javadocDir.getAbsolutePath() );
+                            List l =
+                                JavadocUtil.pruneDirs( subProject,
+                                                       Collections.singletonList( javadocDir.getAbsolutePath() ) );
+                            sourcePaths.addAll( l );
                         }
                     }
                 }
@@ -1662,13 +1669,16 @@ public abstract class AbstractJavadocMojo
         else
         {
             sourcePaths = new ArrayList( Arrays.asList( sourcepath.split( "[;]" ) ) );
+            sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
-                sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
+                List l =
+                    JavadocUtil.pruneDirs( project,
+                                           Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
+                sourcePaths.addAll( l );
             }
         }
 
-        sourcePaths = JavadocUtil.pruneDirs( sourcePaths );
         return sourcePaths;
     }
 
@@ -3195,10 +3205,12 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @param sourcePaths could be null
-     * @param files not null
+     * @param sourcePaths not null, containing absolute and relative paths
+     * @param files not null, containing list of quoted files
      * @param onlyPackageName boolean for only package name
      * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
+     * @see #getFiles(List)
+     * @see #getSourcePaths()
      */
     private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
     {
