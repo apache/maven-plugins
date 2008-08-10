@@ -1,0 +1,38 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    File jarFile = new File( basedir, "target/jar-attached-1.0-SNAPSHOT-sources.jar" );
+    System.out.println( "Checking for existence of " + jarFile );
+    if ( !jarFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+    // TODO: Use variable localRepositoryPath once MINVOKER-49 is released
+    File localRepoDir = new File( basedir.getParentFile().getParentFile(), "local-repo" );
+    System.out.println( "Checking for existence of " + localRepoDir );
+    if ( !localRepoDir.isDirectory() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+
+    File attachedFile = new File( localRepoDir, "test/jar-attached/1.0-SNAPSHOT/jar-attached-1.0-SNAPSHOT-sources.jar" );
+    System.out.println( "Checking for existence of " + attachedFile );
+    if ( !attachedFile.isFile() )
+    {
+        System.out.println( "FAILURE!" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
