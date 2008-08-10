@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.invoker</groupId>
-  <artifactId>local-repo-settings</artifactId>
+  <artifactId>local-repo-default</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -32,6 +32,10 @@
     Test to check for MINVOKER-47, i.e. local repo path given by IT settings.xml must be ignored even if
     plugin configuration does not specify a custom location.
   </description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <build>
     <plugins>
