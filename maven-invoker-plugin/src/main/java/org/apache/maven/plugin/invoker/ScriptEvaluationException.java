@@ -20,7 +20,8 @@ package org.apache.maven.plugin.invoker;
  */
 
 /**
- * Signals an error during parsing/evaluation of a script (e.g. a syntax error).
+ * Signals an error during parsing/evaluation of a script. This can either be a syntax error in the script itself or an
+ * exception triggered by the methods it invoked.
  * 
  * @author Benjamin Bentmann
  * @version $Id$
@@ -35,14 +36,13 @@ class ScriptEvaluationException
     private static final long serialVersionUID = 199336743291078393L;
 
     /**
-     * Creates a new exception with the specified detail message and cause.
+     * Creates a new exception with the specified cause.
      * 
-     * @param message The detail message, may be <code>null</code>.
      * @param cause The cause, may be <code>null</code>.
      */
-    public ScriptEvaluationException( String message, Throwable cause )
+    public ScriptEvaluationException( Throwable cause )
     {
-        super( message, cause );
+        super( cause );
     }
 
 }
