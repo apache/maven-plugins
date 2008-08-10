@@ -57,5 +57,16 @@ under the License.
        </p>
      </answer>
    </faq>
+   <faq id="question4">
+     <question>How can I invoke multiple Maven builds on the same IT project?</question>
+     <answer>
+       <p>
+         This is not supported in the plugin configuration but rather on a per project basis by means of the invoker
+         properties. This way, you use properties like <code>invoker.goals.2</code> to configure the goals for a second
+         invocation of Maven. Have a look at the example about using
+         <a href="examples/invoker-properties.html">Invoker Properties</a>.
+       </p>
+     </answer>
+   </faq>
  </part>
 </faqs>
