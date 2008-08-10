@@ -20,7 +20,6 @@ package org.apache.maven.plugin.invoker;
  */
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 
 import java.io.File;
@@ -83,9 +82,9 @@ class GroovyScriptInterpreter
             {
                 return interpreter.evaluate( script );
             }
-            catch ( GroovyRuntimeException e )
+            catch ( Exception e )
             {
-                throw new ScriptEvaluationException( "script evaluation error", e );
+                throw new ScriptEvaluationException( e );
             }
         }
         finally
