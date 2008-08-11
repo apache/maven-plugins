@@ -24,9 +24,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.project-info-reports</groupId>
-  <artifactId>minimal</artifactId>
+  <artifactId>minimal-pom</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>minimal-pom</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
