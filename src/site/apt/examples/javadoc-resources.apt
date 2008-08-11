@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-07-31
+ 2008-08-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -124,7 +124,7 @@ yourproject
 </HTML>
 +-----+
 
- <<Note:>> With Javadoc 5.0, this file becomes <package-info.java> and is preferred over <package.html>.
+ <<Note>>: With Javadoc 5.0, this file becomes <package-info.java> and is preferred over <package.html>.
 
  For more information, see {{{http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#packagecomment}
  javadoc - The Java API Documentation Generator, Package Comment Files}}.
@@ -160,3 +160,6 @@ public class App
 {
 }
 +-----+
+
+ <<Note>>: You need to run the Javadoc Plugin with the <<<docfilessubdirs>>> parameter to allow the copy of
+ unprocessed files.
