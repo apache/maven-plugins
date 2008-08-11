@@ -29,8 +29,8 @@ under the License.
 
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
-  <packaging>pom</packaging>
   <version>12-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <name>Maven Plugins</name>
   <description>Maven Plugins</description>
@@ -110,13 +110,6 @@ under the License.
     </mailingList>
   </mailingLists>
 
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
-    </site>
-  </distributionManagement>
-
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
@@ -163,6 +156,12 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
   </scm>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
+    </site>
+  </distributionManagement>
 
   <build>
     <pluginManagement>
@@ -220,7 +219,6 @@ under the License.
   </build>
 
   <profiles>
-
     <profile>
       <id>quality-checks</id>
       <activation>
