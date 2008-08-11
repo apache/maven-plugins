@@ -19,24 +19,21 @@ under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-changelog-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven Changelog Plug-in</name>
   <version>2.2-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven Changelog Plug-in</name>
   <description>Produce SCM changelog reports.</description>
-  <prerequisites>
-    <maven>2.0</maven>
-  </prerequisites>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MCHANGELOG</url>
-  </issueManagement>
+
   <developers>
     <developer>
       <id>kaz</id>
@@ -114,6 +111,20 @@ under the License.
       <name>David Jackman</name>
     </contributor>
   </contributors>
+
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MCHANGELOG</url>
+  </issueManagement>
+
+  <properties>
+    <maven-scm.version>1.0</maven-scm.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -217,6 +228,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
       <plugin>
@@ -225,9 +237,6 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
-  <properties>
-    <maven-scm.version>1.0</maven-scm.version>
-  </properties>
 
   <profiles>
     <profile>
