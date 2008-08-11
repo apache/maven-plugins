@@ -1,0 +1,33 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    File siteDir = new File( basedir, "target/site" );
+    System.out.println( "Checking for existence of site directory: " + siteDir );
+    if ( !siteDir.isDirectory() )
+    {
+        System.out.println( "FAILED" );
+        return false;
+    }
+
+    String[] reports = { "changelog", "dev-activity", "file-activity" };
+    for ( String report : reports )
+    {
+        File reportFile = new File( siteDir, report + ".html" );
+        System.out.println( "Checking for existence of report: " + reportFile );
+        if ( !reportFile.isFile() )
+        {
+            System.out.println( "FAILED" );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
