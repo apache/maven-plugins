@@ -19,32 +19,39 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven.plugins.patch.it</groupId>
-  <artifactId>it-project-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>1</version>
-  <name>it-project-parent</name>
+  
+  <groupId>test</groupId>
+  <artifactId>apply-single-patch</artifactId>
+  <name>apply-single-patch</name>
+  <version>1.0-SNAPSHOT</version>
 
-  <repositories>
-    <repository>
-      <id>integration.test.repo</id>
-      <url>${test.remote.repo.url}</url>
-    </repository>
-  </repositories>
-
-  <distributionManagement>
-    <repository>
-      <id>integration.test.repo</id>
-      <url>${test.remote.repo.url}</url>
-    </repository>
-  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-patch-plugin</artifactId>
-        <version>testing</version>
+        <version>@pom.version@</version>
+        
+        <configuration>
+          <targetDirectory>${basedir}</targetDirectory>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>apply-patches</id>
+            
+            <!--  putting it ahead of generate-sources, since this should patch any model files, etc. -->
+            <phase>initialize</phase>
+            
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

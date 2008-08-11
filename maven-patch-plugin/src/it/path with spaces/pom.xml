@@ -20,36 +20,46 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <parent>
-    <groupId>org.apache.maven.plugins.patch.it</groupId>
-    <artifactId>it-project-parent</artifactId>
-    <version>1</version>
-  </parent>
-  
-  <artifactId>skip-when-patch-tracking-file-present</artifactId>
-  <name>skip-when-patch-tracking-file-present</name>
-  
+  <groupId>test</groupId>
+  <artifactId>path-with-spaces</artifactId>
+  <name>path-with-spaces</name>
+  <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-patch-plugin</artifactId>
-        
-        <configuration>
-          <targetDirectory>${basedir}</targetDirectory>
-          <patchTrackingFile>${basedir}/src/main/patches/patches-applied.txt</patchTrackingFile>
-          <patches>
-            <patch>first.patch</patch>
-          </patches>
-        </configuration>
-
+        <version>@pom.version@</version>
         <executions>
           <execution>
-            <id>apply-patches</id>
-            
-            <!--  putting it ahead of generate-sources, since this should patch any model files, etc. -->
+            <id>apply-patch-0</id>
             <phase>initialize</phase>
-            
+            <configuration>
+              <targetDirectory>${basedir}</targetDirectory>
+              <patches>
+                <patch>first.patch</patch>
+              </patches>
+            </configuration>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>apply-patch-1</id>
+            <phase>initialize</phase>
+            <configuration>
+              <targetDirectory>${basedir}</targetDirectory>
+              <originalFile>${basedir}/target/test.txt</originalFile>
+              <destFile>${basedir}/target/test2.txt</destFile>
+              <patches>
+                <patch>second.patch</patch>
+              </patches>
+            </configuration>
             <goals>
               <goal>apply</goal>
             </goals>
