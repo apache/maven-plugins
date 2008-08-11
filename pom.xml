@@ -18,24 +18,28 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-checkstyle-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven Checkstyle Plugin</name>
   <version>2.3-SNAPSHOT</version>
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
-  </issueManagement>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven Checkstyle Plugin</name>
   <inceptionYear>2005</inceptionYear>
+
+  <contributors>
+    <contributor>
+      <name>Joakim Erdfelt</name>
+      <email>joakim@erdfelt.com</email>
+    </contributor>
+  </contributors>
+
   <mailingLists>
     <!-- duplication from maven-plugins pom - temporary until they inherit properly
     -->
@@ -88,17 +92,21 @@ under the License.
       <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
     </mailingList>
   </mailingLists>
-  <contributors>
-    <contributor>
-      <name>Joakim Erdfelt</name>
-      <email>joakim@erdfelt.com</email>
-    </contributor>
-  </contributors>
+
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-checkstyle-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
+  </issueManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
