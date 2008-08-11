@@ -1689,6 +1689,8 @@ public abstract class AbstractJavadocMojo
             }
         }
 
+        sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
+
         return sourcePaths;
     }
 
