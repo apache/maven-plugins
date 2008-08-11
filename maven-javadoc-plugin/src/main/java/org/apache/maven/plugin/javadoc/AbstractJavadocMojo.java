@@ -248,9 +248,14 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
+     * <br/>
+     * Could be used in addition of <code>docfilessubdirs</code> parameter.
+     * <br/>
+     * See <a href="#docfilessubdirs">docfilessubdirs</a>.
      *
      * @since 2.1
      * @parameter expression="${basedir}/src/main/javadoc"
+     * @see #docfilessubdirs
      */
     private File javadocDirectory;
 
@@ -763,8 +768,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
+     * See <a href="#javadocDirectory">javadocDirectory</a>.
+     * <br/>
      *
      * @parameter expression="${docfilessubdirs}" default-value="false"
+     * @see #excludedocfilessubdir
+     * @see #javadocDirectory
      */
     private boolean docfilessubdirs;
 
@@ -788,6 +797,7 @@ public abstract class AbstractJavadocMojo
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${excludedocfilessubdir}"
+     * @see #docfilessubdirs
      */
     private String excludedocfilessubdir;
 
