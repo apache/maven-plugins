@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.settings.Settings;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
@@ -48,6 +49,7 @@ public class InvokerMojoTest
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
         setVariableValueToObject( invokerMojo, "project", project );
+        setVariableValueToObject( invokerMojo, "settings", new Settings() );
         String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
         List goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 3, goals.size() );
