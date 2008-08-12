@@ -20,13 +20,13 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1393,18 +1393,19 @@ public class InvokerMojo
         Map composite = new CompositeMap( this.project, this.interpolationsProperties );
 
         BufferedReader reader = null;
-        Writer writer = null;
+        BufferedWriter writer = null;
         try
         {
             // interpolation with token @...@
             reader =
                 new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
                                                                    composite, "@", "@" ) );
-            writer = WriterFactory.newXmlWriter( interpolatedFile );
+            writer = new BufferedWriter( WriterFactory.newXmlWriter( interpolatedFile ) );
             String line = null;
             while ( ( line = reader.readLine() ) != null )
             {
                 writer.write( line );
+                writer.newLine();
             }
             writer.flush();
         }
