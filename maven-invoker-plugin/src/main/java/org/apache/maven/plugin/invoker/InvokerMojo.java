@@ -1268,6 +1268,25 @@ public class InvokerMojo
     }
 
     /**
+     * Returns the map-based value source used to interpolate POMs and other stuff.
+     * 
+     * @return The map-based value source for interpolation, never <code>null</code>.
+     */
+    private Map getInterpolationValueSource()
+    {
+        Properties props = new Properties();
+        if ( interpolationsProperties != null )
+        {
+            props.putAll( interpolationsProperties );
+        }
+        if ( settings.getLocalRepository() != null )
+        {
+            props.put( "localRepository", settings.getLocalRepository() );
+        }
+        return new CompositeMap( this.project, props );
+    }
+
+    /**
      * Gets goal/profile names for the specified project, either directly from the plugin configuration or from an
      * external token file.
      * 
@@ -1313,7 +1332,7 @@ public class InvokerMojo
         BufferedReader reader = null;
         try
         {
-            Map composite = new CompositeMap( this.project, this.interpolationsProperties );
+            Map composite = getInterpolationValueSource();
             reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
             String line = null;
@@ -1382,21 +1401,12 @@ public class InvokerMojo
         }
         getLog().debug( "interpolate file to create interpolated in " + interpolatedFile.getPath() );
 
-        if ( settings.getLocalRepository() != null )
-        {
-            if ( this.interpolationsProperties == null )
-            {
-                this.interpolationsProperties = new Properties();
-            }
-            this.interpolationsProperties.put( "localRepository", settings.getLocalRepository() );
-        }
-        Map composite = new CompositeMap( this.project, this.interpolationsProperties );
-
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try
         {
             // interpolation with token @...@
+            Map composite = getInterpolationValueSource();
             reader =
                 new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
                                                                    composite, "@", "@" ) );
@@ -1453,9 +1463,8 @@ public class InvokerMojo
                 }
             }
 
-            Map filter = new CompositeMap( project, this.interpolationsProperties );
             Interpolator interpolator = new RegexBasedInterpolator();
-            interpolator.addValueSource( new MapBasedValueSource( filter ) );
+            interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource() ) );
             for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
             {
                 String key = (String) it.next();
