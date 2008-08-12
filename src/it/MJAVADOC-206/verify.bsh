@@ -22,17 +22,18 @@ import org.codehaus.plexus.util.*;
 
 boolean result = true;
 
-boolean checkEncoding( String module, String encoding )
+boolean checkEncoding( String module, String sourceEncoding, String reportingEncoding )
 {
-    print( "module " + module + ", encoding " + encoding );
+    print( "module " + module + ", source encoding " + sourceEncoding
+           + ", expected reporting encoding " + reportingEncoding );
 
     File source = new File( basedir, module + "/src/main/java/Test.java" );
     File javadoc = new File( basedir, module + "/target/site/apidocs/Test.html" );
 
-    String java = IOUtil.toString( new FileInputStream( source ), "UTF-8" );
-    String html = IOUtil.toString( new FileInputStream( javadoc ), encoding );
+    String java = IOUtil.toString( new FileInputStream( source ), sourceEncoding );
+    String html = IOUtil.toString( new FileInputStream( javadoc ), reportingEncoding );
 
-    if ( html.indexOf( "text/html; charset=" + encoding ) < 0 )
+    if ( html.indexOf( "text/html; charset=" + reportingEncoding ) < 0 )
     {
         System.err.println( "charset not specified in content-type of " + javadoc );
         return false;
@@ -49,7 +50,9 @@ boolean checkEncoding( String module, String encoding )
 
 try
 {
-    result = checkEncoding( "default", "UTF-8") && checkEncoding( "encoding", "UTF-16" ) && checkEncoding( "docencoding", "UTF-16" );
+    result = checkEncoding( "default", "ISO-8859-15", "UTF-8")
+             && checkEncoding( "encoding", "UTF-8", "UTF-16" )
+             && checkEncoding( "docencoding", "UTF-8", "UTF-16" );
 }
 catch( IOException e )
 {

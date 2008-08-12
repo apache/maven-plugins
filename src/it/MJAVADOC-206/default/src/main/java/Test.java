@@ -19,9 +19,9 @@
 
 /**
  * Sample class with non-ascii characters:
- * {non-ascii chars delimiter}french: äëïöüàèìòù, greek: αβγδεζηθ, japanese: あいうえお{non-ascii chars delimiter}
+ * {non-ascii chars delimiter}french: ����������, euro: �{non-ascii chars delimiter}
  *
- * @author Hervé Boutemy
+ * @author Herv� Boutemy
  */
 public class Test
 {
