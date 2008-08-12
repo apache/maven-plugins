@@ -132,6 +132,7 @@ public class InterpolationTest
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
         setVariableValueToObject( invokerMojo, "profilesFile", "profiles.txt" );
+        setVariableValueToObject( invokerMojo, "settings", new Settings() );
         String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
             + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
         List profiles = invokerMojo.getProfiles( new File( dirPath ) );
