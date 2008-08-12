@@ -751,8 +751,8 @@ public abstract class AbstractJavadocMojo
     private String charset;
 
     /**
-     * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be the value
-     * of the <code>encoding</code> parameter.
+     * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be
+     * <code>UTF-8</code>.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
      *
@@ -1410,11 +1410,11 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return the docencoding attribute or the value of {@link #getEncoding()} if <code>null</code>.
+     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code>.
      */
     private String getDocencoding()
     {
-        return ( StringUtils.isEmpty( docencoding ) ) ? getEncoding() : docencoding;
+        return ( StringUtils.isEmpty( docencoding ) ) ? ReaderFactory.UTF_8 : docencoding;
     }
 
     /**
