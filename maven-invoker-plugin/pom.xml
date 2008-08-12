@@ -158,6 +158,10 @@ under the License.
               <goals>
                 <goal>verify</goal>
               </goals>
+              <properties>
+                <!-- TODO: Workaround for MINVOKER-50, remove once fixed -->
+                <invoker.version>${project.version}</invoker.version>
+              </properties>
             </configuration>
             <executions>
               <execution>
