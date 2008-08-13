@@ -19,16 +19,9 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.util.Locale;
-
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
-
 /**
  * Generates documentation for the <code>Java code</code> in an <b>aggregator</b> project using the standard
  * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
- * <br/>
- * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>true</code>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -40,12 +33,8 @@ public class AggregatorJavadocReport
     extends JavadocReport
 {
     /** {@inheritDoc} */
-    public void generate( Sink sink, Locale locale )
-        throws MavenReportException
+    protected boolean isAggregator()
     {
-        // operate always in aggregation mode
-        aggregate = true;
-
-        super.generate( sink, locale );
+        return true;
     }
 }
