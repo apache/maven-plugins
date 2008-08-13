@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File pomFile = new File( basedir, "target/it/project/target/classes/interpolated-pom.xml" );
+    System.out.println( "Checking for existence of interpolated IT POM: " + pomFile );
+    if ( !pomFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    String xml = FileUtils.fileRead( pomFile, "UTF-8" );
+    
+    String[] values = {
+            "<prop0>${project.version}</prop0>",
+            "<prop1>1.0-SNAPSHOT</prop1>",
+            "<prop2>PROPERTY-FROM-PLUGIN-CONFIG</prop2>",
+            "<prop3>PROPERTY-FROM-PROPERTIES-SECTION</prop3>",
+            "<prop4>PASSED</prop4>",
+            "<prop5>PASSED</prop5>",
+            "<prop6>PASSED</prop6>",
+            "<prop7>PASSED</prop7>",
+            "<prop8>PASSED</prop8>",
+        };
+    for ( String value : values )
+    {
+        System.out.println( "Checking for occurrence of: " + value );
+        if ( xml.indexOf( value ) < 0 )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
