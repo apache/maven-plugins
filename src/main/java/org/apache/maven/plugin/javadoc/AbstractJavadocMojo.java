@@ -1310,6 +1310,19 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
+     * Indicates whether this goal is flagged with <code>@aggregator</code> or the value of the <code>aggregate</code>
+     * parameter.
+     *
+     * @return <code>true</code> if the goal is designed as an aggregator, <code>false</code> otherwise.
+     * @see AggregatorJavadocReport
+     * @see AggregatorTestJavadocReport
+     */
+    protected boolean isAggregator()
+    {
+        return aggregate;
+    }
+
+    /**
      * @return the output directory
      */
     protected String getOutputDirectory()
@@ -1441,7 +1454,7 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        if ( aggregate && !project.isExecutionRoot() )
+        if ( isAggregator() && !project.isExecutionRoot() )
         {
             return;
         }
@@ -1641,7 +1654,7 @@ public abstract class AbstractJavadocMojo
                 }
             }
 
-            if ( aggregate && project.isExecutionRoot() )
+            if ( isAggregator() && project.isExecutionRoot() )
             {
                 for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
                 {
@@ -1822,7 +1835,7 @@ public abstract class AbstractJavadocMojo
 
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
-        if ( aggregate && project.isExecutionRoot() )
+        if ( isAggregator() && project.isExecutionRoot() )
         {
             try
             {
@@ -2880,7 +2893,7 @@ public abstract class AbstractJavadocMojo
         List offlineLinksList =
             ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ) : new ArrayList() );
 
-        if ( !aggregate && reactorProjects != null )
+        if ( !isAggregator() && reactorProjects != null )
         {
             String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
 
@@ -3116,7 +3129,7 @@ public abstract class AbstractJavadocMojo
             JavadocUtil.copyJavadocResources( anOutputDirectory, getJavadocDirectory(), excludedocfilessubdir );
         }
 
-        if ( aggregate && project.isExecutionRoot() )
+        if ( isAggregator() && project.isExecutionRoot() )
         {
             for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
