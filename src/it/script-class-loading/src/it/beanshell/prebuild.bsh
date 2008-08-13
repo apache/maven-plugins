@@ -1,0 +1,33 @@
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    System.out.println( "Invoking class from project's test class path" );
+    System.out.println( org.MyUtils.getNothing() );
+
+    System.out.println( "Trying to access method which is unavaible in old plexus-utils" );
+    try
+    {
+        System.out.println( FileUtils.class.getMethod( "copyFileIfModified", new Class[] { File.class, File.class } ) );
+        System.out.println( "FAILED!" );
+        return false;
+    }
+    catch( NoSuchMethodException e )
+    {
+        // expected
+        e.printStackTrace();
+    }
+      
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
