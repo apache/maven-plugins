@@ -272,11 +272,20 @@ public class InvokerMojo
 
     /**
      * List of properties which will be used to interpolate goal files.
-     *
+     * 
      * @parameter
      * @since 1.1
+     * @deprecated As of version 1.3, the parameter {@link #filterProperties} should be used instead.
      */
     private Properties interpolationsProperties;
+
+    /**
+     * A list of additional properties which will be used to filter tokens in POMs and goal files.
+     * 
+     * @parameter
+     * @since 1.3
+     */
+    private Map filterProperties;
 
     /**
      * The Maven Project Object
@@ -373,7 +382,7 @@ public class InvokerMojo
      * integration test. This properties file may be used to specify settings for an individual test invocation. Any
      * property present in the file will override the corresponding setting from the plugin configuration. The values of
      * the properties are filtered and may use expressions like <code>${project.version}</code> to reference project
-     * properties or values from the parameter {@link #interpolationsProperties}. The snippet below describes the
+     * properties or values from the parameter {@link #filterProperties}. The snippet below describes the
      * supported properties:
      * 
      * <pre>
@@ -1274,10 +1283,14 @@ public class InvokerMojo
      */
     private Map getInterpolationValueSource()
     {
-        Properties props = new Properties();
+        Map props = new HashMap();
         if ( interpolationsProperties != null )
         {
             props.putAll( interpolationsProperties );
+        }
+        if ( filterProperties != null )
+        {
+            props.putAll( filterProperties );
         }
         if ( settings.getLocalRepository() != null )
         {

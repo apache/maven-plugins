@@ -46,7 +46,7 @@ class CompositeMap
     /**
      * The set of additional properties from which to extract interpolated values, never <code>null</code>.
      */
-    private Properties properties;
+    private Map properties;
 
     /**
      * Creates a new interpolation source backed by the specified Maven project and some user-specified properties.
@@ -55,7 +55,7 @@ class CompositeMap
      * @param properties The set of additional properties from which to extract interpolated values, may be
      *            <code>null</code>.
      */
-    protected CompositeMap( MavenProject mavenProject, Properties properties )
+    protected CompositeMap( MavenProject mavenProject, Map properties )
     {
         if ( mavenProject == null )
         {
