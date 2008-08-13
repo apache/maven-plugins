@@ -28,23 +28,25 @@
 
 Advanced Usage
 
-* Goals File Interpolation
+* Goals File Filtering
 
-  The goals files can be interpolated with some values:
+  The goals files will be filtered such that tokens of the form <<<$\{expression}>>> are replaced with some values:
   
-  * Values from the project POM (you must use <<<$\{pom.groupId}>>> notation in your goals file)
+  * Values from the project POM like <<<project.version>>>
   
-  * In the plugin configuration you can add some properties in an <<<\<interpolationsProperties\>>>> element
+  * In the plugin configuration you can add some properties in the <<<\<filterProperties\>>>> element
+  
+  * Values from the <<<\<properties\>>>> section of your project POM
 
-* IT POM Interpolation 
+* IT POM Filtering
 
-  IT POMs can be interpolated with some values:
+  IT POMs will be filtered such that tokens of the form <<<@expression@>>> are replaced with some values:
     
-  * Values from the project POM (you must use <<<@pom.groupId@>>> notation in your POM file)
+  * Values from the project POM like <<<project.version>>>
   
-  * In the plugin configuration you can add some properties in an <<<\<interpolationsProperties\>>>> element
+  * In the plugin configuration you can add some properties in the <<<\<filterProperties\>>>> element
   
-  * Properties from <<<pom.properties>>>
+  * Values from the <<<\<properties\>>>> section of your project POM
 
 * Running Only Some Tests
 
