@@ -2,8 +2,9 @@
  Aggregating Javadocs for Multi-Projects
  ------
  Maria Odea Ching
+ Vincent Siveton
  ------
- 2008-07-31
+ 2008-08-13
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -78,5 +79,42 @@ Project
 * Using The \<aggregate\> Goal
 
  The \<aggregate/\> parameter doesn't include generate source directories defined using the
- {{{http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html}build-helper:add-source}}. In this case, you need
- to use the <<<aggregate>>> goal and <<<test-aggregate>>> goals.
+ {{{http://mojo.codehaus.org/build-helper-maven-plugin/add-source-mojo.html}build-helper:add-source}}. In this case,
+ you need to use the <<<aggregate>>> goal and <<<test-aggregate>>> goals. You could also define several \<reportSet/\>
+ like the following:
+
++-----+
+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <id>non-aggregate</id>
+            <configuration>
+              ...
+            </configuration>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <configuration>
+              ...
+            </configuration>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
