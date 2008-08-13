@@ -79,21 +79,29 @@ class CompositeMap
      */
     public boolean containsKey( Object key )
     {
-        if ( key == null )
+        if ( !( key instanceof String ) )
         {
             return false;
         }
-        try
+
+        String expression = (String) key;
+        if ( expression.startsWith( "project." ) || expression.startsWith( "pom." ) )
         {
-            Object evaluated = ReflectionValueExtractor.evaluate( (String) key, this.mavenProject );
-            return evaluated == null;
-        }
-        catch ( Exception e )
-        {
-            // uhm do we have to throw a RuntimeException here ?
+            try
+            {
+                Object evaluated = ReflectionValueExtractor.evaluate( expression, this.mavenProject );
+                if ( evaluated != null )
+                {
+                    return true;
+                }
+            }
+            catch ( Exception e )
+            {
+                // uhm do we have to throw a RuntimeException here ?
+            }
         }
 
-        return ( mavenProject.getProperties().containsKey( key ) || properties.containsKey( key ) );
+        return properties.containsKey( key ) || mavenProject.getProperties().containsKey( key );
     }
 
     /**
@@ -117,21 +125,26 @@ class CompositeMap
      */
     public Object get( Object key )
     {
-        if ( key == null )
+        if ( !( key instanceof String ) )
         {
             return null;
         }
-        try
+
+        String expression = (String) key;
+        if ( expression.startsWith( "project." ) || expression.startsWith( "pom." ) )
         {
-            Object evaluated = ReflectionValueExtractor.evaluate( (String) key, this.mavenProject );
-            if ( evaluated != null )
+            try
             {
-                return evaluated;
+                Object evaluated = ReflectionValueExtractor.evaluate( expression, this.mavenProject );
+                if ( evaluated != null )
+                {
+                    return evaluated;
+                }
             }
-        }
-        catch ( Exception e )
-        {
-            // uhm do we have to throw a RuntimeException here ?
+            catch ( Exception e )
+            {
+                // uhm do we have to throw a RuntimeException here ?
+            }
         }
 
         Object value = properties.get( key );
