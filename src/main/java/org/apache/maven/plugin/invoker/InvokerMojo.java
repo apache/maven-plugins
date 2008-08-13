@@ -186,8 +186,8 @@ public class InvokerMojo
      * The name of the project-specific file that contains the enumeration of goals to execute for that test.
      * 
      * @parameter expression="${invoker.goalsFile}" default-value="goals.txt"
-     * @deprecated As of version 1.2 the properties file specified by the parameter invokerPropertiesFile should be used
-     *             instead.
+     * @deprecated As of version 1.2, the key {@code invoker.goals} from the properties file specified by the parameter
+     *             {@link #invokerPropertiesFile} should be used instead.
      */
     private String goalsFile;
 
@@ -227,9 +227,9 @@ public class InvokerMojo
 
     /**
      * Common set of test properties to pass in on each IT's command line, via -D parameters.
-     *
+     * 
      * @parameter
-     * @deprecated Use properties parameter instead.
+     * @deprecated As of version 1.1, use the {@link #properties} parameter instead.
      */
     private Properties testProperties;
 
@@ -315,8 +315,8 @@ public class InvokerMojo
      * 
      * @parameter expression="${invoker.profilesFile}" default-value="profiles.txt"
      * @since 1.1
-     * @deprecated As of version 1.2 the properties file specified by the parameter invokerPropertiesFile should be used
-     *             instead.
+     * @deprecated As of version 1.2, the key {@code invoker.profiles} from the properties file specified by the
+     *             parameter {@link #invokerPropertiesFile} should be used instead.
      */
     private String profilesFile;
 
