@@ -176,7 +176,11 @@ public class InstallMojo
             installProjectPom( mvnProject, testRepository );
 
             // Install the main project artifact
-            installer.install( mvnProject.getArtifact().getFile(), mvnProject.getArtifact(), testRepository );
+            File artifactFile = mvnProject.getArtifact().getFile();
+            if ( artifactFile != null )
+            {
+                installer.install( artifactFile, mvnProject.getArtifact(), testRepository );
+            }
 
             // Install any attached project artifacts
             Collection attachedArtifacts = mvnProject.getAttachedArtifacts();
