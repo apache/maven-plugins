@@ -24,12 +24,6 @@ boolean result = true;
 
 try
 {
-    if ( !System.getProperty( "java.specification.version" ).equals( "1.5" ) )
-    {
-        System.out.println( "JDK is not 1.5. Ignore this BSH." );
-        return true;
-    }
-
     File target = new File( basedir, "target" );
     if ( !target.exists() || !target.isDirectory() )
     {
