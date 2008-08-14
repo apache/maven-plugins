@@ -31,6 +31,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>Maven One Plugin</name>
+  <description>Eases the migration from Maven 1.x to Maven 2.x by providing a POM converter etc.</description>
 
   <prerequisites>
     <maven>2.0</maven>

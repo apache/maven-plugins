@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Changes Report Plugin</name>
+  <description>Creates a release history for inclusion into the site and assists in generating an announcement mail.</description>
 
   <developers>
     <developer>

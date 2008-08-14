@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Jar Plugin</name>
+  <description>Builds a Java Archive (JAR) file from the compiled project classes and resources.</description>
  
   <contributors>
     <contributor>
