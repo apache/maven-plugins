@@ -18,30 +18,34 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-deploy-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven Deploy Plugin</name>
   <version>2.5-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven Deploy Plugin</name>
   <inceptionYear>2004</inceptionYear>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MDEPLOY</url>
-  </issueManagement>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-deploy-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-deploy-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-deploy-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MDEPLOY</url>
+  </issueManagement>
 
   <dependencies>
     <dependency>
@@ -81,6 +85,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -89,6 +94,7 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>run-its</id>
