@@ -230,6 +230,13 @@ public class JavadocReport
         }
     }
 
+    /** {@inheritDoc} */
+    protected boolean isAggregator()
+    {
+        // only here for backward compatibility, this flag does not work reliably
+        return aggregate;
+    }
+
     /**
      * Gets the resource bundle for the specified locale.
      *
