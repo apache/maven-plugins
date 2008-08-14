@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven GPG Plugin</name>
+  <description>Signs the project artifacts with GnuPG.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>
