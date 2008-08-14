@@ -4,7 +4,7 @@
  John Casey
  Maria Odea Ching
  ------
- 10 July 2006
+ 2006-07-10
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,9 @@
  ~~ KIND, either express or implied.  See the License for the
  ~~ specific language governing permissions and limitations
  ~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
 
 Configuring Describe Mojo
 
