@@ -32,6 +32,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>Maven Repository Plugin</name>
+  <description>Creates bundles of artifacts that should be manually uploaded to the central Maven repository.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>
