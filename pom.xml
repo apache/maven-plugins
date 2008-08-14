@@ -29,22 +29,26 @@ under the License.
   <artifactId>maven-shade-plugin</artifactId>
   <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Shade Plugin</name>
 
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MSHADE</url>
-  </issueManagement>
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-shade-plugin</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-shade-plugin</url>
   </scm>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MSHADE</url>
+  </issueManagement>
 
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
+  <properties>
+    <currentVersion>${project.version}</currentVersion>
+  </properties>
 
   <dependencies>
     <!-- Maven -->
@@ -121,10 +125,6 @@ under the License.
       </plugin>
     </plugins>
   </build>
-
-  <properties>
-    <currentVersion>${project.version}</currentVersion>
-  </properties>
 
   <profiles>
     <profile>
