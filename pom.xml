@@ -31,7 +31,7 @@ under the License.
   <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Changelog Plug-in</name>
+  <name>Maven Changelog Plugin</name>
   <description>Produce SCM changelog reports.</description>
 
   <developers>
@@ -116,6 +116,11 @@ under the License.
     <maven>2.0</maven>
   </prerequisites>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-changelog-plugin/</url>
+  </scm>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MCHANGELOG</url>
