@@ -166,9 +166,6 @@ public class JavadocJar
             innerDestDir = new File( getOutputDirectory() );
         }
 
-        // The JAR does not operate in aggregation mode - individual Javadoc JARs are always distributed.
-        aggregate = false;
-
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {

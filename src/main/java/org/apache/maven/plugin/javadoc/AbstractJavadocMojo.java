@@ -329,10 +329,10 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
-     * Since 2.5, you could use <code>javadoc:aggregate</code> goal as an alternative.
-     * <br/>
-     *
+     * 
      * @parameter expression="${aggregate}" default-value="false"
+     * @deprecated As of version 2.5, use the goals <code>javadoc:aggregate</code> and
+     *             <code>javadoc:test-aggregate</code> instead.
      */
     protected boolean aggregate;
 
@@ -1310,8 +1310,7 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Indicates whether this goal is flagged with <code>@aggregator</code> or the value of the <code>aggregate</code>
-     * parameter.
+     * Indicates whether this goal is flagged with <code>@aggregator</code>.
      *
      * @return <code>true</code> if the goal is designed as an aggregator, <code>false</code> otherwise.
      * @see AggregatorJavadocReport
@@ -1319,7 +1318,7 @@ public abstract class AbstractJavadocMojo
      */
     protected boolean isAggregator()
     {
-        return aggregate;
+        return false;
     }
 
     /**
