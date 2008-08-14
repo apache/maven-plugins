@@ -49,32 +49,18 @@
         <executions>
           <execution>
             <id>javadoc</id>
+            <inherited>false</inherited>
             <phase>package</phase>
             <goals>
               <goal>javadoc</goal>
             </goals>
             <configuration>
               <aggregate>false</aggregate>
-              <sourcepath>
-                test-module/src/main/java
-              </sourcepath>
+              <sourcepath>test-module/src/main/java</sourcepath>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>codehaus.snapshots</id>
-      <name>CodeHaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 </project>
