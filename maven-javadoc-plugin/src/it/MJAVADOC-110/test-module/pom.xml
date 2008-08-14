@@ -31,4 +31,15 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Test Module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <debug>true</debug>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

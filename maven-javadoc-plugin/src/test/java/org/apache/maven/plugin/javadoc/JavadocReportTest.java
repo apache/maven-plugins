@@ -465,7 +465,7 @@ public class JavadocReportTest
     {
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/aggregate-test/aggregate-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
         mojo.execute();
 
         // check if project1 api files exist
@@ -720,7 +720,7 @@ public class JavadocReportTest
     {
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/aggregate-resources-test/aggregate-resources-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
         mojo.execute();
 
         // Test overview
