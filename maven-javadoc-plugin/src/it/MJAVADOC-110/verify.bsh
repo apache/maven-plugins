@@ -31,23 +31,17 @@ try
         return false;
     }
 
-    File apidocs = new File( basedir, "target/site/apidocs" );
+    File apidocs = new File( target, "site/apidocs" );
     if ( !apidocs.exists() || !apidocs.isDirectory() )
     {
         System.err.println( "target/site/apidocs file is missing or a directory." );
         return false;
     }
 
-    target = new File( basedir, "test-module/target" );
-    if ( !target.exists() || !target.isDirectory() )
+    File htmlFile = new File( apidocs, "Test.html" );
+    if ( !htmlFile.isFile() )
     {
-        System.err.println( "test-module/target file is missing or a directory." );
-        return false;
-    }
-    apidocs = new File( basedir, "test-module/target/site/apidocs" );
-    if ( !apidocs.exists() || !apidocs.isDirectory() )
-    {
-        System.err.println( "test-module/target/site/apidocs file is missing or a directory." );
+        System.err.println( "target/site/apidocs/Test.html file is missing or a a file." );
         return false;
     }
 }
