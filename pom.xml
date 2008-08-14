@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Deploy Plugin</name>
+  <description>Uploads the project artifacts to the internal remote repository.</description>
   <inceptionYear>2004</inceptionYear>
 
   <prerequisites>
