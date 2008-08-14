@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -22,32 +22,43 @@ under the License.
 <settings>
   <profiles>
     <profile>
-      <id>apache</id>
+      <id>it-repo</id>
       <activation>
         <activeByDefault>true</activeByDefault>
-      </activation>      
+      </activation>
       <repositories>
         <repository>
-          <id>local</id>
+          <id>local.central</id>
           <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
           <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>apache.snapshots</id>
+          <name>Apache Snapshot Repository</name>
+          <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+          <releases>
             <enabled>false</enabled>
-          </snapshots>             
-        </repository>        
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local</id>
+          <id>local.central</id>
           <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
           <snapshots>
-            <enabled>false</enabled>
-          </snapshots>          
+            <enabled>true</enabled>
+          </snapshots>
         </pluginRepository>
       </pluginRepositories>
     </profile>
