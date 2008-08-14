@@ -18,23 +18,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-changes-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven Changes Report Plugin</name>
   <version>2.1-SNAPSHOT</version>
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MCHANGES</url>
-  </issueManagement>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven Changes Report Plugin</name>
 
   <developers>
     <developer>
@@ -53,86 +49,30 @@ under the License.
       <email>dennisl@apache.org</email>
     </developer>
   </developers>
-  
   <contributors>
     <contributor>
       <name>Justin Edelson</name>
     </contributor>
   </contributors>
 
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-changes-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MCHANGES</url>
+  </issueManagement>
   
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.modello</groupId>
-        <artifactId>modello-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>site-docs</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>xdoc</goal>
-              <goal>xsd</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>standard</id>
-            <goals>
-              <goal>java</goal>
-              <goal>xpp3-reader</goal>
-              <goal>xpp3-writer</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>generate-xsd</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/META-INF/changes/xsd</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <version>1.0.0</version>
-          <models>
-            <model>src/main/mdo/changes.mdo</model>
-          </models>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>create-component-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>merge</id>
-            <configuration>
-              <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output>
-              <descriptors>
-                <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
-              </descriptors>
-            </configuration>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>merge-descriptors</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <properties>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
+  </properties>
 
   <dependencies>
     <!-- maven -->
@@ -315,6 +255,98 @@ under the License.
     </dependency>    
     
   </dependencies>
+  
+  <!-- remove when modello is released -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>snapshots.codehaus</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>apache.snapshots</id>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>      
+    </pluginRepository>
+  </pluginRepositories>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>site-docs</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+              <goal>xsd</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>standard</id>
+            <goals>
+              <goal>java</goal>
+              <goal>xpp3-reader</goal>
+              <goal>xpp3-writer</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>generate-xsd</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF/changes/xsd</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <version>1.0.0</version>
+          <models>
+            <model>src/main/mdo/changes.mdo</model>
+          </models>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-component-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>merge</id>
+            <configuration>
+              <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output>
+              <descriptors>
+                <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>merge-descriptors</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <reporting>
     <plugins>
@@ -381,34 +413,5 @@ under the License.
       </build>
     </profile>    
   </profiles>
-  
-  <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
-  </properties>
-  
-  <!-- remove when modello is released -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>snapshots.codehaus</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>      
-    </pluginRepository>
-  </pluginRepositories>
   
 </project>
