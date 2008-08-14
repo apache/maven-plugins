@@ -38,6 +38,11 @@
     <maven>2.0.6</maven>
   </prerequisites>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-assembly-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-assembly-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-assembly-plugin/</url>
+  </scm>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
