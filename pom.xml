@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Shade Plugin</name>
+  <description>Repackages the project classes together with their dependencies into a single uber-jar, optionally renaming classes.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>
