@@ -31,6 +31,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Verifier Plugin</name>
+  <description>Assists in integration testing by means of evaluating success/error conditions read from a configuration file.</description>
 
   <prerequisites>
     <maven>2.0.6</maven>

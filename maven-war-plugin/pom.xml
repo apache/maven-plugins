@@ -32,6 +32,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven War Plugin</name>
+  <description>Builds a Web Application Archive (WAR) file from the project output and its dependencies.</description>
   
   <prerequisites>
     <maven>2.0.6</maven>

@@ -33,6 +33,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Maven Install Plugin</name>
+  <description>Copies the project artifacts to the user's local repository.</description>
   <inceptionYear>2004</inceptionYear>
 
   <prerequisites>
