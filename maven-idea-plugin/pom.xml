@@ -19,31 +19,33 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-idea-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven IDEA Plugin</name>
   <version>2.3-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven IDEA Plugin</name>
 
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
-
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MIDEA</url>
-  </issueManagement>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-idea-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-idea-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-idea-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MIDEA</url>
+  </issueManagement>
 
   <dependencies>
     <dependency>
@@ -104,6 +106,15 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
@@ -331,13 +342,4 @@
       </build>
     </profile>
   </profiles>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
