@@ -1,3 +1,4 @@
+release maven-invoker 2.0.10 so we can consume the new --reactor feature
 deal with sibling aggregators (which use <module>../blah</module>) ... can we do that with -r?  Should we generate a temporary POM instead?
 create a site
 basic unit test
