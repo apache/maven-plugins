@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+boolean check( String project, String encoding )
+{
+    File pomFile = new File( basedir, "target/it/" + project + "/target/classes/interpolated-pom.xml" );
+    System.out.println( "Checking for existence of interpolated IT POM: " + pomFile );
+    if ( !pomFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    String xml = FileUtils.fileRead( pomFile, encoding );
+    
+    String[] values = {
+            "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>",
+            "<prop0>\u00A9\u00AE\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF</prop0>",
+            "<prop1>\u00A9\u00AE\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF</prop1>",
+        };
+    for ( String value : values )
+    {
+        System.out.println( "Checking for occurrence of: " + value );
+        if ( xml.indexOf( value ) < 0 )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
+    return true;
+}
+
+try
+{
+    return check( "latin-1", "ISO-8859-1" ) && check( "utf-8", "UTF-8" );
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
