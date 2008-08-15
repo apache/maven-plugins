@@ -89,7 +89,7 @@ public class MakeMojo
      * Don't really do anything; just print a command that describes what the command would have done
      * @parameter expression="${make.printOnly}"
      */
-    private boolean printOnly = true;
+    private boolean printOnly = false;
     
     public void execute()
         throws MojoExecutionException, MojoFailureException
