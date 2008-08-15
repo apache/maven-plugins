@@ -29,10 +29,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,6 +42,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -485,13 +489,19 @@ public class InvokerMojo
         scriptInterpreters.put( "bsh", new BeanShellScriptInterpreter() );
         scriptInterpreters.put( "groovy", new GroovyScriptInterpreter() );
 
+        Collection collectedProjects = new LinkedHashSet();
+        for ( int i = 0; i < includedPoms.length; i++ )
+        {
+            collectProjects( projectsDirectory, includedPoms[i], collectedProjects, true );
+        }
+
         File projectsDir = projectsDirectory;
 
         if ( cloneProjectsTo != null )
         {
             try
             {
-                cloneProjects( includedPoms );
+                cloneProjects( collectedProjects );
 
                 // enable in-place filtering
                 if ( !cloneProjectsTo.getCanonicalFile().equals( projectsDirectory.getCanonicalFile() ) )
@@ -561,34 +571,135 @@ public class InvokerMojo
     }
 
     /**
-     * Copies the specified IT projects to the directory given by {@link #cloneProjectsTo}. A project may either be
-     * denoted by a path to a POM file or merely by a path to a base directory.
+     * Collects all projects locally reachable from the specified project. The method will as such try to read the POM
+     * and recursively follow its parent/module elements.
      * 
-     * @param includedProjects The paths to the IT projects, relative to the projects directory, must not be
-     *            <code>null</code>.
-     * @throws IOException The the projects could not be copied.
+     * @param projectsDir The base directory of all projects, must not be <code>null</code>.
+     * @param projectPath The relative path of the current project, can denote either the POM or its base directory,
+     *            must not be <code>null</code>.
+     * @param projectPaths The set of already collected projects to add new projects to, must not be <code>null</code>.
+     * @param included A flag indicating whether the specified project has been explicitly included via the parameter
+     *            {@link #pomIncludes}. Such projects will always be added to the result set even if there is no
+     *            corresponding POM.
+     * @throws MojoExecutionException If the project tree could not be traversed.
      */
-    private void cloneProjects( String[] includedProjects )
+    private void collectProjects( File projectsDir, String projectPath, Collection projectPaths, boolean included )
+        throws MojoExecutionException
+    {
+        projectPath = projectPath.replace( '\\', '/' );
+        File pomFile = new File( projectsDir, projectPath );
+        if ( pomFile.isDirectory() )
+        {
+            pomFile = new File( pomFile, "pom.xml" );
+            if ( !pomFile.exists() )
+            {
+                if ( included )
+                {
+                    projectPaths.add( projectPath );
+                }
+                return;
+            }
+            if ( !projectPath.endsWith( "/" ) )
+            {
+                projectPath += '/';
+            }
+            projectPath += "pom.xml";
+        }
+        else if ( !pomFile.isFile() )
+        {
+            return;
+        }
+        if ( !projectPaths.add( projectPath ) )
+        {
+            return;
+        }
+
+        Model model;
+
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( pomFile );
+            model = new MavenXpp3Reader().read( reader );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to parse POM: " + pomFile, e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        try
+        {
+            String projectsRoot = projectsDir.getCanonicalPath();
+            String projectDir = pomFile.getParent();
+
+            String parentPath = "../pom.xml";
+            if ( model.getParent() != null && StringUtils.isNotEmpty( model.getParent().getRelativePath() ) )
+            {
+                parentPath = model.getParent().getRelativePath();
+            }
+            String parent = normalizePath( new File( projectDir, parentPath ), projectsRoot );
+            if ( parent != null )
+            {
+                collectProjects( projectsDir, parent, projectPaths, false );
+            }
+
+            if ( model.getModules() != null )
+            {
+                for ( Iterator it = model.getModules().iterator(); it.hasNext(); )
+                {
+                    String modulePath = (String) it.next();
+                    String module = normalizePath( new File( projectDir, modulePath ), projectsRoot );
+                    if ( module != null )
+                    {
+                        collectProjects( projectsDir, module, projectPaths, false );
+                    }
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to analyze POM: " + pomFile, e );
+        }
+    }
+
+    /**
+     * Copies the specified projects to the directory given by {@link #cloneProjectsTo}. A project may either be denoted
+     * by a path to a POM file or merely by a path to a base directory.
+     * 
+     * @param projectPaths The paths to the projects to clone, relative to the projects directory, must not be
+     *            <code>null</code> nor contain <code>null</code> elements.
+     * @throws IOException If the the projects could not be copied.
+     */
+    private void cloneProjects( Collection projectPaths )
         throws IOException
     {
         cloneProjectsTo.mkdirs();
 
+        Collection dirs = new LinkedHashSet();
+        for ( Iterator it = projectPaths.iterator(); it.hasNext(); )
+        {
+            String projectPath = (String) it.next();
+            if ( !new File( projectsDirectory, projectPath ).isDirectory() )
+            {
+                projectPath = getParentPath( projectPath );
+            }
+            dirs.add( projectPath );
+        }
+
         List clonedSubpaths = new ArrayList();
 
-        for ( int i = 0; i < includedProjects.length; i++ )
+        for ( Iterator it = dirs.iterator(); it.hasNext(); )
         {
-            String subpath = includedProjects[i];
-            if ( !new File( projectsDirectory, subpath ).isDirectory() )
+            String subpath = (String) it.next();
+
+            // skip this project if its parent directory is also scheduled for cloning
+            if ( !".".equals( subpath ) && dirs.contains( getParentPath( subpath ) ) )
             {
-                int lastSep = subpath.lastIndexOf( File.separator );
-                if ( lastSep > -1 )
-                {
-                    subpath = subpath.substring( 0, lastSep );
-                }
-                else
-                {
-                    subpath = ".";
-                }
+                continue;
             }
 
             // avoid copying subdirs that are already cloned.
@@ -626,6 +737,18 @@ public class InvokerMojo
                 clonedSubpaths.add( subpath );
             }
         }
+    }
+
+    /**
+     * Gets the parent path of the specified relative path.
+     * 
+     * @param path The relative path whose parent should be retrieved, must not be <code>null</code>.
+     * @return The parent path or "." if the specified path has no parent, never <code>null</code>.
+     */
+    private String getParentPath( String path )
+    {
+        int lastSep = Math.max( path.lastIndexOf( '/' ), path.lastIndexOf( '\\' ) );
+        return ( lastSep < 0 ) ? "." : path.substring( 0, lastSep );
     }
 
     /**
