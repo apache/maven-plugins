@@ -1,6 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+     <artifactId>maven-plugins</artifactId>
+     <groupId>org.apache.maven.plugins</groupId>
+     <version>11</version>
+  </parent>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-reactor-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -8,6 +13,20 @@
   <name>maven-reactor-plugin</name>
   <description>Build a subset of interdependent projects in a reactor</description>
   <url>http://maven.apache.org</url>
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>dfabulich</id>
+      <name>Dan Fabulich</name>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
