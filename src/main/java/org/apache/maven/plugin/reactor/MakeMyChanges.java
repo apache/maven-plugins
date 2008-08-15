@@ -27,14 +27,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Goal to build all projects that you personally have changed (according to SCM) 
- *
+ * Goal to build all projects that you personally have changed (according to SCM)
+ * 
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
  * @goal makeMyChanges
  * @aggregator
@@ -48,18 +49,24 @@ public class MakeMyChanges
      * @required
      */
     private String scmUrl;
-    
+
     /**
-     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
+     * Ignore files in the "unknown" status (created but not added to source control)
+     * 
+     * @parameter expression="${make.ignoreUnknown"}"
+     */
+    private boolean ignoreUnknown = true;
+
+    /**
+     * @component
      */
     private ScmManager scmManager;
-    
-    private MavenProject project;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if (collectedProjects.size() == 0) {
+        if ( collectedProjects.size() == 0 )
+        {
             throw new NonReactorException();
         }
         StatusScmResult result = null;
@@ -70,19 +77,25 @@ public class MakeMyChanges
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException("Couldn't configure SCM repository: " + e.getLocalizedMessage(),e);
+            throw new MojoExecutionException( "Couldn't configure SCM repository: " + e.getLocalizedMessage(), e );
         }
-        
+
         List changedFiles = result.getChangedFiles();
         // TODO There's a cleverer/faster way to code this...?
         List projectDirectories = getProjectDirectories();
         Set changedDirectories = new HashSet();
-        for (int i = 0; i < changedFiles.size(); i++) {
+        for ( int i = 0; i < changedFiles.size(); i++ )
+        {
             ScmFile changedScmFile = (ScmFile) changedFiles.get( i );
-            File changedFile = new File(changedScmFile.getPath());
-            for (int j = 0; j < projectDirectories.size(); j++) {
+            ScmFileStatus status = changedScmFile.getStatus();
+            if ( !status.isStatus() ) continue;
+            if ( ignoreUnknown && ScmFileStatus.UNKNOWN.equals( status ) ) continue;
+            File changedFile = new File( changedScmFile.getPath() );
+            for ( int j = 0; j < projectDirectories.size(); j++ )
+            {
                 File projectDirectory = (File) projectDirectories.get( j );
-                if (changedFile.getAbsolutePath().startsWith( projectDirectory.getAbsolutePath() )) {
+                if ( changedFile.getAbsolutePath().startsWith( projectDirectory.getAbsolutePath() + File.separator ) )
+                {
                     changedDirectories.add( RelativePather.getRelativePath( baseDir, projectDirectory ) );
                     break;
                 }
@@ -93,10 +106,11 @@ public class MakeMyChanges
         super.execute();
 
     }
-    
-    private List getProjectDirectories() {
-        List dirs = new ArrayList(collectedProjects.size());
-        for (int i = 0; i < collectedProjects.size(); i++)
+
+    private List getProjectDirectories()
+    {
+        List dirs = new ArrayList( collectedProjects.size() );
+        for ( int i = 0; i < collectedProjects.size(); i++ )
         {
             MavenProject mp = (MavenProject) collectedProjects.get( i );
             dirs.add( mp.getFile().getParentFile() );
