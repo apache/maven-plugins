@@ -168,8 +168,9 @@ public class InvokerMojo
     private List pomIncludes = Collections.singletonList( "*/pom.xml" );
 
     /**
-     * Exclude patterns for searching the integration test directory. This parameter is meant to be set from the POM.
-     * By default, no POM files are excluded.
+     * Exclude patterns for searching the integration test directory. This parameter is meant to be set from the POM. By
+     * default, no POM files are excluded. For the convenience of using an include pattern like <code>*</code>, the
+     * custom settings file specified by the parameter {@link #settingsFile} will always be excluded automatically.
      * 
      * @parameter
      */
@@ -197,22 +198,18 @@ public class InvokerMojo
     private Invoker invoker;
 
     /**
-     * Relative path of a pre-build hook BeanShell or Groovy script to run prior to executing the build. If the file
-     * extension is omitted (e.g. "prebuild"), the plugin searches for the file by trying out the known extensions
-     * ".bsh" and ".groovy".<br>
-     * <br>
-     * <em>Note:</em> Support for Groovy was added in version 1.3 of the plugin.
+     * Relative path of a pre-build hook script to run prior to executing the build. This script may be written with
+     * either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>prebuild</code>), the plugin
+     * searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>.
      * 
      * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild.bsh"
      */
     private String preBuildHookScript;
 
     /**
-     * Relative path of a cleanup/verification BeanShell or Groovy script to run after executing the build. If the file
-     * extension is omitted (e.g. "verify"), the plugin searches for the file by trying out the known extensions
-     * ".bsh" and ".groovy".<br>
-     * <br>
-     * <em>Note:</em> Support for Groovy was added in version 1.3 of the plugin.
+     * Relative path of a cleanup/verification hook script to run after executing the build. This script may be written
+     * with either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>verify</code>), the
+     * plugin searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>.
      * 
      * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
      */
@@ -1167,6 +1164,13 @@ public class InvokerMojo
         }
     }
 
+    /**
+     * Gets the paths to the projects that should be build. Each path may either denote a POM file or merely a project
+     * base directory. The returned paths will be relative to the projects directory.
+     * 
+     * @return The paths to the projects that should be build, may be empty but never <code>null</code>.
+     * @throws IOException If the projects directory could not be scanned.
+     */
     String[] getPoms()
         throws IOException
     {
@@ -1204,10 +1208,21 @@ public class InvokerMojo
         }
         else
         {
+            List excludes = ( pomExcludes != null ) ? new ArrayList( pomExcludes ) : new ArrayList();
+            if ( this.settingsFile != null )
+            {
+                String exclude = normalizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
+                if ( exclude != null )
+                {
+                    excludes.add( exclude.replace( '\\', '/' ) );
+                    getLog().debug( "Automatically excluded " + exclude + " from project scanning" );
+                }
+            }
+
             final FileSet fs = new FileSet();
 
             fs.setIncludes( pomIncludes );
-            fs.setExcludes( pomExcludes );
+            fs.setExcludes( excludes );
             fs.setDirectory( projectsDirectory.getCanonicalPath() );
             fs.setFollowSymlinks( false );
             fs.setUseDefaultExcludes( true );
