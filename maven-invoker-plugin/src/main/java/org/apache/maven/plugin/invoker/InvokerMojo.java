@@ -496,19 +496,7 @@ public class InvokerMojo
             projectsDir = cloneProjectsTo;
         }
 
-        if ( !localRepositoryPath.exists() )
-        {
-            localRepositoryPath.mkdirs();
-        }
-
-        final List failures = new ArrayList();
-
-        for ( int i = 0; i < includedPoms.length; i++ )
-        {
-            final String pom = includedPoms[i];
-
-            runBuild( projectsDir, pom, failures );
-        }
+        List failures = runBuilds( projectsDir, includedPoms );
 
         if ( !suppressSummaries )
         {
@@ -666,6 +654,15 @@ public class InvokerMojo
         }
     }
 
+    /**
+     * Determines whether the specified sub path has already been cloned, i.e. whether one of its ancestor directories
+     * was already cloned.
+     * 
+     * @param subpath The sub path to check, must not be <code>null</code>.
+     * @param clonedSubpaths The list of already cloned paths, must not be <code>null</code> nor contain
+     *            <code>null</code> elements.
+     * @return <code>true</code> if the specified path has already been cloned, <code>false</code> otherwise.
+     */
     static boolean alreadyCloned( String subpath, List clonedSubpaths )
     {
         for ( Iterator iter = clonedSubpaths.iterator(); iter.hasNext(); )
@@ -682,16 +679,71 @@ public class InvokerMojo
     }
 
     /**
+     * Runs the specified projects.
+     * 
+     * @param projectsDir The base directory of all projects, must not be <code>null</code>.
+     * @param projects The relative paths to the projects, either to their POM file or merely to their base directory,
+     *            must not be <code>null</code> nor contain <code>null</code> elements.
+     * @return The list of projects that failed, can be empty but never <code>null</code>.
+     * @throws MojoExecutionException If any project could not be launched.
+     */
+    private List runBuilds( File projectsDir, String[] projects )
+        throws MojoExecutionException
+    {
+        List failures = new ArrayList();
+
+        if ( !localRepositoryPath.exists() )
+        {
+            localRepositoryPath.mkdirs();
+        }
+
+        File interpolatedSettingsFile = null;
+        if ( settingsFile != null )
+        {
+            interpolatedSettingsFile =
+                new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
+            buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
+        }
+
+        try
+        {
+            for ( int i = 0; i < projects.length; i++ )
+            {
+                String project = projects[i];
+                try
+                {
+                    runBuild( projectsDir, project, interpolatedSettingsFile );
+                }
+                catch ( BuildFailureException e )
+                {
+                    failures.add( project );
+                }
+            }
+        }
+        finally
+        {
+            if ( interpolatedSettingsFile != null )
+            {
+                interpolatedSettingsFile.delete();
+            }
+        }
+
+        return failures;
+    }
+
+    /**
      * Runs the specified project.
      * 
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
      * @param project The relative path to the project, either to a POM file or merely to a directory, must not be
      *            <code>null</code>.
-     * @param failures The list to record build failures in, must not be <code>null</code>.
+     * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
+     *            the current user settings.
      * @throws MojoExecutionException If the project could not be launched.
+     * @throws BuildFailureException If either a hook script or the build itself failed.
      */
-    private void runBuild( File projectsDir, String project, List failures )
-        throws MojoExecutionException
+    private void runBuild( File projectsDir, String project, File settingsFile )
+        throws MojoExecutionException, BuildFailureException
     {
         File pomFile = new File( projectsDir, project );
         File basedir;
@@ -724,7 +776,20 @@ public class InvokerMojo
 
         try
         {
-            runBuild( project, basedir, interpolatedPomFile, failures );
+            runBuild( basedir, interpolatedPomFile, settingsFile );
+
+            if ( !suppressSummaries )
+            {
+                getLog().info( "...SUCCESS." );
+            }
+        }
+        catch ( BuildFailureException e )
+        {
+            if ( !suppressSummaries )
+            {
+                getLog().info( "...FAILED. " + e.getMessage() );
+            }
+            throw e;
         }
         finally
         {
@@ -738,15 +803,15 @@ public class InvokerMojo
     /**
      * Runs the specified project.
      * 
-     * @param project The relative path to the project, either to a POM file or merely to a directory, must not be
-     *            <code>null</code>.
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @param pomFile The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
-     * @param failures The list to record build failures in, must not be <code>null</code>.
+     * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
+     *            the current user settings.
      * @throws MojoExecutionException If the project could not be launched.
+     * @throws BuildFailureException If either a hook script or the build itself failed.
      */
-    private void runBuild( String project, File basedir, File pomFile, List failures )
-        throws MojoExecutionException
+    private void runBuild( File basedir, File pomFile, File settingsFile )
+        throws MojoExecutionException, BuildFailureException
     {
         InvokerProperties invokerProperties = getInvokerProperties( basedir );
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
@@ -776,13 +841,7 @@ public class InvokerMojo
 
             request.setLocalRepositoryDirectory( localRepositoryPath );
 
-            if ( settingsFile != null )
-            {
-                File interpolatedSettingsFile =
-                    new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
-                buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
-                request.setUserSettingsFile( interpolatedSettingsFile );
-            }
+            request.setUserSettingsFile( settingsFile );
 
             request.setProperties( systemProperties );
 
@@ -847,19 +906,6 @@ public class InvokerMojo
             }
 
             runScript( "post-build script", basedir, postBuildHookScript, logger );
-
-            if ( !suppressSummaries )
-            {
-                getLog().info( "...SUCCESS." );
-            }
-        }
-        catch ( BuildFailureException e )
-        {
-            if ( !suppressSummaries )
-            {
-                getLog().info( "...FAILED. " + e.getMessage() );
-            }
-            failures.add( project );
         }
         finally
         {
@@ -1415,7 +1461,6 @@ public class InvokerMojo
         {
             interpolatedFile.delete();
         }
-        interpolatedFile.deleteOnExit();
         try
         {
             if ( !interpolatedFile.createNewFile() )
