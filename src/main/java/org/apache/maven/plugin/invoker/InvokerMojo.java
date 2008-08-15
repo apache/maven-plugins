@@ -20,13 +20,13 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -411,11 +411,17 @@ public class InvokerMojo
      */
     private String invokerPropertiesFile;
 
+
     /**
      * The supported script interpreters, indexed by the file extension of their associated script files.
      */
     private Map scriptInterpreters;
 
+    /**
+     * A string used to prefix the file name of the filtered POMs, can be empty but never <code>null</code>. This will
+     * be cleared when the parameter {@link #cloneProjectsTo} is used so that the cloned POMs will be filtered in-place.
+     */
+    private String filteredPomPrefix = "interpolated-";
 
     /**
      * Invokes Maven on the configured test projects.
@@ -486,6 +492,12 @@ public class InvokerMojo
             try
             {
                 cloneProjects( includedPoms );
+
+                // enable in-place filtering
+                if ( !cloneProjectsTo.getCanonicalFile().equals( projectsDirectory.getCanonicalFile() ) )
+                {
+                    filteredPomPrefix = "";
+                }
             }
             catch ( IOException e )
             {
@@ -770,7 +782,7 @@ public class InvokerMojo
         File interpolatedPomFile = null;
         if ( pomFile != null )
         {
-            interpolatedPomFile = new File( basedir, "interpolated-" + pomFile.getName() );
+            interpolatedPomFile = new File( basedir, filteredPomPrefix + pomFile.getName() );
             buildInterpolatedFile( pomFile, interpolatedPomFile );
         }
 
@@ -793,7 +805,7 @@ public class InvokerMojo
         }
         finally
         {
-            if ( interpolatedPomFile != null )
+            if ( interpolatedPomFile != null && StringUtils.isNotEmpty( filteredPomPrefix ) )
             {
                 interpolatedPomFile.delete();
             }
@@ -1447,7 +1459,8 @@ public class InvokerMojo
     }
 
     /**
-     * Interpolates the specified POM/settings file to a temporary file.
+     * Interpolates the specified POM/settings file to a temporary file. The destination file may be same as the input
+     * file, i.e. interpolation can be performed in-place.
      * 
      * @param originalFile The XML file to interpolate, must not be <code>null</code>.
      * @param interpolatedFile The target file to write the interpolated contents of the original file to, must not be
@@ -1457,50 +1470,42 @@ public class InvokerMojo
     void buildInterpolatedFile( File originalFile, File interpolatedFile )
         throws MojoExecutionException
     {
-        if ( interpolatedFile.exists() )
-        {
-            interpolatedFile.delete();
-        }
-        try
-        {
-            if ( !interpolatedFile.createNewFile() )
-            {
-                throw new MojoExecutionException( "failed to create file " + interpolatedFile.getPath() );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "failed to create file " + interpolatedFile.getPath(), e );
-        }
-        getLog().debug( "interpolate file to create interpolated in " + interpolatedFile.getPath() );
+        getLog().debug( "Interpolate " + originalFile.getPath() + " to " + interpolatedFile.getPath() );
 
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
         try
         {
-            // interpolation with token @...@
-            Map composite = getInterpolationValueSource();
-            reader =
-                new BufferedReader( new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ),
-                                                                   composite, "@", "@" ) );
-            writer = new BufferedWriter( WriterFactory.newXmlWriter( interpolatedFile ) );
-            String line = null;
-            while ( ( line = reader.readLine() ) != null )
+            String xml;
+
+            Reader reader = null;
+            try
             {
-                writer.write( line );
-                writer.newLine();
+                // interpolation with token @...@
+                Map composite = getInterpolationValueSource();
+                reader = ReaderFactory.newXmlReader( originalFile );
+                reader = new InterpolationFilterReader( reader, composite, "@", "@" );
+                xml = IOUtil.toString( reader );
             }
-            writer.flush();
+            finally
+            {
+                IOUtil.close( reader );
+            }
+
+            Writer writer = null;
+            try
+            {
+                interpolatedFile.getParentFile().mkdirs();
+                writer = WriterFactory.newXmlWriter( interpolatedFile );
+                writer.write( xml );
+                writer.flush();
+            }
+            finally
+            {
+                IOUtil.close( writer );
+            }
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "failed to interpolate file " + originalFile.getPath(), e );
-        }
-        finally
-        {
-            // IOUtil in p-u is null check and silently NPE
-            IOUtil.close( reader );
-            IOUtil.close( writer );
+            throw new MojoExecutionException( "Failed to interpolate file " + originalFile.getPath(), e );
         }
     }
 
