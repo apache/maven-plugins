@@ -45,10 +45,11 @@ public class MakeMyChanges
     extends MakeDependentsMojo
 {
     /**
-     * @parameter expression="${make.scmUrl}" default-value="${project.scm.connection}"
+     * The SCM connection/provider info.  Should be specified in your POM.
+     * @parameter expression="${make.scmConnection}" default-value="${project.scm.connection}"
      * @required
      */
-    private String scmUrl;
+    private String scmConnection;
 
     /**
      * Ignore files in the "unknown" status (created but not added to source control)
@@ -69,10 +70,14 @@ public class MakeMyChanges
         {
             throw new NonReactorException();
         }
+        if ( scmConnection == null )
+        {
+            throw new MojoFailureException("No SCM connection specified.  You must specify an SCM connection by adding a <connection> element to your <scm> element in your POM");
+        }
         StatusScmResult result = null;
         try
         {
-            ScmRepository repository = scmManager.makeScmRepository( scmUrl );
+            ScmRepository repository = scmManager.makeScmRepository( scmConnection );
             result = scmManager.status( repository, new ScmFileSet( baseDir ) );
         }
         catch ( Exception e )
@@ -81,7 +86,7 @@ public class MakeMyChanges
         }
 
         List changedFiles = result.getChangedFiles();
-        // TODO There's a cleverer/faster way to code this...?
+        
         List projectDirectories = getProjectDirectories();
         Set changedDirectories = new HashSet();
         for ( int i = 0; i < changedFiles.size(); i++ )
@@ -102,6 +107,7 @@ public class MakeMyChanges
 
             File changedFile = new File( changedScmFile.getPath() );
             boolean found = false;
+            // TODO There's a cleverer/faster way to code this, right?  This is O(n^2)
             for ( int j = 0; j < projectDirectories.size(); j++ )
             {
                 File projectDirectory = (File) projectDirectories.get( j );

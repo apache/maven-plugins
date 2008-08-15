@@ -47,25 +47,25 @@ public class ResumeMojo
     /**
      * Location of the file.
      * @parameter expression="${basedir}"
-     * @required
      */
     private File baseDir;
     
     /**
      * @parameter expression="${make.group}" default-value="${project.groupId}"
-     * @required
      */
     private String continueFromGroup;
     
     /**
      * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
      * @parameter expression="${fromArtifact}"
+     * @required
      */
     private String continueFromProject;
     
     /**
      * The project folder from which we'll resume
      * @parameter expression="${from}"
+     * @required
      */
     private File continueFromFolder;
     

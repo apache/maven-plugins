@@ -45,42 +45,47 @@ public class MakeMojo
     extends AbstractMojo
 {
     /**
-     * Location of the file.
+     * Location of the POM file; provided by Maven
      * @parameter expression="${basedir}"
-     * @required
+     * 
      */
     File baseDir;
     
     /**
+     * A list of every project in this reactor; provided by Maven
      * @parameter expression="${project.collectedProjects}"
      */
     List collectedProjects;
     
     /**
+     * If you don't specify a groupId in your artifactList, we'll use this as the default groupId.
      * @parameter expression="${make.group}" default-value="${project.groupId}"
-     * @required
+     * 
      */
     String defaultGroup;
     
     /**
      * A list of artifacts to build, e.g. "com.mycompany:bar,com.mycompany:foo" or just "foo,bar", or just "foo" 
-     * @parameter expression="${make.artifacts}"
+     * @parameter expression="${make.artifacts}" default-value=""
+     * @required
      */
     String artifactList;
     
     /**
      * A list of relative paths to build, e.g. "foo,baz/bar"
-     * @parameter expression="${make.folders}"
+     * @parameter expression="${make.folders}" default-value=""
+     * @required
      */
     String folderList;
     
     /**
-     * Goals to run on subproject
+     * Goals to run on subproject.
      * @parameter expression="${make.goals}" default-value="install"
      */
     String goals;
     
     /**
+     * Provided by Maven
      * @component
      */
     Invoker invoker;
@@ -94,7 +99,7 @@ public class MakeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if (artifactList == null && folderList == null) {
+        if ( artifactList == null && folderList == null ) {
             throw new MojoFailureException("You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.projects=com.mycompany:foo,com.mycompany:bar");
         }
         String[] reactorIncludes;
