@@ -6,7 +6,15 @@ import org.codehaus.plexus.util.*;
 
 try
 {
-    File pomFile = new File( basedir, "target/it/project/target/classes/interpolated-pom.xml" );
+    File pomFile = new File( basedir, "target/it/project/pom.xml" );
+    System.out.println( "Checking for existence of original IT POM: " + pomFile );
+    if ( !pomFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    pomFile = new File( basedir, "target/it/project/target/classes/pom.xml" );
     System.out.println( "Checking for existence of interpolated IT POM: " + pomFile );
     if ( !pomFile.exists() )
     {
