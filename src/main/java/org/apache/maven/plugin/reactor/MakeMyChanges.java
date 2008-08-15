@@ -53,7 +53,7 @@ public class MakeMyChanges
     /**
      * Ignore files in the "unknown" status (created but not added to source control)
      * 
-     * @parameter expression="${make.ignoreUnknown"}"
+     * @parameter expression="${make.ignoreUnknown}" default-value=true
      */
     private boolean ignoreUnknown = true;
 
@@ -87,18 +87,39 @@ public class MakeMyChanges
         for ( int i = 0; i < changedFiles.size(); i++ )
         {
             ScmFile changedScmFile = (ScmFile) changedFiles.get( i );
+            getLog().debug( changedScmFile.toString() );
             ScmFileStatus status = changedScmFile.getStatus();
-            if ( !status.isStatus() ) continue;
-            if ( ignoreUnknown && ScmFileStatus.UNKNOWN.equals( status ) ) continue;
+            if ( !status.isStatus() )
+            {
+                getLog().debug( "Not a diff: " + status );
+                continue;
+            }
+            if ( ignoreUnknown && ScmFileStatus.UNKNOWN.equals( status ) )
+            {
+                getLog().debug( "Ignoring unknown" );
+                continue;
+            }
+
             File changedFile = new File( changedScmFile.getPath() );
+            boolean found = false;
             for ( int j = 0; j < projectDirectories.size(); j++ )
             {
                 File projectDirectory = (File) projectDirectories.get( j );
                 if ( changedFile.getAbsolutePath().startsWith( projectDirectory.getAbsolutePath() + File.separator ) )
                 {
-                    changedDirectories.add( RelativePather.getRelativePath( baseDir, projectDirectory ) );
+                    String path = RelativePather.getRelativePath( baseDir, projectDirectory );
+                    if ( !changedDirectories.contains( path ) )
+                    {
+                        getLog().debug( "Including " + path );
+                    }
+                    changedDirectories.add( path );
+                    found = true;
                     break;
                 }
+            }
+            if ( !found )
+            {
+                getLog().debug( "Couldn't find file in any reactor root: " + changedFile.getAbsolutePath() );
             }
         }
         folderList = StringUtils.join( changedDirectories.iterator(), "," );
