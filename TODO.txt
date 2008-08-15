@@ -1,4 +1,5 @@
 deal with sibling aggregators (which use <module>../blah</module>) ... can we do that with -r?  Should we generate a temporary POM instead?
+create a site
 basic unit test
 integration tests
 graduate from sandbox
