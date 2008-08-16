@@ -61,4 +61,12 @@ Cloning Projects
 </project>
 -------------------
 
-          
+  There is another benefit of cloning the projects to a temporary location besides keeping the source tree free of build
+  output. When the projects are not cloned, the plugin must use temporary POMs to perform their filtering. In contrast,
+  cloning the projects enables the plugin to simply filter the cloned POMs in-place. Since a POM's file name remains
+  unchanged this way, the inter-project dependencies expressed in the POMs via <<<\<parent\>>>> and <<<\<module\>>>>
+  elements remain intact, too. This in turn allows the plugin to filter all POMs that participate in a forked build
+  rather than only the root POM of the execution.
+
+  Last but not least, once the projects have been cloned and filtered by an execution of <<<invoker:run>>>, you can
+  browse to a cloned project and manually invoke Maven on it. This can be useful to debug the build.
