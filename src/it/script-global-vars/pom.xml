@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.invoker</groupId>
-  <artifactId>global-vars</artifactId>
+  <artifactId>script-global-vars</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -47,8 +47,8 @@
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
-          <preBuildHookScript>setup.bsh</preBuildHookScript>
-          <postBuildHookScript>verify.bsh</postBuildHookScript>
+          <preBuildHookScript>setup</preBuildHookScript>
+          <postBuildHookScript>verify</postBuildHookScript>
           <goals>
             <goal>validate</goal>
           </goals>
