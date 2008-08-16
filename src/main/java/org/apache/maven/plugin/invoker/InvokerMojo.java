@@ -341,6 +341,24 @@ public class InvokerMojo
     private String mavenOpts;
 
     /**
+     * The home directory of the Maven installation to use for the forked builds. Defaults to the current Maven
+     * installation.
+     * 
+     * @parameter expression="${invoker.mavenHome}"
+     * @since 1.3
+     */
+    private File mavenHome;
+
+    /**
+     * The <code>JAVA_HOME</code> environment variable to use for forked Maven invocations. Defaults to the current Java
+     * home directory.
+     * 
+     * @parameter expression="${invoker.javaHome}"
+     * @since 1.3
+     */
+    private File javaHome;
+
+    /**
      * The file encoding for the pre-/post-build scripts and the list files for goals and profiles.
      * 
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
@@ -1027,6 +1045,17 @@ public class InvokerMojo
             if ( pomFile != null )
             {
                 request.setPomFile( pomFile );
+            }
+
+            if ( mavenHome != null )
+            {
+                invoker.setMavenHome( mavenHome );
+                request.addShellEnvironment( "M2_HOME", mavenHome.getAbsolutePath() );
+            }
+
+            if ( javaHome != null )
+            {
+                request.setJavaHome( javaHome );
             }
 
             for ( int invocationIndex = 1;; invocationIndex++ )
