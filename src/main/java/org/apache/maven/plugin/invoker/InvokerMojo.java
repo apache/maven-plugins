@@ -641,7 +641,7 @@ public class InvokerMojo
             {
                 parentPath = model.getParent().getRelativePath();
             }
-            String parent = normalizePath( new File( projectDir, parentPath ), projectsRoot );
+            String parent = relativizePath( new File( projectDir, parentPath ), projectsRoot );
             if ( parent != null )
             {
                 collectProjects( projectsDir, parent, projectPaths, false );
@@ -652,7 +652,7 @@ public class InvokerMojo
                 for ( Iterator it = model.getModules().iterator(); it.hasNext(); )
                 {
                     String modulePath = (String) it.next();
-                    String module = normalizePath( new File( projectDir, modulePath ), projectsRoot );
+                    String module = relativizePath( new File( projectDir, modulePath ), projectsRoot );
                     if ( module != null )
                     {
                         collectProjects( projectsDir, module, projectPaths, false );
@@ -708,7 +708,7 @@ public class InvokerMojo
                 // avoid creating new files that point to dir/.
                 if ( ".".equals( subpath ) )
                 {
-                    String cloneSubdir = normalizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
+                    String cloneSubdir = relativizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
 
                     // avoid infinite recursion if the cloneTo path is a subdirectory.
                     if ( cloneSubdir != null )
@@ -1392,7 +1392,7 @@ public class InvokerMojo
             List excludes = ( pomExcludes != null ) ? new ArrayList( pomExcludes ) : new ArrayList();
             if ( this.settingsFile != null )
             {
-                String exclude = normalizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
+                String exclude = relativizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
                 if ( exclude != null )
                 {
                     excludes.add( exclude.replace( '\\', '/' ) );
@@ -1416,55 +1416,75 @@ public class InvokerMojo
             poms = (String[]) included.toArray( new String[included.size()] );
         }
 
-        poms = normalizePomPaths( poms );
+        poms = relativizePomPaths( poms );
 
         return poms;
     }
 
-    private String[] normalizePomPaths( String[] poms )
+    /**
+     * Relativizes the specified POM paths against the directory specified by {@link #projectsDirectory} (if possible).
+     * If a POM path does not denote a sub path of the projects directory, it is returned as is.
+     * 
+     * @param pomPaths The POM paths to relativize, must not be <code>null</code> nor contain <code>null</code>
+     *            elements.
+     * @return The relativized POM paths, never <code>null</code>.
+     * @throws IOException If any path could not be relativized.
+     */
+    private String[] relativizePomPaths( String[] pomPaths )
         throws IOException
     {
         String projectsDirPath = projectsDirectory.getCanonicalPath();
 
-        String[] results = new String[poms.length];
-        for ( int i = 0; i < poms.length; i++ )
+        String[] results = new String[pomPaths.length];
+
+        for ( int i = 0; i < pomPaths.length; i++ )
         {
-            String pomPath = poms[i];
+            String pomPath = pomPaths[i];
 
-            File pom = new File( pomPath );
+            File pomFile = new File( pomPath );
 
-            if ( !pom.isAbsolute() )
+            if ( !pomFile.isAbsolute() )
             {
-                pom = new File( projectsDirectory, pomPath );
+                pomFile = new File( projectsDirectory, pomPath );
             }
 
-            String normalizedPath = normalizePath( pom, projectsDirPath );
+            String relativizedPath = relativizePath( pomFile, projectsDirPath );
 
-            if ( normalizedPath == null )
+            if ( relativizedPath == null )
             {
-                normalizedPath = pomPath;
+                relativizedPath = pomPath;
             }
 
-            results[i] = normalizedPath;
+            results[i] = relativizedPath;
         }
 
         return results;
     }
 
-    private String normalizePath( File path, String withinDirPath )
+    /**
+     * Relativizes the specified path against the given base directory. Besides relativization, the returned path will
+     * also be normalized, e.g. directory references like ".." will be removed.
+     * 
+     * @param path The path to relativize, must not be <code>null</code>.
+     * @param basedir The (canonical path of the) base directory to relativize against, must not be <code>null</code>.
+     * @return The relative path in normal form or <code>null</code> if the input path does not denote a sub path of the
+     *         base directory.
+     * @throws IOException If the path could not be relativized.
+     */
+    private String relativizePath( File path, String basedir )
         throws IOException
     {
-        String normalizedPath = path.getCanonicalPath();
+        String relativizedPath = path.getCanonicalPath();
 
-        if ( normalizedPath.startsWith( withinDirPath ) )
+        if ( relativizedPath.startsWith( basedir ) )
         {
-            normalizedPath = normalizedPath.substring( withinDirPath.length() );
-            if ( normalizedPath.startsWith( File.separator ) )
+            relativizedPath = relativizedPath.substring( basedir.length() );
+            if ( relativizedPath.startsWith( File.separator ) )
             {
-                normalizedPath = normalizedPath.substring( File.separator.length() );
+                relativizedPath = relativizedPath.substring( File.separator.length() );
             }
 
-            return normalizedPath;
+            return relativizedPath;
         }
         else
         {
