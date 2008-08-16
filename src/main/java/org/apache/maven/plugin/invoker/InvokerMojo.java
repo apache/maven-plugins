@@ -422,8 +422,9 @@ public class InvokerMojo
     private Map scriptInterpreters;
 
     /**
-     * A string used to prefix the file name of the filtered POMs, can be empty but never <code>null</code>. This will
-     * be cleared when the parameter {@link #cloneProjectsTo} is used so that the cloned POMs will be filtered in-place.
+     * A string used to prefix the file name of the filtered POMs in case the POMs couldn't be filtered in-place (i.e.
+     * the projects were not cloned to a temporary directory), can be <code>null</code>. This will be set to
+     * <code>null</code> if the POMs have already been filtered during cloning.
      */
     private String filteredPomPrefix = "interpolated-";
 
@@ -499,23 +500,12 @@ public class InvokerMojo
 
         if ( cloneProjectsTo != null )
         {
-            try
-            {
-                cloneProjects( collectedProjects );
-
-                // enable in-place filtering
-                if ( !cloneProjectsTo.getCanonicalFile().equals( projectsDirectory.getCanonicalFile() ) )
-                {
-                    filteredPomPrefix = "";
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to clone projects from: " + projectsDirectory + " to: "
-                    + cloneProjectsTo + ". Reason: " + e.getMessage(), e );
-            }
-
+            cloneProjects( collectedProjects );
             projectsDir = cloneProjectsTo;
+        }
+        else
+        {
+            getLog().warn( "Filtering of parent/child POMs is not supported without cloning the projects" );
         }
 
         List failures = runBuilds( projectsDir, includedPoms );
@@ -578,6 +568,7 @@ public class InvokerMojo
      * @param projectPath The relative path of the current project, can denote either the POM or its base directory,
      *            must not be <code>null</code>.
      * @param projectPaths The set of already collected projects to add new projects to, must not be <code>null</code>.
+     *            This set will hold the relative paths to either a POM file or a project base directory.
      * @param included A flag indicating whether the specified project has been explicitly included via the parameter
      *            {@link #pomIncludes}. Such projects will always be added to the result set even if there is no
      *            corresponding POM.
@@ -613,6 +604,7 @@ public class InvokerMojo
         {
             return;
         }
+        getLog().debug( "Collecting parent/child projects of " + projectPath );
 
         Model model;
 
@@ -668,17 +660,18 @@ public class InvokerMojo
 
     /**
      * Copies the specified projects to the directory given by {@link #cloneProjectsTo}. A project may either be denoted
-     * by a path to a POM file or merely by a path to a base directory.
+     * by a path to a POM file or merely by a path to a base directory. During cloning, the POM files will be filtered.
      * 
      * @param projectPaths The paths to the projects to clone, relative to the projects directory, must not be
      *            <code>null</code> nor contain <code>null</code> elements.
-     * @throws IOException If the the projects could not be copied.
+     * @throws MojoExecutionException If the the projects could not be copied/filtered.
      */
     private void cloneProjects( Collection projectPaths )
-        throws IOException
+        throws MojoExecutionException
     {
         cloneProjectsTo.mkdirs();
 
+        // determine project directories to clone
         Collection dirs = new LinkedHashSet();
         for ( Iterator it = projectPaths.iterator(); it.hasNext(); )
         {
@@ -690,52 +683,81 @@ public class InvokerMojo
             dirs.add( projectPath );
         }
 
-        List clonedSubpaths = new ArrayList();
+        boolean filter = false;
 
-        for ( Iterator it = dirs.iterator(); it.hasNext(); )
+        // clone project directories
+        try
         {
-            String subpath = (String) it.next();
+            filter = !cloneProjectsTo.getCanonicalFile().equals( projectsDirectory.getCanonicalFile() );
 
-            // skip this project if its parent directory is also scheduled for cloning
-            if ( !".".equals( subpath ) && dirs.contains( getParentPath( subpath ) ) )
-            {
-                continue;
-            }
+            List clonedSubpaths = new ArrayList();
 
-            // avoid copying subdirs that are already cloned.
-            if ( !alreadyCloned( subpath, clonedSubpaths ) )
+            for ( Iterator it = dirs.iterator(); it.hasNext(); )
             {
-                // avoid creating new files that point to dir/.
-                if ( ".".equals( subpath ) )
+                String subpath = (String) it.next();
+
+                // skip this project if its parent directory is also scheduled for cloning
+                if ( !".".equals( subpath ) && dirs.contains( getParentPath( subpath ) ) )
                 {
-                    String cloneSubdir = relativizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
+                    continue;
+                }
 
-                    // avoid infinite recursion if the cloneTo path is a subdirectory.
-                    if ( cloneSubdir != null )
+                // avoid copying subdirs that are already cloned.
+                if ( !alreadyCloned( subpath, clonedSubpaths ) )
+                {
+                    // avoid creating new files that point to dir/.
+                    if ( ".".equals( subpath ) )
                     {
-                        File temp = File.createTempFile( "pre-invocation-clone.", "" );
-                        temp.delete();
-                        temp.mkdirs();
+                        String cloneSubdir = relativizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
 
-                        copyDirectoryStructure( projectsDirectory, temp );
+                        // avoid infinite recursion if the cloneTo path is a subdirectory.
+                        if ( cloneSubdir != null )
+                        {
+                            File temp = File.createTempFile( "pre-invocation-clone.", "" );
+                            temp.delete();
+                            temp.mkdirs();
 
-                        FileUtils.deleteDirectory( new File( temp, cloneSubdir ) );
+                            copyDirectoryStructure( projectsDirectory, temp );
 
-                        copyDirectoryStructure( temp, cloneProjectsTo );
+                            FileUtils.deleteDirectory( new File( temp, cloneSubdir ) );
+
+                            copyDirectoryStructure( temp, cloneProjectsTo );
+                        }
+                        else
+                        {
+                            copyDirectoryStructure( projectsDirectory, cloneProjectsTo );
+                        }
                     }
                     else
                     {
-                        copyDirectoryStructure( projectsDirectory, cloneProjectsTo );
+                        File srcDir = new File( projectsDirectory, subpath );
+                        File dstDir = new File( cloneProjectsTo, subpath );
+                        copyDirectoryStructure( srcDir, dstDir );
                     }
-                }
-                else
-                {
-                    copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo,
-                                                                                              subpath ) );
-                }
 
-                clonedSubpaths.add( subpath );
+                    clonedSubpaths.add( subpath );
+                }
             }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to clone projects from: " + projectsDirectory + " to: "
+                + cloneProjectsTo + ". Reason: " + e.getMessage(), e );
+        }
+
+        // filter cloned POMs
+        if ( filter )
+        {
+            for ( Iterator it = projectPaths.iterator(); it.hasNext(); )
+            {
+                String projectPath = (String) it.next();
+                File pomFile = new File( cloneProjectsTo, projectPath );
+                if ( pomFile.isFile() )
+                {
+                    buildInterpolatedFile( pomFile, pomFile );
+                }
+            }
+            filteredPomPrefix = null;
         }
     }
 
@@ -905,8 +927,15 @@ public class InvokerMojo
         File interpolatedPomFile = null;
         if ( pomFile != null )
         {
-            interpolatedPomFile = new File( basedir, filteredPomPrefix + pomFile.getName() );
-            buildInterpolatedFile( pomFile, interpolatedPomFile );
+            if ( filteredPomPrefix != null )
+            {
+                interpolatedPomFile = new File( basedir, filteredPomPrefix + pomFile.getName() );
+                buildInterpolatedFile( pomFile, interpolatedPomFile );
+            }
+            else
+            {
+                interpolatedPomFile = pomFile;
+            }
         }
 
         try
