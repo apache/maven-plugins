@@ -49,7 +49,7 @@ Maven 2 Invoker Plugin
 
 * Examples
 
-  The following example configurations are available:
+  The following example configurations are available to illustrate selected use cases in more detail:
 
   * {{{examples/clone-projects.html}Clone projects}} to a new directory before running.
 
@@ -62,5 +62,7 @@ Maven 2 Invoker Plugin
   * {{{examples/access-test-classes.html}Access test classes}} to share code between IT scripts.
 
   * {{{examples/invoker-properties.html}Using Invoker Properties}} to configure goals, profiles etc. for individual projects.
+
+  * {{{examples/prepare-build-env.html}Preparing the Build Environment}} by building some setup projects before other projects.
 
   []
