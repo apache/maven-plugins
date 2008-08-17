@@ -36,6 +36,7 @@ under the License.
       <item name="Installing Artifacts" href="examples/install-artifacts.html"/>
       <item name="Invoker Properties" href="examples/invoker-properties.html"/>
       <item name="Using a Post Build Script" href="examples/post-build-script.html"/>
+      <item name="Preparing the Build Environment" href="examples/prepare-build-env.html"/>
     </menu>
     
   </body>
