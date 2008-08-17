@@ -88,20 +88,19 @@ public class InvokerMojo
 {
 
     /**
-     * Flag used to suppress certain invocations. This is useful in tailoring the
-     * build using profiles.
-     *
+     * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
+     * 
      * @parameter default-value="false"
      * @since 1.1
      */
     private boolean skipInvocation;
 
     /**
-     * Flag used to suppress the summary output notifying of successes and failures. If set to <code>true</code>,
-     * the only indication of the build's success or failure will be the effect it has on the main
-     * build (if it fails, the main build should fail as well). If <code>streamLogs</code> is enabled, the sub-build
-     * summary will also provide an indication.
-     *
+     * Flag used to suppress the summary output notifying of successes and failures. If set to <code>true</code>, the
+     * only indication of the build's success or failure will be the effect it has on the main build (if it fails, the
+     * main build should fail as well). If {@link #streamLogs} is enabled, the sub-build summary will also provide an
+     * indication.
+     * 
      * @parameter default-value="false"
      */
     private boolean suppressSummaries;
@@ -181,6 +180,18 @@ public class InvokerMojo
     private List pomExcludes = Collections.EMPTY_LIST;
 
     /**
+     * Include patterns for searching the projects directory for projects that need to be run before the other projects.
+     * This parameter allows to declare projects that perform setup tasks like installing utility artifacts into the
+     * local repository. Projects matched by these patterns are implicitly excluded from the scan for ordinary projects.
+     * Also, the exclusions defined by the parameter {@link #pomExcludes} apply to the setup projects, too. Default
+     * value is: <code>setup*&#47;pom.xml</code>.
+     * 
+     * @parameter
+     * @since 1.3
+     */
+    private List setupIncludes = Collections.singletonList( "setup*/pom.xml" );
+
+    /**
      * The list of goals to execute on each project. Default value is: <code>package</code>.
      *
      * @parameter
@@ -191,8 +202,8 @@ public class InvokerMojo
      * The name of the project-specific file that contains the enumeration of goals to execute for that test.
      * 
      * @parameter expression="${invoker.goalsFile}" default-value="goals.txt"
-     * @deprecated As of version 1.2, the key {@code invoker.goals} from the properties file specified by the parameter
-     *             {@link #invokerPropertiesFile} should be used instead.
+     * @deprecated As of version 1.2, the key <code>invoker.goals</code> from the properties file specified by the
+     *             parameter {@link #invokerPropertiesFile} should be used instead.
      */
     private String goalsFile;
 
@@ -300,10 +311,11 @@ public class InvokerMojo
 
     /**
      * A comma separated list of project names to run. Specify this parameter to run individual tests by file name,
-     * overriding the <code>pomIncludes</code> and <code>pomExcludes</code> parameters. Each pattern you specify here
-     * will be used to create an include pattern formatted like <code>${projectsDirectory}/<i>pattern</i></code>, so
-     * you can just type "-Dinvoker.test=FirstTest,SecondTest" to run builds in "${projectsDirectory}/FirstTest" and
-     * "${projectsDirectory}/SecondTest".
+     * overriding the {@link #setupIncludes}, {@link #pomIncludes} and {@link #pomExcludes} parameters. Each pattern you
+     * specify here will be used to create an include pattern formatted like
+     * <code>${projectsDirectory}/<i>pattern</i></code>, so you can just type
+     * <code>-Dinvoker.test=FirstTest,SecondTest</code> to run builds in <code>${projectsDirectory}/FirstTest</code> and
+     * <code>${projectsDirectory}/SecondTest</code>.
      * 
      * @parameter expression="${invoker.test}"
      * @since 1.1
@@ -312,11 +324,11 @@ public class InvokerMojo
 
     /**
      * The name of the project-specific file that contains the enumeration of profiles to use for that test. <b>If the
-     * file exists and empty no profiles will be used even if the profiles is set</b>
+     * file exists and is empty no profiles will be used even if the parameter {@link #profiles} is set.</b>
      * 
      * @parameter expression="${invoker.profilesFile}" default-value="profiles.txt"
      * @since 1.1
-     * @deprecated As of version 1.2, the key {@code invoker.profiles} from the properties file specified by the
+     * @deprecated As of version 1.2, the key <code>invoker.profiles</code> from the properties file specified by the
      *             parameter {@link #invokerPropertiesFile} should be used instead.
      */
     private String profilesFile;
@@ -324,7 +336,7 @@ public class InvokerMojo
     /**
      * Path to an alternate <code>settings.xml</code> to use for Maven invocation with all ITs. Note that the
      * <code>&lt;localRepository&gt;</code> element of this settings file is always ignored, i.e. the path given by the
-     * parameter <code>localRepositoryPath</code> is dominant.
+     * parameter {@link #localRepositoryPath} is dominant.
      * 
      * @parameter expression="${invoker.settingsFile}"
      * @since 1.2
@@ -1405,7 +1417,8 @@ public class InvokerMojo
 
     /**
      * Gets the paths to the projects that should be build. Each path may either denote a POM file or merely a project
-     * base directory. The returned paths will be relative to the projects directory.
+     * base directory. The returned paths will be relative to the projects directory. Finally note that the order of the
+     * returned project paths is significant.
      * 
      * @return The paths to the projects that should be build, may be empty but never <code>null</code>.
      * @throws IOException If the projects directory could not be scanned.
@@ -1417,7 +1430,7 @@ public class InvokerMojo
 
         if ( ( pom != null ) && pom.exists() )
         {
-            poms = new String[]{ pom.getAbsolutePath() };
+            poms = new String[] { pom.getAbsolutePath() };
         }
         else if ( invokerTest != null )
         {
@@ -1430,20 +1443,7 @@ public class InvokerMojo
                 includes.add( testRegexes[i] );
             }
 
-            final FileSet fs = new FileSet();
-
-            fs.setIncludes( includes );
-            //fs.setExcludes( pomExcludes );
-            fs.setDirectory( projectsDirectory.getCanonicalPath() );
-            fs.setFollowSymlinks( false );
-            fs.setUseDefaultExcludes( true );
-
-            final FileSetManager fsm = new FileSetManager( getLog() );
-
-            List included = new ArrayList();
-            included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
-            included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
-            poms = (String[]) included.toArray( new String[included.size()] );
+            poms = scanProjectsDirectory( includes, null );
         }
         else
         {
@@ -1458,59 +1458,82 @@ public class InvokerMojo
                 }
             }
 
-            final FileSet fs = new FileSet();
+            String[] setupPoms = scanProjectsDirectory( setupIncludes, excludes );
 
-            fs.setIncludes( pomIncludes );
-            fs.setExcludes( excludes );
-            fs.setDirectory( projectsDirectory.getCanonicalPath() );
-            fs.setFollowSymlinks( false );
-            fs.setUseDefaultExcludes( true );
+            excludes.addAll( setupIncludes );
+            String[] normalPoms = scanProjectsDirectory( pomIncludes, excludes );
 
-            final FileSetManager fsm = new FileSetManager( getLog() );
-
-            List included = new ArrayList();
-            included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
-            included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
-            poms = (String[]) included.toArray( new String[included.size()] );
+            poms = new String[setupPoms.length + normalPoms.length];
+            System.arraycopy( setupPoms, 0, poms, 0, setupPoms.length );
+            System.arraycopy( normalPoms, 0, poms, setupPoms.length, normalPoms.length );
         }
 
-        poms = relativizePomPaths( poms );
+        poms = relativizeProjectPaths( poms );
 
         return poms;
     }
 
     /**
-     * Relativizes the specified POM paths against the directory specified by {@link #projectsDirectory} (if possible).
-     * If a POM path does not denote a sub path of the projects directory, it is returned as is.
+     * Scans the projects directory for projects to build. Both (POM) files and mere directories will be matched by the
+     * scanner patterns.
      * 
-     * @param pomPaths The POM paths to relativize, must not be <code>null</code> nor contain <code>null</code>
+     * @param includes The include patterns for the scanner, may be <code>null</code>.
+     * @param excludes The exclude patterns for the scanner, may be <code>null</code> to exclude nothing.
+     * @return The relative paths to either POM files or project base directories, never <code>null</code>.
+     * @throws IOException If the project directory could not be scanned.
+     */
+    private String[] scanProjectsDirectory( List includes, List excludes )
+        throws IOException
+    {
+        final FileSet fs = new FileSet();
+
+        fs.setIncludes( includes );
+        fs.setExcludes( excludes );
+        fs.setDirectory( projectsDirectory.getCanonicalPath() );
+        fs.setFollowSymlinks( false );
+        fs.setUseDefaultExcludes( true );
+
+        final FileSetManager fsm = new FileSetManager( getLog() );
+
+        List included = new ArrayList();
+        included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
+        included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
+
+        return (String[]) included.toArray( new String[included.size()] );
+    }
+
+    /**
+     * Relativizes the specified project paths against the directory specified by {@link #projectsDirectory} (if
+     * possible). If a project path does not denote a sub path of the projects directory, it is returned as is.
+     * 
+     * @param projectPaths The project paths to relativize, must not be <code>null</code> nor contain <code>null</code>
      *            elements.
-     * @return The relativized POM paths, never <code>null</code>.
+     * @return The relativized project paths, never <code>null</code>.
      * @throws IOException If any path could not be relativized.
      */
-    private String[] relativizePomPaths( String[] pomPaths )
+    private String[] relativizeProjectPaths( String[] projectPaths )
         throws IOException
     {
         String projectsDirPath = projectsDirectory.getCanonicalPath();
 
-        String[] results = new String[pomPaths.length];
+        String[] results = new String[projectPaths.length];
 
-        for ( int i = 0; i < pomPaths.length; i++ )
+        for ( int i = 0; i < projectPaths.length; i++ )
         {
-            String pomPath = pomPaths[i];
+            String projectPath = projectPaths[i];
 
-            File pomFile = new File( pomPath );
+            File file = new File( projectPath );
 
-            if ( !pomFile.isAbsolute() )
+            if ( !file.isAbsolute() )
             {
-                pomFile = new File( projectsDirectory, pomPath );
+                file = new File( projectsDirectory, projectPath );
             }
 
-            String relativizedPath = relativizePath( pomFile, projectsDirPath );
+            String relativizedPath = relativizePath( file, projectsDirPath );
 
             if ( relativizedPath == null )
             {
-                relativizedPath = pomPath;
+                relativizedPath = projectPath;
             }
 
             results[i] = relativizedPath;

@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File logFile = new File( basedir, "build.log" );
+    System.out.println( "Checking for existence of build log: " + logFile );
+    if ( !logFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    String log = FileUtils.fileRead( logFile );
+
+    System.out.println( "Checking for first build" );
+    int index = log.indexOf( "Building: project" );
+    if ( !log.substring( index, index + 18 ).equals( "Building: project3" ) )
+    {
+        System.out.println( "FAILED!\n" + log.substring( index, index + 18 ) );
+        return false;
+    }
+
+    System.out.println( "Checking for duplicate build" );
+    index = log.indexOf( "Building: project3", index + 1 );
+    if ( index >= 0 )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
