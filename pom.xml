@@ -137,7 +137,7 @@ under the License.
     <module>maven-one-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pmd-plugin</module>
-    <module>maven-project-info-reports-plugin</module>
+    <!--<module>maven-project-info-reports-plugin</module>-->
     <module>maven-rar-plugin</module>
     <module>maven-remote-resources-plugin</module>
     <module>maven-repository-plugin</module>
