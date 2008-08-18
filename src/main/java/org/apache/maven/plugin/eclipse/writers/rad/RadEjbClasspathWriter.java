@@ -76,7 +76,7 @@ public class RadEjbClasspathWriter
 
     private static final String VAR = "var";
 
-    private static final String WEBSPHERE6CONTAIGNER =
+    private static final String WEBSPHERE6CONTAINER =
         "com.ibm.wtp.server.java.core.container/com.ibm.ws.ast.st.runtime.core.runtimeTarget.v60/was.base.v6";
 
     /**
@@ -119,7 +119,7 @@ public class RadEjbClasspathWriter
 
             newEntry = new Xpp3Dom( CLASSPATHENTRY );
             newEntry.setAttribute( KIND, CON );
-            newEntry.setAttribute( PATH, WEBSPHERE6CONTAIGNER );
+            newEntry.setAttribute( PATH, WEBSPHERE6CONTAINER );
             classpath.addChild( newEntry );
 
             children = classpath.getChildren();
