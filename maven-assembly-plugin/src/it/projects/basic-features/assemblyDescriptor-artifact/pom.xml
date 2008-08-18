@@ -17,14 +17,4 @@
     <module>descriptor</module>
     <module>assembly</module>
   </modules>
-  
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-artifact-types</artifactId>
-        <version>testing</version>
-      </extension>
-    </extensions>
-  </build>
 </project>
