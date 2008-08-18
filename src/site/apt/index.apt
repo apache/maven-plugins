@@ -46,11 +46,11 @@ Maven 2 Reactor Plugin
 
     Example: <<<mvn reactor:makeDependents -Dmake.folders=foo,bar>>>
     
-  * {{{makeMyChanges-mojo.html}reactor:makeMyChanges}}  build all reactor projects that you personally
+  * {{{makeScmChanges-mojo.html}reactor:makeScmChanges}}  build all reactor projects that you personally
      have changed (according to SCM) and all reactor projects that depend
      on your changes
 
-     Example: <<<mvn reactor:makeMyChanges>>>
+     Example: <<<mvn reactor:makeScmChanges>>>
 
 * make vs. makeDependents
 

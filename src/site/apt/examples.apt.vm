@@ -79,15 +79,15 @@ mvn reactor:makeDependents -Dmake.folders=barBusinessLogic
 
   <<<reactor:makeDependents>>> will examine all of the projects in your reactor to find projects that depend on barBusinessLogic, and automatically build those and nothing else.  In this case, it will automatically build barBusinessLogic and then fooUI.
   
-* Building anything that you personally have changed using reactor:makeMyChanges
+* Building anything that you personally have changed using reactor:makeScmChanges
 
-  Suppose you've made a change to some source files in barBusinessLogic but you've forgotten what you've changed.  You want to make sure you're safe to check-in, and that you haven't broken any projects that depend on you.  You can use <<<reactor:makeMyChanges>>>, like this:
+  Suppose you've made a change to some source files in barBusinessLogic but you've forgotten what you've changed.  You want to make sure you're safe to check-in, and that you haven't broken any projects that depend on you.  You can use <<<reactor:makeScmChanges>>>, like this:
 
 +---+
-mvn reactor:makeMyChanges
+mvn reactor:makeScmChanges
 +---+
 
-  <<<reactor:makeMyChanges>>> determines which files have changed using your SCM (Source Configuration Management) tool, e.g. Subversion, Perforce, Git, etc.  To use it, you'll need to configure an SCM connection in your root project POM file:
+  <<<reactor:makeScmChanges>>> determines which files have changed using your SCM (Source Configuration Management) tool, e.g. Subversion, Perforce, Git, etc.  To use it, you'll need to configure an SCM connection in your root project POM file:
 
 +---+
 <project>
@@ -104,12 +104,12 @@ mvn reactor:makeMyChanges
   
   Once the reactor plugin computes the list of changed files, it will figure out which of those files correspond to which projects in the reactor, and basically do a <<<reactor:makeDependents>>> on those projects that contain changed files.
   
-  In this example, if you only modified files in barBusinessLogic, then running <<<reactor:makeMyChanges>>> is equivalent to running <<<reactor:makeDependents -Dmake.folders=barBusinessLogic>>> -- it builds barBusinessLogic and anything that depends on barBusinessLogic (in this case, it will build fooUI).
+  In this example, if you only modified files in barBusinessLogic, then running <<<reactor:makeScmChanges>>> is equivalent to running <<<reactor:makeDependents -Dmake.folders=barBusinessLogic>>> -- it builds barBusinessLogic and anything that depends on barBusinessLogic (in this case, it will build fooUI).
 
-  <<If you find that reactor:makeMyChanges is doing somthing you don't expect, try running Maven in debug mode>> with <<<--debug>>> or <<<-X>>> like this:
+  <<If you find that reactor:makeScmChanges is doing somthing you don't expect, try running Maven in debug mode>> with <<<--debug>>> or <<<-X>>> like this:
   
 +---+
-mvn reactor:makeMyChanges -X
+mvn reactor:makeScmChanges -X
 +---+
 
   You'll see a log of all the changed files and a depiction of how we computed which projects to pass to <<<reactor:makeDependents>>>.
