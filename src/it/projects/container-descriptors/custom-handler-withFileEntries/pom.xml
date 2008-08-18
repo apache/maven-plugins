@@ -16,30 +16,16 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-component-it-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        
-        <executions>
-          <execution>
-            <id>inject-localrepo-path</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>inject-local-repository-path</goal>
-            </goals>
-            <configuration>
-              <property>local.repo.path</property>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.0</version>
+        <version>${invokerPluginVersion}</version>
         
         <configuration>
           <suppressSummaries>true</suppressSummaries>
-          <localRepositoryPath>${local.repo.path}</localRepositoryPath>
+          <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
           <streamLogs>true</streamLogs>
+          <properties>
+            <testVersion>${testVersion}</testVersion>
+          </properties>
           <goals>
             <goal>install</goal>
           </goals>
