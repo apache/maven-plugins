@@ -20,7 +20,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.3-SNAPSHOT</version>
+      <version>1.4.3</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -33,7 +33,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>testing</version>
         <configuration>
           <descriptor>src/assemble/bin.xml</descriptor>
           <finalName>assembly</finalName>        

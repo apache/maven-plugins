@@ -14,31 +14,35 @@
       </activation>
       
       <repositories>
+        <!--
         <repository>
           <id>main.local.as.remote</id>
           <url>file://${local.repo.path}</url>
         </repository>
+        -->
         <repository>
           <id>integration.test.repo</id>
-          <url>${test.remote.repo.url}</url>
+          <url>@test.remote.repo.url@</url>
         </repository>
       </repositories>
 
       <pluginRepositories>
+        <!--
         <pluginRepository>
           <id>main.local.as.remote</id>
           <url>file://${local.repo.path}</url>
         </pluginRepository>
+        -->
         <pluginRepository>
           <id>integration.test.repo</id>
-          <url>${test.remote.repo.url}</url>
+          <url>@test.remote.repo.url@</url>
         </pluginRepository>
       </pluginRepositories>
 
       <distributionManagement>
         <repository>
           <id>integration.test.repo</id>
-          <url>${test.remote.repo.url}</url>
+          <url>@test.remote.repo.url@</url>
         </repository>
       </distributionManagement>
 
@@ -46,7 +50,8 @@
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>testing</version>
+            <version>${testVersion}</version>
+            <extensions>true</extensions>
           </plugin>
         </plugins>
       </build>

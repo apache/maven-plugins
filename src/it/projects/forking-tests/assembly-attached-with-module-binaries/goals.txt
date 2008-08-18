@@ -1,1 +1,1 @@
-install org.apache.maven.plugins:maven-assembly-plugin:testing:attached
+install org.apache.maven.plugins:maven-assembly-plugin:${testVersion}:attached

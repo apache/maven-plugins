@@ -17,7 +17,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>testing</version>
         <configuration>
           <descriptors>
             <descriptor>org.test:descriptor:1</descriptor>

@@ -22,7 +22,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>testing</version>
         <executions>
           <execution>
             <id>assembly</id>
