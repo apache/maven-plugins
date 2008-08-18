@@ -1,1 +1,1 @@
-clean org.apache.maven.plugins:maven-assembly-plugin:testing:directory-inline
+clean org.apache.maven.plugins:maven-assembly-plugin:${testVersion}:directory-inline
