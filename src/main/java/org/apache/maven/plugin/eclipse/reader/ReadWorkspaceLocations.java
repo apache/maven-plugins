@@ -86,7 +86,7 @@ public class ReadWorkspaceLocations
     public void init( Log log, WorkspaceConfiguration workspaceConfiguration, MavenProject project,
                       String wtpDefaultServer )
     {
-        detectDefaultJREContaigner( workspaceConfiguration, project, log );
+        detectDefaultJREContainer( workspaceConfiguration, project, log );
         readWorkspace( workspaceConfiguration, log );
         detectWTPDefaultServer( log, workspaceConfiguration, wtpDefaultServer );
     }
@@ -144,9 +144,9 @@ public class ReadWorkspaceLocations
      * @param logger the logger to log the error's
      * @return the found container or null if non found.
      */
-    private String getContaignerFromExecutable( String rawExecutable, Map jreMap, Log logger )
+    private String getContainerFromExecutable( String rawExecutable, Map jreMap, Log logger )
     {
-        String foundContaigner = null;
+        String foundContainer = null;
         if ( rawExecutable != null )
         {
             String executable;
@@ -162,11 +162,11 @@ public class ReadWorkspaceLocations
             File executableFile = new File( executable );
             while ( executableFile != null )
             {
-                foundContaigner = (String) jreMap.get( executableFile.getPath() );
-                if ( foundContaigner != null )
+                foundContainer = (String) jreMap.get( executableFile.getPath() );
+                if ( foundContainer != null )
                 {
-                    logger.debug( "detected classpathContaigner from executable: " + foundContaigner );
-                    return foundContaigner;
+                    logger.debug( "detected classpathContainer from executable: " + foundContainer );
+                    return foundContainer;
 
                 }
                 executableFile = executableFile.getParentFile();
@@ -182,7 +182,7 @@ public class ReadWorkspaceLocations
      * @param project the maven project the get the configuration
      * @param logger the logger for errors
      */
-    private void detectDefaultJREContaigner( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
+    private void detectDefaultJREContainer( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
                                              Log logger )
     {
         String defaultJREContainer = ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT;
@@ -191,31 +191,31 @@ public class ReadWorkspaceLocations
             Map jreMap = readAvailableJREs( workspaceConfiguration.getWorkspaceDirectory(), logger );
             if ( jreMap != null )
             {
-                String foundContaigner =
-                    getContaignerFromExecutable( System.getProperty( "maven.compiler.executable" ), jreMap, logger );
-                if ( foundContaigner == null )
+                String foundContainer =
+                    getContainerFromExecutable( System.getProperty( "maven.compiler.executable" ), jreMap, logger );
+                if ( foundContainer == null )
                 {
-                    foundContaigner =
-                        getContaignerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ),
+                    foundContainer =
+                        getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ),
                                                      jreMap, logger );
                 }
-                if ( foundContaigner == null )
+                if ( foundContainer == null )
                 {
                     String sourceVersion = IdeUtils.getCompilerSourceVersion( project );
-                    foundContaigner = (String) jreMap.get( sourceVersion );
-                    if ( foundContaigner != null )
+                    foundContainer = (String) jreMap.get( sourceVersion );
+                    if ( foundContainer != null )
                     {
-                        logger.debug( "detected classpathContaigner from sourceVersion(" + sourceVersion + "): " +
-                            foundContaigner );
+                        logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): " +
+                            foundContainer );
                     }
                 }
-                if ( foundContaigner == null )
+                if ( foundContainer == null )
                 {
-                    foundContaigner = getContaignerFromExecutable( System.getProperty( "java.home" ), jreMap, logger );
+                    foundContainer = getContainerFromExecutable( System.getProperty( "java.home" ), jreMap, logger );
                 }
-                if ( foundContaigner != null )
+                if ( foundContainer != null )
                 {
-                    defaultJREContainer = foundContaigner;
+                    defaultJREContainer = foundContainer;
                 }
 
             }
@@ -458,7 +458,7 @@ public class ReadWorkspaceLocations
                     {
                         jreMap.put( jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
                         jreMap.put( version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
-                        logger.debug( "Default Classpath Contaigner version: " + version + "  location: " + jrePath );
+                        logger.debug( "Default Classpath Container version: " + version + "  location: " + jrePath );
                     }
                     else if ( !jreMap.containsKey( jrePath ) )
                     {
@@ -467,12 +467,12 @@ public class ReadWorkspaceLocations
                             jreMap.put( version, classpathEntry );
                         }
                         jreMap.put( jrePath, classpathEntry );
-                        logger.debug( "Additional Classpath Contaigner version: " + version + " " + classpathEntry +
+                        logger.debug( "Additional Classpath Container version: " + version + " " + classpathEntry +
                             " location: " + jrePath );
                     }
                     else
                     {
-                        logger.debug( "Ignored (duplicated) additional Classpath Contaigner version: " + version + " " +
+                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " " +
                             classpathEntry + " location: " + jrePath );
                     }
                 }
