@@ -388,7 +388,7 @@
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
                     
                     <!-- This will be handled by the parent in the bugs/massembly-285 dir. -->
-                    <pomExclude>bugs/massembly-285/massembly-285-assembly/pom.xml</pomExclude>
+                    <pomExclude>bugs/massembly-285/massembly-285-*/pom.xml</pomExclude>
                     
                     <pomExclude>**/child*/pom.xml</pomExclude>
                     <pomExclude>**/module*/pom.xml</pomExclude>
