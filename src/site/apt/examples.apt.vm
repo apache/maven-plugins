@@ -69,25 +69,25 @@ mvn reactor:make -Dmake.folders=barBusinessLogic
   <<<reactor:make>>> will examine barBusinessLogic and walk down its dependency tree, finding all of the projects that it needs to build.  
   In this case, it will automatically build bazDataAccess and then barBusinessLogic, without building fooUI.
 
-* Changing barBusinessLogic and verifying you didn't break anything using reactor:makeDependents
+* Changing barBusinessLogic and verifying you didn't break anything using reactor:make-dependents
 
-  Suppose you've made a change to barBusinessLogic; you want to make sure you didn't break any of the projects that depend on you.  (In this case, you want to make sure that you didn't break fooUI, but in a more complex reactor that might not be so obvious.)  You also want to avoid rebuilding/testing projects that you know you haven't changed.  In this case, you want to avoid building bazDataAccess.  You can use <<<reactor:makeDependents>>>, like this:
+  Suppose you've made a change to barBusinessLogic; you want to make sure you didn't break any of the projects that depend on you.  (In this case, you want to make sure that you didn't break fooUI, but in a more complex reactor that might not be so obvious.)  You also want to avoid rebuilding/testing projects that you know you haven't changed.  In this case, you want to avoid building bazDataAccess.  You can use <<<reactor:make-dependents>>>, like this:
   
 +---+
-mvn reactor:makeDependents -Dmake.folders=barBusinessLogic
+mvn reactor:make-dependents -Dmake.folders=barBusinessLogic
 +---+
 
-  <<<reactor:makeDependents>>> will examine all of the projects in your reactor to find projects that depend on barBusinessLogic, and automatically build those and nothing else.  In this case, it will automatically build barBusinessLogic and then fooUI.
+  <<<reactor:make-dependents>>> will examine all of the projects in your reactor to find projects that depend on barBusinessLogic, and automatically build those and nothing else.  In this case, it will automatically build barBusinessLogic and then fooUI.
   
-* Building anything that you personally have changed using reactor:makeScmChanges
+* Building anything that you personally have changed using reactor:make-scm-changes
 
-  Suppose you've made a change to some source files in barBusinessLogic but you've forgotten what you've changed.  You want to make sure you're safe to check-in, and that you haven't broken any projects that depend on you.  You can use <<<reactor:makeScmChanges>>>, like this:
+  Suppose you've made a change to some source files in barBusinessLogic but you've forgotten what you've changed.  You want to make sure you're safe to check-in, and that you haven't broken any projects that depend on you.  You can use <<<reactor:make-scm-changes>>>, like this:
 
 +---+
-mvn reactor:makeScmChanges
+mvn reactor:make-scm-changes
 +---+
 
-  <<<reactor:makeScmChanges>>> determines which files have changed using your SCM (Source Configuration Management) tool, e.g. Subversion, Perforce, Git, etc.  To use it, you'll need to configure an SCM connection in your root project POM file:
+  <<<reactor:make-scm-changes>>> determines which files have changed using your SCM (Source Configuration Management) tool, e.g. Subversion, Perforce, Git, etc.  To use it, you'll need to configure an SCM connection in your root project POM file:
 
 +---+
 <project>
@@ -102,17 +102,17 @@ mvn reactor:makeScmChanges
 
   The reactor plugin will use Maven's built-in SCM providers to attempt to figure out which files you've modified.  (By default, it will ignore "unknown" files: files that have been created in a source directory but which haven't been explicitly added to source control.)
   
-  Once the reactor plugin computes the list of changed files, it will figure out which of those files correspond to which projects in the reactor, and basically do a <<<reactor:makeDependents>>> on those projects that contain changed files.
+  Once the reactor plugin computes the list of changed files, it will figure out which of those files correspond to which projects in the reactor, and basically do a <<<reactor:make-dependents>>> on those projects that contain changed files.
   
-  In this example, if you only modified files in barBusinessLogic, then running <<<reactor:makeScmChanges>>> is equivalent to running <<<reactor:makeDependents -Dmake.folders=barBusinessLogic>>> -- it builds barBusinessLogic and anything that depends on barBusinessLogic (in this case, it will build fooUI).
+  In this example, if you only modified files in barBusinessLogic, then running <<<reactor:make-scm-changes>>> is equivalent to running <<<reactor:make-dependents -Dmake.folders=barBusinessLogic>>> -- it builds barBusinessLogic and anything that depends on barBusinessLogic (in this case, it will build fooUI).
 
-  <<If you find that reactor:makeScmChanges is doing somthing you don't expect, try running Maven in debug mode>> with <<<--debug>>> or <<<-X>>> like this:
+  <<If you find that reactor:make-scm-changes is doing somthing you don't expect, try running Maven in debug mode>> with <<<--debug>>> or <<<-X>>> like this:
   
 +---+
-mvn reactor:makeScmChanges -X
+mvn reactor:make-scm-changes -X
 +---+
 
-  You'll see a log of all the changed files and a depiction of how we computed which projects to pass to <<<reactor:makeDependents>>>.
+  You'll see a log of all the changed files and a depiction of how we computed which projects to pass to <<<reactor:make-dependents>>>.
 
 * Doing a "dry run" with the reactor plugin
 
@@ -135,7 +135,7 @@ mvn reactor:makeScmChanges -X
   
 +---+
 mvn reactor:make -Dmake.folders=barBusinessLogic -Dmake.goals=eclipse:eclipse
-mvn reactor:makeDependents -Dmake.folders=barBusinessLogic -Dmake.goals=package,clean
+mvn reactor:make-dependents -Dmake.folders=barBusinessLogic -Dmake.goals=package,clean
 mvn reactor:resume -Dmake.folders=barBusinessLogic -Dmake.goals=test
 +---+
 
@@ -199,7 +199,7 @@ quzUI --> quzAdditionalLogic --> barBusinessLogic --> bazDataAccess
 > mvn reactor:make -Dmake.folders=quz/quzUI
 +---+
 
-  That would build everything in the reactor except "fooUI".  Note that in this project, if you ran <<<mvn reactor:makeDependents -Dmake.folders=barBusinessLogic>>> it would build everything in the reactor except bazDataAccess.
+  That would build everything in the reactor except "fooUI".  Note that in this project, if you ran <<<mvn reactor:make-dependents -Dmake.folders=barBusinessLogic>>> it would build everything in the reactor except bazDataAccess.
 
 * Identifying projects by artifact, instead of by folder name
 

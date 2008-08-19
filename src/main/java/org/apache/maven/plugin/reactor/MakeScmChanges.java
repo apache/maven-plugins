@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Goal to build all projects that you personally have changed (according to SCM)
  * 
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal makeScmChanges
+ * @goal make-scm-changes
  * @aggregator
  * @phase process-sources
  */

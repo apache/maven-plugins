@@ -42,19 +42,19 @@ Maven 2 Reactor Plugin
 
     Example: <<<mvn reactor:make -Dmake.folders=foo,bar>>>
     
-  * {{{makeDependents-mojo.html}reactor:makeDependents}}  builds a project X and all of the reactor projects that depend on X (the reverse of reactor:make)
+  * {{{make-dependents-mojo.html}reactor:make-dependents}}  builds a project X and all of the reactor projects that depend on X (the reverse of reactor:make)
 
-    Example: <<<mvn reactor:makeDependents -Dmake.folders=foo,bar>>>
+    Example: <<<mvn reactor:make-dependents -Dmake.folders=foo,bar>>>
     
-  * {{{makeScmChanges-mojo.html}reactor:makeScmChanges}}  build all reactor projects that you personally
+  * {{{make-scm-changes-mojo.html}reactor:make-scm-changes}}  build all reactor projects that you personally
      have changed (according to SCM) and all reactor projects that depend
      on your changes
 
-     Example: <<<mvn reactor:makeScmChanges>>>
+     Example: <<<mvn reactor:make-scm-changes>>>
 
-* make vs. makeDependents
+* make vs. make-dependents
 
-  The goals <<<reactor:make>>> and <<<reactor:makeDependents>>> are very similar.  They differ in the <direction> of dependency analysis.
+  The goals <<<reactor:make>>> and <<<reactor:make-dependents>>> are very similar.  They differ in the <direction> of dependency analysis.
   
   For example, suppose project "fooUI" depends on project "barBusinessLogic", which depends on project "bazDataAccess".
   
@@ -70,7 +70,7 @@ fooUI --> barBusinessLogic --> bazDataAccess
 barBusinessLogic --> bazDataAccess
 +---+
   
-  * <<makeDependents>>: Because fooUI depends on barBusinessLogic, fooUI is a "dependent" project of barBusinessLogic.  Anything that depends on barBusinessLogic is one of barBusinessLogic's "dependents."  Hence, reactor:makeDependents will build barBusinessLogic, and then build fooUI.
+  * <<make-dependents>>: Because fooUI depends on barBusinessLogic, fooUI is a "dependent" project of barBusinessLogic.  Anything that depends on barBusinessLogic is one of barBusinessLogic's "dependents."  Hence, reactor:make-dependents will build barBusinessLogic, and then build fooUI.
 
 +---+
 fooUI --> barBusinessLogic
@@ -78,7 +78,7 @@ fooUI --> barBusinessLogic
 
   []
   
-  <<In other words, reactor:make walks *down* the dependency tree, whereas reactor:makeDependents walks *up* the dependency tree.>>
+  <<In other words, reactor:make walks *down* the dependency tree, whereas reactor:make-dependents walks *up* the dependency tree.>>
 
 * Examples
 

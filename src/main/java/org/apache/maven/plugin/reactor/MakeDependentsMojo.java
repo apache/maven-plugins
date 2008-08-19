@@ -26,7 +26,7 @@ import org.codehaus.plexus.util.dag.Vertex;
  * Goal to build a project X and all of the reactor projects that depend on X 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
- * @goal makeDependents
+ * @goal make-dependents
  * @aggregator
  * @phase process-sources
  */
