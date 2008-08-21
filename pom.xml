@@ -274,20 +274,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <!-- FIXME: Disable execution, makes IT preparation using maven-component-it-plugin fail (see target/test-build-logs/setup.build.log) -->
-          <execution>
-            <id>generated-helpmojo</id>
-            <configuration>
-              <extractors>
-                <extractor/>
-              </extractors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
