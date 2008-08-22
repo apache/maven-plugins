@@ -29,4 +29,8 @@
 
   <name>Default encoding</name>
   <description>should be UTF-8</description>
+
+  <properties>
+    <project.build.sourceEncoding>ISO-8859-15</project.build.sourceEncoding>
+  </properties>
 </project>

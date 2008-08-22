@@ -27,9 +27,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -142,22 +141,12 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    protected void executeReport( Locale unusedLocale )
+        throws MavenReportException
     {
-        if ( links == null )
-        {
-            links = new ArrayList();
-        }
+        addMainJavadocLink();
 
-        // TODO the prerequisite is that the main report is in apidocs
-        File apidocs = new File( getReportOutputDirectory().getParentFile(), "apidocs" );
-        if ( apidocs.exists() && apidocs.isDirectory() && !links.contains( "../apidocs" ) )
-        {
-            links.add( "../apidocs" );
-        }
-
-        super.execute();
+        super.executeReport( unusedLocale );
     }
 
     /** {@inheritDoc} */
@@ -304,5 +293,23 @@ public class TestJavadocReport
     private ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "test-javadoc-report", locale, getClass().getClassLoader() );
+    }
+
+    /**
+     * Add the <code>../apidocs</code> to the links parameter so Test report could be linked to the Main report.
+     */
+    private void addMainJavadocLink()
+    {
+        if ( links == null )
+        {
+            links = new ArrayList();
+        }
+
+        // TODO the prerequisite is that the main report is in apidocs
+        File apidocs = new File( getReportOutputDirectory().getParentFile(), "apidocs" );
+        if ( apidocs.isDirectory() && !links.contains( "../apidocs" ) )
+        {
+            links.add( "../apidocs" );
+        }
     }
 }

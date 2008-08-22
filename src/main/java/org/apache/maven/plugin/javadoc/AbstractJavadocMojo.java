@@ -248,9 +248,14 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the Javadoc resources directory to be included in the Javadoc (i.e. package.html, images...).
+     * <br/>
+     * Could be used in addition of <code>docfilessubdirs</code> parameter.
+     * <br/>
+     * See <a href="#docfilessubdirs">docfilessubdirs</a>.
      *
      * @since 2.1
      * @parameter expression="${basedir}/src/main/javadoc"
+     * @see #docfilessubdirs
      */
     private File javadocDirectory;
 
@@ -324,10 +329,10 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
-     * Since 2.5, you could use <code>javadoc:aggregate</code> goal as an alternative.
-     * <br/>
-     *
+     * 
      * @parameter expression="${aggregate}" default-value="false"
+     * @deprecated As of version 2.5, use the goals <code>javadoc:aggregate</code> and
+     *             <code>javadoc:test-aggregate</code> instead.
      */
     protected boolean aggregate;
 
@@ -517,7 +522,8 @@ public abstract class AbstractJavadocMojo
     private String docletPath;
 
     /**
-     * Specifies the encoding name of the source files.
+     * Specifies the encoding name of the source files. If not specificed, the encoding value will be the value of the
+     * <code>file.encoding</code> system property.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#encoding">encoding</a>.
      * <br/>
@@ -734,17 +740,19 @@ public abstract class AbstractJavadocMojo
     private String bottom;
 
     /**
-     * Specifies the HTML character set for this document.
+     * Specifies the HTML character set for this document. If not specificed, the charset value will be the value of
+     * the <code>docencoding</code> parameter.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#charset">charset</a>.
      * <br/>
      *
-     * @parameter expression="${charset}" default-value="${project.reporting.outputEncoding}"
+     * @parameter expression="${charset}"
      */
     private String charset;
 
     /**
-     * Specifies the encoding of the generated HTML files.
+     * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be
+     * <code>UTF-8</code>.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docencoding">docencoding</a>.
      *
@@ -760,8 +768,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
+     * See <a href="#javadocDirectory">javadocDirectory</a>.
+     * <br/>
      *
      * @parameter expression="${docfilessubdirs}" default-value="false"
+     * @see #excludedocfilessubdir
+     * @see #javadocDirectory
      */
     private boolean docfilessubdirs;
 
@@ -785,6 +797,7 @@ public abstract class AbstractJavadocMojo
      * Since <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      *
      * @parameter expression="${excludedocfilessubdir}"
+     * @see #docfilessubdirs
      */
     private String excludedocfilessubdir;
 
@@ -1297,6 +1310,18 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
+     * Indicates whether this goal is flagged with <code>@aggregator</code>.
+     *
+     * @return <code>true</code> if the goal is designed as an aggregator, <code>false</code> otherwise.
+     * @see AggregatorJavadocReport
+     * @see AggregatorTestJavadocReport
+     */
+    protected boolean isAggregator()
+    {
+        return false;
+    }
+
+    /**
      * @return the output directory
      */
     protected String getOutputDirectory()
@@ -1389,19 +1414,27 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return the charset attribute or <code>UTF-8</code> if <code>null</code>
+     * @return the charset attribute or the value of {@link #getDocencoding()} if <code>null</code>.
      */
     private String getCharset()
     {
-        return ( charset == null ) ? ReaderFactory.UTF_8 : charset;
+        return ( StringUtils.isEmpty( charset ) ) ? getDocencoding() : charset;
     }
 
     /**
-     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code>
+     * @return the docencoding attribute or <code>UTF-8</code> if <code>null</code>.
      */
     private String getDocencoding()
     {
-        return ( docencoding == null ) ? ReaderFactory.UTF_8 : docencoding;
+        return ( StringUtils.isEmpty( docencoding ) ) ? ReaderFactory.UTF_8 : docencoding;
+    }
+
+    /**
+     * @return the encoding attribute or the value of <code>file.encoding</code> system property if <code>null</code>.
+     */
+    private String getEncoding()
+    {
+        return ( StringUtils.isEmpty( encoding ) ) ? ReaderFactory.FILE_ENCODING : encoding;
     }
 
     /**
@@ -1420,7 +1453,7 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        if ( aggregate && !project.isExecutionRoot() )
+        if ( isAggregator() && !project.isExecutionRoot() )
         {
             return;
         }
@@ -1587,7 +1620,8 @@ public abstract class AbstractJavadocMojo
      * Method to get the source paths. If no source path is specified in the parameter, the compile source roots
      * of the project will be used.
      *
-     * @return a List of the project source paths
+     * @return a List of the project absolute source paths as <code>String</code>
+     * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
     protected List getSourcePaths()
     {
@@ -1595,11 +1629,11 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList( getProjectSourceRoots( project ) );
+            sourcePaths = new ArrayList( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
 
             if ( project.getExecutionProject() != null )
             {
-                sourcePaths.addAll( getExecutionProjectSourceRoots( project ) );
+                sourcePaths.addAll( JavadocUtil.pruneDirs( project, getExecutionProjectSourceRoots( project ) ) );
             }
 
             /*
@@ -1612,11 +1646,14 @@ public abstract class AbstractJavadocMojo
                 File javadocDir = getJavadocDirectory();
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
+                    List l =
+                        JavadocUtil.pruneDirs( project,
+                                               Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
+                    sourcePaths.addAll( l );
                 }
             }
 
-            if ( aggregate && project.isExecutionRoot() )
+            if ( isAggregator() && project.isExecutionRoot() )
             {
                 for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
                 {
@@ -1634,7 +1671,7 @@ public abstract class AbstractJavadocMojo
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                         if ( "java".equals( artifactHandler.getLanguage() ) )
                         {
-                            sourcePaths.addAll( sourceRoots );
+                            sourcePaths.addAll( JavadocUtil.pruneDirs( subProject, sourceRoots ) );
                         }
 
                         String javadocDirRelative =
@@ -1642,7 +1679,10 @@ public abstract class AbstractJavadocMojo
                         File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                         if ( javadocDir.exists() && javadocDir.isDirectory() )
                         {
-                            sourcePaths.add( javadocDir.getAbsolutePath() );
+                            List l =
+                                JavadocUtil.pruneDirs( subProject,
+                                                       Collections.singletonList( javadocDir.getAbsolutePath() ) );
+                            sourcePaths.addAll( l );
                         }
                     }
                 }
@@ -1651,13 +1691,18 @@ public abstract class AbstractJavadocMojo
         else
         {
             sourcePaths = new ArrayList( Arrays.asList( sourcepath.split( "[;]" ) ) );
+            sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
-                sourcePaths.add( getJavadocDirectory().getAbsolutePath() );
+                List l =
+                    JavadocUtil.pruneDirs( project,
+                                           Collections.singletonList( getJavadocDirectory().getAbsolutePath() ) );
+                sourcePaths.addAll( l );
             }
         }
 
-        sourcePaths = JavadocUtil.pruneDirs( sourcePaths );
+        sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
+
         return sourcePaths;
     }
 
@@ -1789,7 +1834,7 @@ public abstract class AbstractJavadocMojo
 
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
-        if ( aggregate && project.isExecutionRoot() )
+        if ( isAggregator() && project.isExecutionRoot() )
         {
             try
             {
@@ -2847,7 +2892,7 @@ public abstract class AbstractJavadocMojo
         List offlineLinksList =
             ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ) : new ArrayList() );
 
-        if ( !aggregate && reactorProjects != null )
+        if ( !isAggregator() && reactorProjects != null )
         {
             String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
 
@@ -3083,7 +3128,7 @@ public abstract class AbstractJavadocMojo
             JavadocUtil.copyJavadocResources( anOutputDirectory, getJavadocDirectory(), excludedocfilessubdir );
         }
 
-        if ( aggregate && project.isExecutionRoot() )
+        if ( isAggregator() && project.isExecutionRoot() )
         {
             for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
@@ -3184,10 +3229,12 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @param sourcePaths could be null
-     * @param files not null
+     * @param sourcePaths not null, containing absolute and relative paths
+     * @param files not null, containing list of quoted files
      * @param onlyPackageName boolean for only package name
      * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
+     * @see #getFiles(List)
+     * @see #getSourcePaths()
      */
     private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
     {
@@ -3381,9 +3428,9 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         // encoding
-        if ( StringUtils.isNotEmpty( encoding ) && !JavadocUtil.validateEncoding( encoding ) )
+        if ( StringUtils.isNotEmpty( getEncoding() ) && !JavadocUtil.validateEncoding( getEncoding() ) )
         {
-            throw new MavenReportException( "Encoding not supported: " + encoding );
+            throw new MavenReportException( "Encoding not supported: " + getEncoding() );
         }
     }
 
@@ -3524,7 +3571,7 @@ public abstract class AbstractJavadocMojo
                            "Source files encoding has not been set, using platform encoding "
                                + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
         }
-        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( encoding ) );
+        addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
 
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 

@@ -1,5 +1,3 @@
-package org.apache.maven.plugin.javadoc;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugin.javadoc;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,21 +18,11 @@ package org.apache.maven.plugin.javadoc;
  */
 
 /**
- * Generates documentation for the <code>Java Test code</code> in an <b>aggregator</b> project using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * Sample class with non-ascii characters:
+ * {non-ascii chars delimiter}french: äëïöüàèìòù, greek: αβγδεζηθ, japanese: あいうえお{non-ascii chars delimiter}
  *
- * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
- * @goal test-aggregate
- * @aggregator
- * @since 2.5
+ * @author Hervé Boutemy
  */
-public class AggregatorTestJavadocReport
-    extends TestJavadocReport
+public class Test
 {
-    /** {@inheritDoc} */
-    protected boolean isAggregator()
-    {
-        return true;
-    }
 }

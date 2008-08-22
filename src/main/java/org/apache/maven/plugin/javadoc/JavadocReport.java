@@ -138,7 +138,11 @@ public class JavadocReport
     public boolean canGenerateReport()
     {
         boolean canGenerate;
-        if ( aggregate && !project.isExecutionRoot() )
+        if ( aggregate != isAggregator() )
+        {
+            canGenerate = false;
+        }
+        else if ( isAggregator() && !project.isExecutionRoot() )
         {
             canGenerate = false;
         }
@@ -224,6 +228,13 @@ public class JavadocReport
 
             getLog().error( e.getMessage(), e );
         }
+    }
+
+    /** {@inheritDoc} */
+    protected boolean isAggregator()
+    {
+        // only here for backward compatibility, this flag does not work reliably
+        return aggregate;
     }
 
     /**

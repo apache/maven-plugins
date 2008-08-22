@@ -46,8 +46,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
@@ -67,12 +67,15 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JavadocUtil
 {
     /**
-     * Method that removes the invalid directories in the specified directories
+     * Method that removes the invalid directories in the specified directories.
+     * <b>Note</b>: All elements in <code>dirs</code> could be an absolute or relative against the project's base
+     * directory <code>String</code> path.
      *
-     * @param dirs the list of directories that will be validated
-     * @return a List of valid directories
+     * @param project the current Maven project not null
+     * @param dirs the list of <code>String</code> directories path that will be validated.
+     * @return a List of valid <code>String</code> directories absolute paths.
      */
-    protected static List pruneDirs( List dirs )
+    protected static List pruneDirs( MavenProject project, List dirs )
     {
         List pruned = new ArrayList( dirs.size() );
         for ( Iterator i = dirs.iterator(); i.hasNext(); )
@@ -85,9 +88,14 @@ public class JavadocUtil
             }
 
             File directory = new File( dir );
-            if ( directory.exists() && directory.isDirectory() && !pruned.contains( dir ) )
+            if ( !directory.isAbsolute() )
             {
-                pruned.add( dir );
+                directory = new File( project.getBasedir(), directory.getPath() );
+            }
+
+            if ( directory.isDirectory() && !pruned.contains( dir ) )
+            {
+                pruned.add( directory.getAbsolutePath() );
             }
         }
 
@@ -95,10 +103,11 @@ public class JavadocUtil
     }
 
     /**
-     * Method that removes the invalid files in the specified files
+     * Method that removes the invalid files in the specified files.
+     * <b>Note</b>: All elements in <code>files</code> should be an absolute <code>String</code> path.
      *
-     * @param files the list of files that will be validated
-     * @return a List of valid files
+     * @param files the list of <code>String</code> files paths that will be validated.
+     * @return a List of valid <code>File</code> objects.
      */
     protected static List pruneFiles( List files )
     {
@@ -113,7 +122,7 @@ public class JavadocUtil
             }
 
             File file = new File( f );
-            if ( file.exists() && file.isFile() && !pruned.contains( f ) )
+            if ( file.isFile() && !pruned.contains( f ) )
             {
                 pruned.add( f );
             }
@@ -148,7 +157,7 @@ public class JavadocUtil
     }
 
     /**
-     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
      * @param artifacts not null
      * @return list of compile artifacts with compile scope
      * @deprecated since 2.5, using {@link #getCompileArtifacts(Set, boolean)} instead of.
@@ -159,7 +168,7 @@ public class JavadocUtil
     }
 
     /**
-     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
      * @param artifacts not null
      * @param withTestScope flag to include or not the artifacts with test scope
      * @return list of compile artifacts with or without test scope.

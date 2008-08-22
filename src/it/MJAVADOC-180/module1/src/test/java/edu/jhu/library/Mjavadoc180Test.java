@@ -1,7 +1,6 @@
 package edu.jhu.library;
 
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import junit.framework.TestCase;
 import org.dbunit.database.IDatabaseConnection;
 
 /**
@@ -12,11 +11,11 @@ import org.dbunit.database.IDatabaseConnection;
  * To change this template use File | Settings | File Templates.
  */
 public class Mjavadoc180Test
+    extends TestCase
 {
     /**
      * This is some test javadoc.  This test method has a phony dependency on DB Unit.
      */
-    @Test
     public void testMJAVADOC180()
     {
         IDatabaseConnection phony = null;
