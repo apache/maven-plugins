@@ -37,57 +37,25 @@
   </description>
   <inceptionYear>2004</inceptionYear>
 
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MJAVADOC</url>
-  </issueManagement>
+  <prerequisites>
+    <maven>2.0.9</maven>
+  </prerequisites>
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-javadoc-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-javadoc-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-javadoc-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MJAVADOC</url>
+  </issueManagement>
 
-  <prerequisites>
-    <maven>2.0.9</maven>
-  </prerequisites>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <!-- TODO: remove when maven-plugins parent pom 12 is released -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.4.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.modello</groupId>
-          <artifactId>modello-maven-plugin</artifactId>
-          <version>1.0-alpha-21</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.modello</groupId>
-        <artifactId>modello-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <version>1.0.0</version>
-          <models>
-            <model>src/main/mdo/javadocOptions.mdo</model>
-          </models>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <properties>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
+  </properties>
 
   <dependencies>
     <!-- maven -->
@@ -218,11 +186,51 @@
     </dependency>
   </dependencies>
 
-  <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
-  </properties>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- TODO: remove when maven-plugins parent pom 12 is released -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.4.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.modello</groupId>
+          <artifactId>modello-maven-plugin</artifactId>
+          <version>1.0-alpha-21</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <version>1.0.0</version>
+          <models>
+            <model>src/main/mdo/javadocOptions.mdo</model>
+          </models>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
