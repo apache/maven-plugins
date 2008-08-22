@@ -726,6 +726,10 @@ public class DescribeMojo
                     (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
 
                 Lifecycle lifecycle = (Lifecycle) lifecycleExecutor.getPhaseToLifecycleMap().get( cmd );
+                if ( lifecycle == null )
+                {
+                    throw new MojoExecutionException( "The given phase '" + cmd + "' is an unknown phase." );
+                }
 
                 LifecycleMapping lifecycleMapping =
                     (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, project.getPackaging() );
