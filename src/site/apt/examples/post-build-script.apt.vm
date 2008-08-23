@@ -65,10 +65,12 @@ Using a Post Build Script
 </project>
 -------------------
 
-  Here is an example post build BeanShell script (<<<verify.bsh>>>) that checks for the existence 
-  of a JAR file after the build has run.  If the JAR file does not exist, the
-  script returns <<<false>>> which causes the Invoker Plugin to log that the build failed.
-          
+  Here is an example post build BeanShell script (<<<verify.bsh>>>) that checks for the existence of a JAR file after
+  the build has run.  If the JAR file does not exist, the script returns <<<false>>> which causes the Invoker Plugin to
+  log that the build failed. More precisely, any return value which does not equal <<<true>>> will be interpreted as a
+  failure condition. And of course, if the script exists abnormally due to an exception, the plugin will flag the
+  corresponding build as a failure, too.
+
 -------------------
 import java.io.*;
 
