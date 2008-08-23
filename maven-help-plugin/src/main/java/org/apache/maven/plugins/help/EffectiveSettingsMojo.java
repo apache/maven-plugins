@@ -21,6 +21,8 @@ package org.apache.maven.plugins.help;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,9 +31,12 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
- * Displays the calculated settings for this project, given any profile enhancement and the inheritance
+ * Displays the calculated settings as XML for this project, given any profile enhancement and the inheritance
  * of the global settings into the user-level settings.
  *
  * @version $Id$
@@ -40,7 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @requiresProject false
  */
 public class EffectiveSettingsMojo
-    extends AbstractHelpMojo
+    extends AbstractEffectiveMojo
 {
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -48,7 +53,7 @@ public class EffectiveSettingsMojo
 
     /**
      * The system settings for Maven. This is the instance resulting from
-     * merging global- and user-level settings files.
+     * merging global and user-level settings files.
      *
      * @parameter expression="${settings}"
      * @readonly
@@ -57,7 +62,7 @@ public class EffectiveSettingsMojo
     private Settings settings;
 
     /**
-     * For security reasons, all passwords are hidden by default. Set this to 'true' to show all passwords.
+     * For security reasons, all passwords are hidden by default. Set this to <code>true</code> to show all passwords.
      *
      * @since 2.1
      * @parameter expression="${showPasswords}" default-value="false"
@@ -83,24 +88,22 @@ public class EffectiveSettingsMojo
             hidePasswords( copySettings );
         }
 
-        StringWriter sWriter = new StringWriter();
+        StringWriter w = new StringWriter();
+        XMLWriter writer =
+            new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", XmlWriterUtil.DEFAULT_INDENTATION_SIZE ),
+                                      copySettings.getModelEncoding(), null );
 
-        SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
+        writeHeader( writer );
 
-        try
-        {
-            settingsWriter.write( sWriter, copySettings );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Cannot serialize Settings to XML.", e );
-        }
+        writeEffectiveSettings( copySettings, writer );
+
+        String effectiveSettings = w.toString();
 
         if ( output != null )
         {
             try
             {
-                writeFile( output, sWriter.toString() );
+                writeXmlFile( output, effectiveSettings, copySettings.getModelEncoding() );
             }
             catch ( IOException e )
             {
@@ -116,11 +119,14 @@ public class EffectiveSettingsMojo
         {
             StringBuffer message = new StringBuffer();
 
-            message.append( "\nEffective settings:\n\n" );
-            message.append( sWriter.toString() );
-            message.append( "\n\n" );
+            message.append( "\nEffective user-specific configuration settings:\n\n" );
+            message.append( effectiveSettings );
+            message.append( "\n" );
 
-            getLog().info( message );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( message.toString() );
+            }
         }
     }
 
@@ -133,7 +139,7 @@ public class EffectiveSettingsMojo
      *
      * @param aSettings not null
      */
-    private void hidePasswords( Settings aSettings )
+    private static void hidePasswords( Settings aSettings )
     {
         for ( Iterator it = aSettings.getProxies().iterator(); it.hasNext(); )
         {
@@ -157,7 +163,7 @@ public class EffectiveSettingsMojo
     }
 
     /**
-     * TODO: should be replaced by SettingsUtils#copySettings()
+     * TODO: should be replaced by SettingsUtils#copySettings() in 2.0.10+.
      *
      * @param settings could be null
      * @return a new instance of settings or null if settings was null.
@@ -184,5 +190,65 @@ public class EffectiveSettingsMojo
         clone.setUsePluginRegistry( settings.isUsePluginRegistry() );
 
         return clone;
+    }
+
+    /**
+     * Method for writing the effective settings informations.
+     *
+     * @param settings the settings, not null.
+     * @param writer the XML writer used, not null.
+     * @throws MojoExecutionException if any
+     */
+    private static void writeEffectiveSettings( Settings settings, XMLWriter writer )
+        throws MojoExecutionException
+    {
+        String effectiveSettings;
+
+        StringWriter sWriter = new StringWriter();
+        SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
+        try
+        {
+            settingsWriter.write( sWriter, settings );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Cannot serialize Settings to XML.", e );
+        }
+
+        effectiveSettings = addMavenNamespace( sWriter.toString(), false );
+
+        writeComment( writer, "Effective Settings for '" + getUserName() + "' on '" + getHostName() + "'" );
+
+        writer.writeMarkup( effectiveSettings );
+    }
+
+    /**
+     * @return the current host name or <code>unknown</code> if error
+     * @see InetAddress#getLocalHost()
+     */
+    private static String getHostName()
+    {
+        try
+        {
+            return InetAddress.getLocalHost().getHostName();
+        }
+        catch ( UnknownHostException e )
+        {
+            return "unknown";
+        }
+    }
+
+    /**
+     * @return the user name or <code>unknown</code> if <code>user.name</code> is not a system property.
+     */
+    private static String getUserName()
+    {
+        String userName = System.getProperty( "user.name" );
+        if ( StringUtils.isEmpty( userName ))
+        {
+            return "unknown";
+        }
+
+        return userName;
     }
 }

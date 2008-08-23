@@ -19,20 +19,28 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
- * Displays the effective POM for this build, with the active profiles factored in.
+ * Displays the effective POM as an XML for this build, with the active profiles factored in.
  *
  * @version $Id$
  * @since 2.0
@@ -40,7 +48,7 @@ import java.util.List;
  * @aggregator
  */
 public class EffectivePomMojo
-    extends AbstractHelpMojo
+    extends AbstractEffectiveMojo
 {
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -74,37 +82,41 @@ public class EffectivePomMojo
     public void execute()
         throws MojoExecutionException
     {
-        StringBuffer message = new StringBuffer();
+        StringWriter w = new StringWriter();
+        XMLWriter writer =
+            new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", XmlWriterUtil.DEFAULT_INDENTATION_SIZE ),
+                                      project.getModel().getModelEncoding(), null );
 
-        if ( projects.get( 0 ).equals( project ) )
+        writeHeader( writer );
+
+        String effectivePom;
+        if ( projects.get( 0 ).equals( project ) && projects.size() > 1 )
         {
-            // this is normal in aggregation mode.
-
+            // outer root element
+            writer.startElement( "projects" );
             for ( Iterator it = projects.iterator(); it.hasNext(); )
             {
-                MavenProject project = (MavenProject) it.next();
+                MavenProject subProject = (MavenProject) it.next();
 
-                getEffectivePom( project, message );
-
-                message.append( "\n" );
+                writeEffectivePom( subProject, writer );
             }
+            writer.endElement();
+
+            effectivePom = w.toString();
+            effectivePom = prettyFormat( effectivePom );
         }
         else
         {
-            getEffectivePom( project, message );
-            message.append( "\n" );
+            writeEffectivePom( project, writer );
+
+            effectivePom = w.toString();
         }
 
         if ( output != null )
         {
-            StringBuffer sb = new StringBuffer();
-            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
-            sb.append( message.toString() );
-
             try
             {
-                writeFile( output, sb );
+                writeXmlFile( output, effectivePom, project.getModel().getModelEncoding() );
             }
             catch ( IOException e )
             {
@@ -118,15 +130,15 @@ public class EffectivePomMojo
         }
         else
         {
-            StringBuffer formatted = new StringBuffer();
+            StringBuffer message = new StringBuffer();
 
-            formatted.append( "\nEffective POMs, after inheritance, interpolation, and profiles are applied:\n\n" );
-            formatted.append( message.toString() );
-            formatted.append( "\n" );
+            message.append( "\nEffective POMs, after inheritance, interpolation, and profiles are applied:\n\n" );
+            message.append( effectivePom );
+            message.append( "\n" );
 
             if ( getLog().isInfoEnabled() )
             {
-                getLog().info( message );
+                getLog().info( message.toString() );
             }
         }
     }
@@ -136,35 +148,62 @@ public class EffectivePomMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Method for displaying the effective pom information of the current build
+     * Method for writing the effective pom informations of the current build.
      *
-     * @param project   the project of the current build
-     * @param message   the information to be displayed
-     * @throws MojoExecutionException
+     * @param project the project of the current build, not null.
+     * @param writer the XML writer , not null, not null.
+     * @throws MojoExecutionException if any
      */
-    private void getEffectivePom( MavenProject project, StringBuffer message )
+    private static void writeEffectivePom( MavenProject project, XMLWriter writer )
         throws MojoExecutionException
     {
         Model pom = project.getModel();
+        String effectivePom;
 
         StringWriter sWriter = new StringWriter();
-
         MavenXpp3Writer pomWriter = new MavenXpp3Writer();
-
         try
         {
             pomWriter.write( sWriter, pom );
-
-            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
-            message.append( "\nEffective POM for project \'" + project.getId() + "\'" );
-            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
-            message.append( "\n" );
-            message.append( sWriter.toString() );
-            message.append( "\n" ).append( StringUtils.repeat( "=", LINE_LENGTH ) );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Cannot serialize POM to XML.", e );
+        }
+
+        effectivePom = addMavenNamespace( sWriter.toString(), true );
+
+        writeComment( writer, "Effective POM for project \'" + project.getId() + "\'" );
+
+        writer.writeMarkup( effectivePom );
+    }
+
+    /**
+     * @param effectivePom not null
+     * @return pretty format of the xml  or the original <code>effectivePom</code> if an error occurred.
+     */
+    private static String prettyFormat( String effectivePom )
+    {
+        SAXBuilder builder = new SAXBuilder();
+
+        try
+        {
+            Document effectiveDocument = builder.build( new StringReader( effectivePom ) );
+
+            StringWriter w = new StringWriter();
+            Format format = Format.getPrettyFormat();
+            XMLOutputter out = new XMLOutputter( format );
+            out.output( effectiveDocument, w );
+
+            return w.toString();
+        }
+        catch ( JDOMException e )
+        {
+            return effectivePom;
+        }
+        catch ( IOException e )
+        {
+            return effectivePom;
         }
     }
 }
