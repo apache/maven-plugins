@@ -110,6 +110,11 @@ under the License.
       <artifactId>maven-plugin-tools-api</artifactId>
       <version>2.4.3</version>
     </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
   <reporting>
     <plugins>
