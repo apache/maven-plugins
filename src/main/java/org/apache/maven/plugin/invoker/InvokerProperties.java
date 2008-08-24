@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.maven.shared.invoker.InvocationRequest;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides a convenient facade around the <code>invoker.properties</code>.
@@ -83,13 +84,13 @@ class InvokerProperties
         String goals = get( "invoker.goals", index );
         if ( goals != null )
         {
-            request.setGoals( new ArrayList( Arrays.asList( goals.trim().split( "[,\\s]+" ) ) ) );
+            request.setGoals( new ArrayList( Arrays.asList( StringUtils.split( goals, ", \t\n\r\f" ) ) ) );
         }
 
         String profiles = get( "invoker.profiles", index );
         if ( profiles != null )
         {
-            request.setProfiles( new ArrayList( Arrays.asList( profiles.trim().split( "[,\\s]+" ) ) ) );
+            request.setProfiles( new ArrayList( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
         }
 
         String mvnOpts = get( "invoker.mavenOpts", index );
