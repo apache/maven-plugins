@@ -95,9 +95,17 @@ public class InvokerPropertiesTest
         facade.configureInvocation( request, 0 );
         assertEquals( Collections.singletonList( "verify" ), request.getGoals() );
 
+        props.setProperty( "invoker.goals", "   " );
+        facade.configureInvocation( request, 0 );
+        assertEquals( Arrays.asList( new String[0] ), request.getGoals() );
+
         props.setProperty( "invoker.goals", "  clean , test   verify  " );
         facade.configureInvocation( request, 0 );
         assertEquals( Arrays.asList( new String[] { "clean", "test", "verify" } ), request.getGoals() );
+
+        props.setProperty( "invoker.goals", "" );
+        facade.configureInvocation( request, 0 );
+        assertEquals( Arrays.asList( new String[0] ), request.getGoals() );
     }
 
     public void testConfigureRequestProfiles()
@@ -116,9 +124,17 @@ public class InvokerPropertiesTest
         facade.configureInvocation( request, 0 );
         assertEquals( Collections.singletonList( "verify" ), request.getProfiles() );
 
-        props.setProperty( "invoker.profiles", "  clean , test   verify  " );
+        props.setProperty( "invoker.profiles", "   " );
+        facade.configureInvocation( request, 0 );
+        assertEquals( Arrays.asList( new String[0] ), request.getProfiles() );
+
+        props.setProperty( "invoker.profiles", "  clean , test   verify  ," );
         facade.configureInvocation( request, 0 );
         assertEquals( Arrays.asList( new String[] { "clean", "test", "verify" } ), request.getProfiles() );
+
+        props.setProperty( "invoker.profiles", "" );
+        facade.configureInvocation( request, 0 );
+        assertEquals( Arrays.asList( new String[0] ), request.getProfiles() );
     }
 
     public void testConfigureRequestMavenOpts()
