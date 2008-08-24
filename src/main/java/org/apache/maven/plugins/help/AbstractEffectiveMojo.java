@@ -24,9 +24,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
 
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -186,6 +191,25 @@ public abstract class AbstractEffectiveMojo
         catch ( IOException e )
         {
             return effectiveXml;
+        }
+    }
+
+    /**
+     * Properties which provides a sorted keySet().
+     */
+    protected static class SortedProperties
+        extends Properties
+    {
+        static final long serialVersionUID = -8985316072702233744L;
+
+        /** {@inheritDoc} */
+        public Set keySet()
+        {
+            Set keynames = super.keySet();
+            Vector list = new Vector( keynames );
+            Collections.sort( list );
+
+            return new LinkedHashSet( list );
         }
     }
 }
