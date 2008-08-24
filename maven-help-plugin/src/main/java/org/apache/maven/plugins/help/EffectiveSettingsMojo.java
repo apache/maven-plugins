@@ -24,8 +24,10 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Iterator;
+import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -202,6 +204,8 @@ public class EffectiveSettingsMojo
     private static void writeEffectiveSettings( Settings settings, XMLWriter writer )
         throws MojoExecutionException
     {
+        cleanSettings( settings );
+
         String effectiveSettings;
 
         StringWriter sWriter = new StringWriter();
@@ -220,6 +224,23 @@ public class EffectiveSettingsMojo
         writeComment( writer, "Effective Settings for '" + getUserName() + "' on '" + getHostName() + "'" );
 
         writer.writeMarkup( effectiveSettings );
+    }
+
+    /**
+     * Apply some logic to clean the model before writing it.
+     *
+     * @param settings not null
+     */
+    private static void cleanSettings( Settings settings )
+    {
+        for ( Iterator it = settings.getProfiles().iterator(); it.hasNext(); )
+        {
+            Profile profile = (Profile) it.next();
+
+            Properties properties = new SortedProperties();
+            properties.putAll( profile.getProperties() );
+            profile.setProperties( properties );
+        }
     }
 
     /**
