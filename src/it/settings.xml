@@ -26,6 +26,10 @@ under the License.
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+      <properties>
+        <!-- This property allows the ITs to access the real local repository instead of the isolated one -->
+        <invoker.repo.local>@localRepository@</invoker.repo.local>
+      </properties>
       <repositories>
         <repository>
           <id>local.central</id>
