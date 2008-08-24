@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -158,6 +159,8 @@ public class EffectivePomMojo
         throws MojoExecutionException
     {
         Model pom = project.getModel();
+        cleanModel( pom );
+
         String effectivePom;
 
         StringWriter sWriter = new StringWriter();
@@ -176,6 +179,18 @@ public class EffectivePomMojo
         writeComment( writer, "Effective POM for project \'" + project.getId() + "\'" );
 
         writer.writeMarkup( effectivePom );
+    }
+
+    /**
+     * Apply some logic to clean the model before writing it.
+     *
+     * @param pom not null
+     */
+    private static void cleanModel( Model pom )
+    {
+        Properties properties = new SortedProperties();
+        properties.putAll( pom.getProperties() );
+        pom.setProperties( properties );
     }
 
     /**
