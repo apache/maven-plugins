@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <profiles>
+    <profile>
+      <id>it-repo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <!--
+      NOTE: We don't use @localRepository@ here which refers to the isolated local repository of the ITs and is quite
+      empty. In contrast, @invoker.repo.local@ has been defined to refer to the original local repository which is a
+      far better source for artifacts.
+      -->
+      <repositories>
+        <repository>
+          <id>local.central</id>
+          <url>file://@invoker.repo.local@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>local.central</id>
+          <url>file://@invoker.repo.local@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+</settings>
