@@ -20,16 +20,18 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.execution.DefaultRuntimeInformation;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.ide.AbstractIdeSupportMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.tools.easymock.TestFileManager;
 
@@ -45,8 +47,20 @@ public class EclipsePluginUnitTest
         fileManager.cleanUp();
     }
 
+    private EclipsePlugin newMojo()
+        throws Exception
+    {
+        EclipsePlugin mojo = new EclipsePlugin();
+        DefaultRuntimeInformation rti = new DefaultRuntimeInformation();
+        rti.initialize();
+        Field field = AbstractIdeSupportMojo.class.getDeclaredField( "runtimeInformation" );
+        field.setAccessible( true );
+        field.set( mojo, rti );
+        return mojo;
+    }
+
     public void testBuildDirectoryList_ShouldUseTestOutputDirFromProjectWhenBuildOutputDirIsStandard()
-        throws MojoExecutionException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -74,7 +88,7 @@ public class EclipsePluginUnitTest
         project.setFile( pom );
 
         EclipseSourceDir[] result =
-            new EclipsePlugin().buildDirectoryList( project, basedir, new File( "target/classes" ) );
+            newMojo().buildDirectoryList( project, basedir, new File( "target/classes" ) );
 
         assertEquals( "should have added 1 resource.", 1, result.length );
 
@@ -84,7 +98,7 @@ public class EclipsePluginUnitTest
     }
 
     public void testExtractResourceDirs_ShouldUseResourceOutput()
-        throws MojoExecutionException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -109,7 +123,7 @@ public class EclipsePluginUnitTest
 
         Set result = new LinkedHashSet();
 
-        EclipsePlugin plugin = new EclipsePlugin();
+        EclipsePlugin plugin = newMojo();
 
         plugin.extractResourceDirs( result, project.getBuild().getResources(), project, basedir, basedir, false,
                                     "target/classes" );
@@ -127,7 +141,7 @@ public class EclipsePluginUnitTest
     }
 
     public void testExtractResourceDirs_ShouldUseSpecifiedOutputDirectory()
-        throws MojoExecutionException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -151,7 +165,7 @@ public class EclipsePluginUnitTest
 
         Set result = new LinkedHashSet();
 
-        EclipsePlugin plugin = new EclipsePlugin();
+        EclipsePlugin plugin = newMojo();
 
         plugin.extractResourceDirs( result, project.getBuild().getTestResources(), project, basedir, basedir, false,
                                     resOutput );
@@ -166,7 +180,7 @@ public class EclipsePluginUnitTest
     }
 
     public void testExtractResourceDirs_ShouldIncludeMainAndTestResources()
-        throws MojoExecutionException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -174,7 +188,7 @@ public class EclipsePluginUnitTest
     }
 
     public void testExtractResourceDirs_ShouldIncludeMainAndTestResourcesWhenBaseDirsDiffer()
-        throws MojoExecutionException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
         File projectBasedir = fileManager.createTempDir();
@@ -183,7 +197,7 @@ public class EclipsePluginUnitTest
     }
 
     private void runResourceExtractionTest( File basedir, File workspaceProjectBasedir )
-        throws MojoExecutionException
+        throws Exception
     {
         Build build = new Build();
 
@@ -210,7 +224,7 @@ public class EclipsePluginUnitTest
 
         Set result = new LinkedHashSet();
 
-        EclipsePlugin plugin = new EclipsePlugin();
+        EclipsePlugin plugin = newMojo();
 
         plugin.extractResourceDirs( result, project.getBuild().getResources(), project, basedir,
                                     workspaceProjectBasedir, false, "target/classes" );

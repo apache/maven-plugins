@@ -52,8 +52,10 @@ import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.artifact.resolver.WarningResolutionListener;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -143,6 +145,13 @@ public abstract class AbstractIdeSupportMojo
      * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" hint="maven"
      */
     protected ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * The runtime information for Maven, used to retrieve Maven's version number.
+     * 
+     * @component
+     */
+    private RuntimeInformation runtimeInformation;
 
     /**
      * Remote repositories which will be searched for source attachments.
@@ -376,7 +385,7 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Setter for <code>downloadJavadocs</code>.
      * 
-     * @param downloadJavadocs The downloadJavadocs to set.
+     * @param downloadJavadoc The downloadJavadocs to set.
      */
     public void setDownloadJavadocs( boolean downloadJavadoc )
     {
@@ -1095,4 +1104,26 @@ public abstract class AbstractIdeSupportMojo
     {
         return getUseProjectReferences() && isAvailableAsAReactorProject( art );
     }
+
+    /**
+     * Checks whether the currently running Maven satisfies the specified version (range).
+     * 
+     * @param version The version range to test for, must not be <code>null</code>.
+     * @return <code>true</code> if the current Maven version matches the specified version range, <code>false</code>
+     *         otherwise.
+     */
+    protected boolean isMavenVersion( String version )
+    {
+        try
+        {
+            VersionRange versionRange = VersionRange.createFromVersionSpec( version );
+            ArtifactVersion mavenVersion = runtimeInformation.getApplicationVersion();
+            return versionRange.containsVersion( mavenVersion );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new IllegalArgumentException( e.getMessage() );
+        }
+    }
+
 }
