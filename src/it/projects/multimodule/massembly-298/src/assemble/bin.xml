@@ -1,0 +1,40 @@
+
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.test:child1</include>
+      </includes>
+      <binaries>
+        <outputDirectory>${artifact.artifactId}</outputDirectory>
+        <includeDependencies>false</includeDependencies>
+        <unpack>true</unpack>
+        <unpackOptions>
+          <includes>
+            <include>org/test/child1/App2*</include>
+          </includes>
+        </unpackOptions>
+      </binaries>
+    </moduleSet>
+    <moduleSet>
+      <includes>
+        <include>org.test:child2</include>
+      </includes>
+      <binaries>
+        <outputDirectory>${artifact.artifactId}</outputDirectory>
+        <includeDependencies>false</includeDependencies>
+        <unpack>true</unpack>
+        <unpackOptions>
+          <excludes>
+            <exclude>org/test/other/*</exclude>
+          </excludes>
+        </unpackOptions>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+</assembly>
