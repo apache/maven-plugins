@@ -1,0 +1,26 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+
+File f = new File( basedir, "massembly-285-assembly/target/massembly-285-assembly-1-bin.jar" );
+JarFile jf = new JarFile( f );
+
+String testPath = "tests/App.class";
+
+int count = 0;
+
+Enumeration e = jf.entries();
+while( e.hasMoreElements() )
+{
+	if ( testPath.equals( String.valueOf( e.nextElement() ) ) )
+	{
+		count++;
+	}
+}
+
+if ( count != 1 )
+{
+	System.out.println( "ERROR! Test path: " + testPath + " was found " + count + " times (should have been 1)." );
+}
+
+return count == 1;
