@@ -19,7 +19,7 @@
   under the License.
 -->
 
-<project name="Maven Shade Plugin">
+<project>
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
