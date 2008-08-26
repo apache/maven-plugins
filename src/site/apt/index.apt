@@ -7,9 +7,9 @@
  ------
 
 
-Maven 2 Source Plugin
+Maven Source Plugin
 
- The Maven 2 Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
+ The Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
  created in the project's target directory.
 
 * Goals Overview
