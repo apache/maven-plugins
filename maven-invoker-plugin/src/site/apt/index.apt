@@ -80,3 +80,6 @@ Maven Invoker Plugin
   * {{{examples/prepare-build-env.html}Preparing the Build Environment}} by building some setup projects before other projects.
 
   []
+
+  You can also study some real-life usages of the Invoker Plugin by browsing its own integration tests which are located
+  in the directory <<<src/it>>> of the {{{source-repository.html}project source tree}}.
