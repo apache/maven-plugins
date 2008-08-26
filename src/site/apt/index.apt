@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven 2 Ant Plugin
+Maven Ant Plugin
 
  The Ant Plugin generates build files for {{{http://ant.apache.org/}Ant}} 1.6.2 or above from the POM.
 
