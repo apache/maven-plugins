@@ -19,6 +19,15 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -39,25 +48,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.artifact.DependencyResolver" role-hint="default"
@@ -66,17 +59,12 @@ import java.util.Set;
  * @version $Id$
  */
 public class DefaultDependencyResolver
-    extends AbstractLogEnabled implements DependencyResolver, Contextualizable
+    extends AbstractLogEnabled implements DependencyResolver
 {
 
-    private static final String[] PREFERRED_RESOLVER_HINTS = {
-      "project-cache-aware", // Provided in Maven 2.1-SNAPSHOT
-      "default"
-    };
-
-    // Commenting this out as a component requirement, so we can look for the new
-    // resolver in maven 2.1-snapshot, then fail back to the default one.
-//     * @plexus.requirement
+    /**
+     * @plexus.requirement
+     */
     private ArtifactResolver resolver;
 
     /**
@@ -266,42 +254,4 @@ public class DefaultDependencyResolver
         return map;
     }
 
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-
-        for ( int i = 0; i < PREFERRED_RESOLVER_HINTS.length; i++ )
-        {
-            String hint = PREFERRED_RESOLVER_HINTS[i];
-
-            try
-            {
-                resolver = (ArtifactResolver) container.lookup( ArtifactResolver.ROLE, hint );
-                break;
-            }
-            catch ( ComponentLookupException e )
-            {
-                getLogger().debug( "Cannot find ArtifactResolver with hint: " + hint, e );
-            }
-        }
-
-        if ( resolver == null )
-        {
-            try
-            {
-                resolver = (ArtifactResolver) container.lookup( ArtifactResolver.ROLE );
-            }
-            catch ( ComponentLookupException e )
-            {
-                getLogger().debug( "Cannot find ArtifactResolver with no hint.", e );
-            }
-        }
-
-        if ( resolver == null )
-        {
-            throw new ContextException( "Failed to lookup a valid ArtifactResolver implementation. Tried hints:\n"
-                                        + Arrays.asList( PREFERRED_RESOLVER_HINTS ) );
-        }
-    }
 }
