@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven 2 GPG Plugin
+Maven GPG Plugin
 
   This plugin signs all of the project's attached artifacts with GnuPG.
 
