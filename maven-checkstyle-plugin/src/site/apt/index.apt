@@ -27,7 +27,7 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven 2 Checkstyle Plugin
+Maven Checkstyle Plugin
 
   The Checkstyle plugin generates report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}
