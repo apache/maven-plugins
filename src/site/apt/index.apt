@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven 2 Changes Plugin
+Maven Changes Plugin
 
   This plugin is used to inform your users of the changes that have occured
   between different releases of your project. The plugin can extract these
