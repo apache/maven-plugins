@@ -192,16 +192,18 @@ public class ModuleSetAssemblyPhase
             impliedDependencySet.setExcludes( binaries.getExcludes() );
             impliedDependencySet.setIncludes( binaries.getIncludes() );
             impliedDependencySet.setUnpack( binaries.isUnpack() );
+            // unpackOptions is handled in the first stage of dependency-set handling, below.
 
             depSets = Collections.singletonList( impliedDependencySet );
         }
 
         if ( depSets != null )
         {
-            // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
             for ( Iterator it = depSets.iterator(); it.hasNext(); )
             {
                 DependencySet ds = (DependencySet) it.next();
+                
+                // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
                 ds.setUseProjectArtifact( false );
             }
 
@@ -269,6 +271,10 @@ public class ModuleSetAssemblyPhase
         task.setDirectoryMode( binaries.getDirectoryMode() );
         task.setFileMode( binaries.getFileMode() );
         task.setUnpack( binaries.isUnpack() );
+        if ( binaries.isUnpack() ) {
+            task.setIncludes( binaries.getUnpackOptions().getIncludes() );
+            task.setExcludes( binaries.getUnpackOptions().getExcludes() );
+        }
 
         task.execute( archiver, configSource );
     }
