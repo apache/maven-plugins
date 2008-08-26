@@ -26,9 +26,9 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven 2 DOAP Plugin
+Maven DOAP Plugin
 
-  Maven 2 DOAP Plugin is used to generate compliant {{{http://usefulinc.com/doap}Description of a Project (DOAP)}}
+  The DOAP Plugin is used to generate compliant {{{http://usefulinc.com/doap}Description of a Project (DOAP)}}
   file from a POM. The main goal is to be able to provide DOAP files for Semantic Web systems that use them as
   primary input but that would also alleviate the burden of maintaining two sets of metadata.
 
