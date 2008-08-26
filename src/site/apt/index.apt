@@ -27,9 +27,9 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven 2 Site Plugin
+Maven Site Plugin
 
- The Maven 2 Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
+ The Site Plugin is used to generate a site for the project. The generated site also includes the project's reports
  that were configured in the <<<\<reporting\>>>> section of the POM.
 
 * Goals Overview
@@ -88,6 +88,6 @@ Maven 2 Site Plugin
 
    * {{{examples/siterun.html}Configuring Site Run}}
 
-   * {{{examples/creatingskins.html}Creating a Skin for the Maven 2 Site Plugin}}
+   * {{{examples/creatingskins.html}Creating a Skin for the Maven Site Plugin}}
 
 
