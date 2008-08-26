@@ -21,7 +21,7 @@
  ~~ specific language governing permissions and limitations
  ~~ under the License.
 
-Maven 2 PMD Plugin
+Maven PMD Plugin
 
   The {{{http://pmd.sourceforge.net/}PMD}} plugin allows you to automatically run the PMD code analysis tool
   on your project's source code and generate a site report with its results. It also supports the separate
