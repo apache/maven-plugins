@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven 2 Remote Resources Plugin
+Maven Remote Resources Plugin
 
   This plugin is used to retrieve JARs of resources from remote repositories,
   processes those resources, and incorporate them into JARs you build with
