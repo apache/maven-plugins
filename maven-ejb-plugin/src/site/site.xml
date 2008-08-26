@@ -31,6 +31,5 @@ under the License.
       <item name="Using the ejb client as a dependency" href="examples/ejb-client-dependency.html"/>
       <item name="Generating an ejb jar client" href="examples/generating-ejb-client.html" />
     </menu>
-    ${reports}
   </body>
 </project>
