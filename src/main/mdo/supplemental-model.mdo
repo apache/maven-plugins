@@ -28,7 +28,7 @@ under the License.
     </default>
   </defaults>
   <classes>
-    <class rootElement="true" xml.tagName="supplementalDataModels">
+    <class rootElement="true" xml.tagName="supplementalDataModels" xsd.compositor="sequence">
       <name>SupplementalDataModel</name>
       <version>1.0.0</version>
       <description>Root element of the supplemental-models.xml file.</description>
