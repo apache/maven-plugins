@@ -41,6 +41,5 @@ under the License.
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />
     </menu>
-	<menu ref="reports" />
   </body>
 </project>
