@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -1274,15 +1273,7 @@ public class EclipsePlugin
     {
         File projectBaseDir = project.getFile().getParentFile();
 
-        // avoid duplicated entries
-        Set directories = new TreeSet();
-
-        extractSourceDirs( directories, project.getCompileSourceRoots(), basedir, projectBaseDir, false, null );
-
-        String relativeOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false );
-
-        extractResourceDirs( directories, project.getBuild().getResources(), project, basedir, projectBaseDir, false,
-                             relativeOutput );
+        String mainOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false );
 
         // If using the standard output location, don't mix the test output into it.
         String testOutput = null;
@@ -1291,18 +1282,46 @@ public class EclipsePlugin
         if ( useStandardOutputDir )
         {
             getLog().debug(
-                            "testOutput toRelativeAndFixSeparator " + projectBaseDir + " , " +
-                                project.getBuild().getTestOutputDirectory() );
+                            "testOutput toRelativeAndFixSeparator " + projectBaseDir + " , "
+                                + project.getBuild().getTestOutputDirectory() );
             testOutput =
                 IdeUtils.toRelativeAndFixSeparator( projectBaseDir,
                                                     new File( project.getBuild().getTestOutputDirectory() ), false );
             getLog().debug( "testOutput after toRelative : " + testOutput );
         }
 
-        extractSourceDirs( directories, project.getTestCompileSourceRoots(), basedir, projectBaseDir, true, testOutput );
+        Set mainDirectories = new LinkedHashSet();
 
-        extractResourceDirs( directories, project.getBuild().getTestResources(), project, basedir, projectBaseDir,
-                             true, testOutput );
+        extractSourceDirs( mainDirectories, project.getCompileSourceRoots(), basedir, projectBaseDir, false, null );
+
+        extractResourceDirs( mainDirectories, project.getBuild().getResources(), project, basedir, projectBaseDir,
+                             false, mainOutput );
+
+        Set testDirectories = new LinkedHashSet();
+
+        extractSourceDirs( testDirectories, project.getTestCompileSourceRoots(), basedir, projectBaseDir, true,
+                           testOutput );
+
+        extractResourceDirs( testDirectories, project.getBuild().getTestResources(), project, basedir,
+                             projectBaseDir, true, testOutput );
+
+        // avoid duplicated entries
+        Set directories = new LinkedHashSet();
+
+        // NOTE: Since MNG-3118, test classes come before main classes
+        boolean testBeforeMain = isMavenVersion( "[2.0.8,)" );
+
+        if ( testBeforeMain )
+        {
+            directories.addAll( testDirectories );
+            directories.removeAll( mainDirectories );
+            directories.addAll( mainDirectories );
+        }
+        else
+        {
+            directories.addAll( mainDirectories );
+            directories.addAll( testDirectories );
+        }
 
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
