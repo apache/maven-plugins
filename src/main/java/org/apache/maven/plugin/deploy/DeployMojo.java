@@ -127,7 +127,7 @@ public class DeployMojo
         
         if ( skip )
         {
-            getLog().info( " skipping artifact deployement " );
+            getLog().info( "Skipping artifact deployment" );
             return;
         }
         
