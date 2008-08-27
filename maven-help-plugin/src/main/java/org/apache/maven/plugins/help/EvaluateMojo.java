@@ -136,7 +136,7 @@ public class EvaluateMojo
      * @required
      * @readonly
      */
-    private ArtifactRepository localRepository;
+    protected ArtifactRepository localRepository;
 
     /**
      * The current Maven project or the super pom.
@@ -145,7 +145,7 @@ public class EvaluateMojo
      * @readonly
      * @required
      */
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * Remote repositories used for the project.
@@ -163,7 +163,7 @@ public class EvaluateMojo
      * @readonly
      * @required
      */
-    private Settings settings;
+    protected Settings settings;
 
     /**
      * The current Maven session.
