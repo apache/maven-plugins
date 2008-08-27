@@ -22,7 +22,7 @@ under the License.
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="filtering">
-     <question>How is filtering done in the war plugin?</question>
+     <question>How is filtering done in the WAR plugin?</question>
      <answer>
        <p>To enable filtering of <code>web.xml</code> you must configure the war plugin as this:
          <source><![CDATA[
