@@ -119,7 +119,7 @@ public class ExpressionsMojo
      * @throws MojoFailureException if any reflection exceptions occur
      * @throws MojoFailureException if no value exists for <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>
      */
-    private List getExpressionsRoot()
+    private static List getExpressionsRoot()
         throws MojoFailureException, MojoExecutionException
     {
         try
