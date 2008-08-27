@@ -4,7 +4,7 @@
  John Casey
  Maria Odea Ching
  ------
- 2008-08-04
+ 2008-08-27
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -212,4 +212,21 @@ command-line option.
 
 +-----+
 # mvn help:all-profiles
++-----+
+
+* Evaluate some Maven expressions
+
++-----+
+# mvn help:evaluate -Dartifact=org.apache.maven.plugins:maven-help-plugin
+...
+[INFO] [help:evaluate]
+[INFO] Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:
+${project.artifactId}
+[INFO]
+maven-help-plugin
+[INFO] Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:
+${project.none}
+[INFO]
+null object or invalid expression
+...
 +-----+

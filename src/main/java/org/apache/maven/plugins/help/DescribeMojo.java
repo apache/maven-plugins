@@ -820,95 +820,12 @@ public class DescribeMojo
         }
 
         // goals
-        MojoDescriptor mojoDescriptor = getMojoDescriptor( cmd, session, project, cmd, true, false );
+        MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
         descriptionBuffer.append( "'" + cmd + "' is a plugin" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
 
         return true;
-    }
-
-    /**
-     * Invoke the following private method
-     * <code>DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
-     *
-     * @param task not null
-     * @param session not null
-     * @param project not null
-     * @param invokedVia not null
-     * @param canUsePrefix not null
-     * @param isOptionalMojo not null
-     * @return MojoDescriptor for the task
-     * @throws MojoFailureException if any can not invoke the method
-     * @throws MojoExecutionException if no descriptor was found for <code>task</code>
-     * @see DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
-     */
-    private static MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
-                                              String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
-        throws MojoFailureException, MojoExecutionException
-    {
-        try
-        {
-            DefaultLifecycleExecutor lifecycleExecutor =
-                (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
-
-            Method m =
-                lifecycleExecutor.getClass().getDeclaredMethod(
-                                                                "getMojoDescriptor",
-                                                                new Class[] { String.class, MavenSession.class,
-                                                                    MavenProject.class, String.class,
-                                                                    Boolean.TYPE, Boolean.TYPE } );
-            m.setAccessible( true );
-            MojoDescriptor mojoDescriptor =
-                (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project, invokedVia,
-                    Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
-
-            if ( mojoDescriptor == null )
-            {
-                throw new MojoExecutionException( "No MOJO exists for '" + task + "'." );
-            }
-
-            return mojoDescriptor;
-        }
-        catch ( SecurityException e )
-        {
-            throw new MojoFailureException( "SecurityException: " + e.getMessage() );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw new MojoFailureException( "IllegalArgumentException: " + e.getMessage() );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new MojoFailureException( "ComponentLookupException: " + e.getMessage() );
-        }
-        catch ( NoSuchMethodException e )
-        {
-            throw new MojoFailureException( "NoSuchMethodException: " + e.getMessage() );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new MojoFailureException( "IllegalAccessException: " + e.getMessage() );
-        }
-        catch ( InvocationTargetException e )
-        {
-            Throwable cause = e.getCause();
-
-            if ( cause instanceof BuildFailureException )
-            {
-                throw new MojoFailureException( "BuildFailureException: " + cause.getMessage() );
-            }
-            else if ( cause instanceof LifecycleExecutionException )
-            {
-                throw new MojoFailureException( "LifecycleExecutionException: " + cause.getMessage() );
-            }
-            else if ( cause instanceof PluginNotFoundException )
-            {
-                throw new MojoFailureException( "PluginNotFoundException: " + cause.getMessage() );
-            }
-
-            throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() );
-        }
     }
 
     /**
