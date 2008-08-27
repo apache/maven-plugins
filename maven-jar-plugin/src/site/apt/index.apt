@@ -26,7 +26,7 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Jar Plugin
+Maven JAR Plugin
 
   This plugin provides the capability to build and sign jars.
 
@@ -71,7 +71,7 @@ Maven Jar Plugin
 
 * Examples
 
-  To provide you with better understanding of some usages of the Jar Plugin,
+  To provide you with better understanding of some usages of the JAR Plugin,
   you can take a look at the following examples:
 
   * {{{examples/manifest-customization.html}Manifest Customization}}

@@ -24,7 +24,7 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Ear Plugin Tests
+EAR Plugin Tests
 
   This page lists the ear plugin integration tests. Each tests is built on top of a sample project available in
   the {{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/src/test/resources/projects/}svn repository}}.
