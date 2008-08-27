@@ -30,7 +30,7 @@ under the License.
   <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Jar Plugin</name>
+  <name>Maven JAR Plugin</name>
   <description>Builds a Java Archive (JAR) file from the compiled project classes and resources.</description>
  
   <contributors>
