@@ -28,7 +28,7 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Creating an Executable Jar File" href="http://maven.apache.org/shared/maven-archiver/examples/classpath.html"/>
+      <item name="Creating an Executable JAR File" href="http://maven.apache.org/shared/maven-archiver/examples/classpath.html"/>
       <item name="Manifest Customization" href="examples/manifest-customization.html"/>
       <item name="Using a Default Manifest File" href="examples/default-manifest-file.html"/>
       <item name="Using Your Own Manifest File" href="http://maven.apache.org/shared/maven-archiver/examples/manifestFile.html"/>

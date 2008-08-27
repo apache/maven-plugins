@@ -31,7 +31,7 @@ under the License.
   <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Rar Plugin</name>
+  <name>Maven RAR Plugin</name>
   <description>Builds a Resource Adapter Archive (RAR) from the project output for deployment to a J2EE server.</description>
   <inceptionYear>2004</inceptionYear>
 

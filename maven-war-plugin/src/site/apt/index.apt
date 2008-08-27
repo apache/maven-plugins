@@ -67,7 +67,7 @@ Maven WAR Plugin
  
  * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
  
- * {{{examples/war-manifest-guide.html}War Manifest Customization}}
+ * {{{examples/war-manifest-guide.html}WAR Manifest Customization}}
 
  * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing Using Jetty6}}
 
