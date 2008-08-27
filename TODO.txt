@@ -4,4 +4,3 @@ deal with sibling aggregators (which use <module>../blah</module>) ... can we do
 basic unit test - would require injecting ProjectSorter (can somebody give me a hint?)
 graduate from sandbox
 make a reverse dependency tree
-
