@@ -68,7 +68,7 @@ import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Evaluates Maven expressions from the user.
+ * Evaluates Maven expressions given by the user in an interactive mode.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
