@@ -188,19 +188,27 @@ public class DescribeMojo
     private String mojo;
 
     /**
-     * This flag specifies that full (verbose) information should be given.
+     * This flag specifies that a full (verbose) list of Mojo informations should be given.
      *
      * @parameter expression="${full}" default-value="false"
      */
     private boolean full;
 
     /**
-     * This flag specifies that a short list of Mojo information should be given.
+     * This flag specifies that a medium list of Mojo informations should be given.
      *
-     * @parameter expression="${medium}" default-value="false"
+     * @parameter expression="${medium}" default-value="true"
      * @since 2.0.2
      */
     private boolean medium;
+
+    /**
+     * This flag specifies that a minimal list of Mojo informations should be given.
+     *
+     * @parameter expression="${minimal}" default-value="false"
+     * @since 2.1
+     */
+    private boolean minimal;
 
     /**
      * A Maven command like a single goal or a single phase following the Maven command line:
@@ -220,6 +228,8 @@ public class DescribeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        validateParameters();
+
         if ( project == null )
         {
             try
@@ -264,6 +274,17 @@ public class DescribeMojo
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
+
+    /**
+     * Validate parameters
+     */
+    private void validateParameters()
+    {
+        if ( full || minimal )
+        {
+            medium = false;
+        }
+    }
 
     /**
      * Method to write the Mojo description into the output file
@@ -482,7 +503,7 @@ public class DescribeMojo
         appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         buffer.append( "\n" );
 
-        if ( full || medium )
+        if ( ( full || medium ) && !minimal )
         {
             append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
             buffer.append( "\n" );
@@ -503,7 +524,8 @@ public class DescribeMojo
                 buffer.append( "\n" );
             }
         }
-        else
+
+        if ( !full )
         {
             buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
             buffer.append( "\n" );
@@ -527,7 +549,7 @@ public class DescribeMojo
         describeMojoGuts( md, buffer, full );
         buffer.append( "\n" );
 
-        if ( !( full || medium ) )
+        if ( !full )
         {
             buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
             buffer.append( "\n" );
