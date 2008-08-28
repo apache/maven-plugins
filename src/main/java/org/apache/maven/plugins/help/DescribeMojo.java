@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -181,7 +180,8 @@ public class DescribeMojo
 
     /**
      * The goal name of a Mojo to describe within the specified Maven Plugin.
-     * If this parameter is specified, only the corresponding Mojo (goal) will be described, rather than the whole Plugin.
+     * If this parameter is specified, only the corresponding Mojo (goal) will be described,
+     * rather than the whole Plugin.
      *
      * @parameter expression="${mojo}"
      */
@@ -269,7 +269,7 @@ public class DescribeMojo
      * Method to write the Mojo description into the output file
      *
      * @param descriptionBuffer contains the description to be written to the file
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException if any
      */
     private void writeDescription( StringBuffer descriptionBuffer )
         throws MojoExecutionException
@@ -314,31 +314,31 @@ public class DescribeMojo
 
         Plugin forLookup = null;
 
-        if ( StringUtils.isNotEmpty( pi.prefix ) )
+        if ( StringUtils.isNotEmpty( pi.getPrefix() ) )
         {
-            descriptor = pluginManager.getPluginDescriptorForPrefix( pi.prefix );
+            descriptor = pluginManager.getPluginDescriptorForPrefix( pi.getPrefix() );
             if ( descriptor == null )
             {
-                forLookup = pluginManager.getPluginDefinitionForPrefix( pi.prefix, session, project );
+                forLookup = pluginManager.getPluginDefinitionForPrefix( pi.getPrefix(), session, project );
             }
         }
-        else if ( StringUtils.isNotEmpty( pi.groupId ) && StringUtils.isNotEmpty( pi.artifactId ) )
+        else if ( StringUtils.isNotEmpty( pi.getGroupId() ) && StringUtils.isNotEmpty( pi.getArtifactId() ) )
         {
             forLookup = new Plugin();
 
-            forLookup.setGroupId( pi.groupId );
-            forLookup.setArtifactId( pi.artifactId );
+            forLookup.setGroupId( pi.getGroupId() );
+            forLookup.setArtifactId( pi.getArtifactId() );
 
-            if ( StringUtils.isNotEmpty( pi.version ) )
+            if ( StringUtils.isNotEmpty( pi.getVersion() ) )
             {
-                forLookup.setVersion( pi.version );
+                forLookup.setVersion( pi.getVersion() );
             }
         }
         else
         {
             StringBuffer msg = new StringBuffer();
-            msg.append( "You must either specify 'groupId' and 'artifactId' both parameters, or a valid 'plugin' " +
-                    "parameter. For instance:\n" );
+            msg.append( "You must either specify 'groupId' and 'artifactId' both parameters, or a valid 'plugin' "
+                + "parameter. For instance:\n" );
             msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
@@ -428,16 +428,16 @@ public class DescribeMojo
                 switch ( pluginParts.length )
                 {
                     case ( 1 ):
-                        pi.prefix = pluginParts[0];
+                        pi.setPrefix( pluginParts[0] );
                         break;
                     case ( 2 ):
-                        pi.groupId = pluginParts[0];
-                        pi.artifactId = pluginParts[1];
+                        pi.setGroupId( pluginParts[0] );
+                        pi.setArtifactId( pluginParts[1] );
                         break;
                     case ( 3 ):
-                        pi.groupId = pluginParts[0];
-                        pi.artifactId = pluginParts[1];
-                        pi.version = pluginParts[2];
+                        pi.setGroupId( pluginParts[0] );
+                        pi.setArtifactId( pluginParts[1] );
+                        pi.setVersion( pluginParts[2] );
                         break;
                     default:
                         throw new MojoFailureException( "plugin parameter must be a plugin prefix,"
@@ -446,14 +446,14 @@ public class DescribeMojo
             }
             else
             {
-                pi.prefix = plugin;
+                pi.setPrefix( plugin );
             }
         }
         else
         {
-            pi.groupId = groupId;
-            pi.artifactId = artifactId;
-            pi.version = version;
+            pi.setGroupId( groupId );
+            pi.setArtifactId( artifactId );
+            pi.setVersion( version );
         }
     }
 
@@ -578,7 +578,7 @@ public class DescribeMojo
 
         if ( StringUtils.isNotEmpty( eGoal ) || StringUtils.isNotEmpty( ePhase ) )
         {
-            append( buffer, "Before this mojo executes, it will call:", 1);
+            append( buffer, "Before this mojo executes, it will call:", 1 );
 
             if ( StringUtils.isNotEmpty( eGoal ) )
             {
@@ -747,17 +747,15 @@ public class DescribeMojo
 
                         if ( lifecycleMapping.getPhases( "default" ).get( key ) != null )
                         {
-                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) ).append(
-                                                                                                                   "\n" );
+                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) );
+                            descriptionBuffer.append( "\n" );
                         }
                     }
 
                     descriptionBuffer.append( "\n" );
-                    descriptionBuffer.append(
-                                              "It is a part of the lifecycle for the POM packaging '"
-                                                  + project.getPackaging()
-                                                  + "'. This lifecycle includes the following phases:" ).append(
-                                                                                                                 "\n" );
+                    descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '"
+                        + project.getPackaging() + "'. This lifecycle includes the following phases:" );
+                    descriptionBuffer.append( "\n" );
                     for ( Iterator it = lifecycle.getPhases().iterator(); it.hasNext(); )
                     {
                         String key = (String) it.next();
@@ -954,7 +952,8 @@ public class DescribeMojo
      * <b>Note</b>: The last character is always a new line.
      *
      * @param sb The buffer to append the description, not <code>null</code>.
-     * @param description The description, not <code>null</code>.
+     * @param key The key, not <code>null</code>.
+     * @param value The value, could be <code>null</code>.
      * @param indent The base indentation level of each line, must not be negative.
      * @throws MojoFailureException if any reflection exceptions occur.
      * @throws MojoExecutionException if any
@@ -1000,20 +999,135 @@ public class DescribeMojo
         return "(no description available)";
     }
 
-    protected static class PluginInfo
+    /**
+     * Class to wrap Plugin information.
+     */
+    static class PluginInfo
     {
-        String prefix;
+        private String prefix;
 
-        String groupId;
+        private String groupId;
 
-        String artifactId;
+        private String artifactId;
 
-        String version;
+        private String version;
 
-        String mojo;
+        private String mojo;
 
-        Plugin plugin;
+        private Plugin plugin;
 
-        PluginDescriptor pluginDescriptor;
+        private PluginDescriptor pluginDescriptor;
+
+        /**
+         * @return the prefix
+         */
+        public String getPrefix()
+        {
+            return prefix;
+        }
+
+        /**
+         * @param prefix the prefix to set
+         */
+        public void setPrefix( String prefix )
+        {
+            this.prefix = prefix;
+        }
+
+        /**
+         * @return the groupId
+         */
+        public String getGroupId()
+        {
+            return groupId;
+        }
+
+        /**
+         * @param groupId the groupId to set
+         */
+        public void setGroupId( String groupId )
+        {
+            this.groupId = groupId;
+        }
+
+        /**
+         * @return the artifactId
+         */
+        public String getArtifactId()
+        {
+            return artifactId;
+        }
+
+        /**
+         * @param artifactId the artifactId to set
+         */
+        public void setArtifactId( String artifactId )
+        {
+            this.artifactId = artifactId;
+        }
+
+        /**
+         * @return the version
+         */
+        public String getVersion()
+        {
+            return version;
+        }
+
+        /**
+         * @param version the version to set
+         */
+        public void setVersion( String version )
+        {
+            this.version = version;
+        }
+
+        /**
+         * @return the mojo
+         */
+        public String getMojo()
+        {
+            return mojo;
+        }
+
+        /**
+         * @param mojo the mojo to set
+         */
+        public void setMojo( String mojo )
+        {
+            this.mojo = mojo;
+        }
+
+        /**
+         * @return the plugin
+         */
+        public Plugin getPlugin()
+        {
+            return plugin;
+        }
+
+        /**
+         * @param plugin the plugin to set
+         */
+        public void setPlugin( Plugin plugin )
+        {
+            this.plugin = plugin;
+        }
+
+        /**
+         * @return the pluginDescriptor
+         */
+        public PluginDescriptor getPluginDescriptor()
+        {
+            return pluginDescriptor;
+        }
+
+        /**
+         * @param pluginDescriptor the pluginDescriptor to set
+         */
+        public void setPluginDescriptor( PluginDescriptor pluginDescriptor )
+        {
+            this.pluginDescriptor = pluginDescriptor;
+        }
     }
 }
