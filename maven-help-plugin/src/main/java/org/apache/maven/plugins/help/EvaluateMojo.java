@@ -472,7 +472,12 @@ public class EvaluateMojo
         getLog().info( "\n" + response.toString() );
     }
 
-    private String toXML( String question, Object obj )
+    /**
+     * @param expression the user expression.
+     * @param obj a not null.
+     * @return the XML for the given object.
+     */
+    private String toXML( String expression, Object obj )
     {
         XStream currentXStream = getXStream();
 
@@ -490,9 +495,9 @@ public class EvaluateMojo
             else
             {
                 // try to detect the alias from question
-                if ( question.indexOf( "." ) != -1 )
+                if ( expression.indexOf( "." ) != -1 )
                 {
-                    String name = question.substring( question.indexOf( "." ) + 1, question.indexOf( "}" ) );
+                    String name = expression.substring( expression.indexOf( "." ) + 1, expression.indexOf( "}" ) );
                     currentXStream.alias( name, List.class );
                 }
             }
@@ -611,9 +616,8 @@ public class EvaluateMojo
                         try
                         {
                             Class clazz = ClassUtils.getClass( name );
-                            xstreamObject.alias(
-                                                 StringUtils.lowercaseFirstLetter( ClassUtils.getShortClassName( clazz ) ),
-                                                 clazz );
+                            String alias = StringUtils.lowercaseFirstLetter( ClassUtils.getShortClassName( clazz ) );
+                            xstreamObject.alias( alias, clazz );
                             if ( !clazz.equals( Model.class ) )
                             {
                                 xstreamObject.omitField( clazz, "modelEncoding" ); // unnecessary field
