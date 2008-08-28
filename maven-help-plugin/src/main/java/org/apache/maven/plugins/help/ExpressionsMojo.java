@@ -45,6 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class ExpressionsMojo
     extends AbstractHelpMojo
 {
+    /** English sentence when no description exists */
     private static final String NO_DESCRIPTION_AVAILABLE = "No description available.";
 
     // ----------------------------------------------------------------------
@@ -71,17 +72,19 @@ public class ExpressionsMojo
         {
             String expression = (String) it.next();
 
-            sb.append( "${" ).append( expression ).append( "}: " ).append( NO_DESCRIPTION_AVAILABLE );
+            sb.append( "${" ).append( expression ).append( "}: " );
+            sb.append( NO_DESCRIPTION_AVAILABLE );
             sb.append( "\n\n" );
         }
 
         for ( Iterator it = m.keySet().iterator(); it.hasNext(); )
         {
             String key = (String) it.next();
-
             Expression expression = (Expression) m.get( key );
-            sb.append( "${" ).append( key ).append( "}: " ).append( trimCDATA( expression.getDescription() ) ).append(
-                                                                                                                       "\n\n" );
+
+            sb.append( "${" ).append( key ).append( "}: " );
+            sb.append( trimCDATA( expression.getDescription() ) );
+            sb.append( "\n\n" );
         }
 
         if ( output != null )
@@ -117,7 +120,7 @@ public class ExpressionsMojo
     /**
      * @return the value of the private static field <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>.
      * @throws MojoFailureException if any reflection exceptions occur
-     * @throws MojoFailureException if no value exists for <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>
+     * @throws MojoExecutionException if no value exists for <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>
      */
     private static List getExpressionsRoot()
         throws MojoFailureException, MojoExecutionException

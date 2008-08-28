@@ -45,8 +45,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class HelpUtil
 {
     /**
-     * Invoke the following private method
-     * <code>DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
+     * Invoke the following private method <code>
+     * DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
      *
      * @param task not null
      * @param session not null

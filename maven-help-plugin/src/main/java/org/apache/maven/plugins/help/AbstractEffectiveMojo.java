@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.help;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.help;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,10 +59,10 @@ public abstract class AbstractEffectiveMojo
     extends AbstractHelpMojo
 {
     /** The POM XSD URL */
-    private static final String POM_XSD_URL ="http://maven.apache.org/maven-v4_0_0.xsd";
+    private static final String POM_XSD_URL = "http://maven.apache.org/maven-v4_0_0.xsd";
 
     /** The Settings XSD URL */
-    private static final String SETTINGS_XSD_URL ="http://maven.apache.org/xsd/settings-1.0.0.xsd";
+    private static final String SETTINGS_XSD_URL = "http://maven.apache.org/xsd/settings-1.0.0.xsd";
 
     /**
      * Utility method to write an XML content in a given file.
@@ -200,6 +201,7 @@ public abstract class AbstractEffectiveMojo
     protected static class SortedProperties
         extends Properties
     {
+        /** serialVersionUID */
         static final long serialVersionUID = -8985316072702233744L;
 
         /** {@inheritDoc} */
