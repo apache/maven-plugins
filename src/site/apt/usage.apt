@@ -3,6 +3,7 @@
  ------
  John Casey
  Maria Odea Ching
+ Vincent Siveton
  ------
  2008-08-27
  ------
@@ -29,161 +30,100 @@
 
 Usage
 
- Below are the different goals and configurations of the Help plugin.
+ Below are the different goals and the minimalist configurations of the Help plugin.
 
+* The <<<help:active-profiles>>> Goal
 
-* The <<<help:active-profiles>>> Mojo
+  The <<<{{{active-profiles-mojo.html}active-profiles}}>>> goal is used to discover which profiles have been
+  applied to the projects currently being built. For each project in the build session, it will output a list of
+  profiles which have been applied to that project, along with the source of the profile (POM, <<<settings.xml>>>
+  or <<<profiles.xml>>>).
 
-  The <<<active-profiles>>> mojo is used to discover which profiles have been applied to the projects currently being built.
-  For each project in the build session, it will output a list of profiles which have been applied to that project, along
-  with the source of the profile (POM, <<<settings.xml>>> or <<<profiles.xml>>>).
-
-  You can execute this mojo using the following command:
+  You can execute this goal using the following command:
 
 +-----+
 # mvn help:active-profiles
 +-----+
 
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-* The <<<help:describe>>> Mojo
+* The <<<help:all-profiles>>> Goal
 
-  The <<<describe>>> mojo is used to discover information about Maven plugins. Given either a <<<plugin>>> or a <<<groupId>>>, an <<<artifactId>>>
-  and optionally a <<<version>>>, the mojo will lookup that plugin and output details about it. If the user also specifies
-  which <<<mojo>>> to describe, the <<<describe>>> mojo will limit output to the details of that mojo, including parameters.
+ The <<<{{{all-profiles-mojo.html}all-profiles}}>>> goal is used to discover all available profiles under the
+ current project.
 
-  This mojo requires either the <<<groupId>>> and <<<artifactId>>> parameters or the <<<plugin>>> parameter to be specified:
+  You can execute this goal using the following command:
+
++-----+
+# mvn help:all-profiles
++-----+
+
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
+
+* The <<<help:describe>>> Goal
+
+  The <<<{{{describe-mojo.html}describe}}>>> goal is used to discover information about Maven plugins. Given either
+  a <<<plugin>>> or a <<<groupId>>>, an <<<artifactId>>> and optionally a <<<version>>>, the mojo will lookup that
+  plugin and output details about it. If the user also specifies which <<<mojo>>> to describe, the <<<describe>>>
+  mojo will limit output to the details of that mojo, including parameters.
+
+  You can execute this goal using the following command:
 
 +-----+
 # mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0.0
 +-----+
 
- or
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-+-----+
-# mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
-+-----+
+  Refer to {{{./examples/describe-configuration.html}Configuring Describe Goal}} for more informations about its
+  configuration.
 
- Here is an example with the <<<mojo>>> parameter specified:
+* The <<<help:effective-pom>>> Goal
 
-+-----+
-# mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin -Dmojo=describe
-+-----+
+  The <<<{{{effective-pom-mojo.html}effective-pom}}>>> goal is used to make visible the POM that results from the
+  application of interpolation, inheritance and active profiles. It provides a useful way of removing the guesswork
+  about just what ends up in the POM that Maven uses to build your project. It will iterate over all projects in the
+  current build session, printing the effective POM for each.
 
- <<Note:>> <<<version>>> is always optional here.
-
- You could also asking for a single Maven command, i.e. a goal, a phase or a lifecycle:
-
-+-----+
-# mvn help:describe -Dcmd=clean
-...
-[INFO] [help:describe]
-[INFO] 'clean' is a lifecycle with the following phases:
-* pre-clean: NOT DEFINED
-* clean: org.apache.maven.plugins:maven-clean-plugin:clean
-* post-clean: NOT DEFINED
-...
-+-----+
-
-or
-
-+-----+
-# mvn help:describe -Dcmd=compile
-...
-[INFO] [help:describe]
-[INFO] 'compile' is a phase corresponding to this plugin:
-org.apache.maven.plugins:maven-compiler-plugin:compile
-
-It is a part of the lifecycle for the POM packaging 'jar'. This lifecycle includes the following phases:
-* validate: NOT DEFINED
-* initialize: NOT DEFINED
-* generate-sources: NOT DEFINED
-* process-sources: NOT DEFINED
-* generate-resources: NOT DEFINED
-* process-resources: org.apache.maven.plugins:maven-resources-plugin:resources
-* compile: org.apache.maven.plugins:maven-compiler-plugin:compile
-* process-classes: NOT DEFINED
-* generate-test-sources: NOT DEFINED
-* process-test-sources: NOT DEFINED
-* generate-test-resources: NOT DEFINED
-* process-test-resources: org.apache.maven.plugins:maven-resources-plugin:testResources
-* test-compile: org.apache.maven.plugins:maven-compiler-plugin:testCompile
-* process-test-classes: NOT DEFINED
-* test: org.apache.maven.plugins:maven-surefire-plugin:test
-* package: org.apache.maven.plugins:maven-jar-plugin:jar
-* pre-integration-test: NOT DEFINED
-* integration-test: NOT DEFINED
-* post-integration-test: NOT DEFINED
-* verify: NOT DEFINED
-* install: org.apache.maven.plugins:maven-install-plugin:install
-* deploy: org.apache.maven.plugins:maven-deploy-plugin:deploy
-...
-+-----+
-
-or
-
-+-----+
-# mvn help:describe -Dcmd=compiler:compile
-...
-[INFO] [help:describe]
-[INFO] 'compiler:compile' is a plugin.
-Plugin: 'org.apache.maven.plugins:maven-compiler-plugin:2.0.2'
------------------------------------------------
-Group Id:  org.apache.maven.plugins
-Artifact Id: maven-compiler-plugin
-Version:     2.0.2
-Goal Prefix: compiler
-Description:
-
-Maven Plugins
-...
-+-----+
-
-* The <<<help:effective-pom>>> Mojo
-
-  The <<<effective-pom>>> mojo is used to make visible the POM that results from the application of interpolation, inheritance
-  and active profiles. It provides a useful way of removing the guesswork about just what ends up in the POM that Maven uses
-  to build your project. It will iterate over all projects in the current build session, printing the effective POM for each.
-
-  The mojo can be executed using the following command:
+  You can execute this goal using the following command:
 
 +-----+
 # mvn help:effective-pom
 +-----+
 
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-* The <<<help:effective-settings>>> Mojo
+* The <<<help:effective-settings>>> Goal
 
-  The <<<effective-settings>>> mojo is used to view the settings that Maven actually uses to run the build. These settings
-  are a result of merging the global file with the user's file, with the user's file taking precedence.
+  The <<<{{{effective-settings-mojo.html}effective-settings}}>>> goal is used to view the settings that Maven
+  actually uses to run the build. These settings are a result of merging the global file with the user's file,
+  with the user's file taking precedence.
 
-  The mojo can be executed using the following command:
+  You can execute this goal using the following command:
 
 +-----+
 # mvn help:effective-settings
 +-----+
 
-* The <<<help:system>>> Mojo
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-  The <<<system>>> mojo is used to view the system informations like system properties and environment variables.
+* The <<<help:system>>> Goal
 
-  The mojo can be executed using the following command:
+  The <<<{{{system-mojo.html}system}}>>> goal is used to view the system informations like system properties and
+  environment variables.
+
+  You can execute this goal using the following command:
 
 +-----+
 # mvn help:system
 +-----+
 
-* Redirecting output to a file
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-  All the mojos listed above can use the optional <<<output>>> parameter to
-  divert the output to a file. Here is an example of that:
+* The <<<expressions>>> Goal
 
-+-----+
-# mvn help:active-profiles -Doutput=/path/to/file
-+-----+
-
-* Display the Plugin expressions used by Maven
-
-  All mojos could use some expressions given by Maven. To list them, just call:
+  When you develop a new Maven Plugin, you could need to use some expressions given by Maven. To list them, just call
+  the {{{expressions-mojo.html}expressions}} goal:
 
 +-----+
 # mvn help:expressions
@@ -208,13 +148,12 @@ command-line option.
 ...
 +-----+
 
-* Display all profiles used by Maven
+ <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-+-----+
-# mvn help:all-profiles
-+-----+
+* The <<<help:evaluate>>> Goal
 
-* Evaluate some Maven expressions
+  You could use this interactive goal to evaluate some Maven expressions. To do it, just call the
+  {{{evaluate-mojo.html}help:evaluate}} goal:
 
 +-----+
 # mvn help:evaluate -Dartifact=org.apache.maven.plugins:maven-help-plugin
@@ -230,3 +169,9 @@ ${project.none}
 null object or invalid expression
 ...
 +-----+
+
+ The <<<artifact>>> parameter refers to ask expressions on the artifact POM. If omitted, the evaluate goal uses the current
+ pom.
+
+ You could ask for all Maven expressions listed by <<<help:expressions>>> goal, i.e. $\{project\}, $\{project.licenses\},
+ $\{settings\}, $\{settings.profiles\}.

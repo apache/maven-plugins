@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -21,20 +21,19 @@ under the License.
 
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="Why aren't profiles from the parent pom included?">
-      <question>Why aren't profiles from the parent pom included?</question>
-      <answer>
-        <p>
-          As of version 2.0.2 they are.
-          See <a href="http://jira.codehaus.org/browse/MPH-16">MPH-16</a> for more info.
-        </p>
-      </answer>
-    </faq>
-    <faq id="What_is_a_Mojo">
-      <question>What is a Mojo?</question>
+    <faq id="What is a Mojo">
+      <question>What is a Mojo</question>
       <answer>
         <p>
           See the Maven FAQ: <a href="http://maven.apache.org/general.html#What_is_a_Mojo">What is a Mojo</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="Why mvn help:active-profiles won't show the active profiles under Maven 2.1">
+      <question>Why <code>mvn help:active-profiles</code> won't show the active profiles under Maven 2.1?</question>
+      <answer>
+        <p>
+          See <a href="http://jira.codehaus.org/browse/MPH-38">MPH-38</a> for more info.
         </p>
       </answer>
     </faq>
