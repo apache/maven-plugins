@@ -135,6 +135,12 @@ public class GetMojo
      */
     private List pomRemoteRepositories;
     
+    /**
+     * Download transitively, retrieving the specified artifact and all of its dependencies.
+     * @parameter expression="{$transitive}" default-value=true
+     */
+    private boolean transitive = true;
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {        
@@ -181,8 +187,16 @@ public class GetMojo
 
         try
         {
-            artifactResolver.resolveTransitively( Collections.singleton( toDownload ), dummyOriginatingArtifact,
-                                                  repoList, localRepository, source );
+            if ( transitive )
+            {
+                artifactResolver.resolveTransitively( Collections.singleton( toDownload ), dummyOriginatingArtifact,
+                                                      repoList, localRepository, source );
+            }
+            else
+            {
+                artifactResolver.resolve ( toDownload, repoList, localRepository );
+            }
+            
         }
         catch ( AbstractArtifactResolutionException e )
         {
