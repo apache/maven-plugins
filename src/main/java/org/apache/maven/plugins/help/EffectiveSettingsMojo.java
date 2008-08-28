@@ -265,7 +265,7 @@ public class EffectiveSettingsMojo
     private static String getUserName()
     {
         String userName = System.getProperty( "user.name" );
-        if ( StringUtils.isEmpty( userName ))
+        if ( StringUtils.isEmpty( userName ) )
         {
             return "unknown";
         }

@@ -40,6 +40,9 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 public class SystemMojo
     extends AbstractHelpMojo
 {
+    /** Magic number to beautify the output */
+    private static final int REPEAT = 25;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -52,9 +55,9 @@ public class SystemMojo
 
         message.append( '\n' );
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
-        message.append( StringUtils.repeat( "=", 25 ) );
+        message.append( StringUtils.repeat( "=", REPEAT ) );
         message.append( " Platform Properties Details " );
-        message.append( StringUtils.repeat( "=", 25 ) ).append( '\n' );
+        message.append( StringUtils.repeat( "=", REPEAT ) ).append( '\n' );
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
         message.append( '\n' );
 
