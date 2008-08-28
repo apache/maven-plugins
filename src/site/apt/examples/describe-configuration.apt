@@ -1,10 +1,11 @@
  ------
- Configuring Describe Mojo
+ Configuring Describe Goal
  ------
  John Casey
  Maria Odea Ching
+ Vincent Siveton
  ------
- 2006-07-10
+ 2008-08-28
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,65 +28,252 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Configuring Describe Mojo
+Configuring Describe Goal
 
-  Below are other configuration examples for the <<<describe>>> mojo.
+  Below are other configuration examples for the <<<{{{../describe-mojo.html}help:describe}}>>> goal.
 
 * The <<<plugin>>> Parameter
 
   The <<<plugin>>> parameter is meant to provide two things: convenience and prefix-based access.
 
-  The convenience comes when specifying a plugin by <<<groupId:artifactId>>>, or by <<<groupId:artifactId:version>>>. Where the more
-  traditional specification of separate fields would mean specifying this:
+  The convenience comes when specifying a plugin by <<<groupId:artifactId>>>, or by <<<groupId:artifactId:version>>>.
+  Where the more traditional specification of separate fields would mean specifying this:
 
 +---+
-mvn help:describe -DgroupId=org.somewhere
-    -DartifactId=some-plugin -Dversion=0.0.0
+# mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0.0
 +---+
 
   the use of the plugin parameter allows this:
 
 +---+
-mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
+# mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
 +---+
+
+ Here is an example to describe the Help plugin:
+
++-----+
+# mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin
++-----+
+
+ <<Note>>: <<<version>>> is always optional here.
 
   On the other hand, the plugin parameter also offers the option to specify a plugin by its prefix, like this:
 
 +---+
-mvn help:describe -Dplugin=help
+# mvn help:describe -Dplugin=help
 +---+
 
 * The <<<mojo>>> Parameter
 
- You can use the <<<mojo>>> parameter of the <<<describe>>> mojo to show or display relative information about a particular mojo
- of the plugin you specified.
+ You can use the <<<mojo>>> parameter of the <<<describe>>> goal to show or display relative informations about a
+ particular goal of the plugin you specified.
 
  For example, when you execute the following command:
 
 +-----+
-mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins
-    -DartifactId=maven-help-plugin
+# mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin
 +-----+
 
- This would display brief information about the <<<describe>>> mojo only.
+ This would display brief information about the <<<describe>>> goal only.
 
-* The <<<medium>>> and <<<full>>> Parameters
+* The <<<cmd>>> Parameter
 
- If you want to display more detailed information, you can use the <<<medium>>>
- or <<<full>>> parameters.
+ You could also ask for a single Maven command, i.e. a goal or a phase or a lifecycle. It is the command when you call
+ Maven, i.e.:
 
- The <<<medium>>> parameter adds a list with the mojos of the plugin and their
++-----+
+# mvn -help
+
+usage: mvn [options] [<goal(s)>] [<phase(s)>]
+...
++-----+
+
+ The following are some examples:
+
++-----+
+# mvn help:describe -Dcmd=clean
+...
+[INFO] [help:describe]
+[INFO] 'clean' is a lifecycle with the following phases:
+* pre-clean: NOT DEFINED
+* clean: org.apache.maven.plugins:maven-clean-plugin:clean
+* post-clean: NOT DEFINED
+...
++-----+
+
++-----+
+# mvn help:describe -Dcmd=compile
+...
+[INFO] [help:describe]
+[INFO] 'compile' is a phase corresponding to this plugin:
+org.apache.maven.plugins:maven-compiler-plugin:compile
+
+It is a part of the lifecycle for the POM packaging 'jar'. This lifecycle includes the following phases:
+* validate: NOT DEFINED
+* initialize: NOT DEFINED
+* generate-sources: NOT DEFINED
+* process-sources: NOT DEFINED
+* generate-resources: NOT DEFINED
+* process-resources: org.apache.maven.plugins:maven-resources-plugin:resources
+* compile: org.apache.maven.plugins:maven-compiler-plugin:compile
+* process-classes: NOT DEFINED
+* generate-test-sources: NOT DEFINED
+* process-test-sources: NOT DEFINED
+* generate-test-resources: NOT DEFINED
+* process-test-resources: org.apache.maven.plugins:maven-resources-plugin:testResources
+* test-compile: org.apache.maven.plugins:maven-compiler-plugin:testCompile
+* process-test-classes: NOT DEFINED
+* test: org.apache.maven.plugins:maven-surefire-plugin:test
+* package: org.apache.maven.plugins:maven-jar-plugin:jar
+* pre-integration-test: NOT DEFINED
+* integration-test: NOT DEFINED
+* post-integration-test: NOT DEFINED
+* verify: NOT DEFINED
+* install: org.apache.maven.plugins:maven-install-plugin:install
+* deploy: org.apache.maven.plugins:maven-deploy-plugin:deploy
+...
++-----+
+
++-----+
+# mvn help:describe -Dcmd=compiler:compile
+...
+[INFO] [help:describe]
+[INFO] 'compiler:compile' is a plugin.
+org.apache.maven.plugins:maven-compiler-plugin:2.0.2
+Group Id: org.apache.maven.plugins
+Artifact Id: maven-compiler-plugin
+Version: 2.0.2
+Goal Prefix: compiler
+Description: Maven Plugins
+
+This plugin has 2 goals:
+
+Goal: 'compile'
+  Full Goal Name: 'compiler:compile'
+  Description: Compiles application sources
+
+Goal: 'testCompile'
+  Full Goal Name: 'compiler:testCompile'
+  Description: Compiles application test sources
+
+For more information, run 'mvn help:describe [...] -Dfull'
+...
++-----+
+
+* The <<<minimal>>>, <<<medium>>> and <<<full>>> Parameters
+
+ If you want to display less or more detailed informations, you can use the <<<minimal>>>, <<<medium>>> or <<<full>>>
+ parameters.
+
+ The <<<minimal>>> parameter adds a minimal list of informations:
+
++-----+
+# mvn help:describe -Dplugin=help -Dminimal=true
+...
+[INFO] [help:describe]
+[INFO] org.apache.maven.plugins:maven-help-plugin:2.1-SNAPSHOT
+Group Id: org.apache.maven.plugins
+Artifact Id: maven-help-plugin
+Version: 2.1-SNAPSHOT
+Goal Prefix: help
+Description: The Maven Help plugin provides goals aimed at helping to make
+  sense out of the build environment. It includes the ability to view the
+  effective POM and settings files, after inheritance and active profiles have
+  been applied, as well as a describe a particular plugin goal to give usage
+  information.
+
+For more information, run 'mvn help:describe [...] -Dfull'
+...
++-----+
+
+ The <<<medium>>> parameter is the default since 2.1 and adds a list with the mojos of the plugin and their
  descriptions:
 
 +-----+
-mvn help:describe -Dplugin=help -Dmedium=true
+# mvn help:describe -Dplugin=help
+...
+[INFO] [help:describe]
+[INFO] org.apache.maven.plugins:maven-help-plugin:2.1-SNAPSHOT
+Group Id: org.apache.maven.plugins
+Artifact Id: maven-help-plugin
+Version: 2.1-SNAPSHOT
+Goal Prefix: help
+Description: The Maven Help plugin provides goals aimed at helping to make
+  sense out of the build environment. It includes the ability to view the
+  effective POM and settings files, after inheritance and active profiles have
+  been applied, as well as a describe a particular plugin goal to give usage
+  information.
+
+This plugin has 9 goals:
+
+Goal: 'effective-settings'
+  Full Goal Name: 'help:effective-settings'
+  Description: Displays the calculated settings as XML for this project,
+    given any profile enhancement and the inheritance of the global settings
+    into the user-level settings.
+
+Goal: 'expressions'
+  Full Goal Name: 'help:expressions'
+  Description: Displays the supported Plugin expressions used by Maven.
+
+Goal: 'help'
+  Full Goal Name: 'help:help'
+  Description: Display help information on maven-help-plugin.
+    Call
+     mvn help:help -Ddetail=true -Dgoal=<goal-name>
+    to display parameter details.
+
+Goal: 'system'
+  Full Goal Name: 'help:system'
+  Description: Displays a list of the platform details like system properties
+    and environment variables.
+
+Goal: 'active-profiles'
+  Full Goal Name: 'help:active-profiles'
+  Description: Displays a list of the profiles which are currently active for
+    this build.
+
+Goal: 'describe'
+  Full Goal Name: 'help:describe'
+  Description: Displays a list of the attributes for a Maven Plugin and/or
+    Mojo (Maven plain Old Java Object).
+
+Goal: 'effective-pom'
+  Full Goal Name: 'help:effective-pom'
+  Description: Displays the effective POM as an XML for this build, with the
+    active profiles factored in.
+
+Goal: 'evaluate'
+  Full Goal Name: 'help:evaluate'
+  Description: Evaluates Maven expressions from the user.
+
+Goal: 'all-profiles'
+  Full Goal Name: 'help:all-profiles'
+  Description: Displays a list of available profiles under the current
+    project.
+    Note: it will list all profiles for a project. If a profile comes up with a
+    status inactive then there might be a need to set profile activation
+    switches/property.
+
+For more information, run 'mvn help:describe [...] -Dfull'
+...
 +-----+
 
- <<Note:>> The <<<medium>>> parameter was added in version 2.0.2 of this plugin.
-
- The <<<full>>> parameter also displays information about the mojos'
- implementation, their parameters and component requirements, among others.
+ The <<<full>>> parameter also displays information about the mojos's implementation, their parameters and component
+ requirements, among others.
 
 +-----+
-mvn help:describe -Dplugin=help -Dfull=true
+# mvn help:describe -Dplugin=help -Dfull=true
++-----+
+
+  <<Note>>: The <<<medium>>> parameter was added in version 2.0.2 and the <<<minimal>>> parameter was added in version
+  2.1 of this Help plugin.
+
+* The <<<output>>> Parameter
+
+  This <<<describe>>> goal can use the optional <<<output>>> parameter to
+  redirect the output to a file. Here is an example of that:
+
++-----+
+# mvn help:describe -Dplugin=help -Dfull=true -Doutput=/path/to/file
 +-----+

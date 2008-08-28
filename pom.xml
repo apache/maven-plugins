@@ -140,15 +140,6 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <build>
     <pluginManagement>
@@ -161,6 +152,15 @@ under the License.
       </plugins>
     </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
@@ -189,6 +189,64 @@ under the License.
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <!-- For JIRA-report -->
+              <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+              <onlyCurrentVersion>true</onlyCurrentVersion>
+              <resolutionIds>Closed</resolutionIds>
+              <sortColumnNames>Type,Key</sortColumnNames>
+              <maxEntries>100</maxEntries> <!-- MCHANGES-124 -->
+            </configuration>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>jira-report</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changelog-plugin</artifactId>
+            <version>2.1</version>
+          </plugin>
+          <!-- TODO: remove when maven-plugins parent pom 12 is released -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>2.4.3</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.5</version>
+            <configuration>
+              <tagletArtifacts>
+                <tagletArtifact>
+                  <groupId>org.apache.maven.plugin-tools</groupId>
+                  <artifactId>maven-plugin-tools-javadoc</artifactId>
+                  <version>2.4.3</version>
+                </tagletArtifact>
+                <tagletArtifact>
+                  <groupId>org.codehaus.plexus</groupId>
+                  <artifactId>plexus-javadoc</artifactId>
+                  <version>1.0</version>
+                </tagletArtifact>
+              </tagletArtifacts>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
     </profile>
   </profiles>
 </project>
