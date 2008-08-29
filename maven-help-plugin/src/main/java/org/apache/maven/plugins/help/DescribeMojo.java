@@ -184,14 +184,16 @@ public class DescribeMojo
      * If this parameter is specified, only the corresponding Mojo (goal) will be described,
      * rather than the whole Plugin.
      *
-     * @parameter expression="${goal}"
+     * @parameter expression="${goal}" alias="mojo"
+     * @since 2.1
      */
     private String goal;
 
     /**
      * This flag specifies that a full (verbose) list of Mojo informations should be given.
      *
-     * @parameter expression="${detail}" default-value="false"
+     * @parameter expression="${detail}" default-value="false" alias="full"
+     * @since 2.1
      */
     private boolean detail;
 
@@ -290,7 +292,7 @@ public class DescribeMojo
         if ( !detail && session.getExecutionProperties().get( "full" ) != null )
         {
             String full = session.getExecutionProperties().getProperty( "full" );
-            detail = Boolean.getBoolean( full );
+            detail = new Boolean( full ).booleanValue();
         }
 
         if ( detail || minimal )
