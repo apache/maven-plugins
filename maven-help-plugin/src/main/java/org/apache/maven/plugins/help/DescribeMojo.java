@@ -652,49 +652,6 @@ public class DescribeMojo
         buffer.append( "\n" );
 
         describeMojoParameters( md, buffer );
-
-        buffer.append( "\n" );
-
-        describeMojoRequirements( md, buffer );
-    }
-
-    /**
-     * Method for displaying the component requirements of the Plugin Mojo
-     *
-     * @param md contains the description of the Plugin Mojo
-     * @param buffer contains information to be printed or displayed
-     * @throws MojoFailureException if any reflection exceptions occur.
-     * @throws MojoExecutionException if any
-     */
-    private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
-        throws MojoFailureException, MojoExecutionException
-    {
-        List reqs = md.getRequirements();
-
-        if ( reqs == null || reqs.isEmpty() )
-        {
-            append( buffer, "This mojo doesn't have any component requirements.", 1 );
-            return;
-        }
-
-        append( buffer, "Component Requirements:", 1 );
-
-        // indent 2
-        int idx = 0;
-        for ( Iterator it = reqs.iterator(); it.hasNext(); idx++ )
-        {
-            ComponentRequirement req = (ComponentRequirement) it.next();
-
-            buffer.append( "\n" );
-
-            append( buffer, "[" + idx + "] Role", req.getRole(), 2 );
-
-            String hint = req.getRoleHint();
-            if ( StringUtils.isNotEmpty( hint ) )
-            {
-                append( buffer, "Role-Hint", hint, 2 );
-            }
-        }
     }
 
     /**
