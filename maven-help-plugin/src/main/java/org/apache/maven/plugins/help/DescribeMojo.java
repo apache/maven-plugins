@@ -55,6 +55,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -710,36 +711,54 @@ public class DescribeMojo
         for ( Iterator it = params.iterator(); it.hasNext(); )
         {
             Parameter parameter = (Parameter) it.next();
+            if ( !parameter.isEditable() ) continue;
 
             buffer.append( "\n" );
 
-            append( buffer, "[" + idx++ + "] Name", parameter.getName()
-                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
-                    2 );
-
-            append( buffer, "Type", parameter.getType(), 2 );
+            // DGF wouldn't it be nice if this worked?
+            String defaultVal = parameter.getDefaultValue();
+            if ( defaultVal == null )
+            {
+                // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder
+                try
+                {
+                    defaultVal = md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value" );
+                }
+                catch ( PlexusConfigurationException e )
+                {
+                    // oh well, we tried our best.
+                }
+            }
+            
+            if ( StringUtils.isNotEmpty( defaultVal ) )
+            {
+                defaultVal = " (Default: " + defaultVal + ")";
+            }
+            if ( defaultVal == null ) defaultVal = "";
+            
+            append( buffer, parameter.getName() + defaultVal, 2);
+//            append( buffer, "[" + idx++ + "] Name", parameter.getName()
+//                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
+//                    2 );
+//
+//            append( buffer, "Type", parameter.getType(), 2 );
 
             String expression = parameter.getExpression();
             if ( StringUtils.isNotEmpty( expression ) )
             {
-                append( buffer, "Expression", expression, 2 );
+                append( buffer, "Expression", expression, 3 );
             }
 
-            String defaultVal = parameter.getDefaultValue();
-            if ( StringUtils.isNotEmpty( defaultVal ) )
-            {
-                append( buffer, "Default value", "'" + defaultVal + "'", 2 );
-            }
+            
 
-            append( buffer, "Required", parameter.isRequired() + "", 2 );
-            append( buffer, "Directly editable", parameter.isEditable() + "", 2 );
+            //append( buffer, "Required", parameter.isRequired() + "", 2 );
 
-            appendAsParagraph( buffer, "Description", toDescription( parameter.getDescription() ), 2 );
+            appendAsParagraph( buffer, null, toDescription( parameter.getDescription() ), 3 );
 
             String deprecation = parameter.getDeprecated();
             if ( StringUtils.isNotEmpty( deprecation ) )
             {
-                append( buffer, "NOTE: This parameter is deprecated." + deprecation, 2 );
+                append( buffer, "NOTE: This parameter is deprecated." + deprecation, 3 );
             }
         }
     }
@@ -1001,17 +1020,21 @@ public class DescribeMojo
     private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
         throws MojoFailureException, MojoExecutionException
     {
-        if ( StringUtils.isEmpty( key ) )
-        {
-            throw new IllegalArgumentException( "Key is required!" );
-        }
 
         if ( StringUtils.isEmpty( value ) )
         {
             value = "Unknown";
         }
 
-        String description = key + ": " + value;
+        String description;
+        if ( key == null )
+        {
+            description = value;
+        }
+        else
+        {
+            description = key + ": " + value;
+        }
 
         List l1 = toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
         List l2 = toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
