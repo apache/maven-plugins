@@ -529,22 +529,13 @@ public class DescribeMojo
 
         if ( ( detail || medium ) && !minimal )
         {
-            append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
+            append( buffer, "This plugin has " + pd.getMojos().size() + " goal"
+                + ( pd.getMojos().size() > 1 ? "" : "s" ) + ":", 0 );
             buffer.append( "\n" );
 
             List mojos = pd.getMojos();
 
-            Collections.sort( mojos, new Comparator()
-            {
-                /** {@inheritDoc} */
-                public int compare( Object o1, Object o2 )
-                {
-                    MojoDescriptor md1 = (MojoDescriptor) o1;
-                    MojoDescriptor md2 = (MojoDescriptor) o2;
-
-                    return md1.getId().compareTo( md2.getId() );
-                }
-            } );
+            PluginUtils.sortMojos( mojos );
 
             for ( Iterator it = mojos.iterator(); it.hasNext(); )
             {
@@ -719,6 +710,13 @@ public class DescribeMojo
     {
         List params = md.getParameters();
 
+        if ( params == null || params.isEmpty() )
+        {
+            append( buffer, "This mojo doesn't use any parameters.", 1 );
+            return;
+        }
+
+        // TODO remove when maven-plugin-tools-api:2.4.4 is out
         Collections.sort( params, new Comparator()
         {
             /** {@inheritDoc} */
@@ -727,15 +725,9 @@ public class DescribeMojo
                 Parameter parameter1 = (Parameter) o1;
                 Parameter parameter2 = (Parameter) o2;
 
-                return parameter1.getName().compareTo( parameter2.getName() );
+                return parameter1.getName().compareToIgnoreCase( parameter2.getName() );
             }
         } );
-
-        if ( params == null || params.isEmpty() )
-        {
-            append( buffer, "This mojo doesn't use any parameters.", 1 );
-            return;
-        }
 
         append( buffer, "Available parameters:", 1 );
 
