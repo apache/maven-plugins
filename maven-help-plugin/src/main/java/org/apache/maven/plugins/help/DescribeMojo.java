@@ -842,8 +842,9 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append( "'" + cmd + "' is a plugin" ).append( ".\n" );
+        descriptionBuffer.append( "'" + cmd + "' is a plugin goal (aka mojo)" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
+        mojo = mojoDescriptor.getGoal();
 
         return true;
     }
