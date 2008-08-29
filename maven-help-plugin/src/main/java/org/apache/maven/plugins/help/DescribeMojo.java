@@ -530,7 +530,7 @@ public class DescribeMojo
         if ( ( detail || medium ) && !minimal )
         {
             append( buffer, "This plugin has " + pd.getMojos().size() + " goal"
-                + ( pd.getMojos().size() > 1 ? "" : "s" ) + ":", 0 );
+                + ( pd.getMojos().size() > 1 ? "s" : "" ) + ":", 0 );
             buffer.append( "\n" );
 
             List mojos = pd.getMojos();
