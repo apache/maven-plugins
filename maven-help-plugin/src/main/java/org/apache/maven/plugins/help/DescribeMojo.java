@@ -370,8 +370,12 @@ public class DescribeMojo
         else
         {
             StringBuffer msg = new StringBuffer();
-            msg.append( "You must either specify 'groupId' and 'artifactId' both parameters, or a valid 'plugin' "
+            msg.append( "You must either specify a 'groupId' and 'artifactId' both parameters, or a valid 'plugin', or a valid 'cmd' "
                 + "parameter. For instance:\n" );
+            msg.append( "  # mvn help:describe -Dcmd=install\n" );
+            msg.append( "or\n" );
+            msg.append( "  # mvn help:describe -Dcmd=help:describe\n" );
+            msg.append( "or\n" );
             msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
