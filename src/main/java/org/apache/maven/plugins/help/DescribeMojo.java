@@ -286,13 +286,13 @@ public class DescribeMojo
         {
             goal = session.getExecutionProperties().getProperty( "mojo" );
         }
-        
+
         if ( !detail && session.getExecutionProperties().get( "full" ) != null )
         {
             String full = session.getExecutionProperties().getProperty( "full" );
-            detail = Boolean.parseBoolean( full );
+            detail = Boolean.getBoolean( full );
         }
-        
+
         if ( detail || minimal )
         {
             medium = false;
@@ -729,13 +729,13 @@ public class DescribeMojo
                     // oh well, we tried our best.
                 }
             }
-            
+
             if ( StringUtils.isNotEmpty( defaultVal ) )
             {
                 defaultVal = " (Default: " + defaultVal + ")";
             }
             if ( defaultVal == null ) defaultVal = "";
-            
+
             append( buffer, parameter.getName() + defaultVal, 2);
 //            append( buffer, "[" + idx++ + "] Name", parameter.getName()
 //                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
@@ -749,7 +749,7 @@ public class DescribeMojo
                 append( buffer, "Expression", expression, 3 );
             }
 
-            
+
 
             //append( buffer, "Required", parameter.isRequired() + "", 2 );
 
