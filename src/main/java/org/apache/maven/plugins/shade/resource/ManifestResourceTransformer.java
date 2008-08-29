@@ -104,8 +104,8 @@ public class ManifestResourceTransformer
                 attributes.put( new Attributes.Name( key ), manifestEntries.get( key ) );
             }
         }
-                
+                    
         jos.putNextEntry( new JarEntry( MANIFEST_PATH ) );
-        manifest.write( jos );        
+        manifest.write( jos );
     }    
 }
