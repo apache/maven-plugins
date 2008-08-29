@@ -709,7 +709,7 @@ public class DescribeMojo
             return;
         }
 
-        append( buffer, "Parameters:", 1 );
+        append( buffer, "Available parameters:", 1 );
 
         // indent 2
         int idx = 0;
@@ -756,7 +756,7 @@ public class DescribeMojo
 
             //append( buffer, "Required", parameter.isRequired() + "", 2 );
 
-            appendAsParagraph( buffer, null, toDescription( parameter.getDescription() ), 3 );
+            append( buffer, toDescription( parameter.getDescription() ), 3 );
 
             String deprecation = parameter.getDeprecated();
             if ( StringUtils.isNotEmpty( deprecation ) )
