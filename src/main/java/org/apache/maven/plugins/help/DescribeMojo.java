@@ -74,6 +74,9 @@ public class DescribeMojo
     /** The default indent size when writing description's Mojo. */
     private static final int INDENT_SIZE = 2;
 
+    /** For unknown values */
+    private static final String UNKNOWN = "Unknown";
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -751,8 +754,6 @@ public class DescribeMojo
                 append( buffer, "Expression", expression, 3 );
             }
 
-
-
             //append( buffer, "Required", parameter.isRequired() + "", 2 );
 
             appendAsParagraph( buffer, null, toDescription( parameter.getDescription() ), 3 );
@@ -964,7 +965,7 @@ public class DescribeMojo
     {
         if ( StringUtils.isEmpty( description ) )
         {
-            sb.append( "Unknown" ).append( '\n' );
+            sb.append( UNKNOWN ).append( '\n' );
             return;
         }
 
@@ -996,7 +997,7 @@ public class DescribeMojo
 
         if ( StringUtils.isEmpty( value ) )
         {
-            value = "Unknown";
+            value = UNKNOWN;
         }
 
         String description = key + ": " + value;
@@ -1022,10 +1023,9 @@ public class DescribeMojo
     private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
         throws MojoFailureException, MojoExecutionException
     {
-
         if ( StringUtils.isEmpty( value ) )
         {
-            value = "Unknown";
+            value = UNKNOWN;
         }
 
         String description;
