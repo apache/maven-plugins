@@ -180,10 +180,17 @@ public class DefaultShader
         throws IOException
     {
         if ( !remapper.hasRelocators() )
-        {
-            jos.putNextEntry( new JarEntry( name ) );
-
-            IOUtil.copy( is, jos );
+        {            
+            try
+            {
+                jos.putNextEntry( new JarEntry( name ) );
+                IOUtil.copy( is, jos );
+            }
+            catch ( ZipException e )
+            {
+                getLogger().warn( "We have a duplicate " + name + " in " + jar );
+            }
+            
             return;
         }
 
