@@ -22,6 +22,8 @@ package org.apache.maven.plugins.help;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -530,7 +532,21 @@ public class DescribeMojo
             append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
             buffer.append( "\n" );
 
-            for ( Iterator it = pd.getMojos().iterator(); it.hasNext(); )
+            List mojos = pd.getMojos();
+
+            Collections.sort( mojos, new Comparator()
+            {
+                /** {@inheritDoc} */
+                public int compare( Object o1, Object o2 )
+                {
+                    MojoDescriptor md1 = (MojoDescriptor) o1;
+                    MojoDescriptor md2 = (MojoDescriptor) o2;
+
+                    return md1.getId().compareTo( md2.getId() );
+                }
+            } );
+
+            for ( Iterator it = mojos.iterator(); it.hasNext(); )
             {
                 MojoDescriptor md = (MojoDescriptor) it.next();
 
@@ -702,6 +718,18 @@ public class DescribeMojo
         throws MojoFailureException, MojoExecutionException
     {
         List params = md.getParameters();
+
+        Collections.sort( params, new Comparator()
+        {
+            /** {@inheritDoc} */
+            public int compare( Object o1, Object o2 )
+            {
+                Parameter parameter1 = (Parameter) o1;
+                Parameter parameter2 = (Parameter) o2;
+
+                return parameter1.getName().compareTo( parameter2.getName() );
+            }
+        } );
 
         if ( params == null || params.isEmpty() )
         {
