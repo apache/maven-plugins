@@ -183,16 +183,16 @@ public class DescribeMojo
      * If this parameter is specified, only the corresponding Mojo (goal) will be described,
      * rather than the whole Plugin.
      *
-     * @parameter expression="${mojo}"
+     * @parameter expression="${goal}"
      */
-    private String mojo;
+    private String goal;
 
     /**
      * This flag specifies that a full (verbose) list of Mojo informations should be given.
      *
-     * @parameter expression="${full}" default-value="false"
+     * @parameter expression="${detail}" default-value="false"
      */
-    private boolean full;
+    private boolean detail;
 
     /**
      * This flag specifies that a medium list of Mojo informations should be given.
@@ -258,9 +258,9 @@ public class DescribeMojo
 
             PluginDescriptor descriptor = lookupPluginDescriptor( pi );
 
-            if ( StringUtils.isNotEmpty( mojo ) )
+            if ( StringUtils.isNotEmpty( goal ) )
             {
-                describeMojo( descriptor.getMojo( mojo ), descriptionBuffer );
+                describeMojo( descriptor.getMojo( goal ), descriptionBuffer );
             }
             else
             {
@@ -280,7 +280,19 @@ public class DescribeMojo
      */
     private void validateParameters()
     {
-        if ( full || minimal )
+        // support legacy parameters "mojo" and "full"
+        if ( goal == null && session.getExecutionProperties().get( "mojo" ) != null )
+        {
+            goal = session.getExecutionProperties().getProperty( "mojo" );
+        }
+        
+        if ( !detail && session.getExecutionProperties().get( "full" ) != null )
+        {
+            String full = session.getExecutionProperties().getProperty( "full" );
+            detail = Boolean.parseBoolean( full );
+        }
+        
+        if ( detail || minimal )
         {
             medium = false;
         }
@@ -503,7 +515,7 @@ public class DescribeMojo
         appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         buffer.append( "\n" );
 
-        if ( ( full || medium ) && !minimal )
+        if ( ( detail || medium ) && !minimal )
         {
             append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
             buffer.append( "\n" );
@@ -512,7 +524,7 @@ public class DescribeMojo
             {
                 MojoDescriptor md = (MojoDescriptor) it.next();
 
-                if ( full )
+                if ( detail )
                 {
                     describeMojoGuts( md, buffer, true );
                 }
@@ -525,9 +537,9 @@ public class DescribeMojo
             }
         }
 
-        if ( !full )
+        if ( !detail )
         {
-            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "For more information, run 'mvn help:describe [...] -Ddetail'" );
             buffer.append( "\n" );
         }
     }
@@ -546,12 +558,12 @@ public class DescribeMojo
         buffer.append( "Mojo: '" ).append( md.getFullGoalName() ).append( "'" );
         buffer.append( '\n' );
 
-        describeMojoGuts( md, buffer, full );
+        describeMojoGuts( md, buffer, detail );
         buffer.append( "\n" );
 
-        if ( !full )
+        if ( !detail )
         {
-            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "For more information, run 'mvn help:describe [...] -Ddetail'" );
             buffer.append( "\n" );
         }
     }
@@ -844,7 +856,7 @@ public class DescribeMojo
 
         descriptionBuffer.append( "'" + cmd + "' is a plugin goal (aka mojo)" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
-        mojo = mojoDescriptor.getGoal();
+        goal = mojoDescriptor.getGoal();
 
         return true;
     }
