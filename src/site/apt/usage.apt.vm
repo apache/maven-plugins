@@ -113,13 +113,14 @@ Usage
 
   Once the IT POMs have been filtered, a Maven build will be started on them. By default, the Invoker Plugin will execute the
   phase <<<package>>> on the IT POMs but that can be changed globally in the plugin configuration or for an individual
-  integration test by using the <<<invoker.properties>>> as done in the example for <<<second-it>>>. Likewise, system
-  properties can be passed to the IT builds via the file <<<test.properties>>>. And the file <<<src/it/settings.xml>>>
-  can be used to specify custom user settings for the tests. Among others, this allows you to make the integration
-  tests use your local repository as a remote repository, avoiding time-consuming downloads from <<<central>>> in order
-  to fill up the initially empty staging repository. Please see the example {{{examples/fast-use.html}Fast Invoker Plugin Configuration}}
-  for more details on this technique. The output of the IT builds is written to a log file named <<<build.log>>> (e.g.
-  <<<target/it/first-it/build.log>>>) and allows diagnostics in case an integration test fails.
+  integration test by using the <<<{{{./examples/invoker-properties.html}invoker.properties}}>>> as done in the example
+  for <<<second-it>>>. Likewise, system properties can be passed to the IT builds via the file <<<test.properties>>>.
+  And the file <<<src/it/settings.xml>>> can be used to specify custom user settings for the tests. Among others, this
+  allows you to make the integration tests use your local repository as a remote repository, avoiding time-consuming
+  downloads from <<<central>>> in order to fill up the initially empty staging repository. Please see the example
+  {{{examples/fast-use.html}Fast Invoker Plugin Configuration}} for more details on this technique. The output of the
+  IT builds is written to a log file named <<<build.log>>> (e.g. <<<target/it/first-it/build.log>>>) and allows
+  diagnostics in case an integration test fails.
 
   When an integration test has finished, the plugin will invoke an optional post build hook script. In the example,
   this is the case for <<<second-it>>> where <<<verify.bsh>>> will be run. The purpose of this script is usally to
