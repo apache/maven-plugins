@@ -57,7 +57,9 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Displays a list of the attributes for a Maven Plugin and/or Mojo (Maven plain Old Java Object).
@@ -77,6 +79,9 @@ public class DescribeMojo
 
     /** For unknown values */
     private static final String UNKNOWN = "Unknown";
+
+    /** For deprecated values */
+    private static final String NO_REASON = "No reason given";
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -602,6 +607,11 @@ public class DescribeMojo
         appendAsParagraph( buffer, "Description", toDescription( md.getDescription() ), 1 );
 
         String deprecation = md.getDeprecated();
+        if ( StringUtils.isEmpty( deprecation ) )
+        {
+            deprecation = getValue( md, "deprecated", NO_REASON );
+        }
+
         if ( StringUtils.isNotEmpty( deprecation ) )
         {
             append( buffer, "Deprecated. " + deprecation, 1 );
@@ -687,7 +697,6 @@ public class DescribeMojo
         append( buffer, "Available parameters:", 1 );
 
         // indent 2
-        int idx = 0;
         for ( Iterator it = params.iterator(); it.hasNext(); )
         {
             Parameter parameter = (Parameter) it.next();
@@ -702,7 +711,8 @@ public class DescribeMojo
                 // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder
                 try
                 {
-                    defaultVal = md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value" );
+                    defaultVal =
+                        md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value" );
                 }
                 catch ( PlexusConfigurationException e )
                 {
@@ -714,14 +724,11 @@ public class DescribeMojo
             {
                 defaultVal = " (Default: " + defaultVal + ")";
             }
-            if ( defaultVal == null ) defaultVal = "";
-
+            else
+            {
+                defaultVal = "";
+            }
             append( buffer, parameter.getName() + defaultVal, 2);
-//            append( buffer, "[" + idx++ + "] Name", parameter.getName()
-//                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
-//                    2 );
-//
-//            append( buffer, "Type", parameter.getType(), 2 );
 
             String expression = parameter.getExpression();
             if ( StringUtils.isNotEmpty( expression ) )
@@ -729,14 +736,17 @@ public class DescribeMojo
                 append( buffer, "Expression", expression, 3 );
             }
 
-            //append( buffer, "Required", parameter.isRequired() + "", 2 );
-
             append( buffer, toDescription( parameter.getDescription() ), 3 );
 
             String deprecation = parameter.getDeprecated();
+            if ( StringUtils.isEmpty( deprecation ) )
+            {
+                deprecation = getValue( md, parameter.getName(), "deprecated", NO_REASON );
+            }
+
             if ( StringUtils.isNotEmpty( deprecation ) )
             {
-                append( buffer, "Deprecated." + deprecation, 3 );
+                append( buffer, "Deprecated. " + deprecation, 3 );
             }
         }
     }
@@ -1036,6 +1046,122 @@ public class DescribeMojo
         }
 
         return "(no description available)";
+    }
+
+    /**
+     * @param md not null
+     * @param name not null
+     * @param defaultValue the default value if not found, could be null.
+     * @return the value of <code>name</code> from the Mojo descriptor or <code>defaultValue</code> if not found.
+     */
+    private static String getValue( MojoDescriptor md, String name, String defaultValue  )
+    {
+        if ( md == null )
+        {
+            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
+        }
+
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "Name parameter is required." );
+        }
+
+        XmlPlexusConfiguration mojoConf = null;
+        try
+        {
+            mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
+        }
+        catch ( ClassCastException e )
+        {
+            return defaultValue;
+        }
+
+        try
+        {
+            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
+                && ( mojoConf.getXpp3Dom().getParent().getChild( name ) != null ) )
+            {
+                String value = mojoConf.getXpp3Dom().getParent().getChild( name ).getValue();
+                if ( StringUtils.isEmpty( value ) )
+                {
+                    value = defaultValue;
+                }
+
+                return value;
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            return defaultValue;
+        }
+
+        return defaultValue;
+    }
+
+    /**
+     * @param md not null
+     * @param parameterName not null
+     * @param name not null
+     * @param defaultValue the default value if not found, could be null.
+     * @return the value of <code>name</code> for the <code>parameterName</code> from the Mojo descriptor or
+     * <code>defaultValue</code> if not found.
+     */
+    private static String getValue( MojoDescriptor md, String parameterName, String name, String defaultValue )
+    {
+        if ( md == null )
+        {
+            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
+        }
+
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "Name parameter is required." );
+        }
+
+        XmlPlexusConfiguration mojoConf = null;
+        try
+        {
+            mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
+        }
+        catch ( ClassCastException e )
+        {
+            return defaultValue;
+        }
+
+        try
+        {
+            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
+                && ( mojoConf.getXpp3Dom().getParent().getChild( "parameters" ) != null ) )
+            {
+                Xpp3Dom[] parameters = mojoConf.getXpp3Dom().getParent().getChild( "parameters" ).getChildren();
+                for ( int i = 0; i < parameters.length; i++ )
+                {
+                    Xpp3Dom parameter = parameters[i];
+                    if ( parameter == null || parameter.getChild( "name" ) == null
+                        || !parameter.getChild( "name" ).getValue().equals( parameterName ) )
+                    {
+                        continue;
+                    }
+
+                    if ( parameter.getChild( name ) != null )
+                    {
+                        String value = parameter.getChild( name ).getValue();
+                        if ( StringUtils.isEmpty( value ) )
+                        {
+                            value = defaultValue;
+                        }
+
+                        return value;
+                    }
+                }
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            return defaultValue;
+        }
+
+        return defaultValue;
     }
 
     /**
