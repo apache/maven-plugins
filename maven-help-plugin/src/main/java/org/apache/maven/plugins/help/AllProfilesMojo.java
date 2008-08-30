@@ -94,7 +94,8 @@ public class AllProfilesMojo
 
             descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( "\n" );
 
-            DefaultProfileManager pm = new DefaultProfileManager( session.getContainer() );
+            DefaultProfileManager pm =
+                new DefaultProfileManager( session.getContainer(), session.getExecutionProperties() );
 
             // Obtain Profiles from external profiles.xml
             try
