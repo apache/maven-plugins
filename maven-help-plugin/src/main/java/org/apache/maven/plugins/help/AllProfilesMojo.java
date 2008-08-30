@@ -143,7 +143,7 @@ public class AllProfilesMojo
                 {
                     Profile p = (Profile) it.next();
 
-                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
 
@@ -153,7 +153,7 @@ public class AllProfilesMojo
                 {
                     Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
 
-                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
             }
