@@ -55,7 +55,6 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.StringUtils;
@@ -597,16 +596,15 @@ public class DescribeMojo
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
         throws MojoFailureException, MojoExecutionException
     {
-        append( buffer, "Goal", "'" + md.getGoal() + "'", 0 );
+        append( buffer, md.getFullGoalName(), 0 );
 
         // indent 1
-        append( buffer, "Full Goal Name", "'" + md.getFullGoalName() + "'", 1 );
         appendAsParagraph( buffer, "Description", toDescription( md.getDescription() ), 1 );
 
         String deprecation = md.getDeprecated();
         if ( StringUtils.isNotEmpty( deprecation ) )
         {
-            append( buffer, "NOTE: This mojo is deprecated. " + deprecation, 1 );
+            append( buffer, "Deprecated. " + deprecation, 1 );
         }
 
         if ( !fullDescription )
@@ -738,7 +736,7 @@ public class DescribeMojo
             String deprecation = parameter.getDeprecated();
             if ( StringUtils.isNotEmpty( deprecation ) )
             {
-                append( buffer, "NOTE: This parameter is deprecated." + deprecation, 3 );
+                append( buffer, "Deprecated." + deprecation, 3 );
             }
         }
     }
