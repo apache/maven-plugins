@@ -28,10 +28,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
 import org.apache.maven.lifecycle.Lifecycle;
@@ -86,6 +89,14 @@ public class DescribeMojo
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
+
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     * @since 2.1
+     */
+    private ArtifactFactory artifactFactory;
 
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
@@ -147,6 +158,16 @@ public class DescribeMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
 
     /**
      * The Maven Plugin to describe. This must be specified in one of three ways:
@@ -517,18 +538,36 @@ public class DescribeMojo
     private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
         throws MojoFailureException, MojoExecutionException
     {
+        append( buffer, pd.getId(), 0 );
+        buffer.append( "\n" );
+
         String name = pd.getName();
         if ( name == null )
         {
-            name = pd.getId();
-        }
+            // Always null see MPLUGIN-137
+            // TODO remove when maven-plugin-tools-api:2.4.4
+            try
+            {
+                Artifact artifact =
+                    artifactFactory.createPluginArtifact( pd.getGroupId(), pd.getArtifactId(),
+                                                          VersionRange.createFromVersion( pd.getVersion() ) );
+                MavenProject pluginProject =
+                    projectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
 
-        append( buffer, name, 0 );
+                name = pluginProject.getName();
+            }
+            catch ( ProjectBuildingException e )
+            {
+                // oh well, we tried our best.
+                name = pd.getId();
+            }
+        }
+        append( buffer, "Name", name, 0 );
+        appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         append( buffer, "Group Id", pd.getGroupId(), 0 );
         append( buffer, "Artifact Id", pd.getArtifactId(), 0 );
         append( buffer, "Version", pd.getVersion(), 0 );
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
-        appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         buffer.append( "\n" );
 
         if ( ( detail || medium ) && !minimal )
