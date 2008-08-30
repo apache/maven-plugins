@@ -28,9 +28,9 @@
 
 Using a Post Build Script
  
-  Here is an example of how the Invoker Plugin can be used to run a set
-  of Maven projects and then verify their output with a BeanShell or Groovy script.
-  The name of the script file in this case is <<<verify.bsh>>>.
+  Here is an example of how the Invoker Plugin can be used to run a set of Maven projects and then verify their output
+  with a {{{http://www.beanshell.org/}BeanShell}} or {{{http://groovy.codehaus.org/}Groovy}} script. The name of the
+  script file in this case is <<<verify.bsh>>>.
 
 -------------------
 <project>
