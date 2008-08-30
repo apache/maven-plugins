@@ -403,8 +403,8 @@ public class DescribeMojo
         else
         {
             StringBuffer msg = new StringBuffer();
-            msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter" +
-                    " OR a 'cmd' parameter. For instance:\n" );
+            msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
+                + " OR a 'cmd' parameter. For instance:\n" );
             msg.append( "  # mvn help:describe -Dcmd=install\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -Dcmd=help:describe\n" );
@@ -739,7 +739,10 @@ public class DescribeMojo
         for ( Iterator it = params.iterator(); it.hasNext(); )
         {
             Parameter parameter = (Parameter) it.next();
-            if ( !parameter.isEditable() ) continue;
+            if ( !parameter.isEditable() )
+            {
+                continue;
+            }
 
             buffer.append( "\n" );
 
@@ -767,7 +770,7 @@ public class DescribeMojo
             {
                 defaultVal = "";
             }
-            append( buffer, parameter.getName() + defaultVal, 2);
+            append( buffer, parameter.getName() + defaultVal, 2 );
 
             String expression = parameter.getExpression();
             if ( StringUtils.isNotEmpty( expression ) )
@@ -1105,18 +1108,9 @@ public class DescribeMojo
             throw new IllegalArgumentException( "Name parameter is required." );
         }
 
-        XmlPlexusConfiguration mojoConf = null;
         try
         {
-            mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
-        }
-        catch ( ClassCastException e )
-        {
-            return defaultValue;
-        }
-
-        try
-        {
+            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
             if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
                 && ( mojoConf.getXpp3Dom().getParent().getChild( name ) != null ) )
             {
@@ -1157,18 +1151,9 @@ public class DescribeMojo
             throw new IllegalArgumentException( "Name parameter is required." );
         }
 
-        XmlPlexusConfiguration mojoConf = null;
         try
         {
-            mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
-        }
-        catch ( ClassCastException e )
-        {
-            return defaultValue;
-        }
-
-        try
-        {
+            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
             if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
                 && ( mojoConf.getXpp3Dom().getParent().getChild( "parameters" ) != null ) )
             {
