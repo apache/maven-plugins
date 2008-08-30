@@ -194,7 +194,7 @@ public class DescribeMojo
      * rather than the whole Plugin.
      *
      * @parameter expression="${goal}" alias="mojo"
-     * @since 2.1
+     * @since 2.1, was <code>mojo</code> in 2.0.x
      */
     private String goal;
 
@@ -202,7 +202,7 @@ public class DescribeMojo
      * This flag specifies that a full (verbose) list of Mojo informations should be given.
      *
      * @parameter expression="${detail}" default-value="false" alias="full"
-     * @since 2.1
+     * @since 2.1, was <code>full</code> in 2.0.x
      */
     private boolean detail;
 
@@ -681,7 +681,7 @@ public class DescribeMojo
             return;
         }
 
-        // TODO remove when maven-plugin-tools-api:2.4.4 is out
+        // TODO remove when maven-plugin-tools-api:2.4.4 is out see PluginUtils.sortMojoParameters()
         Collections.sort( params, new Comparator()
         {
             /** {@inheritDoc} */
