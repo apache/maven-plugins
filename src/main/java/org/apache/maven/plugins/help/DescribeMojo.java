@@ -83,6 +83,9 @@ public class DescribeMojo
     /** For unknown values */
     private static final String UNKNOWN = "Unknown";
 
+    /** For not defined values */
+    private static final String NOT_DEFINED = "Not defined";
+
     /** For deprecated values */
     private static final String NO_REASON = "No reason given";
 
@@ -867,7 +870,7 @@ public class DescribeMojo
                         }
                         else
                         {
-                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                            descriptionBuffer.append( NOT_DEFINED ).append( "\n" );
                         }
                     }
                 }
@@ -887,7 +890,7 @@ public class DescribeMojo
                         }
                         else
                         {
-                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                            descriptionBuffer.append( NOT_DEFINED ).append( "\n" );
                         }
                     }
                 }
@@ -942,7 +945,7 @@ public class DescribeMojo
 
             if ( output == null )
             {
-                throw new MojoExecutionException( "No output was exist '." );
+                throw new MojoExecutionException( "No output was specified." );
             }
 
             return output;
