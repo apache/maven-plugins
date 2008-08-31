@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -299,21 +300,30 @@ public class InstallMojo
                                              ArtifactRepository testRepository )
         throws MojoExecutionException
     {
+        // index available reactor projects
         Map projects = new HashMap();
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject reactorProject = (MavenProject) it.next();
-            projects.put( reactorProject.getId(), reactorProject );
+            String id = reactorProject.getGroupId() + ':' + reactorProject.getArtifactId();
+            projects.put( id, reactorProject );
         }
 
+        // collect transitive dependencies
+        Collection dependencies = new HashSet();
+        for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+            String id = artifact.getGroupId() + ':' + artifact.getArtifactId();
+            dependencies.add( id );
+        }
+
+        // install dependencies available in reactor
         try
         {
-            for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+            for ( Iterator it = dependencies.iterator(); it.hasNext(); )
             {
-                Artifact artifact = (Artifact) it.next();
-                String id =
-                    artifact.getGroupId() + ':' + artifact.getArtifactId() + ':' + artifact.getType() + ':'
-                        + artifact.getVersion();
+                String id = (String) it.next();
                 MavenProject requiredProject = (MavenProject) projects.remove( id );
                 if ( requiredProject != null )
                 {
