@@ -573,13 +573,19 @@ public class DescribeMojo
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
         buffer.append( "\n" );
 
+        List mojos = pd.getMojos();
+
+        if ( mojos == null )
+        {
+            append( buffer, "This plugin has no goals.", 0 );
+            return;
+        }
+
         if ( ( detail || medium ) && !minimal )
         {
             append( buffer, "This plugin has " + pd.getMojos().size() + " goal"
                 + ( pd.getMojos().size() > 1 ? "s" : "" ) + ":", 0 );
             buffer.append( "\n" );
-
-            List mojos = pd.getMojos();
 
             PluginUtils.sortMojos( mojos );
 
