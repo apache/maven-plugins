@@ -267,9 +267,17 @@ public class InstallMojo
     {
         try
         {
-            Artifact pomArtifact =
-                artifactFactory.createProjectArtifact( mvnProject.getGroupId(), mvnProject.getArtifactId(),
-                                                       mvnProject.getVersion() );
+            Artifact pomArtifact = null;
+            if ( "pom".equals( mvnProject.getPackaging() ) )
+            {
+                pomArtifact = mvnProject.getArtifact();
+            }
+            if ( pomArtifact == null )
+            {
+                pomArtifact =
+                    artifactFactory.createProjectArtifact( mvnProject.getGroupId(), mvnProject.getArtifactId(),
+                                                           mvnProject.getVersion() );
+            }
             installArtifact( mvnProject.getFile(), pomArtifact, testRepository );
         }
         catch ( Exception e )
