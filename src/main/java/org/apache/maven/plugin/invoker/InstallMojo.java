@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -162,6 +161,38 @@ public class InstallMojo
     }
 
     /**
+     * Installs the specified artifact to the local repository.
+     * 
+     * @param file The file associated with the artifact, must not be <code>null</code>. This is in most cases the value
+     *            of <code>artifact.getFile()</code> with the exception of the main artifact from a project with
+     *            packaging "pom". Projects with packaging "pom" have no main artifact file. They have however artifact
+     *            metadata (e.g. site descriptors) which needs to be installed.
+     * @param artifact The artifact to install, must not be <code>null</code>.
+     * @param testRepository The local repository to install the artifact to, must not be <code>null</code>.
+     * @throws MojoExecutionException If the artifact could not be installed (e.g. has no associated file).
+     */
+    private void installArtifact( File file, Artifact artifact, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
+        try
+        {
+            if ( file == null )
+            {
+                throw new IllegalStateException( "Artifact has no associated file: " + file );
+            }
+            if ( !file.isFile() )
+            {
+                throw new IllegalStateException( "Artifact is not fully assembled: " + file );
+            }
+            installer.install( file, artifact, testRepository );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to install artifact: " + artifact, e );
+        }
+    }
+
+    /**
      * Installs the main artifact and any attached artifacts of the specified project to the local repository.
      * 
      * @param mvnProject The project whose artifacts should be installed, must not be <code>null</code>.
@@ -175,22 +206,22 @@ public class InstallMojo
         {
             installProjectPom( mvnProject, testRepository );
 
-            // Install the main project artifact
-            File artifactFile = mvnProject.getArtifact().getFile();
-            if ( artifactFile != null )
+            // Install the main project artifact (if the project has one, e.g. has no "pom" packaging)
+            Artifact mainArtifact = mvnProject.getArtifact();
+            if ( mainArtifact.getFile() != null )
             {
-                installer.install( artifactFile, mvnProject.getArtifact(), testRepository );
+                installArtifact( mainArtifact.getFile(), mainArtifact, testRepository );
             }
 
             // Install any attached project artifacts
             Collection attachedArtifacts = mvnProject.getAttachedArtifacts();
             for ( Iterator artifactIter = attachedArtifacts.iterator(); artifactIter.hasNext(); )
             {
-                Artifact theArtifact = (Artifact) artifactIter.next();
-                installer.install( theArtifact.getFile(), theArtifact, testRepository );
+                Artifact attachedArtifact = (Artifact) artifactIter.next();
+                installArtifact( attachedArtifact.getFile(), attachedArtifact, testRepository );
             }
         }
-        catch ( ArtifactInstallationException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to install project artifacts: " + mvnProject, e );
         }
@@ -207,13 +238,20 @@ public class InstallMojo
     private void installProjectParents( MavenProject mvnProject, ArtifactRepository testRepository )
         throws MojoExecutionException
     {
-        for ( MavenProject parent = mvnProject.getParent(); parent != null; parent = parent.getParent() )
+        try
         {
-            if ( parent.getFile() == null )
+            for ( MavenProject parent = mvnProject.getParent(); parent != null; parent = parent.getParent() )
             {
-                break;
+                if ( parent.getFile() == null )
+                {
+                    break;
+                }
+                installProjectPom( parent, testRepository );
             }
-            installProjectPom( parent, testRepository );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to install project parents: " + mvnProject, e );
         }
     }
 
@@ -232,7 +270,7 @@ public class InstallMojo
             Artifact pomArtifact =
                 artifactFactory.createProjectArtifact( mvnProject.getGroupId(), mvnProject.getArtifactId(),
                                                        mvnProject.getVersion() );
-            installer.install( mvnProject.getFile(), pomArtifact, testRepository );
+            installArtifact( mvnProject.getFile(), pomArtifact, testRepository );
         }
         catch ( Exception e )
         {
@@ -260,18 +298,25 @@ public class InstallMojo
             projects.put( reactorProject.getId(), reactorProject );
         }
 
-        for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+        try
         {
-            Artifact artifact = (Artifact) it.next();
-            String id =
-                artifact.getGroupId() + ':' + artifact.getArtifactId() + ':' + artifact.getType() + ':'
-                    + artifact.getVersion();
-            MavenProject requiredProject = (MavenProject) projects.remove( id );
-            if ( requiredProject != null )
+            for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
             {
-                installProjectArtifacts( requiredProject, testRepository );
-                installProjectParents( requiredProject, testRepository );
+                Artifact artifact = (Artifact) it.next();
+                String id =
+                    artifact.getGroupId() + ':' + artifact.getArtifactId() + ':' + artifact.getType() + ':'
+                        + artifact.getVersion();
+                MavenProject requiredProject = (MavenProject) projects.remove( id );
+                if ( requiredProject != null )
+                {
+                    installProjectArtifacts( requiredProject, testRepository );
+                    installProjectParents( requiredProject, testRepository );
+                }
             }
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to install project dependencies: " + mvnProject, e );
         }
     }
 
