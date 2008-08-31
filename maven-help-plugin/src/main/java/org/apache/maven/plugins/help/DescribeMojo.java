@@ -65,7 +65,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * Displays a list of the attributes for a Maven Plugin and/or Mojo (Maven plain Old Java Object).
+ * Displays a list of the attributes for a Maven Plugin and/or goals (aka Mojo - Maven plain Old Java Object).
  *
  * @version $Id$
  * @since 2.0
@@ -223,7 +223,7 @@ public class DescribeMojo
     private String goal;
 
     /**
-     * This flag specifies that a detailed (verbose) list of Mojo information should be given.
+     * This flag specifies that a detailed (verbose) list of goal (Mojo) information should be given.
      *
      * @parameter expression="${detail}" default-value="false" alias="full"
      * @since 2.1, was <code>full</code> in 2.0.x
@@ -231,7 +231,7 @@ public class DescribeMojo
     private boolean detail;
 
     /**
-     * This flag specifies that a medium list of Mojo information should be given.
+     * This flag specifies that a medium list of goal (Mojo) information should be given.
      *
      * @parameter expression="${medium}" default-value="true"
      * @since 2.0.2
@@ -239,7 +239,7 @@ public class DescribeMojo
     private boolean medium;
 
     /**
-     * This flag specifies that a minimal list of Mojo information should be given.
+     * This flag specifies that a minimal list of goal (Mojo) information should be given.
      *
      * @parameter expression="${minimal}" default-value="false"
      * @since 2.1
