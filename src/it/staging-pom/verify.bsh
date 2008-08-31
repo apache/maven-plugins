@@ -14,6 +14,7 @@ try
 
     String[] files = {
             "test/pom-packaging/1.0-SNAPSHOT/pom-packaging-1.0-SNAPSHOT.pom",
+            "test/pom-packaging/1.0-SNAPSHOT/pom-packaging-1.0-SNAPSHOT-site.xml",
       };
     for ( String file : files )
     {
