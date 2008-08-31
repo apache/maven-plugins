@@ -37,9 +37,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Installs the project artifacts into the local repository as a preparation to run the integration tests. More
- * precisely, all artifacts of the project itself, all its locally reachable parent POMs and all its dependencies from
- * the reactor will be installed to the local repository.
+ * Installs the project artifacts of the main build into the local repository as a preparation to run the sub projects.
+ * More precisely, all artifacts of the project itself, all its locally reachable parent POMs and all its dependencies
+ * from the reactor will be installed to the local repository.
  * 
  * @goal install
  * @phase pre-integration-test
