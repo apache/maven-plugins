@@ -25,13 +25,13 @@ under the License.
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="Advanced Usage" href="advance-usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
     
     <menu name="Examples">
       <item name="Accessing Test Classes" href="examples/access-test-classes.html"/>
       <item name="Cloning Projects" href="examples/clone-projects.html"/>
+      <item name="Filtering Files" href="examples/filtering.html"/>
       <item name="Fast Build Configuration" href="examples/fast-use.html"/>
       <item name="Installing Artifacts" href="examples/install-artifacts.html"/>
       <item name="Invoker Properties" href="examples/invoker-properties.html"/>

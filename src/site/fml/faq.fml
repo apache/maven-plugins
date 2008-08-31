@@ -50,7 +50,7 @@ under the License.
      <question>How can I share common code between the pre-/post-build scripts?</question>
      <answer>
        <p>
-         If you want to avoid copy&amp;paste of lengthy code snippets within the IT scripts, you can move this code
+         If you want to avoid copy&amp;paste of lengthy code snippets within the hook scripts, you can move this code
          into a regular Java class. More precisely, you would place this utility code somewhere in your test source
          tree and set the plugin parameter <a href="run-mojo.html#addTestClassPath"><code>addTestClassPath</code></a>
          to <code>true</code>. For more details, please see the example
