@@ -214,7 +214,7 @@ public class DescribeMojo
 
     /**
      * The goal name of a Mojo to describe within the specified Maven Plugin.
-     * If this parameter is specified, only the corresponding Mojo (goal) will be described,
+     * If this parameter is specified, only the corresponding goal (Mojo) will be described,
      * rather than the whole Plugin.
      *
      * @parameter expression="${goal}" alias="mojo"
@@ -223,7 +223,7 @@ public class DescribeMojo
     private String goal;
 
     /**
-     * This flag specifies that a full (verbose) list of Mojo informations should be given.
+     * This flag specifies that a detailed (verbose) list of Mojo information should be given.
      *
      * @parameter expression="${detail}" default-value="false" alias="full"
      * @since 2.1, was <code>full</code> in 2.0.x
@@ -231,7 +231,7 @@ public class DescribeMojo
     private boolean detail;
 
     /**
-     * This flag specifies that a medium list of Mojo informations should be given.
+     * This flag specifies that a medium list of Mojo information should be given.
      *
      * @parameter expression="${medium}" default-value="true"
      * @since 2.0.2
@@ -239,7 +239,7 @@ public class DescribeMojo
     private boolean medium;
 
     /**
-     * This flag specifies that a minimal list of Mojo informations should be given.
+     * This flag specifies that a minimal list of Mojo information should be given.
      *
      * @parameter expression="${minimal}" default-value="false"
      * @since 2.1
@@ -415,7 +415,7 @@ public class DescribeMojo
             msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
-            msg.append( "Try 'mvn help:help -Ddetail=true' for more informations." );
+            msg.append( "Try 'mvn help:help -Ddetail=true' for more information." );
 
             throw new MojoFailureException( msg.toString() );
         }
