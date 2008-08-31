@@ -94,7 +94,8 @@ public class AllProfilesMojo
 
             descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( "\n" );
 
-            DefaultProfileManager pm = new DefaultProfileManager( session.getContainer() );
+            DefaultProfileManager pm =
+                new DefaultProfileManager( session.getContainer(), session.getExecutionProperties() );
 
             // Obtain Profiles from external profiles.xml
             try
@@ -142,7 +143,7 @@ public class AllProfilesMojo
                 {
                     Profile p = (Profile) it.next();
 
-                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
 
@@ -152,7 +153,7 @@ public class AllProfilesMojo
                 {
                     Profile p = (Profile) allProfilesByIds.get( (String) it.next() );
 
-                    descriptionBuffer.append( "\tProfile Id: " ).append( p.getId() );
+                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
                     descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
                 }
             }

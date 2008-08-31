@@ -5,7 +5,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-08-28
+ 2008-08-30
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -137,26 +137,13 @@ It is a part of the lifecycle for the POM packaging 'jar'. This lifecycle includ
 +-----+
 # mvn help:describe -Dcmd=compiler:compile
 ...
-[INFO] [help:describe]
-[INFO] 'compiler:compile' is a plugin.
-org.apache.maven.plugins:maven-compiler-plugin:2.0.2
-Group Id: org.apache.maven.plugins
-Artifact Id: maven-compiler-plugin
-Version: 2.0.2
-Goal Prefix: compiler
-Description: Maven Plugins
-
-This plugin has 2 goals:
-
-Goal: 'compile'
-  Full Goal Name: 'compiler:compile'
+[INFO] 'compiler:compile' is a plugin goal (aka mojo).
+Mojo: 'compiler:compile'
+compiler:compile
   Description: Compiles application sources
+  Deprecated. No reason given
 
-Goal: 'testCompile'
-  Full Goal Name: 'compiler:testCompile'
-  Description: Compiles application test sources
-
-For more information, run 'mvn help:describe [...] -Dfull'
+For more information, run 'mvn help:describe [...] -Ddetail'
 ...
 +-----+
 
@@ -182,7 +169,7 @@ Description: The Maven Help plugin provides goals aimed at helping to make
   been applied, as well as a describe a particular plugin goal to give usage
   information.
 
-For more information, run 'mvn help:describe [...] -Dfull'
+For more information, run 'mvn help:describe [...] -Ddetail'
 ...
 +-----+
 
@@ -192,7 +179,6 @@ For more information, run 'mvn help:describe [...] -Dfull'
 +-----+
 # mvn help:describe -Dplugin=help
 ...
-[INFO] [help:describe]
 [INFO] org.apache.maven.plugins:maven-help-plugin:2.1-SNAPSHOT
 Group Id: org.apache.maven.plugins
 Artifact Id: maven-help-plugin
@@ -206,56 +192,57 @@ Description: The Maven Help plugin provides goals aimed at helping to make
 
 This plugin has 9 goals:
 
-Goal: 'effective-settings'
-  Full Goal Name: 'help:effective-settings'
-  Description: Displays the calculated settings as XML for this project,
-    given any profile enhancement and the inheritance of the global settings
-    into the user-level settings.
-
-Goal: 'expressions'
-  Full Goal Name: 'help:expressions'
-  Description: Displays the supported Plugin expressions used by Maven.
-
-Goal: 'help'
-  Full Goal Name: 'help:help'
-  Description: Display help information on maven-help-plugin.
-    Call
-     mvn help:help -Ddetail=true -Dgoal=<goal-name>
-    to display parameter details.
-
-Goal: 'system'
-  Full Goal Name: 'help:system'
-  Description: Displays a list of the platform details like system properties
-    and environment variables.
-
-Goal: 'active-profiles'
-  Full Goal Name: 'help:active-profiles'
+help:active-profiles
   Description: Displays a list of the profiles which are currently active for
     this build.
+  Deprecated. No reason given
 
-Goal: 'describe'
-  Full Goal Name: 'help:describe'
-  Description: Displays a list of the attributes for a Maven Plugin and/or
-    Mojo (Maven plain Old Java Object).
-
-Goal: 'effective-pom'
-  Full Goal Name: 'help:effective-pom'
-  Description: Displays the effective POM as an XML for this build, with the
-    active profiles factored in.
-
-Goal: 'evaluate'
-  Full Goal Name: 'help:evaluate'
-  Description: Evaluates Maven expressions from the user.
-
-Goal: 'all-profiles'
-  Full Goal Name: 'help:all-profiles'
+help:all-profiles
   Description: Displays a list of available profiles under the current
     project.
     Note: it will list all profiles for a project. If a profile comes up with a
     status inactive then there might be a need to set profile activation
     switches/property.
+  Deprecated. No reason given
 
-For more information, run 'mvn help:describe [...] -Dfull'
+help:describe
+  Description: Displays a list of the attributes for a Maven Plugin and/or
+    Mojo (Maven plain Old Java Object).
+  Deprecated. No reason given
+
+help:effective-pom
+  Description: Displays the effective POM as an XML for this build, with the
+    active profiles factored in.
+  Deprecated. No reason given
+
+help:effective-settings
+  Description: Displays the calculated settings as XML for this project,
+    given any profile enhancement and the inheritance of the global settings
+    into the user-level settings.
+  Deprecated. No reason given
+
+help:evaluate
+  Description: Evaluates Maven expressions given by the user in an
+    interactive mode.
+  Deprecated. No reason given
+
+help:expressions
+  Description: Displays the supported Plugin expressions used by Maven.
+  Deprecated. No reason given
+
+help:help
+  Description: Display help information on maven-help-plugin.
+    Call
+     mvn help:help -Ddetail=true -Dgoal=<goal-name>
+    to display parameter details.
+  Deprecated. No reason given
+
+help:system
+  Description: Displays a list of the platform details like system properties
+    and environment variables.
+  Deprecated. No reason given
+
+For more information, run 'mvn help:describe [...] -Ddetail'
 ...
 +-----+
 
@@ -275,5 +262,5 @@ For more information, run 'mvn help:describe [...] -Dfull'
   redirect the output to a file. Here is an example of that:
 
 +-----+
-# mvn help:describe -Dplugin=help -Dfull=true -Doutput=/path/to/file
+# mvn help:describe -Dplugin=help -Ddetail=true -Doutput=/path/to/file
 +-----+

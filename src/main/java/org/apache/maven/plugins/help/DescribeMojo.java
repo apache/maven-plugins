@@ -22,14 +22,19 @@ package org.apache.maven.plugins.help;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
 import org.apache.maven.lifecycle.Lifecycle;
@@ -53,12 +58,14 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
-import org.codehaus.plexus.component.repository.ComponentRequirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * Displays a list of the attributes for a Maven Plugin and/or Mojo (Maven plain Old Java Object).
+ * Displays a list of the attributes for a Maven Plugin and/or goals (aka Mojo - Maven plain Old Java Object).
  *
  * @version $Id$
  * @since 2.0
@@ -73,9 +80,26 @@ public class DescribeMojo
     /** The default indent size when writing description's Mojo. */
     private static final int INDENT_SIZE = 2;
 
+    /** For unknown values */
+    private static final String UNKNOWN = "Unknown";
+
+    /** For not defined values */
+    private static final String NOT_DEFINED = "Not defined";
+
+    /** For deprecated values */
+    private static final String NO_REASON = "No reason given";
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
+
+    /**
+     * Maven Artifact Factory component.
+     *
+     * @component
+     * @since 2.1
+     */
+    private ArtifactFactory artifactFactory;
 
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
@@ -139,6 +163,16 @@ public class DescribeMojo
     private ArtifactRepository localRepository;
 
     /**
+     * Remote repositories used for the project.
+     *
+     * @since 2.1
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
+
+    /**
      * The Maven Plugin to describe. This must be specified in one of three ways:
      * <br/>
      * <ol>
@@ -180,22 +214,24 @@ public class DescribeMojo
 
     /**
      * The goal name of a Mojo to describe within the specified Maven Plugin.
-     * If this parameter is specified, only the corresponding Mojo (goal) will be described,
+     * If this parameter is specified, only the corresponding goal (Mojo) will be described,
      * rather than the whole Plugin.
      *
-     * @parameter expression="${mojo}"
+     * @parameter expression="${goal}" alias="mojo"
+     * @since 2.1, was <code>mojo</code> in 2.0.x
      */
-    private String mojo;
+    private String goal;
 
     /**
-     * This flag specifies that a full (verbose) list of Mojo informations should be given.
+     * This flag specifies that a detailed (verbose) list of goal (Mojo) information should be given.
      *
-     * @parameter expression="${full}" default-value="false"
+     * @parameter expression="${detail}" default-value="false" alias="full"
+     * @since 2.1, was <code>full</code> in 2.0.x
      */
-    private boolean full;
+    private boolean detail;
 
     /**
-     * This flag specifies that a medium list of Mojo informations should be given.
+     * This flag specifies that a medium list of goal (Mojo) information should be given.
      *
      * @parameter expression="${medium}" default-value="true"
      * @since 2.0.2
@@ -203,7 +239,7 @@ public class DescribeMojo
     private boolean medium;
 
     /**
-     * This flag specifies that a minimal list of Mojo informations should be given.
+     * This flag specifies that a minimal list of goal (Mojo) information should be given.
      *
      * @parameter expression="${minimal}" default-value="false"
      * @since 2.1
@@ -258,9 +294,9 @@ public class DescribeMojo
 
             PluginDescriptor descriptor = lookupPluginDescriptor( pi );
 
-            if ( StringUtils.isNotEmpty( mojo ) )
+            if ( StringUtils.isNotEmpty( goal ) )
             {
-                describeMojo( descriptor.getMojo( mojo ), descriptionBuffer );
+                describeMojo( descriptor.getMojo( goal ), descriptionBuffer );
             }
             else
             {
@@ -280,7 +316,19 @@ public class DescribeMojo
      */
     private void validateParameters()
     {
-        if ( full || minimal )
+        // support legacy parameters "mojo" and "full"
+        if ( goal == null && session.getExecutionProperties().get( "mojo" ) != null )
+        {
+            goal = session.getExecutionProperties().getProperty( "mojo" );
+        }
+
+        if ( !detail && session.getExecutionProperties().get( "full" ) != null )
+        {
+            String full = session.getExecutionProperties().getProperty( "full" );
+            detail = new Boolean( full ).booleanValue();
+        }
+
+        if ( detail || minimal )
         {
             medium = false;
         }
@@ -358,12 +406,16 @@ public class DescribeMojo
         else
         {
             StringBuffer msg = new StringBuffer();
-            msg.append( "You must either specify 'groupId' and 'artifactId' both parameters, or a valid 'plugin' "
-                + "parameter. For instance:\n" );
+            msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
+                + " OR a 'cmd' parameter. For instance:\n" );
+            msg.append( "  # mvn help:describe -Dcmd=install\n" );
+            msg.append( "or\n" );
+            msg.append( "  # mvn help:describe -Dcmd=help:describe\n" );
+            msg.append( "or\n" );
             msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
             msg.append( "or\n" );
             msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
-            msg.append( "Try 'mvn help:help -Ddetail=true' for more informations." );
+            msg.append( "Try 'mvn help:help -Ddetail=true' for more information." );
 
             throw new MojoFailureException( msg.toString() );
         }
@@ -489,30 +541,59 @@ public class DescribeMojo
     private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
         throws MojoFailureException, MojoExecutionException
     {
+        append( buffer, pd.getId(), 0 );
+        buffer.append( "\n" );
+
         String name = pd.getName();
         if ( name == null )
         {
-            name = pd.getId();
-        }
+            // Always null see MPLUGIN-137
+            // TODO remove when maven-plugin-tools-api:2.4.4
+            try
+            {
+                Artifact artifact =
+                    artifactFactory.createPluginArtifact( pd.getGroupId(), pd.getArtifactId(),
+                                                          VersionRange.createFromVersion( pd.getVersion() ) );
+                MavenProject pluginProject =
+                    projectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
 
-        append( buffer, name, 0 );
+                name = pluginProject.getName();
+            }
+            catch ( ProjectBuildingException e )
+            {
+                // oh well, we tried our best.
+                name = pd.getId();
+            }
+        }
+        append( buffer, "Name", name, 0 );
+        appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         append( buffer, "Group Id", pd.getGroupId(), 0 );
         append( buffer, "Artifact Id", pd.getArtifactId(), 0 );
         append( buffer, "Version", pd.getVersion(), 0 );
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
-        appendAsParagraph( buffer, "Description", toDescription( pd.getDescription() ), 0 );
         buffer.append( "\n" );
 
-        if ( ( full || medium ) && !minimal )
+        List mojos = pd.getMojos();
+
+        if ( mojos == null )
         {
-            append( buffer, "This plugin has " + pd.getMojos().size() + " goals:", 0 );
+            append( buffer, "This plugin has no goals.", 0 );
+            return;
+        }
+
+        if ( ( detail || medium ) && !minimal )
+        {
+            append( buffer, "This plugin has " + pd.getMojos().size() + " goal"
+                + ( pd.getMojos().size() > 1 ? "s" : "" ) + ":", 0 );
             buffer.append( "\n" );
 
-            for ( Iterator it = pd.getMojos().iterator(); it.hasNext(); )
+            PluginUtils.sortMojos( mojos );
+
+            for ( Iterator it = mojos.iterator(); it.hasNext(); )
             {
                 MojoDescriptor md = (MojoDescriptor) it.next();
 
-                if ( full )
+                if ( detail )
                 {
                     describeMojoGuts( md, buffer, true );
                 }
@@ -525,9 +606,9 @@ public class DescribeMojo
             }
         }
 
-        if ( !full )
+        if ( !detail )
         {
-            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "For more information, run 'mvn help:describe [...] -Ddetail'" );
             buffer.append( "\n" );
         }
     }
@@ -546,12 +627,12 @@ public class DescribeMojo
         buffer.append( "Mojo: '" ).append( md.getFullGoalName() ).append( "'" );
         buffer.append( '\n' );
 
-        describeMojoGuts( md, buffer, full );
+        describeMojoGuts( md, buffer, detail );
         buffer.append( "\n" );
 
-        if ( !full )
+        if ( !detail )
         {
-            buffer.append( "For more information, run 'mvn help:describe [...] -Dfull'" );
+            buffer.append( "For more information, run 'mvn help:describe [...] -Ddetail'" );
             buffer.append( "\n" );
         }
     }
@@ -568,16 +649,20 @@ public class DescribeMojo
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
         throws MojoFailureException, MojoExecutionException
     {
-        append( buffer, "Goal", "'" + md.getGoal() + "'", 0 );
+        append( buffer, md.getFullGoalName(), 0 );
 
         // indent 1
-        append( buffer, "Full Goal Name", "'" + md.getFullGoalName() + "'", 1 );
         appendAsParagraph( buffer, "Description", toDescription( md.getDescription() ), 1 );
 
         String deprecation = md.getDeprecated();
+        if ( StringUtils.isEmpty( deprecation ) )
+        {
+            deprecation = getValue( md, "deprecated", NO_REASON );
+        }
+
         if ( StringUtils.isNotEmpty( deprecation ) )
         {
-            append( buffer, "NOTE: This mojo is deprecated. " + deprecation, 1 );
+            append( buffer, "Deprecated. " + deprecation, 1 );
         }
 
         if ( !fullDescription )
@@ -623,49 +708,6 @@ public class DescribeMojo
         buffer.append( "\n" );
 
         describeMojoParameters( md, buffer );
-
-        buffer.append( "\n" );
-
-        describeMojoRequirements( md, buffer );
-    }
-
-    /**
-     * Method for displaying the component requirements of the Plugin Mojo
-     *
-     * @param md contains the description of the Plugin Mojo
-     * @param buffer contains information to be printed or displayed
-     * @throws MojoFailureException if any reflection exceptions occur.
-     * @throws MojoExecutionException if any
-     */
-    private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
-        throws MojoFailureException, MojoExecutionException
-    {
-        List reqs = md.getRequirements();
-
-        if ( reqs == null || reqs.isEmpty() )
-        {
-            append( buffer, "This mojo doesn't have any component requirements.", 1 );
-            return;
-        }
-
-        append( buffer, "Component Requirements:", 1 );
-
-        // indent 2
-        int idx = 0;
-        for ( Iterator it = reqs.iterator(); it.hasNext(); idx++ )
-        {
-            ComponentRequirement req = (ComponentRequirement) it.next();
-
-            buffer.append( "\n" );
-
-            append( buffer, "[" + idx + "] Role", req.getRole(), 2 );
-
-            String hint = req.getRoleHint();
-            if ( StringUtils.isNotEmpty( hint ) )
-            {
-                append( buffer, "Role-Hint", hint, 2 );
-            }
-        }
     }
 
     /**
@@ -687,43 +729,75 @@ public class DescribeMojo
             return;
         }
 
-        append( buffer, "Parameters:", 1 );
+        // TODO remove when maven-plugin-tools-api:2.4.4 is out see PluginUtils.sortMojoParameters()
+        Collections.sort( params, new Comparator()
+        {
+            /** {@inheritDoc} */
+            public int compare( Object o1, Object o2 )
+            {
+                Parameter parameter1 = (Parameter) o1;
+                Parameter parameter2 = (Parameter) o2;
+
+                return parameter1.getName().compareToIgnoreCase( parameter2.getName() );
+            }
+        } );
+
+        append( buffer, "Available parameters:", 1 );
 
         // indent 2
-        int idx = 0;
         for ( Iterator it = params.iterator(); it.hasNext(); )
         {
             Parameter parameter = (Parameter) it.next();
+            if ( !parameter.isEditable() )
+            {
+                continue;
+            }
 
             buffer.append( "\n" );
 
-            append( buffer, "[" + idx++ + "] Name", parameter.getName()
-                + ( StringUtils.isEmpty( parameter.getAlias() ) ? "" : " (Alias: " + parameter.getAlias() + ")" ),
-                    2 );
+            // DGF wouldn't it be nice if this worked?
+            String defaultVal = parameter.getDefaultValue();
+            if ( defaultVal == null )
+            {
+                // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder
+                try
+                {
+                    defaultVal =
+                        md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value" );
+                }
+                catch ( PlexusConfigurationException e )
+                {
+                    // oh well, we tried our best.
+                }
+            }
 
-            append( buffer, "Type", parameter.getType(), 2 );
+            if ( StringUtils.isNotEmpty( defaultVal ) )
+            {
+                defaultVal = " (Default: " + defaultVal + ")";
+            }
+            else
+            {
+                defaultVal = "";
+            }
+            append( buffer, parameter.getName() + defaultVal, 2 );
 
             String expression = parameter.getExpression();
             if ( StringUtils.isNotEmpty( expression ) )
             {
-                append( buffer, "Expression", expression, 2 );
+                append( buffer, "Expression", expression, 3 );
             }
 
-            String defaultVal = parameter.getDefaultValue();
-            if ( StringUtils.isNotEmpty( defaultVal ) )
-            {
-                append( buffer, "Default value", "'" + defaultVal + "'", 2 );
-            }
-
-            append( buffer, "Required", parameter.isRequired() + "", 2 );
-            append( buffer, "Directly editable", parameter.isEditable() + "", 2 );
-
-            appendAsParagraph( buffer, "Description", toDescription( parameter.getDescription() ), 2 );
+            append( buffer, toDescription( parameter.getDescription() ), 3 );
 
             String deprecation = parameter.getDeprecated();
+            if ( StringUtils.isEmpty( deprecation ) )
+            {
+                deprecation = getValue( md, parameter.getName(), "deprecated", NO_REASON );
+            }
+
             if ( StringUtils.isNotEmpty( deprecation ) )
             {
-                append( buffer, "NOTE: This parameter is deprecated." + deprecation, 2 );
+                append( buffer, "Deprecated. " + deprecation, 3 );
             }
         }
     }
@@ -802,7 +876,7 @@ public class DescribeMojo
                         }
                         else
                         {
-                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                            descriptionBuffer.append( NOT_DEFINED ).append( "\n" );
                         }
                     }
                 }
@@ -822,7 +896,7 @@ public class DescribeMojo
                         }
                         else
                         {
-                            descriptionBuffer.append( "NOT DEFINED" ).append( "\n" );
+                            descriptionBuffer.append( NOT_DEFINED ).append( "\n" );
                         }
                     }
                 }
@@ -842,8 +916,9 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append( "'" + cmd + "' is a plugin" ).append( ".\n" );
+        descriptionBuffer.append( "'" + cmd + "' is a plugin goal (aka mojo)" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
+        goal = mojoDescriptor.getGoal();
 
         return true;
     }
@@ -876,7 +951,7 @@ public class DescribeMojo
 
             if ( output == null )
             {
-                throw new MojoExecutionException( "No output was exist '." );
+                throw new MojoExecutionException( "No output was specified." );
             }
 
             return output;
@@ -926,7 +1001,7 @@ public class DescribeMojo
     {
         if ( StringUtils.isEmpty( description ) )
         {
-            sb.append( "Unknown" ).append( '\n' );
+            sb.append( UNKNOWN ).append( '\n' );
             return;
         }
 
@@ -958,7 +1033,7 @@ public class DescribeMojo
 
         if ( StringUtils.isEmpty( value ) )
         {
-            value = "Unknown";
+            value = UNKNOWN;
         }
 
         String description = key + ": " + value;
@@ -984,17 +1059,20 @@ public class DescribeMojo
     private static void appendAsParagraph( StringBuffer sb, String key, String value, int indent )
         throws MojoFailureException, MojoExecutionException
     {
-        if ( StringUtils.isEmpty( key ) )
-        {
-            throw new IllegalArgumentException( "Key is required!" );
-        }
-
         if ( StringUtils.isEmpty( value ) )
         {
-            value = "Unknown";
+            value = UNKNOWN;
         }
 
-        String description = key + ": " + value;
+        String description;
+        if ( key == null )
+        {
+            description = value;
+        }
+        else
+        {
+            description = key + ": " + value;
+        }
 
         List l1 = toLines( description, indent, INDENT_SIZE, LINE_LENGTH - INDENT_SIZE );
         List l2 = toLines( description, indent + 1, INDENT_SIZE, LINE_LENGTH );
@@ -1019,6 +1097,104 @@ public class DescribeMojo
         }
 
         return "(no description available)";
+    }
+
+    /**
+     * @param md not null
+     * @param name not null
+     * @param defaultValue the default value if not found, could be null.
+     * @return the value of <code>name</code> from the Mojo descriptor or <code>defaultValue</code> if not found.
+     */
+    private static String getValue( MojoDescriptor md, String name, String defaultValue  )
+    {
+        if ( md == null )
+        {
+            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
+        }
+
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "Name parameter is required." );
+        }
+
+        try
+        {
+            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
+            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
+                && ( mojoConf.getXpp3Dom().getParent().getChild( name ) != null ) )
+            {
+                String value = mojoConf.getXpp3Dom().getParent().getChild( name ).getValue();
+                if ( StringUtils.isEmpty( value ) )
+                {
+                    value = defaultValue;
+                }
+
+                return value;
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            return defaultValue;
+        }
+
+        return defaultValue;
+    }
+
+    /**
+     * @param md not null
+     * @param parameterName not null
+     * @param name not null
+     * @param defaultValue the default value if not found, could be null.
+     * @return the value of <code>name</code> for the <code>parameterName</code> from the Mojo descriptor or
+     * <code>defaultValue</code> if not found.
+     */
+    private static String getValue( MojoDescriptor md, String parameterName, String name, String defaultValue )
+    {
+        if ( md == null )
+        {
+            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
+        }
+
+        if ( StringUtils.isEmpty( name ) )
+        {
+            throw new IllegalArgumentException( "Name parameter is required." );
+        }
+
+        try
+        {
+            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
+            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
+                && ( mojoConf.getXpp3Dom().getParent().getChild( "parameters" ) != null ) )
+            {
+                Xpp3Dom[] parameters = mojoConf.getXpp3Dom().getParent().getChild( "parameters" ).getChildren();
+                for ( int i = 0; i < parameters.length; i++ )
+                {
+                    Xpp3Dom parameter = parameters[i];
+                    if ( parameter == null || parameter.getChild( "name" ) == null
+                        || !parameter.getChild( "name" ).getValue().equals( parameterName ) )
+                    {
+                        continue;
+                    }
+
+                    if ( parameter.getChild( name ) != null )
+                    {
+                        String value = parameter.getChild( name ).getValue();
+                        if ( StringUtils.isEmpty( value ) )
+                        {
+                            value = defaultValue;
+                        }
+
+                        return value;
+                    }
+                }
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            return defaultValue;
+        }
+
+        return defaultValue;
     }
 
     /**
