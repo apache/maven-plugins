@@ -101,8 +101,8 @@ return true;
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
 || Name                    || Type                || Description                                              || Since |
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
-| basedir                  | java.io.File         | The absolute path to the base directory of the test project. | 1.0   |
+| <<<basedir>>>            | <<<java.io.File>>>   | The absolute path to the base directory of the test project. | 1.0   |
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
-| localRepositoryPath      | java.io.File         | The absolute path to the local repository used for the Maven invocation. | 1.3   |
+| <<<localRepositoryPath>>>| <<<java.io.File>>>   | The absolute path to the local repository used for the Maven invocation on the test project. | 1.3   |
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
   
