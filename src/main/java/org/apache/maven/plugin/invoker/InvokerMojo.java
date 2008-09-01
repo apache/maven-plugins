@@ -450,6 +450,14 @@ public class InvokerMojo
      */
     private String invokerPropertiesFile;
 
+    /**
+     * A flag controlling whether failures of the sub builds should fail the main build, too. If set to
+     * <code>true</code>, the main build will proceed even if one or more sub builds failed.
+     * 
+     * @parameter expression="${maven.test.failure.ignore}" default-value="false"
+     * @since 1.3
+     */
+    private boolean ignoreFailures;
 
     /**
      * The supported script interpreters, indexed by the file extension of their associated script files.
@@ -555,12 +563,27 @@ public class InvokerMojo
 
             if ( !failures.isEmpty() )
             {
-                getLog().error( "The following builds failed:" );
+                String heading = "The following builds failed:";
+                if ( ignoreFailures )
+                {
+                    getLog().warn( heading );
+                }
+                else
+                {
+                    getLog().error( heading );
+                }
 
                 for ( final Iterator it = failures.iterator(); it.hasNext(); )
                 {
-                    final String pom = (String) it.next();
-                    getLog().error( "*  " + pom );
+                    String item = "*  " + (String) it.next();
+                    if ( ignoreFailures )
+                    {
+                        getLog().warn( item );
+                    }
+                    else
+                    {
+                        getLog().error( item );
+                    }
                 }
 
                 getLog().info( "---------------------------------------" );
@@ -569,9 +592,16 @@ public class InvokerMojo
 
         if ( !failures.isEmpty() )
         {
-            String message = failures.size() + " builds failed.";
+            String message = failures.size() + " build" + ( failures.size() == 1 ? "" : "s" ) + " failed.";
 
-            throw new MojoFailureException( this, message, message );
+            if ( ignoreFailures )
+            {
+                getLog().warn( "Ignoring that " + message );
+            }
+            else
+            {
+                throw new MojoFailureException( this, message, message );
+            }
         }
     }
 
