@@ -60,8 +60,8 @@ public class EclipseAntExternalLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_TYPES", new String[] { "1" } );
 
-        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS", new String[] { "/" +
-            config.getEclipseProjectName() + "/" + buildfilePath } );
+        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS", new String[] { "/"
+            + config.getEclipseProjectName() + "/" + buildfilePath } );
     }
 
     protected String getLaunchConfigurationType()

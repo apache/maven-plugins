@@ -206,9 +206,9 @@ public class BuildCommand
         {
             BuildCommand b = (BuildCommand) obj;
 
-            return name.equals( b.name ) &&
-                ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) ) &&
-                ( arguments == null || arguments.isEmpty() ? b.arguments == null || b.arguments.isEmpty()
+            return name.equals( b.name )
+                && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
+                && ( arguments == null || arguments.isEmpty() ? b.arguments == null || b.arguments.isEmpty()
                                 : arguments.equals( b.arguments ) );
         }
         else
@@ -219,7 +219,7 @@ public class BuildCommand
 
     public int hashCode()
     {
-        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() ) +
-            ( arguments == null ? 0 : 17 * arguments.hashCode() );
+        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() )
+            + ( arguments == null ? 0 : 17 * arguments.hashCode() );
     }
 }

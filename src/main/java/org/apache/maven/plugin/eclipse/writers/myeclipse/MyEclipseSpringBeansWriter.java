@@ -116,8 +116,8 @@ public class MyEclipseSpringBeansWriter
     }
 
     /**
-     * Retrieve the list of Spring configuration files recursively from the <code>basedir</code> directory,
-     * considering only filenames matching the <code>pattern</code> given
+     * Retrieve the list of Spring configuration files recursively from the <code>basedir</code> directory, considering
+     * only filenames matching the <code>pattern</code> given
      * 
      * @param basedir the path to the base directory to search in
      * @param pattern file include pattern

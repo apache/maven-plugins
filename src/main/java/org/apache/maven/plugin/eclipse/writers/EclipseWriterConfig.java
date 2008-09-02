@@ -146,7 +146,7 @@ public class EclipseWriterConfig
     private float wtpVersion;
 
     private float ajdtVersion;
-    
+
     private WorkspaceConfiguration workspaceConfiguration;
 
     public WorkspaceConfiguration getWorkspaceConfiguration()
@@ -193,8 +193,8 @@ public class EclipseWriterConfig
                     {
                         return result;
                     }
-                    if ( ( (IdeDependency) o1 ).getClassifier() != null &&
-                        ( (IdeDependency) o2 ).getClassifier() != null )
+                    if ( ( (IdeDependency) o1 ).getClassifier() != null
+                        && ( (IdeDependency) o2 ).getClassifier() != null )
                     {
                         result =
                             ( (IdeDependency) o1 ).getClassifier().compareToIgnoreCase(
@@ -587,6 +587,7 @@ public class EclipseWriterConfig
 
     /**
      * Returns the ajdtVersion.
+     * 
      * @return the ajdtVersion.
      */
     public float getAjdtVersion()
@@ -596,6 +597,7 @@ public class EclipseWriterConfig
 
     /**
      * Sets the ajdtVersion.
+     * 
      * @param ajdtVersion the ajdtVersion.
      */
     public void setAjdtVersion( float ajdtVersion )

@@ -31,7 +31,8 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Add eclipse artifacts from an eclipse installation to the local repo. This mojo automatically analize the eclipse
  * directory, copy plugins jars to the local maven repo, and generates appropriate poms. Use
- * <code>eclipse:to-maven</code> for the latest naming conventions in place, <code>groupId</code>.<code>artifactId</code>.
+ * <code>eclipse:to-maven</code> for the latest naming conventions in place, <code>groupId</code>.
+ * <code>artifactId</code>.
  * 
  * @author Fabrizio Giustina
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
@@ -48,9 +49,9 @@ public class MakeArtifactsMojo
     /**
      * Strip qualifier (fourth token) from the plugin version. Qualifiers are for eclipse plugin the equivalent of
      * timestamped snapshot versions for Maven, but the date is maintained also for released version (e.g. a jar for the
-     * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's
-     * usually handy to not to include this qualifier when generating maven artifacts for major releases, while it's
-     * needed when working with eclipse integration/nightly builds.
+     * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's usually
+     * handy to not to include this qualifier when generating maven artifacts for major releases, while it's needed when
+     * working with eclipse integration/nightly builds.
      * 
      * @parameter expression="${stripQualifier}" default-value="true"
      */
@@ -130,8 +131,8 @@ public class MakeArtifactsMojo
     {
         if ( this.resolveVersionRanges && plugins.containsKey( getKey( model ) ) )
         {
-            throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: " +
-                getKey( model ) );
+            throw new MojoFailureException( "There are two versions of the same plugin, can not resolve versions: "
+                + getKey( model ) );
         }
 
         super.processPlugin( plugin, model, plugins, models );

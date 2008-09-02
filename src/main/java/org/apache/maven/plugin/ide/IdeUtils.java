@@ -97,7 +97,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings, considering also settings altered in plugin executions .
-     *
+     * 
      * @param project maven project
      * @return option value (may be null)
      */
@@ -116,7 +116,7 @@ public class IdeUtils
     /**
      * Returns the source version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     *
+     * 
      * @param project maven project
      * @return java source version
      */
@@ -128,7 +128,7 @@ public class IdeUtils
     /**
      * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
      * both standard and test sources, if settings are different.
-     *
+     * 
      * @param project maven project
      * @return java target version
      */
@@ -164,7 +164,7 @@ public class IdeUtils
 
     /**
      * Extracts the version of the first matching artifact in the given list.
-     *
+     * 
      * @param artifactIds artifact names to compare against for extracting version
      * @param artifacts Set of artifacts for our project
      * @param len expected length of the version sub-string
@@ -191,7 +191,7 @@ public class IdeUtils
 
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
-     *
+     * 
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -211,7 +211,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     *
+     * 
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
@@ -231,7 +231,7 @@ public class IdeUtils
 
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
-     *
+     * 
      * @todo there should be a better way to do this
      * @param project the current maven project to get the configuration from.
      * @param artifactId the artifact id of the plugin to search for
@@ -245,8 +245,8 @@ public class IdeUtils
         if ( configuration != null )
         {
             configurationDomList.add( configuration );
-            for ( int index = 0; !configurationDomList.isEmpty() && subConfiguration != null &&
-                index < subConfiguration.length; index++ )
+            for ( int index = 0; !configurationDomList.isEmpty() && subConfiguration != null
+                && index < subConfiguration.length; index++ )
             {
                 ArrayList newConfigurationDomList = new ArrayList();
                 for ( Iterator childElement = configurationDomList.iterator(); childElement.hasNext(); )
@@ -277,7 +277,7 @@ public class IdeUtils
 
     /**
      * Use the project name template to create an eclipse project.
-     *
+     * 
      * @param template Template for the project name
      * @param artifact the artifact to create the project name for
      * @return the created ide project name
@@ -427,7 +427,7 @@ public class IdeUtils
 
     /**
      * Returns a compiler plugin settings from a list of plugins .
-     *
+     * 
      * @param project maven project
      * @return option value (may be null)
      */
