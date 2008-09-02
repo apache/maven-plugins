@@ -32,12 +32,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.reader.ReadWorkspaceLocations;
+import org.apache.maven.plugin.eclipse.writers.EclipseAjdtWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
@@ -82,6 +85,25 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 public class EclipsePlugin
     extends AbstractIdeSupportMojo
 {
+    private static final String WEAVE_DEPENDENCY = "weaveDependency";
+
+    private static final String WEAVE_DEPENDENCIES = "weaveDependencies";
+
+    private static final String ASPECT_LIBRARY = "aspectLibrary";
+
+    private static final String ASPECT_LIBRARIES = "aspectLibraries";
+
+    private static final String ASPECT_DIRECTORY = "aspectDirectory";
+
+    private static final String TEST_ASPECT_DIRECTORY = "testAspectDirectory";
+
+    private static final String ASPECTJ_MAVEN_PLUGIN = "aspectj-maven-plugin";
+
+    private static final String ORG_CODEHAUS_MOJO = "org.codehaus.mojo";
+
+    private static final String DEFAULT_TEST_ASPECT_DIRECTORY = "src/test/aspect";
+
+    private static final String DEFAULT_ASPECT_DIRECTORY = "src/main/aspect";
 
     private static final String NATURE_WST_FACET_CORE_NATURE = "org.eclipse.wst.common.project.facet.core.nature"; //$NON-NLS-1$
 
@@ -101,6 +123,8 @@ public class EclipsePlugin
 
     private static final String BUILDER_PDE_SCHEMA = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
 
+    private static final String BUILDER_AJDT_CORE_JAVA = "org.eclipse.ajdt.core.ajbuilder"; //$NON-NLS-1$
+
     private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
 
     private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature"; //$NON-NLS-1$
@@ -109,8 +133,12 @@ public class EclipsePlugin
 
     private static final String NATURE_PDE_PLUGIN = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
 
-    protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
+    private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature"; //$NON-NLS-1$
 
+    protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
+    
+    protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"; //$NON-NLS-1$
+    
     protected static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
 
     // warning, order is important for binary search
@@ -301,6 +329,12 @@ public class EclipsePlugin
     private boolean pde;
 
     /**
+     * Is it an AJDT project? If yes, the plugin adds the necessary natures and build commands to
+     * the .project file. 
+     */
+    private boolean ajdt;
+
+    /**
      * The relative path of the manifest file
      * 
      * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
@@ -464,6 +498,14 @@ public class EclipsePlugin
      */
     protected boolean limitProjectReferencesToWorkspace;
 
+    /**
+     * The version of AJDT for which configuration files will be generated. The default value is "1.5", supported versions 
+     * are "none", "1.4", and "1.5".
+     * 
+     * @parameter expression="${eclipse.ajdtVersion}" default-value="1.5"
+     */
+    private String ajdtVersion;
+    
     protected boolean isJavaProject()
     {
         return isJavaProject;
@@ -705,7 +747,7 @@ public class EclipsePlugin
         boolean ready = true;
 
         checkDeprecations();
-
+        ajdt = enableAjdt( executedProject ) && !ajdtVersion.equals( "none" );
         ready = validate();
 
         // TODO: Why are we using project in some places, and executedProject in others??
@@ -949,6 +991,10 @@ public class EclipsePlugin
         if ( isJavaProject )
         {
             new EclipseClasspathWriter().init( getLog(), config ).write();
+            if ( ajdt && ajdtVersion.equals( "1.4" ) )
+            {
+                new EclipseAjdtWriter().init( getLog(), config ).write();
+            }
         }
 
         if ( wtpapplicationxml )
@@ -1058,6 +1104,18 @@ public class EclipsePlugin
 
         config.setWtpVersion( wtpVersionFloat );
 
+        float ajdtVersionFloat;
+        try
+        {
+            ajdtVersionFloat = Float.parseFloat( ajdtVersion );
+        }
+        catch( NumberFormatException e )
+        {
+            ajdtVersionFloat = 0.0f;
+        }
+        
+        config.setAjdtVersion( ajdtVersionFloat );
+        
         Set convertedBuildCommands = new LinkedHashSet();
 
         if ( buildcommands != null )
@@ -1075,6 +1133,12 @@ public class EclipsePlugin
                     convertedBuildCommands.add( new BuildCommand( (String) cmd ) );
                 }
             }
+        }
+
+        if( ajdt )
+        {
+            buildAjdtWeaveDeps( deps );
+            buildAspectjDeps( deps );
         }
 
         config.setBuildCommands( new LinkedList( convertedBuildCommands ) );
@@ -1194,6 +1258,11 @@ public class EclipsePlugin
 
         if ( isJavaProject )
         {
+            if ( ajdt )
+            {
+                projectnatures.add( NATURE_AJDT_CORE_JAVA );
+            }
+
             projectnatures.add( NATURE_JDT_CORE_JAVA );
         }
 
@@ -1221,13 +1290,18 @@ public class EclipsePlugin
         if ( getWorkspaceConfiguration().getDefaultClasspathContainer() != null )
         {
             getLog().info(
-                           "Adding default classpath container: " +
+                           "Adding default classpath contaigner: " +
                                getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
         }
         if ( pde )
         {
             classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
+        }
+        
+        if( ajdt )
+        {
+            classpathContainers.add( ASPECTJ_RT_CONTAINER );
         }
     }
 
@@ -1242,7 +1316,14 @@ public class EclipsePlugin
 
         if ( isJavaProject )
         {
-            buildcommands.add( new BuildCommand( BUILDER_JDT_CORE_JAVA ) );
+            if ( ajdt )
+            {
+                buildcommands.add( new BuildCommand( BUILDER_AJDT_CORE_JAVA) );
+            }
+            else
+            {
+                buildcommands.add( new BuildCommand( BUILDER_JDT_CORE_JAVA ) );
+            }
         }
 
         if ( wtpVersionFloat >= 1.5f )
@@ -1322,7 +1403,8 @@ public class EclipsePlugin
             directories.addAll( mainDirectories );
             directories.addAll( testDirectories );
         }
-
+ if( ajdt )
+extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
@@ -1416,6 +1498,140 @@ public class EclipsePlugin
                                                    resource.isFiltering() ) );
         }
     }
+
+    private void extractAspectDirs( Set directories, MavenProject project, File basedir, File projectBaseDir, String testOutput ) throws MojoExecutionException
+    {
+        Xpp3Dom configuration = getAspectjConfiguration( project );
+        if( configuration != null )
+        {
+            String aspectDirectory = DEFAULT_ASPECT_DIRECTORY;
+            Xpp3Dom aspectDirectoryElement = configuration.getChild( ASPECT_DIRECTORY );
+            if( aspectDirectoryElement != null )
+            {
+                aspectDirectory = aspectDirectoryElement.getValue();
+            }
+             
+            File aspectDirectoryFile = new File( basedir, aspectDirectory );
+            if( aspectDirectoryFile.exists() && aspectDirectoryFile.isDirectory() )
+            {
+                String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile, !projectBaseDir
+                    .equals( basedir ) );
+    
+                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, null, null, false ) );
+            }
+    
+            String testAspectDirectory = DEFAULT_TEST_ASPECT_DIRECTORY;
+            Xpp3Dom testAspectDirectoryElement = configuration.getChild( TEST_ASPECT_DIRECTORY );
+            if( testAspectDirectoryElement != null )
+            {
+                testAspectDirectory = testAspectDirectoryElement.getValue();
+            }
+             
+            File testAspectDirectoryFile = new File( basedir, testAspectDirectory );
+            if( testAspectDirectoryFile.exists() && testAspectDirectoryFile.isDirectory() )
+            {
+                String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile, !projectBaseDir
+                    .equals( basedir ) );
+    
+                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, null, null, false ) );
+            }
+        }
+    }
+
+    private boolean enableAjdt(MavenProject project)
+    {
+        boolean enable = false;
+        List buildPlugins = project.getBuildPlugins();
+        for ( Iterator it = buildPlugins.iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin)it.next();
+            if( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO ) && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            {
+                enable = true;
+                break;
+            }
+        }
+        
+        return enable;
+    }
+    
+    private Xpp3Dom getAspectjConfiguration(MavenProject project) 
+    {
+        Xpp3Dom configuration = null;
+        List buildPlugins = project.getBuildPlugins();
+        for ( Iterator it = buildPlugins.iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin)it.next();
+            if( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO ) && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            {
+                configuration = (Xpp3Dom)plugin.getConfiguration();
+                break;
+            }
+        }
+        
+        return configuration;
+    }
+
+    private void buildAspectjDeps( IdeDependency[] deps ) throws MojoExecutionException
+    {
+        Xpp3Dom configuration = getAspectjConfiguration( executedProject );
+        if( configuration != null )
+        {
+            Xpp3Dom aspectLibrariesParent  = configuration.getChild( ASPECT_LIBRARIES );
+            if( aspectLibrariesParent != null )
+            {
+                Xpp3Dom[] aspectLibraries = aspectLibrariesParent.getChildren( ASPECT_LIBRARY );
+                outerLoop:
+                for( int i = 0 ; i < aspectLibraries.length ; i++ )
+                {
+                    String artifactId = aspectLibraries[ i ].getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = aspectLibraries[ i ].getChild( POM_ELT_GROUP_ID ).getValue();
+                    for( int j = 0 ; j < deps.length ; j++ )
+                    {
+                        if( deps[ j ].getArtifactId().equals( artifactId ) &&
+                            deps[ j ].getGroupId().equals( groupId ) )
+                        {
+                            deps[ j ].setAjdtDependency( true );
+                            continue outerLoop;
+                        }
+                    }
+        
+                    throw new MojoExecutionException( "AspectLibrary is not a dependency of project" );
+                }
+            }
+        }
+    }
+
+    private void buildAjdtWeaveDeps( IdeDependency[] deps ) throws MojoExecutionException
+    {
+        Xpp3Dom configuration = getAspectjConfiguration( executedProject );
+        if( configuration != null )
+        {
+            Xpp3Dom weaveDependenciesParent  = configuration.getChild( WEAVE_DEPENDENCIES );
+            if( weaveDependenciesParent != null )
+            {
+                Xpp3Dom[] weaveDependencies  = weaveDependenciesParent.getChildren( WEAVE_DEPENDENCY );
+                outerLoop:
+                for( int i = 0 ; i < weaveDependencies.length ; i++ )
+                {
+                    String artifactId = weaveDependencies[ i ].getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = weaveDependencies[ i ].getChild( POM_ELT_GROUP_ID ).getValue();
+                    for( int j = 0 ; j < deps.length ; j++ )
+                    {
+                        if( deps[ j ].getArtifactId().equals( artifactId ) &&
+                            deps[ j ].getGroupId().equals( groupId ) )
+                        {
+                            deps[ j ].setAjdtWeaveDependency( true );
+                            continue outerLoop;
+                        }
+                    }
+    
+                    throw new MojoExecutionException( "WeaveDependency is not a dependency of project" );
+                }
+            }
+        }
+    }
+
 
     /**
      * Calculate the project name template from the fields {@link #projectNameTemplate},
