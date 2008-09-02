@@ -23,6 +23,7 @@
         <version>test</version>
         <configuration>
           <wtpversion>R7</wtpversion>
+          <downloadSources>true</downloadSources>
         </configuration>
       </plugin>
     </plugins>
