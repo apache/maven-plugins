@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -54,6 +54,36 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 public class EclipseClasspathWriter
     extends AbstractEclipseWriter
 {
+
+    /**
+     * 
+     */
+    private static final String ORG_ECLIPSE_AJDT_INPATH = "org.eclipse.ajdt.inpath";
+
+    /**
+     * 
+     */
+    private static final String ORG_ECLIPSE_AJDT_ASPECTPATH = "org.eclipse.ajdt.aspectpath";
+
+    /**
+     * 
+     */
+    private static final String NAME = "name";
+
+    /**
+     * 
+     */
+    private static final String VALUE = "value";
+
+    /**
+     * 
+     */
+    private static final String ATTRIBUTE = "attribute";
+
+    /**
+     * 
+     */
+    private static final String ATTRIBUTES = "attributes";
 
     /**
      * Eclipse build path variable M2_REPO
@@ -255,12 +285,12 @@ public class EclipseClasspathWriter
                 buildXmlPrinter.addAttribute( "default", "copy-resources" );
 
                 buildXmlPrinter.startElement( "target" );
-                buildXmlPrinter.addAttribute( "name", "init" );
+                buildXmlPrinter.addAttribute( NAME, "init" );
                 // initialize filtering tokens here
                 buildXmlPrinter.endElement();
 
                 buildXmlPrinter.startElement( "target" );
-                buildXmlPrinter.addAttribute( "name", "copy-resources" );
+                buildXmlPrinter.addAttribute( NAME, "copy-resources" );
                 buildXmlPrinter.addAttribute( "depends", "init" );
 
                 for ( Iterator it = specialSources.iterator(); it.hasNext(); )
@@ -505,6 +535,12 @@ public class EclipseClasspathWriter
 
         }
 
+        // Skip aspectj libraries since they are in the container.
+        if( (config.getAjdtVersion() != 0) && dep.getArtifactId().toLowerCase().startsWith( "aspectj" ) )
+        {
+            return;
+        } 
+        
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, kind );
         writer.addAttribute( ATTR_PATH, path );
@@ -520,13 +556,13 @@ public class EclipseClasspathWriter
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( "attributes" ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
                 attributeElemOpen = true;
             }
 
-            writer.startElement( "attribute" ); //$NON-NLS-1$
-            writer.addAttribute( "value", "jar:" + new File( javadocpath ).toURI() + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            writer.addAttribute( "name", "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
+            writer.addAttribute( VALUE, "jar:" + new File( javadocpath ).toURI() + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            writer.addAttribute( NAME, "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
         }
@@ -537,17 +573,47 @@ public class EclipseClasspathWriter
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( "attributes" ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
                 attributeElemOpen = true;
             }
 
-            writer.startElement( "attribute" ); //$NON-NLS-1$
-            writer.addAttribute( "value", "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "name", "org.eclipse.jst.component.dependency" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
+            writer.addAttribute( VALUE, "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( NAME, "org.eclipse.jst.component.dependency" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
         }
 
+        if( dep.isAjdtDependency() && (config.getAjdtVersion() >= 1.5) )
+        {
+            if ( !attributeElemOpen )
+            {
+                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                attributeElemOpen = true;
+            }
+
+            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
+            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_ASPECTPATH ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.endElement();
+           
+        }
+
+        if( dep.isAjdtWeaveDependency() && (config.getAjdtVersion() >= 1.5)  )
+        {
+            if ( !attributeElemOpen )
+            {
+                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                attributeElemOpen = true;
+            }
+
+            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
+            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_INPATH ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.endElement();
+           
+        }
+        
         if ( attributeElemOpen )
         {
             writer.endElement();
