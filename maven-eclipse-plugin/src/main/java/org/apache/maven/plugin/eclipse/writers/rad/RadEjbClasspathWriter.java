@@ -105,8 +105,8 @@ public class RadEjbClasspathWriter
             Xpp3Dom[] children = classpath.getChildren();
             for ( int index = 0; index < children.length; index++ )
             {
-                if ( LIB.equals( children[index].getAttribute( KIND ) ) &&
-                    TARGET_WEBSPHERE_CLASSES.equals( children[index].getAttribute( "path" ) ) )
+                if ( LIB.equals( children[index].getAttribute( KIND ) )
+                    && TARGET_WEBSPHERE_CLASSES.equals( children[index].getAttribute( "path" ) ) )
                 {
                     return; // nothing to do!
                 }
@@ -267,9 +267,9 @@ public class RadEjbClasspathWriter
             {
                 File path = new File( children[index].getAttribute( PATH ) );
 
-                if ( path.exists() && path.getParentFile().getName().equals( LIB ) &&
-                    path.getParentFile().getParentFile().getName().equals( "base_v6" ) &&
-                    path.getParentFile().getParentFile().getParentFile().getName().equals( "runtimes" ) )
+                if ( path.exists() && path.getParentFile().getName().equals( LIB )
+                    && path.getParentFile().getParentFile().getName().equals( "base_v6" )
+                    && path.getParentFile().getParentFile().getParentFile().getName().equals( "runtimes" ) )
                 {
                     Xpp3Dom[] currentChildren = classpath.getChildren();
                     for ( int deleteIndex = currentChildren.length - 1; deleteIndex >= 0; deleteIndex-- )

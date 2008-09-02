@@ -157,8 +157,8 @@ public abstract class AbstractWtpResourceWriter
         String archiveName;
 
         // ejb's and wars must always be toplevel
-        if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() ) ||
-            Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() )
+            || Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
         {
             deployPath = "/";
         }
@@ -202,8 +202,7 @@ public abstract class AbstractWtpResourceWriter
             if ( dep.isSystemScoped() )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    +
-                    IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
+                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
             }
             else
             {
@@ -213,14 +212,12 @@ public abstract class AbstractWtpResourceWriter
                 if ( !new File( relativePath ).isAbsolute() )
                 {
                     handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                        +
-                        relativePath;
+                        + relativePath;
                 }
                 else
                 {
                     handle = "module:/classpath/lib/" //$NON-NLS-1$
-                        +
-                        IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
+                        + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
                 }
             }
             if ( Constants.PROJECT_PACKAGING_EAR.equals( this.config.getPackaging() ) && !"/".equals( deployPath ) )
@@ -277,9 +274,9 @@ public abstract class AbstractWtpResourceWriter
 
             // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
             // exclude test and provided and system dependencies outside the project
-            if ( ( !dep.isTestDependency() && !dep.isProvided() && !dep.isSystemScopedOutsideProject( project ) ) &&
-                ( Constants.PROJECT_PACKAGING_JAR.equals( type ) || Constants.PROJECT_PACKAGING_EJB.equals( type ) ||
-                    "ejb-client".equals( type ) || Constants.PROJECT_PACKAGING_WAR.equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            if ( ( !dep.isTestDependency() && !dep.isProvided() && !dep.isSystemScopedOutsideProject( project ) )
+                && ( Constants.PROJECT_PACKAGING_JAR.equals( type ) || Constants.PROJECT_PACKAGING_EJB.equals( type )
+                    || "ejb-client".equals( type ) || Constants.PROJECT_PACKAGING_WAR.equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
                 addDependency( writer, dep, localRepository, config.getProject().getBasedir(), deployDir );
             }

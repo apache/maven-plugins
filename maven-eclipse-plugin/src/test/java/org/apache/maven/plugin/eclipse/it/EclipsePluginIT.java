@@ -597,8 +597,8 @@ public class EclipsePluginIT
         testProject( project, properties, "clean", "eclipse" );
 
         Xpp3Dom classpath =
-            Xpp3DomBuilder.build( new FileReader( getTestFile( "target/test-classes/projects/" + project +
-                "/.classpath" ) ) );
+            Xpp3DomBuilder.build( new FileReader( getTestFile( "target/test-classes/projects/" + project
+                + "/.classpath" ) ) );
 
         boolean foundDirectCompileAsProject = false;
         String foundJRE = "";

@@ -218,8 +218,9 @@ public class InstallPluginsMojo
             else
             {
                 getLog().debug(
-                                "Skipping dependency: " + artifact.getId() +
-                                    ". Set pluginDependencyTypes with a comma-separated list of types to change this." );
+                                "Skipping dependency: "
+                                    + artifact.getId()
+                                    + ". Set pluginDependencyTypes with a comma-separated list of types to change this." );
             }
         }
     }
@@ -230,8 +231,7 @@ public class InstallPluginsMojo
      * </p>
      * <ol>
      * <li>Determine whether the plugin should be extracted into a directory or not</li>
-     * <li>If the plugin's target location exists, or overwrite is set to true:
-     * <ol type="a">
+     * <li>If the plugin's target location exists, or overwrite is set to true: <ol type="a">
      * <li>if extract, ensure the plugin target location exists (mkdirs), and extract there.</li>
      * <li>copy the plugin file from the local repository to the target location</li>
      * </ol>
@@ -258,8 +258,8 @@ public class InstallPluginsMojo
 
         if ( !pluginsDir.exists() || !pluginsDir.isDirectory() )
         {
-            throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir +
-                " (plugins directory is missing or not a directory)." );
+            throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir
+                + " (plugins directory is missing or not a directory)." );
         }
 
         boolean installAsJar = true;
@@ -280,8 +280,8 @@ public class InstallPluginsMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to read manifest of plugin " +
-                artifact.getFile().getAbsolutePath(), e );
+            throw new MojoExecutionException( "Unable to read manifest of plugin "
+                + artifact.getFile().getAbsolutePath(), e );
         }
 
         String bundleVersion = attributes.getValue( "Bundle-Version" );
@@ -297,8 +297,8 @@ public class InstallPluginsMojo
         if ( bundleName == null )
         {
             getLog().debug(
-                            "Ignoring " + artifact.getArtifactId() +
-                                " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
+                            "Ignoring " + artifact.getArtifactId()
+                                + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
             return;
         }
 
@@ -317,8 +317,8 @@ public class InstallPluginsMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Failed to remove old plugin from: " + pluginFile + " or: " +
-                        pluginDir, e );
+                    throw new MojoExecutionException( "Failed to remove old plugin from: " + pluginFile + " or: "
+                        + pluginDir, e );
                 }
 
                 getLog().debug( "Removal of old plugin is complete; proceeding with plugin installation." );
@@ -346,14 +346,14 @@ public class InstallPluginsMojo
             if ( installAsJar )
             {
                 getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile +
-                                   " already exists. Set overwrite = true to override this." );
+                               "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile
+                                   + " already exists. Set overwrite = true to override this." );
             }
             else if ( !installAsJar )
             {
                 getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir +
-                                   " already exists. Set overwrite = true to override this." );
+                               "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir
+                                   + " already exists. Set overwrite = true to override this." );
             }
         }
     }
@@ -373,8 +373,8 @@ public class InstallPluginsMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Failed to copy Eclipse plugin: " + artifact.getId() + "\nfrom: " +
-                    artifact.getFile() + "\nto: " + pluginFile, e );
+                throw new MojoExecutionException( "Failed to copy Eclipse plugin: " + artifact.getId() + "\nfrom: "
+                    + artifact.getFile() + "\nto: " + pluginFile, e );
             }
         }
         else
@@ -414,8 +414,8 @@ public class InstallPluginsMojo
      */
     private String formatEclipsePluginName( Artifact artifact, String bundleVersion )
     {
-        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_" +
-            maven2OsgiConverter.getVersion( artifact.getVersion() );
+        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
+            + maven2OsgiConverter.getVersion( artifact.getVersion() );
     }
 
 }

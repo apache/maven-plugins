@@ -180,8 +180,8 @@ public class EclipseWtpFacetsWriter
 
     /**
      * Writes a facet <code>installed</code> element with attribute <code>facet</code> set to the value of argument
-     * <code>facetName</code>, and attribute <code>version</code> set to the value of argument
-     * <code>facetVersion</code>.
+     * <code>facetName</code>, and attribute <code>version</code> set to the value of argument <code>facetVersion</code>
+     * .
      * 
      * @param writer
      * @param facetName

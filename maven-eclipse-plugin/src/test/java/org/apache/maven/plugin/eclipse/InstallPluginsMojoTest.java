@@ -199,8 +199,8 @@ public class InstallPluginsMojoTest
 
         if ( resource == null )
         {
-            throw new IllegalStateException( "Cannot find test source jar: (m2repo|M2REPO)" + SOURCE_PATH +
-                " in context classloader!" );
+            throw new IllegalStateException( "Cannot find test source jar: (m2repo|M2REPO)" + SOURCE_PATH
+                + " in context classloader!" );
         }
 
         sourceFile = new File( resource.getPath() );

@@ -158,8 +158,7 @@ public class EclipseWtpComponentWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
-                +
-                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
+                + IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement(); // property
 
         }
@@ -181,8 +180,8 @@ public class EclipseWtpComponentWriter
             writer.endElement();
         }
 
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ||
-            Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
+            || Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
             // write out the dependencies.
             writeWarOrEarResources( writer, config.getProject(), localRepository );

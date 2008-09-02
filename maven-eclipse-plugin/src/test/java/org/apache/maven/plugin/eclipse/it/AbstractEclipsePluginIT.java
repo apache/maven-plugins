@@ -139,8 +139,8 @@ public abstract class AbstractEclipsePluginIT
                     pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( PomFile, "test",
                                                                                localRepositoryDirectory );
 
-                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory +
-                    "\n" );
+                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
+                    + "\n" );
 
                 installed = true;
             }
@@ -320,8 +320,8 @@ public abstract class AbstractEclipsePluginIT
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR +
-            "/" );
+        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR
+            + "/" );
 
     }
 
@@ -397,9 +397,9 @@ public abstract class AbstractEclipsePluginIT
             {
             }
 
-            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: " +
-                StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: " +
-                result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: "
+                + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: "
+                + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
 
@@ -493,8 +493,8 @@ public abstract class AbstractEclipsePluginIT
 
             if ( actualLines.size() <= i )
             {
-                fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: " +
-                    expectedLines.size() );
+                fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: "
+                    + expectedLines.size() );
             }
 
             String actual = actualLines.get( i ).toString();

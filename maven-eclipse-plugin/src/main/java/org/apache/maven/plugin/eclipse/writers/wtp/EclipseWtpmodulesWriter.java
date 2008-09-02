@@ -91,9 +91,8 @@ public class EclipseWtpmodulesWriter
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                +
-                IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                                                    new File( warSourceDirectory ), false ) );
+                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                      new File( warSourceDirectory ), false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );

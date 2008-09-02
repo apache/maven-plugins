@@ -70,8 +70,8 @@ import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A plugin extending
- * AbstractIdeSupportMojo should implement the <code>setup()</code> and <code>writeConfiguration()</code> methods,
- * plus the getters needed to get the various configuration flags and required components. The lifecycle:
+ * AbstractIdeSupportMojo should implement the <code>setup()</code> and <code>writeConfiguration()</code> methods, plus
+ * the getters needed to get the various configuration flags and required components. The lifecycle:
  * 
  * <pre>
  *       *** calls setup() where you can configure your specific stuff and stop the mojo from execute if appropriate ***
@@ -190,8 +190,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives, a
-     * status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the
-     * file <code>mvn-eclipse-cache.properties</code> in order to reset this cache.
+     * status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the file
+     * <code>mvn-eclipse-cache.properties</code> in order to reset this cache.
      * 
      * @parameter expression="${downloadSources}"
      */
@@ -614,9 +614,9 @@ public abstract class AbstractIdeSupportMojo
                             }
                         }
 
-                        if ( includeArtifact &&
-                            ( !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) ) || emittedReactorProjectId.add( art.getGroupId() +
-                                '-' + art.getArtifactId() ) ) )
+                        if ( includeArtifact
+                            && ( !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) ) || emittedReactorProjectId.add( art.getGroupId()
+                                + '-' + art.getArtifactId() ) ) )
                         {
 
                             // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar"
@@ -802,8 +802,8 @@ public abstract class AbstractIdeSupportMojo
             {
                 MavenProject reactorProject = (MavenProject) iter.next();
 
-                if ( reactorProject.getGroupId().equals( artifact.getGroupId() ) &&
-                    reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
                 {
                     if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
                     {
@@ -812,10 +812,10 @@ public abstract class AbstractIdeSupportMojo
                     else
                     {
                         getLog().info(
-                                       "Artifact " +
-                                           artifact.getId() +
-                                           " already available as a reactor project, but with different version. Expected: " +
-                                           artifact.getVersion() + ", found: " + reactorProject.getVersion() );
+                                       "Artifact "
+                                           + artifact.getId()
+                                           + " already available as a reactor project, but with different version. Expected: "
+                                           + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
                     }
                 }
             }
@@ -890,8 +890,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Resolve source artifacts and download them if <code>downloadSources</code> is <code>true</code>. Source and
      * javadocs artifacts will be attached to the <code>IdeDependency</code> Resolve source and javadoc artifacts. The
-     * resolved artifacts will be downloaded based on the <code>downloadSources</code> and
-     * <code>downloadJavadocs</code> attributes. Source and
+     * resolved artifacts will be downloaded based on the <code>downloadSources</code> and <code>downloadJavadocs</code>
+     * attributes. Source and
      * 
      * @param deps resolved dependencies
      */
@@ -955,8 +955,8 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Resolve the required artifacts for each of the dependency. <code>sources</code> or <code>javadoc</code>
-     * artifacts (depending on the <code>classifier</code>) are attached to the dependency.
+     * Resolve the required artifacts for each of the dependency. <code>sources</code> or <code>javadoc</code> artifacts
+     * (depending on the <code>classifier</code>) are attached to the dependency.
      * 
      * @param deps resolved dependencies
      * @param inClassifier the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
@@ -987,13 +987,13 @@ public abstract class AbstractIdeSupportMojo
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug(
-                                "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier() +
-                                    " at " + dependency.getId() + ":" + inClassifier );
+                                "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier()
+                                    + " at " + dependency.getId() + ":" + inClassifier );
             }
 
             String key =
-                dependency.getClassifier() == null ? dependency.getId() + ":" + inClassifier : dependency.getId() +
-                    ":" + inClassifier + ":" + dependency.getClassifier();
+                dependency.getClassifier() == null ? dependency.getId() + ":" + inClassifier : dependency.getId() + ":"
+                    + inClassifier + ":" + dependency.getClassifier();
 
             if ( !unavailableArtifactsCache.containsKey( key ) )
             {

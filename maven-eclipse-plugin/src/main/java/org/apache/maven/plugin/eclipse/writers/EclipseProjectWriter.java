@@ -48,7 +48,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Writes eclipse .project file.
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -195,7 +195,7 @@ public class EclipseProjectWriter
                 IdeDependency dep = config.getDepsOrdered()[j];
                 // Avoid duplicates entries when same project is refered using multiple types
                 // (ejb, test-jar ...)
-                if ( dep.isReferencedProject() && ! duplicates.contains( dep.getEclipseProjectName() ))
+                if ( dep.isReferencedProject() && !duplicates.contains( dep.getEclipseProjectName() ) )
                 {
                     writer.startElement( "project" ); //$NON-NLS-1$
                     writer.writeText( dep.getEclipseProjectName() );
@@ -257,8 +257,8 @@ public class EclipseProjectWriter
                 {
                     IdeDependency dep = config.getDepsOrdered()[j];
 
-                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject() &&
-                        !dep.isTestDependency() && !dep.isOsgiBundle() )
+                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
+                        && !dep.isTestDependency() && !dep.isOsgiBundle() )
                     {
                         String name = dep.getFile().getName();
                         addLink( writer, name, StringUtils.replace( IdeUtils.getCanonicalPath( dep.getFile() ), "\\",
