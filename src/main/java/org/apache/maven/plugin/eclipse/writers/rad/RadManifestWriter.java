@@ -141,8 +141,8 @@ public class RadManifestWriter
         Manifest manifest = createNewManifest();
 
         File manifestFile =
-            new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar +
-                MANIFEST_MF_FILENAME );
+            new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar
+                + MANIFEST_MF_FILENAME );
 
         log.info( "MANIFEST LOCATION: " + manifestFile );
 
@@ -165,8 +165,8 @@ public class RadManifestWriter
             }
             catch ( Exception e )
             {
-                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { metaInfBaseDirectory +
-                    File.separatorChar + MANIFEST_MF_FILENAME } ) );
+                log.error( Messages.getString( "EclipsePlugin.cantwritetofile", new Object[] { metaInfBaseDirectory
+                    + File.separatorChar + MANIFEST_MF_FILENAME } ) );
             }
 
         }
@@ -270,8 +270,8 @@ public class RadManifestWriter
                 newValue = orderClasspath( newValue );
                 existingValue = orderClasspath( existingValue );
             }
-            if ( ( newValue == null || !newValue.equals( existingValue ) ) &&
-                ( existingValue == null || !existingValue.equals( newValue ) ) )
+            if ( ( newValue == null || !newValue.equals( existingValue ) )
+                && ( existingValue == null || !existingValue.equals( newValue ) ) )
             {
                 return false;
             }

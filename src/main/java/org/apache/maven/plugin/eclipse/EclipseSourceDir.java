@@ -177,8 +177,8 @@ public class EclipseSourceDir
      */
     public boolean equals( Object obj )
     {
-        return ( obj != null ) && ( obj instanceof EclipseSourceDir ) &&
-            this.path.equals( ( (EclipseSourceDir) obj ).path );
+        return ( obj != null ) && ( obj instanceof EclipseSourceDir )
+            && this.path.equals( ( (EclipseSourceDir) obj ).path );
     }
 
     /**

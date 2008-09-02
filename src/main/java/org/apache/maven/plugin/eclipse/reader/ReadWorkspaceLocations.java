@@ -183,7 +183,7 @@ public class ReadWorkspaceLocations
      * @param logger the logger for errors
      */
     private void detectDefaultJREContainer( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
-                                             Log logger )
+                                            Log logger )
     {
         String defaultJREContainer = ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT;
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
@@ -196,8 +196,8 @@ public class ReadWorkspaceLocations
                 if ( foundContainer == null )
                 {
                     foundContainer =
-                        getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ),
-                                                     jreMap, logger );
+                        getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ), jreMap,
+                                                    logger );
                 }
                 if ( foundContainer == null )
                 {
@@ -205,8 +205,8 @@ public class ReadWorkspaceLocations
                     foundContainer = (String) jreMap.get( sourceVersion );
                     if ( foundContainer != null )
                     {
-                        logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): " +
-                            foundContainer );
+                        logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): "
+                            + foundContainer );
                     }
                 }
                 if ( foundContainer == null )
@@ -342,8 +342,8 @@ public class ReadWorkspaceLocations
                                                                          null ) );
             String packaging = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
 
-            logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging +
-                " (" + eclipseProjectName + ")" + " -> " + projectLocation );
+            logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging + " ("
+                + eclipseProjectName + ")" + " -> " + projectLocation );
             return new IdeDependency( group, artifact, version, packaging, true, false, false, false, false, null,
                                       packaging, false, null, 0, eclipseProjectName );
         }
@@ -467,13 +467,13 @@ public class ReadWorkspaceLocations
                             jreMap.put( version, classpathEntry );
                         }
                         jreMap.put( jrePath, classpathEntry );
-                        logger.debug( "Additional Classpath Container version: " + version + " " + classpathEntry +
-                            " location: " + jrePath );
+                        logger.debug( "Additional Classpath Container version: " + version + " " + classpathEntry
+                            + " location: " + jrePath );
                     }
                     else
                     {
-                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " " +
-                            classpathEntry + " location: " + jrePath );
+                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " "
+                            + classpathEntry + " location: " + jrePath );
                     }
                 }
                 catch ( IOException e )

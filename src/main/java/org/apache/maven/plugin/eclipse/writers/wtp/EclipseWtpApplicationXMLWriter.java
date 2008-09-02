@@ -113,9 +113,9 @@ public class EclipseWtpApplicationXMLWriter
         if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             File applicationXmlFile =
-                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar" +
-                    File.separator + "META-INF" + File.separator +
-                    EclipseWtpApplicationXMLWriter.APPLICATION_XML_FILENAME );
+                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar"
+                    + File.separator + "META-INF" + File.separator
+                    + EclipseWtpApplicationXMLWriter.APPLICATION_XML_FILENAME );
             // create the directory structiure for eclipse deployment
             applicationXmlFile.getParentFile().mkdirs();
             // copy all deployment files to the eclipse deployment
@@ -133,8 +133,8 @@ public class EclipseWtpApplicationXMLWriter
                 applicationXmlDom.getChildren( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE );
 
             File modulemapsXmlFile =
-                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar" +
-                    File.separator + "META-INF" + File.separator + EclipseWtpApplicationXMLWriter.MODULEMAPS_FILENAME );
+                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar"
+                    + File.separator + "META-INF" + File.separator + EclipseWtpApplicationXMLWriter.MODULEMAPS_FILENAME );
             Xpp3Dom modulemapsXmlDom = readXMLFile( modulemapsXmlFile );
             if ( modulemapsXmlDom == null )
             {
@@ -170,8 +170,8 @@ public class EclipseWtpApplicationXMLWriter
         try
         {
             File applicationDirectory =
-                new File( this.config.getEclipseProjectDirectory(), "src" + File.separator + "main" + File.separator +
-                    "application" );
+                new File( this.config.getEclipseProjectDirectory(), "src" + File.separator + "main" + File.separator
+                    + "application" );
             File eclipseApplicationDirectory =
                 new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar" );
             copyDirectoryStructure( applicationDirectory, eclipseApplicationDirectory );
@@ -225,8 +225,8 @@ public class EclipseWtpApplicationXMLWriter
             {
                 if ( !destination.exists() && !destination.mkdirs() )
                 {
-                    throw new IOException( "Could not create destination directory '" + destination.getAbsolutePath() +
-                        "'." );
+                    throw new IOException( "Could not create destination directory '" + destination.getAbsolutePath()
+                        + "'." );
                 }
 
                 copyDirectoryStructure( file, destination );
@@ -322,24 +322,24 @@ public class EclipseWtpApplicationXMLWriter
                                                                                                                 dependency.getEclipseProjectName() ) )
             {
                 if ( ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) || dependency.getType().equals(
-                                                                                                                      "ejb3" ) ) &&
-                    children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS ) &&
-                    children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
-                                                                                                                    EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
-                                                                                                                                                                      EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_EJB_MODULE ) )
+                                                                                                                      "ejb3" ) )
+                    && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS )
+                    && children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
+                                                                                                                       EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
+                                                                                                                                                                         EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_EJB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) &&
-                    children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS ) &&
-                    children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
-                                                                                                                    EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
-                                                                                                                                                                      EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_WEB_MODULE ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR )
+                    && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS )
+                    && children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
+                                                                                                                       EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
+                                                                                                                                                                         EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_WEB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR ) &&
-                    children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_UTILITY_JARMAPPINGS ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR )
+                    && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
                 }
@@ -387,8 +387,8 @@ public class EclipseWtpApplicationXMLWriter
             utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID, "UtilityJARMapping_" + id );
             utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.MODULEMAPS_PROJECT_NAME,
                                             dependency.getEclipseProjectName() );
-            utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.URI, dependency.getEclipseProjectName() +
-                ".jar" );
+            utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.URI, dependency.getEclipseProjectName()
+                + ".jar" );
             modulemapXmlDom.addChild( utilityJARMapping );
             return utilityJARMapping;
         }
@@ -511,8 +511,8 @@ public class EclipseWtpApplicationXMLWriter
      */
     private void updateApplicationXml( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapXmlDom, IdeDependency dependency )
     {
-        if ( dependency.isTestDependency() || dependency.isProvided() ||
-            dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
+        if ( dependency.isTestDependency() || dependency.isProvided()
+            || dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
         {
             return;
         }
@@ -559,8 +559,8 @@ public class EclipseWtpApplicationXMLWriter
                 handled( module );
                 module.getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB ).getChild(
                                                                                                 EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB_URI ).setValue(
-                                                                                                                                                                   dependency.getEclipseProjectName() +
-                                                                                                                                                                       ".war" );
+                                                                                                                                                                   dependency.getEclipseProjectName()
+                                                                                                                                                                       + ".war" );
                 module.getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB ).getChild(
                                                                                                 EclipseWtpApplicationXMLWriter.APPLICATION_XML_CONTEXT_ROOT ).setValue(
                                                                                                                                                                         contextRootInPom );
@@ -584,8 +584,8 @@ public class EclipseWtpApplicationXMLWriter
             Xpp3Dom webArtifactId = this.webModulesFromPoms[index].getChild( "artifactId" );
             Xpp3Dom webContextRoot = this.webModulesFromPoms[index].getChild( "contextRoot" );
 
-            if ( webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals( artifactId ) &&
-                webGroupId != null && webGroupId.getValue().equals( groupId ) )
+            if ( webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals( artifactId )
+                && webGroupId != null && webGroupId.getValue().equals( groupId ) )
             {
                 return webContextRoot.getValue();
             }

@@ -165,10 +165,10 @@ public class RadPlugin
             new RadManifestWriter().init( getLog(), config ).write();
         }
 
-        if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) &&
-            !Constants.PROJECT_PACKAGING_WAR.equals( packaging ) &&
-            !Constants.PROJECT_PACKAGING_EJB.equals( packaging ) &&
-            !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ) )
+        if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
+            && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
+            && !Constants.PROJECT_PACKAGING_EJB.equals( packaging )
+            && !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ) )
         {
 
             String generatedResourceDir =
@@ -303,16 +303,16 @@ public class RadPlugin
      */
     protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
-        if ( this.reactorProjects != null &&
-            ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() ) ||
-                Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
+        if ( this.reactorProjects != null
+            && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
+                || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
         {
             for ( Iterator iter = this.reactorProjects.iterator(); iter.hasNext(); )
             {
                 MavenProject reactorProject = (MavenProject) iter.next();
 
-                if ( reactorProject.getGroupId().equals( artifact.getGroupId() ) &&
-                    reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
                 {
                     if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
                     {
@@ -321,10 +321,10 @@ public class RadPlugin
                     else
                     {
                         getLog().info(
-                                       "Artifact " +
-                                           artifact.getId() +
-                                           " already available as a reactor project, but with different version. Expected: " +
-                                           artifact.getVersion() + ", found: " + reactorProject.getVersion() );
+                                       "Artifact "
+                                           + artifact.getId()
+                                           + " already available as a reactor project, but with different version. Expected: "
+                                           + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
                     }
                 }
             }

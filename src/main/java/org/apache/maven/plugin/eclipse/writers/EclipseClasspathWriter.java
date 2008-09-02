@@ -206,8 +206,8 @@ public class EclipseClasspathWriter
         {
             EclipseSourceDir dir = config.getSourceDirs()[j];
 
-            log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output=" +
-                dir.getOutput() + "; default output=" + defaultOutput );
+            log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output="
+                + dir.getOutput() + "; default output=" + defaultOutput );
 
             boolean isSpecial = false;
 
@@ -218,8 +218,7 @@ public class EclipseClasspathWriter
                 // and if the default output has any sources that copy there.
 
                 if ( dir.getOutput() != null // resource output dir is set
-                    &&
-                    !dir.getOutput().equals( defaultOutput ) // output dir is not default target/classes
+                    && !dir.getOutput().equals( defaultOutput ) // output dir is not default target/classes
                     && dir.getOutput().startsWith( defaultOutput ) // ... but is nested
                     && byOutputDir.get( defaultOutput ) != null // ???
                     && !( (List) byOutputDir.get( defaultOutput ) ).isEmpty() // ???
@@ -228,8 +227,8 @@ public class EclipseClasspathWriter
                     // do not specify as source since the output will be nested. Instead, mark
                     // it as a todo, and handle it with a custom build.xml file later.
 
-                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output=" +
-                        dir.getOutput() + ")" );
+                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output="
+                        + dir.getOutput() + ")" );
 
                     isSpecial = true;
                     specialSources.add( dir );
@@ -325,8 +324,8 @@ public class EclipseClasspathWriter
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Cannot create " + config.getEclipseProjectDirectory() +
-                    "/maven-eclipse.xml", e );
+                throw new MojoExecutionException( "Cannot create " + config.getEclipseProjectDirectory()
+                    + "/maven-eclipse.xml", e );
             }
 
             log.info( "Creating external launcher file" );
@@ -340,9 +339,9 @@ public class EclipseClasspathWriter
                                            new BuildCommand(
                                                              "org.eclipse.ui.externaltools.ExternalToolBuilder",
                                                              "LaunchConfigHandle",
-                                                             "<project>/" +
-                                                                 EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS +
-                                                                 "Maven_Ant_Builder.launch" ) );
+                                                             "<project>/"
+                                                                 + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
+                                                                 + "Maven_Ant_Builder.launch" ) );
         }
 
         // ----------------------------------------------------------------------
@@ -357,24 +356,24 @@ public class EclipseClasspathWriter
         Set addedDependencies = new HashSet();
         // TODO if (..magic property equals orderDependencies..)
 
-		// ----------------------------------------------------------------------
+        // ----------------------------------------------------------------------
         // Java API dependencies that may complete the classpath container so must
-		// be declared BEFORE so that container access rules don't fail
+        // be declared BEFORE so that container access rules don't fail
         // ----------------------------------------------------------------------
         IdeDependency[] depsToWrite = config.getDepsOrdered();
-		for ( int j = 0; j < depsToWrite.length; j++ )
+        for ( int j = 0; j < depsToWrite.length; j++ )
         {
             IdeDependency dep = depsToWrite[j];
-			if ( dep.isJavaApi() )
-			{
-				String depId = getDependencyId( dep );
-				if ( !addedDependencies.contains( depId ) )
+            if ( dep.isJavaApi() )
+            {
+                String depId = getDependencyId( dep );
+                if ( !addedDependencies.contains( depId ) )
                 {
-				    addDependency( writer, dep );
-	                addedDependencies.add( depId );
+                    addDependency( writer, dep );
+                    addedDependencies.add( depId );
                 }
-			}
-		}
+            }
+        }
 
         // ----------------------------------------------------------------------
         // Container classpath entries
@@ -401,7 +400,7 @@ public class EclipseClasspathWriter
                 /* avoid duplicates in the classpath for artifacts with different types (like ejbs or test-jars) */
                 if ( !addedDependencies.contains( depId ) )
                 {
-	                addDependency( writer, dep );
+                    addDependency( writer, dep );
                     addedDependencies.add( depId );
                 }
             }
@@ -510,11 +509,10 @@ public class EclipseClasspathWriter
                     if ( ATTR_VAR.equals( kind ) )
                     {
                         sourcepath =
-                            M2_REPO +
-                                "/" //$NON-NLS-1$
-                                +
-                                IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(),
-                                                                    false );
+                            M2_REPO
+                                + "/" //$NON-NLS-1$
+                                + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(),
+                                                                      false );
                     }
                     else
                     {
@@ -536,11 +534,11 @@ public class EclipseClasspathWriter
         }
 
         // Skip aspectj libraries since they are in the container.
-        if( (config.getAjdtVersion() != 0) && dep.getArtifactId().toLowerCase().startsWith( "aspectj" ) )
+        if ( ( config.getAjdtVersion() != 0 ) && dep.getArtifactId().toLowerCase().startsWith( "aspectj" ) )
         {
             return;
-        } 
-        
+        }
+
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, kind );
         writer.addAttribute( ATTR_PATH, path );
@@ -567,9 +565,9 @@ public class EclipseClasspathWriter
 
         }
 
-        if ( Constants.PROJECT_PACKAGING_WAR.equals( this.config.getPackaging() ) && config.getWtpapplicationxml() &&
-            kind.equals( ATTR_VAR ) && !dep.isTestDependency() && !dep.isProvided() &&
-            !dep.isSystemScopedOutsideProject( this.config.getProject() ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equals( this.config.getPackaging() ) && config.getWtpapplicationxml()
+            && kind.equals( ATTR_VAR ) && !dep.isTestDependency() && !dep.isProvided()
+            && !dep.isSystemScopedOutsideProject( this.config.getProject() ) )
         {
             if ( !attributeElemOpen )
             {
@@ -584,7 +582,7 @@ public class EclipseClasspathWriter
 
         }
 
-        if( dep.isAjdtDependency() && (config.getAjdtVersion() >= 1.5) )
+        if ( dep.isAjdtDependency() && ( config.getAjdtVersion() >= 1.5 ) )
         {
             if ( !attributeElemOpen )
             {
@@ -596,10 +594,10 @@ public class EclipseClasspathWriter
             writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_ASPECTPATH ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
-           
+
         }
 
-        if( dep.isAjdtWeaveDependency() && (config.getAjdtVersion() >= 1.5)  )
+        if ( dep.isAjdtWeaveDependency() && ( config.getAjdtVersion() >= 1.5 ) )
         {
             if ( !attributeElemOpen )
             {
@@ -611,9 +609,9 @@ public class EclipseClasspathWriter
             writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_INPATH ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
-           
+
         }
-        
+
         if ( attributeElemOpen )
         {
             writer.endElement();

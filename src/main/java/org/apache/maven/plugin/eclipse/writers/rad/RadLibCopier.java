@@ -88,8 +88,8 @@ public class RadLibCopier
         }
         for ( int index = 0; index < deps.length; index++ )
         {
-            if ( !deps[index].isTestDependency() && !deps[index].isProvided() && !deps[index].isReferencedProject() &&
-                !deps[index].isSystemScoped() )
+            if ( !deps[index].isTestDependency() && !deps[index].isProvided() && !deps[index].isReferencedProject()
+                && !deps[index].isSystemScoped() )
             {
                 copyFile( deps[index].getFile(), new File( destDir, deps[index].getFile().getName() ), log );
             }
@@ -151,8 +151,8 @@ public class RadLibCopier
             IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
 
         String srcMainWebappWebInfLibDirName =
-            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF" +
-                File.separatorChar + "lib";
+            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF"
+                + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirName );
         srcMainWebappWebInfLibDir.mkdirs();

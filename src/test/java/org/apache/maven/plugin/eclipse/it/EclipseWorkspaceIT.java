@@ -30,12 +30,12 @@ public class EclipseWorkspaceIT
 {
 
     private static final String ECLIPSE_JDT_CORE_PREFS_PATH =
-        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" +
-            EclipseWorkspaceWriter.ECLIPSE_JDT_CORE_PREFS_FILE;
+        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/"
+            + EclipseWorkspaceWriter.ECLIPSE_JDT_CORE_PREFS_FILE;
 
     private static final String ECLIPSE_JDT_UI_PREFS_PATH =
-        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/" +
-            EclipseWorkspaceWriter.ECLIPSE_JDT_UI_PREFS_FILE;
+        EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR + "/"
+            + EclipseWorkspaceWriter.ECLIPSE_JDT_UI_PREFS_FILE;
 
     protected void setUp()
         throws Exception

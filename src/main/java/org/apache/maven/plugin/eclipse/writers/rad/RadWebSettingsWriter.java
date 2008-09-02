@@ -180,8 +180,8 @@ public class RadWebSettingsWriter
 
                 if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
                 {
-                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString() +
-                        " selected for inclusion as lib-module" );
+                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
+                        + " selected for inclusion as lib-module" );
 
                     String depName = dependency.getEclipseProjectName();
                     String depJar = dependency.getArtifactId() + ".jar";

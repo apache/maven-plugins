@@ -124,8 +124,8 @@ public class RadCleanMojo
         String webContentDir = IdeUtils.toRelativeAndFixSeparator( basedir, warSourceDirectory, false );
 
         String srcMainWebappWebInfLibDirname =
-            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF" +
-                File.separatorChar + "lib";
+            basedir.getAbsolutePath() + File.separatorChar + webContentDir + File.separatorChar + "WEB-INF"
+                + File.separatorChar + "lib";
 
         File srcMainWebappWebInfLibDir = new File( srcMainWebappWebInfLibDirname );
         srcMainWebappWebInfLibDir.mkdirs();
@@ -171,8 +171,8 @@ public class RadCleanMojo
     {
 
         // sanity check, only support cleanup of 2 types - jar and war
-        if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packagingType ) ||
-            Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packagingType ) )
+        if ( Constants.PROJECT_PACKAGING_JAR.equalsIgnoreCase( packagingType )
+            || Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packagingType ) )
         {
             String[] oldFiles =
                 FileUtils.getFilesFromExtension( directory.getAbsolutePath(), new String[] { packagingType } );
