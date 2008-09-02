@@ -51,7 +51,7 @@
   <properties>
     <maven.test.jvmargs>-Xmx256m</maven.test.jvmargs>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -214,17 +214,24 @@
                   <!-- The tests check file encoding and class path ordering which depends on fixes in latest Maven -->
                   <version>[2.0.9,)</version>
                 </requireMavenVersion>
-              </rules>    
+              </rules>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <configuration>
+              <includes>
+                <include>**/*Test.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
           <excludes>
             <exclude>**/Abstract*.java</exclude>
             <exclude>**/InstallPluginsMojoTest.java</exclude>
@@ -240,7 +247,6 @@
       </plugin>
     </plugins>
   </build>
-  
   <profiles>
     <profile>
       <id>run-its</id>
@@ -248,12 +254,19 @@
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*IT.java</include>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
+            <executions>
+              <execution>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>**/*IT.java</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <artifactId>maven-plugin-plugin</artifactId>
@@ -263,7 +276,7 @@
                 <id>generated-helpmojo</id>
                 <configuration>
                   <extractors>
-                    <extractor/>
+                    <extractor />
                   </extractors>
                 </configuration>
               </execution>
