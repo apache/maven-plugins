@@ -60,9 +60,9 @@ public class MyEclipseMetadataWriter
     {
         String packaging = config.getProject().getPackaging();
 
-        if ( !Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) &&
-            !Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) &&
-            !Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
+        if ( !Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging )
+            && !Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
+            && !Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
             return;
         }

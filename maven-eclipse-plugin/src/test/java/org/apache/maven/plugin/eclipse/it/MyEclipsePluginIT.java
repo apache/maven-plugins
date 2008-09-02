@@ -54,7 +54,7 @@ public class MyEclipsePluginIT
 
     /**
      * Simple project with additionalConfig
-     *
+     * 
      * @throws Exception
      */
     public void testMyEclipseProject05()

@@ -136,9 +136,9 @@ public class EclipsePlugin
     private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature"; //$NON-NLS-1$
 
     protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
-    
+
     protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"; //$NON-NLS-1$
-    
+
     protected static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
 
     // warning, order is important for binary search
@@ -329,8 +329,7 @@ public class EclipsePlugin
     private boolean pde;
 
     /**
-     * Is it an AJDT project? If yes, the plugin adds the necessary natures and build commands to
-     * the .project file. 
+     * Is it an AJDT project? If yes, the plugin adds the necessary natures and build commands to the .project file.
      */
     private boolean ajdt;
 
@@ -413,8 +412,8 @@ public class EclipsePlugin
     private EclipseConfigFile[] additionalConfig;
 
     /**
-     * If set to <code>true</code>, the version number of the artifact is appended to the name of the generated
-     * Eclipse project. See projectNameTemplate for other options.
+     * If set to <code>true</code>, the version number of the artifact is appended to the name of the generated Eclipse
+     * project. See projectNameTemplate for other options.
      * 
      * @parameter expression="${eclipse.addVersionToProjectName}" default-value="false"
      */
@@ -430,8 +429,8 @@ public class EclipsePlugin
 
     /**
      * Allows configuring the name of the eclipse projects. This property if set wins over addVersionToProjectName and
-     * addGroupIdToProjectName You can use <code>[groupId]</code>, <code>[artifactId]</code> and
-     * <code>[version]</code> variables. eg. <code>[groupId].[artifactId]-[version]</code>
+     * addGroupIdToProjectName You can use <code>[groupId]</code>, <code>[artifactId]</code> and <code>[version]</code>
+     * variables. eg. <code>[groupId].[artifactId]-[version]</code>
      * 
      * @parameter expression="${eclipse.projectNameTemplate}"
      */
@@ -499,13 +498,13 @@ public class EclipsePlugin
     protected boolean limitProjectReferencesToWorkspace;
 
     /**
-     * The version of AJDT for which configuration files will be generated. The default value is "1.5", supported versions 
-     * are "none", "1.4", and "1.5".
+     * The version of AJDT for which configuration files will be generated. The default value is "1.5", supported
+     * versions are "none", "1.4", and "1.5".
      * 
      * @parameter expression="${eclipse.ajdtVersion}" default-value="1.5"
      */
     private String ajdtVersion;
-    
+
     protected boolean isJavaProject()
     {
         return isJavaProject;
@@ -756,8 +755,8 @@ public class EclipsePlugin
         // ear projects don't contain java sources
         // pde projects are always java projects
         isJavaProject =
-            pde ||
-                ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
+            pde
+                || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
         setupExtras();
 
@@ -859,8 +858,8 @@ public class EclipsePlugin
         for ( Iterator iter = classpathContainers.iterator(); iter.hasNext(); )
         {
             Object classPathContainer = iter.next();
-            if ( classPathContainer != null &&
-                classPathContainer.toString().startsWith( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
+            if ( classPathContainer != null
+                && classPathContainer.toString().startsWith( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
             {
                 containsJREContainer = true;
                 break;
@@ -1109,13 +1108,13 @@ public class EclipsePlugin
         {
             ajdtVersionFloat = Float.parseFloat( ajdtVersion );
         }
-        catch( NumberFormatException e )
+        catch ( NumberFormatException e )
         {
             ajdtVersionFloat = 0.0f;
         }
-        
+
         config.setAjdtVersion( ajdtVersionFloat );
-        
+
         Set convertedBuildCommands = new LinkedHashSet();
 
         if ( buildcommands != null )
@@ -1135,7 +1134,7 @@ public class EclipsePlugin
             }
         }
 
-        if( ajdt )
+        if ( ajdt )
         {
             buildAjdtWeaveDeps( deps );
             buildAspectjDeps( deps );
@@ -1171,8 +1170,8 @@ public class EclipsePlugin
      */
     private void collectWarContextRootsFromReactorEarConfiguration( EclipseWriterConfig config )
     {
-        if ( reactorProjects != null && wtpContextName == null &&
-            Constants.PROJECT_PACKAGING_WAR.equals( project.getPackaging() ) )
+        if ( reactorProjects != null && wtpContextName == null
+            && Constants.PROJECT_PACKAGING_WAR.equals( project.getPackaging() ) )
         {
             for ( Iterator iter = reactorProjects.iterator(); iter.hasNext(); )
             {
@@ -1188,15 +1187,14 @@ public class EclipsePlugin
                         Xpp3Dom groupId = warDefinitions[index].getChild( "groupId" );
                         Xpp3Dom artifactId = warDefinitions[index].getChild( "artifactId" );
                         Xpp3Dom contextRoot = warDefinitions[index].getChild( "contextRoot" );
-                        if ( groupId != null && artifactId != null && contextRoot != null &&
-                            groupId.getValue() != null && artifactId.getValue() != null &&
-                            contextRoot.getValue() != null )
+                        if ( groupId != null && artifactId != null && contextRoot != null && groupId.getValue() != null
+                            && artifactId.getValue() != null && contextRoot.getValue() != null )
                         {
                             getLog().info(
-                                           "Found context root definition for " + groupId.getValue() + ":" +
-                                               artifactId.getValue() + " " + contextRoot.getValue() );
-                            if ( project.getArtifactId().equals( artifactId.getValue() ) &&
-                                project.getGroupId().equals( groupId.getValue() ) )
+                                           "Found context root definition for " + groupId.getValue() + ":"
+                                               + artifactId.getValue() + " " + contextRoot.getValue() );
+                            if ( project.getArtifactId().equals( artifactId.getValue() )
+                                && project.getGroupId().equals( groupId.getValue() ) )
                             {
                                 config.setContextName( contextRoot.getValue() );
                             }
@@ -1204,9 +1202,9 @@ public class EclipsePlugin
                         else
                         {
                             getLog().info(
-                                           "Found incomplete ear configuration in " + reactorProject.getGroupId() +
-                                               ":" + reactorProject.getGroupId() + " found " +
-                                               warDefinitions[index].toString() );
+                                           "Found incomplete ear configuration in " + reactorProject.getGroupId() + ":"
+                                               + reactorProject.getGroupId() + " found "
+                                               + warDefinitions[index].toString() );
                         }
                     }
                 }
@@ -1290,16 +1288,16 @@ public class EclipsePlugin
         if ( getWorkspaceConfiguration().getDefaultClasspathContainer() != null )
         {
             getLog().info(
-                           "Adding default classpath contaigner: " +
-                               getWorkspaceConfiguration().getDefaultClasspathContainer() );
+                           "Adding default classpath contaigner: "
+                               + getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
         }
         if ( pde )
         {
             classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
         }
-        
-        if( ajdt )
+
+        if ( ajdt )
         {
             classpathContainers.add( ASPECTJ_RT_CONTAINER );
         }
@@ -1318,7 +1316,7 @@ public class EclipsePlugin
         {
             if ( ajdt )
             {
-                buildcommands.add( new BuildCommand( BUILDER_AJDT_CORE_JAVA) );
+                buildcommands.add( new BuildCommand( BUILDER_AJDT_CORE_JAVA ) );
             }
             else
             {
@@ -1383,8 +1381,8 @@ public class EclipsePlugin
         extractSourceDirs( testDirectories, project.getTestCompileSourceRoots(), basedir, projectBaseDir, true,
                            testOutput );
 
-        extractResourceDirs( testDirectories, project.getBuild().getTestResources(), project, basedir,
-                             projectBaseDir, true, testOutput );
+        extractResourceDirs( testDirectories, project.getBuild().getTestResources(), project, basedir, projectBaseDir,
+                             true, testOutput );
 
         // avoid duplicated entries
         Set directories = new LinkedHashSet();
@@ -1403,8 +1401,8 @@ public class EclipsePlugin
             directories.addAll( mainDirectories );
             directories.addAll( testDirectories );
         }
- if( ajdt )
-extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
+        if ( ajdt )
+            extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
@@ -1485,153 +1483,156 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
                 }
 
                 getLog().debug(
-                                "Making relative and fixing separator: { " + workspaceProjectBaseDir + ", " +
-                                    outputFile + ", false }." );
+                                "Making relative and fixing separator: { " + workspaceProjectBaseDir + ", "
+                                    + outputFile + ", false }." );
                 thisOutput = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
             getLog().debug(
-                            "Adding eclipse source dir: { " + resourceDir + ", " + thisOutput + ", true, " + test +
-                                ", " + includePattern + ", " + excludePattern + " }." );
+                            "Adding eclipse source dir: { " + resourceDir + ", " + thisOutput + ", true, " + test
+                                + ", " + includePattern + ", " + excludePattern + " }." );
 
             directories.add( new EclipseSourceDir( resourceDir, thisOutput, true, test, includePattern, excludePattern,
                                                    resource.isFiltering() ) );
         }
     }
 
-    private void extractAspectDirs( Set directories, MavenProject project, File basedir, File projectBaseDir, String testOutput ) throws MojoExecutionException
+    private void extractAspectDirs( Set directories, MavenProject project, File basedir, File projectBaseDir,
+                                    String testOutput )
+        throws MojoExecutionException
     {
         Xpp3Dom configuration = getAspectjConfiguration( project );
-        if( configuration != null )
+        if ( configuration != null )
         {
             String aspectDirectory = DEFAULT_ASPECT_DIRECTORY;
             Xpp3Dom aspectDirectoryElement = configuration.getChild( ASPECT_DIRECTORY );
-            if( aspectDirectoryElement != null )
+            if ( aspectDirectoryElement != null )
             {
                 aspectDirectory = aspectDirectoryElement.getValue();
             }
-             
+
             File aspectDirectoryFile = new File( basedir, aspectDirectory );
-            if( aspectDirectoryFile.exists() && aspectDirectoryFile.isDirectory() )
+            if ( aspectDirectoryFile.exists() && aspectDirectoryFile.isDirectory() )
             {
-                String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile, !projectBaseDir
-                    .equals( basedir ) );
-    
+                String sourceRoot =
+                    IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile,
+                                                        !projectBaseDir.equals( basedir ) );
+
                 directories.add( new EclipseSourceDir( sourceRoot, null, false, false, null, null, false ) );
             }
-    
+
             String testAspectDirectory = DEFAULT_TEST_ASPECT_DIRECTORY;
             Xpp3Dom testAspectDirectoryElement = configuration.getChild( TEST_ASPECT_DIRECTORY );
-            if( testAspectDirectoryElement != null )
+            if ( testAspectDirectoryElement != null )
             {
                 testAspectDirectory = testAspectDirectoryElement.getValue();
             }
-             
+
             File testAspectDirectoryFile = new File( basedir, testAspectDirectory );
-            if( testAspectDirectoryFile.exists() && testAspectDirectoryFile.isDirectory() )
+            if ( testAspectDirectoryFile.exists() && testAspectDirectoryFile.isDirectory() )
             {
-                String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile, !projectBaseDir
-                    .equals( basedir ) );
-    
+                String sourceRoot =
+                    IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile,
+                                                        !projectBaseDir.equals( basedir ) );
+
                 directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, null, null, false ) );
             }
         }
     }
 
-    private boolean enableAjdt(MavenProject project)
+    private boolean enableAjdt( MavenProject project )
     {
         boolean enable = false;
         List buildPlugins = project.getBuildPlugins();
         for ( Iterator it = buildPlugins.iterator(); it.hasNext(); )
         {
-            Plugin plugin = (Plugin)it.next();
-            if( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO ) && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            Plugin plugin = (Plugin) it.next();
+            if ( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO )
+                && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
             {
                 enable = true;
                 break;
             }
         }
-        
+
         return enable;
     }
-    
-    private Xpp3Dom getAspectjConfiguration(MavenProject project) 
+
+    private Xpp3Dom getAspectjConfiguration( MavenProject project )
     {
         Xpp3Dom configuration = null;
         List buildPlugins = project.getBuildPlugins();
         for ( Iterator it = buildPlugins.iterator(); it.hasNext(); )
         {
-            Plugin plugin = (Plugin)it.next();
-            if( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO ) && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            Plugin plugin = (Plugin) it.next();
+            if ( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO )
+                && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
             {
-                configuration = (Xpp3Dom)plugin.getConfiguration();
+                configuration = (Xpp3Dom) plugin.getConfiguration();
                 break;
             }
         }
-        
+
         return configuration;
     }
 
-    private void buildAspectjDeps( IdeDependency[] deps ) throws MojoExecutionException
+    private void buildAspectjDeps( IdeDependency[] deps )
+        throws MojoExecutionException
     {
         Xpp3Dom configuration = getAspectjConfiguration( executedProject );
-        if( configuration != null )
+        if ( configuration != null )
         {
-            Xpp3Dom aspectLibrariesParent  = configuration.getChild( ASPECT_LIBRARIES );
-            if( aspectLibrariesParent != null )
+            Xpp3Dom aspectLibrariesParent = configuration.getChild( ASPECT_LIBRARIES );
+            if ( aspectLibrariesParent != null )
             {
                 Xpp3Dom[] aspectLibraries = aspectLibrariesParent.getChildren( ASPECT_LIBRARY );
-                outerLoop:
-                for( int i = 0 ; i < aspectLibraries.length ; i++ )
+                outerLoop: for ( int i = 0; i < aspectLibraries.length; i++ )
                 {
-                    String artifactId = aspectLibraries[ i ].getChild( POM_ELT_ARTIFACT_ID ).getValue();
-                    String groupId = aspectLibraries[ i ].getChild( POM_ELT_GROUP_ID ).getValue();
-                    for( int j = 0 ; j < deps.length ; j++ )
+                    String artifactId = aspectLibraries[i].getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = aspectLibraries[i].getChild( POM_ELT_GROUP_ID ).getValue();
+                    for ( int j = 0; j < deps.length; j++ )
                     {
-                        if( deps[ j ].getArtifactId().equals( artifactId ) &&
-                            deps[ j ].getGroupId().equals( groupId ) )
+                        if ( deps[j].getArtifactId().equals( artifactId ) && deps[j].getGroupId().equals( groupId ) )
                         {
-                            deps[ j ].setAjdtDependency( true );
+                            deps[j].setAjdtDependency( true );
                             continue outerLoop;
                         }
                     }
-        
+
                     throw new MojoExecutionException( "AspectLibrary is not a dependency of project" );
                 }
             }
         }
     }
 
-    private void buildAjdtWeaveDeps( IdeDependency[] deps ) throws MojoExecutionException
+    private void buildAjdtWeaveDeps( IdeDependency[] deps )
+        throws MojoExecutionException
     {
         Xpp3Dom configuration = getAspectjConfiguration( executedProject );
-        if( configuration != null )
+        if ( configuration != null )
         {
-            Xpp3Dom weaveDependenciesParent  = configuration.getChild( WEAVE_DEPENDENCIES );
-            if( weaveDependenciesParent != null )
+            Xpp3Dom weaveDependenciesParent = configuration.getChild( WEAVE_DEPENDENCIES );
+            if ( weaveDependenciesParent != null )
             {
-                Xpp3Dom[] weaveDependencies  = weaveDependenciesParent.getChildren( WEAVE_DEPENDENCY );
-                outerLoop:
-                for( int i = 0 ; i < weaveDependencies.length ; i++ )
+                Xpp3Dom[] weaveDependencies = weaveDependenciesParent.getChildren( WEAVE_DEPENDENCY );
+                outerLoop: for ( int i = 0; i < weaveDependencies.length; i++ )
                 {
-                    String artifactId = weaveDependencies[ i ].getChild( POM_ELT_ARTIFACT_ID ).getValue();
-                    String groupId = weaveDependencies[ i ].getChild( POM_ELT_GROUP_ID ).getValue();
-                    for( int j = 0 ; j < deps.length ; j++ )
+                    String artifactId = weaveDependencies[i].getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = weaveDependencies[i].getChild( POM_ELT_GROUP_ID ).getValue();
+                    for ( int j = 0; j < deps.length; j++ )
                     {
-                        if( deps[ j ].getArtifactId().equals( artifactId ) &&
-                            deps[ j ].getGroupId().equals( groupId ) )
+                        if ( deps[j].getArtifactId().equals( artifactId ) && deps[j].getGroupId().equals( groupId ) )
                         {
-                            deps[ j ].setAjdtWeaveDependency( true );
+                            deps[j].setAjdtWeaveDependency( true );
                             continue outerLoop;
                         }
                     }
-    
+
                     throw new MojoExecutionException( "WeaveDependency is not a dependency of project" );
                 }
             }
         }
     }
-
 
     /**
      * Calculate the project name template from the fields {@link #projectNameTemplate},
@@ -1675,9 +1676,9 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
         for ( int index = 0; workspaceArtefacts != null && index < workspaceArtefacts.length; index++ )
         {
             IdeDependency workspaceArtefact = workspaceArtefacts[index];
-            if ( workspaceArtefact.isAddedToClasspath() &&
-                workspaceArtefact.getGroupId().equals( artifact.getGroupId() ) &&
-                workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
+            if ( workspaceArtefact.isAddedToClasspath()
+                && workspaceArtefact.getGroupId().equals( artifact.getGroupId() )
+                && workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
             {
                 if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
                 {
@@ -1727,8 +1728,8 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
         for ( int index = 0; workspaceArtefacts != null && index < workspaceArtefacts.length; index++ )
         {
             IdeDependency workspaceArtefact = workspaceArtefacts[index];
-            if ( workspaceArtefact.getGroupId().equals( artifact.getGroupId() ) &&
-                workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
+            if ( workspaceArtefact.getGroupId().equals( artifact.getGroupId() )
+                && workspaceArtefact.getArtifactId().equals( artifact.getArtifactId() ) )
             {
                 if ( workspaceArtefact.getVersion().equals( artifact.getVersion() ) )
                 {
@@ -1739,10 +1740,10 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
                 else
                 {
                     getLog().info(
-                                   "Artifact " +
-                                       artifact.getId() +
-                                       " already available as a workspace project, but with different version. Expected: " +
-                                       artifact.getVersion() + ", found: " + workspaceArtefact.getVersion() );
+                                   "Artifact "
+                                       + artifact.getId()
+                                       + " already available as a workspace project, but with different version. Expected: "
+                                       + artifact.getVersion() + ", found: " + workspaceArtefact.getVersion() );
                 }
             }
         }
@@ -1751,7 +1752,6 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
 
     /*
      * (non-Javadoc)
-     * 
      * @see org.apache.maven.plugin.ide.AbstractIdeSupportMojo#doDependencyResolution()
      */
     protected IdeDependency[] doDependencyResolution()
@@ -1769,8 +1769,8 @@ extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
      */
     protected boolean hasToResolveJar( Artifact art )
     {
-        return !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) ) ||
-            ( limitProjectReferencesToWorkspace && !( getUseProjectReferences() && isAvailableAsAWorkspaceProject( art ) ) );
+        return !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) )
+            || ( limitProjectReferencesToWorkspace && !( getUseProjectReferences() && isAvailableAsAWorkspaceProject( art ) ) );
     }
 
     /**

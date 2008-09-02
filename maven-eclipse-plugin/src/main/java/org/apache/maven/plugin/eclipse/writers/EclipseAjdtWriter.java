@@ -63,13 +63,13 @@ public class EclipseAjdtWriter
     private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version"; //$NON-NLS-1$
 
     private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
-    
+
     private static final String AJDT_PROP_PREFIX = "org.eclipse.ajdt.ui."; //$NON-NLS-1$
-    
+
     private static final String ASPECT_DEP_PROP = "aspectPath";
-    
+
     private static final String WEAVE_DEP_PROP = "inPath";
-    
+
     /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
      */
@@ -83,19 +83,19 @@ public class EclipseAjdtWriter
         IdeDependency[] deps = config.getDeps();
         int ajdtDepCount = 0;
         int ajdtWeaveDepCount = 0;
-        for ( int i = 0 ; i < deps.length ; i++ )
+        for ( int i = 0; i < deps.length; i++ )
         {
-            if( deps[ i ].isAjdtDependency() )
+            if ( deps[i].isAjdtDependency() )
             {
-                addDependency( ajdtSettings, deps[ i ], ASPECT_DEP_PROP, ++ajdtDepCount );
+                addDependency( ajdtSettings, deps[i], ASPECT_DEP_PROP, ++ajdtDepCount );
             }
 
-            if( deps[ i ].isAjdtWeaveDependency() )
+            if ( deps[i].isAjdtWeaveDependency() )
             {
-                addDependency( ajdtSettings, deps[ i ], WEAVE_DEP_PROP, ++ajdtWeaveDepCount );
+                addDependency( ajdtSettings, deps[i], WEAVE_DEP_PROP, ++ajdtWeaveDepCount );
             }
         }
-        
+
         // write the settings, if needed
         if ( !ajdtSettings.isEmpty() )
         {

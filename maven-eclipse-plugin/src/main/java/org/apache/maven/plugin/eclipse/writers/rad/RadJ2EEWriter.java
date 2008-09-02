@@ -69,9 +69,9 @@ public class RadJ2EEWriter
         Writer w;
         String packaging = config.getPackaging();
 
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ||
-            Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ||
-            Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
+            || Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging )
+            || Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             try
             {

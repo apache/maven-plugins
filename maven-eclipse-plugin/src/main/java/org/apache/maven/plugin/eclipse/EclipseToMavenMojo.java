@@ -140,13 +140,13 @@ public class EclipseToMavenMojo
      * @component
      */
     protected InputHandler inputHandler;
-    
+
     /**
      * Strip qualifier (fourth token) from the plugin version. Qualifiers are for eclipse plugin the equivalent of
      * timestamped snapshot versions for Maven, but the date is maintained also for released version (e.g. a jar for the
-     * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's
-     * usually handy to not to include this qualifier when generating maven artifacts for major releases, while it's
-     * needed when working with eclipse integration/nightly builds.
+     * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's usually
+     * handy to not to include this qualifier when generating maven artifacts for major releases, while it's needed when
+     * working with eclipse integration/nightly builds.
      * 
      * @parameter expression="${stripQualifier}" default-value="false"
      */
@@ -288,8 +288,8 @@ public class EclipseToMavenMojo
                 }
                 else
                 {
-                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep +
-                        " in project " + key );
+                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep
+                        + " in project " + key );
                 }
             }
         }
@@ -515,8 +515,8 @@ public class EclipseToMavenMojo
             else
             {
                 version =
-                    StringUtils.substring( version, 0, lastDot ) + "-" +
-                        StringUtils.substring( version, lastDot + 1, version.length() );
+                    StringUtils.substring( version, 0, lastDot ) + "-"
+                        + StringUtils.substring( version, lastDot + 1, version.length() );
             }
         }
         return version;
@@ -684,8 +684,8 @@ public class EclipseToMavenMojo
                 // build number found, fix it
                 int lastDot = group.lastIndexOf( "." );
                 group =
-                    StringUtils.substring( group, 0, lastDot ) + "-" +
-                        StringUtils.substring( group, lastDot + 1, group.length() );
+                    StringUtils.substring( group, 0, lastDot ) + "-"
+                        + StringUtils.substring( group, lastDot + 1, group.length() );
             }
             matcher.appendReplacement( newVersionRange, group );
         }

@@ -21,8 +21,8 @@ package org.apache.maven.plugin.eclipse.writers.wtp;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute
- * has been added. These ones are the only differences
+ * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute has
+ * been added. These ones are the only differences
  * 
  * @author Fabrizio Giustina
  * @version $Id$

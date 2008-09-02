@@ -39,7 +39,7 @@ public class MonitoredResource
 
     public String print()
     {
-        return "<item factoryID='org.eclipse.ui.internal.model.ResourceFactory' path='" + path + "' type='" + type +
-            "'/>";
+        return "<item factoryID='org.eclipse.ui.internal.model.ResourceFactory' path='" + path + "' type='" + type
+            + "'/>";
     }
 }

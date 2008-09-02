@@ -186,8 +186,8 @@ public class RadApplicationXMLWriter
         result.setAttribute( XMLNS, "http://java.sun.com/xml/ns/j2ee" );
         result.setAttribute( XMLNS_XSI, "http://www.w3.org/2001/XMLSchema-instance" );
         result.setAttribute( XMLNS_SCHEMA_LOCATION,
-                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_" +
-                                 j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
+                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_"
+                                 + j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
         result.addChild( new Xpp3Dom( APPLICATION_XML_DESCRIPTION ) );
         Xpp3Dom name = new Xpp3Dom( APPLICATION_XML_DISPLAY_NAME );
         name.setValue( config.getProject().getArtifactId() );
@@ -249,22 +249,22 @@ public class RadApplicationXMLWriter
         {
             if ( children[index].getAttribute( MODULEMAPS_PROJECT_NAME ).equals( dependency.getArtifactId() ) )
             {
-                if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) &&
-                    children[index].getName().equals( MODULEMAPS_MAPPINGS ) &&
-                    children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
-                                                                                                        MODULEMAPS_APPLICATION_EJB_MODULE ) )
+                if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB )
+                    && children[index].getName().equals( MODULEMAPS_MAPPINGS )
+                    && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                           MODULEMAPS_APPLICATION_EJB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR ) &&
-                    children[index].getName().equals( MODULEMAPS_MAPPINGS ) &&
-                    children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
-                                                                                                        MODULEMAPS_APPLICATION_WEB_MODULE ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR )
+                    && children[index].getName().equals( MODULEMAPS_MAPPINGS )
+                    && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                           MODULEMAPS_APPLICATION_WEB_MODULE ) )
                 {
                     return children[index];
                 }
-                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR ) &&
-                    children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
+                else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR )
+                    && children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
                 }
@@ -394,8 +394,8 @@ public class RadApplicationXMLWriter
                 Xpp3Dom[] newModulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
                 for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
                 {
-                    if ( ( newModulemapsXmlDomChildren[newIndex] != null ) &&
-                        ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
+                    if ( ( newModulemapsXmlDomChildren[newIndex] != null )
+                        && ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
                     {
                         modulemapsXmlDom.removeChild( newIndex );
                         break;
@@ -478,8 +478,8 @@ public class RadApplicationXMLWriter
                 {
                     handled( module );
                     module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_WEB_URI ).setValue(
-                                                                                                         dependency.getArtifactId() +
-                                                                                                             ".war" );
+                                                                                                         dependency.getArtifactId()
+                                                                                                             + ".war" );
                     module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_CONTEXT_ROOT ).setValue(
                                                                                                               contextRootInPom );
                 }
