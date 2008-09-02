@@ -153,18 +153,67 @@ public class EclipseAjdtWriter
 
         if ( dep.isReferencedProject() && !config.isPde() )
         {
-            path = "/" + dep.getArtifactId(); //$NON-NLS-1$
+            path = "/" + dep.getEclipseProjectName(); //$NON-NLS-1$
+        }
+        else if ( dep.isReferencedProject() && config.isPde() )
+        {
+            // don't do anything, referenced projects are automatically handled by eclipse in PDE builds
+            return;
         }
         else
         {
             File artifactPath = dep.getFile();
+
             if ( artifactPath == null )
             {
                 log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
-            path = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), artifactPath, false );
+            if ( dep.isSystemScoped() )
+            {
+                path = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), artifactPath, false );
+
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
+                                                   new Object[] { dep.getArtifactId(), path } ) );
+                }
+            }
+            else
+            {
+                File localRepositoryFile = new File( config.getLocalRepository().getBasedir() );
+
+                // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
+                // added to the Bundle-Classpath:
+                if ( config.isPde() && ( dep.isProvided() || dep.isOsgiBundle() ) )
+                {
+                    return;
+                }
+                else if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
+                {
+                    // path for link created in .project, not to the actual file
+                    path = dep.getFile().getName();
+                }
+                // running in PDE mode and the dependency is provided means, that it is provided by
+                // the target platform. This case is covered by adding the plugin container
+                else
+                {
+                    String fullPath = artifactPath.getPath();
+                    String relativePath =
+                        IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
+
+                    if ( !new File( relativePath ).isAbsolute() )
+                    {
+                        path = EclipseClasspathWriter.M2_REPO + "/" //$NON-NLS-1$
+                            + relativePath;
+                    }
+                    else
+                    {
+                        path = relativePath;
+                    }
+                }
+            }
         }
 
         ajdtSettings.setProperty( AJDT_PROP_PREFIX + propName + CONTENT_KIND + index, BINARY );
