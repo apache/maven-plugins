@@ -1,0 +1,14 @@
+<classpath>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/2.0/junit-2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5.jar" sourcepath="M2_REPO/org/springframework/spring-aspects/2.5/spring-aspects-2.5-sources.jar">
+    <attributes>
+      <attribute name="org.eclipse.ajdt.aspectpath" value="true"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5/spring-beans-2.5.jar" sourcepath="M2_REPO/org/springframework/spring-beans/2.5/spring-beans-2.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5/spring-core-2.5.jar" sourcepath="M2_REPO/org/springframework/spring-core/2.5/spring-core-2.5-sources.jar"/>
+</classpath>
