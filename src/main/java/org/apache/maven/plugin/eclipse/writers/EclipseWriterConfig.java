@@ -145,6 +145,8 @@ public class EclipseWriterConfig
      */
     private float wtpVersion;
 
+    private float ajdtVersion;
+    
     private WorkspaceConfiguration workspaceConfiguration;
 
     public WorkspaceConfiguration getWorkspaceConfiguration()
@@ -581,6 +583,24 @@ public class EclipseWriterConfig
     public IdeDependency[] getDepsOrdered()
     {
         return orderedDeps;
+    }
+
+    /**
+     * Returns the ajdtVersion.
+     * @return the ajdtVersion.
+     */
+    public float getAjdtVersion()
+    {
+        return ajdtVersion;
+    }
+
+    /**
+     * Sets the ajdtVersion.
+     * @param ajdtVersion the ajdtVersion.
+     */
+    public void setAjdtVersion( float ajdtVersion )
+    {
+        this.ajdtVersion = ajdtVersion;
     }
 
 }

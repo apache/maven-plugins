@@ -105,6 +105,16 @@ public class IdeDependency
     private String eclipseProjectName;
 
     /**
+     * The ajdt weave dependency
+     */
+    private boolean ajdtWeaveDependency;
+    
+    /**
+     * The ajdt dependency.
+     */
+    private boolean ajdtDependency;
+    
+    /**
      * Creates an uninitialized instance
      */
     public IdeDependency()
@@ -452,6 +462,46 @@ public class IdeDependency
     public void setEclipseProjectName( String eclipseProjectName )
     {
         this.eclipseProjectName = eclipseProjectName;
+    }
+
+    /**
+     * Returns the ajdtWeaveDependency.
+     * 
+     * @return the ajdtWeaveDependency.
+     */
+    public boolean isAjdtWeaveDependency()
+    {
+        return ajdtWeaveDependency;
+    }
+
+    /**
+     * Sets the ajdtWeaveDependency.
+     * 
+     * @param ajdtWeaveDependency the ajdtWeaveDependency.
+     */
+    public void setAjdtWeaveDependency( boolean ajdtWeaveDependency )
+    {
+        this.ajdtWeaveDependency = ajdtWeaveDependency;
+    }
+
+    /**
+     * Returns the ajdtDependency.
+     * 
+     * @return the ajdtDependency.
+     */
+    public boolean isAjdtDependency()
+    {
+        return ajdtDependency;
+    }
+
+    /**
+     * Sets the ajdtDependency.
+     * 
+     * @param ajdtDependency the ajdtDependency.
+     */
+    public void setAjdtDependency( boolean ajdtDependency )
+    {
+        this.ajdtDependency = ajdtDependency;
     }
 
     /**

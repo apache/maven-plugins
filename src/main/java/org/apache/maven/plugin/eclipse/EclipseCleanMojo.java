@@ -75,6 +75,11 @@ public class EclipseCleanMojo
     private static final String FILE_ECLIPSE_JDT_CORE_PREFS = ".settings/org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
 
     /**
+     * AJDT preferences.
+     */
+    private static final String FILE_AJDT_PREFS = ".settings/org.eclipse.ajdt.ui.prefs"; //$NON-NLS-1$
+
+    /**
      * Packaging for the current project.
      * 
      * @parameter expression="${project.packaging}"
@@ -126,6 +131,7 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_COMPONENT_15 ) );
         delete( new File( basedir, FILE_FACET_CORE_XML ) );
         delete( new File( basedir, FILE_ECLIPSE_JDT_CORE_PREFS ) );
+        delete( new File( basedir, FILE_AJDT_PREFS ) );
 
         File settingsDir = new File( basedir, DIR_DOT_SETTINGS );
         if ( settingsDir.exists() && settingsDir.isDirectory() && settingsDir.list().length == 0 )
