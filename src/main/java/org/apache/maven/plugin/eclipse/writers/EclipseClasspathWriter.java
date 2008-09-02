@@ -88,7 +88,7 @@ public class EclipseClasspathWriter
     /**
      * Eclipse build path variable M2_REPO
      */
-    private static final String M2_REPO = "M2_REPO"; //$NON-NLS-1$
+    protected static final String M2_REPO = "M2_REPO"; //$NON-NLS-1$
 
     /**
      * Attribute for sourcepath.
