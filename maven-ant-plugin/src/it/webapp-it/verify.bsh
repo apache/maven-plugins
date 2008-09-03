@@ -1,32 +1,99 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.jar.*;
 
 import org.codehaus.plexus.util.IOUtil;
 
-File build;
-File mavenBuild;
-File mavenBuildProperties;
+try
+{
+  File build;
+  File mavenBuild;
+  File mavenBuildProperties;
+  
+  // Webapp project
+  
+  build = new File( basedir, "build.xml" );
+  if ( build.isDirectory() || !build.exists() )
+  {
+    System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+    return false;
+  }
+  mavenBuild = new File( basedir, "maven-build.xml" );
+  if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+  {
+    System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+    return false;
+  }
+  mavenBuildProperties = new File( basedir, "maven-build.properties" );
+  if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+  {
+    System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+    return false;
+  }
+  
+  warFile = new File( basedir, "target/ant-webapp-test.war" );
+  System.out.println( "Checking for existence of WAR file: " + warFile );
+  if ( !warFile.isFile() )
+  {
+    System.err.println( "FAILED!" );
+    return false;
+  }
+  
+  JarFile war = new JarFile( warFile );
 
-// Webapp project
+  String[] expected = {
+    "index.jsp",
+    "WEB-INF/web.xml",
+    "WEB-INF/test.txt",
+    "WEB-INF/classes/test.properties",
+    "WEB-INF/classes/org/MyClass.class",
+  };
+  for ( String entry : expected )
+  {
+    System.out.println( "Checking for existence of WAR file entry: " + entry );
+    if ( war.getEntry( entry ) == null )
+    {
+      System.err.println( "FAILED!" );
+      return false;
+    }
 
-build = new File( basedir, "build.xml" );
-if ( build.isDirectory() || !build.exists() )
-{
-  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
-  return false;
+    System.out.println( "Checking for uniqueness of WAR file entry: " + entry );
+    int count = 0;
+    for ( Enumeration en = war.entries(); en.hasMoreElements(); )
+    {
+      JarEntry je = (JarEntry) en.nextElement();
+      if ( entry.equals( je.getName() ) )
+      {
+        count++;
+      }
+    }
+    if ( count != 1 )
+    {
+      System.err.println( "FAILED! " + count );
+      return false;
+    }
+  }
+  
+  String[] unexpected = {
+    "org/MyClass.class",
+  };
+  for ( String entry : unexpected )
+  {
+    System.out.println( "Checking for absence of WAR file entry: " + entry );
+    if ( war.getEntry( entry ) != null )
+    {
+      System.err.println( "FAILED!" );
+      return false;
+    }
+  }
+
+  war.close();
 }
-mavenBuild = new File( basedir, "maven-build.xml" );
-if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+catch( Throwable t )
 {
-  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
-  return false;
-}
-mavenBuildProperties = new File( basedir, "maven-build.properties" );
-if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
-{
-  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
-  return false;
+    t.printStackTrace();
+    return false;
 }
 
 return true;

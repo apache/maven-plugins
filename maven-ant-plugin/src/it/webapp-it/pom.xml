@@ -38,6 +38,10 @@ under the License.
     </dependency>
   </dependencies>
 
+  <properties>
+    <build.compiler>extJavac</build.compiler>
+  </properties>
+
   <build>
     <finalName>ant-webapp-test</finalName>
     <plugins>
