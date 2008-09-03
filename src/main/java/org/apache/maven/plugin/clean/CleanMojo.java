@@ -24,7 +24,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -200,31 +199,9 @@ public class CleanMojo
         {
             for ( Iterator it = filesets.iterator(); it.hasNext(); )
             {
-                Fileset fileset = (Fileset) it.next();
+                FileSet fileset = (FileSet) it.next();
 
-                try
-                {
-                    getLog().info( "Deleting " + fileset );
-
-                    if ( !project.isExecutionRoot() )
-                    {
-                        String projectBasedir = StringUtils.replace( project.getBasedir().getAbsolutePath(),
-                                                                     "\\", "/" );
-                        String filesetDir = StringUtils.replace( fileset.getDirectory(), "\\", "/" );
-
-                        if ( filesetDir.indexOf( projectBasedir ) == -1 )
-                        {
-                            fileset.setDirectory( projectBasedir + "/" + filesetDir );
-                        }
-                    }
-
-                    fileSetManager.delete( fileset, failOnError );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory()
-                        + ". Reason: " + e.getMessage(), e );
-                }
+                removeFileSet( fileset );
             }
         }
     }
@@ -250,27 +227,45 @@ public class CleanMojo
                 throw new MojoExecutionException( dir + " is not a directory." );
             }
 
-            FileSet fs = new FileSet();
+            FileSet fs = new Fileset();
             fs.setDirectory( dir.getPath() );
-            fs.addInclude( "**/**" );
+            fs.addInclude( "**" );
             fs.setFollowSymlinks( followSymLinks );
 
-            try
+            removeFileSet( fs );
+        }
+    }
+
+    /**
+     * Deletes the specified file set. If the base directory of the file set is relative, it will be resolved against
+     * the base directory of the current project.
+     *
+     * @param fileset The file set to delete, must not be <code>null</code>.
+     * @throws MojoExecutionException When the file set failed to get deleted.
+     */
+    private void removeFileSet( FileSet fileset )
+        throws MojoExecutionException
+    {
+        try
+        {
+            if ( !new File( fileset.getDirectory() ).isAbsolute() )
             {
-                getLog().info( "Deleting directory " + dir.getAbsolutePath() );
-                fileSetManager.delete( fs, failOnError );
+                fileset.setDirectory( new File( project.getBasedir(), fileset.getDirectory() ).getPath() );
             }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(),
-                                                  e );
-            }
-            catch ( IllegalStateException e )
-            {
-                // TODO: IOException from plexus-utils should be acceptable here
-                throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(),
-                                                  e );
-            }
+
+            getLog().info( "Deleting " + fileset );
+            fileSetManager.delete( fileset, failOnError );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: "
+                + e.getMessage(), e );
+        }
+        catch ( IllegalStateException e )
+        {
+            // TODO: IOException from plexus-utils should be acceptable here
+            throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: "
+                + e.getMessage(), e );
         }
     }
 
