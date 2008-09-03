@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+  <configExtensions>
+    <configExtension>xml</configExtension>
+  </configExtensions>
+  <configs/>
+  <configSets/>
+  <springVersion>2.0</springVersion>
+</beansProjectDescription>
