@@ -1039,7 +1039,7 @@ public class AntBuildWriter
             }
             else if ( AntBuildWriterUtil.isEarPackaging( project ) )
             {
-                AntBuildWriterUtil.writeEarTask( writer, project );
+                AntBuildWriterUtil.writeEarTask( writer, project, localRepository );
                 synonym = "ear";
             }
             else if ( AntBuildWriterUtil.isWarPackaging( project ) )
