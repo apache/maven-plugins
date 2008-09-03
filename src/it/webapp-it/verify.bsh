@@ -2,8 +2,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.*;
+import java.util.regex.*;
 
-import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.*;
 
 try
 {
@@ -19,12 +20,24 @@ try
     System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
     return false;
   }
+
   mavenBuild = new File( basedir, "maven-build.xml" );
   if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
   {
     System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
     return false;
   }
+
+  String xml = FileUtils.fileRead( mavenBuild, "UTF-8" );
+  Matcher m0 = Pattern.compile( "<copy\\s+file\\s*=\\s*\\Q\"${maven.repo.local}/log4j/log4j/1.2.14/log4j-1.2.14.jar\"\\E"
+      + "\\s*todir\\s*=\\s*\\Q\"${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib\"\\E" ).matcher( xml );
+  System.out.println( "Checking for existence of <copy> from ${maven.repo.local} for WAR libs" );
+  if ( !m0.find() )
+  {
+      System.err.println( "FAILED!\n" + xml );
+      return false;
+  }
+
   mavenBuildProperties = new File( basedir, "maven-build.properties" );
   if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
   {
@@ -48,6 +61,7 @@ try
     "WEB-INF/test.txt",
     "WEB-INF/classes/test.properties",
     "WEB-INF/classes/org/MyClass.class",
+    "WEB-INF/lib/log4j-1.2.14.jar",
   };
   for ( String entry : expected )
   {
