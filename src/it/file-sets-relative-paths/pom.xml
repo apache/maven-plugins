@@ -25,24 +25,31 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>test</groupId>
-  <artifactId>default</artifactId>
+  <artifactId>parent</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <name>Test for clean</name>
-  <description>Check for proper cleaning of default output files.</description>
+
+  <modules>
+    <module>child-a</module>
+    <module>child-b</module>
+  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>@pom.version@</version>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>@pom.version@</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
 </project>
