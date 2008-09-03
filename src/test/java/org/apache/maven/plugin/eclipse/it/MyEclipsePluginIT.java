@@ -16,7 +16,7 @@ public class MyEclipsePluginIT
     public void testProject01()
         throws Exception
     {
-        testProject( "project-myeclipse-01", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-01" );
     }
 
     /**
@@ -27,7 +27,7 @@ public class MyEclipsePluginIT
     public void testProject02()
         throws Exception
     {
-        testProject( "project-myeclipse-02", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-02" );
     }
 
     /**
@@ -38,7 +38,7 @@ public class MyEclipsePluginIT
     public void testProject03()
         throws Exception
     {
-        testProject( "project-myeclipse-03", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-03" );
     }
 
     /**
@@ -49,7 +49,7 @@ public class MyEclipsePluginIT
     public void testProject04()
         throws Exception
     {
-        testProject( "project-myeclipse-04", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-04" );
     }
 
     /**
@@ -60,7 +60,18 @@ public class MyEclipsePluginIT
     public void testProject05()
         throws Exception
     {
-        testProject( "project-myeclipse-05", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-05" );
+    }
+
+    /**
+     * Simple project with with spring configuration that points at non-existent directory
+     * 
+     * @throws Exception
+     */
+    public void testMyEclipseProject06MECLIPSE427()
+        throws Exception
+    {
+        testMyEclipseProject( "project-myeclipse-06-MECLIPSE-427" );
     }
 
     /**
@@ -72,7 +83,13 @@ public class MyEclipsePluginIT
     public void testProject07MECLIPSE445()
         throws Exception
     {
-        testProject( "project-myeclipse-07-MECLIPSE-445", null, "myeclipse-clean", "myeclipse" );
+        testMyEclipseProject( "project-myeclipse-07-MECLIPSE-445" );
+    }
+
+    public void testMyEclipseProject( String project )
+        throws Exception
+    {
+        testProject( project, null, "myeclipse-clean", "myeclipse" );
     }
 
 }
