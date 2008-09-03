@@ -13,10 +13,10 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testMyEclipseProject01()
+    public void testProject01()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-01" );
+        testProject( "project-myeclipse-01", null, "myeclipse-clean", "myeclipse" );
     }
 
     /**
@@ -24,10 +24,10 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testMyEclipseProject02()
+    public void testProject02()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-02" );
+        testProject( "project-myeclipse-02", null, "myeclipse-clean", "myeclipse" );
     }
 
     /**
@@ -35,10 +35,10 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testMyEclipseProject03()
+    public void testProject03()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-03" );
+        testProject( "project-myeclipse-03", null, "myeclipse-clean", "myeclipse" );
     }
 
     /**
@@ -46,10 +46,10 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testMyEclipseProject04()
+    public void testProject04()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-04" );
+        testProject( "project-myeclipse-04", null, "myeclipse-clean", "myeclipse" );
     }
 
     /**
@@ -57,15 +57,22 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testMyEclipseProject05()
+    public void testProject05()
         throws Exception
     {
-        testMyEclipseProject( "project-myeclipse-05" );
+        testProject( "project-myeclipse-05", null, "myeclipse-clean", "myeclipse" );
     }
 
-    private void testMyEclipseProject( String project )
+    /**
+     * Verifies spring files created with sub-projects (modules) module-1 should have spring bean files in the
+     * .springBeans file. module-2 should not have spring bean files in the .springBeans file.
+     * 
+     * @throws Exception
+     */
+    public void testProject07MECLIPSE445()
         throws Exception
     {
-        testProject( project, null, "myeclipse-clean", "myeclipse" );
+        testProject( "project-myeclipse-07-MECLIPSE-445", null, "myeclipse-clean", "myeclipse" );
     }
+
 }

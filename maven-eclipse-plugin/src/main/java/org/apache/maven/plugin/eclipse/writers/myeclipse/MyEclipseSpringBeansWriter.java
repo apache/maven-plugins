@@ -66,10 +66,10 @@ public class MyEclipseSpringBeansWriter
     public void write()
         throws MojoExecutionException
     {
-        FileWriter w;
+        FileWriter sprintFileWriter;
         try
         {
-            w =
+            sprintFileWriter =
                 new FileWriter( new File( config.getEclipseProjectDirectory(), MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
         }
         catch ( IOException ex )
@@ -77,7 +77,7 @@ public class MyEclipseSpringBeansWriter
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
+        XMLWriter writer = new PrettyPrintXMLWriter( sprintFileWriter, "UTF-8", null );
 
         writer.startElement( MYECLIPSE_SPRING_BEANS_PROJECT_DESCRIPTION );
         // Configuration extension
@@ -90,13 +90,23 @@ public class MyEclipseSpringBeansWriter
         // Configuration files
         writer.startElement( MYECLIPSE_SPRING_CONFIGS );
 
+        // maven's cwd stays at the top of hierarchical projects so we
+        // do this with full path so it works as we descend through various modules (projects)
+        String absolutePrefix = config.getEclipseProjectDirectory() + "/";
+        // convert hem all to forward slashes
+        absolutePrefix = StringUtils.replace( absolutePrefix, "\\", "/" );
+        int absolutePrefixLength = absolutePrefix.length();
         Iterator onConfigFiles =
-            getConfigurationFilesList( (String) springConfig.get( "basedir" ),
+            getConfigurationFilesList( absolutePrefix + (String) springConfig.get( "basedir" ),
                                        (String) springConfig.get( "file-pattern" ) ).iterator();
+
         while ( onConfigFiles.hasNext() )
         {
             writer.startElement( MYECLIPSE_SPRING_CONFIG );
-            writer.writeText( StringUtils.replace( (String) onConfigFiles.next(), "\\", "/" ) );
+            // convert out any back slashes
+            String processedFileName = StringUtils.replace( (String) onConfigFiles.next(), "\\", "/" );
+            // write out the file name minus the absolute path to get to the top of the project
+            writer.writeText( processedFileName.substring( absolutePrefixLength ) );
             writer.endElement();
         }
         writer.endElement();
@@ -112,7 +122,7 @@ public class MyEclipseSpringBeansWriter
 
         writer.endElement();
 
-        IOUtil.close( w );
+        IOUtil.close( sprintFileWriter );
     }
 
     /**
@@ -130,21 +140,34 @@ public class MyEclipseSpringBeansWriter
         try
         {
             File directory = new File( basedir );
-
-            File[] subdirs = directory.listFiles( new FileFilter()
+            if ( directory.exists() )
             {
-                public boolean accept( File pathname )
+                log.debug( "Scanning " + basedir + " for spring definition files" );
+                File[] subdirs = directory.listFiles( new FileFilter()
                 {
-                    return pathname.isDirectory();
+                    public boolean accept( File pathname )
+                    {
+                        return pathname.isDirectory();
+                    }
+                } );
+
+                if ( subdirs != null )
+                {
+                    for ( int i = 0; i < subdirs.length; i++ )
+                    {
+                        configFiles.addAll( getConfigurationFilesList( subdirs[i].getPath(), pattern ) );
+                    }
                 }
-            } );
 
-            for ( int i = 0; i < subdirs.length; i++ )
-            {
-                configFiles.addAll( getConfigurationFilesList( subdirs[i].getPath(), pattern ) );
+                configFiles.addAll( FileUtils.getFileNames( directory, pattern, null, true ) );
             }
-
-            configFiles.addAll( FileUtils.getFileNames( directory, pattern, null, true ) );
+            else
+            {
+                // This isn't fatal because sometimes we run this in a nested set of
+                // projects where some of the projects may not have spring configuration
+                log.warn( Messages.getString( "MyEclipseSpringBeansWriter.baseDirDoesNotExist",
+                                              new Object[] { basedir } ) );
+            }
         }
         catch ( IOException ioe )
         {
