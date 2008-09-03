@@ -47,6 +47,6 @@ public class Fileset
      */
     public String toString()
     {
-        return "file-set: " + getDirectory() + " (included: " + getIncludes() + ", excluded: " + getExcludes() + ")";
+        return "file set: " + getDirectory() + " (included: " + getIncludes() + ", excluded: " + getExcludes() + ")";
     }
 }
