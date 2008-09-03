@@ -495,22 +495,20 @@ public class AntBuildWriterUtil
     public static void writeWarTask( XMLWriter writer, MavenProject project, File localRepository )
         throws IOException
     {
+        String webXml =
+            getMavenWarPluginBasicOption( project, "webXml", "${basedir}/src/main/webapp/WEB-INF/web.xml" );
+        if ( webXml.startsWith( "${basedir}/" ) )
+        {
+            webXml = webXml.substring( "${basedir}/".length() );
+        }
+        
         writeCopyLib( writer, project, "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
 
         writer.startElement( "war" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.war" );
-        addWrapAttribute( writer, "war", "basedir", "${maven.build.outputDir}", 3 );
         addWrapAttribute( writer, "war", "compress",
                           getMavenWarPluginBasicOption( project, "archive//compress", "true" ), 3 );
-        if ( getMavenWarPluginBasicOption( project, "webXml", null ) != null )
-        {
-            addWrapAttribute( writer, "war", "webxml", getMavenWarPluginBasicOption( project, "webXml", null ), 3 );
-        }
-        else
-        {
-            // Default
-            addWrapAttribute( writer, "war", "webxml", "${basedir}/src/main/webapp/WEB-INF/web.xml", 3 );
-        }
+        addWrapAttribute( writer, "war", "webxml", webXml, 3 );
         if ( getMavenWarPluginBasicOption( project, "manifestFile", null ) != null )
         {
             addWrapAttribute( writer, "war", "manifest", getMavenWarPluginBasicOption( project, "manifestFile", null ),
@@ -522,12 +520,9 @@ public class AntBuildWriterUtil
         writer.startElement( "classes" );
         writer.addAttribute( "dir", "${maven.build.outputDir}" );
         writer.endElement(); // classes
-        writer.startElement( "webinf" );
-        writer.addAttribute( "dir", "${basedir}/src/main/webapp/WEB-INF" );
-        addWrapAttribute( writer, "webinf", "excludes", "web.xml", 4 );
-        writer.endElement(); // webinf
         writer.startElement( "fileset" );
-        writer.addAttribute( "dir", "${basedir}/src/main/webapp" );
+        writer.addAttribute( "dir", "src/main/webapp" );
+        addWrapAttribute( writer, "fileset", "excludes", "WEB-INF/web.xml", 4 );
         writer.endElement(); // fileset
         writer.endElement(); // war
     }
