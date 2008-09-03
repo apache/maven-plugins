@@ -452,12 +452,13 @@ public class AntBuildWriterUtil
      *
      * @param writer not null
      * @param project not null
+     * @param localRepository not null
      * @throws IOException if any
      */
-    public static void writeEarTask( XMLWriter writer, MavenProject project )
+    public static void writeEarTask( XMLWriter writer, MavenProject project, File localRepository )
         throws IOException
     {
-        writeCopyLib( writer, project, "${maven.build.dir}/${maven.build.finalName}" );
+        writeCopyLib( writer, project, localRepository, "${maven.build.dir}/${maven.build.finalName}" );
 
         writer.startElement( "ear" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.ear" );
@@ -502,7 +503,7 @@ public class AntBuildWriterUtil
             webXml = webXml.substring( "${basedir}/".length() );
         }
         
-        writeCopyLib( writer, project, "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
+        writeCopyLib( writer, project, localRepository, "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
 
         writer.startElement( "war" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.war" );
@@ -1108,9 +1109,10 @@ public class AntBuildWriterUtil
      *
      * @param writer not null
      * @param project not null
+     * @param localRepository not null
      * @param outputDir not null
      */
-    private static void writeCopyLib( XMLWriter writer, MavenProject project, String outputDir )
+    private static void writeCopyLib( XMLWriter writer, MavenProject project, File localRepository, String outputDir )
     {
         writer.startElement( "mkdir" );
         writer.addAttribute( "dir", outputDir );
@@ -1125,8 +1127,15 @@ public class AntBuildWriterUtil
                 if ( !artifact.getScope().equals( Artifact.SCOPE_PROVIDED )
                     && !artifact.getScope().equals( Artifact.SCOPE_TEST ) )
                 {
+                    String path = artifact.getFile().getPath();
+                    path = toRelative( localRepository, path );
+                    if ( !new File( path ).isAbsolute() )
+                    {
+                        path = "${maven.repo.local}/" + path;
+                    }
+
                     writer.startElement( "copy" );
-                    writer.addAttribute( "file", artifact.getFile().getPath() );
+                    writer.addAttribute( "file", path );
                     addWrapAttribute( writer, "copy", "todir", outputDir, 3 );
                     writer.endElement(); // copy
                 }
