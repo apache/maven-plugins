@@ -24,12 +24,18 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>test</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
   <groupId>test</groupId>
-  <artifactId>default</artifactId>
+  <artifactId>child-a</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Test for clean</name>
-  <description>Check for proper cleaning of default output files.</description>
+  <name>Child A</name>
+  <description>Check for proper cleaning of file sets with relative paths during reactor build.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,7 +46,14 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>@pom.version@</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <!-- NOTE: It is part of the test design that this path is relative (to the project base directory) -->
+              <directory>temp-stuff</directory>
+            </fileset>
+          </filesets>
+        </configuration>
       </plugin>
     </plugins>
   </build>
