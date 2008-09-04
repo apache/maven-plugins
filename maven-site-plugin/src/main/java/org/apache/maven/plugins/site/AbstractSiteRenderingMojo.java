@@ -214,7 +214,7 @@ public abstract class AbstractSiteRenderingMojo
 
         if ( attributes.get( "outputEncoding" ) == null )
         {
-            attributes.put( "outputEncoding", outputEncoding );
+            attributes.put( "outputEncoding", getOutputEncoding() );
         }
 
         // Put any of the properties in directly into the Velocity context
@@ -226,7 +226,7 @@ public abstract class AbstractSiteRenderingMojo
             decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories,
                                                            toRelative( project.getBasedir(),
                                                                        siteDirectory.getAbsolutePath() ),
-                                                           locale, getInputEncoding(), outputEncoding );
+                                                           locale, getInputEncoding(), getOutputEncoding() );
         }
         catch ( SiteToolException e )
         {
