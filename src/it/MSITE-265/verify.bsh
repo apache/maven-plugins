@@ -31,14 +31,14 @@ try
         System.err.println( "target file is missing or not a directory." );
         return false;
     }
-    
+
     File siteDirectory = new File ( target, "site" );
     if ( !siteDirectory.exists() || !siteDirectory.isDirectory() )
     {
         System.err.println( "site file is missing or not a directory." );
         return false;
-    }    
-    
+    }
+
     File releaseDirectory = new File ( siteDirectory, "releases" );
     if ( !releaseDirectory.exists() || !releaseDirectory.isDirectory() )
     {
@@ -56,23 +56,23 @@ try
     {
         System.err.println( "release16 file is missing or a directory." );
         return false;
-    }      
-    
+    }
+
     File download = new File ( siteDirectory, "download.html" );
     if ( !download.exists() || download.isDirectory() )
     {
         System.err.println( "download.html file is missing or a directory." );
         return false;
-    }    
+    }
     FileInputStream fis = new FileInputStream ( download );
     String downloadContent = IOUtil.toString ( fis );
     int indexOf = downloadContent.indexOf( "Download Maven 2.0.7" );
     if ( indexOf < 0)
     {
-    	System.err.println( "download.html doesn't contains Download Maven 2.0.7" );
+        System.err.println( "download.html doesn't contains Download Maven 2.0.7" );
         return false;
     }
-           
+
 }
 catch( IOException e )
 {
