@@ -101,12 +101,13 @@ public class CleanMojo
     private File reportDirectory;
 
     /**
-     * Sets whether the plugin runs in verbose mode.
-     *
-     * @parameter expression="${clean.verbose}" default-value="false"
+     * Sets whether the plugin runs in verbose mode. As of plugin version 2.3, the default value is derived from Maven's
+     * global debug flag (compare command line switch <code>-X</code>).
+     * 
+     * @parameter expression="${clean.verbose}"
      * @since 2.1
      */
-    private boolean verbose;
+    private Boolean verbose;
 
     /**
      * The list of fileSets to delete, in addition to the default directories.
@@ -167,7 +168,7 @@ public class CleanMojo
 
         try
         {
-            fileSetManager = new FileSetManager( getLog(), verbose );
+            fileSetManager = new FileSetManager( getLog(), isVerbose());
 
             removeDirectory( directory );
             removeDirectory( outputDirectory );
@@ -185,6 +186,16 @@ public class CleanMojo
 
             getLog().warn( e.getMessage() );
         }
+    }
+
+    /**
+     * Indicates whether verbose output is enabled.
+     * 
+     * @return <code>true</code> if verbose output is enabled, <code>false</code> otherwise.
+     */
+    private boolean isVerbose()
+    {
+        return ( verbose != null ) ? verbose.booleanValue() : getLog().isDebugEnabled();
     }
 
     /**
