@@ -168,7 +168,7 @@ public class CleanMojo
 
         try
         {
-            fileSetManager = new FileSetManager( getLog(), isVerbose());
+            fileSetManager = new FileSetManager( getLog(), isVerbose() );
 
             removeDirectory( directory );
             removeDirectory( outputDirectory );
@@ -228,16 +228,6 @@ public class CleanMojo
     {
         if ( dir != null )
         {
-            if ( !dir.exists() )
-            {
-                return;
-            }
-
-            if ( !dir.isDirectory() )
-            {
-                throw new MojoExecutionException( dir + " is not a directory." );
-            }
-
             FileSet fs = new Fileset();
             fs.setDirectory( dir.getPath() );
             fs.addInclude( "**" );
@@ -259,9 +249,23 @@ public class CleanMojo
     {
         try
         {
-            if ( !new File( fileset.getDirectory() ).isAbsolute() )
+            File dir = new File( fileset.getDirectory() );
+
+            if ( !dir.isAbsolute() )
             {
-                fileset.setDirectory( new File( project.getBasedir(), fileset.getDirectory() ).getPath() );
+                dir = new File( project.getBasedir(), fileset.getDirectory() );
+                fileset.setDirectory( dir.getPath() );
+            }
+
+            if ( !dir.exists() )
+            {
+                getLog().debug( "Skipping non-existing directory: " + dir );
+                return;
+            }
+
+            if ( !dir.isDirectory() )
+            {
+                throw new MojoExecutionException( dir + " is not a directory." );
             }
 
             getLog().info( "Deleting " + fileset );
