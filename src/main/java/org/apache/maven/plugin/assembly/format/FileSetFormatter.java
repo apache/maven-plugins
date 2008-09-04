@@ -57,7 +57,16 @@ public class FileSetFormatter
 
             FileSet fileSet = new FileSet();
             fileSet.setLineEnding( lineEnding );
-            fileSet.setDirectory( set.getDirectory() );
+            
+            if(set.getDirectory() == null)
+            {
+            	fileSet.setDirectory(archiveBaseDir.getAbsolutePath());
+            }
+            else
+            {
+            	fileSet.setDirectory( set.getDirectory() );
+            }
+                        
             fileSet.setIncludes( set.getIncludes() );
 
             fileSet.setExcludes( set.getExcludes() );
