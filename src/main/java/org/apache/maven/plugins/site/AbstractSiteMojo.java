@@ -117,9 +117,9 @@ public abstract class AbstractSiteMojo
     /**
      * Specifies the output encoding.
      *
-     * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
+     * @parameter expression="${outputEncoding}" default-value="${project.reporting.outputEncoding}"
      */
-    protected String outputEncoding;
+    private String outputEncoding;
 
     /**
      * Gets the input files encoding.
@@ -129,6 +129,16 @@ public abstract class AbstractSiteMojo
     protected String getInputEncoding()
     {
         return ( inputEncoding == null ) ? ReaderFactory.ISO_8859_1 : inputEncoding;
+    }
+
+    /**
+     * Gets the effective reporting output files encoding.
+     *
+     * @return The effective reporting output file encoding, never <code>null</code>.
+     */
+    protected String getOutputEncoding()
+    {
+        return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
     }
 
     protected void populateReportItems( DecorationModel decorationModel, Locale locale, Map reportsByOutputName )

@@ -27,3 +27,10 @@ Jason van Zyl
 
 Download Maven ${currentVersion}
 
+  Encoding support test:
+
+  * source file encoding is configured in <<<pom.xml>>>: <<<UTF-8>>>
+
+  * using default reporting output files encoding: <<<UTF-8>>>
+
+  * demo character: € (euro)
