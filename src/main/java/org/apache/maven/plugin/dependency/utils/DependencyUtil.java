@@ -117,7 +117,7 @@ public final class DependencyUtil
             // artifact id
             sb.append( artifact.getArtifactId() ).append( File.separatorChar );
             // version
-            sb.append( artifact.getVersion() ).append( File.separatorChar );
+            sb.append( artifact.getBaseVersion() ).append( File.separatorChar );
         }
         else
         {
