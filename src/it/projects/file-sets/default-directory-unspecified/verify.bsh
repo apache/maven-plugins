@@ -1,0 +1,10 @@
+import java.io.*;
+
+boolean result = true;
+
+String assemblyDir = "target/default-directory-unspecified-1.0-SNAPSHOT-src.dir/";
+
+result = result && new File( basedir, assemblyDir + "build.log" ).exists();
+result = result && !new File( basedir, assemblyDir + ".svn" ).exists();
+
+return result;
