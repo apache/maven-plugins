@@ -89,7 +89,7 @@ public class SiteDescriptorAttachMojo
 
                     siteDescriptorContent =
                         siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
-                                                                       getInputEncoding(), outputEncoding );
+                                                                       getInputEncoding(), getOutputEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }

@@ -65,11 +65,21 @@ try
         return false;
     }
     FileInputStream fis = new FileInputStream ( download );
-    String downloadContent = IOUtil.toString ( fis );
+    String downloadContent = IOUtil.toString ( fis, "UTF-8" );
     int indexOf = downloadContent.indexOf( "Download Maven 2.0.7" );
     if ( indexOf < 0)
     {
-        System.err.println( "download.html doesn't contains Download Maven 2.0.7" );
+        System.err.println( "download.html doesn't contain Download Maven 2.0.7" );
+        return false;
+    }
+    if ( downloadContent.indexOf( "charset=UTF-8" ) < 0)
+    {
+        System.err.println( "download.html doesn't contain 'charset=UTF-8' directive" );
+        return false;
+    }
+    if ( downloadContent.indexOf( " \u20AC (euro)" ) < 0)
+    {
+        System.err.println( "download.html doesn't contain euro symbol" );
         return false;
     }
 
