@@ -1,0 +1,14 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>*.*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
