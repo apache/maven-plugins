@@ -21,11 +21,14 @@ package org.apache.maven.plugin.resources;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -303,7 +306,7 @@ public class ResourcesMojoTest
 
         assertNotNull( mojo );
 
-        project.addFile( "file4.txt", "current working directory = ${user.dir}" );
+        project.addFile( "file4.txt", "current-working-directory = ${user.dir}" );
         project.setResourceFiltering( 0, true );
         project.setupBuildEnvironment();
 
@@ -312,12 +315,20 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
+        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+        setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
-        String checkString = "current working directory = " + (String) System.getProperty( "user.dir" );
 
-        assertContent( resourcesDir + "/file4.txt", checkString );
+        File userDir = new File( System.getProperty( "user.dir" ) );
+        assertTrue( userDir.exists() );
+        
+        Properties props = new Properties();
+        props.load( new FileInputStream( new File( resourcesDir + "/file4.txt" ) ) );
+        File fileFromFiltering = new File( props.getProperty( "current-working-directory" ) );
+        assertTrue( fileFromFiltering.exists() );
+        assertEquals( userDir.getAbsolutePath(), fileFromFiltering.getAbsolutePath() );
     }
 
     /**
@@ -450,6 +461,7 @@ public class ResourcesMojoTest
         setVariableValueToObject(mojo, "filters", filterList);
         mojo.execute();
         final String resourcesDir = project.getOutputDirectory();
+        
         final String checkString = "current working directory=foobar";
 
         assertContent(resourcesDir + "/file4.properties", checkString);
