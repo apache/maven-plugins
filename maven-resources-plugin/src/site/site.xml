@@ -29,13 +29,13 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Specifying a character encoding scheme"
-    href="/examples/encoding.html"/>
-  <item name="Specifying resource directories"
-    href="/examples/resource-directory.html"/>
+            href="/examples/encoding.html"/>
+      <item name="Specifying resource directories"
+            href="/examples/resource-directory.html"/>
       <item name="Filtering"
-    href="/examples/filter.html"/>
+            href="/examples/filter.html"/>
       <item name="Including and excluding files and directories"
-    href="/examples/include-exclude.html"/>
+            href="/examples/include-exclude.html"/>
     </menu>
   </body>
 </project>
