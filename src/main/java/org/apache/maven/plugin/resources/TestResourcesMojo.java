@@ -19,13 +19,8 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.shared.filtering.MavenFilteringException;
-import org.apache.maven.shared.filtering.MavenResourcesExecution;
-
-import java.util.Collections;
-import java.util.List;
 import java.io.File;
+import java.util.List;
 
 /**
  * Copy resources for the test source code to the test output directory.
