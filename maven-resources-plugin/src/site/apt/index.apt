@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- 12 July 2006
+ 2008-09-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,9 +29,9 @@
 Maven Resources Plugin
 
  The Resources Plugin handles the copying of project resources to the output
- directory. Resources come in two: main resources and test resources. The
+ directory. There are two different kinds of resources: main resources and test resources. The
  difference is that the main resources are the resources associated to the main
- source code while the test resources are that for the test code.
+ source code while the test resources are associated to the test source code.
 
  Thus, this allows the separation of resources for the main source code and its
  unit tests.
@@ -79,6 +79,3 @@ Maven Resources Plugin
 
    * {{{examples/include-exclude.html}Including and excluding files and
       directories}}
-
-
-

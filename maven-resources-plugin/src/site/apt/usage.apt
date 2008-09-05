@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- 12 July 2006
+ 2008-09-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -37,11 +37,11 @@ Usage
 mvn resources:resources
 +-----+
 
- Upon executing this command, the resources for your main source code would be
- copied to the resources for your main output build. This does not affect the
+ Upon executing this command, the resources for your main source code will be
+ copied to your main build output directory. This does not affect the
  resources for your test code.
 
- Moreover, this goal is bounded to the process-resources phase.
+ Moreover, this goal is bound to the <<<process-resources>>> phase.
 
 * Copy resources for the unit tests
 
@@ -49,8 +49,8 @@ mvn resources:resources
 mvn resources:testResources
 +-----+
 
- Like the first goal, this goal copies the resources for your test code to your
- test output build. Also, this does not affect the resources for the main source
+ Like the first goal this goal copies resources, but this time for your test source code to your
+ test build output directory. Also, this does not affect the resources for the main source
  code.
 
- Furthermore, this is bounded to the process-test-resources
+ Furthermore, this is bound to the <<<process-test-resources>>> phase.
