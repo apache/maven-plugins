@@ -27,22 +27,28 @@ under the License.
       </question>
       <answer>
         <p>Resources are non-source code files used by your project. Examples of
-        these are properties files, images and xml files</p>
+        these are properties files, images and XML files.</p>
       </answer>
     </faq>
     <faq id="When should I use the resouces plugin's goal outside a lifecycle?">
       <question>
-        When should I use the resouces plugin's goal outside a lifecycle?
+        When should I use the Resources Plugin's goal outside a lifecycle?
       </question>
       <answer>
-        <p>The maven resource plugin simply copies resources from your source to
-        your build output (with the optional filtering). So if that's the only
+        <p>The Maven Resource Plugin simply copies resources from your source to
+        your build output (with optional filtering). So if that's the only
         operation you are interested in, you can skip the other phases such as
-        compilation and testing and simply do mvn
-        resources:resources.</p>
+        compilation and testing and simply do</p>
+
+        <source>mvn resources:resources</source>
+
         <p>For example, if you just debugged your configuration file and you
         want to manually test it in your container if it works, you can simply
-        do mvn resources:resources to produce those configuration files on your
+        do</p>
+
+        <source>mvn resources:resources</source>
+
+        <p>This will produce those configuration files on your
         output thus skipping the other phases which may eat up a huge amount of
         your time.</p>
       </answer>
@@ -54,6 +60,7 @@ under the License.
       <answer>
         <p>No. Your main resources and your test resources are separated from
         each other.</p>
+
         <p>Your test resources should only be used by your tests. Thus, they are
         separated from the main to avoid any side effects that may occur.</p>
       </answer>
@@ -64,8 +71,8 @@ under the License.
       </question>
       <answer>
         <p>The Maven Resource Plugin only allows encoding values representing
-        the charsets supported by the Java platform, namely US-ASCII,
-        ISO-8859-1, UTF-8, UTF-16BE, UTF-16LE, and UTF-16</p>
+        the charsets supported by the Java platform, namely <code>US-ASCII</code>,
+        <code>ISO-8859-1</code>, <code>UTF-8</code>, <code>UTF-16BE</code>, <code>UTF-16LE</code> and <code>UTF-16</code>.</p>
       </answer>
     </faq>
   </part>

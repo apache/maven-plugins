@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- July 2006
+ 2008-09-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,11 +28,11 @@
 
 Specifying a character encoding scheme
 
- A character encoding scheme such as ASCII, UTF-8, or UTF-16 can be chosen to be
+ A character encoding scheme such as <<<ASCII>>>, <<<UTF-8>>> or <<<UTF-16>>> can be chosen to be
  used for the reading and writing of files.
 
- For example, if we want to specify that the character encoding scheme be UTF-8,
- we would simply have to modify the pom.
+ For example, if we want to specify that the character encoding scheme be <<<UTF-8>>>,
+ we would simply have to modify the POM.
 
 +-----+
 <project>
@@ -49,7 +49,7 @@ Specifying a character encoding scheme
         </configuration>
       </plugin>
     </plugins>
-  ...
+    ...
   </build>
   ...
 </project>
