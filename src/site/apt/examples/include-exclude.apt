@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- July 2006
+ 2008-09-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,80 +29,77 @@
 Including and excluding files and directories
 
  When specifying a resource directory, every file within that directory may not
- be used. Thus, we may have to specify only the files that we want to inlcude or
+ be used. Thus, we may have to specify only the files that we want to include or
  specify the files that we want to exclude.
 
- To include a resource, we only need to add an includes tag.
+ To include a resource, we only need to add an <<<\<includes\>>>> element.
 
 +-----+
 <project>
-  [...]
+  ...
   <name>My Resources Plugin Practice Project</name>
-  [...]
+  ...
   <build>
-    [...]
+    ...
     <resources>
-      [...]
       <resource>
         <directory> [your directory] </directory>
         <includes>
           <include> [resource file #1] </include>
           <include> [resource file #2] </include>
           <include> [resource file #3] </include>
-          [...]
+          ...
           <include> [resource file #n] </include>
         </includes>
       </resource>
-      [...]
+      ...
     </resources>
-  [...]
+    ...
   </build>
-  [...]
+  ...
 </project>
 +-----+
 
- And to exclude a resource, we only need to add an excludes tag.
+ And to exclude a resource, we only need to add an <<<\<excludes\>>>> element.
 
 +-----+
 <project>
-  [...]
+  ...
   <name>My Resources Plugin Practice Project</name>
-  [...]
+  ...
   <build>
-    [...]
+    ...
     <resources>
-      [...]
       <resource>
         <directory> [your directory] </directory>
         <excludes>
           <exclude> [non-resource file #1] </exclude>
           <exclude> [non-resource file #2] </exclude>
           <exclude> [non-resource file #3] </exclude>
-          [...]
+          ...
           <exclude> [non-resource file #n] </exclude>
         </excludes>
       </resource>
-      [...]
+      ...
     </resources>
-  [...]
+    ...
   </build>
-  [...]
+  ...
 </project>
 +-----+
 
- For example, if we want to include all text and rtf files under our
- src/my-resources directory and in all its  subdirectory, we can do the
- following
+ For example, if we want to include all text and RTF files under our
+ <<<src/my-resources>>> directory and in all its subdirectories, we can do the
+ following:
 
 +-----+
 <project>
-  [...]
+  ...
   <name>My Resources Plugin Practice Project</name>
-  [...]
+  ...
   <build>
-    [...]
+    ...
     <resources>
-      [...]
       <resource>
         <directory> src/my-resources </directory>
         <includes>
@@ -110,26 +107,25 @@ Including and excluding files and directories
           <include> **/*.rtf </include>
         </includes>
       </resource>
-      [...]
+      ...
     </resources>
-  [...]
+    ...
   </build>
-  [...]
+  ...
 </project>
 +-----+
 
  Also, if we want to include everything except the bitmaps, jpegs, and gifs, we
- can simply exclude them by
+ can simply exclude them by:
 
 +-----+
 <project>
-  [...]
+  ...
   <name>My Resources Plugin Practice Project</name>
-  [...]
+  ...
   <build>
-    [...]
+    ...
     <resources>
-      [...]
       <resource>
         <directory> src/my-resources </directory>
         <excludes>
@@ -139,27 +135,26 @@ Including and excluding files and directories
           <exclude> **/*.gif </exclude>
         </excludes>
       </resource>
-      [...]
+      ...
     </resources>
-  [...]
+    ...
   </build>
-  [...]
+  ...
 </project>
 +-----+
 
- Of course, we can also have both includes and exclude tags. For example, if we
+ Of course, we can also have both <<<\<includes\>>>> and <<<\<excludes\>>>> elements. For example, if we
  want to include all text files that does not contain the word "test" in their
- filename
+ filename.
 
 +-----+
 <project>
-  [...]
+  ...
   <name>My Resources Plugin Practice Project</name>
-  [...]
+  ...
   <build>
-    [...]
+    ...
     <resources>
-      [...]
       <resource>
         <directory> src/my-resources </directory>
         <includes>
@@ -169,10 +164,10 @@ Including and excluding files and directories
           <exclude> **/*test*.* </exclude>
         </excludes>
       </resource>
-      [...]
+      ...
     </resources>
-  [...]
+    ...
   </build>
-  [...]
+  ...
 </project>
 +-----+
