@@ -30,6 +30,8 @@ import java.util.Properties;
 
 
 /**
+ * @deprecated use classes in the component maven-filtering
+ * TODO remove the class ?
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author William Ferguson
  * @version $Id$

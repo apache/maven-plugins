@@ -20,7 +20,10 @@ package org.apache.maven.plugin.resources;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesExecution;
 
+import java.util.Collections;
 import java.util.List;
 import java.io.File;
 
@@ -52,10 +55,24 @@ public class TestResourcesMojo
      */
     private List resources;
 
-    public void execute()
-        throws MojoExecutionException
+    public File getOutputDirectory()
     {
-        copyResources( resources, outputDirectory );
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory( File outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    public List getResources()
+    {
+        return resources;
+    }
+
+    public void setResources( List resources )
+    {
+        this.resources = resources;
     }
 
 }
