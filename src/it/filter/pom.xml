@@ -36,6 +36,14 @@
     <filters>
       <filter>src/main/filters/my.filter</filter>
     </filters>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>@pom.version@</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <!--
