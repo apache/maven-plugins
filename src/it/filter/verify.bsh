@@ -91,7 +91,14 @@ try
       System.err.println( "SomeResource.txt not contains test:filter resolution profileProperty=foo-profileProperty-bar" );
       return false;
     }
-            
+    
+    //test:filter syspropsExecutionPropsWins=fromExecProps
+    indexOf = paramContent.indexOf( "test:filter syspropsExecutionPropsWins=fromExecProps" );
+    if ( indexOf < 0)
+    {
+      System.err.println( "SomeResource.txt not contains test:filter syspropsExecutionPropsWins=fromExecProps" );
+      return false;
+    }        
 }
 catch( IOException e )
 {
