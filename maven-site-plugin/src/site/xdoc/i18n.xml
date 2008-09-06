@@ -239,6 +239,18 @@ under the License.
               </td>
             </tr>
             <tr>
+              <td>Portuguese</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pt.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pt.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_pt.properties">See</a>
+              </td>
+            </tr>
+            <tr>
               <td>Slovak</td>
               <td>
                 <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_sk.properties">See</a>
