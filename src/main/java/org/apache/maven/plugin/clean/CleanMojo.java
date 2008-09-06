@@ -150,6 +150,15 @@ public class CleanMojo
     private boolean failOnError;
 
     /**
+     * Disables the deletion of the default output directories configured for a project. If set to <code>true</code>,
+     * only the files/directories selected via the parameter {@link #filesets} will be deleted.
+     * 
+     * @parameter expression="${clean.excludeDefaultDirectories}" default-value="false"
+     * @since 2.3
+     */
+    private boolean excludeDefaultDirectories;
+
+    /**
      * Deletes file-sets in the following project build directory order:
      * (source) directory, output directory, test directory, report directory,
      * and then the additional file-sets.
@@ -170,10 +179,13 @@ public class CleanMojo
         {
             fileSetManager = new FileSetManager( getLog(), isVerbose() );
 
-            removeDirectory( directory );
-            removeDirectory( outputDirectory );
-            removeDirectory( testOutputDirectory );
-            removeDirectory( reportDirectory );
+            if ( !excludeDefaultDirectories )
+            {
+                removeDirectory( directory );
+                removeDirectory( outputDirectory );
+                removeDirectory( testOutputDirectory );
+                removeDirectory( reportDirectory );
+            }
 
             removeAdditionalFilesets();
         }
