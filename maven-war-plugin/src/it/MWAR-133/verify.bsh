@@ -50,7 +50,7 @@ try
     String paramContent = IOUtil.toString ( fis );
     
     
-    int indexOf = paramContent.indexOf( "app.version=2.0" );
+    int indexOf = paramContent.indexOf( "app.version=${node.version}" );
     if ( indexOf < 0)
     {
     	System.err.println( "filtered.properties was not filtered with the value of ${node.version}" );
