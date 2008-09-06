@@ -98,7 +98,15 @@ try
     {
       System.err.println( "SomeResource.txt not contains test:filter syspropsExecutionPropsWins=fromExecProps" );
       return false;
-    }        
+    }   
+    
+    //newToken=foo     
+    indexOf = paramContent.indexOf( "newToken=foo" );
+    if ( indexOf < 0)
+    {
+      System.err.println( "SomeResource.txt not contains newToken=foo" );
+      return false;
+    }       
 }
 catch( IOException e )
 {
