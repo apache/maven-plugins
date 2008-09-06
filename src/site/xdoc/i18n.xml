@@ -294,9 +294,7 @@ under the License.
           at the L10n Status Report for each one of them:
           <ul>
             <li><a href="l10n-status.html">Site Plugin</a></li>
-            <!-- TODO: This one has not bee published yet. Remove this comment when that has been done.
             <li><a href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/l10n-status.html">Project Info Reports Plugin</a></li>
-            -->
             <li><a href="http://maven.apache.org/shared/maven-doxia-tools/l10n-status.html">Doxia Tools</a></li>
           </ul>
         </p>
