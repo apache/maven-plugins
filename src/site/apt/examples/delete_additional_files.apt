@@ -29,7 +29,7 @@
 
 Delete Additional Files Not Exposed to Maven
 
-  The <<<maven-clean-plugin>>> will delete the <<<target>>> directory by default.  You may configure
+  The Maven Clean Plugin will delete the <<<target>>> directory by default.  You may configure
   it to delete additional directories and files.  The following example shows how:
 
 +--------
@@ -37,6 +37,7 @@ Delete Additional Files Not Exposed to Maven
   [...]
   <plugin>
     <artifactId>maven-clean-plugin</artifactId>
+    <version>2.2</version>
     <configuration>
       <filesets>
         <fileset>

@@ -28,13 +28,14 @@
 
 Ignoring Clean Errors
 
-  To ignore errors when running the cleanup for a particular project, set the <<<failOnError>>> property to false.
+  To ignore errors when running the cleanup for a particular project, set the <<<failOnError>>> property to <<<false>>>.
 
 +--------
 <build>
   [...]
     <plugin>
       <artifactId>maven-clean-plugin</artifactId>
+      <version>2.2</version>
       <configuration>
         <failOnError>false</failOnError>
       </configuration>
