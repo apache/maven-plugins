@@ -308,7 +308,7 @@ under the License.
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>l10n-maven-plugin</artifactId>
-            <version>1.0-alpha-1</version>
+            <version>1.0-alpha-2-SNAPSHOT</version>
             <configuration>
               <locales>
                 <locale>cs</locale>
@@ -322,6 +322,7 @@ under the License.
                 <locale>nl</locale>
                 <locale>no</locale>
                 <locale>pl</locale>
+                <locale>pt</locale>
                 <locale>pt_BR</locale>
                 <locale>sk</locale>
                 <locale>sv</locale>
