@@ -28,13 +28,14 @@
 
 Skipping Clean
 
-  To skip running the cleanup for a particular project, set the <<<skip>>> property to true.
+  To skip running the cleanup for a particular project, set the <<<skip>>> property to <<<true>>>.
 
 +--------
 <build>
   [...]
     <plugin>
       <artifactId>maven-clean-plugin</artifactId>
+      <version>2.2</version>
       <configuration>
         <skip>true</skip>
       </configuration>
