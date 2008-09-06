@@ -107,7 +107,10 @@
                 <goal>process-test-resources</goal>
               </goals>
               <settingsFile>src/it/settings.xml</settingsFile>  
-              <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>            
+              <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>   
+              <properties>
+                <execProps>fromExecProps</execProps>
+              </properties>         
             </configuration>
             <executions>
               <execution>
