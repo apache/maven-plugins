@@ -26,9 +26,6 @@ under the License.
   <name>MWAR-133 Maven Webapp</name>
   <description>MWAR-133 it</description>
 
-  <properties>
-    <node.version>2.0</node.version>
-  </properties>
   <build>
     <resources>
       <resource>
