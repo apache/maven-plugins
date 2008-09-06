@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+boolean createSymlink( File link, File target )
+{
+    try
+    {
+        String[] args = { "ln", "-s", target.getAbsolutePath(), link.getAbsolutePath() };
+        Process process = Runtime.getRuntime().exec( args );
+        process.waitFor();
+        return 0 == process.exitValue();
+    }
+    catch ( Exception e )
+    {
+        // assume platform does not support "ln" command, test should be skipped
+        return false;
+    }
+}
+
+try
+{
+    File targetDir = new File( basedir, "target" );
+    File link = new File( targetDir, "link" );
+    File target = new File( targetDir, "link-target.txt" );
+
+    System.out.println( "Creating symlink " + link + " -> " + target );
+    if ( !createSymlink( link, target ) )
+    {
+        System.out.println( "FAILURE, platform does not support symlinks, skipping test." );
+    }
+
+    System.out.println( "Deleting symlink target " + target );
+    target.delete();
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
