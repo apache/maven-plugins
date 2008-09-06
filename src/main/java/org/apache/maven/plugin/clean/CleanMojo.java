@@ -54,9 +54,9 @@ public class CleanMojo
     extends AbstractMojo
 {
     /**
-     * The Maven Project Object
+     * The Maven Project Object.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      * @since 2.2
@@ -66,7 +66,7 @@ public class CleanMojo
     /**
      * This is where build results go.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      * @readonly
      */
@@ -75,7 +75,7 @@ public class CleanMojo
     /**
      * This is where compiled classes go.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      * @readonly
      */
@@ -84,7 +84,7 @@ public class CleanMojo
     /**
      * This is where compiled test classes go.
      *
-     * @parameter expression="${project.build.testOutputDirectory}"
+     * @parameter default-value="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
@@ -93,7 +93,7 @@ public class CleanMojo
     /**
      * This is where the site plugin generates its pages.
      *
-     * @parameter expression="${project.reporting.outputDirectory}"
+     * @parameter default-value="${project.reporting.outputDirectory}"
      * @required
      * @readonly
      * @since 2.1.1
@@ -110,7 +110,7 @@ public class CleanMojo
     private Boolean verbose;
 
     /**
-     * The list of fileSets to delete, in addition to the default directories.
+     * The list of file sets to delete, in addition to the default directories.
      *
      * @parameter
      * @since 2.1
@@ -118,7 +118,7 @@ public class CleanMojo
     private List filesets;
 
     /**
-     * Sets whether the plugin should follow Symbolic Links to delete files.
+     * Sets whether the plugin should follow symbolic links to delete files.
      *
      * @parameter expression="${clean.followSymLinks}" default-value="false"
      * @since 2.1
@@ -134,7 +134,7 @@ public class CleanMojo
     private FileSetManager fileSetManager;
 
     /**
-     * Disable the plugin execution.
+     * Disables the plugin execution.
      *
      * @parameter expression="${clean.skip}" default-value="false"
      * @since 2.2
