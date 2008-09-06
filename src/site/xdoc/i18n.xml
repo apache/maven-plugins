@@ -327,11 +327,11 @@ under the License.
               translation for the Maven Site Plugin.
             </li>
             <li>
-              Translate the files contents using your preferred text editor. If
-              the characters of your language are included in the ISO-8859-1
-              character set, then use that encoding for your files. Otherwise
-              either use Unicode escapes, like "\u8ff0", or save your files with
-              UTF-8 encoding.
+              Translate the files contents using your preferred text editor.
+              The files must use US-ASCII encoding. For characters that are not
+              included in US-ASCII you must use Unicode escapes, like "\u8ff0".
+              See the tools section below for examples of tools that can help
+              you to convert your texts to use Unicode escapes. 
             </li>
             <li>
               To test your localization
@@ -343,8 +343,8 @@ under the License.
                 <li>Include your files in <code>src/main/resources</code> for each one</li>
                 <li>Run "<code>mvn install</code>" for each one</li>
                 <li>Configure a project to produce a site in several locales</li>
-                <li>Make sure that it is using the latest SNAPSHOT versions of
-                  the above artifacts</li>
+                <li>Make sure that it is using the latest SNAPSHOT version of
+                  each of the above artifacts</li>
                 <li>Run "<code>mvn site</code>" on that project to test it</li>
               </ul>
             </li>
@@ -376,7 +376,7 @@ under the License.
               <a href="http://notepad-plus.sourceforge.net/">Notepad++</a>, ...
             </li>
             <li>
-              <b>Tools to write a file in a given charset, like UTF-8</b>:
+              <b>Tools to write a file in a given charset</b>:
               any editor like Notepad, Eclipse, IntelliJ IDEA, ...
             </li>
             <li>
