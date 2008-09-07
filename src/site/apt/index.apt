@@ -36,6 +36,9 @@ Maven Resources Plugin
  Thus, this allows the separation of resources for the main source code and its
  unit tests.
 
+ Starting with version 2.3 this plugin uses the {{{http://maven.apache.org/shared/maven-filtering/}Maven Filtering}}
+ shared component for filtering resources.
+
 * Goals Overview
 
    The Resources Plugin has two goals:
