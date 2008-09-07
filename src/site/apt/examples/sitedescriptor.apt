@@ -5,7 +5,7 @@
  <vincent.siveton@gmail.com>
  Maria Odea Ching
  ------
- November 2006
+ 2008-09-07
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -82,6 +82,32 @@ Configuring the Site Descriptor
 <project>
   ...
   <publishDate position="none"/>
+  ...
+</project>
++-----+
+
+* Version
+
+  You can show the "Version" of your project on the site, by addding a <<<\<version\>>>> element to your
+  <<<site.xml>>> like this:
+
++-----+
+<project>
+  ...
+  <version position="right"/>
+  ...
+</project>
++-----+
+
+  The <<<position>>> attribute can have the same values as the <<<publishDate>>> attribute, see above.
+  If the <<<position>>> attribute is omitted, the default value is <<<left>>>.
+
+  If you want hide the version, you can use this in your <<<site.xml>>>:
+
++-----+
+<project>
+  ...
+  <version position="none"/>
   ...
 </project>
 +-----+
