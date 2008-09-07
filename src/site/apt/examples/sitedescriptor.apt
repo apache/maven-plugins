@@ -68,7 +68,7 @@ Configuring the Site Descriptor
 +-----+
 <project>
   ...
-  <publishDate position="navigation-bottom" format="MM-dd-yy"/>
+  <publishDate format="yyyy-MM-dd" position="right"/>
   ...
 </project>
 +-----+
