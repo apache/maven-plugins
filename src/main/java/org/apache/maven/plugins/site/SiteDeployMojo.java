@@ -147,8 +147,7 @@ public class SiteDeployMojo
 
         try
         {
-            // @todo Use WagonManager#getWagon(Repository) when available. It's available in Maven 2.0.5.
-            wagon = wagonManager.getWagon( repository.getProtocol() );
+            wagon = wagonManager.getWagon( repository );
             configureWagon( wagon, repository.getId(), settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
@@ -234,17 +233,17 @@ public class SiteDeployMojo
     /**
      * <p>
      * Get the <code>ProxyInfo</code> of the proxy associated with the <code>host</code>
-     * and the <code>protocol</code> of the given <code>repository</code> 
+     * and the <code>protocol</code> of the given <code>repository</code>.
      * </p>
      * <p>
      * Extract from <a href="http://java.sun.com/j2se/1.5.0/docs/guide/net/properties.html">
-     * J2SE Doc : Networking Properties - nonProxyHosts</a> : "The value can be a list of hosts, 
+     * J2SE Doc : Networking Properties - nonProxyHosts</a> : "The value can be a list of hosts,
      * each separated by a |, and in addition a wildcard character (*) can be used for matching"
      * </p>
      * <p>
      * Defensively support for comma (",") and semi colon (";") in addition to pipe ("|") as separator.
      * </p>
-     * 
+     *
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
      */
     public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
@@ -296,7 +295,7 @@ public class SiteDeployMojo
 
     /**
      * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
-     * 
+     *
      * @todo Remove when {@link WagonManager#getWagon(Repository) is available}. It's available in Maven 2.0.5.
      * @param wagon
      * @param repositoryId
@@ -329,7 +328,7 @@ public class SiteDeployMojo
                     }
                     catch ( final ComponentLookupException e )
                     {
-                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator." 
+                        throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator."
                             + " Wagon configuration cannot be applied.", e );
                     }
                     catch ( ComponentConfigurationException e )
