@@ -292,6 +292,18 @@ public abstract class AbstractSiteRenderingMojo
         return context;
     }
 
+    /**
+     * Go through the list of reports and process each one like this:
+     * <ul>
+     * <li>Add the report to a map of reports keyed by filename having the report itself as value
+     * <li>If the report is not yet in the map of documents, add it together with a suitable renderer
+     * </ul>
+     *
+     * @param reports A List of MavenReports
+     * @param documents A Map of documents, keyed by filename
+     * @return A map with all reports keyed by filename having the report itself as value. The map will be used to
+     * populate a menu.
+     */
     protected Map locateReports( List reports, Map documents, Locale locale )
     {
         Map reportsByOutputName = new HashMap();
@@ -300,19 +312,20 @@ public abstract class AbstractSiteRenderingMojo
             MavenReport report = (MavenReport) i.next();
 
             String outputName = report.getOutputName() + ".html";
+
+            // Always add the report to the menu, see MSITE-150
+            reportsByOutputName.put( report.getOutputName(), report );
+
             if ( documents.containsKey( outputName ) )
             {
                 String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-                getLog().info(
-                               "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
+                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
                                    + "\" already exists for the " + displayLanguage + " version." );
                 i.remove();
             }
             else
             {
-                reportsByOutputName.put( report.getOutputName(), report );
-
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
                 ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog() );
                 documents.put( outputName, renderer );
@@ -321,6 +334,13 @@ public abstract class AbstractSiteRenderingMojo
         return reportsByOutputName;
     }
 
+    /**
+     * Go through the collection of reports and put each report into a list for the appropriate category. The list is
+     * put into a map keyed by the name of the category.
+     *
+     * @param reports A Collection of MavenReports
+     * @return A map keyed category having the report itself as value
+     */
     protected Map categoriseReports( Collection reports )
     {
         Map categories = new HashMap();
@@ -343,7 +363,7 @@ public abstract class AbstractSiteRenderingMojo
     {
         Map documents = siteRenderer.locateDocumentFiles( context );
 
-        // TODO: temporary solution for MSITE-289. We need to upgrade doxia sit tools
+        // TODO: temporary solution for MSITE-289. We need to upgrade doxia site tools
         Map tmp = new HashMap();
         for ( Iterator it = documents.keySet().iterator(); it.hasNext(); )
         {
