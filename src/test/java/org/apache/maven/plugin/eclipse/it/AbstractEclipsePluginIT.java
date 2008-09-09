@@ -468,14 +468,14 @@ public abstract class AbstractEclipsePluginIT
     protected void assertFileEquals( String mavenRepo, File expectedFile, File actualFile )
         throws IOException
     {
-        List expectedLines = getLines( mavenRepo, expectedFile );
+        List expectedLines = getLines( expectedFile );
 
         if ( !actualFile.exists() )
         {
             throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
         }
 
-        List actualLines = getLines( mavenRepo, actualFile );
+        List actualLines = getLines( actualFile );
         String filename = actualFile.getName();
 
         String basedir = new File( getBasedir() ).getCanonicalPath().replace( '\\', '/' );
@@ -570,7 +570,7 @@ public abstract class AbstractEclipsePluginIT
         }
     }
 
-    private List getLines( String mavenRepo, File file )
+    private List getLines( File file )
         throws IOException
     {
         List lines = new ArrayList();
