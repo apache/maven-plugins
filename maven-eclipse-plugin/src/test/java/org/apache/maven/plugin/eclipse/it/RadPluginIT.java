@@ -62,7 +62,7 @@ public class RadPluginIT
         File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/MANIFEST.MF" );
         File expectedManifest =
             getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest );
+        assertFileEquals( expectedManifest, generatedManifest );
     }
 
     public void testProject4()
