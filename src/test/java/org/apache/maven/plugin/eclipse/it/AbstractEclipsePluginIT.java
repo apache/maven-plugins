@@ -459,13 +459,13 @@ public abstract class AbstractEclipsePluginIT
                     throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
                 }
 
-                assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedFile, actualFile );
+                assertFileEquals( expectedFile, actualFile );
 
             }
         }
     }
 
-    protected void assertFileEquals( String mavenRepo, File expectedFile, File actualFile )
+    protected void assertFileEquals( File expectedFile, File actualFile )
         throws IOException
     {
         List expectedLines = getLines( expectedFile );
