@@ -103,8 +103,7 @@ public class EclipsePluginMasterProjectIT
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-1/expected/.project" ), //
-                          new File( basedir, "module-1/.project" ) );
+        assertFileEquals( new File( basedir, "module-1/expected/.project" ), new File( basedir, "module-1/.project" ) );
     }
 
     public void testModule1Classpath()
@@ -134,16 +133,14 @@ public class EclipsePluginMasterProjectIT
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-1/expected/.wtpmodules" ), //
-                          new File( basedir, "module-1/.wtpmodules" ) );
+        assertFileEquals( new File( basedir, "module-1/expected/.wtpmodules" ), new File( basedir, "module-1/.wtpmodules" ) );
     }
 
     public void testModule2Project()
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-2/expected/.project" ), //
-                          new File( basedir, "module-2/.project" ) );
+        assertFileEquals( new File( basedir, "module-2/expected/.project" ), new File( basedir, "module-2/.project" ) );
     }
 
     public void testModule2Classpath()
