@@ -19,6 +19,8 @@ package org.apache.maven.plugin.war.util;
  * under the License.
  */
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
@@ -93,6 +95,18 @@ public class MappingUtils
         public Object getValue( String key )
         {
             return properties.getProperty( key );
+        }
+
+        public void clearFeedback()
+        {
+            // nothing here
+            
+        }
+
+        public List getFeedback()
+        {
+            // nothing here just NPE free
+            return Collections.EMPTY_LIST;
         }
 
     }
