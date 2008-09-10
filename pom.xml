@@ -41,7 +41,7 @@
     <dependency>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
     <!-- DGF it's too painful to depend on all of the providers plus the API + plexus and track their versions ... -->
     <!--
