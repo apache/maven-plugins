@@ -1,0 +1,11 @@
+
+test:direct resolution project.version=${project.version}
+test:filter resolution project.version=${filter.token.project.version}
+
+test:filter direct projectProperty=${projectProperty}
+test:filter resolution projectProperty=${filter.token.projectProperty}
+
+test:filter direct profileProperty=${profileProperty}
+test:filter resolution profileProperty=${filter.token.profileProperty}
+
+escapeString=\${project.version}
