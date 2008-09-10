@@ -102,6 +102,14 @@ public class ResourcesMojo
      * @required
      */
     protected MavenSession session;   
+    
+    /**
+     * Expression preceded with the String won't be interpolated 
+     * \${foo} will be replaced with ${foo}
+     * @parameter expression="${maven.resources.escapeString}"
+     * @since 2.3
+     */    
+    protected String escapeString;
 
     public void execute()
         throws MojoExecutionException
@@ -121,6 +129,7 @@ public class ResourcesMojo
                                                                                            project, encoding, filters,
                                                                                            Collections.EMPTY_LIST,
                                                                                            session );
+            mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesFiltering.filterResources( mavenResourcesExecution );
         }
         catch ( MavenFilteringException e )
