@@ -1,0 +1,23 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.apache.maven.plugin.assembly.test:child</include>
+      </includes>
+      <sources>
+        <fileSets>
+          <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>src/main/assembly-resources</directory>
+            <filtered>true</filtered>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
