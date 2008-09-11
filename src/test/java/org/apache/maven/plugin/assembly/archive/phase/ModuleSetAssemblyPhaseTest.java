@@ -172,7 +172,7 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, project );
 
         macTask.expectGetFinalName( null );
-
+        
         FileSet fs = new FileSet();
         fs.setOutputDirectory( "out" );
 
@@ -209,7 +209,7 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
 
         macTask.expectGetFinalName( null );
-
+        
         FileSet fs = new FileSet();
 
         ModuleSources sources = new ModuleSources();
@@ -275,7 +275,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-
+        
         int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         macTask.expectAddFile( moduleArtifactFile, "out/artifact", mode );
@@ -358,7 +358,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-
+        
         ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setIncludeDependencies( false );
@@ -437,7 +437,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-
+        
         ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setIncludeDependencies( false );
@@ -474,7 +474,8 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-
+        macTask.expectGetSession( null );
+        
         ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
@@ -536,7 +537,8 @@ public class ModuleSetAssemblyPhaseTest
         int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         macTask.expectAddFile( moduleArtifactFile, "out/artifact", mode );
-
+        macTask.expectGetSession( null );
+        
         ModuleBinaries binaries = new ModuleBinaries();
 
         binaries.setUnpack( false );
@@ -657,7 +659,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetDestFile( new File( "junk" ) );
 
         macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
-
+        
         ModuleBinaries binaries = new ModuleBinaries();
         binaries.setOutputDirectory( "out" );
         binaries.setOutputFileNameMapping( "artifact" );

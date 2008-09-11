@@ -106,6 +106,8 @@ public class AddDependencySetsTaskTest
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
 
+        macTask.expectGetSession( null );
+        
         mockManager.replayAll();
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
@@ -180,6 +182,8 @@ public class AddDependencySetsTaskTest
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectResolveDependencies( Collections.singleton( depMock.getArtifact() ) );
         macTask.expectAddFile( file, "out/" + aid + "-" + version + "." + type );
+        
+        macTask.expectGetSession( null );
 
         DependencySet ds = new DependencySet();
         ds.setOutputDirectory( "/out" );
@@ -252,6 +256,8 @@ public class AddDependencySetsTaskTest
 
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectCSGetFinalName( "final-name" );
+        
+        macTask.expectGetSession( null );
 
         MavenProject depProject = new MavenProject( new Model() );
 
