@@ -45,7 +45,7 @@ public class FileSetFormatter
         this.logger = logger;
     }
 
-    public File formatFileSetForAssembly( File archiveBaseDir, org.apache.maven.plugin.assembly.model.FileSet set )
+    public File formatFileSetForAssembly( File fileSetDir, org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException, IOException
     {
         String lineEndingHint = set.getLineEnding();
@@ -60,7 +60,7 @@ public class FileSetFormatter
             
             if(set.getDirectory() == null)
             {
-            	fileSet.setDirectory(archiveBaseDir.getAbsolutePath());
+            	fileSet.setDirectory(fileSetDir.getAbsolutePath());
             }
             else
             {
@@ -97,7 +97,7 @@ public class FileSetFormatter
 
                     targetFile.getParentFile().mkdirs();
 
-                    File sourceFile = new File( archiveBaseDir, file );
+                    File sourceFile = new File( fileSetDir, file );
                     try
                     {
                         sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir );
@@ -118,7 +118,7 @@ public class FileSetFormatter
             }
         }
 
-        return archiveBaseDir;
+        return fileSetDir;
     }
 
     private static void deleteDirectory( File formattedDir )
