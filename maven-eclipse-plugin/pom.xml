@@ -19,25 +19,20 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12-SNAPSHOT</version>
   </parent>
-
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-eclipse-plugin</artifactId>
   <version>2.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-
   <name>Maven Eclipse Plugin</name>
   <description>The Eclipse Plugin is used to generate Eclipse IDE files (.project, .classpath and the .settings folder) from a POM.</description>
-
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
-
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</developerConnection>
@@ -47,11 +42,9 @@
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MECLIPSE</url>
   </issueManagement>
-
   <properties>
     <maven.test.jvmargs>-Xmx256m</maven.test.jvmargs>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -197,7 +190,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -221,18 +213,12 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>test</phase>
-            <configuration>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
         <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
           <excludes>
+            <exclude>**/project/**</exclude>
             <exclude>**/Abstract*.java</exclude>
             <exclude>**/InstallPluginsMojoTest.java</exclude>
           </excludes>
@@ -264,6 +250,9 @@
                   <includes>
                     <include>**/*IT.java</include>
                   </includes>
+                  <excludes>
+                    <exclude>specified only to override configuration from default execution</exclude>
+                  </excludes>
                 </configuration>
               </execution>
             </executions>
