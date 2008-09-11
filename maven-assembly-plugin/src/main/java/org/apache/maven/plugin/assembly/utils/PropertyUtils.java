@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
@@ -50,7 +54,7 @@ public final class PropertyUtils
      * @return the loaded and fully resolved Properties object
      */
     public static Properties getInterpolatedPropertiesFromFile( File propfile, boolean fail, boolean useSystemProps )
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props;
 
@@ -80,13 +84,21 @@ public final class PropertyUtils
             throw new FileNotFoundException( propfile.toString() );
         }
 
-        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-        interpolator.addValueSource( new PropertiesInterpolationValueSource( props ) );
+        StringSearchInterpolator interpolator = new StringSearchInterpolator();
+        interpolator.addValueSource( new PropertiesBasedValueSource( props ) );
 
         for ( Enumeration n = props.propertyNames(); n.hasMoreElements(); )
         {
             String key = (String) n.nextElement();
-            String value = interpolator.interpolate( props.getProperty( key ), "__properties" );
+            String value = props.getProperty( key );
+            try
+            {
+                value = interpolator.interpolate( value );
+            }
+            catch ( InterpolationException e )
+            {
+                throw new AssemblyFormattingException( "Failed to interpolate property value: '" + value + "' for key: '" + key + "'. Reason: " + e.getMessage(), e );
+            }
 
             props.setProperty( key, value );
         }

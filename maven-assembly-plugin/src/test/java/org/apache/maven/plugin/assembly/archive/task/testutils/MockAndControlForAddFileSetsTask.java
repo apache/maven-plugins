@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
@@ -61,6 +62,9 @@ public class MockAndControlForAddFileSetsTask
         archiver = ( Archiver ) archiverCtl.getMock();
 
         archiveBaseDir = fileManager.createTempDir();
+        
+        configSource.getMavenSession();
+        configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
     }
 
     public void expectGetArchiveBaseDirectory()
@@ -152,6 +156,12 @@ public class MockAndControlForAddFileSetsTask
         configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
     }
 
+    public void expectGetSession( MavenSession session )
+    {
+        configSource.getMavenSession();
+        configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );
+    }
+    
     public void expectGetFinalName( String finalName )
     {
         configSource.getFinalName();

@@ -22,6 +22,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
@@ -240,6 +241,12 @@ public class MockAndControlForAddDependencySetsTask
 
         dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
         dependencyResolverCtl.setReturnValue( resolvedArtifacts, MockControl.ONE_OR_MORE );
+    }
+    
+    public void expectGetSession( MavenSession session )
+    {
+        configSource.getMavenSession();
+        configSourceCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
     }
 
 }

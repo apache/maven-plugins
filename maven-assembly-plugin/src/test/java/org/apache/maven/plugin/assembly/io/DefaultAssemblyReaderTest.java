@@ -897,6 +897,9 @@ public class DefaultAssemblyReaderTest
 
         configSource.isSiteIncluded();
         configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        
+        configSource.isIgnoreMissingDescriptor();
+        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 

@@ -420,6 +420,9 @@ public class FileItemAssemblyPhaseTest
             mockManager.add( control );
 
             configSource = ( AssemblerConfigurationSource ) control.getMock();
+            
+            configSource.getMavenSession();
+            control.setReturnValue( null, MockControl.ZERO_OR_MORE );
         }
 
         public void expectGetProject( MavenProject project )

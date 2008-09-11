@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -28,6 +29,7 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
 
 import java.util.Properties;
 
@@ -234,9 +236,23 @@ public class AssemblyFormatUtilsTest
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
+        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+        mockManager.add( sessionCtl );
+        
+        MavenSession session = (MavenSession) sessionCtl.getMock();
+        session.getExecutionProperties();
+        sessionCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        
+        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        mockManager.add( csCtl );
+        
+        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+        cs.getMavenSession();
+        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        
         mockManager.replayAll();
 
-        String result = AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}", artifactMock.getArtifact(), mainProject, artifactProject, "artifact." );
+        String result = AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}", artifactMock.getArtifact(), mainProject, artifactProject, "artifact.", cs );
 
         assertEquals( "artifact-2-SNAPSHOT", result );
 
@@ -472,18 +488,32 @@ public class AssemblyFormatUtilsTest
             mainProject = new MavenProject( new Model() );
         }
 
-        ArtifactMock artifactMock = new ArtifactMock( mockManager, groupId, artifactId, version, extension, classifier, false );
+        ArtifactMock artifactMock = new ArtifactMock( mockManager, groupId, artifactId, version, extension, classifier, false, null );
+        
+        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+        mockManager.add( sessionCtl );
+        
+        MavenSession session = (MavenSession) sessionCtl.getMock();
+        session.getExecutionProperties();
+        sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
+        
+        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        mockManager.add( csCtl );
+        
+        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+        cs.getMavenSession();
+        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
 
         mockManager.replayAll();
 
         String result;
         if ( prefix == null )
         {
-            result = AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject, artifactProject );
+            result = AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject, artifactProject, cs );
         }
         else
         {
-            result = AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject, artifactProject, prefix );
+            result = AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject, artifactProject, prefix, cs );
         }
 
         assertEquals( checkValue, result );
@@ -554,18 +584,38 @@ public class AssemblyFormatUtilsTest
             artifactProject = project;
             mainProject = new MavenProject( new Model() );
         }
+        
+        MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
+        mockManager.add( sessionCtl );
+        
+        MavenSession session = (MavenSession) sessionCtl.getMock();
+        session.getExecutionProperties();
+        sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
+        
+        MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        mockManager.add( csCtl );
+        
+        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
+        cs.getMavenSession();
+        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
 
         String result;
+        
+        mockManager.replayAll();
         if ( prefix == null )
         {
-            result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, artifactProject, finalName );
+            result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, artifactProject, finalName, cs );
         }
         else
         {
-            result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, artifactProject, finalName, prefix );
+            result = AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, artifactProject, finalName, prefix, cs );
         }
 
         assertEquals( checkValue, result );
+        
+        mockManager.verifyAll();
+        
+        mockManager.clear();
     }
 
     private void verifyDistroName( String assemblyId, String classifier, String finalName, boolean appendAssemblyId, String checkValue )

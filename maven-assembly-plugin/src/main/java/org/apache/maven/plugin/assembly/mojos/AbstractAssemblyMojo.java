@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.mojos;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -204,6 +205,15 @@ public abstract class AbstractAssemblyMojo
      * @component
      */
     private MavenProjectHelper projectHelper;
+    
+    /**
+     * The Maven Session Object
+     *
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    private MavenSession mavenSession;
 
     /**
      * Temporary directory that contain the files to be assembled.
@@ -638,4 +648,9 @@ public abstract class AbstractAssemblyMojo
     public void setIgnoreMissingDescriptor(boolean ignoreMissingDescriptor) {
         this.ignoreMissingDescriptor = ignoreMissingDescriptor;
     }
+    
+    public MavenSession getMavenSession() {
+    	return this.mavenSession;
+    }
+
 }

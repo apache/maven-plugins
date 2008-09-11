@@ -80,8 +80,9 @@ public class FileItemAssemblyPhase
                 destName = sourceName;
             }
 
-            String outputDirectory = AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(),
-                configSource.getProject(), null, configSource.getFinalName() );
+            String outputDirectory =
+                AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getProject(), null,
+                                                        configSource.getFinalName(), configSource );
 
             String target;
 

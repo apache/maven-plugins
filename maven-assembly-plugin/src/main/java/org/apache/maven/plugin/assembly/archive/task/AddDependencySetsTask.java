@@ -286,11 +286,13 @@ public class AddDependencySetsTask
 
         outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(),
                                                                   depProject, depProject.getBuild().getFinalName(),
-                                                                  artifactExpressionPrefix );
+                                                                  artifactExpressionPrefix,
+                                                                  configSource );
 
         String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
                                                                        depArtifact, configSource.getProject(),
-                                                                       depProject, artifactExpressionPrefix );
+                                                                       depProject, artifactExpressionPrefix,
+                                                                       configSource );
 
         String target;
 

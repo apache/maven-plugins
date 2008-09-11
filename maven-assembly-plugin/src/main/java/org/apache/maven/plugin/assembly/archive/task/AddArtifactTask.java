@@ -101,7 +101,7 @@ public class AddArtifactTask
 
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix, configSource );
 
         if ( unpack )
         {
@@ -167,7 +167,10 @@ public class AddArtifactTask
         }
         else
         {
-            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact, configSource.getProject(), project, artifactExpressionPrefix );
+            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact, 
+            		                                                              configSource.getProject(), project, 
+            		                                                              artifactExpressionPrefix,
+            		                                                              configSource );
 
             String outputLocation = destDirectory + fileNameMapping;
 
