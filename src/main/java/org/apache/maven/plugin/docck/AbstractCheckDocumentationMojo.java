@@ -114,11 +114,13 @@ public abstract class AbstractCheckDocumentationMojo
 
     protected AbstractCheckDocumentationMojo()
     {
+        String httpUserAgent = "maven-docck-plugin/1.x" + " (Java " + System.getProperty( "java.version" ) + "; "
+                + System.getProperty( "os.name" ) + " " + System.getProperty( "os.version" ) + ")";
+
         httpClient = new HttpClient();
 
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 5000 );
-        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT,
-                                             "Apache Maven/2.0 (Maven Documentation Checker Plugin)" );
+        httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT, httpUserAgent );
     }
 
     protected List getReactorProjects()
