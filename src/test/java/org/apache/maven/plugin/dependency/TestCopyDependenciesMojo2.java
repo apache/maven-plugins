@@ -25,11 +25,19 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
+import org.apache.maven.artifact.repository.metadata.Snapshot;
+import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.artifact.transform.SnapshotTransformation;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 public class TestCopyDependenciesMojo2
     extends AbstractDependencyMojoTestCase
@@ -217,20 +225,64 @@ public class TestCopyDependenciesMojo2
     public void testRepositoryLayout()
         throws Exception
     {
+    	String baseVersion = "2.0-SNAPSHOT";
+		Artifact expandedSnapshot = this.stubFactory.createArtifact( "testGroupId", "expanded-snapshot", baseVersion );
+
+    	SnapshotTransformation tr = new SnapshotTransformation();
+        Snapshot snapshot = new Snapshot();
+        snapshot.setTimestamp( tr.getDeploymentTimestamp() );
+        snapshot.setBuildNumber( 1 );
+        RepositoryMetadata metadata = new SnapshotArtifactRepositoryMetadata( expandedSnapshot, snapshot );
+        String newVersion = snapshot.getTimestamp() + "-" + snapshot.getBuildNumber();
+        expandedSnapshot.setResolvedVersion( StringUtils.replace( baseVersion, Artifact.SNAPSHOT_VERSION, newVersion ) );
+        expandedSnapshot.addMetadata( metadata );
+
+    	mojo.project.getArtifacts().add(expandedSnapshot);
+    	mojo.project.getDependencyArtifacts().add(expandedSnapshot);
+
         mojo.useRepositoryLayout = true;
         mojo.execute();
+        
+        File outputDirectory = mojo.outputDirectory;
+		ArtifactRepository targetRepository = mojo.repositoryFactory.createDeploymentArtifactRepository( 
+        		"local", 
+        		outputDirectory.toURL().toExternalForm(), 
+                new DefaultRepositoryLayout(),
+                false );
 
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, mojo.useRepositoryLayout, false,
-                                                                      mojo.outputDirectory, artifact );
-            File file = new File( folder, fileName );
-            assertTrue( file.exists() );
+			assertArtifactExists( artifact, targetRepository );
+            
+            if ( ! artifact.getBaseVersion().equals( artifact.getVersion() ) )
+            {
+            	Artifact baseArtifact = mojo.factory.createArtifact( artifact.getGroupId(), 
+						            			                     artifact.getArtifactId(),
+						            			                     artifact.getBaseVersion(),
+						            			                     artifact.getScope(),
+						            			                     artifact.getType() );
+    			assertArtifactExists( baseArtifact, targetRepository );
+            }
+
         }
     }
+
+	private void assertArtifactExists( Artifact artifact, ArtifactRepository targetRepository ) {
+		File file = new File( targetRepository.getBasedir(), 
+							  targetRepository.getLayout().pathOf( artifact ) );
+		assertTrue( file.exists() );
+
+		Iterator metaIter = artifact.getMetadataList().iterator();
+        while ( metaIter.hasNext() )
+        {
+        	ArtifactMetadata meta = (ArtifactMetadata) metaIter.next();
+			File metaFile = new File( targetRepository.getBasedir(), 
+									  targetRepository.getLayout().pathOfLocalRepositoryMetadata( meta, targetRepository) );
+			assertTrue( metaFile.exists() );
+        }
+	}
 
     public void testSubPerArtifactRemoveVersion()
         throws Exception
