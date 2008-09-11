@@ -1,0 +1,25 @@
+import java.io.*;
+
+File f = new File( basedir, "child/target/child-1-src.dir/test.txt" );
+
+if ( !f.exists() )
+{
+	System.out.println( "Filtered file from file-set: " + f + " is missing." );
+	return false;
+}
+
+StringBuffer sb = new StringBuffer();
+
+FileReader reader = new FileReader( f );
+char[] cbuf = new char[16];
+int read = -1;
+while( ( read = reader.read( cbuf ) ) > -1 )
+{
+	sb.append( cbuf, 0, read );
+}
+
+reader.close();
+
+System.out.println( "Contents of test.txt: '" + sb.toString() + "' should contain the windows newline: '\\r\\n'." );
+
+return sb.toString().indexOf( "1\r\nchild" ) > -1;
