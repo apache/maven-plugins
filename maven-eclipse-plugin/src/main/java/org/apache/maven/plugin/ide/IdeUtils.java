@@ -414,7 +414,7 @@ public class IdeUtils
             relative = absolutePath;
         }
 
-        relative = StringUtils.replace( relative, '\\', '/' );
+        relative = fixSeparator( relative );
 
         if ( replaceSlashesWithDashes )
         {
@@ -423,6 +423,18 @@ public class IdeUtils
         }
 
         return relative;
+    }
+
+    /**
+     * Convert the provided filename from a Windows separator \\ to a unix/java
+     * separator /
+     * 
+     * @param filename file name to fix separator
+     * @return filename with all \\ replaced with /
+     */
+    public static String fixSeparator( String filename )
+    {
+        return StringUtils.replace( filename, '\\', '/' );
     }
 
     /**
