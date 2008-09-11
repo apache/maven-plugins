@@ -58,14 +58,7 @@ public class FileSetFormatter
             FileSet fileSet = new FileSet();
             fileSet.setLineEnding( lineEnding );
             
-            if(set.getDirectory() == null)
-            {
-            	fileSet.setDirectory(fileSetDir.getAbsolutePath());
-            }
-            else
-            {
-            	fileSet.setDirectory( set.getDirectory() );
-            }
+            fileSet.setDirectory(fileSetDir.getAbsolutePath());
                         
             fileSet.setIncludes( set.getIncludes() );
 
@@ -78,12 +71,14 @@ public class FileSetFormatter
             // if we don't have anything to process, let's just skip all of this mess.
             if ( ( files == null ) || ( files.length == 0 ) )
             {
-                logger.info( "No files selected for line-ending conversion. Skipping: " + fileSet.getDirectory() );
+                logger.info( "No files selected for line-ending conversion or filtering. Skipping: " + fileSet.getDirectory() );
             }
             else
             {
                 File formattedDir =
                     FileUtils.createTempFile( "fileSetFormatter.", ".tmp", configSource.getTemporaryRootDirectory() );
+                
+                logger.debug( "Filtering files from: " + fileSetDir + " into temp dir: " + formattedDir );
 
                 formattedDir.delete();
                 formattedDir.mkdirs();
@@ -92,6 +87,8 @@ public class FileSetFormatter
                 for ( int i = 0; i < files.length; i++ )
                 {
                     String file = files[i];
+                    
+                    logger.debug( "Filtering: " + file );
 
                     File targetFile = new File( formattedDir, file );
 
@@ -116,6 +113,10 @@ public class FileSetFormatter
                 }
                 return formattedDir;
             }
+        }
+        else
+        {
+            logger.debug( "NOT reformatting any files in " + fileSetDir );
         }
 
         return fileSetDir;

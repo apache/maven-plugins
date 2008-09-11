@@ -7,17 +7,8 @@
     <version>1</version>
   </parent>
   
-  <artifactId>${artifactId}</artifactId>
+  <artifactId>child</artifactId>
   <packaging>jar</packaging>
-  
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
   
   <build>
     <plugins>
@@ -25,7 +16,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
-            <descriptor>src/main/assembly/bin.xml</descriptor>
+            <descriptor>src/main/assembly/src.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>
