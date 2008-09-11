@@ -180,6 +180,9 @@ public final class AssemblyFormatUtils
         {
             value = value.substring( 1 );
         }
+        
+        value = StringUtils.replace( value, "//", "/" );
+        value = StringUtils.replace( value, "\\\\", "\\" );
 
         return value;
     }
@@ -315,6 +318,9 @@ public final class AssemblyFormatUtils
         // Now, run the interpolation using the rules stated above.
         value = interpolator.interpolate( value, "__artifact" );
 
+        value = StringUtils.replace( value, "//", "/" );
+        value = StringUtils.replace( value, "\\\\", "\\" );
+        
         return value;
     }
 
