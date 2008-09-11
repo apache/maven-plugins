@@ -20,20 +20,21 @@ package org.apache.maven.plugin.eclipse.it;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.ExecutionFailedException;
-import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -91,6 +92,11 @@ public abstract class AbstractEclipsePluginIT
     private static boolean installed = false;
 
     /**
+     * The name of the directory used for comparison of expected output.
+     */
+    private static final String EXPECTED_DIRECTORY_NAME = "expected";
+
+    /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
     protected void setUp()
@@ -109,8 +115,8 @@ public abstract class AbstractEclipsePluginIT
 
         String mavenHome = System.getProperty( "maven.home" );
 
-        // maven.home is set by surefire when the test is run with maven, but better make the test run in IDEs without
-        // the need of additional properties
+        // maven.home is set by surefire when the test is run with maven, but better make the test
+        // run in IDEs without the need of additional properties
         if ( mavenHome == null )
         {
             String path = System.getProperty( "java.library.path" );
@@ -247,11 +253,7 @@ public abstract class AbstractEclipsePluginIT
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        compareDirectoryContent( basedir, projectOutputDir, "" );
-        compareDirectoryContent( basedir, projectOutputDir, ".settings/" );
-        compareDirectoryContent( basedir, projectOutputDir, ".externalToolBuilders/" );
-        compareDirectoryContent( basedir, projectOutputDir, "META-INF/" );
-
+        compareDirectoryContent( basedir, projectOutputDir );
     }
 
     /**
@@ -320,8 +322,7 @@ public abstract class AbstractEclipsePluginIT
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        compareDirectoryContent( basedir, projectOutputDir, EclipseWorkspaceWriter.ECLIPSE_CORE_RUNTIME_SETTINGS_DIR
-            + "/" );
+        compareDirectoryContent( basedir, projectOutputDir );
 
     }
 
@@ -429,30 +430,24 @@ public abstract class AbstractEclipsePluginIT
     }
 
     /**
-     * @param basedir
-     * @param projectOutputDir
-     * @throws IOException
+     * @param basedir the base directory of the project
+     * @param projectOutputDir the directory where the eclipse plugin will write the output files.
+     * @throws MojoExecutionException
      */
-    protected void compareDirectoryContent( File basedir, File projectOutputDir, String additionalDir )
-        throws IOException
+    protected void compareDirectoryContent( File basedir, File projectOutputDir )
+        throws MojoExecutionException
     {
-        File expectedConfigDir = new File( basedir, "expected/" + additionalDir );
+        File[] expectedDirectories = getExpectedDirectories( basedir );
 
-        if ( expectedConfigDir.isDirectory() )
+        for ( int i = 0; i < expectedDirectories.length; i++ )
         {
-            File[] files = expectedConfigDir.listFiles( new FileFilter()
-            {
-                public boolean accept( File file )
-                {
-                    return !file.isDirectory();
-                }
-            } );
+            File expectedDirectory = expectedDirectories[i];
+            File[] expectedFilesToCompare = getExpectedFilesToCompare( expectedDirectory );
 
-            for ( int j = 0; j < files.length; j++ )
+            for ( int j = 0; j < expectedFilesToCompare.length; j++ )
             {
-                File expectedFile = files[j];
-                File actualFile =
-                    new File( projectOutputDir, additionalDir + expectedFile.getName() ).getCanonicalFile();
+                File expectedFile = expectedFilesToCompare[j];
+                File actualFile = getActualFile( projectOutputDir, basedir, expectedFile );
 
                 if ( !actualFile.exists() )
                 {
@@ -466,7 +461,7 @@ public abstract class AbstractEclipsePluginIT
     }
 
     protected void assertFileEquals( File expectedFile, File actualFile )
-        throws IOException
+        throws MojoExecutionException
     {
         List expectedLines = getLines( expectedFile );
 
@@ -476,9 +471,9 @@ public abstract class AbstractEclipsePluginIT
         }
 
         List actualLines = getLines( actualFile );
-        String filename = actualFile.getName();
 
-        String basedir = new File( getBasedir() ).getCanonicalPath().replace( '\\', '/' );
+        String basedir = ( IdeUtils.getCanonicalPath( new File( getBasedir() ) ) ).replace( '\\', '/' );
+        String localRepositoryAsPath = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( localRepositoryDirectory ) );
 
         for ( int i = 0; i < expectedLines.size(); i++ )
         {
@@ -487,9 +482,7 @@ public abstract class AbstractEclipsePluginIT
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
             expected = StringUtils.replace( expected, "${basedir}", basedir );
-            expected =
-                StringUtils.replace( expected, "${M2_REPO}", localRepositoryDirectory.getCanonicalPath().replace( '\\',
-                                                                                                                  '/' ) );
+            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryAsPath );
 
             if ( actualLines.size() <= i )
             {
@@ -530,7 +523,8 @@ public abstract class AbstractEclipsePluginIT
                 actual = actual.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
             }
 
-            assertEquals( "Checking " + filename + ", line #" + ( i + 1 ), expected, actual );
+            assertEquals( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
+                + IdeUtils.getCanonicalPath( expectedFile ) + "' at line #" + ( i + 1 ), expected, actual );
         }
 
         assertTrue( "Unequal number of lines.", expectedLines.size() == actualLines.size() );
@@ -571,22 +565,133 @@ public abstract class AbstractEclipsePluginIT
     }
 
     private List getLines( File file )
-        throws IOException
+        throws MojoExecutionException
     {
-        List lines = new ArrayList();
-
-        BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
-
-        String line;
-
-        while ( ( line = reader.readLine() ) != null )
+        try
         {
-            lines.add( line );
+            List lines = new ArrayList();
+
+            BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
+
+            String line;
+
+            while ( ( line = reader.readLine() ) != null )
+            {
+                lines.add( line );
+            }
+
+            IOUtil.close( reader );
+
+            return lines;
         }
-
-        IOUtil.close( reader );
-
-        return lines;
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "failed to getLines from file: " + file.getAbsolutePath(), e );
+        }
     }
 
+    /**
+     * @param basedir base directory to search for directories named "expected"
+     * @return an array of directories that match "expected"
+     */
+    private File[] getExpectedDirectories( File basedir )
+    {
+        List expectedDirectories = new ArrayList();
+        List subdirectories = new ArrayList();
+
+        File[] allFiles = basedir.listFiles();
+        if ( allFiles != null )
+        {
+            for ( int i = 0; i < allFiles.length; i++ )
+            {
+                File currentFile = allFiles[i];
+                if ( currentFile.isDirectory() )
+                {
+                    if ( currentFile.getName().equals( EXPECTED_DIRECTORY_NAME ) )
+                    {
+                        expectedDirectories.add( currentFile );
+                    }
+                    else
+                    {
+                        subdirectories.add( currentFile );
+                    }
+                }
+            }
+        }
+        if ( !subdirectories.isEmpty() )
+        {
+            for ( Iterator iter = subdirectories.iterator(); iter.hasNext(); )
+            {
+                File subdirectory = (File) iter.next();
+                File[] subdirectoryFiles = getExpectedDirectories( subdirectory );
+                expectedDirectories.addAll( Arrays.asList( subdirectoryFiles ) );
+            }
+        }
+        return (File[]) expectedDirectories.toArray( new File[expectedDirectories.size()] );
+    }
+
+    /**
+     * @param expectedDirectory the expected directory to locate expected Files
+     * @return an array of Files found under the expectedDirectory - will recurse through the directory structure.
+     */
+    private File[] getExpectedFilesToCompare( File expectedDirectory )
+    {
+        List expectedFiles = new ArrayList();
+        List subdirectories = new ArrayList();
+
+        File[] allFiles = expectedDirectory.listFiles();
+        if ( allFiles != null )
+        {
+            for ( int i = 0; i < allFiles.length; i++ )
+            {
+                File currentFile = allFiles[i];
+                if ( currentFile.isDirectory() )
+                {
+                    subdirectories.add( currentFile );
+                }
+                else
+                {
+                    expectedFiles.add( currentFile );
+                }
+            }
+        }
+        if ( !subdirectories.isEmpty() )
+        {
+            for ( Iterator iter = subdirectories.iterator(); iter.hasNext(); )
+            {
+                File subdirectory = (File) iter.next();
+                File[] subdirectoryFiles = getExpectedFilesToCompare( subdirectory );
+                expectedFiles.addAll( Arrays.asList( subdirectoryFiles ) );
+            }
+        }
+
+        return (File[]) expectedFiles.toArray( new File[expectedFiles.size()] );
+    }
+
+    /**
+     * Locate the actual file needed for comparison. The expectedFile has the baseDir prefix removed and the resulting
+     * relative path used to locate the file within the projectOutputDir.
+     * 
+     * @param projectOutputDir the directory where the eclipse plugin writes files to
+     * @param basedir the base dir of the project being tested
+     * @param expectedFile the expected file used to compare to the actual file
+     * @return the actual file needed for comparison against the expectedFile
+     * @throws MojoExecutionException failures for obtaining actual file.
+     */
+    private File getActualFile( File projectOutputDir, File basedir, File expectedFile )
+        throws MojoExecutionException
+    {
+        String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, expectedFile, false );
+        relativePath = relativePath.replaceFirst( EXPECTED_DIRECTORY_NAME, "" );
+        File actualFile = new File( projectOutputDir, relativePath );
+        try
+        {
+            return actualFile.getCanonicalFile();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( Messages.getString( "cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
+        }
+
+    }
 }
