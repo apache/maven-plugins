@@ -318,21 +318,23 @@ public class ModuleSetAssemblyPhase
             MavenProject moduleProject = ( MavenProject ) j.next();
 
             getLogger().info( "Processing sources for module project: " + moduleProject.getId() );
+            
+            List moduleFileSets = new ArrayList();
 
             for ( Iterator fsIterator = fileSets.iterator(); fsIterator.hasNext(); )
             {
                 FileSet fileSet = ( FileSet ) fsIterator.next();
 
-                FileSet moduleFileSet = createFileSet( fileSet, sources, moduleProject, configSource );
-
-                AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( moduleFileSet ) );
-
-                task.setArtifactExpressionPrefix( "module." );
-                task.setProject( moduleProject );
-                task.setLogger( getLogger() );
-
-                task.execute( archiver, configSource );
+                moduleFileSets.add( createFileSet( fileSet, sources, moduleProject, configSource ) );
             }
+            
+            AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
+
+            task.setArtifactExpressionPrefix( "module." );
+            task.setProject( moduleProject );
+            task.setLogger( getLogger() );
+
+            task.execute( archiver, configSource );
         }
     }
 
@@ -419,7 +421,7 @@ public class ModuleSetAssemblyPhase
         }
 
         fs.setExcludes( excludes );
-
+        fs.setFiltered( fileSet.isFiltered() );
         fs.setFileMode( fileSet.getFileMode() );
         fs.setIncludes( fileSet.getIncludes() );
         fs.setLineEnding( fileSet.getLineEnding() );
