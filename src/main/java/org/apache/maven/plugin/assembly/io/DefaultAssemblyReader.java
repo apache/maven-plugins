@@ -236,7 +236,7 @@ public class DefaultAssemblyReader
     private Assembly addAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource, List assemblies )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
+        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream( "assemblies/" + ref + ".xml" );
 
         if ( resourceAsStream == null )
         {

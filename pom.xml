@@ -159,8 +159,8 @@
     </dependency>
     <dependency>
       <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>1.2_Java1.3</version>
+      <artifactId>easymockclassextension</artifactId>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -186,6 +186,11 @@
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.codehaus.plexus</groupId>
+    	<artifactId>plexus-interpolation</artifactId>
+    	<version>1.5</version>
     </dependency>
   </dependencies>
 
@@ -368,6 +373,8 @@
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
                     
+                    <!-- MASSEMBLY has NOT been fixed yet. -->
+                    <pomExclude>bugs/massembly-285/**</pomExclude>
                     <!-- This will be handled by the parent in the bugs/massembly-285 dir. -->
                     <pomExclude>bugs/massembly-285/massembly-285-*/pom.xml</pomExclude>
                     
