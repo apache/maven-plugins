@@ -1,0 +1,15 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <outputDirectory>/</outputDirectory>
+      <directory>src/main/assembly-resources</directory>
+      <filtered>true</filtered>
+      <lineEnding>crlf</lineEnding>
+    </fileSet>
+  </fileSets>
+</assembly>
