@@ -95,7 +95,8 @@ public class RepositoryAssemblyPhase
 
             String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
-                                                        null, configSource.getFinalName() );
+                                                        null, configSource.getFinalName(),
+                                                        configSource );
 
             File repositoryDirectory = new File( tempRoot, outputDirectory );
 

@@ -112,7 +112,7 @@ public class DefaultAssemblyArchiver
             if ( specifiedBasedir != null )
             {
                 basedir = AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(),
-                                                                  null, finalName );
+                                                                  null, finalName, configSource );
             }
 
             List containerHandlers = selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers() );

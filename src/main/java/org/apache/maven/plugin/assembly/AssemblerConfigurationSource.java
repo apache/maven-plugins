@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -81,4 +82,6 @@ public interface AssemblerConfigurationSource
     boolean isIgnoreDirFormatExtensions();
 
     boolean isIgnoreMissingDescriptor();
+    
+    MavenSession getMavenSession();
 }

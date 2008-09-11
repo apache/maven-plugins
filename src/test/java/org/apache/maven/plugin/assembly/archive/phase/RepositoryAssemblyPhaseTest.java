@@ -232,6 +232,9 @@ public class RepositoryAssemblyPhaseTest
             mockManager.add( control );
 
             configSource = (AssemblerConfigurationSource) control.getMock();
+            
+            configSource.getMavenSession();
+            control.setReturnValue( null, MockControl.ZERO_OR_MORE );
         }
 
         public void expectGetRemoteRepositories( List remoteRepos )
