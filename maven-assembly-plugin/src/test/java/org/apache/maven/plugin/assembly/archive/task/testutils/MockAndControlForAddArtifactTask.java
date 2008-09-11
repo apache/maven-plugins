@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
@@ -70,6 +71,9 @@ public class MockAndControlForAddArtifactTask
     {
         configSource.getProject();
         configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        
+        configSource.getMavenSession();
+        configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
     }
 
     public void expectGetFinalName( String finalName )
@@ -156,5 +160,11 @@ public class MockAndControlForAddArtifactTask
     {
         configSource.getReactorProjects();
         configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
+    }
+    
+    public void expectGetSession( MavenSession session )
+    {
+        configSource.getMavenSession();
+        configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );
     }
 }

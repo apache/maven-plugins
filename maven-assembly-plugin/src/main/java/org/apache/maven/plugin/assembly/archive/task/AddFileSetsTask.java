@@ -111,7 +111,9 @@ public class AddFileSetsTask
             destDirectory = fileSet.getDirectory();
         }
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix );
+        destDirectory =
+            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project,
+                                                    configSource.getFinalName(), artifactExpressionPrefix, configSource );
 
         if ( logger.isDebugEnabled() )
         {
@@ -127,7 +129,6 @@ public class AddFileSetsTask
 
         if ( fileSetDir.exists() )
         {
-            File origFileSetDir = fileSetDir;
             try
             {
                 fileSetDir = fileSetFormatter.formatFileSetForAssembly( fileSetDir, fileSet );

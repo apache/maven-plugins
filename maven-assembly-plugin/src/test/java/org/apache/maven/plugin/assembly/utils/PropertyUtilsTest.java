@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class PropertyUtilsTest
 {
 
     public void testShouldNotTouchPropertiesWithNoExpressions()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props = new Properties();
         props.setProperty( "key", "value" );
@@ -51,7 +52,7 @@ public class PropertyUtilsTest
     }
 
     public void testShouldResolveExpressionReferringToExistingKeyWithoutExpressionPrefix()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props = new Properties();
         props.setProperty( "key", "value" );
@@ -67,25 +68,8 @@ public class PropertyUtilsTest
         assertEquals( "value", result.getProperty( "key2" ) );
     }
 
-    public void testShouldResolveExpressionReferringToExistingKeyWithExpressionPrefix()
-        throws IOException
-    {
-        Properties props = new Properties();
-        props.setProperty( "key", "value" );
-        props.setProperty( "key2", "${__properties.key}" );
-
-        File propsFile = getTempFile();
-
-        writePropertiesTo( propsFile, props );
-
-        Properties result = PropertyUtils.getInterpolatedPropertiesFromFile( propsFile, true, false );
-
-        assertEquals( "value", result.getProperty( "key" ) );
-        assertEquals( "value", result.getProperty( "key2" ) );
-    }
-
     public void testShouldResolveExpressionReferringToSysPropKeyWithoutExpressionPrefix()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props = new Properties();
         props.setProperty( "key", "value" );
@@ -102,26 +86,8 @@ public class PropertyUtilsTest
         assertEquals( userName, result.getProperty( "key2" ) );
     }
 
-    public void testShouldResolveExpressionReferringToSysPropKeyWithExpressionPrefix()
-        throws IOException
-    {
-        Properties props = new Properties();
-        props.setProperty( "key", "value" );
-        props.setProperty( "key2", "${__properties.user.name}" );
-
-        String userName = System.getProperty( "user.name" );
-
-        File propsFile = getTempFile();
-
-        writePropertiesTo( propsFile, props );
-
-        Properties result = PropertyUtils.getInterpolatedPropertiesFromFile( propsFile, true, true );
-
-        assertEquals( userName, result.getProperty( "key2" ) );
-    }
-
     public void testShouldNotTouchExpressionReferringToNonExistentKeyWithoutExpressionPrefix()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props = new Properties();
         props.setProperty( "key", "value" );
@@ -136,24 +102,8 @@ public class PropertyUtilsTest
         assertEquals( "${foo.bar.gobbledy.gook}", result.getProperty( "key2" ) );
     }
 
-    public void testShouldNotTouchExpressionReferringToNonExistentKeyWithExpressionPrefix()
-        throws IOException
-    {
-        Properties props = new Properties();
-        props.setProperty( "key", "value" );
-        props.setProperty( "key2", "${__properties.foo.bar.gobbledy.gook}" );
-
-        File propsFile = getTempFile();
-
-        writePropertiesTo( propsFile, props );
-
-        Properties result = PropertyUtils.getInterpolatedPropertiesFromFile( propsFile, true, false );
-
-        assertEquals( "${__properties.foo.bar.gobbledy.gook}", result.getProperty( "key2" ) );
-    }
-
     public void testShouldNotIncludeSystemProperties()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         Properties props = new Properties();
 
@@ -167,7 +117,7 @@ public class PropertyUtilsTest
     }
 
     public void testShouldFailWhenGivenNonExistentPropertiesFileLocation()
-        throws IOException
+        throws IOException, AssemblyFormattingException
     {
         File propsFile = getTempFile();
         propsFile.delete();

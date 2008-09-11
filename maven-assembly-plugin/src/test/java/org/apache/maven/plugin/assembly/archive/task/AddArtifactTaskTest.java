@@ -75,7 +75,7 @@ public class AddArtifactTaskTest
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( artifactFile, outputLocation );
-
+        
         mockManager.replayAll();
 
         AddArtifactTask task = createTask( artifactMock.getArtifact() );
@@ -100,7 +100,7 @@ public class AddArtifactTaskTest
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( file, outputDir + artifactId + "-" + version + "." + ext );
-
+        
         mockManager.replayAll();
 
         AddArtifactTask task = new AddArtifactTask( mock.getArtifact(), new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );

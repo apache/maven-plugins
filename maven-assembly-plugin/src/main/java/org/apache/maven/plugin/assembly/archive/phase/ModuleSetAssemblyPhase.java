@@ -431,7 +431,7 @@ public class ModuleSetAssemblyPhase
         {
             destPathPrefix =
                 AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
-                                                             moduleProject.getArtifact(), configSource.getProject(), moduleProject, "module." );
+                                                             moduleProject.getArtifact(), configSource.getProject(), moduleProject, "module.", configSource );
 
             if ( !destPathPrefix.endsWith( "/" ) )
             {
@@ -450,7 +450,9 @@ public class ModuleSetAssemblyPhase
             destPath = destPathPrefix + destPath;
         }
 
-        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject, configSource.getFinalName(), "module." );
+        destPath =
+            AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject,
+                                                    configSource.getFinalName(), "module.", configSource );
 
         fs.setOutputDirectory( destPath );
 
