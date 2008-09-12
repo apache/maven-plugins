@@ -56,7 +56,7 @@ public abstract class AbstractAssemblyMojo
      * as skipped for a particular build. This makes the assembly plugin more controllable
      * from profiles.
      *
-     * @parameter default-value="false"
+     * @parameter expression="${skipAssembly}" default-value="false"
      */
     private boolean skipAssembly;
 
