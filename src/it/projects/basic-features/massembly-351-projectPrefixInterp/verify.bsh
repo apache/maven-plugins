@@ -1,0 +1,25 @@
+import java.io.*;
+
+File f = new File( basedir, "target/project-1-myassembly.dir/files/project1.file" );
+File f2 = new File( basedir, "target/project-1-myassembly.dir/files/project2.file" );
+File f3 = new File( basedir, "target/project-1-myassembly.dir/files/project3.file" );
+
+boolean fOK = f.exists() && f.isFile();
+if ( !fOK )
+{
+	System.out.println( "File: " + f + " doesn't exist, or isn't a file." );
+}
+
+boolean f2OK = f2.exists() && f2.isFile();
+if ( !f2OK )
+{
+	System.out.println( "File: " + f2 + " doesn't exist, or isn't a file." );
+}
+
+boolean f3OK = f3.exists() && f3.isFile();
+if ( !f3OK )
+{
+	System.out.println( "File: " + f3 + " doesn't exist, or isn't a file." );
+}
+
+return fOK && f2OK;
