@@ -19,26 +19,33 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.testutils.ConfigSourceStub;
+import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
 
 public class AssemblyInterpolatorTest
     extends TestCase
 {
 
     private AssemblyInterpolator interpolator;
+    
+    private AssemblerConfigurationSource configSourceStub = new ConfigSourceStub();
 
     public void setUp()
         throws IOException
@@ -69,7 +76,7 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, project, Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, project, configSourceStub );
 
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -97,7 +104,7 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
 
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -120,7 +127,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
 
         assertEquals( "assembly.group.id", result.getId() );
     }
@@ -143,7 +150,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
 
         assertEquals( "assembly.other.id", result.getId() );
     }
@@ -165,11 +172,36 @@ public class AssemblyInterpolatorTest
         Assembly assembly = new Assembly();
 
         assembly.setId( "assembly.${groupId}" );
+        
+        MockManager mm = new MockManager();
+        
+        MockControl sessionControl = MockClassControl.createControl( MavenSession.class );
+        MavenSession session = (MavenSession) sessionControl.getMock();
+        
+        mm.add( sessionControl );
+        
+        Properties execProps = new Properties();
+        execProps.setProperty( "groupId", "still.another.id" );
+        
+        session.getExecutionProperties();
+        sessionControl.setReturnValue( execProps, MockControl.ZERO_OR_MORE );
+        
+        MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
+        AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
+        
+        mm.add( csControl );
+        
+        cs.getMavenSession();
+        csControl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        
+        mm.replayAll();
 
-        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.singletonMap( "groupId",
-            "still.another.id" ) );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), cs );
 
         assertEquals( "assembly.still.another.id", result.getId() );
+        
+        mm.verifyAll();
+        mm.clear();
     }
 
     public void testShouldNotTouchUnresolvedExpression()
@@ -185,7 +217,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${unresolved}" );
 
-        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
 
         assertEquals( "assembly.${unresolved}", result.getId() );
     }
@@ -203,9 +235,10 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${project.build.finalName}" );
 
-        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
 
         assertEquals( "assembly.final-name", result.getId() );
     }
+    
 
 }
