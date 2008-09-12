@@ -19,6 +19,20 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
@@ -38,20 +52,6 @@ import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import junit.framework.TestCase;
 
 public class DefaultAssemblyReaderTest
     extends TestCase
@@ -85,6 +85,9 @@ public class DefaultAssemblyReaderTest
 
         configSource.getRemoteRepositories();
         configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ZERO_OR_MORE );
+        
+        configSource.getMavenSession();
+        configSourceControl.setReturnValue( null, MockControl.ZERO_OR_MORE );
     }
 
     public void tearDown()
