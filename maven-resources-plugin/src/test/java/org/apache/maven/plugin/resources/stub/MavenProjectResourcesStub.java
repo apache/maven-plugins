@@ -19,11 +19,15 @@ package org.apache.maven.plugin.resources.stub;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.model.Resource;
 
 public class MavenProjectResourcesStub
     extends MavenProjectBuildStub
 {
+    
+    private File baseDir;
 
     public MavenProjectResourcesStub( String id )
         throws Exception
@@ -107,5 +111,15 @@ public class MavenProjectResourcesStub
         resource.setFiltering( false );
         resource.setTargetPath( null );
         build.addTestResource( resource );
+    }
+
+    public File getBaseDir()
+    {
+        return baseDir == null ? super.getBasedir() : baseDir;
+    }
+
+    public void setBaseDir( File baseDir )
+    {
+        this.baseDir = baseDir;
     }
 }
