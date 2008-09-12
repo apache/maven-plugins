@@ -20,9 +20,7 @@ package org.apache.maven.plugin.assembly.utils;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
@@ -44,26 +42,6 @@ import org.codehaus.plexus.util.StringUtils;
 public final class AssemblyFormatUtils
 {
     
-    private static final List PROJECT_PREFIXES;
-    
-    private static final List PROJECT_PROPERTIES_PREFIXES;
-    
-    static
-    {
-        List projectPrefixes = new ArrayList();
-        projectPrefixes.add( "pom." );
-        projectPrefixes.add( "project." );
-        
-        PROJECT_PREFIXES = Collections.unmodifiableList( projectPrefixes );
-        
-        List projectPropertiesPrefixes = new ArrayList();
-        
-        projectPropertiesPrefixes.add( "pom.properties." );
-        projectPropertiesPrefixes.add( "project.properties." );
-        
-        PROJECT_PROPERTIES_PREFIXES = Collections.unmodifiableList( projectPropertiesPrefixes );
-    }
-
     private AssemblyFormatUtils()
     {
     }
@@ -189,10 +167,10 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             // 5
-            interpolator.addValueSource( new PrefixedObjectValueSource( PROJECT_PREFIXES, mainProject, true ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, mainProject, true ) );
             
             // 6
-            interpolator.addValueSource( new PrefixedPropertiesValueSource( PROJECT_PROPERTIES_PREFIXES, mainProject.getProperties(), true ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES, mainProject.getProperties(), true ) );
         }
 
         Properties commandLineProperties = System.getProperties();
@@ -336,7 +314,7 @@ public final class AssemblyFormatUtils
         {
             // 3
             // 4
-            interpolator.addValueSource( new PrefixedObjectValueSource( PROJECT_PREFIXES, mainProject, true ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, mainProject, true ) );
         }
 
         Properties specialRules = new Properties();
@@ -380,7 +358,7 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             // 7
-            interpolator.addValueSource( new PrefixedPropertiesValueSource( PROJECT_PROPERTIES_PREFIXES, mainProject.getProperties(), true ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES, mainProject.getProperties(), true ) );
         }
 
         Properties commandLineProperties = System.getProperties();
