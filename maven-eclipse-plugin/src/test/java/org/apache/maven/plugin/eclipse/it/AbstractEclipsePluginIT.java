@@ -499,28 +499,44 @@ public abstract class AbstractEclipsePluginIT
             }
 
             /*
-             * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix. On a
-             * Windows box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir" is mapped
-             * to "file:/home/dir". So, in the first case the slash after "file:" is not part of the corresponding
-             * filesystem path while in the later case it is. This discrepancy makes verifying the javadoc attachments
-             * in ".classpath" a little tricky.
+             * Hacks for assertEquals problems.
              */
             if ( !expected.equals( actual ) )
             {
+                /*
+                 * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix.
+                 * On a Windows box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir"
+                 * is mapped to "file:/home/dir". So, in the first case the slash after "file:" is not part of the
+                 * corresponding filesystem path while in the later case it is. This discrepancy makes verifying the
+                 * javadoc attachments in ".classpath" a little tricky.
+                 */
                 // convert "file:C:/dir" to "file:/C:/dir"
                 expected = expected.replaceAll( "file:([a-zA-Z])", "file:/$1" );
-            }
 
-            /*
-             * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file as the
-             * value for a key like "org.eclipse.jdt.ui.formatterprofiles" from "org.eclipse.jdt.ui.prefs". Line
-             * terminators in this value are platform-dependent.
-             */
-            if ( !expected.equals( actual ) && expectedFile.getName().endsWith( ".prefs" ) )
-            {
-                // normalize line terminators
-                expected = expected.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
-                actual = actual.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+                if ( expectedFile.getName().endsWith( ".prefs" ) )
+                {
+                    /*
+                     * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file
+                     * as the value for a key like "org.eclipse.jdt.ui.formatterprofiles" from
+                     * "org.eclipse.jdt.ui.prefs". Line terminators in this value are platform-dependent.
+                     */
+                    // normalize line terminators
+                    expected = expected.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+                    actual = actual.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+                }
+                else if ( expectedFile.getName().equals( "org.eclipse.wst.common.component" )
+                    || expectedFile.getName().equals( ".modulemaps" )
+                    || expectedFile.getName().equals( "application.xml" ) )
+                {
+                    /*
+                     * NOTE: This is a hack to compensate for files that contain generated values like dependent-object
+                     * in org.eclipse.wst.common.component.
+                     * 
+                     * Regex would be a better solution.
+                     */
+                    expected = expected.replaceAll( "_\\d+", "" );
+                    actual = actual.replaceAll( "_\\d+", "" );
+                }
             }
 
             assertEquals( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
