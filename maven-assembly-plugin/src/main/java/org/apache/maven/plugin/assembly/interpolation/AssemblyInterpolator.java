@@ -19,27 +19,33 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
-import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
+import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.RecursionInterceptor;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.interpolation.object.FieldBasedObjectInterpolator;
+import org.codehaus.plexus.interpolation.object.ObjectInterpolationWarning;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @version $Id$
@@ -47,10 +53,6 @@ import java.util.regex.Pattern;
 public class AssemblyInterpolator
     extends AbstractLogEnabled
 {
-    private static final Pattern ELEMENT_PATTERN = Pattern.compile( "\\<([^> ]+)[^>]*>([^<]+)" );
-
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile( "\\$\\{(pom\\.|project\\.|env\\.)?([^}]+)\\}" );
-
     private static final Set INTERPOLATION_BLACKLIST;
 
     static
@@ -77,143 +79,107 @@ public class AssemblyInterpolator
         envars = CommandLineUtils.getSystemEnvVars( false );
     }
 
-    public Assembly interpolate( Assembly assembly, MavenProject project, Map context )
+    public Assembly interpolate( Assembly assembly, MavenProject project, AssemblerConfigurationSource configSource )
         throws AssemblyInterpolationException
     {
-        return interpolate( assembly, project, context, true );
-    }
+        Set blacklistFields = new HashSet( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
+        blacklistFields.addAll( INTERPOLATION_BLACKLIST );
 
-    public Assembly interpolate( Assembly assembly, MavenProject project, Map context, boolean strict )
-        throws AssemblyInterpolationException
-    {
-        StringWriter sWriter = new StringWriter();
+        Set blacklistPkgs = FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_PACKAGE_PREFIXES;
 
-        AssemblyXpp3Writer writer = new AssemblyXpp3Writer();
+        FieldBasedObjectInterpolator objectInterpolator =
+            new FieldBasedObjectInterpolator( blacklistFields, blacklistPkgs );
+        Interpolator interpolator = buildInterpolator( project, configSource );
+
+        // TODO: Will this adequately detect cycles between prefixed property references and prefixed project
+        // references??
+        RecursionInterceptor interceptor =
+            new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
 
         try
         {
-            writer.write( sWriter, assembly );
+            objectInterpolator.interpolate( assembly, interpolator, interceptor );
         }
-        catch ( IOException e )
+        catch ( InterpolationException e )
         {
-            throw new AssemblyInterpolationException( "Cannot serialize assembly descriptor for interpolation.", e );
+            throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
+                + ". Reason: " + e.getMessage(), e );
         }
 
-        String serializedAssembly = sWriter.toString();
-
-        serializedAssembly = interpolateInternal( serializedAssembly, assembly, project, context );
-
-        StringReader sReader = new StringReader( serializedAssembly );
-
-        AssemblyXpp3Reader assemblyReader = new AssemblyXpp3Reader();
-        try
+        if ( objectInterpolator.hasWarnings() && getLogger().isDebugEnabled() )
         {
-            assembly = assemblyReader.read( sReader );
-        }
-        catch ( IOException e )
-        {
-            throw new AssemblyInterpolationException(
-                "Cannot read assembly descriptor from interpolating filter of serialized version.", e );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new AssemblyInterpolationException(
-                "Cannot read assembly descriptor from interpolating filter of serialized version.", e );
+            StringBuffer sb = new StringBuffer();
+
+            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: "
+                + assembly.getId() + ":\n" );
+
+            List warnings = objectInterpolator.getWarnings();
+            for ( Iterator it = warnings.iterator(); it.hasNext(); )
+            {
+                ObjectInterpolationWarning warning = (ObjectInterpolationWarning) it.next();
+
+                sb.append( '\n' ).append( warning );
+            }
+
+            sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
+
+            getLogger().debug( sb.toString() );
         }
 
         return assembly;
     }
 
-    private String interpolateInternal( String src, Assembly assembly, MavenProject project, Map context )
-        throws AssemblyInterpolationException
+    private Interpolator buildInterpolator( MavenProject project, AssemblerConfigurationSource configSource )
     {
-        String result = src;
+        StringSearchInterpolator interpolator = new StringSearchInterpolator();
 
-        Matcher elementMatcher = ELEMENT_PATTERN.matcher( result );
+        MavenSession session = configSource.getMavenSession();
 
-        while ( elementMatcher.find() )
+        if ( session != null )
         {
-            String element = elementMatcher.group( 0 );
-
-            String elementName = elementMatcher.group( 1 );
-            String value = elementMatcher.group( 2 );
-
-            // only attempt to interpolate if the following is met:
-            // 1. the element is not in the interpolation blacklist.
-            // 2. the value is not empty (otherwise there's nothing to interpolate)
-            // 3. the value contains a "${" (a pretty good clue that there's an expression in it)
-            if ( StringUtils.isNotEmpty( value ) && ( value.indexOf( "${" ) > -1 ) )
+            Properties userProperties = null;
+            try
             {
-                if ( !INTERPOLATION_BLACKLIST.contains( elementName ) )
-                {
-                    String interpolatedValue =
-                        interpolateElementValue( value, assembly, project, context );
+                userProperties = session.getExecutionProperties();
+            }
+            catch ( NoSuchMethodError nsmer )
+            {
+                // OK, so user is using Maven <= 2.0.8. No big deal.
+            }
 
-                    String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
-                    result = StringUtils.replace( result, element, modifiedElement );
-                }
+            if ( userProperties != null )
+            {
+                // 4
+                interpolator.addValueSource( new PropertiesBasedValueSource( userProperties ) );
             }
         }
 
-        return result;
-    }
+        interpolator.addValueSource( new PrefixedPropertiesValueSource(
+                                                                        InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                                                        project.getProperties(), true ) );
+        interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project,
+                                                                    true ) );
 
-    private String interpolateElementValue( String src, Assembly assembly, MavenProject project, Map context )
-        throws AssemblyInterpolationException
-    {
-        String result = src;
-
-        Matcher matcher = EXPRESSION_PATTERN.matcher( result );
-        while ( matcher.find() )
+        Properties commandLineProperties = System.getProperties();
+        try
         {
-            String wholeExpr = matcher.group( 0 );
-            String realExpr = matcher.group( 2 );
-
-            Object value = context.get( realExpr );
-
-            if ( value == null )
+            if ( session != null )
             {
-                value = project.getProperties().getProperty( realExpr );
+                commandLineProperties = session.getExecutionProperties();
             }
 
-            if ( value == null )
-            {
-                try
-                {
-                    value = ReflectionValueExtractor.evaluate( realExpr, project, false );
-                }
-                catch ( Exception e )
-                {
-                    Logger logger = getLogger();
-                    if ( logger.isDebugEnabled() )
-                    {
-                        logger.debug( "Assembly descriptor interpolation cannot proceed with expression: " + wholeExpr +
-                            ". Skipping...", e );
-                    }
-                }
-            }
-
-            if ( value == null )
-            {
-                value = envars.getProperty( realExpr );
-            }
-
-            // if the expression refers to itself, skip it.
-            if ( wholeExpr.equals( value ) )
-            {
-                throw new AssemblyInterpolationException( wholeExpr, assembly.getId() + " references itself." );
-            }
-
-            if ( value != null )
-            {
-                result = StringUtils.replace( result, wholeExpr, String.valueOf( value ) );
-                // could use:
-                // result = matcher.replaceFirst( stringValue );
-                // but this could result in multiple lookups of stringValue, and replaceAll is not correct behaviour
-                matcher.reset( result );
-            }
         }
-        return result;
+        catch ( NoSuchMethodError nsmer )
+        {
+            // OK, so user is using Maven <= 2.0.8. No big deal.
+        }
+
+        // 7
+        interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );
+        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), envars,
+                                                                        true ) );
+
+        return interpolator;
     }
 
     protected Logger getLogger()

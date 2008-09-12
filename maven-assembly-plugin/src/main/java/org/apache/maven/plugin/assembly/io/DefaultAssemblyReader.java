@@ -367,7 +367,7 @@ public class DefaultAssemblyReader
 
             debugPrintAssembly( "Before assembly is interpolated:", assembly );
 
-            assembly = new AssemblyInterpolator().interpolate( assembly, project, context );
+            assembly = new AssemblyInterpolator().interpolate( assembly, project, configSource );
 
             debugPrintAssembly( "After assembly is interpolated:", assembly );
         }
