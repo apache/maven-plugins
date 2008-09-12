@@ -74,7 +74,7 @@ public class EclipseClasspathWriterUnitTest
         EclipseSourceDir dir =
             new EclipseSourceDir( "src/main/resources", "target/classes", true, false, null, null, false );
         EclipseSourceDir testDir =
-            new EclipseSourceDir( "src/test/resources", "target/classes/test-resources", true, true, null, null, false );
+            new EclipseSourceDir( "src\\test\\resources", "target/classes/test-resources", true, true, null, null, false );
 
         EclipseSourceDir[] dirs = { dir, testDir };
 

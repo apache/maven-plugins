@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import org.apache.maven.plugin.ide.IdeUtils;
+
 /**
  * Represent an eclipse source dir. Eclipse has no "main", "test" or "resource" concepts, so two source dirs with the
  * same path are equal.
@@ -45,7 +47,7 @@ public class EclipseSourceDir
     public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include,
                              String exclude, boolean filtering )
     {
-        this.path = path;
+        setPath( path );
         this.output = output;
         this.isResource = isResource;
         this.test = test;
@@ -126,12 +128,13 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>path</code>.
+     * Converts \\ to / in path.
      * 
      * @param path The path to set.
      */
     public void setPath( String path )
     {
-        this.path = path;
+        this.path = IdeUtils.fixSeparator( path );
     }
 
     /**
