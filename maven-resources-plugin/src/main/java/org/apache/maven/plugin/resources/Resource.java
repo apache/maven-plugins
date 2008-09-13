@@ -21,7 +21,7 @@ package org.apache.maven.plugin.resources;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
- * @since 13 sept. 2008
+ * @since 2.3
  * @version $Id$
  */
 public class Resource
