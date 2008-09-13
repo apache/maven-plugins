@@ -48,6 +48,8 @@ Maven Resources Plugin
 
    * {{{testResources-mojo.html}resources:testResources}} copies the
      resources for the test source code to the test output directory.
+     
+   * {{{copy-resources-mojo.html}resources:copy-resources}} copies resources to an output directory.     
 
 * Usage
 
