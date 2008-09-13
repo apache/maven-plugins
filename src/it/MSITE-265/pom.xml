@@ -30,12 +30,16 @@ under the License.
     <currentVersion>2.0.7</currentVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>@pom.version@</version>
       </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
