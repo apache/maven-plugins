@@ -110,6 +110,13 @@ public class ResourcesMojo
      * @since 2.3
      */    
     protected String escapeString;
+    
+    /**
+     * Overwrite existing files even if the destination files are newer.
+     * @parameter expression="${maven.resources.overwrite}" default-value="false"
+     * @since 2.3
+     */
+    private boolean overwrite;
 
     public void execute()
         throws MojoExecutionException
@@ -130,6 +137,7 @@ public class ResourcesMojo
                                                                                            Collections.EMPTY_LIST,
                                                                                            session );
             mavenResourcesExecution.setEscapeString( escapeString );
+            mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesFiltering.filterResources( mavenResourcesExecution );
         }
         catch ( MavenFilteringException e )
@@ -178,6 +186,16 @@ public class ResourcesMojo
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
+    }
+
+    public boolean isOverwrite()
+    {
+        return overwrite;
+    }
+
+    public void setOverwrite( boolean overwrite )
+    {
+        this.overwrite = overwrite;
     }
     
     
