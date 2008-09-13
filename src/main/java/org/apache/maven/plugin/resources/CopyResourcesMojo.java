@@ -23,10 +23,13 @@ import java.util.List;
  */
 
 /**
+ * Copy resources of the configured plugin attribute resources
+ * 
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 2.3
  * @version $Id$
  * @goal copy-resources
+ * @phase
  */
 public class CopyResourcesMojo
     extends ResourcesMojo
