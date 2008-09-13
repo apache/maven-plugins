@@ -35,6 +35,9 @@ under the License.
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>@pom.version@</version>
+        <configuration>
+          <locales>en,ca,cs,da,de,es,fr,hu,it,ja,ko,nl,no,pl,pt,pt_BR,sk,sv,tr,zh</locales>
+        </configuration>
       </plugin>
     </plugins>
   </build>
