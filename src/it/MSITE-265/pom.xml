@@ -36,6 +36,11 @@ under the License.
         <artifactId>maven-site-plugin</artifactId>
         <version>@pom.version@</version>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
     </plugins>
   </reporting>
 </project>
