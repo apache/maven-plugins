@@ -38,6 +38,8 @@ under the License.
             href="/examples/include-exclude.html"/>
       <item name="Escape Filtering"
             href="/examples/escape-filtering.html"/>
+      <item name="Copy Resources"
+            href="/examples/copy-resources.html"/>      
     </menu>
   </body>
 </project>
