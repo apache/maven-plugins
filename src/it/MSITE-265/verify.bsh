@@ -83,6 +83,12 @@ try
         return false;
     }
 
+    File reports = new File ( siteDirectory, "project-reports.html" );
+    if ( !reports.exists() || reports.isDirectory() )
+    {
+        System.err.println( "project-reports.html file is missing or a directory." );
+        return false;
+    }
 }
 catch( IOException e )
 {
