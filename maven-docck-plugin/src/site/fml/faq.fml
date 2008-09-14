@@ -26,10 +26,10 @@ under the License.
      <answer>
        <p>
          The plugin documentation standard was created to address the frequent
-         complaint of lack of documentation, specifically on the maven plugins.
-         The standard was based on suggestions made on the maven dev mailing
+         complaint of lack of documentation, specifically for the Maven plugins.
+         The standard was based on suggestions made on the Maven dev mailing
          list with some refinements. It is a community consensus of what basic
-         documentation a maven plugin should have.
+         documentation a Maven plugin should have.
        </p>
      </answer>
    </faq>
