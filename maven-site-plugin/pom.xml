@@ -165,7 +165,7 @@ under the License.
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
-                <pomInclude>**/**/pom.xml</pomInclude>
+                <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
