@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
-
 /**
  * @deprecated use classes in the component maven-filtering
  * TODO remove the class ?
@@ -46,8 +45,8 @@ public final class PropertyUtils
     /**
      * Reads a property file, resolving all internal variables, using the supplied base properties.
      * <p>
-     * The properties are resolved iteratively, so if the value of property A refers to property B, then after resolution
-     * the value of property B will contain the value of property B.
+     * The properties are resolved iteratively, so if the value of property A refers to property B, then after
+     * resolution the value of property B will contain the value of property B.
      * </p>
      *
      * @param propFile The property file to load.
@@ -111,31 +110,31 @@ public final class PropertyUtils
 
         final Properties baseProps = new Properties();
 
-        if (useSystemProps)
+        if ( useSystemProps )
         {
-            baseProps.putAll(System.getProperties());
+            baseProps.putAll( System.getProperties() );
         }
 
         final Properties resolvedProps = new Properties();
         try
         {
-            resolvedProps.putAll(loadPropertyFile(propfile, baseProps));
-        } catch (FileNotFoundException e)
+            resolvedProps.putAll( loadPropertyFile( propfile, baseProps ) );
+        }
+        catch ( FileNotFoundException e )
         {
-            if (fail)
+            if ( fail )
             {
-                throw new FileNotFoundException(propfile.toString());
+                throw new FileNotFoundException( propfile.toString() );
             }
         }
 
-        if (useSystemProps)
+        if ( useSystemProps )
         {
-            resolvedProps.putAll(baseProps);
+            resolvedProps.putAll( baseProps );
         }
 
         return resolvedProps;
     }
-
 
     /**
      * Retrieves a property value, replacing values like ${token}
@@ -166,7 +165,8 @@ public final class PropertyUtils
             v = v.substring( idx + 2 );
 
             // if no matching } then bail
-            if ( ( idx2 = v.indexOf( '}' ) ) < 0 )
+            idx2 = v.indexOf( '}' );
+            if ( idx2 < 0 )
             {
                 break;
             }
