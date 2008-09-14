@@ -119,7 +119,8 @@ public abstract class AbstractCheckDocumentationMojo
 
         httpClient = new HttpClient();
 
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 5000 );
+        final int connectionTimeout = 5000;
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( connectionTimeout );
         httpClient.getParams().setParameter( HttpMethodParams.USER_AGENT, httpUserAgent );
     }
 
