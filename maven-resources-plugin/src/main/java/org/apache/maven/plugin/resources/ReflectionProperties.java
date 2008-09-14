@@ -25,7 +25,6 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.util.Properties;
 
-
 /**
  * @deprecated use classes in the component maven-filtering
  * TODO remove the class ?
@@ -38,15 +37,15 @@ public class ReflectionProperties
 
     private MavenProject project;
 
-    boolean escapedBackslashesInFilePath;
+    private boolean escapedBackslashesInFilePath;
 
     public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath )
     {
-       super();
+        super();
 
-       project = aProject;
+        project = aProject;
 
-       this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
+        this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
     }
 
     public Object get( Object key )
@@ -54,24 +53,23 @@ public class ReflectionProperties
         Object value = null;
         try
         {
-            value = ReflectionValueExtractor.evaluate( "" + key , project );
+            value = ReflectionValueExtractor.evaluate( "" + key, project );
 
-            if ( escapedBackslashesInFilePath && value != null &&
-                "java.lang.String".equals( value.getClass().getName() ) )
+            if ( escapedBackslashesInFilePath && ( value instanceof String ) )
             {
                 String val = (String) value;
 
                 // Check if it's a windows path
                 if ( val.indexOf( ":\\" ) == 1 )
                 {
-                    value = StringUtils.replace( (String)value, "\\", "\\\\" );
-                    value = StringUtils.replace( (String)value, ":", "\\:" );
+                    value = StringUtils.replace( (String) value, "\\", "\\\\" );
+                    value = StringUtils.replace( (String) value, ":", "\\:" );
                 }
             }
         }
         catch ( Exception e )
         {
-            //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
+            // TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
         }
         return value;
     }

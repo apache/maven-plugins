@@ -132,7 +132,8 @@ public class ResourcesMojo
             }
             
             
-            MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution( getResources(), getOutputDirectory(),
+            MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution( getResources(), 
+                                                                                           getOutputDirectory(),
                                                                                            project, encoding, filters,
                                                                                            Collections.EMPTY_LIST,
                                                                                            session );
