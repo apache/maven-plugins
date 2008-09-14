@@ -28,7 +28,7 @@ import java.util.Iterator;
  */
 public class DocumentationReporter
 {
-    List reports = new ArrayList();
+    private List reports = new ArrayList();
 
     public void info( String message )
     {
