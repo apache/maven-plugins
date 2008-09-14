@@ -2,7 +2,7 @@
  Usage
  ------
  ------
- 19-June-2006
+ 2008-09-14
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,21 +28,21 @@
 Usage
 
   This document is intended to provide instructions for using the
-  maven-docck-plugin. In order for this discussion to be useful, it's
+  Maven DOCCK Plugin. In order for this discussion to be useful, it's
   critical to cover two topics: Configuring your project's <<<pom.xml>>> to run
   the plugin during every build and using the plugin from the command-line.
 
-* Configuring the plugin in pom.xml
+* Configuring the plugin in <<<pom.xml>>>
 
    You can use the following configuration in your <<<pom.xml>>> to run the DOCCK
    Plugin everytime the project is built.
 
 +---+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
-      [...]
+      ...
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-docck-plugin</artifactId>
@@ -54,10 +54,10 @@ Usage
           </execution>
         </executions>
       </plugin>
-      [...]
+      ...
     </plugins>
   </build>
-  [...]
+  ...
 </project>
 +---+
 
@@ -66,7 +66,7 @@ Usage
   The DOCCK Plugin is easily executed from the command line since it can run
   without any parameter configuration.
 
-  To run the DOCCK Plugin on a project, use:
+  To run the DOCCK Plugin on a project, type:
 
 +---+
 mvn docck:check

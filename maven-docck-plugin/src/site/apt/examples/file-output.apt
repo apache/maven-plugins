@@ -2,6 +2,7 @@
  Sending the output to a file
  ------
  ------
+ 2008-09-14
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,17 +27,17 @@
 
 Sending the output to a file
 
-* Configuring your pom.xml
+* Configuring your <<<pom.xml>>>
 
   You can use the following configuration in your <<<pom.xml>>> to run the DOCCK
   Plugin everytime the project is built and send its output to a file.
 
 +---+
 <project>
-  [...]
+  ...
   <build>
     <plugins>
-      [...]
+      ...
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-docck-plugin</artifactId>
@@ -51,10 +52,10 @@ Sending the output to a file
           </execution>
         </executions>
       </plugin>
-      [...]
+      ...
     </plugins>
   </build>
-  [...]
+  ...
 </project>
 +---+
 
