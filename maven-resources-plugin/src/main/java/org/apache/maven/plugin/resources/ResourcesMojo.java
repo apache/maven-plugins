@@ -71,6 +71,7 @@ public class ResourcesMojo
      *
      * @parameter expression="${project.resources}"
      * @required
+     * @readonly
      */
     private List resources;
 
