@@ -38,14 +38,14 @@ try
         return false;
     }
 
-    File parentDirectory = new File ( stagingDirectory, "localhost/www.example.com/parent" );
+    File parentDirectory = new File ( stagingDirectory, "localhost/tmp/www.example.com/parent" );
     if ( !parentDirectory.exists() || !parentDirectory.isDirectory() )
     {
         System.err.println( "Staging directory for parent is missing or not a directory." );
         return false;
     }
 
-    File childDirectory = new File ( stagingDirectory, "localhost/www.example.com/parent/child" );
+    File childDirectory = new File ( stagingDirectory, "localhost/tmp/www.example.com/parent/child" );
     if ( !childDirectory.exists() || !childDirectory.isDirectory() )
     {
         System.err.println( "Staging directory for child is missing or not a directory." );
