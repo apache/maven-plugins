@@ -167,6 +167,8 @@ public class VerifierMojo
     {
         boolean result = false;
 
+        getLog().debug( "Verifying contents of " + fileCheck.getLocation() );
+
         Pattern pattern = Pattern.compile( fileCheck.getContains() );
 
         // Note: Very inefficient way as we load the whole file in memory. If you have a better
@@ -193,6 +195,7 @@ public class VerifierMojo
         File physicalFile = new File( fileCheck.getLocation() );
         if ( fileCheck.isExists() )
         {
+            getLog().debug( "Verifying existence of " + physicalFile );
             result = physicalFile.exists();
             if ( !result )
             {
@@ -201,6 +204,7 @@ public class VerifierMojo
         }
         else
         {
+            getLog().debug( "Verifying absence of " + physicalFile );
             result = !physicalFile.exists();
             if ( !result )
             {
