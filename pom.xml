@@ -157,20 +157,12 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.2</version>
+            <version>1.2.1</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
-                <pomInclude>**/pom.xml</pomInclude>
+                <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
-              <pomExcludes>
-                <pomExclude>MWAR-143/war-common/pom.xml</pomExclude>
-                <pomExclude>MWAR-143/war-filter-overlay/pom.xml</pomExclude>
-                <pomExclude>MWAR-131/mwar131-test/pom.xml</pomExclude>
-                <pomExclude>MWAR-131/mwar131-webapp/pom.xml</pomExclude>
-                <pomExclude>MWAR-131/mwar131-webapp2/pom.xml</pomExclude>
-                <pomExclude>**/META-INF/**/pom.xml</pomExclude>
-              </pomExcludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
@@ -178,7 +170,7 @@ under the License.
                 <goal>package</goal>
               </goals>
               <settingsFile>src/it/settings.xml</settingsFile>
-              <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
             </configuration>
             <executions>
               <execution>
