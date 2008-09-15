@@ -118,6 +118,13 @@ public class ResourcesMojo
      * @since 2.3
      */
     private boolean overwrite;
+    
+    /**
+     * Copy any empty directories included in the Ressources.
+     * @parameter expression="${maven.resources.includeEmptyDirs}" default-value="false"
+     * @since 2.3
+     */    
+    protected boolean includeEmptyDirs;
 
     public void execute()
         throws MojoExecutionException
@@ -132,7 +139,7 @@ public class ResourcesMojo
                                    + ", i.e. build is platform dependent!" );
             }
             
-            
+
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution( getResources(), 
                                                                                            getOutputDirectory(),
                                                                                            project, encoding, filters,
@@ -140,6 +147,7 @@ public class ResourcesMojo
                                                                                            session );
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
+            mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
             mavenResourcesFiltering.filterResources( mavenResourcesExecution );
         }
         catch ( MavenFilteringException e )
@@ -198,6 +206,16 @@ public class ResourcesMojo
     public void setOverwrite( boolean overwrite )
     {
         this.overwrite = overwrite;
+    }
+
+    public boolean isIncludeEmptyDirs()
+    {
+        return includeEmptyDirs;
+    }
+
+    public void setIncludeEmptyDirs( boolean includeEmptyDirs )
+    {
+        this.includeEmptyDirs = includeEmptyDirs;
     }
     
     
