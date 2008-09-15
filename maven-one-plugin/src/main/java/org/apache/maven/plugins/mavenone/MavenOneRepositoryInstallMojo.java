@@ -150,10 +150,12 @@ public class MavenOneRepositoryInstallMojo
                 File file = artifact.getFile();
                 if ( file == null )
                 {
-                    throw new MojoExecutionException(
-                        "The packaging for this project did not assign a file to the build artifact" );
+                    getLog().warn( "The packaging for this project did not assign a file to the build artifact" );
                 }
-                installer.install( file, artifact, localRepository );
+                else
+                {
+                    installer.install( file, artifact, localRepository );
+                }
             }
 
             if ( attachedArtifacts != null && !attachedArtifacts.isEmpty() )
