@@ -22,13 +22,12 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-verifier-plugin-sample-simple</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <groupId>org.apache.maven.its.it0006</groupId>
+  <artifactId>maven-it-it0006</artifactId>
+  <version>1.0-alpha-2-SNAPSHOT</version>
 
-  <name>Maven Verifier Plugin Simple Sample</name>
-  <description>Maven Verifier Plugin Simple Sample</description>
+  <name>Maven Integration Test :: it0006</name>
+  <description>Integration test for the verifier plugin.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,17 +36,10 @@ under the License.
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-verifier-plugin</artifactId>
         <version>@project.version@</version>
-        <configuration>
-          <failOnError>true</failOnError>
-          <verificationFile>${basedir}/src/test/verifier/verifications-test.xml</verificationFile>
-        </configuration>
         <executions>
           <execution>
-            <id>main</id>
-            <phase>verify</phase>
             <goals>
               <goal>verify</goal>
             </goals>
