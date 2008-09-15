@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -20,22 +21,28 @@ under the License.
 
 <project>
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-verifier-plugin-sample-simple</artifactId>
   <packaging>jar</packaging>
+
   <name>Maven Verifier Plugin Simple Sample</name>
   <description>Maven Verifier Plugin Simple Sample</description>
   <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-verifier-plugin</artifactId>
+        <version>@project.version@</version>
         <configuration>
-
           <failOnError>true</failOnError>
           <verificationFile>${basedir}/src/test/verifier/verifications-test.xml</verificationFile>
-
         </configuration>
         <executions>
           <execution>
