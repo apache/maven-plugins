@@ -55,9 +55,7 @@ public class InstallPluginsMojoTest
 {
     private static final String TEST_M2_REPO = "m2repo/eclipseinstall/";
 
-    private static final Artifact ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME =
-        new DefaultArtifact( "org.eclipse.core", "runtime", VersionRange.createFromVersion( "3.2.0-v20060603" ),
-                             "scope-unused", "eclipse-plugin", "classifier-unused", null );
+    private static Artifact ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME;
 
     private TestFileManager fileManager;
 
@@ -86,6 +84,33 @@ public class InstallPluginsMojoTest
     private File locateInstalledFile( File pluginsDir, Artifact artifact )
     {
         return new File( pluginsDir, formatEclipsePluginName( artifact ) + ".jar" );
+    }
+
+    public void testJira488()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Artifact jira488_missingManifest =
+            createArtifact("jira", "meclipse", "488");
+
+        File pluginsDir = performTestInstall( null, false, jira488_missingManifest, "eclipse-plugin" );
+
+        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+
+        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+
+        assertFalse( installedFile + " should not exist as Jar has not Manifest.", installedFile.exists() );
+        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+
+        mm.verifyAll();
+    }
+
+    private Artifact createArtifact(String groupId, String artifactId, String version)
+    {
+        Artifact artifact = new DefaultArtifact( groupId, artifactId, VersionRange.createFromVersion( version ), "scope-unused",
+                             "eclipse-plugin", "classifier-unused", null );
+        artifact.setFile( locateArtifact( artifact ) );
+
+        return artifact;
     }
 
     public void testShouldInstallAsJarWhenPropertyNotSpecified()
@@ -211,7 +236,8 @@ public class InstallPluginsMojoTest
     {
         fileManager = new TestFileManager( "InstallPluginsMojo.test.", "" );
 
-        ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME.setFile( locateArtifact( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME ) );
+        ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME = createArtifact( "org.eclipse.core", "runtime", "3.2.0-v20060603" );
+
     }
 
     private File locateArtifact( Artifact artifact )
@@ -318,7 +344,8 @@ public class InstallPluginsMojoTest
                 manager.getUnArchiver( (File) null );
                 control.setMatcher( MockControl.ALWAYS_MATCHER );
                 ZipUnArchiver zipUnArchiver = new ZipUnArchiver();
-                zipUnArchiver.enableLogging( new ConsoleLogger(org.codehaus.plexus.logging.Logger.LEVEL_INFO, "console") );
+                zipUnArchiver.enableLogging( new ConsoleLogger( org.codehaus.plexus.logging.Logger.LEVEL_INFO,
+                                                                "console" ) );
                 control.setReturnValue( zipUnArchiver, MockControl.ONE_OR_MORE );
             }
             catch ( NoSuchArchiverException e )
