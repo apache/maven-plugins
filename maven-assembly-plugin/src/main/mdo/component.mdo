@@ -382,10 +382,11 @@
           <type>String</type>
           <defaultValue>${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</defaultValue>
           <description>
-            Sets the mapping pattern for all dependencies included in this
+            Sets the mapping pattern for all NON-UNPACKED dependencies included in this
             assembly. Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
             If the artifact doesn't have a classifier, that part of the pattern will be left off.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
+            dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
           </description>
         </field>
         <field>
