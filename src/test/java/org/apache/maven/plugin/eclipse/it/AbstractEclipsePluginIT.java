@@ -20,15 +20,18 @@ package org.apache.maven.plugin.eclipse.it;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import junit.framework.AssertionFailedError;
 
@@ -46,8 +49,14 @@ import org.apache.maven.shared.test.plugin.TestToolsException;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -95,6 +104,11 @@ public abstract class AbstractEclipsePluginIT
      * The name of the directory used for comparison of expected output.
      */
     private static final String EXPECTED_DIRECTORY_NAME = "expected";
+
+    /**
+     * The XML Header used to check if the file contains XML content.
+     */
+    private static final String XML_HEADER = "<?xml";
 
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -148,6 +162,19 @@ public abstract class AbstractEclipsePluginIT
                 System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
                     + "\n" );
 
+                // Hack: to work around proxys and DTDs retrievals.
+                EntityResolver ignoreDtds = new EntityResolver() {
+
+                    public InputSource resolveEntity( String publicId, String systemId )
+                        throws SAXException, IOException
+                    {
+                        return new InputSource(new StringReader("<!ELEMENT ignored (#PCDATA)>"));
+                    }
+                    
+                };       
+                XMLUnit.setTestEntityResolver( ignoreDtds );
+                XMLUnit.setControlEntityResolver( ignoreDtds );
+                
                 installed = true;
             }
         }
@@ -463,87 +490,189 @@ public abstract class AbstractEclipsePluginIT
     protected void assertFileEquals( File expectedFile, File actualFile )
         throws MojoExecutionException
     {
-        List expectedLines = getLines( expectedFile );
-
         if ( !actualFile.exists() )
         {
             throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
         }
 
-        List actualLines = getLines( actualFile );
+        HashMap variableReplacement = new HashMap();
+        variableReplacement.put( "${basedir}",
+                                 IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( new File( getBasedir() ) ) ) );
+        variableReplacement.put( "${M2_REPO}",
+                                 IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( localRepositoryDirectory ) ) );
 
-        String basedir = ( IdeUtils.getCanonicalPath( new File( getBasedir() ) ) ).replace( '\\', '/' );
-        String localRepositoryAsPath = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( localRepositoryDirectory ) );
+        String expectedFileContents = preprocess( expectedFile, variableReplacement );
+        String actualFileContents = preprocess( actualFile, null );
 
+        if ( isXml( expectedFile ) )
+        {
+            assertXmlFileEquals( expectedFile, expectedFileContents, actualFile, actualFileContents );
+        }
+        else
+        {
+            assertTextFileEquals( expectedFile, expectedFileContents, actualFile, actualFileContents );
+        }
+    }
+
+    /**
+     * Assert that two XML files are equal.
+     * 
+     * @param expectedFile the expected file - only used for path information
+     * @param expectedFileContents the contents of the expected file
+     * @param actualFile the actual file - only used for path information
+     * @param actualFileContents the contents of the actual fiel
+     * @throws MojoExecutionException failures.
+     */
+    private void assertXmlFileEquals( File expectedFile, String expectedFileContents, File actualFile,
+                                      String actualFileContents )
+        throws MojoExecutionException
+    {
+        try
+        {
+            XMLAssert.assertXMLEqual( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
+                + IdeUtils.getCanonicalPath( expectedFile ), expectedFileContents, actualFileContents );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( IdeUtils.getCanonicalPath( expectedFile )
+                + "assertXmlFileEquals failure: IO " + e.getMessage(), e );
+        }
+        catch ( SAXException e )
+        {
+            throw new MojoExecutionException( "assertXmlFileEquals failure: SAX " + e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Assert that two text files are equals. Lines that start with # are comments and ignored.
+     * 
+     * @param expectedFile the expected file - only used for path information
+     * @param expectedFileContents the contents of the expected file
+     * @param actualFile the actual file - only used for path information
+     * @param actualFileContents the contents of the actual fiel
+     * @throws MojoExecutionException failures.
+     */
+    private void assertTextFileEquals( File expectedFile, String expectedFileContents, File actualFile,
+                                       String actualFileContents )
+        throws MojoExecutionException
+    {
+        List expectedLines = getLines( expectedFileContents );
+        List actualLines = getLines( actualFileContents );
         for ( int i = 0; i < expectedLines.size(); i++ )
         {
             String expected = expectedLines.get( i ).toString();
-
-            // replace some vars in the expected line, to account
-            // for absolute paths that are different on each installation.
-            expected = StringUtils.replace( expected, "${basedir}", basedir );
-            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryAsPath );
-
             if ( actualLines.size() <= i )
             {
                 fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: "
                     + expectedLines.size() );
             }
-
             String actual = actualLines.get( i ).toString();
-
             if ( expected.startsWith( "#" ) && actual.startsWith( "#" ) )
             {
                 // ignore comments, for settings file
                 continue;
             }
-
-            /*
-             * Hacks for assertEquals problems.
-             */
-            if ( !expected.equals( actual ) )
-            {
-                /*
-                 * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix.
-                 * On a Windows box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir"
-                 * is mapped to "file:/home/dir". So, in the first case the slash after "file:" is not part of the
-                 * corresponding filesystem path while in the later case it is. This discrepancy makes verifying the
-                 * javadoc attachments in ".classpath" a little tricky.
-                 */
-                // convert "file:C:/dir" to "file:/C:/dir"
-                expected = expected.replaceAll( "file:([a-zA-Z])", "file:/$1" );
-
-                if ( expectedFile.getName().endsWith( ".prefs" ) )
-                {
-                    /*
-                     * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file
-                     * as the value for a key like "org.eclipse.jdt.ui.formatterprofiles" from
-                     * "org.eclipse.jdt.ui.prefs". Line terminators in this value are platform-dependent.
-                     */
-                    // normalize line terminators
-                    expected = expected.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
-                    actual = actual.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
-                }
-                else if ( expectedFile.getName().equals( "org.eclipse.wst.common.component" )
-                    || expectedFile.getName().equals( ".modulemaps" )
-                    || expectedFile.getName().equals( "application.xml" ) )
-                {
-                    /*
-                     * NOTE: This is a hack to compensate for files that contain generated values like dependent-object
-                     * in org.eclipse.wst.common.component.
-                     * 
-                     * Regex would be a better solution.
-                     */
-                    expected = expected.replaceAll( "_\\d+", "" );
-                    actual = actual.replaceAll( "_\\d+", "" );
-                }
-            }
-
             assertEquals( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
                 + IdeUtils.getCanonicalPath( expectedFile ) + "' at line #" + ( i + 1 ), expected, actual );
         }
-
         assertTrue( "Unequal number of lines.", expectedLines.size() == actualLines.size() );
+    }
+
+    /**
+     * Preprocess the file so that equals comparison can be done. Preprocessing may vary based on filename.
+     * 
+     * @param file the file being processed
+     * @param variables if not null, then replace all keys with the corresponding values in the expected string.
+     * 
+     * @return processed input
+     */
+    private String preprocess( File file, Map variables )
+        throws MojoExecutionException
+    {
+        String result = null;
+        try
+        {
+            result = FileUtils.fileRead( file, "UTF-8" );
+        }
+        catch ( IOException ex )
+        {
+            throw new MojoExecutionException( "Unable to read file", ex );
+        }
+        result = replaceVariables( result, variables );
+        result = fixWindowsDriveURI( result );
+
+        /*
+         * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file as the
+         * value for a key like "org.eclipse.jdt.ui.formatterprofiles" from "org.eclipse.jdt.ui.prefs". Line terminators
+         * in this value are platform-dependent.
+         * 
+         */
+        if ( file.getName().endsWith( ".prefs" ) )
+        {
+            result = normalizeNewlineTerminators( result );
+        }
+
+        /*
+         * NOTE: This is a hack to compensate for files that contain generated values like dependent-object in
+         * org.eclipse.wst.common.component.
+         * 
+         * Regex would be a better solution.
+         */
+        if ( file.getName().equals( "org.eclipse.wst.common.component" ) || file.getName().equals( ".modulemaps" )
+            || file.getName().equals( "application.xml" ) )
+        {
+            result = result.replaceAll( "_\\d+", "" );
+        }
+        return result;
+    }
+
+    /**
+     * Normalize line terminators into \n. \r\n, \r, \n all get changed into \n.
+     * 
+     * @param input the string to normalize
+     * @return string with line terminators normalized
+     */
+    private String normalizeNewlineTerminators( String input )
+    {
+        return input.replaceAll( "(\\\\r\\\\n)|(\\\\n)|(\\\\r)", "\\n" );
+    }
+
+    /**
+     * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix. On a Windows
+     * box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir" is mapped to
+     * "file:/home/dir". So, in the first case the slash after "file:" is not part of the corresponding filesystem path
+     * while in the later case it is. This discrepancy makes verifying the javadoc attachments in ".classpath" a little
+     * tricky.
+     * 
+     * @param input string input that may contain a windows URI
+     * @return all windows URI convert "file:C:/dir" to "file:/C:/dir"
+     */
+    private String fixWindowsDriveURI( String input )
+    {
+        return input.replaceAll( "file:([a-zA-Z]):", "file:/$1:" );
+    }
+
+    /**
+     * @param str input string
+     * @param variables map of variables (keys) and replacement value (values)
+     * @return the string with all variable values replaced.
+     */
+    private String replaceVariables( String str, Map variables )
+    {
+        String result = str;
+        if ( variables != null && !variables.isEmpty() )
+        {
+            Iterator iter = variables.entrySet().iterator();
+            while ( iter.hasNext() )
+            {
+                Map.Entry entry = (Entry) iter.next();
+                String variable = (String) entry.getKey();
+                String replacement = (String) entry.getValue();
+                result = result.replace( variable, replacement );
+            }
+        }
+
+        return result;
     }
 
     protected void assertContains( String message, String full, String substring )
@@ -580,14 +709,15 @@ public abstract class AbstractEclipsePluginIT
         }
     }
 
-    private List getLines( File file )
+    private List getLines( String input )
         throws MojoExecutionException
     {
         try
+
         {
             List lines = new ArrayList();
 
-            BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
+            BufferedReader reader = new BufferedReader( new StringReader( input ) );
 
             String line;
 
@@ -602,7 +732,7 @@ public abstract class AbstractEclipsePluginIT
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "failed to getLines from file: " + file.getAbsolutePath(), e );
+            throw new MojoExecutionException( "failed to getLines", e );
         }
     }
 
@@ -708,6 +838,31 @@ public abstract class AbstractEclipsePluginIT
         {
             throw new MojoExecutionException( Messages.getString( "cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
         }
+    }
 
+    /**
+     * Test if the file contains xml content.
+     * 
+     * @param f the file to test
+     * @return true if the file contains xml content, false otherwise.
+     */
+    private boolean isXml( File f )
+    {
+        FileReader reader = null;
+        try
+        {
+            reader = new FileReader( f );
+            char[] header = new char[XML_HEADER.length()];
+            reader.read( header );
+            return XML_HEADER.equals( new String( header ) );
+        }
+        catch ( Exception e )
+        {
+            return false;
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 }
