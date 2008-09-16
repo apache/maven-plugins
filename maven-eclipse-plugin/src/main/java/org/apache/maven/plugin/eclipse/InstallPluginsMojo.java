@@ -231,7 +231,8 @@ public class InstallPluginsMojo
      * </p>
      * <ol>
      * <li>Determine whether the plugin should be extracted into a directory or not</li>
-     * <li>If the plugin's target location exists, or overwrite is set to true: <ol type="a">
+     * <li>If the plugin's target location exists, or overwrite is set to true:
+     * <ol type="a">
      * <li>if extract, ensure the plugin target location exists (mkdirs), and extract there.</li>
      * <li>copy the plugin file from the local repository to the target location</li>
      * </ol>
@@ -276,6 +277,13 @@ public class InstallPluginsMojo
             // don't verify, plugins zipped by eclipse:make-artifacts could have a bad signature
             JarFile jar = new JarFile( artifact.getFile(), false );
             Manifest manifest = jar.getManifest();
+            if ( manifest == null )
+            {
+                getLog().debug(
+                                "Ignoring " + artifact.getArtifactId()
+                                    + " as it is does not have a Manifest (and so is not an OSGi bundle)" );
+                return;
+            }
             attributes = manifest.getMainAttributes();
         }
         catch ( IOException e )
@@ -408,8 +416,8 @@ public class InstallPluginsMojo
 
     /**
      * <p>
-     * Format the artifact information into an Eclipse-friendly plug-in name.
-     * Delegates to maven2OsgiConverter to obtain bundle symbolic name and version.
+     * Format the artifact information into an Eclipse-friendly plug-in name. Delegates to maven2OsgiConverter to obtain
+     * bundle symbolic name and version.
      * </p>
      */
     private String formatEclipsePluginName( Artifact artifact )
