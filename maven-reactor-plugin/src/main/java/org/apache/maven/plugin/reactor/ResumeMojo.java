@@ -60,14 +60,14 @@ public class ResumeMojo
     
     /**
      * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
-     * @parameter expression="${fromArtifact}"
+     * @parameter expression="${fromArtifact}" default-value="null"
      * @required
      */
     private String continueFromProject;
     
     /**
      * The project folder from which we'll resume
-     * @parameter expression="${from}"
+     * @parameter expression="${from}" default-value="null"
      * @required
      */
     private File continueFromFolder;
@@ -92,6 +92,14 @@ public class ResumeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+    	if ( "null".equals( continueFromProject ) )
+    	{
+    	    continueFromProject = null;
+    	}
+    	if ( new File( "null" ).equals( continueFromFolder ) )
+    	{
+    	    continueFromFolder = null;
+    	}
         if ( continueFromFolder == null && continueFromProject == null )
         {
             throw new MojoFailureException("You must specify either a folder or a project with -Dfrom=baz/bar or -DfromArtifact=com.mycompany:foo (groupId is optional)");
