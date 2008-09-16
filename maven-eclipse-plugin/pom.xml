@@ -226,7 +226,6 @@
           <excludes>
             <exclude>**/project/**</exclude>
             <exclude>**/Abstract*.java</exclude>
-            <exclude>**/InstallPluginsMojoTest.java</exclude>
           </excludes>
           <systemProperties>
             <property>
