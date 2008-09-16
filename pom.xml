@@ -99,6 +99,7 @@ under the License.
             <!-- SNAPSHOT due to MINVOKER-48 -->
             <version>1.3-SNAPSHOT</version>
             <configuration>
+              <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/**/pom.xml</pomInclude>
