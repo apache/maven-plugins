@@ -1372,16 +1372,16 @@ public class EclipsePlugin
 
         extractSourceDirs( mainDirectories, project.getCompileSourceRoots(), basedir, projectBaseDir, false, null );
 
-        extractResourceDirs( mainDirectories, project.getBuild().getResources(), project, basedir, projectBaseDir,
-                             false, mainOutput );
+        extractResourceDirs( mainDirectories, project.getBuild().getResources(), basedir, projectBaseDir, false,
+                             mainOutput );
 
         Set testDirectories = new LinkedHashSet();
 
         extractSourceDirs( testDirectories, project.getTestCompileSourceRoots(), basedir, projectBaseDir, true,
                            testOutput );
 
-        extractResourceDirs( testDirectories, project.getBuild().getTestResources(), project, basedir, projectBaseDir,
-                             true, testOutput );
+        extractResourceDirs( testDirectories, project.getBuild().getTestResources(), basedir, projectBaseDir, true,
+                             testOutput );
 
         // avoid duplicated entries
         Set directories = new LinkedHashSet();
@@ -1425,8 +1425,8 @@ public class EclipsePlugin
         }
     }
 
-    void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
-                              File workspaceProjectBaseDir, boolean test, final String output )
+    void extractResourceDirs( Set directories, List resources, File basedir, File workspaceProjectBaseDir,
+                              boolean test, final String output )
         throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )

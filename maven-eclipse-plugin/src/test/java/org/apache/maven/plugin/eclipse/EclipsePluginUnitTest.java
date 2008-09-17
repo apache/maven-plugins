@@ -93,7 +93,7 @@ public class EclipsePluginUnitTest
 
         String path = result[0].getOutput();
 
-        assertTrue( "output directory should end with: " + resOutput, path.endsWith( resOutput ) );
+        assertEquals( resOutput, path );
     }
 
     public void testExtractResourceDirs_ShouldUseResourceOutput()
@@ -124,7 +124,7 @@ public class EclipsePluginUnitTest
 
         EclipsePlugin plugin = newMojo();
 
-        plugin.extractResourceDirs( result, project.getBuild().getResources(), project, basedir, basedir, false,
+        plugin.extractResourceDirs( result, project.getBuild().getResources(), basedir, basedir, false,
                                     "target/classes" );
 
         Iterator resultIter = result.iterator();
@@ -135,8 +135,7 @@ public class EclipsePluginUnitTest
 
         String prefix = "target/classes/";
 
-        assertTrue( "output directory should end with: " + prefix + resOutput + "\nWas: " + path, path.endsWith( prefix
-            + resOutput ) );
+        assertEquals( prefix + resOutput, path );
     }
 
     public void testExtractResourceDirs_ShouldUseSpecifiedOutputDirectory()
@@ -166,8 +165,7 @@ public class EclipsePluginUnitTest
 
         EclipsePlugin plugin = newMojo();
 
-        plugin.extractResourceDirs( result, project.getBuild().getTestResources(), project, basedir, basedir, false,
-                                    resOutput );
+        plugin.extractResourceDirs( result, project.getBuild().getTestResources(), basedir, basedir, false, resOutput );
 
         Iterator resultIter = result.iterator();
 
@@ -175,7 +173,7 @@ public class EclipsePluginUnitTest
 
         String path = ( (EclipseSourceDir) resultIter.next() ).getOutput();
 
-        assertTrue( "output directory should end with: " + resOutput, path.endsWith( resOutput ) );
+        assertEquals( resOutput, path );
     }
 
     public void testExtractResourceDirs_ShouldIncludeMainAndTestResources()
@@ -225,8 +223,8 @@ public class EclipsePluginUnitTest
 
         EclipsePlugin plugin = newMojo();
 
-        plugin.extractResourceDirs( result, project.getBuild().getResources(), project, basedir,
-                                    workspaceProjectBasedir, false, "target/classes" );
+        plugin.extractResourceDirs( result, project.getBuild().getResources(), basedir, workspaceProjectBasedir, false,
+                                    "target/classes" );
 
         Iterator resultIter = result.iterator();
 
@@ -234,19 +232,14 @@ public class EclipsePluginUnitTest
 
         String path = ( (EclipseSourceDir) resultIter.next() ).getPath();
 
-        if ( basedir.equals( workspaceProjectBasedir ) )
-        {
-            assertTrue( "resource dir path: " + path + " does not end with: " + resDir, path.endsWith( resDir ) );
-        }
-        else
+        if ( !basedir.equals( workspaceProjectBasedir ) )
         {
             resDir = resDir.replace( '\\', '/' ).replace( '/', '-' );
-
-            assertTrue( "resource dir path: " + path + " does not end with: " + resDir, path.endsWith( resDir ) );
         }
+        assertEquals( resDir, path );
 
-        plugin.extractResourceDirs( result, project.getBuild().getTestResources(), project, basedir,
-                                    workspaceProjectBasedir, false, "target/test-classes" );
+        plugin.extractResourceDirs( result, project.getBuild().getTestResources(), basedir, workspaceProjectBasedir,
+                                    false, "target/test-classes" );
 
         resultIter = result.iterator();
         resultIter.next();
@@ -255,18 +248,10 @@ public class EclipsePluginUnitTest
 
         path = ( (EclipseSourceDir) resultIter.next() ).getPath();
 
-        if ( basedir.equals( workspaceProjectBasedir ) )
-        {
-            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir,
-                        path.endsWith( testResDir ) );
-        }
-        else
+        if ( !basedir.equals( workspaceProjectBasedir ) )
         {
             testResDir = testResDir.replace( '\\', '/' ).replace( '/', '-' );
-
-            assertTrue( "test-resource dir path: " + path + " does not end with: " + testResDir,
-                        path.endsWith( testResDir ) );
         }
-
+        assertEquals( testResDir, path );
     }
 }
