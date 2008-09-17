@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
@@ -26,10 +27,13 @@ import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
@@ -40,10 +44,23 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.collections.ActiveCollectionManager;
+import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+import org.codehaus.plexus.component.configurator.ComponentConfigurator;
+import org.codehaus.plexus.component.configurator.ConfigurationListener;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,7 +73,7 @@ import java.util.Map;
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
-    implements AssemblyArchiver
+    implements AssemblyArchiver, Contextualizable
 {
 
     /**
@@ -73,6 +90,8 @@ public class DefaultAssemblyArchiver
      * @plexus.requirement role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
      */
     private Map containerDescriptorHandlers;
+
+    private PlexusContainer container;
 
     public DefaultAssemblyArchiver()
     {
@@ -229,17 +248,19 @@ public class DefaultAssemblyArchiver
         }
 
         List extraSelectors = null;
+        List extraFinalizers = null;
         if ( archiver instanceof JarArchiver )
         {
             extraSelectors = Collections.singletonList( new JarSecurityFileSelector() );
-        }
-
-        List extraFinalizers = null;
-        if ( "jar".equals( format ) )
-        {
+            
             extraFinalizers = Collections.singletonList( new ManifestCreationFinalizer( configSource.getProject(),
                                                                                         configSource.getJarArchiveConfiguration() ) );
 
+        }
+        
+        if ( configSource.getArchiverConfig() != null )
+        {
+            configureArchiver( archiver, configSource );
         }
 
         String prefix = "";
@@ -251,6 +272,53 @@ public class DefaultAssemblyArchiver
         archiver = new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers, getLogger(), configSource.isDryRun() );
 
         return archiver;
+    }
+
+    private void configureArchiver( Archiver archiver, AssemblerConfigurationSource configSource )
+        throws ArchiverException
+    {
+        ComponentConfigurator configurator;
+        try
+        {
+            configurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new ArchiverException( "Failed to lookup configurator component for setup of archiver: " + archiver.getClass().getName(), e );
+        }
+        
+        Xpp3Dom config;
+        try
+        {
+            config = Xpp3DomBuilder.build( new StringReader( configSource.getArchiverConfig() ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass().getName(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass().getName(), e );
+        }
+        
+        XmlPlexusConfiguration configuration = new XmlPlexusConfiguration( config );
+        
+        ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
+        ExpressionEvaluator expressionEvaluator = new AssemblyExpressionEvaluator( configSource );
+
+        getLogger().debug( "Configuring archiver: '" + archiver.getClass().getName() + "' -->" );
+        
+        try
+        {
+            configurator.configureComponent( archiver, configuration, expressionEvaluator,
+                                             container.getContainerRealm(), listener );
+        }
+        catch ( ComponentConfigurationException e )
+        {
+            throw new ArchiverException( "Failed to configure archiver: " + archiver.getClass().getName(), e );
+        }
+        
+        getLogger().debug( "-- end configuration --" );
     }
 
     protected Archiver createWarArchiver()
@@ -298,6 +366,17 @@ public class DefaultAssemblyArchiver
         tarArchiver.setLongfile( tarFileMode );
 
         return tarArchiver;
+    }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    protected void setContainer( PlexusContainer container )
+    {
+        this.container = container;
     }
 
 }
