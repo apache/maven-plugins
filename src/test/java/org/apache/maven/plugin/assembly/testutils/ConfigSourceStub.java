@@ -13,6 +13,9 @@ public class ConfigSourceStub
     implements AssemblerConfigurationSource
 {
 
+    private String archiverConfig;
+    private MavenProject project;
+
     public File getArchiveBaseDirectory()
     {
         return null;
@@ -85,7 +88,7 @@ public class ConfigSourceStub
 
     public MavenProject getProject()
     {
-        return null;
+        return project;
     }
 
     public List getReactorProjects()
@@ -141,6 +144,21 @@ public class ConfigSourceStub
     public boolean isSiteIncluded()
     {
         return false;
+    }
+    
+    public void setArchiverConfig( String archiverConfig )
+    {
+        this.archiverConfig = archiverConfig;
+    }
+
+    public String getArchiverConfig()
+    {
+        return archiverConfig;
+    }
+
+    public void setProject( MavenProject mavenProject )
+    {
+        this.project = mavenProject;
     }
 
 }

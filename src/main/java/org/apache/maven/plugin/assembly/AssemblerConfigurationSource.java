@@ -84,4 +84,6 @@ public interface AssemblerConfigurationSource
     boolean isIgnoreMissingDescriptor();
     
     MavenSession getMavenSession();
+    
+    String getArchiverConfig();
 }

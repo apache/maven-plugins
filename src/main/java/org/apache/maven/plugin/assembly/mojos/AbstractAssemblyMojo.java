@@ -36,6 +36,8 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.util.Iterator;
@@ -284,6 +286,24 @@ public abstract class AbstractAssemblyMojo
      * @component
      */
     private AssemblyReader assemblyReader;
+    
+    /**
+     * Allows additional configuration options that are specific to a particular
+     * type of archive format. This is intended to capture an XML configuration
+     * that will be used to reflectively setup the options on the archiver instance.
+     * <br/>
+     * For instance, to direct an assembly with the "ear" format to use a particular
+     * appXml file, you should specify the following for the archiverConfig value
+     * in your plugin configuration:
+     * <br/>
+     * <pre>
+     * &lt;appXml&gt;${project.basedir}/somepath/app.xml&lt;/appXml&gt;
+     * </pre>
+     *  
+     * @parameter
+     * @since 2.2-beta-3
+     */
+    private PlexusConfiguration archiverConfig;
 
     /**
      * Create the binary distribution.
@@ -651,6 +671,11 @@ public abstract class AbstractAssemblyMojo
     
     public MavenSession getMavenSession() {
     	return this.mavenSession;
+    }
+    
+    public String getArchiverConfig()
+    {
+        return archiverConfig == null ? null : archiverConfig.toString();
     }
 
 }
