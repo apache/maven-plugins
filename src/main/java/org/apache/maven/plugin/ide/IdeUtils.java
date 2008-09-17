@@ -393,21 +393,29 @@ public class IdeUtils
             fileToAdd = new File( basedir, fileToAdd.getPath() );
         }
 
-        String basedirpath;
-        String absolutePath;
+        String basedirPath = getCanonicalPath( basedir );
+        String absolutePath = getCanonicalPath( fileToAdd );
 
-        basedirpath = getCanonicalPath( basedir );
-        absolutePath = getCanonicalPath( fileToAdd );
+        String relative = null;
 
-        String relative;
-
-        if ( absolutePath.equals( basedirpath ) )
+        if ( absolutePath.equals( basedirPath ) )
         {
             relative = "."; //$NON-NLS-1$
         }
-        else if ( absolutePath.startsWith( basedirpath ) )
+        else if ( absolutePath.startsWith( basedirPath ) )
         {
-            relative = absolutePath.substring( basedirpath.length() + 1 );
+            // MECLIPSE-261
+            // The canonical form of a windows root dir ends in a slash, whereas the canonical form of any other file
+            // does not.
+            // The absolutePath is assumed to be: basedirPath + Separator + fileToAdd
+            // In the case of a windows root directory the Separator is missing since it is contained within
+            // basedirPath.
+            int length = basedirPath.length();
+            if ( !basedirPath.endsWith( "\\" ) )
+            {
+                length++;
+            }
+            relative = absolutePath.substring( length );
         }
         else
         {
@@ -426,8 +434,7 @@ public class IdeUtils
     }
 
     /**
-     * Convert the provided filename from a Windows separator \\ to a unix/java
-     * separator /
+     * Convert the provided filename from a Windows separator \\ to a unix/java separator /
      * 
      * @param filename file name to fix separator
      * @return filename with all \\ replaced with /

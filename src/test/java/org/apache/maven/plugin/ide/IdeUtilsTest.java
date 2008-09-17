@@ -51,10 +51,10 @@ public class IdeUtilsTest
         name = IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE, dependency );
         assertEquals( dependency.getArtifactId() + "-" + dependency.getVersion(), name );
     }
-    
+
     /**
-     * When the file to add is on a different drive and an absolute path expect
-     * that the returned value is the same as the file to add (but with /s) 
+     * When the file to add is on a different drive and an absolute path expect that the returned value is the same as
+     * the file to add (but with /s)
      * 
      * @throws Exception
      */
@@ -71,8 +71,8 @@ public class IdeUtilsTest
     }
 
     /**
-     * When the file to add is a relative file then expect the result to be
-     * relative to the basedir (not whatever the current processes basedir is set to)
+     * When the file to add is a relative file then expect the result to be relative to the basedir (not whatever the
+     * current processes basedir is set to)
      * 
      * @throws Exception
      */
@@ -86,6 +86,29 @@ public class IdeUtilsTest
         String expected = "target/main-output";
 
         assertEquals( actual, expected );
-    }    
+    }
+
+    /**
+     * See MECLIPSE-261.
+     * <p>
+     * When the base dir is a windows root directory the assumption that the full path to fileToAdd is basedir + "/" +
+     * fileToAdd is incorrect.
+     * <p>
+     * As the canonical form of a windows root dir ends in a slash, whereas the canonical form of any other file does
+     * not.
+     * 
+     * @throws Exception
+     */
+    public void testToRelativeAndFixSeparator_MECLIPSE_261()
+        throws Exception
+    {
+        File basedir = new File( "Z:" );
+        File fileToAdd = new File( "target/main-output" );
+
+        String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
+        String expected = "target/main-output";
+
+        assertEquals( actual, expected );
+    }
 
 }
