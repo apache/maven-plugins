@@ -47,13 +47,16 @@ public class RadPluginIT
         testProject( "project-rad-1", new Properties(), "rad-clean", "rad" );
     }
 
-    /*
-     * TODO: fix failing test public void testProject2() throws Exception { testProject( "project-rad-2", new
-     * Properties(), "rad-clean", "rad" ); File generatedManifest = getTestFile( PROJECTS_BASEDIR +
-     * "/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" ); File expectedManifest = getTestFile( PROJECTS_BASEDIR +
-     * "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" ); assertFileEquals(
-     * localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest ); }
-     */
+    public void testProject2()
+        throws Exception
+    {
+        testProject( "project-rad-2", new Properties(), "rad-clean", "rad" );
+        File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" );
+        File expectedManifest =
+            getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
+        assertFileEquals( expectedManifest, generatedManifest );
+
+    }
 
     public void testProject3()
         throws Exception
