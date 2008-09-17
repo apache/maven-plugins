@@ -20,6 +20,9 @@ package org.apache.maven.plugin.ide;
 
 import java.io.File;
 
+import org.codehaus.plexus.component.repository.io.PlexusTools;
+import org.codehaus.plexus.util.Os;
+
 import junit.framework.TestCase;
 
 /**
@@ -30,8 +33,8 @@ import junit.framework.TestCase;
  */
 public class IdeUtilsTest
     extends TestCase
-{
-
+{  
+    
     public void testGetProjectNameStringIdeDependency()
     {
         IdeDependency dependency = new IdeDependency();
@@ -61,6 +64,10 @@ public class IdeUtilsTest
     public void testToRelativeAndFixSeparator_WhereOnDifferentDrivesAndAbsolutePaths()
         throws Exception
     {
+        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
+        {
+            return;
+        }
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "D:\\ide\\workspace\\maven\\maven-eclipse-plugin\\target\\main-output" );
 
@@ -79,6 +86,10 @@ public class IdeUtilsTest
     public void testToRelativeAndFixSeparator_WhereOnDifferentDrivesAndFileToAddRelative()
         throws Exception
     {
+        if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
+            return;
+        }
+        
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "target/main-output" );
 
@@ -102,6 +113,10 @@ public class IdeUtilsTest
     public void testToRelativeAndFixSeparator_MECLIPSE_261()
         throws Exception
     {
+        if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
+            return;
+        }
+        
         File basedir = new File( "Z:" );
         File fileToAdd = new File( "target/main-output" );
 
