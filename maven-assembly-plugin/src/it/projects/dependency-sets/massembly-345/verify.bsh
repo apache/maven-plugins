@@ -1,0 +1,6 @@
+import java.io.*;
+
+// verify that the ear is created
+result = new File( basedir, "target/massembly-345-1-bin.ear" ).exists();
+
+return result;
