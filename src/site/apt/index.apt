@@ -98,6 +98,8 @@ Maven Eclipse Plugin
 
   * {{{examples/load-code-styles.html}Load Code Style file}}
   
+  * {{{examples/configure-checkstyle.html}Configure Checkstyle}}
+  
   * {{{examples/multi-module-projects.html}Multi-module projects with WTP}}
       
   * {{{examples/ajdt-projects.html}AJDT projects}}  
