@@ -55,6 +55,8 @@ public class AssemblyInterpolator
 {
     private static final Set INTERPOLATION_BLACKLIST;
 
+    private static final Properties ENVIRONMENT_VARIABLES;
+
     static
     {
         Set blacklist = new HashSet();
@@ -64,19 +66,23 @@ public class AssemblyInterpolator
         blacklist.add( "outputDirectory" );
 
         INTERPOLATION_BLACKLIST = blacklist;
-    }
-
-    private Properties envars;
-
-    public AssemblyInterpolator( Properties envars )
-    {
-        this.envars = envars;
+        
+        Properties environmentVariables;
+        try
+        {
+            environmentVariables = CommandLineUtils.getSystemEnvVars( false );
+        }
+        catch ( IOException e )
+        {
+            environmentVariables = new Properties();
+        }
+        
+        ENVIRONMENT_VARIABLES = environmentVariables;
     }
 
     public AssemblyInterpolator()
         throws IOException
     {
-        envars = CommandLineUtils.getSystemEnvVars( false );
     }
 
     public Assembly interpolate( Assembly assembly, MavenProject project, AssemblerConfigurationSource configSource )
@@ -105,6 +111,10 @@ public class AssemblyInterpolator
             throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
                 + ". Reason: " + e.getMessage(), e );
         }
+        finally
+        {
+            interpolator.clearAnswers();
+        }
 
         if ( objectInterpolator.hasWarnings() && getLogger().isDebugEnabled() )
         {
@@ -129,9 +139,10 @@ public class AssemblyInterpolator
         return assembly;
     }
 
-    private Interpolator buildInterpolator( MavenProject project, AssemblerConfigurationSource configSource )
+    public static Interpolator buildInterpolator( MavenProject project, AssemblerConfigurationSource configSource )
     {
         StringSearchInterpolator interpolator = new StringSearchInterpolator();
+        interpolator.setCacheAnswers( true );
 
         MavenSession session = configSource.getMavenSession();
 
@@ -176,7 +187,7 @@ public class AssemblyInterpolator
 
         // 7
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );
-        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), envars,
+        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), ENVIRONMENT_VARIABLES,
                                                                         true ) );
 
         return interpolator;
