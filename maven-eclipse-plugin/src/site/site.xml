@@ -39,6 +39,7 @@ under the License.
       <item name="Provide Project Natures And Build Commands" href="examples/provide-project-natures-and-build-commands.html"/>
       <item name="Adding additional facets" href="examples/additional-facets.html"/>
       <item name="Load Code Style file" href="examples/load-code-styles.html"/>
+      <item name="Configure Checkstyle" href="examples/configure-checkstyle.html"/>
       <item name="Multi-module projects with WTP" href="examples/multi-module-projects.html"/>
     </menu>
   </body>
