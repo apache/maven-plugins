@@ -1,0 +1,16 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>maven-libs</outputDirectory>
+      <includes>
+        <include>org.apache.maven.wagon*</include>
+        <include>org.apache.maven.reporting*</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
