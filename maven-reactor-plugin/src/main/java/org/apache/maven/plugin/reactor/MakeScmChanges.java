@@ -52,7 +52,7 @@ public class MakeScmChanges
      * @parameter expression="${make.scmConnection}" default-value="${project.scm.connection}"
      * @required
      */
-    private String scmConnection;
+    String scmConnection;
 
     /**
      * Ignore files in the "unknown" status (created but not added to source control)
@@ -64,7 +64,7 @@ public class MakeScmChanges
     /**
      * @component
      */
-    private ScmManager scmManager;
+    ScmManager scmManager;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException

@@ -99,6 +99,11 @@ public class MakeMojo
      */
     private boolean printOnly = false;
     
+    /**
+     * @component
+     */
+    SimpleInvoker simpleInvoker;
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -150,7 +155,7 @@ public class MakeMojo
             throw new MojoExecutionException( "Problem generating dependency tree", e );
         }
 
-        new SimpleInvoker().runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
+        simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
 
     }
 

@@ -35,7 +35,7 @@ import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
  *
  */
-class SimpleInvoker
+public class SimpleInvoker
 {
     /** Runs a "mvn --reactor" build with the specified includes
      * 
