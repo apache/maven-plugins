@@ -410,10 +410,10 @@ public class IdeUtils
             // The absolutePath is assumed to be: basedirPath + Separator + fileToAdd
             // In the case of a windows root directory the Separator is missing since it is contained within
             // basedirPath.
-            int length = basedirPath.length();
-            if ( !basedirPath.endsWith( "\\" ) )
+            int length = basedirPath.length() + 1;
+            if ( basedirPath.endsWith( "\\" ) )
             {
-                length++;
+                length--;
             }
             relative = absolutePath.substring( length );
         }
