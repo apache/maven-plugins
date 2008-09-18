@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -311,10 +312,11 @@ public class InstallMojo
 
         // collect transitive dependencies
         Collection dependencies = new HashSet();
-        for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+        for ( Iterator it = mvnProject.getRuntimeArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
-            String id = artifact.getGroupId() + ':' + artifact.getArtifactId();
+            String id = ArtifactUtils.versionlessKey( artifact );
+            
             dependencies.add( id );
         }
 
@@ -327,8 +329,33 @@ public class InstallMojo
                 MavenProject requiredProject = (MavenProject) projects.remove( id );
                 if ( requiredProject != null )
                 {
+                    it.remove();
                     installProjectArtifacts( requiredProject, testRepository );
                     installProjectParents( requiredProject, testRepository );
+                }
+            }
+            
+            for ( Iterator it = mvnProject.getRuntimeArtifacts().iterator(); it.hasNext(); )
+            {
+                Artifact artifact = (Artifact) it.next();
+                String id = ArtifactUtils.versionlessKey( artifact );
+                
+                if ( dependencies.contains( id ) )
+                {
+                    File artifactFile = artifact.getFile();
+                    
+                    installArtifact( artifactFile, artifact, testRepository );
+                    
+                    Artifact pomArtifact =
+                        artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                        artifact.getVersion(), null, "pom" );
+                    
+                    File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
+                    
+                    if ( pomFile.exists() )
+                    {
+                        installArtifact( pomFile, pomArtifact, testRepository );
+                    }
                 }
             }
         }
