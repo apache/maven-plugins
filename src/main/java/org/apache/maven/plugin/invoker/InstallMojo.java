@@ -320,9 +320,10 @@ public class InstallMojo
             dependencies.add( id );
         }
 
-        // install dependencies available in reactor
+        // install dependencies
         try
         {
+            // install dependencies from reactor
             for ( Iterator it = dependencies.iterator(); it.hasNext(); )
             {
                 String id = (String) it.next();
@@ -334,24 +335,25 @@ public class InstallMojo
                     installProjectParents( requiredProject, testRepository );
                 }
             }
-            
+
+            // install remaining dependencies from local repository
             for ( Iterator it = mvnProject.getRuntimeArtifacts().iterator(); it.hasNext(); )
             {
                 Artifact artifact = (Artifact) it.next();
                 String id = ArtifactUtils.versionlessKey( artifact );
-                
+
                 if ( dependencies.contains( id ) )
                 {
                     File artifactFile = artifact.getFile();
-                    
+
                     installArtifact( artifactFile, artifact, testRepository );
-                    
+
                     Artifact pomArtifact =
                         artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
                                                         artifact.getVersion(), null, "pom" );
-                    
+
                     File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
-                    
+
                     if ( pomFile.exists() )
                     {
                         installArtifact( pomFile, pomArtifact, testRepository );
