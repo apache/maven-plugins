@@ -27,16 +27,14 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputDirectory></outputDirectory>
-      <outputFileNameMapping></outputFileNameMapping>
+      <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
   <fileSets>
     <fileSet>
-      <directory>target/classes</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.build.outputDirectory}</directory>
     </fileSet>
   </fileSets>
 </assembly>

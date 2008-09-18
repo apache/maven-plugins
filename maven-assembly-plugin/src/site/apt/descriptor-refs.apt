@@ -70,14 +70,13 @@ Pre-defined Descriptor Files
   <fileSets>
     <fileSet>
       <includes>
-        <include>README*</include>
-        <include>LICENSE*</include>
-        <include>NOTICE*</include>
+        <include>${project.basedir}/README*</include>
+        <include>${project.basedir}/LICENSE*</include>
+        <include>${project.basedir}/NOTICE*</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.build.directory}</directory>
       <includes>
         <include>*.jar</include>
       </includes>
@@ -105,16 +104,13 @@ Pre-defined Descriptor Files
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputDirectory></outputDirectory>
-      <outputFileNameMapping></outputFileNameMapping>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
   <fileSets>
     <fileSet>
-      <directory>target/classes</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.build.outputDirectory}</directory>
     </fileSet>
   </fileSets>
 </assembly>
@@ -141,15 +137,15 @@ Pre-defined Descriptor Files
   <fileSets>
     <fileSet>
       <includes>
-        <include>README*</include>
-        <include>LICENSE*</include>
-        <include>NOTICE*</include>
-        <include>pom.xml</include>
+        <include>${project.basedir}/README*</include>
+        <include>${project.basedir}/LICENSE*</include>
+        <include>${project.basedir}/NOTICE*</include>
+        <include>${project.basedir}/pom.xml</include>
       </includes>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
-      <directory>src</directory>
+      <directory>${project.basedir}/src</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>
@@ -178,11 +174,10 @@ Pre-defined Descriptor Files
   </formats>
   <fileSets>
     <fileSet>
-      <directory>.</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.basedir}</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-        <exclude>**/target/**</exclude>
+        <exclude>${project.build.directory}/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
