@@ -40,7 +40,6 @@ under the License.
         <artifactId>maven-invoker-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
             <!-- only invoke this one which requires all the other projects to be cloned as well -->
