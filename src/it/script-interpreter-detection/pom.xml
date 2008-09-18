@@ -41,7 +41,6 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <debug>true</debug>
-          <projectsDirectory>src/it</projectsDirectory>
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
