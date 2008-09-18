@@ -386,11 +386,11 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.3-SNAPSHOT</version>
             <configuration>
               <debug>true</debug>
-              <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
-                <pomInclude>**/**/pom.xml</pomInclude>
+                <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
