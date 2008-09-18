@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-10</version>
+      <version>1.0-alpha-11-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -373,8 +373,6 @@
                   <pomExcludes>
                     <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
                     
-                    <!-- MASSEMBLY has NOT been fixed yet. -->
-                    <pomExclude>bugs/massembly-285/**</pomExclude>
                     <!-- This will be handled by the parent in the bugs/massembly-285 dir. -->
                     <pomExclude>bugs/massembly-285/massembly-285-*/pom.xml</pomExclude>
                     

@@ -889,6 +889,15 @@ public class DefaultAssemblyArchiverTest
         {
         }
 
+        public String getDuplicateBehavior()
+        {
+            return Archiver.DUPLICATES_ADD;
+        }
+
+        public void setDuplicateBehavior( String duplicate )
+        {
+        }
+
     }
 
 }
