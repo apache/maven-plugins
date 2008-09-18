@@ -48,7 +48,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Install plugins resolved from the Maven repository system into an Eclipse instance.
- *
+ * 
  * @goal install-plugins
  * @author jdcasey
  * @requiresDependencyResolution compile
@@ -65,14 +65,14 @@ public class InstallPluginsMojo
 
     /**
      * This is the installed base directory of the Eclipse instance you want to modify.
-     *
+     * 
      * @parameter expression="${eclipseDir}"
      */
     private File eclipseDir;
 
     /**
      * Determines whether this mojo leaves existing installed plugins as-is, or overwrites them.
-     *
+     * 
      * @parameter expression="${overwrite}" default-value="false"
      */
     private boolean overwrite;
@@ -80,7 +80,7 @@ public class InstallPluginsMojo
     /**
      * The list of resolved dependencies from the current project. Since we're not resolving the dependencies by hand
      * here, the build will fail if some of these dependencies do not resolve.
-     *
+     * 
      * @parameter default-value="${project.artifacts}"
      * @required
      * @readonly
@@ -90,14 +90,14 @@ public class InstallPluginsMojo
     /**
      * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse instance's plugins
      * directory.
-     *
+     * 
      * @parameter expression="${pluginDependencyTypes}" default-value="jar"
      */
     private String pluginDependencyTypes;
 
     /**
      * The location of the Maven local repository, from which to install resolved dependency plugins.
-     *
+     * 
      * @parameter default-value="${localRepository}"
      * @required
      * @readonly
@@ -107,7 +107,7 @@ public class InstallPluginsMojo
     /**
      * Used to retrieve the project metadata (POM) associated with each plugin dependency, to help determine whether
      * that plugin should be installed as a jar, or expanded into a directory.
-     *
+     * 
      * @component
      */
     private MavenProjectBuilder projectBuilder;
@@ -116,14 +116,14 @@ public class InstallPluginsMojo
      * Used to configure and retrieve an appropriate tool for extracting each resolved plugin dependency. It is
      * conceivable that some resolved dependencies could be zip files, jar files, or other types, so the manager
      * approach is a convenient way to provide extensibility here.
-     *
+     * 
      * @component
      */
     private ArchiverManager archiverManager;
 
     /**
      * Input handler, needed for comand line handling.
-     *
+     * 
      * @component
      */
     private InputHandler inputHandler;
@@ -240,7 +240,7 @@ public class InstallPluginsMojo
      * Warn whenever a plugin will overwrite an existing file or directory, and emit an INFO message whenever a plugin
      * installation is skipped because of an existing file and overwrite == false.
      * </p>
-     *
+     * 
      * @param artifact The plugin dependency as it has been resolved.
      * @param project The project metadata for the accompanying plugin-dependency artifact, used to determine whether to
      *            install as a jar or as a directory
@@ -292,7 +292,6 @@ public class InstallPluginsMojo
                 + artifact.getFile().getAbsolutePath(), e );
         }
 
-        String bundleVersion = attributes.getValue( "Bundle-Version" );
         String pluginName = formatEclipsePluginName( artifact );
 
         File pluginFile = new File( pluginsDir, pluginName + ".jar" );
@@ -302,11 +301,12 @@ public class InstallPluginsMojo
 
         /* check if artifact is an OSGi bundle and ignore if not */
         Object bundleName = attributes.getValue( "Bundle-Name" );
-        if ( bundleName == null )
+        Object bundleSymbolicName = attributes.getValue( "Bundle-SymbolicName" );
+        if ( bundleSymbolicName == null && bundleName == null )
         {
             getLog().debug(
                             "Ignoring " + artifact.getArtifactId()
-                                + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
+                                + " as it is not an OSGi bundle (no Bundle-SymbolicName or Bundle-Name in manifest)" );
             return;
         }
 
