@@ -68,62 +68,107 @@ public class InstallPluginsMojoTest
     private Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
 
     /**
-     * Copied from {@link InstallPluginsMojo#formatEclipsePluginName}
+     * Has both Bundle-Name and Bundle-SymbolicName and should be installed.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
      */
-    private String formatEclipsePluginName( Artifact artifact )
-    {
-        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
-            + maven2OsgiConverter.getVersion( artifact.getVersion() );
-    }
-
-    private File locateInstalledDir( File pluginsDir, Artifact artifact )
-    {
-        return new File( pluginsDir, formatEclipsePluginName( artifact ) );
-    }
-
-    private File locateInstalledFile( File pluginsDir, Artifact artifact )
-    {
-        return new File( pluginsDir, formatEclipsePluginName( artifact ) + ".jar" );
-    }
-
-    public void testJira488()
+    public void testJira_MECLIPSE_418_correct_bundle_headers()
         throws MojoExecutionException, MojoFailureException
     {
-        Artifact jira488_missingManifest =
-            createArtifact("jira", "meclipse", "488");
+        Artifact artifact = createArtifact( "jira.meclipse_418", "correct_bundle_headers", "1" );
 
-        File pluginsDir = performTestInstall( null, false, jira488_missingManifest, "eclipse-plugin" );
+        performTestInstall( null, false, artifact, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertFalse( installedFile + " should not exist as Jar has not Manifest.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileExists( artifact );
+        assertInstalledDirDoesNotExist( artifact );
 
         mm.verifyAll();
     }
 
-    private Artifact createArtifact(String groupId, String artifactId, String version)
+    /**
+     * Has Bundle-SymbolicName but no Bundle-Name and should be installed.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void testJira_MECLIPSE_418_no_bundle_name()
+        throws MojoExecutionException, MojoFailureException
     {
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, VersionRange.createFromVersion( version ), "scope-unused",
-                             "eclipse-plugin", "classifier-unused", null );
-        artifact.setFile( locateArtifact( artifact ) );
+        Artifact artifact = createArtifact( "jira.meclipse_418", "no_bundle_name", "1" );
 
-        return artifact;
+        performTestInstall( null, false, artifact, "eclipse-plugin" );
+
+        assertInstalledFileExists( artifact );
+        assertInstalledDirDoesNotExist( artifact );
+
+        mm.verifyAll();
+    }
+    
+    /**
+     * Has Bundle-Name but no Bundle-SymbolicName and should be installed.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void testJira_MECLIPSE_418_no_bundle_symbolicname()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Artifact artifact = createArtifact( "jira.meclipse_418", "no_bundle_symbolicname", "1" );
+
+        performTestInstall( null, false, artifact, "eclipse-plugin" );
+
+        assertInstalledFileExists( artifact );
+        assertInstalledDirDoesNotExist( artifact );
+
+        mm.verifyAll();
+    }    
+    
+    /**
+     * Has neither Bundle-Name or Bundle-SymbolicName and should NOT be installed.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void testJira_MECLIPSE_418_no_manifest_headers()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Artifact artifact = createArtifact( "jira.meclipse_418", "no_manifest_headers", "1" );
+
+        performTestInstall( null, false, artifact, "eclipse-plugin" );
+
+        assertInstalledFileDoesNotExist( artifact );
+        assertInstalledDirDoesNotExist( artifact );
+
+        mm.verifyAll();
+    }      
+
+    /**
+     * if a jar has no manifest, do not install plugin.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void testJira_MECLIPSE_488()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Artifact jira488_missingManifest = createArtifact( "jira", "meclipse_488", "1" );
+
+        performTestInstall( null, false, jira488_missingManifest, "eclipse-plugin" );
+
+        assertInstalledFileDoesNotExist( jira488_missingManifest );
+        assertInstalledDirDoesNotExist( jira488_missingManifest );
+
+        mm.verifyAll();
     }
 
     public void testShouldInstallAsJarWhenPropertyNotSpecified()
         throws MojoExecutionException, MojoFailureException
     {
-        File pluginsDir = performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
+        performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertTrue( installedFile + " should exist.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -131,14 +176,10 @@ public class InstallPluginsMojoTest
     public void testShouldInstallAsJarWhenPropertyIsTrue()
         throws MojoExecutionException, MojoFailureException
     {
-        File pluginsDir = performTestInstall( Boolean.TRUE, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
+        performTestInstall( Boolean.TRUE, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertTrue( installedFile + " should exist.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -146,15 +187,10 @@ public class InstallPluginsMojoTest
     public void testShouldInstallAsDirWhenPropertyIsFalse()
         throws MojoExecutionException, MojoFailureException
     {
-        File pluginsDir =
-            performTestInstall( Boolean.FALSE, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
+        performTestInstall( Boolean.FALSE, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertFalse( installedFile + " should not exist.", installedFile.exists() );
-        assertTrue( installedDir + " should exist.", installedDir.exists() );
+        assertInstalledFileDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -162,15 +198,10 @@ public class InstallPluginsMojoTest
     public void testShouldInstallWhenTypeContainedInPluginTypesListWithMultipleValues()
         throws MojoExecutionException, MojoFailureException
     {
-        File pluginsDir =
-            performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "osgi-bundle,eclipse-plugin" );
+        performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "osgi-bundle,eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertTrue( installedFile + " should exist.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -178,14 +209,10 @@ public class InstallPluginsMojoTest
     public void testShouldNotInstallWhenTypeNotContainedInPluginTypesList()
         throws MojoExecutionException, MojoFailureException
     {
-        File pluginsDir = performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "type-not-in-this-list" );
+        performTestInstall( null, false, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "type-not-in-this-list" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertFalse( installedFile + " should not exist.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -195,18 +222,14 @@ public class InstallPluginsMojoTest
     {
         createPluginsDir();
 
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
+        File installedDir = locateInstalledDir( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
         installedDir.mkdir();
-
-        assertTrue( installedDir + " should have been created prior to running the test.", installedDir.exists() );
+        assertInstalledDirExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         performTestInstall( Boolean.FALSE, true, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertFalse( installedFile + " should not exist.", installedFile.exists() );
-        assertTrue( installedDir + " should still exist.", installedDir.exists() );
+        assertInstalledFileDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
     }
@@ -216,20 +239,44 @@ public class InstallPluginsMojoTest
     {
         createPluginsDir();
 
-        File installedDir = locateInstalledDir( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
+        File installedDir = locateInstalledDir( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
         installedDir.mkdir();
-
-        assertTrue( installedDir + " should have been created prior to running the test.", installedDir.exists() );
+        assertInstalledDirExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         performTestInstall( null, true, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME, "eclipse-plugin" );
 
-        File installedFile = locateInstalledFile( pluginsDir, ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
-
-        assertTrue( installedFile + " should exist.", installedFile.exists() );
-        assertFalse( installedDir + " should not exist.", installedDir.exists() );
+        assertInstalledFileExists( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
+        assertInstalledDirDoesNotExist( ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME );
 
         mm.verifyAll();
+    }
+
+    private void assertInstalledFileDoesNotExist( Artifact artifact )
+    {
+        File installedFile = locateInstalledFile( artifact );
+
+        assertFalse( installedFile + " should not exist.", installedFile.exists() );
+    }
+
+    private void assertInstalledFileExists( Artifact artifact )
+    {
+        File installedFile = locateInstalledFile( artifact );
+
+        assertTrue( installedFile + " should exist.", installedFile.exists() );
+    }
+
+    private void assertInstalledDirDoesNotExist( Artifact artifact )
+    {
+        File installedFile = locateInstalledDir( artifact );
+
+        assertFalse( installedFile + " should not exist.", installedFile.exists() );
+    }
+
+    private void assertInstalledDirExists( Artifact artifact )
+    {
+        File installedFile = locateInstalledDir( artifact );
+
+        assertTrue( installedFile + " should exist.", installedFile.exists() );
     }
 
     public void setUp()
@@ -237,7 +284,6 @@ public class InstallPluginsMojoTest
         fileManager = new TestFileManager( "InstallPluginsMojo.test.", "" );
 
         ARTIFACT_ORG_ECLIPSE_CORE_RUNTIME = createArtifact( "org.eclipse.core", "runtime", "3.2.0-v20060603" );
-
     }
 
     private File locateArtifact( Artifact artifact )
@@ -264,14 +310,12 @@ public class InstallPluginsMojoTest
         fileManager.cleanUp();
     }
 
-    // returns plugins directory
-    private File performTestInstall( Boolean installAsJar, boolean overwrite, Artifact artifact, String typeList )
+    private void performTestInstall( Boolean installAsJar, boolean overwrite, Artifact artifact, String typeList )
         throws MojoExecutionException, MojoFailureException
     {
         createPluginsDir();
 
         String type = artifact.getType();
-        Artifact dep = createDependencyArtifact( artifact );
 
         ArtifactRepository localRepo = createLocalRepository();
         MavenProjectBuilder projectBuilder = createProjectBuilder( typeList.indexOf( type ) > -1, installAsJar );
@@ -283,7 +327,7 @@ public class InstallPluginsMojoTest
         mm.replayAll();
 
         InstallPluginsMojo mojo =
-            new InstallPluginsMojo( eclipseDir, overwrite, Collections.singletonList( dep ), typeList, localRepo,
+            new InstallPluginsMojo( eclipseDir, overwrite, Collections.singletonList( artifact ), typeList, localRepo,
                                     projectBuilder, archiverManager, inputHandler, log );
         try
         {
@@ -297,8 +341,6 @@ public class InstallPluginsMojoTest
         }
 
         mojo.execute();
-
-        return pluginsDir;
     }
 
     private File createPluginsDir()
@@ -402,31 +444,46 @@ public class InstallPluginsMojoTest
         return repo;
     }
 
-    private Artifact createDependencyArtifact( Artifact artifactToCopy )
+    /**
+     * @param groupId
+     * @param artifactId
+     * @param version
+     * @return an artifact with the specified values and configured for testing to the local m2repo
+     */
+    private Artifact createArtifact( String groupId, String artifactId, String version )
     {
-        MockControl control = MockControl.createControl( Artifact.class );
-
-        mm.add( control );
-
-        Artifact artifact = (Artifact) control.getMock();
-
-        artifact.getFile();
-        control.setReturnValue( artifactToCopy.getFile(), MockControl.ZERO_OR_MORE );
-
-        artifact.getArtifactId();
-        control.setReturnValue( artifactToCopy.getArtifactId(), MockControl.ZERO_OR_MORE );
-
-        artifact.getVersion();
-        control.setReturnValue( artifactToCopy.getVersion(), MockControl.ZERO_OR_MORE );
-
-        artifact.getType();
-        control.setReturnValue( artifactToCopy.getType(), MockControl.ZERO_OR_MORE );
-
-        artifact.getId();
-        control.setReturnValue( artifactToCopy.getGroupId() + ":" + artifactToCopy.getArtifactId() + ":"
-            + artifactToCopy.getType() + ":" + artifactToCopy.getVersion(), MockControl.ZERO_OR_MORE );
+        Artifact artifact =
+            new DefaultArtifact( groupId, artifactId, VersionRange.createFromVersion( version ), "scope-unused",
+                                 "eclipse-plugin", "classifier-unused", null );
+        artifact.setFile( locateArtifact( artifact ) );
 
         return artifact;
     }
 
+    /**
+     * Copied from {@link InstallPluginsMojo#formatEclipsePluginName}
+     */
+    private String formatEclipsePluginName( Artifact artifact )
+    {
+        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
+            + maven2OsgiConverter.getVersion( artifact.getVersion() );
+    }
+
+    /**
+     * @param artifact
+     * @return the installed directory for the plugin (because it is an unpacked bundle)
+     */
+    private File locateInstalledDir( Artifact artifact )
+    {
+        return new File( pluginsDir, formatEclipsePluginName( artifact ) );
+    }
+
+    /**
+     * @param artifact
+     * @return the installed file for the plugin bundle
+     */
+    private File locateInstalledFile( Artifact artifact )
+    {
+        return new File( pluginsDir, formatEclipsePluginName( artifact ) + ".jar" );
+    }
 }
