@@ -564,6 +564,15 @@ public class ComponentsXmlArchiverFileFilterTest
 
             };
         }
+
+        public String getDuplicateBehavior()
+        {
+            return Archiver.DUPLICATES_ADD;
+        }
+
+        public void setDuplicateBehavior( String duplicate )
+        {
+        }
     }
 
 }

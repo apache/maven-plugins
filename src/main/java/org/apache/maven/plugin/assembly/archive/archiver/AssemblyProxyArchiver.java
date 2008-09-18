@@ -817,4 +817,14 @@ public class AssemblyProxyArchiver
         return delegate.getResources();
     }
 
+    public String getDuplicateBehavior()
+    {
+        return delegate.getDuplicateBehavior();
+    }
+
+    public void setDuplicateBehavior( String duplicate )
+    {
+        delegate.setDuplicateBehavior( duplicate );
+    }
+
 }
