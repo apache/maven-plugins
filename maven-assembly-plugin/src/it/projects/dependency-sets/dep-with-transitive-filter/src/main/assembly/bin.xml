@@ -9,9 +9,11 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>maven-libs</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>org.apache.maven.wagon*</include>
-        <include>org.apache.maven.reporting*</include>
       </includes>
     </dependencySet>
   </dependencySets>
