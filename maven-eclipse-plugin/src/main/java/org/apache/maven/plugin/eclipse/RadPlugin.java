@@ -19,6 +19,7 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -37,6 +38,7 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Generates the rad-6 configuration files.
@@ -338,7 +340,7 @@ public class RadPlugin
      */
     protected void setupExtras()
         throws MojoExecutionException
-    {
+    {        
         super.setupExtras();
 
         IdeDependency[] deps = doDependencyResolution();
@@ -346,5 +348,12 @@ public class RadPlugin
         EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
         addManifestResource( config );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getProjectNameForArifact( Artifact artifact ) {
+        return artifact.getArtifactId();
     }
 }
