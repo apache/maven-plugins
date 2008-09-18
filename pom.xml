@@ -131,18 +131,4 @@ under the License.
     </profile>
   </profiles>
   
-  <!-- remove when plexus-utils 1.5.7 released -->
-  <repositories>
-    <repository>
-      <id>snapshots.codehaus</id>
-        <url>http://snapshots.repository.codehaus.org/</url>
-        <releases>
-          <enabled>false</enabled>
-        </releases>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-      </repository>
-    </repositories>
-  
 </project>
