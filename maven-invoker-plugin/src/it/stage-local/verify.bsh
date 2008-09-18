@@ -1,0 +1,36 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    File itRepoDir = new File( basedir, "target/it-repo" );
+    System.out.println( "Checking for existence of: " + itRepoDir );
+    if ( !itRepoDir.isDirectory() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    String[] files = {
+            "junit/junit/3.8.2/junit-3.8.2.pom",
+            "junit/junit/3.8.2/junit-3.8.2.jar",
+      };
+    for ( String file : files )
+    {
+        File stagedFile = new File( itRepoDir, file );
+        System.out.println( "Checking for existence of: " + stagedFile );
+        if ( !stagedFile.isFile() )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;
