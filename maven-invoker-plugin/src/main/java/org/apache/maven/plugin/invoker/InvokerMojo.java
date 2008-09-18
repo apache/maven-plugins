@@ -124,7 +124,7 @@ public class InvokerMojo
     /**
      * Directory to search for integration tests.
      *
-     * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/projects/"
+     * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/it/"
      */
     private File projectsDirectory;
 
