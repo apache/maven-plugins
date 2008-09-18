@@ -220,7 +220,7 @@ public class InvokerMojo
      * exception, the corresponding build is flagged as a failure. In this case, neither Maven nor the post-build hook
      * script will be invoked.
      * 
-     * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild.bsh"
+     * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild"
      */
     private String preBuildHookScript;
 
@@ -231,7 +231,7 @@ public class InvokerMojo
      * If this script exists for a particular project but returns any value different from <code>true</code> or throws
      * an exception, the corresponding build is flagged as a failure.
      * 
-     * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
+     * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild"
      */
     private String postBuildHookScript;
 
