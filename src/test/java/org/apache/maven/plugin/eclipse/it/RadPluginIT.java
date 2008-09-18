@@ -305,4 +305,14 @@ public class RadPluginIT
 
     }
 
+    public void testProject8()
+        throws Exception
+    {
+        testProject( "project-rad-8", new Properties(), "rad-clean", "rad" );
+        File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-8/src/main/webapp/META-INF/MANIFEST.MF" );
+        File expectedManifest =
+            getTestFile( PROJECTS_BASEDIR + "/project-rad-8/src/main/webapp/META-INF/expected_MANIFEST.MF" );
+        assertFileEquals( expectedManifest, generatedManifest );
+
+    }
 }
