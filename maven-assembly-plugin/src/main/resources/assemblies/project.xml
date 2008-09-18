@@ -27,12 +27,10 @@
   </formats>
   <fileSets>
     <fileSet>
-      <!-- TODO: use expresssions instead: ${project.build.sourceDirectory}, etc -->
-      <directory>.</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.basedir}</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-        <exclude>**/target/**</exclude>
+        <exclude>**/${project.build.directory}/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>

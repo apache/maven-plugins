@@ -28,16 +28,14 @@
   <fileSets>
     <fileSet>
       <includes>
-        <include>README*</include>
-        <include>LICENSE*</include>
-        <include>NOTICE*</include>
+        <include>${project.basedir}/README*</include>
+        <include>${project.basedir}/LICENSE*</include>
+        <include>${project.basedir}/NOTICE*</include>
       </includes>
     </fileSet>
     <!-- TODO: docs? -->
     <fileSet>
-      <!-- TODO: use expresssions instead: ${project.build.directory}, ${project.build.finalName} -->
-      <directory>target</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.build.directory}</directory>
       <includes>
         <include>*.jar</include>
       </includes>
