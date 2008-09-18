@@ -266,16 +266,11 @@ public abstract class AbstractEclipsePluginIT
 
         String outputDirPath =
             IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
-        File outputDir;
         File projectOutputDir = basedir;
 
-        if ( outputDirPath == null )
+        if ( outputDirPath != null )
         {
-            outputDir = basedir;
-        }
-        else
-        {
-            outputDir = new File( basedir, outputDirPath );
+            File outputDir = new File( basedir, outputDirPath );
             outputDir.mkdirs();
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
