@@ -70,9 +70,14 @@ under the License.
     </dependency>
     <dependency>
         <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-providers</artifactId>
+        <artifactId>maven-scm-providers-standard</artifactId>
         <version>1.1</version>
         <type>pom</type>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-manager-plexus</artifactId>
+        <version>1.1</version>
     </dependency>
     <dependency>
         <groupId>org.apache.maven</groupId>
