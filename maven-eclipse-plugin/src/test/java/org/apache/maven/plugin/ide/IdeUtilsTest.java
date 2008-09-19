@@ -20,10 +20,9 @@ package org.apache.maven.plugin.ide;
 
 import java.io.File;
 
-import org.codehaus.plexus.component.repository.io.PlexusTools;
-import org.codehaus.plexus.util.Os;
-
 import junit.framework.TestCase;
+
+import org.codehaus.plexus.util.Os;
 
 /**
  * Test for {@link IdeUtils}
