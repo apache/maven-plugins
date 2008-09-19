@@ -123,6 +123,7 @@ public class CopyDependenciesMojo
 			if ( "pom".equals( artifact.getType() ) ) 
 			{
 				installer.install( artifact.getFile(), artifact, targetRepository );
+	            installBaseSnapshot( artifact, targetRepository );
 			}
 			else
 			{
