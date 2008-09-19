@@ -31,12 +31,12 @@ Filtering Files
   Some files of the sub projects can be filtered, i.e. special tokens will be replaced by some other string before the
   actual build is started. In detail, the following files will be filtered:
 
-  * POM files selected by the include/exclude patterns. The tokens to filter must be enclosed in <<<@...@>>> to avoid
-    interferences with Maven's normal POM interpolation, i.e. use <<<@project.version@>>> instead of
+  * POM files selected by the include/exclude patterns. The tokens to be filtered must be enclosed in <<<@...@>>> to
+    avoid interferences with Maven's normal POM interpolation, i.e. use <<<@project.version@>>> instead of
     <<<$\{project.version\}>>>. Starting with version 1.3, the plugin will also (recursively) filter all POM files
     referenced via <<<\<parent\>>>> or <<<\<module\>>>> tags, if the projects are cloned to a temporary location.
 
-  * The custom user setting file. Again, the tokens to filter in this file must be enclosed in <<<@...@>>>.
+  * The custom user setting file. Again, the tokens to be filtered in this file must be enclosed in <<<@...@>>>.
 
   * The invoker properties, the goals file and the profiles file. Tokens in these files must use the usual Maven syntax
     <<<$\{...\}>>>.
@@ -115,6 +115,8 @@ Filtering Files
 || Built-in Property       || Value                                                                           || Since |
 *--------------------------+----------------------------------------------------------------------------------+--------+
 | <<<localRepository>>>    | The absolute path to the local repository used for the main build.               | 1.2    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<localRepositoryUrl>>> | The <<<file:>>> URL to the local repository used for the main build.             | 1.3    |
 *--------------------------+----------------------------------------------------------------------------------+--------+
 
   [[3]] The properties given by the parameter <<<filterProperties>>> in the plugin configuration will be consulted for
