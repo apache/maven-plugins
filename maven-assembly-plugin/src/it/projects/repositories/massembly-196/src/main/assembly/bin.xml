@@ -1,0 +1,22 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <repositories>
+    <repository>
+      <includeMetadata>true</includeMetadata>
+      <outputDirectory>repo</outputDirectory>
+      <groupVersionAlignments>
+        <groupVersionAlignment>
+          <id>org.apache.maven.plugins</id>
+          <version>2.0</version>
+          <excludes>
+            <exclude>maven-surefire-plugin</exclude>
+          </excludes>
+        </groupVersionAlignment>
+      </groupVersionAlignments>
+    </repository>
+  </repositories>
+</assembly>
