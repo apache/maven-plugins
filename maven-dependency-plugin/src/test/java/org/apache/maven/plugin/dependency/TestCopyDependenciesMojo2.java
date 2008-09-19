@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -226,19 +227,27 @@ public class TestCopyDependenciesMojo2
         throws Exception
     {
     	String baseVersion = "2.0-SNAPSHOT";
-		Artifact expandedSnapshot = this.stubFactory.createArtifact( "testGroupId", "expanded-snapshot", baseVersion );
+		String groupId = "testGroupId";
+		String artifactId = "expanded-snapshot";
 
-    	SnapshotTransformation tr = new SnapshotTransformation();
-        Snapshot snapshot = new Snapshot();
-        snapshot.setTimestamp( tr.getDeploymentTimestamp() );
-        snapshot.setBuildNumber( 1 );
-        RepositoryMetadata metadata = new SnapshotArtifactRepositoryMetadata( expandedSnapshot, snapshot );
-        String newVersion = snapshot.getTimestamp() + "-" + snapshot.getBuildNumber();
-        expandedSnapshot.setResolvedVersion( StringUtils.replace( baseVersion, Artifact.SNAPSHOT_VERSION, newVersion ) );
-        expandedSnapshot.addMetadata( metadata );
+		Artifact expandedSnapshot = createExpandedVersionArtifact( baseVersion,
+				                                                   groupId, 
+				                                                   artifactId,
+				                                                   "compile",
+				                                                   "jar",
+				                                                   null);
 
     	mojo.project.getArtifacts().add(expandedSnapshot);
     	mojo.project.getDependencyArtifacts().add(expandedSnapshot);
+
+		Artifact pomExpandedSnapshot = createExpandedVersionArtifact( baseVersion,
+													                  groupId, 
+													                  artifactId,
+													                  "compile",
+													                  "pom",
+													                  null);
+    	mojo.project.getArtifacts().add(pomExpandedSnapshot);
+    	mojo.project.getDependencyArtifacts().add(pomExpandedSnapshot);
 
         mojo.useRepositoryLayout = true;
         mojo.execute();
@@ -268,6 +277,27 @@ public class TestCopyDependenciesMojo2
 
         }
     }
+
+	private Artifact createExpandedVersionArtifact( String baseVersion,
+			                                        String groupId, 
+			                                        String artifactId,
+			                                        String scope,
+			                                        String type, 
+			                                        String classifier ) 
+			throws IOException 
+	{
+		Artifact expandedSnapshot = this.stubFactory.createArtifact( groupId, artifactId, baseVersion, scope, type, classifier );
+
+    	SnapshotTransformation tr = new SnapshotTransformation();
+        Snapshot snapshot = new Snapshot();
+        snapshot.setTimestamp( tr.getDeploymentTimestamp() );
+        snapshot.setBuildNumber( 1 );
+        RepositoryMetadata metadata = new SnapshotArtifactRepositoryMetadata( expandedSnapshot, snapshot );
+        String newVersion = snapshot.getTimestamp() + "-" + snapshot.getBuildNumber();
+        expandedSnapshot.setResolvedVersion( StringUtils.replace( baseVersion, Artifact.SNAPSHOT_VERSION, newVersion ) );
+        expandedSnapshot.addMetadata( metadata );
+		return expandedSnapshot;
+	}
 
 	private void assertArtifactExists( Artifact artifact, ArtifactRepository targetRepository ) {
 		File file = new File( targetRepository.getBasedir(), 
