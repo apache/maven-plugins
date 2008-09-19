@@ -134,13 +134,15 @@ public abstract class AbstractSourceJarMojo
      * @param p not null
      * @return the compile or test sources
      */
-    protected abstract List getSources( MavenProject p );
+    protected abstract List getSources( MavenProject p )
+		throws MojoExecutionException;
 
     /**
      * @param p not null
      * @return the compile or test resources
      */
-    protected abstract List getResources( MavenProject p );
+    protected abstract List getResources( MavenProject p )
+		throws MojoExecutionException;
 
     protected void packageSources( MavenProject p )
         throws MojoExecutionException
