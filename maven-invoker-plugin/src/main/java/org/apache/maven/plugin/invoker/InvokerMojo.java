@@ -1627,6 +1627,17 @@ public class InvokerMojo
         if ( settings.getLocalRepository() != null )
         {
             props.put( "localRepository", settings.getLocalRepository() );
+            /*
+             * NOTE: Maven fails to properly handle percent-encoded "file:" URLs (WAGON-111) so don't use File.toURI()
+             * here and just do it the simple way.
+             */
+            String url = settings.getLocalRepository();
+            if ( !url.startsWith( "/" ) )
+            {
+                url = '/' + url;
+            }
+            url = "file://" + url.replace( '\\', '/' );
+            props.put( "localRepositoryUrl", url );
         }
         return new CompositeMap( this.project, props );
     }

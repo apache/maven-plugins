@@ -52,7 +52,7 @@ Fast Build Configuration
         <configuration>
           ...
           <settingsFile>src/it/settings.xml</settingsFile>
-          ...              
+          ...
         </configuration>
       </plugin>
     </plugins>
@@ -76,7 +76,7 @@ Fast Build Configuration
       <repositories>
         <repository>
           <id>local.central</id>
-          <url>file://@localRepository@</url>
+          <url>@localRepositoryUrl@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -88,7 +88,7 @@ Fast Build Configuration
       <pluginRepositories>
         <pluginRepository>
           <id>local.central</id>
-          <url>file://@localRepository@</url>
+          <url>@localRepositoryUrl@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -102,5 +102,5 @@ Fast Build Configuration
 </settings>
 -------------------  
 
-  The token <<<@localRepository@>>> will be automatically replaced by the Invoker Plugin with the path to the local
+  The token <<<@localRepositoryUrl@>>> will be automatically replaced by the Invoker Plugin with the URL to the local
   repository used for the Maven invocation.
