@@ -119,7 +119,7 @@ public class SiteStageDeployMojo
         Wagon wagon;
         try
         {
-            wagon = wagonManager.getWagon( repository.getProtocol() );
+            wagon = wagonManager.getWagon( repository );
             SiteDeployMojo.configureWagon( wagon, STAGING_SERVER_ID, settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
