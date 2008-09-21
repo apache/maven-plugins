@@ -1,4 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -17,40 +18,48 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>12</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>maven-pmd-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Maven PMD Plugin</name>
   <version>2.5-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <name>Maven PMD Plugin</name>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
     fragments,
     as well as being able to fail the build based on these metrics.
   </description>
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MPMD</url>
-  </issueManagement>
   <inceptionYear>2005</inceptionYear>
+
   <contributors>
     <contributor>
       <name>John Allen</name>
     </contributor>
   </contributors>
+
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/</url>
   </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MPMD</url>
+  </issueManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -105,6 +114,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
       <plugin>
