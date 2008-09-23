@@ -15,10 +15,17 @@ package org.apache.maven.plugin.eclipse.reader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
+import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.shared.tools.easymock.MockManager;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.easymock.MockControl;
 
 /**
  * @author <a href="mailto:baerrach@apache.org">Barrie Treloar</a>
@@ -36,6 +43,8 @@ public class ReadWorkspaceLocationsTest
 
     private static final File WORKSPACE_PROJECT_METADATA_DIRECTORY =
         new File( WORKSPACE_DIRECTORY, ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
+
+    private MockManager mm = new MockManager();
 
     /**
      * {@inheritDoc}
@@ -107,6 +116,46 @@ public class ReadWorkspaceLocationsTest
         File projectLocation = objectUnderTest.getProjectLocation( WORKSPACE_DIRECTORY, metadataProjectDirectory );
 
         assertFileEquals( expectedProjectDirectory, projectLocation );
+    }
+
+    public void testReadDefinedServers_PrefsFileDoesNotExist()
+        throws Exception
+    {
+        MockControl logControl = MockControl.createControl( Log.class );
+        mm.add( logControl );
+
+        Log logger = (Log) logControl.getMock();
+        WorkspaceConfiguration workspaceConfiguration = new WorkspaceConfiguration();
+        workspaceConfiguration.setWorkspaceDirectory( new File( "/does/not/exist" ) );
+
+        mm.replayAll();
+
+        ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
+        HashMap servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
+
+        mm.verifyAll();
+        assertTrue( servers.isEmpty() );
+    }
+
+    public void testReadDefinedServers_PrefsFileExistsWithMissingRuntimes()
+        throws Exception
+    {
+        MockControl logControl = MockControl.createControl( Log.class );
+        mm.add( logControl );
+
+        Log logger = (Log) logControl.getMock();
+        WorkspaceConfiguration workspaceConfiguration = new WorkspaceConfiguration();
+        File prefsFile =
+            new File(
+                      "target/test-classes/eclipse/dynamicWorkspace/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.server.core.prefs" );
+        workspaceConfiguration.setWorkspaceDirectory( prefsFile );
+        mm.replayAll();
+
+        ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
+        HashMap servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
+
+        mm.verifyAll();
+        assertTrue( servers.isEmpty() );
     }
 
     /**
