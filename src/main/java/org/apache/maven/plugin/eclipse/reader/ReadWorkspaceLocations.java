@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -48,9 +51,9 @@ import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 public class ReadWorkspaceLocations
 {
 
-    private static final String BINARY_LOCATION_FILE = ".location";
+    public static final String BINARY_LOCATION_FILE = ".location";
 
-    private static final String METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS =
+    public static final String METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS =
         ".metadata/.plugins/org.eclipse.core.resources/.projects";
 
     private static final String[] PARENT_VERSION = new String[] { "parent", "version" };
@@ -229,52 +232,44 @@ public class ReadWorkspaceLocations
      * @param workspaceLocation the location of the workspace
      * @param project the project subdirectory in the metadata
      * @return the full path to the project.
+     * @throws IOException failures to read location file
+     * @throws URISyntaxException failures to read location file
      */
-    private String getProjectLocation( File workspaceLocation, File project )
+    /* package */File getProjectLocation( File workspaceLocation, File project )
+        throws IOException, URISyntaxException
     {
-        String projectLocation = null;
         File location = new File( project, ReadWorkspaceLocations.BINARY_LOCATION_FILE );
         if ( location.exists() )
         {
+            SafeChunkyInputStream fileInputStream = null;
             try
             {
-                SafeChunkyInputStream fileInputStream = new SafeChunkyInputStream( location );
+                fileInputStream = new SafeChunkyInputStream( location );
                 DataInputStream dataInputStream = new DataInputStream( fileInputStream );
                 String file = dataInputStream.readUTF().trim();
 
                 if ( file.length() > 0 )
                 {
-                    file = file.substring( file.indexOf( ':' ) + 1 );
-                    while ( !Character.isLetterOrDigit( file.charAt( 0 ) ) )
+                    if ( !file.startsWith( "URI//" ) )
                     {
-                        file = file.substring( 1 );
+                        throw new IOException( location.getAbsolutePath() + " contains unexpected data: " + file); 
                     }
-                    if ( file.indexOf( ':' ) < 0 )
-                    {
-                        file = File.separator + file;
-                    }
-                    projectLocation = file;
+                    file = file.substring( "URI//".length() );                    
+                    return new File( new URI( file ) );
                 }
-
             }
-            catch ( FileNotFoundException e )
+            finally
             {
-                projectLocation = "unknown";
-            }
-            catch ( IOException e )
-            {
-                projectLocation = "unknown";
+                IOUtil.close( fileInputStream );
             }
         }
-        if ( projectLocation == null )
+        File projectBase = new File( workspaceLocation, project.getName() );
+        if ( projectBase.isDirectory() )
         {
-            File projectBase = new File( workspaceLocation, project.getName() );
-            if ( projectBase.isDirectory() )
-            {
-                projectLocation = projectBase.getAbsolutePath();
-            }
+            return projectBase;
         }
-        return projectLocation;
+
+        return null;
     }
 
     /**
@@ -318,17 +313,17 @@ public class ReadWorkspaceLocations
      * @throws XmlPullParserException
      * @throws IOException
      */
-    private IdeDependency readArtefact( String projectLocation, Log logger )
+    private IdeDependency readArtefact( File projectLocation, Log logger )
         throws FileNotFoundException, XmlPullParserException, IOException
     {
-        File projectFile = new File( new File( projectLocation ), ".project" );
-        String eclipseProjectName = new File( projectLocation ).getName();
+        File projectFile = new File( projectLocation, ".project" );
+        String eclipseProjectName = projectLocation.getName();
         if ( projectFile.exists() )
         {
             Xpp3Dom project = Xpp3DomBuilder.build( new FileReader( projectFile ) );
             eclipseProjectName = getValue( project, new String[] { "name" }, eclipseProjectName );
         }
-        File pomFile = new File( new File( projectLocation ), "pom.xml" );
+        File pomFile = new File( projectLocation, "pom.xml" );
         if ( pomFile.exists() )
         {
             Xpp3Dom pom = Xpp3DomBuilder.build( new FileReader( pomFile ) );
@@ -343,13 +338,13 @@ public class ReadWorkspaceLocations
             String packaging = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
 
             logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging + " ("
-                + eclipseProjectName + ")" + " -> " + projectLocation );
+                + eclipseProjectName + ")" + " -> " + projectLocation.getAbsolutePath() );
             return new IdeDependency( group, artifact, version, packaging, true, false, false, false, false, null,
                                       packaging, false, null, 0, eclipseProjectName );
         }
         else
         {
-            logger.debug( "ignored workspace project NO pom available " + projectLocation );
+            logger.debug( "ignored workspace project NO pom available " + projectLocation.getAbsolutePath() );
             return null;
         }
     }
@@ -406,14 +401,6 @@ public class ReadWorkspaceLocations
      */
     private HashMap readAvailableJREs( File workspaceLocation, Log logger )
     {
-        HashMap jreMap = new HashMap();
-        jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
-        jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
-        jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
-        jreMap.put( "1.5", CLASSPATHENTRY_STANDARD + "J2SE-1.5" );
-        jreMap.put( "5", jreMap.get( "1.5" ) );
-        jreMap.put( "1.6", CLASSPATHENTRY_STANDARD + "JavaSE-1.6" );
-        jreMap.put( "6", jreMap.get( "1.6" ) );
         Xpp3Dom vms;
         try
         {
@@ -422,7 +409,7 @@ public class ReadWorkspaceLocations
                           ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_LAUNCHING_PREFS );
             if ( !prefs.exists() )
             {
-                return jreMap;
+                return null;
             }
             Properties properties = new Properties();
             properties.load( new FileInputStream( prefs ) );
@@ -433,8 +420,17 @@ public class ReadWorkspaceLocations
         catch ( Exception e )
         {
             logger.error( "Could not read workspace JRE preferences", e );
-            return jreMap;
+            return null;
         }
+        
+        HashMap jreMap = new HashMap();
+        jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
+        jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
+        jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
+        jreMap.put( "1.5", CLASSPATHENTRY_STANDARD + "J2SE-1.5" );
+        jreMap.put( "5", jreMap.get( "1.5" ) );
+        jreMap.put( "1.6", CLASSPATHENTRY_STANDARD + "JavaSE-1.6" );
+        jreMap.put( "6", jreMap.get( "1.6" ) );        
         String defaultJRE = vms.getAttribute( "defaultVM" ).trim();
         Xpp3Dom[] vmTypes = vms.getChildren( "vmType" );
         for ( int vmTypeIndex = 0; vmTypeIndex < vmTypes.length; vmTypeIndex++ )
@@ -493,7 +489,7 @@ public class ReadWorkspaceLocations
      */
     private void readWorkspace( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
-        ArrayList dependencys = new ArrayList();
+        ArrayList dependencies = new ArrayList();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
             File workspace =
@@ -508,24 +504,24 @@ public class ReadWorkspaceLocations
                 {
                     try
                     {
-                        String projectLocation =
+                        File projectLocation =
                             getProjectLocation( workspaceConfiguration.getWorkspaceDirectory(), project );
                         if ( projectLocation != null )
                         {
                             IdeDependency ideDependency = readArtefact( projectLocation, logger );
                             if ( ideDependency != null )
                             {
-                                dependencys.add( ideDependency );
+                                dependencies.add( ideDependency );
                             }
                         }
                     }
                     catch ( Exception e )
                     {
-                        logger.warn( "could not read workspace project:" + project );
+                        logger.warn( "could not read workspace project:" + project, e );
                     }
                 }
             }
         }
-        workspaceConfiguration.setWorkspaceArtefacts( (IdeDependency[]) dependencys.toArray( new IdeDependency[dependencys.size()] ) );
+        workspaceConfiguration.setWorkspaceArtefacts( (IdeDependency[]) dependencies.toArray( new IdeDependency[dependencies.size()] ) );
     }
 }
