@@ -45,49 +45,54 @@ public class ResumeMojo
     /**
      * @parameter expression="${project.collectedProjects}"
      */
-    private List collectedProjects;
+    List collectedProjects;
     
     /**
      * Location of the file.
      * @parameter expression="${basedir}"
      */
-    private File baseDir;
+    File baseDir;
     
     /**
      * @parameter expression="${make.group}" default-value="${project.groupId}"
      */
-    private String continueFromGroup;
+    String continueFromGroup;
     
     /**
      * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
      * @parameter expression="${fromArtifact}" default-value="null"
      * @required
      */
-    private String continueFromProject;
+    String continueFromProject;
     
     /**
      * The project folder from which we'll resume
      * @parameter expression="${from}" default-value="null"
      * @required
      */
-    private File continueFromFolder;
+    File continueFromFolder;
     
     /**
      * Goals to run on subproject
      * @parameter expression="${make.goals}" default-value="install"
      */
-    private String goals;
+    String goals;
     
     /**
      * @component
      */
-    private Invoker invoker;
+    Invoker invoker;
     
     /**
      * Don't really do anything; just print a message that describes what the command would have done
      * @parameter expression="${make.printOnly}"
      */
-    private boolean printOnly = false;
+    boolean printOnly = false;
+    
+    /**
+     * @component
+     */
+    SimpleInvoker simpleInvoker;
     
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -173,7 +178,7 @@ public class ResumeMojo
             throw new MojoExecutionException( "Problem generating dependency tree", e );
         }
 
-        new SimpleInvoker().runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
+        simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
 
     }
 }

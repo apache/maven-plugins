@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>11</version>
+    <version>12</version>
   </parent>
 
   <artifactId>maven-reactor-plugin</artifactId>
@@ -69,27 +69,26 @@ under the License.
         <version>2.0.10</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.1</version>
-    </dependency>
-    <!-- DGF it's too painful to depend on all of the providers plus the API + plexus and track their versions ... -->
-    <!--
-    <dependency>
         <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-api</artifactId>
-        <version>1.0</version>
+        <artifactId>maven-scm-providers-standard</artifactId>
+        <version>1.1</version>
+        <type>pom</type>
     </dependency>
     <dependency>
         <groupId>org.apache.maven.scm</groupId>
         <artifactId>maven-scm-manager-plexus</artifactId>
-        <version>1.0</version>
-    </dependency>-->
+        <version>1.1</version>
+    </dependency>
     <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-project</artifactId>
         <version>2.0.9</version>
     </dependency>
+    <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>1.5.6</version>
+      </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
