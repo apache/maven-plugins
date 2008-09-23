@@ -66,15 +66,18 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#clear()
      */
     public void clear()
     {
         // nothing here
-
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#containsKey(java.lang.Object)
      */
     public boolean containsKey( Object key )
@@ -105,6 +108,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue( Object value )
@@ -113,6 +118,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#entrySet()
      */
     public Set entrySet()
@@ -121,6 +128,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#get(java.lang.Object)
      */
     public Object get( Object key )
@@ -154,6 +163,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty()
@@ -162,6 +173,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#keySet()
      */
     public Set keySet()
@@ -170,6 +183,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     public Object put( Object key, Object value )
@@ -178,6 +193,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#putAll(java.util.Map)
      */
     public void putAll( Map t )
@@ -186,6 +203,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#remove(java.lang.Object)
      */
     public Object remove( Object key )
@@ -194,6 +213,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#size()
      */
     public int size()
@@ -202,6 +223,8 @@ class CompositeMap
     }
 
     /**
+     * {@inheritDoc}
+     * 
      * @see java.util.Map#values()
      */
     public Collection values()
