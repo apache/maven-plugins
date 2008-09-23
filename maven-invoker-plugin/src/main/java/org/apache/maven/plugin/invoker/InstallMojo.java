@@ -117,7 +117,11 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
+        UnobtrusiveLogger.setupLogger( installer, getLog() );
+
         ArtifactRepository testRepository = createTestRepository();
+
+        getLog().info( "Installing project artifacts and dependencies to " + new File( testRepository.getBasedir() ) );
         installProjectArtifacts( project, testRepository );
         installProjectParents( project, testRepository );
         installProjectDependencies( project, reactorProjects, testRepository );
