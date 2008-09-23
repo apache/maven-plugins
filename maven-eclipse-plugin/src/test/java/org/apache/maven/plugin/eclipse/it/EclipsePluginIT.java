@@ -46,6 +46,17 @@ public class EclipsePluginIT
         super.setUp();
     }
 
+    /**
+     * Assumes that unit tests (ReadWorkspaceLocationsTest) have been run so that .location files have been created
+     * correctly.
+     */
+    public void testDynamicWorkspaceLookup()
+        throws Exception
+    {
+        File basedir = new File(TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation, "project-Z");
+        testProject( basedir );
+    }
+
     public void testProject01()
         throws Exception
     {
@@ -459,11 +470,11 @@ public class EclipsePluginIT
     public void testProject39()
         throws Exception
     {
-        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
+        checkJRESettingsWithEclipseWorkspace( "project-39", TempEclipseWorkspace.getFixtureEclipseWithDefault13(),
                                               "", null );
-        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
+        checkJRESettingsWithEclipseWorkspace( "project-39", TempEclipseWorkspace.getFixtureEclipseWithDefault15(),
                                               "J2SE-1.3", null );
-        checkJRESettingsWithEclipseWorkspace( "project-39", new TempEclipseWorkspace( "rad7WithDefault14", false ),
+        checkJRESettingsWithEclipseWorkspace( "project-39", TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14(),
                                               "J2SE-1.3", null );
     }
 
@@ -471,18 +482,18 @@ public class EclipsePluginIT
         throws Exception
     {
         String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
-        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault13", true ),
+        checkJRESettingsWithEclipseWorkspace( "project-40", TempEclipseWorkspace.getFixtureEclipseWithDefault13(),
                                               "JVM 1.3.1", jre131 );
-        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "eclipseWithDefault15", false ),
+        checkJRESettingsWithEclipseWorkspace( "project-40", TempEclipseWorkspace.getFixtureEclipseWithDefault15(),
                                               "JVM 1.3.1", jre131 );
-        checkJRESettingsWithEclipseWorkspace( "project-40", new TempEclipseWorkspace( "rad7WithDefault14", false ), "",
+        checkJRESettingsWithEclipseWorkspace( "project-40", TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14(), "",
                                               jre131 );
     }
 
     public void testProject41()
         throws Exception
     {
-        TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
+        TempEclipseWorkspace rad7 = TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14();
         Properties properties = new Properties();
         properties.setProperty( "eclipse.workspace", rad7.workspaceLocation.getCanonicalPath() );
         testProject( "project-41", properties, "clean", "eclipse" );
@@ -492,7 +503,7 @@ public class EclipsePluginIT
     public void testProject42()
         throws Exception
     {
-        TempEclipseWorkspace rad7 = new TempEclipseWorkspace( "rad7WithDefault14", false );
+        TempEclipseWorkspace rad7 = TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14();
         Properties properties = new Properties();
         properties.setProperty( "eclipse.workspace", rad7.workspaceLocation.getCanonicalPath() );
         testProject( "project-42", properties, "clean", "eclipse" );

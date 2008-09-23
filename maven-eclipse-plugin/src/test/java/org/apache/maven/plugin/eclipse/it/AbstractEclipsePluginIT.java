@@ -163,18 +163,19 @@ public abstract class AbstractEclipsePluginIT
                     + "\n" );
 
                 // Hack: to work around proxys and DTDs retrievals.
-                EntityResolver ignoreDtds = new EntityResolver() {
+                EntityResolver ignoreDtds = new EntityResolver()
+                {
 
                     public InputSource resolveEntity( String publicId, String systemId )
                         throws SAXException, IOException
                     {
-                        return new InputSource(new StringReader("<!ELEMENT ignored (#PCDATA)>"));
+                        return new InputSource( new StringReader( "<!ELEMENT ignored (#PCDATA)>" ) );
                     }
-                    
-                };       
+
+                };
                 XMLUnit.setTestEntityResolver( ignoreDtds );
                 XMLUnit.setControlEntityResolver( ignoreDtds );
-                
+
                 installed = true;
             }
         }
@@ -222,20 +223,18 @@ public abstract class AbstractEclipsePluginIT
     {
         testProject( projectName, new Properties(), "clean", "eclipse" );
     }
-
+    
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      * 
-     * @param projectName project directory
-     * @param properties additional properties
+     * @param basedir basedir of mvn execution
      * @throws Exception any exception generated during test
-     * @deprecated Use {@link #testProject(String,Properties,String,String)} instead
      */
-    protected void testProject( String projectName, Properties properties )
+    protected void testProject( File basedir )
         throws Exception
     {
-        testProject( projectName, properties, "clean", "eclipse" );
-    }
+        testProject( basedir, new Properties(), "clean", "eclipse" );
+    }    
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
@@ -250,7 +249,21 @@ public abstract class AbstractEclipsePluginIT
         throws Exception
     {
         File basedir = getTestFile( "target/test-classes/projects/" + projectName );
+        testProject( basedir, properties, cleanGoal, genGoal );
+    }
 
+    /**
+     * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * 
+     * @param basedir basedir of mvn execution
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal )
+        throws Exception
+    {
         File pom = new File( basedir, "pom.xml" );
 
         String pluginSpec = getPluginCLISpecification();
