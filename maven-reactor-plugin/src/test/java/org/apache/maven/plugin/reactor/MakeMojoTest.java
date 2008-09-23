@@ -114,6 +114,19 @@ public class MakeMojoTest extends TestCase
         assertEquals("businessLogic/pom.xml,ui/pom.xml", fi.getIncludes());
     }
     
+    public void testMakeResume() throws Exception {
+        MakeMojo m = new MakeMojo();
+        m.collectedProjects = configuredProjects;
+        m.artifactList = "reactortest:ui";
+        m.continueFromFolder = new File(baseDir, "businessLogic");
+        m.baseDir = baseDir;
+        m.goals = "install";
+        FakeInvoker fi = new FakeInvoker();
+        m.simpleInvoker = fi;
+        m.execute();
+        assertEquals("businessLogic/pom.xml,ui/pom.xml", fi.getIncludes());
+    }
+    
     class FakeInvoker extends SimpleInvoker {
         String[] reactorIncludes;
         List goalList;
