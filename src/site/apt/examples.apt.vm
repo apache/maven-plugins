@@ -153,6 +153,16 @@ mvn reactor:resume -Dmake.folders=barBusinessLogic -Dmake.goals=install,-DskipTe
   
   If you want to get really fancy, you may prefer to just dry run the reactor plugin in <<<-Dmake.printOnly>>> mode, described above.  That will print out the command that the plugin would have used to build, but you can tweak that command line to your heart's content!
 
+* Resuming a "make" build
+
+  When you use <<<reactor:make>>>, you run a subset of projects, but that doesn't mean stuff won't fail halfway through the build.  You can resume a <<<reactor:make>>> build from the project that stopped the build by passing <<<-Dfrom>>> to the <<<reactor:make>>> goal, like this:
+
++---+
+mvn reactor:make -Dmake.folders=fooUI -Dfrom=barBusinessLogic
++---+
+
+  The <<<-Dfrom>>> argument also works with <<<reactor:make-dependents>>> and <<<reactor:make-scm-changes>>>.
+
 * Nested directories
 
   Let's consider a more complex project:
@@ -220,3 +230,4 @@ mvn reactor:resume -DfromArtifact=com.mycompany:quzAdditionalLogic
 +---+
 mvn reactor:make -Dmake.artifacts=quzUI
 +---+
+

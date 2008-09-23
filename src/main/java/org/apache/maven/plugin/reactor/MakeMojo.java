@@ -104,6 +104,18 @@ public class MakeMojo
      */
     SimpleInvoker simpleInvoker;
     
+    /**
+     * The artifact from which we'll resume, e.g. "com.mycompany:foo" or just "foo"
+     * @parameter expression="${fromArtifact}"
+     */
+    String continueFromProject;
+    
+    /**
+     * The project folder from which we'll resume
+     * @parameter expression="${from}"
+     */
+    File continueFromFolder;
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -111,6 +123,7 @@ public class MakeMojo
             throw new MojoFailureException("You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.projects=com.mycompany:foo,com.mycompany:bar");
         }
         String[] reactorIncludes;
+        List sortedProjects;
         try
         {
             if (collectedProjects.size() == 0) {
@@ -136,7 +149,7 @@ public class MakeMojo
             
             // sort them again
             ps = new SuperProjectSorter( new ArrayList( out ) );
-            List sortedProjects = ps.getSortedProjects();
+            sortedProjects = ps.getSortedProjects();
             
             // construct array of relative POM paths
             reactorIncludes = new String[sortedProjects.size()];
@@ -155,7 +168,21 @@ public class MakeMojo
             throw new MojoExecutionException( "Problem generating dependency tree", e );
         }
 
-        simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
+        if (continueFromFolder != null || continueFromProject != null) {
+            ResumeMojo resumer = new ResumeMojo();
+            resumer.baseDir = baseDir;
+            resumer.collectedProjects = sortedProjects;
+            resumer.continueFromFolder = continueFromFolder;
+            resumer.continueFromProject = continueFromProject;
+            resumer.goals = goals;
+            resumer.invoker = invoker;
+            resumer.simpleInvoker = simpleInvoker;
+            resumer.printOnly = printOnly;
+            resumer.continueFromGroup = defaultGroup;
+            resumer.execute();
+        } else {
+            simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
+        }
 
     }
 
