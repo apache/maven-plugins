@@ -483,10 +483,12 @@ public class EclipsePlugin
      * settings as the reactor projects, but the project name template my differ. The pom's in the workspace projects
      * may not contain variables in the artefactId, groupId and version tags.
      * 
+     * If workspace is not defined, then an attempt to locate it by checking up the directory hierarchy will be made.
+     * 
      * @since 2.5
      * @parameter expression="${eclipse.workspace}"
      */
-    protected String workspace;
+    protected File workspace;
 
     /**
      * Limit the use of project references to the current workspace. No project references will be created to projects
@@ -1701,13 +1703,35 @@ public class EclipsePlugin
         if ( workspaceConfiguration == null )
         {
             workspaceConfiguration = new WorkspaceConfiguration();
-            if ( workspace != null )
-            {
-                workspaceConfiguration.setWorkspaceDirectory( new File( workspace ) );
-            }
+            locateWorkspace();
+            workspaceConfiguration.setWorkspaceDirectory( workspace );
+
             new ReadWorkspaceLocations().init( getLog(), workspaceConfiguration, project, wtpdefaultserver );
         }
         return workspaceConfiguration;
+    }
+
+    /**
+     * If workspace is not defined, then attempt to locate it by checking up the directory hierarchy.
+     */
+    private void locateWorkspace()
+    {
+        if ( workspace == null )
+        {
+            File currentWorkingDirectory = new File( "." ).getAbsoluteFile();
+            while ( currentWorkingDirectory != null )
+            {
+                File metadataDirectory = new File( currentWorkingDirectory, ".metadata" );
+                logger.debug( "Checking metadataDirectory = " + currentWorkingDirectory );
+                if ( metadataDirectory.exists() && metadataDirectory.isDirectory() )
+                {
+                    logger.debug( "  Found" );
+                    workspace = currentWorkingDirectory;
+                    return;
+                }
+                currentWorkingDirectory = currentWorkingDirectory.getParentFile();
+            }
+        }
     }
 
     public List getExcludes()
