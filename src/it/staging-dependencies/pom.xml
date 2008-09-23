@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>test</groupId>
-  <artifactId>stage-local</artifactId>
+  <artifactId>staging-dependencies</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <description>
