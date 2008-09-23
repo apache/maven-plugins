@@ -125,6 +125,13 @@ public class ResourcesMojo
      * @since 2.3
      */    
     protected boolean includeEmptyDirs;
+    
+    /**
+     * Additionnal file extensions to not apply filtering (already defined are : jpg, jpeg, gif, bmp, png)
+     * @parameter 
+     * @since 2.3
+     */
+    protected List nonFilteredFileExtensions;
 
     public void execute()
         throws MojoExecutionException
@@ -148,6 +155,10 @@ public class ResourcesMojo
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
+            if ( nonFilteredFileExtensions != null )
+            {
+                mavenResourcesExecution.setNonFilteredFileExtensions( nonFilteredFileExtensions );
+            }
             mavenResourcesFiltering.filterResources( mavenResourcesExecution );
         }
         catch ( MavenFilteringException e )
