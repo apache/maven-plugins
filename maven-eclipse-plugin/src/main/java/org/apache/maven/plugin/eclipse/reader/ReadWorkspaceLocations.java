@@ -91,12 +91,23 @@ public class ReadWorkspaceLocations
     {
         detectDefaultJREContainer( workspaceConfiguration, project, log );
         readWorkspace( workspaceConfiguration, log );
-        detectWTPDefaultServer( log, workspaceConfiguration, wtpDefaultServer );
+        detectWTPDefaultServer( workspaceConfiguration, wtpDefaultServer, log );
     }
 
-    private void detectWTPDefaultServer( Log log, WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer )
+    /**
+     * Detect WTP Default Server. Do nothing if tehre are no defined servers in the settings.
+     * 
+     * @param workspaceConfiguration
+     * @param wtpDefaultServer
+     * @param log
+     */
+    private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer, Log log )
     {
         HashMap servers = readDefinedServers( workspaceConfiguration, log );
+        if ( servers == null || servers.isEmpty() )
+        {
+            return;
+        }
         if ( wtpDefaultServer != null )
         {
             Set ids = servers.keySet();
@@ -252,9 +263,9 @@ public class ReadWorkspaceLocations
                 {
                     if ( !file.startsWith( "URI//" ) )
                     {
-                        throw new IOException( location.getAbsolutePath() + " contains unexpected data: " + file); 
+                        throw new IOException( location.getAbsolutePath() + " contains unexpected data: " + file );
                     }
-                    file = file.substring( "URI//".length() );                    
+                    file = file.substring( "URI//".length() );
                     return new File( new URI( file ) );
                 }
             }
@@ -349,7 +360,7 @@ public class ReadWorkspaceLocations
         }
     }
 
-    private HashMap readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    /* package */ HashMap readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
         HashMap detectedRuntimes = new HashMap();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
@@ -360,11 +371,16 @@ public class ReadWorkspaceLocations
                 File prefs =
                     new File( workspaceConfiguration.getWorkspaceDirectory(),
                               ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_SERVER_PREFS );
-                Properties properties = new Properties();
-                properties.load( new FileInputStream( prefs ) );
-                runtimesElement =
-                    Xpp3DomBuilder.build( new StringReader(
-                                                            properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY ) ) );
+                if ( prefs.exists() )
+                {
+                    Properties properties = new Properties();
+                    properties.load( new FileInputStream( prefs ) );
+                    String runtimes = properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
+                    if ( runtimes != null )
+                    {
+                        runtimesElement = Xpp3DomBuilder.build( new StringReader( runtimes ) );
+                    }
+                }
             }
             catch ( Exception e )
             {
@@ -422,7 +438,7 @@ public class ReadWorkspaceLocations
             logger.error( "Could not read workspace JRE preferences", e );
             return null;
         }
-        
+
         HashMap jreMap = new HashMap();
         jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
         jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
@@ -430,7 +446,7 @@ public class ReadWorkspaceLocations
         jreMap.put( "1.5", CLASSPATHENTRY_STANDARD + "J2SE-1.5" );
         jreMap.put( "5", jreMap.get( "1.5" ) );
         jreMap.put( "1.6", CLASSPATHENTRY_STANDARD + "JavaSE-1.6" );
-        jreMap.put( "6", jreMap.get( "1.6" ) );        
+        jreMap.put( "6", jreMap.get( "1.6" ) );
         String defaultJRE = vms.getAttribute( "defaultVM" ).trim();
         Xpp3Dom[] vmTypes = vms.getChildren( "vmType" );
         for ( int vmTypeIndex = 0; vmTypeIndex < vmTypes.length; vmTypeIndex++ )
