@@ -922,8 +922,15 @@ public class InvokerMojo
         File interpolatedSettingsFile = null;
         if ( settingsFile != null )
         {
-            interpolatedSettingsFile =
-                new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
+            if ( cloneProjectsTo != null )
+            {
+                interpolatedSettingsFile = new File( cloneProjectsTo, "interpolated-" + settingsFile.getName() );
+            }
+            else
+            {
+                interpolatedSettingsFile =
+                    new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
+            }
             buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
         }
 
@@ -944,7 +951,7 @@ public class InvokerMojo
         }
         finally
         {
-            if ( interpolatedSettingsFile != null )
+            if ( interpolatedSettingsFile != null && cloneProjectsTo == null )
             {
                 interpolatedSettingsFile.delete();
             }
