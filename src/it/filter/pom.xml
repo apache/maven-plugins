@@ -35,6 +35,8 @@
     </resources>
     <filters>
       <filter>src/main/filters/my.filter</filter>
+      <filter>src/main/filters/filter2.properties</filter>
+      <filter>src/main/filters/filter3.properties</filter>
     </filters>
     <pluginManagement>
       <plugins>
