@@ -11,3 +11,5 @@ test:filter resolution profileProperty=${filter.token.profileProperty}
 test:filter syspropsExecutionPropsWins=${execProps}
 
 newToken=@value@
+
+var3=${var3}
