@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -73,6 +74,8 @@ public class AddDependencySetsTask
     private final Logger logger;
 
     private final MavenProject project;
+    
+    private MavenProject moduleProject;
 
     private final MavenProjectBuilder projectBuilder;
 
@@ -82,13 +85,16 @@ public class AddDependencySetsTask
 
     private final DependencyResolver dependencyResolver;
 
-    private String artifactExpressionPrefix = "artifact.";
+    private final Map managedVersions;
 
-    public AddDependencySetsTask( List dependencySets, MavenProject project, MavenProjectBuilder projectBuilder,
+    private Artifact moduleArtifact;
+
+    public AddDependencySetsTask( List dependencySets, MavenProject project, Map managedVersions, MavenProjectBuilder projectBuilder,
                                   DependencyResolver dependencyResolver, Logger logger )
     {
         this.dependencySets = dependencySets;
         this.project = project;
+        this.managedVersions = managedVersions;
         this.projectBuilder = projectBuilder;
         this.dependencyResolver = dependencyResolver;
         this.logger = logger;
@@ -160,7 +166,8 @@ public class AddDependencySetsTask
                 AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
 
                 task.setProject( depProject );
-                task.setArtifactExpressionPrefix( artifactExpressionPrefix );
+                task.setModuleProject( moduleProject );
+                task.setModuleArtifact( moduleArtifact );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
                 task.setFileNameMapping( dependencySet.getOutputFileNameMapping(), defaultOutputFileNameMapping );
                 task.setDirectoryMode( dependencySet.getDirectoryMode() );
@@ -203,7 +210,7 @@ public class AddDependencySetsTask
         try
         {
             dependencyArtifacts = dependencyResolver.resolveDependencies( project, dependencySet.getScope(),
-                                                                          localRepository,
+                                                                          managedVersions, localRepository,
                                                                           additionalRemoteRepositories,
                                                                           dependencySet.isUseTransitiveDependencies() );
 
@@ -285,14 +292,13 @@ public class AddDependencySetsTask
         String outputDirectory = dependencySet.getOutputDirectory();
 
         outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(),
-                                                                  depProject, depProject.getBuild().getFinalName(),
-                                                                  artifactExpressionPrefix,
+                                                                  moduleProject, depProject, depProject.getBuild().getFinalName(),
                                                                   configSource );
 
-        String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
-                                                                       depArtifact, configSource.getProject(),
-                                                                       depProject, artifactExpressionPrefix,
-                                                                       configSource );
+        String destName =
+            AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact,
+                                                         configSource.getProject(), moduleProject, moduleArtifact,
+                                                         depProject, configSource );
 
         String target;
 
@@ -354,8 +360,23 @@ public class AddDependencySetsTask
         this.defaultOutputFileNameMapping = defaultOutputFileNameMapping;
     }
 
-    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    public MavenProject getModuleProject()
     {
-        this.artifactExpressionPrefix = artifactExpressionPrefix;
+        return moduleProject;
+    }
+
+    public void setModuleProject( MavenProject moduleProject )
+    {
+        this.moduleProject = moduleProject;
+    }
+
+    public void setModuleArtifact( Artifact moduleArtifact )
+    {
+        this.moduleArtifact = moduleArtifact;
+    }
+    
+    public Artifact getModuleArtifact()
+    {
+        return moduleArtifact;
     }
 }

@@ -19,16 +19,16 @@ package org.apache.maven.plugin.assembly.testutils;
  * under the License.
  */
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.easymock.MockControl;
 
 public class MockManager
 {
 
-    private List mockControls = new ArrayList();
+    private Set mockControls = new HashSet();
 
     public void add( MockControl control )
     {

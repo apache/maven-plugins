@@ -48,8 +48,8 @@ public class AddFileSetsTask
     private Logger logger;
 
     private MavenProject project;
-
-    private String artifactExpressionPrefix;
+    
+    private MavenProject moduleProject;
 
     public AddFileSetsTask( List fileSets )
     {
@@ -112,8 +112,8 @@ public class AddFileSetsTask
         }
 
         destDirectory =
-            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project,
-                                                    configSource.getFinalName(), artifactExpressionPrefix, configSource );
+            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project,
+                                                    configSource.getFinalName(), configSource );
 
         if ( logger.isDebugEnabled() )
         {
@@ -203,9 +203,14 @@ public class AddFileSetsTask
         this.project = project;
     }
 
-    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    public MavenProject getModuleProject()
     {
-        this.artifactExpressionPrefix = artifactExpressionPrefix;
+        return moduleProject;
+    }
+
+    public void setModuleProject( MavenProject moduleProject )
+    {
+        this.moduleProject = moduleProject;
     }
 
 }
