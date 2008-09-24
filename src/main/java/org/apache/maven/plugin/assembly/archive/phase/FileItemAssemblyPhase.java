@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.AssemblyContext;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.FileFormatter;
@@ -37,6 +39,8 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 
 /**
+ * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
+ * 
  * @version $Id$
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
  *                   role-hint="file-items"
@@ -46,7 +50,20 @@ public class FileItemAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException, AssemblyFormattingException
+    {
+        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
+                         AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List fileList = assembly.getFiles();

@@ -1,0 +1,23 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <binaries>
+        <outputDirectory>${module.artifactId}</outputDirectory>
+        <includeDependencies>true</includeDependencies>
+        <dependencySets>
+          <dependencySet>
+            <includes>
+              <include>commons-codec*</include>
+            </includes>
+            <unpack>false</unpack>
+          </dependencySet>
+        </dependencySets>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+</assembly>

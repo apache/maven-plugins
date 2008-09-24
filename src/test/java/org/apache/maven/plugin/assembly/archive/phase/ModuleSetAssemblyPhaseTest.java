@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
@@ -61,6 +62,8 @@ public class ModuleSetAssemblyPhaseTest
 {
 
     private TestFileManager fileManager = new TestFileManager( "module-set-phase.test.", "" );
+    
+    private Logger logger = new ConsoleLogger( Logger.LEVEL_INFO, "test" );
 
     public void tearDown()
         throws IOException
@@ -140,7 +143,7 @@ public class ModuleSetAssemblyPhaseTest
         File basedir = fileManager.createTempDir();
 
         MavenProject artifactProject = new MavenProject( new Model() );
-
+        
         artifactProject.setFile( new File( basedir, "pom.xml" ) );
 
         ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
@@ -309,7 +312,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        createPhase( null, null ).addModuleBinaries( null, null, null, null );
+        createPhase( null, null ).addModuleBinaries( null, null, null, null, null );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
@@ -339,7 +342,8 @@ public class ModuleSetAssemblyPhaseTest
 
         createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries, projects,
                                                                                                 macTask.archiver,
-                                                                                                macTask.configSource );
+                                                                                                macTask.configSource,
+                                                                                                new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -377,7 +381,8 @@ public class ModuleSetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
+                                                       new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -411,7 +416,8 @@ public class ModuleSetAssemblyPhaseTest
 
         try
         {
-            createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
+            createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
+                                                           new DefaultAssemblyContext() );
 
             fail( "Should throw an invalid configuration exception because of module with missing attachment." );
         }
@@ -455,7 +461,8 @@ public class ModuleSetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
+                                                       new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -515,7 +522,8 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
+                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -571,7 +579,8 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
+                                 new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -746,11 +755,11 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
+        moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask )
-            .getModuleProjects( moduleSet, macTask.configSource, true );
+        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
@@ -775,11 +784,11 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
+        moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask )
-            .getModuleProjects( moduleSet, macTask.configSource, true );
+        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
@@ -804,11 +813,11 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
+        moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask )
-            .getModuleProjects( moduleSet, macTask.configSource, true );
+        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertFalse( moduleProjects.isEmpty() );
 
@@ -839,11 +848,11 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
+        moduleSet.setIncludeSubModules( true );
 
         mm.replayAll();
 
-        Set moduleProjects = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask )
-            .getModuleProjects( moduleSet, macTask.configSource, true );
+        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertEquals( 2, moduleProjects.size() );
 
@@ -889,13 +898,13 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
 
         ModuleSet moduleSet = new ModuleSet();
+        moduleSet.setIncludeSubModules( true );
 
         moduleSet.addExclude( "group:artifact2" );
 
         mm.replayAll();
 
-        Set moduleProjects = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask )
-            .getModuleProjects( moduleSet, macTask.configSource, true );
+        Set moduleProjects = ModuleSetAssemblyPhase.getModuleProjects( moduleSet, macTask.configSource, logger );
 
         assertTrue( moduleProjects.isEmpty() );
 
