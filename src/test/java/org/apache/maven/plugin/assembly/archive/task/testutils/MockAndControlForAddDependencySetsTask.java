@@ -224,7 +224,7 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            dependencyResolver.resolveDependencies( null, null, null, null, true );
+            dependencyResolver.resolveDependencies( null, null, null, null, null, true );
         }
         catch ( ArtifactResolutionException e )
         {

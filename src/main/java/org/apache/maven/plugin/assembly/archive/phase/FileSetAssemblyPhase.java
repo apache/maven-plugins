@@ -20,6 +20,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.AssemblyContext;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -30,6 +32,8 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import java.util.List;
 
 /**
+ * Handles the &lt;fileSets/&gt; top-level section of the assembly descriptor.
+ * 
  * @version $Id$
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
  *                   role-hint="file-sets"
@@ -39,7 +43,20 @@ public class FileSetAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException, AssemblyFormattingException
+    {
+        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
+                         AssemblyContext context )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List fileSets = assembly.getFileSets();
