@@ -1,0 +1,17 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.apache.maven:maven-model:jar</include>
+        <include>org.apache.maven:maven-model:jar:sources</include>
+        <include>org.apache.maven:maven-model:jar:javadoc</include>
+      </includes>
+      <unpack>false</unpack>
+    </dependencySet>
+  </dependencySets>
+</assembly>
