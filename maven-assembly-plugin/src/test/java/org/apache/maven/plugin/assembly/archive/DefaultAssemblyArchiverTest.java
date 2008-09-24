@@ -19,15 +19,19 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
@@ -61,7 +65,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class DefaultAssemblyArchiverTest
     extends PlexusTestCase
@@ -92,7 +95,7 @@ public class DefaultAssemblyArchiverTest
 
         AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseControl.getMock();
 
-        phase.execute( null, null, null );
+        phase.execute( null, null, null, null );
         phaseControl.setMatcher( MockControl.ALWAYS_MATCHER );
 
         MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
@@ -526,7 +529,7 @@ public class DefaultAssemblyArchiverTest
     private DefaultAssemblyArchiver createSubject( MockAndControlForAssemblyArchiver macMgr, List phases, Logger logger )
     {
         DefaultAssemblyArchiver subject =
-            new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.collectionManager, phases );
+            new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.collectionManager, macMgr.resolver, phases );
         
         subject.setContainer( getContainer() );
 
@@ -553,6 +556,10 @@ public class DefaultAssemblyArchiverTest
         MockControl collectionManagerControl;
 
         ActiveCollectionManager collectionManager;
+        
+        MockControl resolverControl;
+        
+        DependencyResolver resolver;
 
         private final MockManager mm;
 
@@ -568,6 +575,31 @@ public class DefaultAssemblyArchiverTest
             mm.add( collectionManagerControl );
 
             collectionManager = (ActiveCollectionManager) collectionManagerControl.getMock();
+            
+            resolverControl = MockControl.createControl( DependencyResolver.class );
+            mm.add( resolverControl );
+            
+            resolver = (DependencyResolver) resolverControl.getMock();
+            
+            try
+            {
+                resolver.buildManagedVersionMap( null, null );
+            }
+            catch ( ArtifactResolutionException e )
+            {
+            }
+            catch ( ArchiveCreationException e )
+            {
+            }
+            catch ( InvalidVersionSpecificationException e )
+            {
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+            }
+            
+            resolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            resolverControl.setReturnValue( Collections.EMPTY_MAP, MockControl.ZERO_OR_MORE );
         }
 
         void expectGetDestFile( File file )

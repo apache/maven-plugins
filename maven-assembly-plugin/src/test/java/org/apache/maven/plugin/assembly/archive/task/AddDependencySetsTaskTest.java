@@ -113,7 +113,7 @@ public class AddDependencySetsTaskTest
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
-                                                                depProject, macTask.projectBuilder,
+                                                                depProject, Collections.EMPTY_MAP, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, macTask.archiver, macTask.configSource );
@@ -141,7 +141,7 @@ public class AddDependencySetsTaskTest
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
-                                                                project, macTask.projectBuilder,
+                                                                project, Collections.EMPTY_MAP, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, null, macTask.configSource );
@@ -193,7 +193,7 @@ public class AddDependencySetsTaskTest
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
-                                                                project, macTask.projectBuilder,
+                                                                project, Collections.EMPTY_MAP, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, macTask.archiver, macTask.configSource );
@@ -266,7 +266,7 @@ public class AddDependencySetsTaskTest
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ),
-                                                                project, macTask.projectBuilder,
+                                                                project, Collections.EMPTY_MAP, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         mockManager.replayAll();
@@ -300,7 +300,7 @@ public class AddDependencySetsTaskTest
 
         AddDependencySetsTask task = new AddDependencySetsTask(
                                                                 Collections.singletonList( dependencySet ),
-                                                                project, macTask.projectBuilder,
+                                                                project, Collections.EMPTY_MAP, macTask.projectBuilder,
                                                                 macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
@@ -355,7 +355,7 @@ public class AddDependencySetsTaskTest
 
         AddDependencySetsTask task = new AddDependencySetsTask(
                                                                 Collections.singletonList( dependencySet ),
-                                                                project, null,
+                                                                project, Collections.EMPTY_MAP, null,
                                                                 macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
@@ -409,7 +409,7 @@ public class AddDependencySetsTaskTest
 
         AddDependencySetsTask task = new AddDependencySetsTask(
                                                                 Collections.singletonList( dependencySet ),
-                                                                project, null,
+                                                                project, Collections.EMPTY_MAP, null,
                                                                 macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );

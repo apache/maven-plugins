@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,9 +47,9 @@ public final class ProjectUtils
     {
         Set singleParentSet = Collections.singleton( project );
 
-        Set moduleCandidates = new HashSet( reactorProjects );
+        Set moduleCandidates = new LinkedHashSet( reactorProjects );
 
-        Set modules = new HashSet();
+        Set modules = new LinkedHashSet();
 
         // we temporarily add the master project to the modules set, since this
         // set is pulling double duty as a set of

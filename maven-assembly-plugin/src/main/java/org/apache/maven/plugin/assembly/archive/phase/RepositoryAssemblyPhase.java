@@ -23,6 +23,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.AssemblyContext;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
@@ -80,8 +83,21 @@ public class RepositoryAssemblyPhase
         dependencyResolver = resolver;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+    {
+        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
+                         AssemblyContext context )
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         List repositoriesList = assembly.getRepositories();
 
@@ -91,7 +107,7 @@ public class RepositoryAssemblyPhase
         {
             Repository repository = (Repository) i.next();
 
-            resolveDependencies(repository, configSource);
+            resolveDependencies( repository, configSource, context );
 
             String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
@@ -127,7 +143,8 @@ public class RepositoryAssemblyPhase
         }
     }
 
-    private void resolveDependencies( Repository repository, AssemblerConfigurationSource configSource )
+    private void resolveDependencies( Repository repository, AssemblerConfigurationSource configSource,
+                                      AssemblyContext context )
         throws ArchiveCreationException
     {
         MavenProject project = configSource.getProject();
@@ -140,8 +157,9 @@ public class RepositoryAssemblyPhase
         try
         {
             // NOTE: hard-coding to resolve artifacts transitively, since this is meant to be a self-contained repository...
-            dependencyArtifacts = dependencyResolver
-                .resolveDependencies( project, repository.getScope(), localRepository, additionalRemoteRepositories, true );
+            dependencyArtifacts =
+                dependencyResolver.resolveDependencies( project, repository.getScope(), context.getManagedVersionMap(),
+                                                        localRepository, additionalRemoteRepositories, true );
 
             if ( ( dependencyArtifacts != null ) && !dependencyArtifacts.isEmpty() )
             {

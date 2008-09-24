@@ -19,11 +19,16 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.AssemblyContext;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -32,6 +37,7 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;
@@ -68,6 +74,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Controller component designed to organize the many activities involved in 
+ * creating an assembly archive. This includes locating and configuring {@link Archiver}
+ * instances, executing multiple {@link AssemblyArchiverPhase} instances to 
+ * interpret the various sections of the assembly descriptor and determine which
+ * files to add, and other associated activities.
+ * 
  * @version $Id$
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver" role-hint="default"
  */
@@ -90,6 +102,11 @@ public class DefaultAssemblyArchiver
      * @plexus.requirement role="org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler"
      */
     private Map containerDescriptorHandlers;
+    
+    /**
+     * @plexus.requirement
+     */
+    private DependencyResolver dependencyResolver;
 
     private PlexusContainer container;
 
@@ -99,12 +116,30 @@ public class DefaultAssemblyArchiver
     }
 
     // introduced for testing.
-    public DefaultAssemblyArchiver( ArchiverManager archiverManager, ActiveCollectionManager collectionManager, List assemblyPhases )
+    protected DefaultAssemblyArchiver( ArchiverManager archiverManager, ActiveCollectionManager collectionManager,
+                                    DependencyResolver resolver, List assemblyPhases )
     {
         this.archiverManager = archiverManager;
+        dependencyResolver = resolver;
         this.assemblyPhases = assemblyPhases;
     }
-
+    
+    /**
+     * Create the assembly archive. Generally:
+     * 
+     * <ol>
+     *   <li>Setup any directory structures for temporary files</li>
+     *   <li>Calculate the output directory/file for the assembly</li>
+     *   <li>Setup any handler components for special descriptor files we may encounter</li>
+     *   <li>Lookup and configure the {@link Archiver} to be used</li>
+     *   <li>Determine what, if any, dependency resolution will be required, and 
+     *       resolve any dependency-version conflicts up front to produce a 
+     *       managed-version map for the whole assembly process.</li>
+     *   <li>Iterate through the available {@link AssemblyArchiverPhase} instances,
+     *       executing each to handle a different top-level section of the
+     *       assembly descriptor, if that section is present.</li>
+     * </ol>
+     */
     public File createArchive( Assembly assembly, String fullName, String format,
                                AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -140,12 +175,16 @@ public class DefaultAssemblyArchiver
                                                 containerHandlers );
 
             archiver.setDestFile( destFile );
+            
+            Map managedVersionMap = dependencyResolver.buildManagedVersionMap( assembly, configSource );
+            
+            AssemblyContext context = new DefaultAssemblyContext().setManagedVersionMap( managedVersionMap );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
                 AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
 
-                phase.execute( assembly, archiver, configSource );
+                phase.execute( assembly, archiver, configSource, context );
             }
 
             archiver.createArchive();
@@ -161,6 +200,18 @@ public class DefaultAssemblyArchiver
         catch ( NoSuchArchiverException e )
         {
             throw new ArchiveCreationException( "Unable to obtain archiver for extension '" + format + "'" );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new ArchiveCreationException( "Unable to create managed-version map for all assembly activities: " + e.getMessage(), e );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new ArchiveCreationException( "Unable to create managed-version map for all assembly activities: " + e.getMessage(), e );
+        }
+        catch ( InvalidDependencyVersionException e )
+        {
+            throw new ArchiveCreationException( "Unable to create managed-version map for all assembly activities: " + e.getMessage(), e );
         }
 
         return destFile;
