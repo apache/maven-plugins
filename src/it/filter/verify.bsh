@@ -106,7 +106,15 @@ try
     {
       System.err.println( "SomeResource.txt not contains newToken=foo" );
       return false;
-    }       
+    }
+    
+    //var3=Foo-Bar/Thing     
+    indexOf = paramContent.indexOf( "var3=Foo-Bar/Thing" );
+    if ( indexOf < 0)
+    {
+      System.err.println( "SomeResource.txt not contains var3=Foo-Bar/Thing" );
+      return false;
+    }             
 }
 catch( IOException e )
 {
