@@ -58,14 +58,16 @@ public class AddArtifactTask
     private final Artifact artifact;
 
     private MavenProject project;
+    
+    private MavenProject moduleProject;
+    
+    private Artifact moduleArtifact;
 
     private String outputDirectory;
 
     private String outputFileNameMapping;
 
     private final Logger logger;
-
-    private String artifactExpressionPrefix = "artifact.";
 
     public AddArtifactTask( Artifact artifact, Logger logger )
     {
@@ -101,7 +103,7 @@ public class AddArtifactTask
 
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), project, configSource.getFinalName(), artifactExpressionPrefix, configSource );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project, configSource.getFinalName(), configSource );
 
         if ( unpack )
         {
@@ -167,10 +169,10 @@ public class AddArtifactTask
         }
         else
         {
-            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact, 
-            		                                                              configSource.getProject(), project, 
-            		                                                              artifactExpressionPrefix,
-            		                                                              configSource );
+            String fileNameMapping =
+                AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
+                                                             configSource.getProject(), moduleProject, moduleArtifact,
+                                                             project, configSource );
 
             String outputLocation = destDirectory + fileNameMapping;
 
@@ -249,9 +251,24 @@ public class AddArtifactTask
         setFileNameMapping( outputFileNameMapping == null ? defaultOutputFileNameMapping : outputFileNameMapping );
     }
 
-    public void setArtifactExpressionPrefix( String artifactExpressionPrefix )
+    public MavenProject getModuleProject()
     {
-        this.artifactExpressionPrefix = artifactExpressionPrefix;
+        return moduleProject;
+    }
+
+    public void setModuleProject( MavenProject moduleProject )
+    {
+        this.moduleProject = moduleProject;
+    }
+
+    public Artifact getModuleArtifact()
+    {
+        return moduleArtifact;
+    }
+
+    public void setModuleArtifact( Artifact moduleArtifact )
+    {
+        this.moduleArtifact = moduleArtifact;
     }
 
 }

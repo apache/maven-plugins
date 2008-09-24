@@ -20,6 +20,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.AssemblyContext;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
@@ -32,6 +34,8 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
 /**
+ * Handles the top-level &lt;dependencySets/&gt; section of the assembly descriptor.
+ * 
  * @version $Id$
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
  *                   role-hint="dependency-sets"
@@ -64,12 +68,25 @@ public class DependencySetAssemblyPhase
         enableLogging( logger );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
+        execute( assembly, archiver, configSource, new DefaultAssemblyContext() );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
+                         AssemblyContext context )
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+    {
         AddDependencySetsTask task =
-            new AddDependencySetsTask( assembly.getDependencySets(), configSource.getProject(), projectBuilder,
-                                       dependencyResolver, getLogger() );
+            new AddDependencySetsTask( assembly.getDependencySets(), configSource.getProject(),
+                                       context.getManagedVersionMap(), projectBuilder, dependencyResolver, getLogger() );
 
         task.execute( archiver, configSource );
     }

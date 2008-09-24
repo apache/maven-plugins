@@ -11,7 +11,7 @@
     <moduleSet>
       <binaries>
         <outputDirectory>modules</outputDirectory>
-        <outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping>
+        <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
         <unpack>false</unpack>
         <includeDependencies>true</includeDependencies>
       </binaries>

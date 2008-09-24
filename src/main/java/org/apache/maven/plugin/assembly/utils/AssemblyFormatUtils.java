@@ -74,48 +74,55 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
 
+    /**
+     * @deprecated Use {@link AssemblyFormatUtils#getOutputDirectory(String, MavenProject, MavenProject, String, AssemblerConfigurationSource)}
+     * instead.
+     */
+    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
+                                             String finalName )
+        throws AssemblyFormattingException
+    {
+        return getOutputDirectory( output, mainProject, null, artifactProject, finalName, null );
+    }
+
     public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
                                              String finalName, AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
-        return getOutputDirectory( output, mainProject, artifactProject, finalName, "artifact.", configSource );
+        return getOutputDirectory( output, mainProject, null, artifactProject, finalName, configSource );
     }
 
-    /*
+    /**
      * ORDER OF INTERPOLATION PRECEDENCE:
-     *
-     * 1. Support for special expressions, like ${finalName} (use the assembly plugin configuration not the build config)
-     * 2. prefixed with artifactProjectRefName ("module." or "artifact.", normally).
-     *    A. MavenProject instance for artifact
-     * 3. prefixed with "artifact.", if artifactProjectRefName != "artifact."
-     *    A. MavenProject instance for artifact
-     * 4. user-defined properties from the command line
-     * 5. prefixed with "pom." or "project.", or no prefix at all
-     *    A. MavenProject instance from current build
-     * 6. properties from main project
-     * 7. system properties, from the MavenSession instance (to support IDEs)
-     * 8. environment variables.
-     * 
+     * <ol>
+     * <li> Support for special expressions, like ${finalName} (use the assembly plugin configuration not the build config)</li>
+     * <li> prefixed with "module." if moduleProject is non-null
+     *    <ol><li>MavenProject instance for module being assembled</li></ol>
+     * </li>
+     * <li>prefixed with "artifact." if artifactProject is non-null
+     *    <ol><li>MavenProject instance for artifact</li></ol>
+     * </li>
+     * <li>user-defined properties from the command line</li>
+     * <li>prefixed with "pom." or "project.", or no prefix at all
+     *    <ol><li>MavenProject instance from current build</li></ol>
+     * </li>
+     * <li>properties from main project</li>
+     * <li>system properties, from the MavenSession instance (to support IDEs)</li>
+     * <li>environment variables.</li>
+     * </ol>
      */
-    public static String getOutputDirectory( String output, MavenProject mainProject, MavenProject artifactProject,
-                                             String finalName, String artifactProjectRefName,
+    public static String getOutputDirectory( String output, 
+                                             MavenProject mainProject, 
+                                             MavenProject moduleProject,
+                                             MavenProject artifactProject,
+                                             String finalName,
                                              AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
-        if ( artifactProjectRefName == null )
-        {
-            artifactProjectRefName = "artifact.";
-        }
-
         String value = output;
         if ( value == null )
         {
             value = "";
-        }
-
-        if ( ( artifactProjectRefName != null ) && !artifactProjectRefName.endsWith( "." ) )
-        {
-            artifactProjectRefName += ".";
         }
 
         StringSearchInterpolator interpolator = new StringSearchInterpolator();
@@ -130,37 +137,42 @@ public final class AssemblyFormatUtils
 
         // 1
         interpolator.addValueSource( new PropertiesBasedValueSource( specialExpressionOverrides ) );
+        
+        if ( moduleProject != null )
+        {
+            // 2
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
+        }
 
         if ( artifactProject != null )
         {
-            // 2
-            interpolator.addValueSource( new PrefixedObjectValueSource( artifactProjectRefName, artifactProject ) );
-
-            if ( !"artifact.".equals( artifactProjectRefName ) )
-            {
-                // 3
-                interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
-            }
+            // 3
+            interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
         }
 
-        MavenSession session = configSource.getMavenSession();
-
-        if ( session != null )
+        MavenSession session = null;
+        
+        if ( configSource != null )
         {
-            Properties userProperties = null;
-            try
+            session = configSource.getMavenSession();
+
+            if ( session != null )
             {
-                userProperties = session.getExecutionProperties();
-            }
-            catch ( NoSuchMethodError nsmer )
-            {
-                // OK, so user is using Maven <= 2.0.8. No big deal.
-            }
-            
-            if ( userProperties != null )
-            {
-                // 4
-                interpolator.addValueSource( new PropertiesBasedValueSource( userProperties ) );
+                Properties userProperties = null;
+                try
+                {
+                    userProperties = session.getExecutionProperties();
+                }
+                catch ( NoSuchMethodError nsmer )
+                {
+                    // OK, so user is using Maven <= 2.0.8. No big deal.
+                }
+                
+                if ( userProperties != null )
+                {
+                    // 4
+                    interpolator.addValueSource( new PropertiesBasedValueSource( userProperties ) );
+                }
             }
         }
         
@@ -225,52 +237,63 @@ public final class AssemblyFormatUtils
         return value;
     }
 
+    /**
+     * @deprecated Use {@link AssemblyFormatUtils#evaluateFileNameMapping(String, Artifact, MavenProject, MavenProject, AssemblerConfigurationSource)}
+     * instead.
+     */
+    public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject,
+                                                  MavenProject artifactProject )
+        throws AssemblyFormattingException
+    {
+        return evaluateFileNameMapping( expression, artifact, mainProject, null, null, artifactProject, null );
+    }
+
     public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject,
                                                   MavenProject artifactProject,
                                                   AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
-        return evaluateFileNameMapping( expression, artifact, mainProject, artifactProject, "artifact.", configSource );
+        return evaluateFileNameMapping( expression, artifact, mainProject, null, null, artifactProject, configSource );
     }
 
-    /*
+    /**
      * ORDER OF INTERPOLATION PRECEDENCE:
-     *
-     * 1. prefixed with artifactProjectRefName, from parameters list above.
-     *    A. Artifact instance
-     *    B. ArtifactHandler instance for artifact
-     *    C. MavenProject instance for artifact
-     * 2. prefixed with "artifact.", if artifactProjectRefName != "artifact."
-     *    A. Artifact instance
-     *    B. ArtifactHandler instance for artifact
-     *    C. MavenProject instance for artifact
-     * 3. prefixed with "pom." or "project."
-     *    A. MavenProject instance from current build
-     * 4. no prefix, using main project instance
-     *    A. MavenProject instance from current build
-     * 5. Support for special expressions, like ${dashClassifier?}
-     * 6. user-defined properties from the command line
-     * 7. properties from main project
-     * 8. system properties, from the MavenSession instance (to support IDEs)
-     * 9. environment variables.
-     *
+     * <ol>
+     * <li>prefixed with "module.", if moduleProject != null
+     *    <ol>
+     *    <li>Artifact instance for module, if moduleArtifact != null</li>
+     *    <li>ArtifactHandler instance for module, if moduleArtifact != null</li>
+     *    <li>MavenProject instance for module</li>
+     *    </ol>
+     * </li>
+     * <li>prefixed with "artifact."
+     *    <ol>
+     *    <li>Artifact instance</li>
+     *    <li>ArtifactHandler instance for artifact</li>
+     *    <li>MavenProject instance for artifact</li>
+     *    </ol>
+     * </li>
+     * <li>prefixed with "pom." or "project."
+     *    <ol><li>MavenProject instance from current build</li></ol>
+     * </li>
+     * <li>no prefix, using main project instance
+     *    <ol><li>MavenProject instance from current build</li></ol>
+     * </li>
+     * <li>Support for special expressions, like ${dashClassifier?}</li>
+     * <li>user-defined properties from the command line</li>
+     * <li>properties from main project</li>
+     * <li>system properties, from the MavenSession instance (to support IDEs)</li>
+     * <li>environment variables.</li>
+     * </ol>
      */
     public static String evaluateFileNameMapping( String expression, Artifact artifact, MavenProject mainProject,
-                                                  MavenProject artifactProject, String artifactProjectRefName,
+                                                  MavenProject moduleProject,
+                                                  Artifact moduleArtifact,
+                                                  MavenProject artifactProject, 
                                                   AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         String value = expression;
-
-        if ( artifactProjectRefName == null )
-        {
-            artifactProjectRefName = "artifact.";
-        }
-
-        if ( !artifactProjectRefName.endsWith( "." ) )
-        {
-            artifactProjectRefName += ".";
-        }
 
         // TODO: This is BAD! Accessors SHOULD NOT change the behavior of the object.
         // [jdcasey; 16-Aug-1007] This is fixed in SVN, just waiting for it to pass out of legacy.
@@ -278,36 +301,33 @@ public final class AssemblyFormatUtils
 
         StringSearchInterpolator interpolator = new StringSearchInterpolator();
 
-        // 1A
-        interpolator.addValueSource( new PrefixedObjectValueSource( artifactProjectRefName, artifact ) );
-
-        // 1B
-        interpolator.addValueSource( new PrefixedObjectValueSource( artifactProjectRefName, artifact.getArtifactHandler() ) );
-        interpolator.addValueSource( new PrefixedObjectValueSource( artifactProjectRefName
-                                                                         + ( artifactProjectRefName.endsWith( "." )
-                                                                                         ? "" : "." ) + "handler.",
-                                                                         artifact.getArtifactHandler() ) );
-
-        // 1C
-        if ( artifactProject != null )
+        if ( moduleArtifact != null )
         {
-            interpolator.addValueSource( new PrefixedObjectValueSource( artifactProjectRefName, artifactProject ) );
+            // 1A
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleArtifact ) );
+            
+            // 1B
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleArtifact.getArtifactHandler() ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.handler.", moduleArtifact.getArtifactHandler() ) );
+        }
+        
+        // 1C
+        if ( moduleProject != null )
+        {
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
         }
 
-        if ( !"artifact.".equals( artifactProjectRefName ) )
+        // 2A
+        interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifact ) );
+
+        // 2B
+        interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifact.getArtifactHandler() ) );
+        interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.handler.", artifact.getArtifactHandler() ) );
+
+        // 2C
+        if ( artifactProject != null )
         {
-            // 2A
-            interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifact ) );
-
-            // 2B
-            interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifact.getArtifactHandler() ) );
-            interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.handler.", artifact.getArtifactHandler() ) );
-
-            // 2C
-            if ( artifactProject != null )
-            {
-                interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
-            }
+            interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
         }
 
         if ( mainProject != null )
@@ -334,24 +354,28 @@ public final class AssemblyFormatUtils
         // 5
         interpolator.addValueSource( new PropertiesBasedValueSource( specialRules ) );
 
-        MavenSession session = configSource.getMavenSession();
-
-        if ( session != null )
+        MavenSession session = null;
+        if ( configSource != null )
         {
-            Properties userProperties = null;
-            try
+            session = configSource.getMavenSession();
+
+            if ( session != null )
             {
-                userProperties = session.getExecutionProperties();
-            }
-            catch ( NoSuchMethodError nsmer )
-            {
-                // OK, so user is using Maven <= 2.0.8. No big deal.
-            }
-            
-            if ( userProperties != null )
-            {
-                // 6
-                interpolator.addValueSource( new PropertiesBasedValueSource( userProperties ) );
+                Properties userProperties = null;
+                try
+                {
+                    userProperties = session.getExecutionProperties();
+                }
+                catch ( NoSuchMethodError nsmer )
+                {
+                    // OK, so user is using Maven <= 2.0.8. No big deal.
+                }
+                
+                if ( userProperties != null )
+                {
+                    // 6
+                    interpolator.addValueSource( new PropertiesBasedValueSource( userProperties ) );
+                }
             }
         }
         

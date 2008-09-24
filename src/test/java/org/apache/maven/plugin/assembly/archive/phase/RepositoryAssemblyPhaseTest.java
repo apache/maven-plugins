@@ -24,6 +24,8 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
@@ -67,7 +69,7 @@ public class RepositoryAssemblyPhaseTest
     }
 
     public void testExecute_ShouldNotIncludeRepositoryIfNonSpecifiedInAssembly()
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         MockManager mm = new MockManager();
 
@@ -88,13 +90,14 @@ public class RepositoryAssemblyPhaseTest
 
         createPhase( macRepo.repositoryAssembler, macResolver.dependencyResolver,
                      new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly, macArchiver.archiver,
-                                                                                macCS.configSource );
+                                                                                macCS.configSource,
+                                                                                new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
 
     public void testExecute_ShouldIncludeOneRepository()
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         MockManager mm = new MockManager();
 
@@ -138,7 +141,8 @@ public class RepositoryAssemblyPhaseTest
 
         createPhase( macRepo.repositoryAssembler, macResolver.dependencyResolver,
                      new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly, macArchiver.archiver,
-                                                                                macCS.configSource );
+                                                                                macCS.configSource,
+                                                                                new DefaultAssemblyContext() );
 
         mm.verifyAll();
     }
@@ -299,7 +303,7 @@ public class RepositoryAssemblyPhaseTest
         {
             try
             {
-                dependencyResolver.resolveDependencies( null, null, null, null, true );
+                dependencyResolver.resolveDependencies( null, null, null, null, null, true );
                 dependencyResolverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
                 dependencyResolverCtl.setReturnValue( resolvedArtifacts );
             }
@@ -346,21 +350,6 @@ public class RepositoryAssemblyPhaseTest
             }
 
             control.setVoidCallable( MockControl.ONE_OR_MORE );
-        }
-    }
-
-    private final class MockAndControlForLogger
-    {
-        Logger logger;
-
-        MockControl control;
-
-        public MockAndControlForLogger( MockManager mockManager )
-        {
-            control = MockControl.createControl( Logger.class );
-            mockManager.add( control );
-
-            logger = (Logger) control.getMock();
         }
     }
 
