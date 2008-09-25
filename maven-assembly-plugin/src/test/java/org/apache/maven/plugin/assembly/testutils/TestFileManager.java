@@ -119,7 +119,6 @@ public class TestFileManager
     }
 
     public void cleanUp()
-        throws IOException
     {
         for ( Iterator it = filesToDelete.iterator(); it.hasNext(); )
         {
@@ -127,7 +126,14 @@ public class TestFileManager
 
             if ( file.exists() )
             {
-                FileUtils.forceDelete( file );
+                try
+                {
+                    FileUtils.forceDelete( file );
+                }
+                catch ( Exception e )
+                {
+                    System.err.println( "Error while deleting test file/dir: " + file + "; ignoring." );
+                }
             }
 
             it.remove();
