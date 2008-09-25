@@ -2,7 +2,7 @@ import java.io.*;
 
 boolean result = true;
 
-String assemblyDir = "target/excluding-svn-dirs-1.0-SNAPSHOT-src.dir/src/main/assembly/";
+String assemblyDir = "target/excluding-svn-dirs-1.0-SNAPSHOT-src/src/main/assembly/";
 
 result = result && new File( basedir, assemblyDir + "src.xml" ).exists();
 result = result && !new File( basedir, assemblyDir + ".svn" ).exists();

@@ -6,8 +6,8 @@ boolean result = true;
 
 try
 {
-    File a = new File( basedir, "assembly/target/assembly-1-fromArtifact.dir/a/file.txt");
-    File b = new File( basedir, "assembly/target/assembly-1-fromArtifact.dir/b/file.txt");
+    File a = new File( basedir, "assembly/target/assembly-1-fromArtifact/a/file.txt");
+    File b = new File( basedir, "assembly/target/assembly-1-fromArtifact/b/file.txt");
     if(result) {
         BufferedReader r = new BufferedReader(new FileReader(a));
         String s = r.readLine();

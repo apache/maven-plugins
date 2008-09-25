@@ -5,7 +5,7 @@ import java.util.jar.*;
 boolean result = true;
 
 String finalName = "two-levels-includeBaseDirectory-withSources-1.0-SNAPSHOT";
-String rootDir = "target/" + finalName + "-src.dir/" + finalName + "/modules/";
+String rootDir = "target/" + finalName + "-src/" + finalName + "/modules/";
 
 result = result && new File( basedir, rootDir + "child-level1-project1/pom.xml" ).exists();   
 

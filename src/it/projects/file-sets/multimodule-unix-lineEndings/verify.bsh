@@ -1,6 +1,6 @@
 import java.io.*;
 
-File f = new File( basedir, "child/target/child-1-src.dir/test.txt" );
+File f = new File( basedir, "child/target/child-1-src/test.txt" );
 
 if ( !f.exists() )
 {

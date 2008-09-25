@@ -1,8 +1,8 @@
 import java.io.*;
 
-File f = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly.dir/file/path/some.file" );
-File f2 = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly.dir/file2/path/some.file" );
-File f3 = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly.dir/file3/path/some.file" );
+File f = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly/file/path/some.file" );
+File f2 = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly/file2/path/some.file" );
+File f3 = new File( basedir, "target/massembly-256-pomPropertiesInterp-1-myassembly/file3/path/some.file" );
 
 boolean fOK = f.exists() && f.isFile();
 if ( !fOK )
