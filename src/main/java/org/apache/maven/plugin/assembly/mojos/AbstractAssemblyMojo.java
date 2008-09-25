@@ -72,8 +72,11 @@ public abstract class AbstractAssemblyMojo
      * If this flag is set, the ".dir" suffix will be suppressed in the output
      * directory name when using assembly/format == 'dir' and other formats
      * that begin with 'dir'.
+     * <br/>
+     * <b>NOTE:</b> Since 2.2-beta-3, the default-value for this is true, NOT 
+     * false as it used to be.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      */
     private boolean ignoreDirFormatExtensions;
 
