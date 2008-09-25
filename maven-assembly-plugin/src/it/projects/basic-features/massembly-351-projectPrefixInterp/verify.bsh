@@ -1,8 +1,8 @@
 import java.io.*;
 
-File f = new File( basedir, "target/project-1-myassembly.dir/files/project1.file" );
-File f2 = new File( basedir, "target/project-1-myassembly.dir/files/project2.file" );
-File f3 = new File( basedir, "target/project-1-myassembly.dir/files/project3.file" );
+File f = new File( basedir, "target/project-1-myassembly/files/project1.file" );
+File f2 = new File( basedir, "target/project-1-myassembly/files/project2.file" );
+File f3 = new File( basedir, "target/project-1-myassembly/files/project3.file" );
 
 boolean fOK = f.exists() && f.isFile();
 if ( !fOK )

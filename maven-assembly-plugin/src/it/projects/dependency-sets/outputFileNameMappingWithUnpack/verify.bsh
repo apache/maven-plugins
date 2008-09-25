@@ -1,7 +1,7 @@
 import java.io.*;
 
 // verify that the ear is created
-File dirWithMapping = new File( basedir, "target/project-1-bin.dir/some_directory/junit.jar/" );
+File dirWithMapping = new File( basedir, "target/project-1-bin/some_directory/junit.jar/" );
 
 if ( dirWithMapping.exists() )
 {
@@ -9,7 +9,7 @@ if ( dirWithMapping.exists() )
 	return false;
 }
 
-File dir = new File( basedir, "target/project-1-bin.dir/some_directory/junit/framework/TestCase.class" );
+File dir = new File( basedir, "target/project-1-bin/some_directory/junit/framework/TestCase.class" );
 
 if ( !dir.exists() )
 {

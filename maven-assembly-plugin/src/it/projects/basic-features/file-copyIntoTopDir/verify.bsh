@@ -6,7 +6,7 @@ boolean result = true;
 
 try
 {
-    result = new File( basedir, "target/parent-1.0-bug-example.dir/TODO.txt" ).exists();   
+    result = new File( basedir, "target/parent-1.0-bug-example/TODO.txt" ).exists();   
 }
 catch( IOException e )
 {
