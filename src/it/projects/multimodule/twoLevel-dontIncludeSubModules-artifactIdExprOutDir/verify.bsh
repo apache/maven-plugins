@@ -4,10 +4,10 @@ import java.util.jar.*;
 
 boolean result = true;
 
-result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src.dir/child-level1-project1/pom.xml" ).exists();   
+result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src/child-level1-project1/pom.xml" ).exists();   
 
-result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src.dir/child-level1-project2/pom.xml" ).exists();   
+result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src/child-level1-project2/pom.xml" ).exists();   
 
-result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src.dir/child-level1-project2/child-level2-project1/pom.xml" ).exists();   
+result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-src/child-level1-project2/child-level2-project1/pom.xml" ).exists();   
 
 return result;

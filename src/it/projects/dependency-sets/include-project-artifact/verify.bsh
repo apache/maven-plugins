@@ -6,7 +6,7 @@ boolean result = true;
 
 try
 {
-    File dir = new File( basedir, "target/include-project-artifact-1.0-SNAPSHOT-bin.dir" );
+    File dir = new File( basedir, "target/include-project-artifact-1.0-SNAPSHOT-bin" );
     
     System.out.println( "Checking for existence and file-ishness of: " + dir );
     
