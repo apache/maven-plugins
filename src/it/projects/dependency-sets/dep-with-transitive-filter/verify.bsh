@@ -1,7 +1,7 @@
 import java.io.*;
 
-File wagonJackrabbitJar = new File( basedir, "target/project-1-bin.dir/maven-libs/wagon-webdav-jackrabbit-1.0-beta-4.jar" );
-File xercesMinimalJar = new File( basedir, "target/project-1-bin.dir/maven-libs/xercesMinimal-1.9.6.2.jar" );
+File wagonJackrabbitJar = new File( basedir, "target/project-1-bin/maven-libs/wagon-webdav-jackrabbit-1.0-beta-4.jar" );
+File xercesMinimalJar = new File( basedir, "target/project-1-bin/maven-libs/xercesMinimal-1.9.6.2.jar" );
 
 if ( !wagonJackrabbitJar.exists() )
 {

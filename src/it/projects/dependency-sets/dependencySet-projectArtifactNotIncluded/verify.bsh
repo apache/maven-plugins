@@ -5,9 +5,9 @@ if ( basedir == void )
   basedir = new File( "." );
 }
 
-File depFile = new File( basedir, "target/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT-bin.dir/lib/commons-logging-1.0.4.jar" );
+File depFile = new File( basedir, "target/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT-bin/lib/commons-logging-1.0.4.jar" );
 
-File projectArtifactFile = new File( basedir, "target/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT-bin.dir/lib/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT.war" );
+File projectArtifactFile = new File( basedir, "target/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT-bin/lib/dependencySet-projectArtifactNotIncluded-1.0-SNAPSHOT.war" );
 
 System.out.println( "result: " + ( depFile.exists() && !projectArtifactFile.exists() ) );
 return depFile.exists() && !projectArtifactFile.exists();

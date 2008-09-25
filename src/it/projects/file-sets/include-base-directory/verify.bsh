@@ -2,7 +2,7 @@ import java.io.*;
 
 boolean result = true;
 
-String assemblyDir = "target/include-base-directory-1.0-SNAPSHOT-src.dir/include-base-directory-1.0-SNAPSHOT/src/main/assembly/";
+String assemblyDir = "target/include-base-directory-1.0-SNAPSHOT-src/include-base-directory-1.0-SNAPSHOT/src/main/assembly/";
 
 result = result && new File( basedir, assemblyDir + "src.xml" ).exists();
 

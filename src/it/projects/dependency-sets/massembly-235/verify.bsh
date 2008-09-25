@@ -1,6 +1,6 @@
 import java.io.*;
 
-File dir = new File( basedir, "target/massembly235-test-1-release.dir" );
+File dir = new File( basedir, "target/massembly235-test-1-release" );
 
 File goodJar = new File( dir, "xmlenc-0.52.jar" );
 File badJar = new File( dir, "xmlenc-0.39.jar" );

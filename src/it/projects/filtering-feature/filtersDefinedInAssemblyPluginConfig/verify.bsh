@@ -6,7 +6,7 @@ boolean result = true;
 
 try
 {
-    File file = new File( basedir, "target/parent-1.0-filtered-assembly.dir/file.txt");
+    File file = new File( basedir, "target/parent-1.0-filtered-assembly/file.txt");
     if(result) {
         BufferedReader r = new BufferedReader(new FileReader(file));
         String s = r.readLine();

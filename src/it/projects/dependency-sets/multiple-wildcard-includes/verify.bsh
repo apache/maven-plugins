@@ -1,7 +1,7 @@
 import java.io.*;
 
-File wagonProviderJar = new File( basedir, "target/massembly-241-1-bin.dir/maven-libs/wagon-provider-api-1.0-beta-4.jar" );
-File reportingImplJar = new File( basedir, "target/massembly-241-1-bin.dir/maven-libs/maven-reporting-impl-2.0.4.1.jar" );
+File wagonProviderJar = new File( basedir, "target/massembly-241-1-bin/maven-libs/wagon-provider-api-1.0-beta-4.jar" );
+File reportingImplJar = new File( basedir, "target/massembly-241-1-bin/maven-libs/maven-reporting-impl-2.0.4.1.jar" );
 
 if ( !wagonProviderJar.exists() )
 {
