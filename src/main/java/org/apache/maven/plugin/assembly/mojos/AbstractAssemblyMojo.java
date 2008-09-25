@@ -364,7 +364,7 @@ public abstract class AbstractAssemblyMojo
                         {
                             projectHelper.attachArtifact( project, format, classifier, destFile );
                         }
-                        else if ( destFile.getPath().endsWith( type ) )
+                        else if ( !"pom".equals( type ) && format.equals( type ) )
                         {
                             if ( !warnedAboutMainProjectArtifact )
                             {
