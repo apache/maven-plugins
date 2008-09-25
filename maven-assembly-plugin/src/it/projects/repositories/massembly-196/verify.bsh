@@ -1,7 +1,7 @@
 import java.io.File;
 
-File jarPlugin = new File( basedir, "target/massembly-196-1-bin.dir/repo/org/apache/maven/plugins/maven-jar-plugin/2.0/maven-jar-plugin-2.0.jar" );
-File surefirePlugin = new File( basedir, "target/massembly-196-1-bin.dir/repo/org/apache/maven/plugins/maven-surefire-plugin/2.3/maven-surefire-plugin-2.3.jar" );
+File jarPlugin = new File( basedir, "target/massembly-196-1-bin/repo/org/apache/maven/plugins/maven-jar-plugin/2.0/maven-jar-plugin-2.0.jar" );
+File surefirePlugin = new File( basedir, "target/massembly-196-1-bin/repo/org/apache/maven/plugins/maven-surefire-plugin/2.3/maven-surefire-plugin-2.3.jar" );
 
 if ( !jarPlugin.exists() )
 {

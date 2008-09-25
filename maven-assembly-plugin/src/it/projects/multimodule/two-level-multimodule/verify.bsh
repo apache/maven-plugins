@@ -6,8 +6,8 @@ boolean result = true;
 
 try
 {
-    result = new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-bin.dir/modules/child-level1-project1-1.0-SNAPSHOT.jar" ).exists();   
-    result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-bin.dir/modules/child-level2-project1-1.0-SNAPSHOT.jar" ).exists();   
+    result = new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-bin/modules/child-level1-project1-1.0-SNAPSHOT.jar" ).exists();   
+    result = result && new File( basedir, "target/two-level-multimodule-1.0-SNAPSHOT-bin/modules/child-level2-project1-1.0-SNAPSHOT.jar" ).exists();   
 }
 catch( IOException e )
 {

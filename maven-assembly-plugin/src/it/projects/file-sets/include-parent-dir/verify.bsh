@@ -1,3 +1,3 @@
 import java.io.*;
 
-return new File( basedir, "child/target/child-1.0-SNAPSHOT-parent.dir/child/pom.xml" ).exists();
+return new File( basedir, "child/target/child-1.0-SNAPSHOT-parent/child/pom.xml" ).exists();
