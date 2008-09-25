@@ -37,7 +37,6 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.util.Iterator;
@@ -353,6 +352,7 @@ public abstract class AbstractAssemblyMojo
 
                     MavenProject project = getProject();
                     String classifier = getClassifier();
+                    String type = project.getArtifact().getType();
 
                     if ( attach && destFile.isFile() )
                     {
@@ -364,7 +364,7 @@ public abstract class AbstractAssemblyMojo
                         {
                             projectHelper.attachArtifact( project, format, classifier, destFile );
                         }
-                        else
+                        else if ( destFile.getPath().endsWith( type ) )
                         {
                             if ( !warnedAboutMainProjectArtifact )
                             {
@@ -385,6 +385,10 @@ public abstract class AbstractAssemblyMojo
                             }
 
                             project.getArtifact().setFile( destFile );
+                        }
+                        else
+                        {
+                            projectHelper.attachArtifact( project, format, null, destFile );
                         }
                     }
                     else

@@ -1,0 +1,38 @@
+import java.io.*;
+
+String base = "target/deploy/org/test/massembly-301/1/massembly-301-1";
+File jar = new File( basedir, base + ".jar" );
+File zip = new File( basedir, base + ".zip" );
+File tgz = new File( basedir, base + ".tar.gz" );
+
+{
+	File f = jar;
+	String type = "main jar";
+	
+	if ( !f.exists() )
+	{
+		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+	}
+}
+
+{
+	File f = zip;
+	String type = "sources zip";
+	
+	if ( !f.exists() )
+	{
+		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+	}
+}
+
+{
+	File f = tgz;
+	String type = "sources tar.gz";
+	
+	if ( !f.exists() )
+	{
+		System.out.println( "Project " + type + " is missing in deployment repository. File was: " + f );
+	}
+}
+
+return jar.exists() && zip.exists() && tgz.exists();
