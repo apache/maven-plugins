@@ -101,7 +101,7 @@ public class ResumeMojo
     	{
     	    continueFromProject = null;
     	}
-    	if ( new File( "null" ).equals( continueFromFolder ) )
+    	if ( new File( "null" ).getAbsoluteFile().equals( continueFromFolder ) )
     	{
     	    continueFromFolder = null;
     	}
