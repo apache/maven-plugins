@@ -1631,6 +1631,7 @@ public class InvokerMojo
         {
             props.putAll( filterProperties );
         }
+        props.put( "basedir", this.project.getBasedir().getAbsolutePath() );
         if ( settings.getLocalRepository() != null )
         {
             props.put( "localRepository", settings.getLocalRepository() );

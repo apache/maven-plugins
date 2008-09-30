@@ -105,14 +105,16 @@ Filtering Files
   is not <<<null>>>.
 
   [[1]] Tokens of the form <<<project.*>>> and <<<pom.*>>> will be expanded to the referenced POM value if possible,
-        e.g. <<<project.version>>> refers to the version given in <<<pom.xml>>>. If no such POM element exists, the
-        value lookup continues as outlined next.
+        e.g. <<<project.version>>> refers to the version given in the <<<pom.xml>>> that executed the Invoker Plugin.
+        If no such POM element exists, the value lookup continues as outlined next.
 
   [[2]] Built-in properties defined by the Invoker Plugin will be processed. See this table for a list of available
         built-in properties:
 
 *--------------------------+----------------------------------------------------------------------------------+--------+
 || Built-in Property       || Value                                                                           || Since |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<basedir>>>            | The absolute path to the project base directory of the main build.               | 1.1    |
 *--------------------------+----------------------------------------------------------------------------------+--------+
 | <<<localRepository>>>    | The absolute path to the local repository used for the main build.               | 1.2    |
 *--------------------------+----------------------------------------------------------------------------------+--------+

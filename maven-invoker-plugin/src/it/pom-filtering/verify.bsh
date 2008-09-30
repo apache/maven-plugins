@@ -44,6 +44,22 @@ try
             return false;
         }
     }
+    
+    String[] badValues = {
+            "<prop9>@basedir@</prop9>",
+            "<prop9>FAILED</prop9>",
+            "<prop10>@localRepository@</prop10>",
+            "<prop11>@localRepositoryUrl@</prop11>",
+        };
+    for ( String value : badValues )
+    {
+        System.out.println( "Checking for absence of: " + value );
+        if ( xml.indexOf( value ) >= 0 )
+        {
+            System.out.println( "FAILED!" );
+            return false;
+        }
+    }
 }
 catch( Throwable t )
 {
