@@ -276,7 +276,7 @@ public abstract class AbstractWarMojo
     
     /**
      * To escape interpolated value with windows path 
-     * c:\foo\bar will be replace with c\:\\foo\\bar
+     * c:\foo\bar will be replaced with c:\\foo\\bar
      * @parameter expression="${maven.war.escapedBackslashesInFilePath}" default-value="false"
      * @since 2.1-alpha-2
      */    
