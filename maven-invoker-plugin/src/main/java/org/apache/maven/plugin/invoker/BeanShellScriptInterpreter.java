@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import bsh.Capabilities;
 import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.TargetError;
@@ -59,6 +60,21 @@ class BeanShellScriptInterpreter
                 System.setOut( scriptOutput );
                 engine.setErr( scriptOutput );
                 engine.setOut( scriptOutput );
+            }
+
+            if ( !Capabilities.haveAccessibility() )
+            {
+                try
+                {
+                    Capabilities.setAccessibility( true );
+                }
+                catch ( Exception e )
+                {
+                    if ( scriptOutput != null )
+                    {
+                        e.printStackTrace( scriptOutput );
+                    }
+                }
             }
 
             if ( classPath != null && !classPath.isEmpty() )
