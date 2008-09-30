@@ -43,6 +43,10 @@ under the License.
     <prop7>@itProperty@</prop7>
     <!-- properties with prefix "project"/"pom" must fallback to plugin config if no matching POM value exists -->
     <prop8>@project.nonExistingPomValue@</prop8>
+    <!-- built-in properties must not be overridden by properties from the plugin configuration -->
+    <prop9>@basedir@</prop9>
+    <prop10>@localRepository@</prop10>
+    <prop11>@localRepositoryUrl@</prop11>
   </properties>
 
   <build>
