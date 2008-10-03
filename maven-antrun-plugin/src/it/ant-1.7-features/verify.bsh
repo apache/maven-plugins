@@ -1,0 +1,17 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File actual = new File( basedir, "echo.xml" );
+    File expected = new File( basedir, "echo.xml.expected" );
+    return FileUtils.contentEquals(expected, actual);
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
