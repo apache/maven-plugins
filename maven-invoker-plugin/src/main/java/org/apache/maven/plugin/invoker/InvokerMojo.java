@@ -56,8 +56,6 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -1501,13 +1499,14 @@ public class InvokerMojo
             }
 
             String[] setupPoms = scanProjectsDirectory( setupIncludes, excludes );
+            getLog().debug( "Setup projects: " + Arrays.asList( setupPoms ) );
 
-            excludes.addAll( setupIncludes );
             String[] normalPoms = scanProjectsDirectory( pomIncludes, excludes );
 
-            poms = new String[setupPoms.length + normalPoms.length];
-            System.arraycopy( setupPoms, 0, poms, 0, setupPoms.length );
-            System.arraycopy( normalPoms, 0, poms, setupPoms.length, normalPoms.length );
+            Collection uniquePoms = new LinkedHashSet();
+            uniquePoms.addAll( Arrays.asList( setupPoms ) );
+            uniquePoms.addAll( Arrays.asList( normalPoms ) );
+            poms = (String[]) uniquePoms.toArray( new String[uniquePoms.size()] );
         }
 
         poms = relativizeProjectPaths( poms );
@@ -1517,7 +1516,9 @@ public class InvokerMojo
 
     /**
      * Scans the projects directory for projects to build. Both (POM) files and mere directories will be matched by the
-     * scanner patterns.
+     * scanner patterns. If the patterns match a directory which contains a file named "pom.xml", the results will
+     * include the path to this file rather than the directory path in order to avoid duplicate invocations of the same
+     * project.
      * 
      * @param includes The include patterns for the scanner, may be <code>null</code>.
      * @param excludes The exclude patterns for the scanner, may be <code>null</code> to exclude nothing.
@@ -1527,21 +1528,44 @@ public class InvokerMojo
     private String[] scanProjectsDirectory( List includes, List excludes )
         throws IOException
     {
-        final FileSet fs = new FileSet();
+        if ( !projectsDirectory.isDirectory() )
+        {
+            return new String[0];
+        }
 
-        fs.setIncludes( includes );
-        fs.setExcludes( excludes );
-        fs.setDirectory( projectsDirectory.getCanonicalPath() );
-        fs.setFollowSymlinks( false );
-        fs.setUseDefaultExcludes( true );
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( projectsDirectory.getCanonicalFile() );
+        scanner.setFollowSymlinks( false );
+        if ( includes != null )
+        {
+            scanner.setIncludes( (String[]) includes.toArray( new String[includes.size()] ) );
+        }
+        if ( excludes != null )
+        {
+            scanner.setExcludes( (String[]) excludes.toArray( new String[excludes.size()] ) );
+        }
+        scanner.addDefaultExcludes();
+        scanner.scan();
 
-        final FileSetManager fsm = new FileSetManager( getLog() );
+        Collection matches = new LinkedHashSet();
 
-        List included = new ArrayList();
-        included.addAll( Arrays.asList( fsm.getIncludedFiles( fs ) ) );
-        included.addAll( Arrays.asList( fsm.getIncludedDirectories( fs ) ) );
+        matches.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
 
-        return (String[]) included.toArray( new String[included.size()] );
+        String[] includedDirs = scanner.getIncludedDirectories();
+        for ( int i = 0; i < includedDirs.length; i++ )
+        {
+            String includedFile = includedDirs[i] + File.separatorChar + "pom.xml";
+            if ( new File( scanner.getBasedir(), includedFile ).isFile() )
+            {
+                matches.add( includedFile );
+            }
+            else
+            {
+                matches.add( includedDirs[i] );
+            }
+        }
+
+        return (String[]) matches.toArray( new String[matches.size()] );
     }
 
     /**
