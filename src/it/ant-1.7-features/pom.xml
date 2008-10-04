@@ -24,7 +24,7 @@
   <groupId>org.apache.maven.plugins.antrun</groupId>
   <artifactId>antrun-plugin-test</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Test for MANTRUN-68 </name>
+  <name>Test for MANTRUN-68</name>
   <dependencies></dependencies>
   <build>
     <plugins>
