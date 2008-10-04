@@ -6,7 +6,7 @@ import org.codehaus.plexus.util.*;
 
 try
 {
-    File  actual = new File( basedir, "echo.xml" );
+    File actual = new File( basedir, "echo.xml" );
     File expected = new File( basedir, "echo.xml.expected" );
     return FileUtils.contentEquals(expected, actual);
 }
