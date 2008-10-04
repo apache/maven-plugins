@@ -1,11 +1,12 @@
 import java.io.*;
+import org.codehaus.plexus.util.*;
 import org.custommonkey.xmlunit.*;
 try
 {
     File actual = new File( basedir, "echo.xml" );
     File expected = new File( basedir, "echo.xml.expected" );
-    FileReader actualReader = new FileReader(actual);
-    FileReader expectedReader = new FileReader(expected);
+    Reader actualReader = ReaderFactory.newXmlReader(actual);
+    Reader expectedReader = ReaderFactory.newXmlReader(expected);
     XMLAssert.assertXMLEqual(expectedReader, actualReader);
     return true;
 }
