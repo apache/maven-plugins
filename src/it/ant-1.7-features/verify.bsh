@@ -1,14 +1,13 @@
 import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
-import org.codehaus.plexus.util.*;
-
+import org.custommonkey.xmlunit.*;
 try
 {
     File actual = new File( basedir, "echo.xml" );
     File expected = new File( basedir, "echo.xml.expected" );
-    return FileUtils.contentEquals(expected, actual);
+    FileReader actualReader = new FileReader(actual);
+    FileReader expectedReader = new FileReader(expected);
+    XMLAssert.assertXMLEqual(expectedReader, actualReader);
+    return true;
 }
 catch( Throwable t )
 {
