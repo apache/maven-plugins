@@ -113,6 +113,20 @@ under the License.
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>1.2</version>
+                <scope>test</scope>
+              </dependency>
+              <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>3.8.2</version>
+                <scope>test</scope>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
