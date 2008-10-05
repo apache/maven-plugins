@@ -1,0 +1,16 @@
+import java.io.*;
+import org.custommonkey.xmlunit.*;
+try
+{
+    File actual = new File( basedir, "echo.xml" );
+    File expected = new File( basedir, "echo.xml.expected" );
+    FileReader actualReader = new FileReader(actual);
+    FileReader expectedReader = new FileReader(expected);
+    XMLAssert.assertXMLEqual(expectedReader, actualReader);
+    return true;
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
