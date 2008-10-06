@@ -110,6 +110,12 @@ class InvokerProperties
         {
             request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
         }
+
+        String offline = get( "invoker.offline", index );
+        if ( offline != null )
+        {
+            request.setOffline( Boolean.valueOf( offline ).booleanValue() );
+        }
     }
 
     /**
