@@ -67,8 +67,11 @@ invoker.failureBehavior=fail-never
 # The expected result of the build, possible values are "success" (default) and "failure"
 invoker.buildResult=failure
 
-# A boolean value controlling the -N flag, defaults to "false"
-invoker.nonRecursive=false
+# A boolean value controlling the aggregator mode of Maven, defaults to "false"
+invoker.nonRecursive=true
+
+# A boolean value controlling the network behavior of Maven, defaults to "false"
+invoker.offline=true
 +----
 
   The comments given in the example should be rather self-explanatory. Looking closely, you can also notice that the

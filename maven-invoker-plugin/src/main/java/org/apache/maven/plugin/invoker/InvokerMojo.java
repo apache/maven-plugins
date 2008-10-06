@@ -439,8 +439,11 @@ public class InvokerMojo
      * # The expected result of the build, possible values are &quot;success&quot; (default) and &quot;failure&quot;
      * invoker.buildResult=failure
      * 
-     * # A boolean value controlling the -N flag, defaults to &quot;false&quot;
-     * invoker.nonRecursive=false
+     * # A boolean value controlling the aggregator mode of Maven, defaults to &quot;false&quot;
+     * invoker.nonRecursive=true
+     * 
+     * # A boolean value controlling the network behavior of Maven, defaults to &quot;false&quot;
+     * invoker.offline=true
      * </pre>
      * 
      * @parameter expression="${invoker.invokerPropertiesFile}" default-value="invoker.properties"
@@ -1122,6 +1125,8 @@ public class InvokerMojo
                 request.setProfiles( profiles );
 
                 request.setMavenOpts( mavenOpts );
+
+                request.setOffline( false );
 
                 invokerProperties.configureInvocation( request, invocationIndex );
 

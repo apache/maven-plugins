@@ -195,4 +195,28 @@ public class InvokerPropertiesTest
         assertTrue( request.isRecursive() );
     }
 
+    public void testConfigureRequestOffline()
+        throws Exception
+    {
+        Properties props = new Properties();
+        InvokerProperties facade = new InvokerProperties( props );
+
+        InvocationRequest request = new DefaultInvocationRequest();
+
+        request.setOffline( true );
+        facade.configureInvocation( request, 0 );
+        assertTrue( request.isOffline() );
+        request.setOffline( false );
+        facade.configureInvocation( request, 0 );
+        assertFalse( request.isOffline() );
+
+        props.setProperty( "invoker.offline", "true" );
+        facade.configureInvocation( request, 0 );
+        assertTrue( request.isOffline() );
+
+        props.setProperty( "invoker.offline", "false" );
+        facade.configureInvocation( request, 0 );
+        assertFalse( request.isOffline() );
+    }
+
 }
