@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- 2008-09-05
+ 2008-10-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,7 @@ Maven Resources Plugin
 
 * Goals Overview
 
-   The Resources Plugin has two goals:
+   The Resources Plugin has three goals:
 
    * {{{resources-mojo.html}resources:resources}} copies the
      resources for the main source code to the main output directory.
