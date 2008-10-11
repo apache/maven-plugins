@@ -82,5 +82,8 @@ Maven Resources Plugin
 
    * {{{examples/filter.html}Filtering}}
 
-   * {{{examples/include-exclude.html}Including and excluding files and
-      directories}}
+   * {{{examples/include-exclude.html}Including and excluding files and directories}}
+   
+   * {{{examples/escape-filtering.html}Escape filtering}}
+   
+   * {{{examples/copy-resources.html}Copy resources}}
