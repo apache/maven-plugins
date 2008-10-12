@@ -43,6 +43,7 @@ under the License.
           <linkXRef>true</linkXRef>
           <!-- value not really important, just point to an existing dir -->
           <xrefLocation>${basedir}/target/test-harness/checkstyle/custom</xrefLocation>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
     </plugins>
