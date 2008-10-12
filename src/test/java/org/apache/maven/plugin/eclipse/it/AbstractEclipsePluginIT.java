@@ -676,7 +676,7 @@ public abstract class AbstractEclipsePluginIT
                 Map.Entry entry = (Entry) iter.next();
                 String variable = (String) entry.getKey();
                 String replacement = (String) entry.getValue();
-                result = result.replace( variable, replacement );
+                result = StringUtils.replace( result, variable, replacement );
             }
         }
 
