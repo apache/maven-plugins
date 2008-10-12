@@ -45,11 +45,11 @@
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>@pom.version@</version>
-        <!--configuration>
+        <configuration>
           <nonFilteredFileExtensions>
-            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+            <nonFilteredFileExtension>img</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
-        </configuration-->          
+        </configuration>          
       </plugin>      
     </plugins>
   </build>
