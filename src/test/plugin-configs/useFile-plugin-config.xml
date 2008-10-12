@@ -42,6 +42,7 @@ under the License.
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/site/xref</xrefLocation>
           <useFile>${basedir}/target/test-harness/checkstyle/useFile/checkstyle-output.txt</useFile>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
     </plugins>
