@@ -811,8 +811,16 @@ public class LinkcheckReport
 
                     getSink().tableCell();
                     getSink().italic();
-                    getSink().link( linkcheckFileResult.getTarget() );
-                    getSink().text( linkcheckFileResult.getTarget() );
+                    if ( linkcheckFileResult.getTarget().startsWith( "#" ) )
+                    {
+                        getSink().link( linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget() );
+                        getSink().text( linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget() );
+                    }
+                    else
+                    {
+                        getSink().link( linkcheckFileResult.getTarget() );
+                        getSink().text( linkcheckFileResult.getTarget() );
+                    }
                     getSink().link_();
                     getSink().text( ": " );
                     getSink().text( linkcheckFileResult.getErrorMessage() );
