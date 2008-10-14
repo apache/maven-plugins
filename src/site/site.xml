@@ -39,7 +39,9 @@ under the License.
       <item name="Escape Filtering"
             href="/examples/escape-filtering.html"/>
       <item name="Copy Resources"
-            href="/examples/copy-resources.html"/>      
+            href="/examples/copy-resources.html"/>   
+      <item name="Binaries Filtering"
+            href="/examples/binaries-filtering.html"/>   
     </menu>
   </body>
 </project>
