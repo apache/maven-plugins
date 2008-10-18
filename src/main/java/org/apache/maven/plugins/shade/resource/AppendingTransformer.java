@@ -28,6 +28,10 @@ import java.util.jar.JarOutputStream;
 
 import org.codehaus.plexus.util.IOUtil;
 
+/**
+ * A resource processor that appends content for a resource, separated by a newline.
+ * 
+ */
 public class AppendingTransformer
     implements ResourceTransformer
 {

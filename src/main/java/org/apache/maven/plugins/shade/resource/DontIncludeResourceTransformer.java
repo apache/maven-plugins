@@ -24,7 +24,8 @@ import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 
 /**
- * Prevents duplicate copies of the license
+ * A resource processor that prevents the inclusion of an arbitrary
+ * resource into the shaded JAR.
  *
  */
 public class DontIncludeResourceTransformer

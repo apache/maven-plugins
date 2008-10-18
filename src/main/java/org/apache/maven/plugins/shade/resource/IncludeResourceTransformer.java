@@ -29,8 +29,8 @@ import java.util.jar.JarOutputStream;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
- * Prevents duplicate copies of the license
- *
+ * A resource processor that allows the addition of an arbitrary file
+ * content into the shaded JAR.
  */
 public class IncludeResourceTransformer
     implements ResourceTransformer

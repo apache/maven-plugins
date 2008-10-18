@@ -39,12 +39,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 
-// 1. We want to process all resources that are common in all the JARs that we are processing.
-// 2. At the end of processing we want to hand back the transformation of the resources.
-
-// In my particular case I want to grab all the plexus components.xml files and aggregate them
-// and then stick them in one place in the aggregated JAR.
-
+/**
+ * A resource processor that aggregates plexus <code>components.xml</code> files.
+ * 
+ */
 public class ComponentsXmlResourceTransformer
     implements ResourceTransformer
 {
