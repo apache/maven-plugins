@@ -23,7 +23,7 @@ under the License.
   <parent>
      <artifactId>maven-plugins</artifactId>
      <groupId>org.apache.maven.plugins</groupId>
-     <version>11</version>
+     <version>12</version>
   </parent>
 
   <artifactId>maven-shade-plugin</artifactId>
@@ -73,7 +73,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.5</version>
     </dependency>
 
     <!-- Others -->
