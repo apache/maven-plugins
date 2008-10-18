@@ -84,29 +84,29 @@ public class ShadeMojo
      */
     private MavenProject project;
 
-    /** 
+    /**
      * @component
      * @required
      * @readonly
      */
     private MavenProjectHelper projectHelper;
 
-    /** 
+    /**
      * @component
      * @required
      * @readonly
      */
     private Shader shader;
-    
+
     /**
      * The dependency tree builder to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
      */
     private DependencyTreeBuilder dependencyTreeBuilder;
-    
+
     /**
      * ProjectBuilder, needed to create projects from the artifacts.
      *
@@ -115,10 +115,10 @@ public class ShadeMojo
      * @readonly
      */
     private MavenProjectBuilder mavenProjectBuilder;
-    
+
     /**
      * The artifact metadata source to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -127,7 +127,7 @@ public class ShadeMojo
 
     /**
      * The artifact collector to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -317,7 +317,7 @@ public class ShadeMojo
                 sourceArtifacts.add( file );
             }
         }
-        
+
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -356,7 +356,7 @@ public class ShadeMojo
 
             List relocators = getRelocators();
 
-            List resourceTransformers = getResourceTrasformers();
+            List resourceTransformers = getResourceTransformers();
 
             shader.shade( artifacts, outputJar, filters, relocators, resourceTransformers );
 
@@ -444,6 +444,7 @@ public class ShadeMojo
             //try a gc to see if an unclosed stream needs garbage collecting
             System.gc();
             System.gc();
+
             if ( !newFile.renameTo( oldFile ) )
             {
                 // Still didn't work.   We'll do a copy
@@ -558,12 +559,12 @@ public class ShadeMojo
             PackageRelocation r = relocations[i];
 
             relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getExcludes() ) );
-
         }
+
         return relocators;
     }
 
-    private List getResourceTrasformers()
+    private List getResourceTransformers()
     {
         if ( transformers == null )
         {
@@ -621,6 +622,7 @@ public class ShadeMojo
                 + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
+
     private File shadedSourceArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
@@ -648,6 +650,7 @@ public class ShadeMojo
 
         return new File( outputDirectory, shadedName );
     }
+
     private File shadedSourcesArtifactFile()
     {
         Artifact artifact = project.getArtifact();
@@ -688,7 +691,7 @@ public class ShadeMojo
         List dependencies = new ArrayList();
 
         boolean modified = false;
-        
+
         List transitiveDeps = new ArrayList();
 
         for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
@@ -709,7 +712,7 @@ public class ShadeMojo
             dep.setVersion( artifact.getVersion() );
 
             //we'll figure out the exclusions in a bit.
-            
+
             transitiveDeps.add( dep );
         }
         List origDeps = getProject().getDependencies();
@@ -747,30 +750,30 @@ public class ShadeMojo
         {
             while ( modified )
             {
-            
+
                 model.setDependencies( dependencies );
-    
+
                 File f = new File( outputDirectory, "dependency-reduced-pom.xml" );
                 if ( f.exists() )
                 {
                     f.delete();
                 }
-    
+
                 Writer w = WriterFactory.newXmlWriter( f );
-    
+
                 PomWriter.write( w, model, true );
-    
+
                 w.close();
-    
+
                 MavenProject p2 = mavenProjectBuilder.build( f, localRepository, null );
                 modified = updateExcludesInDeps( p2, dependencies, transitiveDeps );
-    
+
             }
-            
-            //copy the dependecy-reduced-pom.xml to the basedir where 
+
+            //copy the dependecy-reduced-pom.xml to the basedir where
             //we'll set the file for the project to it.  We cannot set
             //it to the real version in "target" as then ${basedir} gets
-            //messed up.   We'll delete this file on exit to make 
+            //messed up.   We'll delete this file on exit to make
             //sure it gets cleaned up.
             File f = new File( project.getBasedir(), "dependency-reduced-pom.xml" );
             File f2 = new File( outputDirectory, "dependency-reduced-pom.xml" );
@@ -780,7 +783,7 @@ public class ShadeMojo
             }
             FileUtils.copyFile( f2, f );
             FileUtils.forceDeleteOnExit( f );
-            project.setFile( f );            
+            project.setFile( f );
         }
     }
 
@@ -795,9 +798,9 @@ public class ShadeMojo
             return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier();
         }
     }
-    
-    
-    public boolean updateExcludesInDeps( MavenProject project, 
+
+
+    public boolean updateExcludesInDeps( MavenProject project,
                                          List dependencies,
                                          List transitiveDeps )
         throws DependencyTreeBuilderException
@@ -811,11 +814,11 @@ public class ShadeMojo
                                                   artifactCollector );
         boolean modified = false;
         Iterator it = node.getChildren().listIterator();
-        while ( it.hasNext() ) 
+        while ( it.hasNext() )
         {
             DependencyNode n2 = (DependencyNode) it.next();
             Iterator it2 = n2.getChildren().listIterator();
-            while ( it2.hasNext() ) 
+            while ( it2.hasNext() )
             {
                 DependencyNode n3 = (DependencyNode) it2.next();
                 //anything two levels deep that is marked "included"
@@ -827,27 +830,27 @@ public class ShadeMojo
                     //prior to 2.0.8 may grab versions from transients instead of
                     //from the direct deps in which case they would be marked included
                     //instead of OMITTED_FOR_DUPLICATE
-                    
+
                     //also, if not promoting the transitives, level 2's would be included
                     boolean found = false;
-                    for ( int x = 0; x < transitiveDeps.size(); x++ ) 
+                    for ( int x = 0; x < transitiveDeps.size(); x++ )
                     {
                         Dependency dep = (Dependency) transitiveDeps.get( x );
                         if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
-                            && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) ) 
+                            && dep.getGroupId().equals( n3.getArtifact().getGroupId() ) )
                         {
                             found = true;
                         }
-                            
+
                     }
-                    
-                    if ( !found ) 
+
+                    if ( !found )
                     {
-                        for ( int x = 0; x < dependencies.size(); x++ ) 
+                        for ( int x = 0; x < dependencies.size(); x++ )
                         {
                             Dependency dep = (Dependency) dependencies.get( x );
                             if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
-                                && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) ) 
+                                && dep.getGroupId().equals( n2.getArtifact().getGroupId() ) )
                             {
                                 Exclusion exclusion = new Exclusion();
                                 exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
@@ -859,8 +862,8 @@ public class ShadeMojo
                         }
                     }
                 }
-            }            
+            }
         }
         return modified;
-    }    
+    }
 }

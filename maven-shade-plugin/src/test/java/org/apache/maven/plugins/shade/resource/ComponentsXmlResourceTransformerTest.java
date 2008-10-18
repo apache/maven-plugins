@@ -46,7 +46,7 @@ public class ComponentsXmlResourceTransformerTest
     {
         transformer.processResource( getClass().getResourceAsStream( "/components-1.xml" ) );
         transformer.processResource( getClass().getResourceAsStream( "/components-2.xml" ) );
-        
+
         assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ) ),
                       FileUtils.fileRead( transformer.getTransformedResource() ) );
     }

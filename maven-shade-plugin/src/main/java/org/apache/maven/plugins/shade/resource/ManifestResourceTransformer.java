@@ -34,7 +34,7 @@ import org.codehaus.plexus.util.IOUtil;
  * A resource processor that allows the arbitrary addition of attributes to
  * the first MANIFEST.MF that is found in the set of JARs being processed, or
  * to a newly created manifest for the shaded JAR.
- *  
+ *
  * @author Jason van Zyl
  * @since 1.2
  */
@@ -46,11 +46,11 @@ public class ManifestResourceTransformer
     // Configuration
     private String mainClass;
     private Map manifestEntries;
-    
+
     // Fields
     private boolean manifestDiscovered;
     private Manifest manifest;
-    
+
     public boolean canTransformResource( String resource )
     {
         if ( MANIFEST_PATH.equalsIgnoreCase( resource ) )
@@ -71,7 +71,7 @@ public class ManifestResourceTransformer
         {
             manifest = new Manifest( is );
             manifestDiscovered = true;
-            IOUtil.close(  is );
+            IOUtil.close( is );
         }
     }
 
@@ -85,17 +85,17 @@ public class ManifestResourceTransformer
     {
         // If we didn't find a manifest, then let's create one.
         if ( manifest == null )
-        {            
+        {
             manifest = new Manifest();
         }
 
         Attributes attributes = manifest.getMainAttributes();
-        
+
         if ( mainClass != null )
         {
-            attributes.put( Attributes.Name.MAIN_CLASS, mainClass );                    
+            attributes.put( Attributes.Name.MAIN_CLASS, mainClass );
         }
-        
+
         if ( manifestEntries != null )
         {
             for ( Iterator i = manifestEntries.keySet().iterator(); i.hasNext(); )
@@ -104,8 +104,8 @@ public class ManifestResourceTransformer
                 attributes.put( new Attributes.Name( key ), manifestEntries.get( key ) );
             }
         }
-                    
+
         jos.putNextEntry( new JarEntry( MANIFEST_PATH ) );
         manifest.write( jos );
-    }    
+    }
 }
