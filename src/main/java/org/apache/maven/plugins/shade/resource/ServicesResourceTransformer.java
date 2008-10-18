@@ -59,7 +59,7 @@ public class ServicesResourceTransformer
             if ( data == null )
             {
                 data = new ByteArrayOutputStream();
-                serviceEntries.put(  resource, data );
+                serviceEntries.put( resource, data );
             }
 
             return true;
