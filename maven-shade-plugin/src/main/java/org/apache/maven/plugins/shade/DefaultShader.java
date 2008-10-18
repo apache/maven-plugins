@@ -180,7 +180,7 @@ public class DefaultShader
         throws IOException
     {
         if ( !remapper.hasRelocators() )
-        {            
+        {
             try
             {
                 jos.putNextEntry( new JarEntry( name ) );
@@ -190,7 +190,7 @@ public class DefaultShader
             {
                 getLogger().warn( "We have a duplicate " + name + " in " + jar );
             }
-            
+
             return;
         }
 

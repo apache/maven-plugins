@@ -38,30 +38,30 @@ import org.jdom.Content;
  * resources spread across many JARs the individual entries will all be concatenated into a single
  * META-INF/services/org.apache.maven.project.ProjectBuilder resource packaged into the resultant JAR produced
  * by the shading process.
- *  
+ *
  * @author jvanzyl
  */
 public class ServicesResourceTransformer
     implements ResourceTransformer
 {
     private static final String SERVICES_PATH = "META-INF/services";
-    
+
     private ByteArrayOutputStream data;
 
     private Map serviceEntries = new HashMap();
-    
+
     public boolean canTransformResource( String resource )
     {
         if ( resource.startsWith( SERVICES_PATH ) )
-        {            
+        {
             data = (ByteArrayOutputStream) serviceEntries.get( resource );
-            
+
             if ( data == null )
             {
                 data = new ByteArrayOutputStream();
                 serviceEntries.put(  resource, data );
-            }            
-            
+            }
+
             return true;
         }
 
@@ -90,6 +90,6 @@ public class ServicesResourceTransformer
             jos.putNextEntry( new JarEntry( key ) );
             IOUtil.copy( new ByteArrayInputStream( data.toByteArray() ), jos );
             data.reset();
-        }        
+        }
     }
 }
