@@ -27,16 +27,36 @@ under the License.
   <version>1.0-SNAPSHOT</version>
 
   <description>
-    Test to check for staging of (runtime) dependencies directly from local repository (MINVOKER-64).
+    Test to check for staging of (runtime) dependencies directly from local repository (MINVOKER-64, MINVOKER-70).
   </description>
 
   <dependencies>
+    <!-- released version -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
     </dependency>
+    <!-- snapshot version, must be staged using the base version and not the timestamped version -->
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>minvoker-70</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>maven-invoker-plugin-it</id>
+      <url>file:///${basedir}/repo</url>
+      <releases>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+      <snapshots>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
