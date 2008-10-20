@@ -36,6 +36,7 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 /**
  * Installs the project artifacts of the main build into the local repository as a preparation to run the sub projects.
@@ -352,8 +353,6 @@ public class InstallMojo
 
                     File artifactFile = artifact.getFile();
 
-                    installArtifact( artifactFile, depArtifact, testRepository );
-
                     Artifact pomArtifact =
                         artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
                                                         artifact.getBaseVersion(), null, "pom" );
@@ -361,8 +360,10 @@ public class InstallMojo
                     File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
                     if ( pomFile.exists() )
                     {
-                        installArtifact( pomFile, pomArtifact, testRepository );
+                        depArtifact.addMetadata( new ProjectArtifactMetadata( depArtifact, pomFile ) );
                     }
+
+                    installArtifact( artifactFile, depArtifact, testRepository );
                 }
             }
         }
