@@ -317,7 +317,6 @@ public class InstallMojo
         {
             Artifact artifact = (Artifact) it.next();
             String id = ArtifactUtils.versionlessKey( artifact );
-            
             dependencies.add( id );
         }
 
@@ -345,16 +344,21 @@ public class InstallMojo
 
                 if ( dependencies.contains( id ) )
                 {
+                    Artifact depArtifact =
+                        artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
+                                                                      artifact.getArtifactId(),
+                                                                      artifact.getBaseVersion(), artifact.getType(),
+                                                                      artifact.getClassifier() );
+
                     File artifactFile = artifact.getFile();
 
-                    installArtifact( artifactFile, artifact, testRepository );
+                    installArtifact( artifactFile, depArtifact, testRepository );
 
                     Artifact pomArtifact =
                         artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                        artifact.getVersion(), null, "pom" );
+                                                        artifact.getBaseVersion(), null, "pom" );
 
                     File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
-
                     if ( pomFile.exists() )
                     {
                         installArtifact( pomFile, pomArtifact, testRepository );
