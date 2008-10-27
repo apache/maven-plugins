@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.dependency;
 
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@ package org.apache.maven.plugin.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
@@ -49,7 +49,7 @@ public abstract class AbstractDependencyMojo
 {
     /**
      * Used to look up Artifacts in the remote repository.
-     * 
+     *
      * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
      * @required
      * @readonly
@@ -58,7 +58,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Used to look up Artifacts in the remote repository.
-     * 
+     *
      * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
      * @required
      * @readonly
@@ -67,7 +67,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Artifact collector, needed to resolve dependencies.
-     * 
+     *
      * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
      * @required
      * @readonly
@@ -84,7 +84,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Location of the local repository.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @readonly
      * @required
@@ -93,7 +93,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * List of Remote Repositories used by the resolver
-     * 
+     *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
@@ -102,7 +102,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * To look up Archiver/UnArchiver implementations
-     * 
+     *
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
      * @required
      * @readonly
@@ -111,7 +111,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * POM
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -120,7 +120,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Contains the full list of projects in the reactor.
-     * 
+     *
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -129,7 +129,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * If the plugin should be silent.
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${silent}"
@@ -139,7 +139,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Output absolute filename for resolved artifacts
-     * 
+     *
      * @optional
      * @since 2.0
      * @parameter expression="${outputAbsoluteArtifactFilename}"
@@ -176,10 +176,10 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Does the actual copy of the file and logging.
-     * 
+     *
      * @param artifact represents the file to copy.
      * @param destFile file name of destination file.
-     * 
+     *
      * @throws MojoExecutionException with a message if an
      *             error occurs.
      */
@@ -209,16 +209,16 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Unpacks the archive file.
-     * 
+     *
      * @param file File to be unpacked.
      * @param location Location where to put the unpacked
      *            files.
      * @param includes Comma separated list of file patterns
-     *            to include i.e. **\/*.xml,
-     *            **\/*.properties
+     *            to include i.e. **&#47;.xml,
+     *            **&#47;*.properties
      * @param excludes Comma separated list of file patterns
-     *            to exclude i.e. **\/*.xml,
-     *            **\/*.properties
+     *            to exclude i.e. **&#47;*.xml,
+     *            **&#47;*.properties
      */
     protected void unpack ( File file, File location, String includes, String excludes )
         throws MojoExecutionException
@@ -227,7 +227,7 @@ public abstract class AbstractDependencyMojo
         {
             getLog().info(
                             "Unpacking " + file.getPath() + " to\n  " + location.getPath()
-                                + "\n   with Includes " + includes + " and excludes:" + excludes );
+                                + "\n   with includes " + includes + " and excludes:" + excludes );
 
             location.mkdirs();
 
