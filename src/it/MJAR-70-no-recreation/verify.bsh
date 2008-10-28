@@ -47,7 +47,7 @@ try
     Commandline commandline = new Commandline();
     commandline.setExecutable( "mvn" );
     commandline.setWorkingDirectory( basedir );
-    commandline.createArg().setLine( "-f interpolated-pom.xml -Dmaven.repo.local=" + localRepoPath + "  package" );     
+    commandline.createArg().setLine( "-f pom.xml -Dmaven.repo.local=" + localRepoPath + "  package" );     
     CommandLineUtils.StringStreamConsumer consumer = new CommandLineUtils.StringStreamConsumer();
     int res = CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
     System.out.println( consumer.getOutput() );
