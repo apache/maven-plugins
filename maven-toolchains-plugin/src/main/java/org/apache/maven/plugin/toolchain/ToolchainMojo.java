@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.toolchain;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,9 +19,6 @@
  * under the License.
  */
 
-
-package org.apache.maven.plugin.toolchain;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +28,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.toolchain.MisconfiguredToolchainException;
-import org.apache.maven.toolchain.RequirementMatcher;
 import org.apache.maven.toolchain.ToolchainManagerPrivate;
 import org.apache.maven.toolchain.ToolchainPrivate;
 
@@ -70,12 +68,12 @@ public class ToolchainMojo
     {
     }
 
-    public void execute( )
+    public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( toolchains != null )
         {
-            Iterator en = toolchains.getToolchainsTypes().iterator(  );
+            Iterator en = toolchains.getToolchainsTypes().iterator();
             List nonMatchedTypes = new ArrayList();
             while ( en.hasNext() )
             {

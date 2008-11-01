@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.toolchain;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,9 +19,9 @@
  * under the License.
  */
 
-package org.apache.maven.plugin.toolchain;
-
 import java.util.HashMap;
+import java.util.Map;
+
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.converters.AbstractConfigurationConverter;
@@ -38,7 +40,7 @@ public class ToolchainConverter
     extends AbstractConfigurationConverter
 {
 
-    public static final String ROLE = ConfigurationConverter.class.getName(  );
+    public static final String ROLE = ConfigurationConverter.class.getName();
 
     /**
      * @see org.codehaus.plexus.component.configurator.converters.ConfigurationConverter#canConvert(java.lang.Class)
@@ -59,7 +61,7 @@ public class ToolchainConverter
                                      ConfigurationListener listener )
         throws ComponentConfigurationException
     {
-        Toolchains retValue = new Toolchains(  );
+        Toolchains retValue = new Toolchains();
         processConfiguration( retValue, configuration, expressionEvaluator );
 
         return retValue;
@@ -70,19 +72,19 @@ public class ToolchainConverter
                                        ExpressionEvaluator expressionEvaluator )
         throws ComponentConfigurationException
     {
-        HashMap map = new HashMap(  );
-        PlexusConfiguration[] tools = configuration.getChildren(  );
+        Map map = new HashMap();
+        PlexusConfiguration[] tools = configuration.getChildren();
         for ( int i = 0; i < tools.length; i++ )
         {
-            String type = tools[i].getName(  );
-            PlexusConfiguration[] params = tools[i].getChildren(  );
-            HashMap parameters = new HashMap(  );
+            String type = tools[i].getName();
+            PlexusConfiguration[] params = tools[i].getChildren();
+            Map parameters = new HashMap();
             for ( int j = 0; j < params.length; j++ )
             {
                 try
                 {
-                    String name = params[j].getName(  );
-                    String val = params[j].getValue(  );
+                    String name = params[j].getName();
+                    String val = params[j].getValue();
                     parameters.put( name, val );
                 }
                 catch ( PlexusConfigurationException ex )
