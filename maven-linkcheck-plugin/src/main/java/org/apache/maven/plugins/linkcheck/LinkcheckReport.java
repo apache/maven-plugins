@@ -58,6 +58,7 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Generates a <code>Linkcheck</code> report.
@@ -256,6 +257,14 @@ public class LinkcheckReport
      */
     protected String[] excludedLinks;
 
+    /**
+     * Specifies the encoding to be used by Linkcheck. If <code>${project.reporting.outputEncoding}</code> is not
+     * specified, using UTF-8.
+     *
+     * @parameter expression="${encoding}" default-value="${project.reporting.outputEncoding}"
+     */
+    private String encoding;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -409,6 +418,7 @@ public class LinkcheckReport
         lc.setExcludedPages( getExcludedPages() );
         lc.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
         lc.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
+        lc.setEncoding( ( StringUtils.isNotEmpty( encoding ) ? encoding : WriterFactory.UTF_8 ) );
 
         HttpBean bean = new HttpBean();
         bean.setMethod( httpMethod );
