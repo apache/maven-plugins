@@ -34,7 +34,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.doxia.linkcheck.DefaultLinkCheck;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
 import org.apache.maven.doxia.linkcheck.LinkCheckException;
@@ -421,16 +420,15 @@ public class LinkcheckReport
         throws SiteToolException, LinkCheckException
     {
         // Wrap linkcheck
-        LinkCheck lc = new DefaultLinkCheck();
-        lc.setOnline( !offline );
-        lc.setBasedir( outputDirectory );
-        lc.setReportOutput( new File( linkcheckOutput ) );
-        lc.setLinkCheckCache( new File( linkcheckCache ) );
-        lc.setExcludedLinks( getExcludedLinks( locale ) );
-        lc.setExcludedPages( getExcludedPages() );
-        lc.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
-        lc.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
-        lc.setEncoding( ( StringUtils.isNotEmpty( encoding ) ? encoding : WriterFactory.UTF_8 ) );
+        linkCheck.setOnline( !offline );
+        linkCheck.setBasedir( outputDirectory );
+        linkCheck.setReportOutput( new File( linkcheckOutput ) );
+        linkCheck.setLinkCheckCache( new File( linkcheckCache ) );
+        linkCheck.setExcludedLinks( getExcludedLinks( locale ) );
+        linkCheck.setExcludedPages( getExcludedPages() );
+        linkCheck.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
+        linkCheck.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
+        linkCheck.setEncoding( ( StringUtils.isNotEmpty( encoding ) ? encoding : WriterFactory.UTF_8 ) );
 
         HttpBean bean = new HttpBean();
         bean.setMethod( httpMethod );
@@ -444,9 +442,9 @@ public class LinkcheckReport
             bean.setProxyUser( proxy.getUsername() );
             bean.setProxyPassword( proxy.getPassword() );
         }
-        lc.setHttp( bean );
+        linkCheck.setHttp( bean );
 
-        return lc.execute();
+        return linkCheck.execute();
     }
 
     private String[] getExcludedLinks( Locale locale )
