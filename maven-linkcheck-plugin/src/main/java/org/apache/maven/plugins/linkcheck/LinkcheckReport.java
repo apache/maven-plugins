@@ -37,6 +37,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.linkcheck.DefaultLinkCheck;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
+import org.apache.maven.doxia.linkcheck.LinkCheckException;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
@@ -392,9 +393,17 @@ public class LinkcheckReport
 
             generateReport( locale, result );
         }
+        catch ( SiteToolException e )
+        {
+            throw new MavenReportException( "SiteToolException: " + e.getMessage(), e );
+        }
+        catch ( LinkCheckException e )
+        {
+            throw new MavenReportException( "LinkCheckException: " + e.getMessage(), e );
+        }
         catch ( Exception e )
         {
-            throw new MavenReportException( "IOException: " + e.getMessage(), e );
+            throw new MavenReportException( "Exception: " + e.getMessage(), e );
         }
     }
 
@@ -404,9 +413,12 @@ public class LinkcheckReport
 
     /**
      * Execute the <code>Linkcheck</code> tool.
+     *
+     * @throws SiteToolException if any
+     * @throws LinkCheckException if any
      */
     private LinkcheckModel executeLinkCheck( Locale locale )
-        throws Exception
+        throws SiteToolException, LinkCheckException
     {
         // Wrap linkcheck
         LinkCheck lc = new DefaultLinkCheck();
@@ -438,7 +450,7 @@ public class LinkcheckReport
     }
 
     private String[] getExcludedLinks( Locale locale )
-        throws Exception
+        throws SiteToolException
     {
         List linksToExclude = ( excludedLinks != null ? new ArrayList( Arrays.asList( excludedLinks ) ) : new ArrayList() );
 
