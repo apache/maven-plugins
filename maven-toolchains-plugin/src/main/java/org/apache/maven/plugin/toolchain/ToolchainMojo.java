@@ -88,9 +88,8 @@ public class ToolchainMojo
                     {
                         if ( tcs[i].matchesRequirements( params ) )
                         {
-                            getLog(  ).info( "Toolchain (" + type + ") matched:" + tcs[i] );
-                            toolchainManager.storeToolchainToBuildContext( tcs[i],
-                                session );
+                            getLog().info( "Toolchain (" + type + ") matched:" + tcs[i] );
+                            toolchainManager.storeToolchainToBuildContext( tcs[i], session );
                             matched = true;
                             break;
                         }
@@ -102,34 +101,36 @@ public class ToolchainMojo
                 }
                 catch ( MisconfiguredToolchainException ex )
                 {
-                    throw new MojoExecutionException( "Misconfigured toolchains.",
-                        ex );
+                    throw new MojoExecutionException( "Misconfigured toolchains.", ex );
                 }
             }
             if ( !nonMatchedTypes.isEmpty() )
             {
                 //TODO add the default toolchain instance if defined??
-                String str = "Cannot find matching toolchain definitions for the following toolchain types:";
+                StringBuffer buff = new StringBuffer();
+                buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
                 Iterator it = nonMatchedTypes.iterator();
                 while ( it.hasNext() )
                 {
                     String type = (String) it.next();
-                    str = str + "\n" + type;
+                    buff.append( '\n' );
+                    buff.append( type );
                     Map params = toolchains.getParams( type );
                     if ( params.size() > 0 )
                     {
                         Iterator it2 = params.keySet().iterator();
-                        str = str + " [";
+                        buff.append( " [" );
                         while ( it2.hasNext() )
                         {
                             String string = (String) it2.next();
-                            str = str + " " + string + "='" + params.get( string ) + "' ";
+                            buff.append( " " + string + "='" + params.get( string ) + "' " );
                         }
-                        str = str + "]";
+                        buff.append( ']' );
                     }
                 }
-                getLog().error( str );
-                throw new MojoFailureException( str + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
+                getLog().error( buff.toString() );
+                throw new MojoFailureException( buff.toString()
+                		+ "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
             }
         }
         else
