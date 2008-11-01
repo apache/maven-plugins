@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.toolchain;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugin.toolchain;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -33,13 +33,13 @@ public final class Toolchains
     /** <String type, Map<String param, String value>> */
     Map toolchains;
 
-    public final Set getToolchainsTypes( )
+    public Set getToolchainsTypes()
     {
-        return Collections.unmodifiableSet( toolchains.keySet(  ) );
+        return Collections.unmodifiableSet( toolchains.keySet() );
     }
 
-    public final Map getParams( String type )
+    public Map getParams( String type )
     {
-        return Collections.unmodifiableMap( (Map) toolchains.get(type) );
+        return Collections.unmodifiableMap( (Map) toolchains.get( type ) );
     }
 }
