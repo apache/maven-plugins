@@ -20,7 +20,6 @@ package org.apache.maven.plugin.source;
  */
 
 import java.io.File;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>

@@ -36,7 +36,7 @@ under the License.
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
 
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <scm>
@@ -78,7 +78,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.1</version>
+      <version>1.5.6</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
