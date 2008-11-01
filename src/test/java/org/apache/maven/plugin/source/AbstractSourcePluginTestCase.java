@@ -1,29 +1,5 @@
 package org.apache.maven.plugin.source;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Resource;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.codehaus.plexus.archiver.zip.ZipFile;
-
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -43,6 +19,17 @@ import org.codehaus.plexus.archiver.zip.ZipFile;
 * under the License.
 */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.archiver.zip.ZipFile;
+
 /**
  * @author Stephane Nicoll
  */
@@ -50,18 +37,18 @@ public abstract class AbstractSourcePluginTestCase
     extends AbstractMojoTestCase
 {
 
-    protected final String FINAL_NAME_PREFIX = "maven-source-plugin-test-";
+    protected static final String FINAL_NAME_PREFIX = "maven-source-plugin-test-";
 
-    protected final String FINAL_NAME_SUFFIX = "-99.0";
+    protected static final String FINAL_NAME_SUFFIX = "-99.0";
 
     protected abstract String getGoal();
 
     /**
-     * Execute the souce plugin for the specified project.
+     * Execute the source plugin for the specified project.
      *
      * @param projectName the name of the project
      * @return the base directory of the project
-     * @throws Exception if an error occured
+     * @throws Exception if an error occurred
      */
     protected void executeMojo( final String projectName )
         throws Exception
