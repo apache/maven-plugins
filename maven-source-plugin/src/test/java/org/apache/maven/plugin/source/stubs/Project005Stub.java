@@ -24,10 +24,9 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.io.FileReader;
 import java.io.File;
 
 /**
@@ -50,7 +49,7 @@ public class Project005Stub
         try
         {
             model = pomReader.read(
-                new FileReader( new File( getBasedir() + "/target/test-classes/unit/project-005/pom.xml" ) ) );
+                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-005/pom.xml" ) ) );
             setModel( model );
 
             setGroupId( model.getGroupId() );

@@ -22,14 +22,12 @@ package org.apache.maven.plugin.source.stubs;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.io.FileReader;
 import java.io.File;
 
 /**
@@ -52,7 +50,7 @@ public class Project003Stub
         try
         {
             model = pomReader.read(
-                new FileReader( new File( getBasedir() + "/target/test-classes/unit/project-003/pom.xml" ) ) );
+                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-003/pom.xml" ) ) );
             setModel( model );
 
             setGroupId( model.getGroupId() );
