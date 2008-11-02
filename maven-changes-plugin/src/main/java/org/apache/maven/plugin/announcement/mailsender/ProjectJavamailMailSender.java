@@ -178,7 +178,7 @@ public class ProjectJavamailMailSender
 
             // Setting the Subject and Content Type
             msg.setSubject( mail.getSubject() );
-            msg.setContent( mail.getContent(), "text/plain" );
+            msg.setContent( mail.getContent(), mail.getContentType() == null ? "text/plain" : mail.getContentType() );
 
             if ( mail.getSendDate() != null )
             {

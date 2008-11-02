@@ -19,21 +19,22 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
-import org.apache.maven.model.Developer;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.mailsender.MailSenderException;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.model.Developer;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.mailsender.MailMessage;
+import org.codehaus.plexus.mailsender.MailSenderException;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Goal which sends an announcement through email.
@@ -152,6 +153,14 @@ public class AnnouncementMailMojo
      * @required
      */
     private String template;
+    
+    /**
+     * Mail content type to use. 
+     * @parameter default-value="text/plain"
+     * @required
+     * @since 2.1
+     */
+    private String mailContentType;
 
     private ProjectJavamailMailSender mailer = new ProjectJavamailMailSender();
 
@@ -179,8 +188,9 @@ public class AnnouncementMailMojo
         {
             mailer.setPassword( password );
         }
+        
         mailer.initialize();
-
+        
         if ( getLog().isDebugEnabled() )
         {
             getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
@@ -223,8 +233,13 @@ public class AnnouncementMailMojo
             {
                 email = it.next().toString();
                 getLog().info( "Sending mail to " + email + "..." );
-                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( templateFile ) ), email, "", fromAddress,
-                             fromName );
+                MailMessage mailMsg = new MailMessage();
+                mailMsg.setSubject( getSubject() );
+                mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
+                mailMsg.setContentType( this.mailContentType );
+                mailMsg.setFrom( email, "" );
+                mailMsg.addTo( fromAddress, fromName );
+                mailer.send( mailMsg );
                 getLog().info( "Sent..." );
             }
         }
