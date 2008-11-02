@@ -114,7 +114,9 @@ variable2=value2
   <fileSets>
     <fileSet>
       <directory>${basedir}</directory>
-      <includes>*.txt</includes>
+      <includes>
+        <include>*.txt</include>
+      </includes>
       <excludes>
         <exclude>README.txt</exclude>
         <exclude>NOTICE.txt</exclude>
