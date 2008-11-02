@@ -47,7 +47,7 @@ public class FileActivityReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generate file activity report from SCM.";
+        return getBundle( locale ).getString( "report.file-activity.description" );
     }
 
     /**
@@ -55,7 +55,7 @@ public class FileActivityReport
      */
     public String getName( Locale locale )
     {
-        return "File Activity";
+        return getBundle( locale ).getString( "report.file-activity.name" );
     }
 
     /**
@@ -143,7 +143,7 @@ public class FileActivityReport
         sink.section2();
 
         doChangeSetTitle( set, bundle, sink );
-        
+
         doSummary( set, bundle, sink );
 
         sink.table();
