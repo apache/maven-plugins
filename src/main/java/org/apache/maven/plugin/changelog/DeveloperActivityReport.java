@@ -60,7 +60,7 @@ public class DeveloperActivityReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generated developer activity report from SCM.";
+        return getBundle( locale ).getString( "report.dev-activity.description" );
     }
 
     /**
@@ -68,7 +68,7 @@ public class DeveloperActivityReport
      */
     public String getName( Locale locale )
     {
-        return "Developer Activity";
+        return getBundle( locale ).getString( "report.dev-activity.name" );
     }
 
     /**

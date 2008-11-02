@@ -1403,7 +1403,7 @@ public class ChangeLogReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generated change log report from SCM.";
+        return getBundle( locale ).getString( "report.changelog.description" );
     }
 
     /**
@@ -1411,7 +1411,7 @@ public class ChangeLogReport
      */
     public String getName( Locale locale )
     {
-        return "Change Log";
+        return getBundle( locale ).getString( "report.changelog.name" );
     }
 
     /**
