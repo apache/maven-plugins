@@ -248,6 +248,22 @@ public class AnnouncementMojo
      */
     private int maxEntries;
 
+    /**
+     * Defines the JIRA username for authentication into a private JIRA installation.
+     *
+     * @parameter default-value=""
+     * @since 2.1
+     */
+    private String jiraUser;
+
+    /**
+     * Defines the JIRA password for authentication into a private JIRA installation.
+     *
+     * @parameter default-value=""
+     * @since 2.1
+     */
+    private String jiraPassword;
+
     //=======================================//
     //    announcement-generate execution    //
     //=======================================//
@@ -475,6 +491,10 @@ public class AnnouncementMojo
         jiraDownloader.setSettings( settings );
 
         jiraDownloader.setNbEntries( maxEntries );
+
+        jiraDownloader.setJiraUser( jiraUser );
+
+        jiraDownloader.setJiraPassword( jiraPassword );
 
         try
         {
