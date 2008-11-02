@@ -258,31 +258,7 @@ under the License.
     </dependency>
     
   </dependencies>
-  
-  <!-- remove when modello is released -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>snapshots.codehaus</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-  
+    
   <build>
     <plugins>
       <plugin>
