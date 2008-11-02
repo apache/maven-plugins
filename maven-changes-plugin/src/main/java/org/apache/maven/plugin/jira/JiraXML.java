@@ -127,7 +127,7 @@ public class JiraXML
         {
             issue.setReporter( currentElement.toString().trim() );
         }
-        else if ( qName.equals( "version" ) )
+        else if ( qName.equals( "version" ) && currentParent.equals( "item" ) )
         {
             issue.setVersion( currentElement.toString().trim() );
         }
