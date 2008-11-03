@@ -36,7 +36,7 @@ Configuring the Trac Report
  accessible via no authentication, basic authentication or NTLM authentication, 
  if you've used form authentication then you are out of luck.
  
- Your Trac installation needs to have the {{http://trac-hacks.org/wiki/XmlRpcPlugin}XML-RPC plugin}
+ Your Trac installation needs to have the {{{http://trac-hacks.org/wiki/XmlRpcPlugin}XML-RPC plugin}}
  installed and working for this plugin to be able to read the tickets. 
 
 ** Basic Report Configuration
@@ -46,27 +46,28 @@ Configuring the Trac Report
  will be listed
  
 +-----------------+
-	<issueManagement>
-		<system>trac</system>
-		<url>http://mytracserver.local/trac/MYPROJECT/</url>
-	</issueManagement>
+  <issueManagement>
+    <system>trac</system>
+    <url>http://mytracserver.local/trac/MYPROJECT/</url>
+  </issueManagement>
 +-----------------+
 
 ** Configuring a Custom Query
  
- The exact query can configured in the <<<\<query\>>>> element.  See 
- {{http://trac.edgewall.org/wiki/TracQuery}TracQuery} for the exact syntax.
+ The exact query can configured in the <<<\<query\>>>> element.  
+ See {{{http://trac.edgewall.org/wiki/TracQuery}TracQuery}} for the exact syntax.
 
 +-----------------+
-...
-<plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-changes-plugin</artifactId>
-	<configuration>
-		<query>status=accepted&amp;status=assigned&amp;status=new&amp;status=reopened&amp;order=priority&amp;component=${project.artifactId}</query>
-	</configuration>
-</plugin>
-...
+  ...
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-changes-plugin</artifactId>
+    <version>2.1</version>
+    <configuration>
+      <query>status=accepted&amp;status=assigned&amp;status=new&amp;status=reopened&amp;order=priority&amp;component=${project.artifactId}</query>
+    </configuration>
+  </plugin>
+  ...
 +-----------------+
 
 
@@ -79,18 +80,19 @@ Configuring the Trac Report
 +-----------------+
 <project>
   ...
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<configuration>
-					<tracUser>my username</tracUser>
-					<tracPassword>my password</tracPassword>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <tracUser>my username</tracUser>
+          <tracPassword>my password</tracPassword>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   ...
 </project>
 +-----------------+
@@ -112,18 +114,19 @@ Configuring the Trac Report
 +-----------------+
 <project>
   ...
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<configuration>
-					...
-					<outputEncoding>Windows-31J</outputEncoding>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          ...
+          <outputEncoding>Windows-31J</outputEncoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   ...
 </project>
 +-----------------+
