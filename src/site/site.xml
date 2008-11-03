@@ -41,6 +41,7 @@ under the License.
       <item name="Specifying the Mail Sender" href="examples/specifying-mail-sender.html"/>
       <item name="Using a Custom Announcement Template" href="examples/using-a-custom-announcement-template.html"/>
       <item name="Validate Your changes.xml File" href="examples/changes-file-validation.html"/>
+      <item name="Configuring Trac Report" href="examples/configuring-trac-report.html"/>
     </menu>
   </body>
 </project>
