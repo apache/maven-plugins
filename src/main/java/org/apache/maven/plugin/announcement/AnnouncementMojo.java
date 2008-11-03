@@ -20,7 +20,9 @@ package org.apache.maven.plugin.announcement;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
@@ -33,11 +35,14 @@ import org.apache.maven.plugins.changes.model.Action;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
@@ -263,6 +268,14 @@ public class AnnouncementMojo
      * @since 2.1
      */
     private String jiraPassword;
+    
+    /**
+     * The template encoding.
+     *
+     * @parameter expression="${changes.templateEncoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.1
+     */      
+    private String templateEncoding;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -437,13 +450,26 @@ public class AnnouncementMojo
                 f.getParentFile().mkdirs();
             }
 
-            Writer writer = new FileWriter( f );
+            
 
             VelocityEngine engine = velocity.getEngine();
            
             engine.setApplicationAttribute( "baseDirectory", basedir );
             
-            engine.mergeTemplate( templateDirectory + "/" + template, context, writer );
+            if ( StringUtils.isEmpty( templateEncoding ) )
+            {
+                templateEncoding =  ReaderFactory.FILE_ENCODING;
+                getLog().warn(
+                               "File encoding has not been set, using platform encoding " + templateEncoding
+                                   + ", i.e. build is platform dependent!" );
+            }
+            
+            
+            Writer writer = new OutputStreamWriter( new FileOutputStream( f ), templateEncoding );
+            
+            Template velocityTemplate = engine.getTemplate( templateDirectory + "/" + template, templateEncoding );
+            
+            velocityTemplate.merge( context, writer );
 
             writer.flush();
 

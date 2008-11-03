@@ -76,7 +76,7 @@ public class ChangesXML
             {
                 if ( properties.getAuthor() != null )
                 {
-                    this.author =properties.getAuthor().getName();
+                    this.author = properties.getAuthor().getName();
                     this.authorEmail = properties.getAuthor().getName(); 
                 }
                 this.title = properties.getTitle();                  
