@@ -34,12 +34,12 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    
+
     <menu name="Advanced Topics">
       <item name="Assembly Descriptors" href="advanced-descriptor-topics.html"/>
       <item name="ModuleSets" href="advanced-module-set-topics.html"/>
     </menu>
-    
+
     <menu name="Examples">
       <item name="Examples Index" href="examples/index.html"/>
       <item name="Single Project" collapse="false" href="examples/single/index.html">
@@ -52,6 +52,7 @@ under the License.
         <item name="Include Module Artifacts" href="examples/multimodule/module-binary-inclusion-simple.html"/>
         <item name="Include Module Sources" href="examples/multimodule/module-source-inclusion-simple.html"/>
       </item>
+      <item name="Sharing Assembly Descriptors" href="examples/sharing-descriptors.html"/>
     </menu>
   </body>
 </project>
