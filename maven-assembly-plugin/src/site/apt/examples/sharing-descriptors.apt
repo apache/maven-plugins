@@ -1,0 +1,141 @@
+ ------
+ Sharing Assembly Descriptors
+ ------
+ Dennis Lundberg
+ ------
+ 2008-11-03
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Sharing Assembly Descriptors
+
+  So you have created an assembly descriptor that you feel is so good that you
+  want to share it between several of your projects. The simplest way to solve
+  this problem is to create a separate project for your assembly descriptor.
+  Let's call the project <my-assembly-descriptor>.
+
+* The Shared Assembly Descriptor Project
+
+  Here's what the directory structure for that project looks like:
+
++---+
+my-assembly-descriptor
+    +-- src
+    |   `-- main
+    |       `-- resources
+    |           `-- assemblies
+    |               `-- myassembly.xml
+    `-- pom.xml
++---+
+
+  There are just two files in this project: your assembly descriptor
+  <<<myassembly.xml>>> and a <<<pom.xml>>>.
+
+
+  First let's check out the POM for the Shared Assembly Descriptor Project. It
+  is quite simple:
+
++---+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>your.group.id</groupId>
+  <artifactId>my-assembly-descriptor</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Shared Assembly Descriptor</name>
+</project>
++---+
+
+  Next let's look at our shared assembly descriptor. This is just an example.
+  Replace it with the assembly descriptor you want to share.
+
++---+
+<assembly>
+  <id>my-assembly-descriptor-id</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
+      <directory>src</directory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+  </fileSets>
+</assembly>
++---+
+
+  Run '<<<mvn install>>>' on this project to install the Shared Assembly
+  Descriptor project into your local repository.
+
+
+* The Project Using the Shared Assembly Descriptor
+
+  In the project that wants to use our Shared Assembly Descriptor, you need to
+  add <<<my-assembly-descriptor>>> as a dependency on the Assembly Plugin. This
+  makes our assembly descriptor available for the Assembly Plugin to use.
+
++---+
+<project>
+  <groupId>your.group.id</groupId>
+  <artifactId>my-project</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <modelVersion>4.0.0</modelVersion>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2</version>
+        <dependencies>
+          <dependency>
+            <groupId>your.group.id</groupId>
+            <artifactId>my-assembly-descriptor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <!-- This is where we use our shared assembly descriptor -->
+              <descriptors>
+                <descriptor>myassembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++---+
