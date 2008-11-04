@@ -144,6 +144,27 @@ under the License.
           <description>The list of actions taken for this release.</description>
         </field>
       </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0</version>
+          <code><![CDATA[
+            public java.util.List getActions(String type)
+            {
+                java.util.List actions = new java.util.ArrayList();
+                for (java.util.Iterator iterator = getActions().iterator(); iterator.hasNext(); )
+                {
+                  Action action = (Action) iterator.next();
+                  if ( action.getType() != null && action.getType().equalsIgnoreCase( type ) )
+                  {
+                      actions.add( action );
+                  } 
+                }
+                return actions;
+            }
+          ]]></code>
+        </codeSegment>
+      </codeSegments>
+      
     </class>
     <class>
       <name>Author</name>

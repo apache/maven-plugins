@@ -21,7 +21,6 @@ package org.apache.maven.plugin.announcement;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -450,8 +449,6 @@ public class AnnouncementMojo
                 f.getParentFile().mkdirs();
             }
 
-            
-
             VelocityEngine engine = velocity.getEngine();
            
             engine.setApplicationAttribute( "baseDirectory", basedir );
@@ -463,7 +460,6 @@ public class AnnouncementMojo
                                "File encoding has not been set, using platform encoding " + templateEncoding
                                    + ", i.e. build is platform dependent!" );
             }
-            
             
             Writer writer = new OutputStreamWriter( new FileOutputStream( f ), templateEncoding );
             
