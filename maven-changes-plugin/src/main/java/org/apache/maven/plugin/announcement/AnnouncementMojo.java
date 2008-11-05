@@ -80,8 +80,8 @@ public class AnnouncementMojo
     /**
      * Version of the artifact.
      *
-     * @parameter expression="${project.version}"
-     * @readonly
+     * @parameter expression="${changes.version}" default-value="${project.version}"
+     * @required
      */
     private String version;
 
