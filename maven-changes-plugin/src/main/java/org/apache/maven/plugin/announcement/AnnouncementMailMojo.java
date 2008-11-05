@@ -124,7 +124,7 @@ public class AnnouncementMailMojo
     /**
      * Recipient email address.
      *
-     * @parameter expression="${changes.toAddresses}"
+     * @parameter
      * @required
      */
     private List toAddresses;
