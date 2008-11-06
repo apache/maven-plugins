@@ -168,7 +168,7 @@ public class AnnouncementMailMojo
         throws MojoExecutionException
     {
         File templateFile = new File( templateOutputDirectory, template );
-
+       
         ConsoleLogger logger = new ConsoleLogger( 0, "base" );
 
         mailer.enableLogging( logger );
