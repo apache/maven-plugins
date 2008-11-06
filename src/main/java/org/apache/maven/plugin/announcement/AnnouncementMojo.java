@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -104,7 +105,7 @@ public class AnnouncementMojo
     /**
      * The name of the artifact to be used in the announcement.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter expression="${changes.finalName}" default-value="${project.build.finalName}"
      * @required
      */
     private String finalName;
@@ -255,7 +256,7 @@ public class AnnouncementMojo
     /**
      * Defines the JIRA username for authentication into a private JIRA installation.
      *
-     * @parameter default-value=""
+     * @parameter default-value="" expression="${changes.jiraUser}"
      * @since 2.1
      */
     private String jiraUser;
@@ -263,7 +264,7 @@ public class AnnouncementMojo
     /**
      * Defines the JIRA password for authentication into a private JIRA installation.
      *
-     * @parameter default-value=""
+     * @parameter default-value="" expression="${changes.jiraPassword}"
      * @since 2.1
      */
     private String jiraPassword;
@@ -275,6 +276,15 @@ public class AnnouncementMojo
      * @since 2.1
      */      
     private String templateEncoding;
+    
+    /**
+     * The template encoding.
+     *
+     * @parameter expression="${changes.jiraMerge}" default-value="false"
+     * @since 2.1
+     */      
+    
+    private boolean jiraMerge;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -288,25 +298,35 @@ public class AnnouncementMojo
     public void execute()
         throws MojoExecutionException
     {
-        
-        if ( !generateJiraAnnouncement )
+        if ( this.jiraMerge )
         {
-            if ( getXmlPath().exists() )
-            {
-                setXml( new ChangesXML( getXmlPath(), getLog() ) );
-
-                getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
-
-                doGenerate( getXml().getReleaseList() );
-            }
-            else
-            {
-                getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
-            }
+            ChangesXML changesXML =  new ChangesXML( getXmlPath(), getLog() );
+            List changesReleases = changesXML.getReleaseList();
+            List jiraReleases = getJiraReleases();
+            List mergedReleases = mergeReleases( changesReleases, jiraReleases );
+            doGenerate( mergedReleases );
         }
         else
         {
-            doJiraGenerate();
+            if ( !generateJiraAnnouncement )
+            {
+                if ( getXmlPath().exists() )
+                {
+                    setXml( new ChangesXML( getXmlPath(), getLog() ) );
+
+                    getLog().info( "Creating announcement file from " + getXmlPath() + "..." );
+
+                    doGenerate( getXml().getReleaseList() );
+                }
+                else
+                {
+                    getLog().warn( "changes.xml file " + getXmlPath().getAbsolutePath() + " does not exist." );
+                }
+            }
+            else
+            {
+                doJiraGenerate();
+            }
         }
     }
 
@@ -317,6 +337,12 @@ public class AnnouncementMojo
      * @throws MojoExecutionException
      */
     public void doGenerate( List releases )
+        throws MojoExecutionException
+    {
+        doGenerate( releases, getLatestRelease( releases )  );
+    }
+    
+    protected void doGenerate( List releases, Release release )
         throws MojoExecutionException
     {
         try
@@ -340,7 +366,7 @@ public class AnnouncementMojo
 
             context.put( "url", getUrl() );
 
-            context.put( "release", getLatestRelease( releases ) );
+            context.put( "release", release );
 
             context.put( "introduction", getIntroduction() );
 
@@ -406,14 +432,47 @@ public class AnnouncementMojo
             }
         }
 
+        release = getRelease( releases, pomVersion );
+        isFound = (release != null);
+        
         if ( !isFound )
         {
             throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
                 + "' among the supplied releases." );
         }
+        else
+        {
+            
+        }
         return release;
     }
 
+    
+    protected Release getRelease(List releases, String version)
+    {
+        Release release = null;
+        for ( int i = 0; i < releases.size(); i++ )
+        {
+            release = (Release) releases.get( i );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "The release: " + release.getVersion()
+                    + " has " + release.getActions().size() + " actions." );
+            }
+
+            if ( release.getVersion() != null && release.getVersion().equals( version ) )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Found the correct release: " + release.getVersion() );
+                    logRelease( release );
+                }
+                return release;
+            }
+        }
+        return null;
+    }
+    
     private void logRelease( Release release )
     {
         Action action;
@@ -496,6 +555,16 @@ public class AnnouncementMojo
     public void doJiraGenerate()
         throws MojoExecutionException
     {
+        List releases = getJiraReleases();
+
+        getLog().info( "Creating announcement file from JIRA releases..." );
+
+        doGenerate( releases );
+    }
+    
+    protected List getJiraReleases()
+        throws MojoExecutionException
+    {
         JiraDownloader jiraDownloader = new JiraDownloader();
 
         File jiraXMLFile = jiraXML;
@@ -528,12 +597,13 @@ public class AnnouncementMojo
 
                 List issues = jiraParser.getIssueList();
 
-                List releases = JiraXML.getReleases( issues );
-
-                getLog().info( "Creating announcement file from JIRA releases..." );
-
-                doGenerate( releases );
+                return JiraXML.getReleases( issues );
             }
+            else
+            {
+                getLog().warn( "jira file " + jiraXMLFile.getPath() + " doesn't exists " );
+            }
+            return Collections.EMPTY_LIST;
         }
         catch ( Exception e )
         {
@@ -541,6 +611,36 @@ public class AnnouncementMojo
         }
     }
 
+    protected List mergeReleases( List changesReleases, List jiraReleases )
+    {
+        if ( changesReleases == null && jiraReleases == null )
+        {
+            return Collections.EMPTY_LIST;
+        }
+        if ( changesReleases == null )
+        {
+            return jiraReleases;
+        }
+        if ( jiraReleases == null )
+        {
+            return changesReleases;
+        }
+
+        for ( Iterator iterator = changesReleases.iterator(); iterator.hasNext(); )
+        {
+            Release release = (Release) iterator.next();
+            Release jiraRelease = getRelease( jiraReleases, release.getVersion() );
+            if ( jiraRelease != null )
+            {
+                if ( jiraRelease.getActions() != null )
+                {
+                    release.getActions().addAll( jiraRelease.getActions() );
+                }
+            }
+        }
+        return changesReleases;
+    }
+    
     /*
      * accessors
      */
