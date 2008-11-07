@@ -22,7 +22,11 @@ package org.apache.maven.doxia.sink;
 import java.io.File;
 
 /**
+ * This interface was copied from doxia-sink-api 1.0-alpha-9, to avoid upgrading prerequisite
+ * to Maven 2.0.8.
+ * 
  * @author <a href="kenney@apache.org">Kenney Westerhof</a>
+ * @todo MSITE-368 remove this class when Maven 2.0.8 as prerequisite is ok
  */
 public interface SinkFactory
 {
