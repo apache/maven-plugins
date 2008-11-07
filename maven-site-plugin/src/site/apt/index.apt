@@ -92,4 +92,5 @@ Maven Site Plugin
 
    * {{{examples/creatingskins.html}Creating a Skin for the Maven Site Plugin}}
 
+   * {{{examples/site-deploy-to-sourceforge.net.html}Deploy to sourceforge.net}}
 
