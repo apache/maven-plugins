@@ -30,7 +30,11 @@ import java.util.Locale;
  * method should be dropped. But that will render all reporting mojo's 
  * uncompilable. 
  *
+ * This interface was copied from reporting-api 3.0, to avoid upgrading prerequisite
+ * to Maven 3.0.
+ *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
+ * @todo MSITE-369 remove this class when Maven 3.0 as prerequisite is ok
  */
 public interface MavenMultiPageReport
     extends MavenReport
