@@ -33,6 +33,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <escapeString>\</escapeString>
           <webResources>
             <resource>
               <directory>${basedir}/src/main/webresources</directory>
