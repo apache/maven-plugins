@@ -50,8 +50,14 @@ try
     {
       System.err.println( "jdbc.url not filtered correctly" );
       return false;
-    }    
-   
+    }  
+    
+    indexOf = paramContent.indexOf( "<Set name=\"password\">${jdbc.password}</Set>" );  
+    if ( indexOf < 0)
+    {
+      System.err.println( "jdbc.password has been filtered" );
+      return false;
+    }   
 }
 catch( IOException e )
 {
