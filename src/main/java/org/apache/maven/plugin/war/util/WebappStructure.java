@@ -106,6 +106,10 @@ public class WebappStructure
     public List getDependencies()
     {
         final List result = new ArrayList();
+        if ( dependenciesInfo == null )
+        {
+            return result;
+        }
         final Iterator it = dependenciesInfo.iterator();
         while ( it.hasNext() )
         {
