@@ -22,15 +22,14 @@ package org.apache.maven.plugin.checkstyle;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
@@ -115,8 +114,7 @@ public class CheckstyleViolationCheckMojo
             try
             {
                 XmlPullParser xpp = new MXParser();
-                // TODO: use ReaderFactory.newXmlReader() when plexus-utils can be upgraded
-                Reader freader = new InputStreamReader( new FileInputStream( outputFile ), "UTF-8" );
+                Reader freader = ReaderFactory.newXmlReader( outputFile );
                 BufferedReader breader = new BufferedReader( freader );
                 xpp.setInput( breader );
 
