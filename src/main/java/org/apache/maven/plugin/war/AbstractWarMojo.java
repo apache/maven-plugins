@@ -47,6 +47,7 @@ import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -281,6 +282,14 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */    
     private boolean escapedBackslashesInFilePath = false;
+    
+    /**
+     * Expression preceded with the String won't be interpolated 
+     * \${foo} will be replaced with ${foo}
+     * @parameter expression="${maven.war.escapeString}"
+     * @since 2.1-beta-1
+     */    
+    protected String escapeString;    
 
     /**
      * The archive configuration to use.
@@ -417,9 +426,12 @@ public abstract class AbstractWarMojo
         List defaultFilterWrappers = null;
         try
         {
+            MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
+            mavenResourcesExecution.setEscapeString( escapeString );
+             
             defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
                                                                                    escapedBackslashesInFilePath,
-                                                                                   this.session );
+                                                                                   this.session, mavenResourcesExecution );
             
         }
         catch ( MavenFilteringException e )
