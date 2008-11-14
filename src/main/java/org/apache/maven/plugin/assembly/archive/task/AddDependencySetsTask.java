@@ -170,8 +170,19 @@ public class AddDependencySetsTask
                 task.setModuleArtifact( moduleArtifact );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
                 task.setFileNameMapping( dependencySet.getOutputFileNameMapping(), defaultOutputFileNameMapping );
-                task.setDirectoryMode( dependencySet.getDirectoryMode() );
-                task.setFileMode( dependencySet.getFileMode() );
+                
+                int dirMode = TypeConversionUtils.modeToInt( dependencySet.getDirectoryMode(), logger );
+                if ( dirMode != -1 )
+                {
+                    task.setDirectoryMode( dirMode );
+                }
+                
+                int fileMode = TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger );
+                if ( fileMode != -1 )
+                {
+                    task.setFileMode( fileMode );
+                }
+                
                 task.setUnpack( dependencySet.isUnpack() );
 
                 UnpackOptions opts = dependencySet.getUnpackOptions();

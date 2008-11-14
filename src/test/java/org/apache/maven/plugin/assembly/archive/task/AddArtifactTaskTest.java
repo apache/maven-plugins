@@ -188,8 +188,9 @@ public class AddArtifactTaskTest
         AddArtifactTask task = createTask( artifactMock.getArtifact() );
 
         task.setUnpack( true );
-        task.setDirectoryMode( "777" );
-        task.setFileMode( "777" );
+        
+        task.setDirectoryMode( directoryMode );
+        task.setFileMode( fileMode );
 
         task.execute( mac.archiver, mac.configSource );
 

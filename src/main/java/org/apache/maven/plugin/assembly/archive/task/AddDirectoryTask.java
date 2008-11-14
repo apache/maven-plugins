@@ -73,12 +73,12 @@ public class AddDirectoryTask
 
         try
         {
-            if ( directoryMode > -1 )
+            if ( directoryMode != -1 )
             {
                 archiver.setDefaultDirectoryMode( directoryMode );
             }
 
-            if ( fileMode > -1 )
+            if ( fileMode != -1 )
             {
                 archiver.setDefaultFileMode( fileMode );
             }
