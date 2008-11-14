@@ -1,3 +1,0 @@
-clean
-ant:ant
-antrun:run
