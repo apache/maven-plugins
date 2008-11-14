@@ -134,8 +134,18 @@ public class RepositoryAssemblyPhase
 
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
 
-            task.setDirectoryMode( TypeConversionUtils.modeToInt( repository.getDirectoryMode(), getLogger() ) );
-            task.setFileMode( TypeConversionUtils.modeToInt( repository.getFileMode(), getLogger() ) );
+            int dirMode = TypeConversionUtils.modeToInt( repository.getDirectoryMode(), getLogger() );
+            if ( dirMode != -1 )
+            {
+                task.setDirectoryMode( dirMode );
+            }
+            
+            int fileMode = TypeConversionUtils.modeToInt( repository.getFileMode(), getLogger() );
+            if ( fileMode != -1 )
+            {
+                task.setFileMode( fileMode );
+            }
+            
             task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
 
