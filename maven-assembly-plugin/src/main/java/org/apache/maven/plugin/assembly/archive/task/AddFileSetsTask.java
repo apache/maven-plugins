@@ -143,12 +143,24 @@ public class AddFileSetsTask
 
             AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
-            task.setDirectoryMode( TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger ) );
-            task.setFileMode( TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger ) );
+            int dirMode = TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger );
+            if ( dirMode != -1 )
+            {
+                task.setDirectoryMode( dirMode );
+            }
+            
+            int fileMode = TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger );
+            if ( fileMode != -1 )
+            {
+                task.setFileMode( fileMode );
+            }
+            
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
+            
             List excludes = fileSet.getExcludes();
             excludes.add( "**/*.filtered" );
             task.setExcludes( excludes );
+            
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );
 
