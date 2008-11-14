@@ -40,6 +40,7 @@ import org.apache.maven.plugin.assembly.model.ModuleSources;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
+import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
@@ -299,8 +300,19 @@ public class ModuleSetAssemblyPhase
         task.setProject( project );
         task.setModuleProject( project );
         task.setModuleArtifact( artifact );
-        task.setDirectoryMode( binaries.getDirectoryMode() );
-        task.setFileMode( binaries.getFileMode() );
+        
+        int dirMode = TypeConversionUtils.modeToInt( binaries.getDirectoryMode(), getLogger() );
+        if ( dirMode != -1 )
+        {
+            task.setDirectoryMode( dirMode );
+        }
+        
+        int fileMode = TypeConversionUtils.modeToInt( binaries.getFileMode(), getLogger() );
+        if ( fileMode != -1 )
+        {
+            task.setFileMode( fileMode );
+        }
+        
         task.setUnpack( binaries.isUnpack() );
         
         if ( binaries.isUnpack() && binaries.getUnpackOptions() != null )

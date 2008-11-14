@@ -45,9 +45,9 @@ public class AddArtifactTask
 
     public static final String[] DEFAULT_INCLUDES_ARRAY = { "**/*" };
 
-    private String directoryMode;
+    private int directoryMode = -1;
 
-    private String fileMode;
+    private int fileMode = -1;
 
     private boolean unpack = false;
 
@@ -128,14 +128,14 @@ public class AddArtifactTask
 
             try
             {
-                if ( fileMode != null )
+                if ( fileMode != -1 )
                 {
-                    archiver.setDefaultFileMode( TypeConversionUtils.modeToInt( fileMode, logger ) );
+                    archiver.setDefaultFileMode( fileMode );
                 }
 
-                if ( directoryMode != null )
+                if ( directoryMode != -1 )
                 {
-                    archiver.setDefaultDirectoryMode( TypeConversionUtils.modeToInt( directoryMode, logger ) );
+                    archiver.setDefaultDirectoryMode( directoryMode );
                 }
 
                 File artifactFile = artifact.getFile();
@@ -182,11 +182,9 @@ public class AddArtifactTask
 
                 logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: " + outputLocation + "." );
 
-                if ( fileMode != null )
+                if ( fileMode != -1 )
                 {
-                    int mode = TypeConversionUtils.modeToInt( fileMode, logger );
-
-                    archiver.addFile( artifactFile, outputLocation, mode );
+                    archiver.addFile( artifactFile, outputLocation, fileMode );
                 }
                 else
                 {
@@ -201,12 +199,12 @@ public class AddArtifactTask
         }
     }
 
-    public void setDirectoryMode( String directoryMode )
+    public void setDirectoryMode( int directoryMode )
     {
         this.directoryMode = directoryMode;
     }
 
-    public void setFileMode( String fileMode )
+    public void setFileMode( int fileMode )
     {
         this.fileMode = fileMode;
     }
