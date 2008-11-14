@@ -1,3 +1,0 @@
-clean
-install
-ant:ant

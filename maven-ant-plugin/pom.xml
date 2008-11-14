@@ -148,6 +148,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.3</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
@@ -171,20 +172,6 @@ under the License.
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
-              </execution>
-              <!-- TODO: Remove execution once MINVOKER-46 is released -->
-              <execution>
-                <id>integration-test-phase-2</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <pomIncludes>
-                    <pomInclude>ear-it/pom.xml</pomInclude>
-                  </pomIncludes>
-                  <goalsFile>goals-2.txt</goalsFile>
-                </configuration>
               </execution>
             </executions>
           </plugin>
