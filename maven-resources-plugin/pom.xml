@@ -77,8 +77,14 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3-SNAPSHOT</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.7-SNAPSHOT</version>
+    </dependency>    
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -129,5 +135,19 @@ under the License.
       </build>
     </profile>
   </profiles>
+  
+  <!-- TODO remove when plexus-interpolation is released -->
+  <repositories>
+    <repository>
+      <id>codehaus.snapshot</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   
 </project>
