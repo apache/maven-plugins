@@ -329,9 +329,17 @@ public class ChangesReportGenerator
     private void sinkBeginReport( Sink sink, ResourceBundle bundle )
     {
         sink.head();
-
+        String title = null;
+        if ( report.getTitle() != null )
+        {
+            title = report.getTitle();
+        }
+        else
+        {
+            title = bundle.getString( "report.changes.header" );
+        }
         sink.title();
-        sink.text( bundle.getString( "report.changes.header" ) );
+        sink.text( title );
         sink.title_();
 
         if ( StringUtils.isNotEmpty( report.getAuthor() ) )
@@ -347,8 +355,7 @@ public class ChangesReportGenerator
 
         sink.section1();
 
-        sinkSectionTitle1Anchor( sink, bundle.getString( "report.changes.header" ), bundle
-            .getString( "report.changes.header" ) );
+        sinkSectionTitle1Anchor( sink, title, title );
     }
 
     private void sinkCell( Sink sink, String text )
