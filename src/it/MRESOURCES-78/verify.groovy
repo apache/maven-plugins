@@ -21,5 +21,5 @@ assert new File(basedir, 'target/classes/unfiltered.properties').exists();
 
 filteredContent = new File(basedir, 'target/classes/filtered.properties').text;
 assert content.contains( 'bar=this is bar');
-assert content.contains( 'escaped=\${escaped}');
-assert content.contains( 'escaped.at=\@escaped.at@');
+assert content.contains( 'escaped=\\${escaped}');
+assert content.contains( 'escaped.at=\\@escaped.at@');
