@@ -42,7 +42,7 @@
     <url>http://localhost/bla</url>
   </issueManagement>
   <properties>
-    <changesPluginVersion>2.0</changesPluginVersion>
+    <changesPluginVersion>@pom.version@</changesPluginVersion>
   </properties>
   <build>
     <pluginManagement>

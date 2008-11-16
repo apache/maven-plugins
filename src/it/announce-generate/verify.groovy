@@ -20,7 +20,7 @@
 assert new File(basedir, 'target/announcement/announcement.vm').exists();
 content = new File(basedir, 'target/announcement/announcement.vm').text;
 
-assert content.contains( 'Nice library' );
+assert content.contains( 'Test report.' );
 
 assert content.contains( 'Changes in this version include:' );
 
@@ -34,7 +34,7 @@ assert content.contains( 'o Enable retrieving component-specific issues.  Issue:
 
 assert content.contains( 'Changes:' );
 
-assert content.contains( 'o Handle different issue systems.' );
+assert content.contains( 'o Handle different issue systems.  Issue: MCHANGES-999.' );
 
 assert content.contains( 'o Updated dependencies.' );
 
@@ -42,5 +42,6 @@ assert content.contains( 'Removed:' );
 
 assert content.contains( 'o The element type \" link \" must be terminated by the matching end-tag.' );
 
-assert content.contains( 'Deleted the erroneous code.' );
+assert content.contains( 'Deleted the erroneous code.  Issue: MCHANGES-899.' );
 
+return true;
