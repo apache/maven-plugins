@@ -31,7 +31,7 @@ under the License.
       <action dev="me" type="fix" issue="MCHANGES-88">
         Enable retrieving component-specific issues.
       </action>
-      <action dev="jruiz" type="remove">
+      <action dev="jruiz" type="remove" issue="MCHANGES-899">
         The element type " link " must be terminated by the matching end-tag.
         Deleted the erroneous code.
         <fixes issue="MCHANGES-1"/>
@@ -39,7 +39,7 @@ under the License.
         <dueto name="John Doe" email="john@doe.com"/>
         <dueto name="Jane Doe"/>
       </action>
-      <action dev="you" type="update" system="bugzilla">
+      <action dev="you" type="update" issue="MCHANGES-999" system="bugzilla">
         Handle different issue systems.
         <fixes issue="bug-12345"/>
         <dueto name="John Doe" email="john@doe.com"/>

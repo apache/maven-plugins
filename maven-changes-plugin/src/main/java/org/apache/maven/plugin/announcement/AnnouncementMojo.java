@@ -480,9 +480,9 @@ public class AnnouncementMojo
         {
             action = (Action) iterator.next();
             getLog().debug( "o " + action.getType() );
-            getLog().debug( "  - " + action.getIssue() );
-            getLog().debug( "  - " + action.getAction() );
-            getLog().debug( "  - " + action.getDueTo() );
+            getLog().debug( "issue : " + action.getIssue() );
+            getLog().debug( "action : " + action.getAction() );
+            getLog().debug( "dueTo : " + action.getDueTo() );
         }
     }
 
