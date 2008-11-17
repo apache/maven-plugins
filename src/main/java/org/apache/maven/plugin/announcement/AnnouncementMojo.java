@@ -375,6 +375,8 @@ public class AnnouncementMojo
             context.put( "finalName", getFinalName() );
 
             context.put( "urlDownload", getUrlDownload() );
+            
+            context.put( "project", project );
 
             processTemplate( context, getOutputDirectory(), template );
         }
