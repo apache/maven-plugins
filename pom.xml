@@ -280,6 +280,9 @@ under the License.
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+            </configuration>            
           </execution>
           <execution>
             <id>standard</id>
