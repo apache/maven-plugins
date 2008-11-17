@@ -228,20 +228,21 @@ public class AnnouncementMailMojo
         getLog().info( "Using this sender for email announcement: " + fromAddress + " < " + fromName + " > " );
         try
         {
+            MailMessage mailMsg = new MailMessage();
+            mailMsg.setSubject( getSubject() );
+            mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
+            mailMsg.setContentType( this.mailContentType );
+            mailMsg.setFrom( fromAddress, fromName );            
             final Iterator it = getToAddresses().iterator();
             while ( it.hasNext() )
             {
                 email = it.next().toString();
                 getLog().info( "Sending mail to " + email + "..." );
-                MailMessage mailMsg = new MailMessage();
-                mailMsg.setSubject( getSubject() );
-                mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
-                mailMsg.setContentType( this.mailContentType );
-                mailMsg.setFrom( email, "" );
-                mailMsg.addTo( fromAddress, fromName );
-                mailer.send( mailMsg );
-                getLog().info( "Sent..." );
+                mailMsg.addTo( email, "" );
+
             }
+            mailer.send( mailMsg );
+            getLog().info( "Sent..." );            
         }
         catch ( IOException ioe )
         {
