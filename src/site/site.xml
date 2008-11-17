@@ -29,6 +29,7 @@ under the License.
     </menu>
     <menu name="Reference">
       <item name="changes.xml" href="changes.html"/>
+      <item name="changes.xsd" href="xsd/changes-1.0.0.xsd"/>
     </menu>
     <menu name="Samples">
       <item name="Sample Changes Report" href="changes-report.html"/>
