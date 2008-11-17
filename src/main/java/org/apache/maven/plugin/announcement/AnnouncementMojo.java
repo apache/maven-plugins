@@ -26,6 +26,7 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -283,8 +284,14 @@ public class AnnouncementMojo
      * @parameter expression="${changes.jiraMerge}" default-value="false"
      * @since 2.1
      */      
-    
     private boolean jiraMerge;
+    
+    /**
+     * Map which will be pass to the velocity context
+     * @parameter
+     * @since 2.1
+     */
+    private Map announceParameters;
 
     //=======================================//
     //    announcement-generate execution    //
@@ -377,6 +384,17 @@ public class AnnouncementMojo
             context.put( "urlDownload", getUrlDownload() );
             
             context.put( "project", project );
+            
+            if ( announceParameters == null )
+            {
+                // empty Map to prevent NPE in velocity execution
+                context.put( "announceParameters", Collections.EMPTY_MAP );
+            }
+            else
+            {
+                context.put( "announceParameters", announceParameters );
+            }
+            
 
             processTemplate( context, getOutputDirectory(), template );
         }
