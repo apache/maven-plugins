@@ -31,6 +31,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.mailsender.MailMessage;
 import org.codehaus.plexus.mailsender.MailSenderException;
@@ -169,7 +170,12 @@ public class AnnouncementMailMojo
     {
         File templateFile = new File( templateOutputDirectory, template );
        
-        ConsoleLogger logger = new ConsoleLogger( 0, "base" );
+        ConsoleLogger logger = new ConsoleLogger( Logger.LEVEL_INFO, "base" );
+        
+        if ( getLog().isDebugEnabled() )
+        {
+            logger.setThreshold( Logger.LEVEL_DEBUG );
+        }
 
         mailer.enableLogging( logger );
 
