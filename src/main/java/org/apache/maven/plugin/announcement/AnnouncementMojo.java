@@ -137,7 +137,7 @@ public class AnnouncementMojo
     /**
      * Short description or introduction of the released artifact.
      *
-     * @parameter expression="${project.description}"
+     * @parameter default-value="${project.description}"
      */
     private String introduction;
 
