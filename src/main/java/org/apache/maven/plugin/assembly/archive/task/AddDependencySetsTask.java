@@ -127,7 +127,7 @@ public class AddDependencySetsTask
                                      AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
     {
-        logger.info( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
+        logger.debug( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
 
         if ( !dependencySet.isUseTransitiveDependencies() && dependencySet.isUseTransitiveFiltering() )
         {
