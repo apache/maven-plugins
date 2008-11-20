@@ -460,7 +460,7 @@ public abstract class AbstractWarMojo
             task.performPostPackaging( context );
 
         }
-        getLog().info( "Webapp assembled in[" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
+        getLog().info( "Webapp assembled in [" + ( System.currentTimeMillis() - startTime ) + " msecs]" );
 
     }
 
