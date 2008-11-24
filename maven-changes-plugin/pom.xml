@@ -278,10 +278,9 @@ under the License.
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
-              <goal>xsd</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+              <outputDirectory>src/site/xdoc/</outputDirectory>
             </configuration>            
           </execution>
           <execution>
@@ -302,6 +301,16 @@ under the License.
               <outputDirectory>${project.build.outputDirectory}/META-INF/changes/xsd</outputDirectory>
             </configuration>
           </execution>
+          <execution>
+            <id>generate-xsd-site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
+            </configuration>
+          </execution>          
         </executions>
         <configuration>
           <version>1.0.0</version>
