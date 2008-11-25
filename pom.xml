@@ -83,7 +83,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.7-SNAPSHOT</version>
+      <version>1.7</version>
     </dependency>    
 
     <dependency>
@@ -135,19 +135,5 @@ under the License.
       </build>
     </profile>
   </profiles>
-  
-  <!-- TODO remove when plexus-interpolation is released -->
-  <repositories>
-    <repository>
-      <id>codehaus.snapshot</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
   
 </project>
