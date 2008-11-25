@@ -34,6 +34,7 @@ import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
@@ -153,6 +154,20 @@ public class EclipseWtpComponentWriter
                                  IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
                                                                      warSourceDirectory, false ) );
             writer.endElement();
+            
+            // add web resources over the top of the war source directory
+            Xpp3Dom[] webResources = IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                    new String[] { "webResources", "resource" } );
+            for ( int index = 0; index < webResources.length; index++ )
+            {
+                File webResourceDirectory = new File( webResources[index].getChild( "directory" ).getValue() );
+            	writer.startElement( ELT_WB_RESOURCE );
+                writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_SOURCE_PATH,
+                                     IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                    		 webResourceDirectory, false ) );
+                writer.endElement();
+            }
 
             // @todo is this really needed?
             writer.startElement( ELT_PROPERTY );
