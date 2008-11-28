@@ -245,9 +245,18 @@ public class EclipseClasspathWriter
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
 
-            if ( StringUtils.isNotEmpty( dir.getInclude() ) )
+            String includes = dir.getInclude();
+
+            if ( !dir.isResource() )
             {
-                writer.addAttribute( ATTR_INCLUDING, dir.getInclude() );
+                // automatically include java files only: eclipse doesn't have the concept of a source only directory so it 
+                // will try to include non-java files found in maven source dirs
+                includes = StringUtils.isEmpty( includes ) ? "**/*.java" : includes + "|**/*.java";
+            }
+            
+            if ( StringUtils.isNotEmpty( includes ) )
+            {
+                writer.addAttribute( ATTR_INCLUDING, includes );
             }
 
             String excludes = dir.getExclude();
