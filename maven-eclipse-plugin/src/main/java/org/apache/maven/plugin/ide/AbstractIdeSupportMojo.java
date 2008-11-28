@@ -190,8 +190,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives, a
-     * status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the file
-     * <code>mvn-eclipse-cache.properties</code> in order to reset this cache.
+     * status cache is mantained in the ~/.m2 directory. To reset this cache delete the 
+     * <code>maven-eclipse-plugin-cache.properties</code>.
      * 
      * @parameter expression="${downloadSources}"
      */
@@ -200,8 +200,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of javadoc attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for javadocs: in order to avoid repeated check for unavailable javadoc archives,
-     * a status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the
-     * file <code>mvn-eclipse-cache.properties</code> in order to reset this cache.
+     * a status cache is mantained in the ~/.m2 directory. To reset this cache delete the 
+     * <code>maven-eclipse-plugin-cache.properties</code>.
      * 
      * @parameter expression="${downloadJavadocs}"
      */
@@ -869,25 +869,6 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
-     * Find the reactor target dir. executedProject doesn't have the multiproject root dir set, and the only way to
-     * extract it is iterating on parent projects.
-     * 
-     * @param prj current project
-     * @return the parent target dir.
-     */
-    private File getReactorTargetDir( MavenProject prj )
-    {
-        if ( prj.getParent() != null )
-        {
-            if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
-            {
-                return getReactorTargetDir( prj.getParent() );
-            }
-        }
-        return new File( prj.getBuild().getDirectory() );
-    }
-
-    /**
      * Resolve source artifacts and download them if <code>downloadSources</code> is <code>true</code>. Source and
      * javadocs artifacts will be attached to the <code>IdeDependency</code> Resolve source and javadoc artifacts. The
      * resolved artifacts will be downloaded based on the <code>downloadSources</code> and <code>downloadJavadocs</code>
@@ -898,24 +879,24 @@ public abstract class AbstractIdeSupportMojo
     private void resolveSourceAndJavadocArtifacts( IdeDependency[] deps )
     {
 
-        File reactorTargetDir = getReactorTargetDir( project );
-        File unavailableArtifactsTmpFile = new File( reactorTargetDir, "mvn-eclipse-cache.properties" );
-
-        getLog().info( "Using source status cache: " + unavailableArtifactsTmpFile.getAbsolutePath() );
+        File cacheDir = new File( System.getProperty( "user.home" ), ".m2" );
+        File unavailableArtifactsCacheFile = new File( cacheDir, "maven-eclipse-plugin-cache.properties" );
+        
+        getLog().info( "Using source status cache: " + unavailableArtifactsCacheFile.getAbsolutePath() );
 
         // create target dir if missing
-        if ( !unavailableArtifactsTmpFile.getParentFile().exists() )
+        if ( !unavailableArtifactsCacheFile.getParentFile().exists() )
         {
-            unavailableArtifactsTmpFile.getParentFile().mkdirs();
+            unavailableArtifactsCacheFile.getParentFile().mkdirs();
         }
 
-        Properties unavailableArtifactsCache = new Properties();
-        if ( unavailableArtifactsTmpFile.exists() )
+            Properties unavailableArtifactsCache = new Properties();
+        if ( unavailableArtifactsCacheFile.exists() )
         {
             InputStream is = null;
             try
             {
-                is = new FileInputStream( unavailableArtifactsTmpFile );
+                is = new FileInputStream( unavailableArtifactsCacheFile );
                 unavailableArtifactsCache.load( is );
             }
             catch ( IOException e )
@@ -940,8 +921,8 @@ public abstract class AbstractIdeSupportMojo
         FileOutputStream fos = null;
         try
         {
-            fos = new FileOutputStream( unavailableArtifactsTmpFile );
-            unavailableArtifactsCache.store( fos, "Temporary index for unavailable sources and javadocs" );
+            fos = new FileOutputStream( unavailableArtifactsCacheFile );
+            unavailableArtifactsCache.store( fos, "Cache of unavailable sources and javadocs" );
         }
         catch ( IOException e )
         {
@@ -950,8 +931,7 @@ public abstract class AbstractIdeSupportMojo
         finally
         {
             IOUtil.close( fos );
-        }
-
+        }        
     }
 
     /**
