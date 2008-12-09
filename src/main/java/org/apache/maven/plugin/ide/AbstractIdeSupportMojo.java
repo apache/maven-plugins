@@ -878,61 +878,14 @@ public abstract class AbstractIdeSupportMojo
      */
     private void resolveSourceAndJavadocArtifacts( IdeDependency[] deps )
     {
-
-        File cacheDir = new File( System.getProperty( "user.home" ), ".m2" );
-        File unavailableArtifactsCacheFile = new File( cacheDir, "maven-eclipse-plugin-cache.properties" );
-        
-        getLog().info( "Using source status cache: " + unavailableArtifactsCacheFile.getAbsolutePath() );
-
-        // create target dir if missing
-        if ( !unavailableArtifactsCacheFile.getParentFile().exists() )
-        {
-            unavailableArtifactsCacheFile.getParentFile().mkdirs();
-        }
-
-            Properties unavailableArtifactsCache = new Properties();
-        if ( unavailableArtifactsCacheFile.exists() )
-        {
-            InputStream is = null;
-            try
-            {
-                is = new FileInputStream( unavailableArtifactsCacheFile );
-                unavailableArtifactsCache.load( is );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Unable to read source status for reactor projects" );
-            }
-            finally
-            {
-                IOUtil.close( is );
-            }
-
-        }
-
         final List missingSources =
-            resolveDependenciesWithClassifier( deps, "sources", getDownloadSources(), unavailableArtifactsCache );
+            resolveDependenciesWithClassifier( deps, "sources", getDownloadSources() );
         missingSourceDependencies.addAll( missingSources );
 
         final List missingJavadocs =
-            resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs(), unavailableArtifactsCache );
-        missingJavadocDependencies.addAll( missingJavadocs );
-
-        FileOutputStream fos = null;
-        try
-        {
-            fos = new FileOutputStream( unavailableArtifactsCacheFile );
-            unavailableArtifactsCache.store( fos, "Cache of unavailable sources and javadocs" );
-        }
-        catch ( IOException e )
-        {
-            getLog().warn( "Unable to cache source status for reactor projects" );
-        }
-        finally
-        {
-            IOUtil.close( fos );
-        }        
-    }
+            resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs() );
+        missingJavadocDependencies.addAll( missingJavadocs ); 
+    }   
 
     /**
      * Resolve the required artifacts for each of the dependency. <code>sources</code> or <code>javadoc</code> artifacts
@@ -941,12 +894,10 @@ public abstract class AbstractIdeSupportMojo
      * @param deps resolved dependencies
      * @param inClassifier the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
      * @param includeRemoteRepositories flag whether we should search remote repositories for the artifacts or not
-     * @param unavailableArtifactsCache cache of unavailable artifacts
      * @return the list of dependencies for which the required artifact was not found
      */
     private List resolveDependenciesWithClassifier( IdeDependency[] deps, String inClassifier,
-                                                    boolean includeRemoteRepositories,
-                                                    Properties unavailableArtifactsCache )
+                                                    boolean includeRemoteRepositories )
     {
         List missingClassifierDependencies = new ArrayList();
 
@@ -971,17 +922,27 @@ public abstract class AbstractIdeSupportMojo
                                     + " at " + dependency.getId() + ":" + inClassifier );
             }
 
-            String key =
-                dependency.getClassifier() == null ? dependency.getId() + ":" + inClassifier : dependency.getId() + ":"
-                    + inClassifier + ":" + dependency.getClassifier();
+            Artifact baseArtifact =
+                artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+                                                              dependency.getVersion(), dependency.getType(),
+                                                              dependency.getClassifier() );      
+            baseArtifact =
+                IdeUtils.resolveArtifact( artifactResolver, baseArtifact, remoteRepos, localRepository, getLog() );
+            if (!baseArtifact.isResolved()) {
+                // base artifact does not exist - no point checking for javadoc/sources
+                continue;
+            }
+            
+            Artifact artifact =
+                IdeUtils.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+                                                       dependency.getVersion(), dependency.getClassifier(),
+                                                       inClassifier, artifactFactory );
+            File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
 
-            if ( !unavailableArtifactsCache.containsKey( key ) )
-            {
-                Artifact artifact =
-                    IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                            dependency.getVersion(), dependency.getClassifier(),
-                                                            inClassifier, localRepository, artifactResolver,
-                                                            artifactFactory, remoteRepos, getLog() );
+            if ( !notAvailableMarkerFile.exists() )
+            {                
+                artifact =
+                    IdeUtils.resolveArtifact( artifactResolver, artifact, remoteRepos, localRepository, getLog() );
                 if ( artifact.isResolved() )
                 {
                     if ( "sources".equals( inClassifier ) )
@@ -995,7 +956,19 @@ public abstract class AbstractIdeSupportMojo
                 }
                 else
                 {
-                    unavailableArtifactsCache.put( key, Boolean.TRUE.toString() );
+                    if ( includeRemoteRepositories )
+                    {
+                        try
+                        {
+                            notAvailableMarkerFile.createNewFile();
+                            getLog().debug( Messages.getString( "creatednotavailablemarkerfile", notAvailableMarkerFile ) );
+                        }
+                        catch ( IOException e )
+                        {
+                            getLog().warn( Messages.getString( "failedtocreatenotavailablemarkerfile",
+                                                               notAvailableMarkerFile ) );
+                        }
+                    }
                     // add the dependencies to the list
                     // of those lacking the required
                     // artifact

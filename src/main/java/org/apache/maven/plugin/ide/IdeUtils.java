@@ -304,12 +304,64 @@ public class IdeUtils
                         : PROJECT_NAME_DEFAULT_TEMPLATE, project );
     }
 
-    public static Artifact resolveArtifactWithClassifier( String groupId, String artifactId, String version,
-                                                          String depClassifier, String inClassifier,
-                                                          ArtifactRepository localRepository,
-                                                          ArtifactResolver artifactResolver,
-                                                          ArtifactFactory artifactFactory, List remoteRepos, Log log )
+    /**
+     * @param artifact the artifact 
+     * @return the not-available marker file for the specified artifact
+     */
+    public static File getNotAvailableMarkerFile(ArtifactRepository localRepository, Artifact artifact) {
+        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) + "-not-available");        
+    }
+    
+    /**
+     * Wrapper around {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * 
+     * @param artifactResolver see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param artifact see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param remoteRepos see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param localRepository see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param log Logger
+     * @return the artifact, resolved if possible.
+     */
+    public static Artifact resolveArtifact( ArtifactResolver artifactResolver, Artifact artifact, List remoteRepos,
+                                            ArtifactRepository localRepository, Log log )
 
+    {
+        try
+        {
+            artifactResolver.resolve( artifact, remoteRepos, localRepository );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            // ignore, the jar has not been found
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            String message =
+                Messages.getString( "errorresolving", new Object[] { artifact.getClassifier(),
+                    artifact.getId(), e.getMessage() } );
+
+            log.warn( message );
+        }
+
+        return artifact;
+    }
+
+    /**
+     * Wrap {@link ArtifactFactory#createArtifactWithClassifier} so that the type and classifier 
+     * are set correctly for "sources" and "javadoc".
+     * 
+     * @param groupId see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param artifactId see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param version see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param depClassifier see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param inClassifier either "sources" of "javadoc" 
+     * @param artifactFactory see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @return see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @see ArtifactFactory#createArtifactWithClassifier
+     */
+    public static Artifact createArtifactWithClassifier( String groupId, String artifactId, String version,
+                                                          String depClassifier, String inClassifier,
+                                                          ArtifactFactory artifactFactory )
     {
         String type = null;
 
@@ -338,27 +390,7 @@ public class IdeUtils
             finalClassifier = depClassifier + "-" + inClassifier;
         }
 
-        Artifact resolvedArtifact =
-            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, finalClassifier );
-
-        try
-        {
-            artifactResolver.resolve( resolvedArtifact, remoteRepos, localRepository );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            // ignore, the jar has not been found
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            String message =
-                Messages.getString( "errorresolving", new Object[] { finalClassifier, resolvedArtifact.getId(),
-                    e.getMessage() } );
-
-            log.warn( message );
-        }
-
-        return resolvedArtifact;
+        return artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, finalClassifier );
     }
 
     public static String resolveJavaVersion( MavenProject project )

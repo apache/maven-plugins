@@ -545,7 +545,50 @@ public class EclipsePluginIT
     {
         testProject( "project-45" );
     }
-
+    
+    /**
+     * Test not available marker file is created for sources/javadocs.
+     * biz.aQute:bndlib:0.0.145 does not have sources or javadocs.
+     * 
+     * @throws Exception
+     */
+    public void testProject46()
+        throws Exception
+    {
+        testProject( "project-46" );
+        assertNotAvailableMarkerFileExists( "biz.aQute", "bndlib", "0.0.145", null, "sources" );
+        assertNotAvailableMarkerFileExists( "biz.aQute", "bndlib", "0.0.145", null, "javadoc" );
+    }
+    
+    /**
+     * Test not available marker file is created for sources/javadocs.
+     * commons-lang:commons-lang:1.0 does not have sources but does have javadocs.
+     * 
+     * @throws Exception
+     */
+    public void testProject47()
+        throws Exception
+    {
+        testProject( "project-47" );
+        assertNotAvailableMarkerFileExists( "commons-lang", "commons-lang", "1.0", null, "sources" );
+        assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "1.0", null, "javadoc" );
+    }
+    
+    /**
+     * Test not available marker file is created for sources/javadocs.
+     * does-not-exist:does-not-exist:666 doesn't exist so no markers should be created.
+     * 
+     * @throws Exception
+     */
+    public void testProject48()
+        throws Exception
+    {
+        testProject( "project-48" );
+        assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "sources" );
+        assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "javadoc" );
+    }    
+    
+    
     public void testJeeSimple()
         throws Exception
     {
@@ -631,9 +674,4 @@ public class EclipsePluginIT
         assertEquals( expectedJRE, foundJRE );
     }
 
-    /*
-     * TODO: Add a test for downloadJavadocs. Currently, eclipse doesn't support having variables in the javadoc path.
-     * This means that the expected .classpath can't match the final result as the result will have the absolute path to
-     * the user's local repo.
-     */
 }
