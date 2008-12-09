@@ -35,16 +35,27 @@ import java.util.Map.Entry;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.factory.DefaultArtifactFactory;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
+import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.ExecutionFailedException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.test.plugin.BuildTool;
 import org.apache.maven.shared.test.plugin.PluginTestTool;
 import org.apache.maven.shared.test.plugin.ProjectTool;
+import org.apache.maven.shared.test.plugin.RepositoryTool;
 import org.apache.maven.shared.test.plugin.TestToolsException;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
@@ -64,12 +75,14 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 public abstract class AbstractEclipsePluginIT
-    extends PlexusTestCase
+    extends AbstractMojoTestCase
 {
 
     private BuildTool buildTool;
 
     private ProjectTool projectTool;
+    
+    private RepositoryTool repositoryTool;
 
     /**
      * Test repository directory.
@@ -127,6 +140,8 @@ public abstract class AbstractEclipsePluginIT
 
         projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
 
+        repositoryTool = (RepositoryTool) lookup( RepositoryTool.ROLE, "default" );
+        
         String mavenHome = System.getProperty( "maven.home" );
 
         // maven.home is set by surefire when the test is run with maven, but better make the test
@@ -873,4 +888,52 @@ public abstract class AbstractEclipsePluginIT
             IOUtil.close( reader );
         }
     }
+    
+    protected File getNotAvailableMarkerFile( String groupId, String artifactId, String version,
+                                                     String classifier, String inClassifier )
+        throws Exception
+    {
+        // HACK: START
+        // TODO: Work out how to use Plexus to obtain these values
+        String url = "file://" + localRepositoryDirectory;
+        ArtifactRepository localRepository =
+            new DefaultArtifactRepository( "local", url, new DefaultRepositoryLayout() );
+
+        ArtifactFactory artifactFactory = new DefaultArtifactFactory();
+        
+        DefaultArtifactHandler javaSourceArtifactHandler = new DefaultArtifactHandler( "java-source" );
+        setVariableValueToObject( javaSourceArtifactHandler, "extension", "jar");
+        
+        DefaultArtifactHandler javadocArtifactHandler = new DefaultArtifactHandler( "javadoc" );
+        setVariableValueToObject( javadocArtifactHandler, "extension", "jar");
+
+        Map artifactHandlers = new HashMap();
+        artifactHandlers.put( "java-source", javaSourceArtifactHandler );
+        artifactHandlers.put( "javadoc", javadocArtifactHandler );
+        
+        ArtifactHandlerManager artifactHandlerManager = new DefaultArtifactHandlerManager();
+        setVariableValueToObject( artifactHandlerManager, "artifactHandlers", artifactHandlers);
+        setVariableValueToObject( artifactFactory, "artifactHandlerManager", artifactHandlerManager);
+        // HACK: END
+        
+        Artifact artifact =
+            IdeUtils.createArtifactWithClassifier( groupId, artifactId, version, classifier, inClassifier,
+                                                   artifactFactory);
+        return IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
+    }
+    
+    protected void assertNotAvailableMarkerFileExists( String groupId, String artifactId, String version,
+                                                       String classifier, String inClassifier ) throws Exception
+    {
+        File markerFile = getNotAvailableMarkerFile( groupId, artifactId, version, classifier, inClassifier );
+        assertTrue( "The \"Not Available\" marker file does not exist: " + markerFile, markerFile.exists() );
+    }
+    
+    protected void assertNotAvailableMarkerFileDoesNotExist( String groupId, String artifactId, String version,
+                                                       String classifier, String inClassifier ) throws Exception
+    {
+        File markerFile = getNotAvailableMarkerFile( groupId, artifactId, version, classifier, inClassifier );
+        assertTrue( "The \"Not Available\" marker file incorrectly exists: " + markerFile, !markerFile.exists() );
+    }
+    
 }
