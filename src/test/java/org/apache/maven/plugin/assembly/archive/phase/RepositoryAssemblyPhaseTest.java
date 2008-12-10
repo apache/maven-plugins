@@ -19,6 +19,16 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -42,19 +52,13 @@ import org.apache.maven.shared.repository.RepositoryAssembler;
 import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class RepositoryAssemblyPhaseTest
     extends TestCase
@@ -131,7 +135,7 @@ public class RepositoryAssemblyPhaseTest
         File outDir = new File( tempRoot, "out" );
 
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
-        macArchiver.expectAddDirectory( outDir, "out/", null, FileUtils.getDefaultExcludes() );
+        macArchiver.expectAddDirectory( outDir, "out/", null, null );
 
         macRepo.expectAssemble( outDir, repo, macCS.configSource );
 
@@ -174,14 +178,117 @@ public class RepositoryAssemblyPhaseTest
         {
             try
             {
-                archiver.addDirectory( outDir, location, includes, excludes );
+                DefaultFileSet fs = new DefaultFileSet();
+                fs.setDirectory( outDir );
+                fs.setPrefix( location );
+                fs.setIncludes( includes );
+                fs.setExcludes( excludes );
+                
+                archiver.addFileSet( fs );
             }
             catch ( ArchiverException e )
             {
                 Assert.fail( "Should never happen." );
             }
 
-            control.setMatcher( MockControl.ARRAY_MATCHER );
+            control.setMatcher( new AbstractMatcher()
+            {
+
+                protected boolean argumentMatches( Object expected, Object actual )
+                {
+                    FileSet e = (FileSet) expected;
+                    FileSet a = (FileSet) actual;
+                    
+                    if ( !eq( e.getDirectory(), a.getDirectory() ) )
+                    {
+                        System.out.println( "FileSet directory expected: " + e.getDirectory() + "\nActual: "
+                            + a.getDirectory() );
+                        
+                        return false;
+                    }
+                    
+                    if ( !eq( e.getPrefix(), a.getPrefix() ) )
+                    {
+                        System.out.println( "FileSet prefix expected: " + e.getPrefix() + "\nActual: " + a.getPrefix() );
+                        
+                        return false;
+                    }
+                    
+                    if ( !areq( e.getIncludes(), a.getIncludes() ) )
+                    {
+                        System.out.println( "FileSet includes expected: " + arToStr( e.getIncludes() ) + "\nActual: "
+                            + arToStr( a.getIncludes() ) );
+                        
+                        return false;
+                    }
+                    
+                    if ( !areq( e.getExcludes(), a.getExcludes() ) )
+                    {
+                        System.out.println( "FileSet excludes expected: " + arToStr( e.getExcludes() ) + "\nActual: "
+                                            + arToStr( a.getExcludes() ) );
+                                        
+                                        return false;
+                    }
+                    
+                    return true;
+                }
+
+                protected String argumentToString( Object argument )
+                {
+                    FileSet a = (FileSet) argument;
+                    
+                    return argument == null ? "Null FileSet" : "FileSet:[dir=" + a.getDirectory() + ", prefix: "
+                        + a.getPrefix() + "\nincludes:\n" + arToStr( a.getIncludes() ) + "\nexcludes:\n"
+                        + arToStr( a.getExcludes() ) + "]";
+                }
+                
+                private String arToStr( String[] array )
+                {
+                    return array == null ? "-EMPTY-" : StringUtils.join( array, "\n\t" );
+                }
+
+                private boolean areq( String[] first, String[] second )
+                {
+                    if ( ( first == null || first.length == 0 ) && ( second == null || second.length == 0 ) )
+                    {
+                        return true;
+                    }
+                    else if ( first == null && second != null )
+                    {
+                        return false;
+                    }
+                    else if ( first != null && second == null )
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return Arrays.equals( first, second );
+                    }
+                }
+
+                private boolean eq( Object first, Object second )
+                {
+                    if ( first == null && second == null )
+                    {
+                        return true;
+                    }
+                    else if ( first == null && second != null )
+                    {
+                        return false;
+                    }
+                    else if ( first != null && second == null )
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return first.equals( second );
+                    }
+                }
+                
+            });
+            
             control.setVoidCallable( MockControl.ONE_OR_MORE );
         }
 

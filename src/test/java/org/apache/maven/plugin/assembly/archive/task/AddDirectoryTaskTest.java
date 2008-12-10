@@ -85,7 +85,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addDirectory( null, null, null, null );
+            archiver.addFileSet( null );
             archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
         }
         catch ( ArchiverException e )
@@ -113,7 +113,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addDirectory( null, null, null, null );
+            archiver.addFileSet( null );
             archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
         }
         catch ( ArchiverException e )
@@ -146,7 +146,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addDirectory( null, null, null, null );
+            archiver.addFileSet( null );
             archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
         }
         catch ( ArchiverException e )

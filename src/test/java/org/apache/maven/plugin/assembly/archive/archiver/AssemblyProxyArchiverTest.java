@@ -83,7 +83,7 @@ public class AssemblyProxyArchiverTest
         File output = fileManager.createTempFile();
         delegate.setDestFile( output );
 
-        CounterSelector counter = new CounterSelector( false );
+        CounterSelector counter = new CounterSelector( true );
         List selectors = Collections.singletonList( counter );
 
         AssemblyProxyArchiver archiver = new AssemblyProxyArchiver( "", delegate, Collections.EMPTY_LIST, selectors,
@@ -93,6 +93,8 @@ public class AssemblyProxyArchiverTest
         fileManager.createFile( dir, "file.txt", "This is a test." );
 
         archiver.addDirectory( dir );
+        
+        archiver.createArchive();
 
         assertEquals( 1, counter.getCount() );
     }
