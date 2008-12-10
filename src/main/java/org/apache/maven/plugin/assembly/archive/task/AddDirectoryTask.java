@@ -27,7 +27,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 /**
  * @version $Id$
@@ -67,7 +67,7 @@ public class AddDirectoryTask
             throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
                 + outputDirectory + ". All paths must be within the archive root directory." );
         }
-
+        
         int oldDirMode = archiver.getDefaultDirectoryMode();
         int oldFileMode = archiver.getDefaultFileMode();
 
@@ -95,11 +95,6 @@ public class AddDirectoryTask
                     directoryExcludes = new ArrayList();
                 }
 
-                if ( useDefaultExcludes )
-                {
-                    directoryExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
-                }
-
                 try
                 {
                     String[] includesArray = null;
@@ -111,7 +106,14 @@ public class AddDirectoryTask
                     // this one is guaranteed to be non-null by code above.
                     String[] excludesArray = (String[]) directoryExcludes.toArray( new String[0] );
 
-                    archiver.addDirectory( directory, outputDirectory, includesArray, excludesArray );
+                    DefaultFileSet fs = new DefaultFileSet();
+                    fs.setUsingDefaultExcludes( useDefaultExcludes );
+                    fs.setPrefix( outputDirectory );
+                    fs.setDirectory( directory );
+                    fs.setIncludes( includesArray );
+                    fs.setExcludes( excludesArray );
+
+                    archiver.addFileSet( fs );
                 }
                 catch ( ArchiverException e )
                 {
