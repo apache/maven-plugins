@@ -190,8 +190,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives, a
-     * status cache is mantained in the ~/.m2 directory. To reset this cache delete the 
-     * <code>maven-eclipse-plugin-cache.properties</code>.
+     * status cache is mantained. To reset this cache run <code>mvn eclipse:remove-cache</code>, or use the
+     * <code>forceRecheck</code> option.
      * 
      * @parameter expression="${downloadSources}"
      */
@@ -200,12 +200,22 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of javadoc attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for javadocs: in order to avoid repeated check for unavailable javadoc archives,
-     * a status cache is mantained in the ~/.m2 directory. To reset this cache delete the 
-     * <code>maven-eclipse-plugin-cache.properties</code>.
+     * a status cache is mantained. To reset this cache run <code>mvn eclipse:remove-cache</code>, or use the
+     * <code>forceRecheck</code> option.
      * 
      * @parameter expression="${downloadJavadocs}"
      */
     protected boolean downloadJavadocs;
+    
+    /**
+     * Enables/disables the rechecking of the remote repository for downloading source/javadoc attachments. Defaults to
+     * false. When this flag is <code>true</code> and the source or javadoc attachment has a status cache to indicate
+     * that it is not available, then the remote repository will be rechecked for a source or javadoc attachment and the
+     * status cache updated to reflect the new state.
+     * 
+     * @parameter expression="${forceRecheck}"
+     */
+    protected boolean forceRecheck;
 
     /**
      * Plexus logger needed for debugging manual artifact resolution.
@@ -939,6 +949,12 @@ public abstract class AbstractIdeSupportMojo
                                                        inClassifier, artifactFactory );
             File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
 
+            if (forceRecheck && notAvailableMarkerFile.exists()) {
+                if (!notAvailableMarkerFile.delete()) {
+                    getLog().warn( Messages.getString( "unabletodeletenotavailablemarkerfile", notAvailableMarkerFile ) );
+                }
+            }
+            
             if ( !notAvailableMarkerFile.exists() )
             {                
                 artifact =
