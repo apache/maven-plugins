@@ -15,4 +15,19 @@
     <module>massembly-285-mod2</module>
     <module>massembly-285-assembly</module>
   </modules>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <configuration>
+            <archiverConfig>
+              <duplicateBehavior>skip</duplicateBehavior>
+            </archiverConfig>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
