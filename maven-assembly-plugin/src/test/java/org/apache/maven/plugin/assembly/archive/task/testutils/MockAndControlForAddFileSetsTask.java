@@ -138,7 +138,7 @@ public class MockAndControlForAddFileSetsTask
 
             try
             {
-                archiver.addDirectory( null, null, null, null );
+                archiver.addFileSet( null );
                 archiverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
                 archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
             }
