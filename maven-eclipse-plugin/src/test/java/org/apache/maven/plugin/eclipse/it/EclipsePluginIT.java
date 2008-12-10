@@ -587,7 +587,25 @@ public class EclipsePluginIT
         assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "sources" );
         assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "javadoc" );
     }    
-    
+
+    /**
+     * Test forceRecheck
+     * 
+     * @throws Exception
+     */
+    public void testProject49()
+        throws Exception
+    {
+        File notAvailableMarkerFile =
+            getNotAvailableMarkerFile( "commons-lang", "commons-lang", "2.4", null, "sources" );
+        notAvailableMarkerFile.getParentFile().mkdirs();
+        notAvailableMarkerFile.createNewFile();
+        getNotAvailableMarkerFile( "commons-lang", "commons-lang", "2.4", null, "javadoc" ).createNewFile();
+
+        testProject( "project-49" );
+        assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "sources" );
+        assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "javadoc" );
+    }   
     
     public void testJeeSimple()
         throws Exception
