@@ -1704,6 +1704,7 @@ public class EclipsePlugin
         {
             workspaceConfiguration = new WorkspaceConfiguration();
             locateWorkspace();
+            getLog().info( Messages.getString( "EclipsePlugin.workspace", workspace ) );
             workspaceConfiguration.setWorkspaceDirectory( workspace );
 
             new ReadWorkspaceLocations().init( getLog(), workspaceConfiguration, project, wtpdefaultserver );
@@ -1722,10 +1723,10 @@ public class EclipsePlugin
             while ( currentWorkingDirectory != null )
             {
                 File metadataDirectory = new File( currentWorkingDirectory, ".metadata" );
-                logger.debug( "Checking metadataDirectory = " + currentWorkingDirectory );
+                logger.debug( "Checking for eclipse workspace at " + currentWorkingDirectory );
                 if ( metadataDirectory.exists() && metadataDirectory.isDirectory() )
                 {
-                    logger.debug( "  Found" );
+                    logger.debug( "  Found workspace at " + currentWorkingDirectory );
                     workspace = currentWorkingDirectory;
                     return;
                 }
