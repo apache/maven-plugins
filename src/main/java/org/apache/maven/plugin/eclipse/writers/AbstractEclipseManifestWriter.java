@@ -235,7 +235,7 @@ public abstract class AbstractEclipseManifestWriter
             Manifest existingManifest = readExistingManifest( manifestFile );
             if ( areManifestsEqual( manifest, existingManifest ) )
             {
-                this.log.info( Messages.getString( "EclipseCleanMojo.unchanged", manifestFile.getAbsolutePath() ) );
+                this.log.info( Messages.getString( "EclipsePlugin.unchangedmanifest", manifestFile.getAbsolutePath() ) );
                 return false;
             }
         }

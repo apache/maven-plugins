@@ -516,7 +516,7 @@ public class RadApplicationXMLWriter
         Xpp3Dom original = readXMLFile( xmlFile );
         if ( original != null && original.equals( xmlDomTree ) )
         {
-            log.info( Messages.getString( "EclipseCleanMojo.unchanged", xmlFile.getAbsolutePath() ) );
+            log.info( Messages.getString( "EclipsePlugin.unchangedmanifest", xmlFile.getAbsolutePath() ) );
             return;
         }
         Writer w = null;
@@ -527,7 +527,7 @@ public class RadApplicationXMLWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "Rad6Plugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
         Xpp3DomWriter.write( writer, xmlDomTree );
