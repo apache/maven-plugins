@@ -101,12 +101,12 @@ public class EclipseOSGiManifestWriter
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile",
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
                                                                   config.getOSGIManifestFile().getAbsolutePath() ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile",
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
                                                                   config.getOSGIManifestFile().getAbsolutePath() ), e );
         }
         finally
@@ -186,7 +186,7 @@ public class EclipseOSGiManifestWriter
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantreadfile", manifestFile.getAbsolutePath() ) );
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile", manifestFile.getAbsolutePath() ) );
         }
         manifestSb.append( addBundleClasspathEntries() );
 

@@ -85,12 +85,12 @@ public class EclipseToMavenMojo
     /**
      * A pattern the <code>deployTo</code> param should match.
      */
-    private static final Pattern DEPLOYTO_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
+    private static final Pattern DEPLOYTO_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" ); //$NON-NLS-1$
 
     /**
      * A pattern for a 4 digit osgi version number.
      */
-    private static final Pattern VERSION_PATTERN = Pattern.compile( "(([0-9]+\\.)+[0-9]+)" );
+    private static final Pattern VERSION_PATTERN = Pattern.compile( "(([0-9]+\\.)+[0-9]+)" ); //$NON-NLS-1$
 
     /**
      * Plexus container, needed to manually lookup components for deploy of artifacts.
@@ -168,7 +168,7 @@ public class EclipseToMavenMojo
     {
         if ( eclipseDir == null )
         {
-            getLog().info( "Eclipse directory? " );
+            getLog().info( Messages.getString( "EclipseToMavenMojo.eclipseDirectoryPrompt" ) ); //$NON-NLS-1$
 
             String eclipseDirString;
             try
@@ -177,21 +177,21 @@ public class EclipseToMavenMojo
             }
             catch ( IOException e )
             {
-                throw new MojoFailureException( "Unable to read from standard input" );
+                throw new MojoFailureException( Messages.getString( "EclipseToMavenMojo.errorreadingfromstandardinput" ) ); //$NON-NLS-1$
             }
             eclipseDir = new File( eclipseDirString );
         }
 
         if ( !eclipseDir.isDirectory() )
         {
-            throw new MojoFailureException( "Directory " + eclipseDir.getAbsolutePath() + " doesn't exists" );
+            throw new MojoFailureException( Messages.getString( "EclipseToMavenMojo.directoydoesnotexist", eclipseDir.getAbsolutePath() ) ); //$NON-NLS-1$
         }
 
-        File pluginDir = new File( eclipseDir, "plugins" );
+        File pluginDir = new File( eclipseDir, "plugins" ); //$NON-NLS-1$
 
         if ( !pluginDir.isDirectory() )
         {
-            throw new MojoFailureException( "Plugin directory " + pluginDir.getAbsolutePath() + " doesn't exists" );
+            throw new MojoFailureException( Messages.getString( "EclipseToMavenMojo.plugindirectorydoesnotexist", pluginDir.getAbsolutePath() ) ); //$NON-NLS-1$
         }
 
         File[] files = pluginDir.listFiles();
@@ -200,7 +200,7 @@ public class EclipseToMavenMojo
 
         if ( remoteRepo != null )
         {
-            getLog().info( "Will deploy artifacts to remote repository " + deployTo );
+            getLog().info( Messages.getString( "EclipseToMavenMojo.remoterepositorydeployto", deployTo ) ); //$NON-NLS-1$
         }
 
         Map plugins = new HashMap();
@@ -210,7 +210,7 @@ public class EclipseToMavenMojo
         {
             File file = files[j];
 
-            getLog().info( "Processing file " + file.getAbsolutePath() );
+            getLog().info( Messages.getString( "EclipseToMavenMojo.processingfile", file.getAbsolutePath() ) ); //$NON-NLS-1$
 
             processFile( file, plugins, models );
         }
@@ -218,7 +218,7 @@ public class EclipseToMavenMojo
         int i = 1;
         for ( Iterator it = plugins.keySet().iterator(); it.hasNext(); )
         {
-            getLog().info( "Processing " + ( i++ ) + " of " + plugins.keySet().size() );
+            getLog().info( Messages.getString("EclipseToMavenMojo.processingplugin", new Object[] { Integer.valueOf( i++ ), Integer.valueOf( plugins.keySet().size() ) } ) ); //$NON-NLS-1$
             String key = (String) it.next();
             EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
             Model model = (Model) models.get( key );
@@ -233,7 +233,7 @@ public class EclipseToMavenMojo
 
         if ( plugin == null )
         {
-            getLog().warn( "Skipping file " + file.getAbsolutePath() );
+            getLog().warn( Messages.getString("EclipseToMavenMojo.skippingfile", file.getAbsolutePath() ) ); //$NON-NLS-1$
             return;
         }
 
@@ -256,12 +256,12 @@ public class EclipseToMavenMojo
 
     protected String getKey( Model model )
     {
-        return model.getGroupId() + "." + model.getArtifactId();
+        return model.getGroupId() + "." + model.getArtifactId(); //$NON-NLS-1$
     }
 
     private String getKey( Dependency dependency )
     {
-        return dependency.getGroupId() + "." + dependency.getArtifactId();
+        return dependency.getGroupId() + "." + dependency.getArtifactId(); //$NON-NLS-1$
     }
 
     /**
@@ -278,7 +278,7 @@ public class EclipseToMavenMojo
         for ( Iterator it = model.getDependencies().iterator(); it.hasNext(); )
         {
             Dependency dep = (Dependency) it.next();
-            if ( dep.getVersion().indexOf( "[" ) > -1 || dep.getVersion().indexOf( "(" ) > -1 )
+            if ( dep.getVersion().indexOf( "[" ) > -1 || dep.getVersion().indexOf( "(" ) > -1 ) //$NON-NLS-1$ //$NON-NLS-2$
             {
                 String key = getKey( model );
                 Model dependencyModel = (Model) models.get( getKey( dep ) );
@@ -288,8 +288,8 @@ public class EclipseToMavenMojo
                 }
                 else
                 {
-                    throw new MojoFailureException( "Unable to resolve version range for dependency " + dep
-                        + " in project " + key );
+                    throw new MojoFailureException( Messages.getString( "EclipseToMavenMojo.unabletoresolveversionrange", new Object[] { dep //$NON-NLS-1$
+                        , key } ) ); //$NON-NLS-1$
                 }
             }
         }
@@ -308,7 +308,7 @@ public class EclipseToMavenMojo
         {
             return new ExplodedPlugin( file );
         }
-        else if ( file.getName().endsWith( ".jar" ) )
+        else if ( file.getName().endsWith( ".jar" ) ) //$NON-NLS-1$
         {
             try
             {
@@ -316,7 +316,7 @@ public class EclipseToMavenMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Unable to access jar " + file.getAbsolutePath(), e );
+                throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.unabletoaccessjar", file.getAbsolutePath() ), e ); //$NON-NLS-1$
             }
         }
 
@@ -339,7 +339,7 @@ public class EclipseToMavenMojo
         {
             if ( !plugin.hasManifest() )
             {
-                getLog().warn( "Plugin " + plugin + " does not have a manifest; skipping.." );
+                getLog().warn( Messages.getString( "EclipseToMavenMojo.plugindoesnothavemanifest", plugin ) ); //$NON-NLS-1$
                 return null;
             }
 
@@ -352,7 +352,7 @@ public class EclipseToMavenMojo
 
             if ( bundleName == null || version == null )
             {
-                getLog().error( "Unable to read bundle name/version from manifest, skipping..." );
+                getLog().error( Messages.getString( "EclipseToMavenMojo.unabletoreadbundlefrommanifest") ); //$NON-NLS-1$
                 return null;
             }
 
@@ -365,7 +365,7 @@ public class EclipseToMavenMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error processing plugin " + plugin, e );
+            throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.errorprocessingplugin", plugin ), e ); //$NON-NLS-1$
         }
 
         Dependency[] deps = parseDependencies( requireBundle );
@@ -374,7 +374,7 @@ public class EclipseToMavenMojo
         artifactId = createArtifactId( bundleName );
 
         Model model = new Model();
-        model.setModelVersion( "4.0.0" );
+        model.setModelVersion( "4.0.0" ); //$NON-NLS-1$
         model.setGroupId( groupId );
         model.setArtifactId( artifactId );
         model.setName( name );
@@ -382,7 +382,7 @@ public class EclipseToMavenMojo
 
         model.setProperties( plugin.getPomProperties() );
 
-        if ( groupId.startsWith( "org.eclipse" ) )
+        if ( groupId.startsWith( "org.eclipse" ) ) //$NON-NLS-1$
         {
             // why do we need a parent?
 
@@ -395,8 +395,8 @@ public class EclipseToMavenMojo
             // infer license for know projects, everything at eclipse is licensed under EPL
             // maybe too simplicistic, but better than nothing
             License license = new License();
-            license.setName( "Eclipse Public License - v 1.0" );
-            license.setUrl( "http://www.eclipse.org/org/documents/epl-v10.html" );
+            license.setName( "Eclipse Public License - v 1.0" ); //$NON-NLS-1$
+            license.setUrl( "http://www.eclipse.org/org/documents/epl-v10.html" ); //$NON-NLS-1$
             model.addLicense( license );
         }
 
@@ -426,17 +426,17 @@ public class EclipseToMavenMojo
         ArtifactMetadata metadata = null;
         File pomFile = null;
         Artifact pomArtifact =
-            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "pom" );
+            artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null, "pom" ); //$NON-NLS-1$
         Artifact artifact =
             artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null,
                                             Constants.PROJECT_PACKAGING_JAR );
         try
         {
-            pomFile = File.createTempFile( "pom-", ".xml" );
+            pomFile = File.createTempFile( "pom-", ".xml" ); //$NON-NLS-1$ //$NON-NLS-2$
 
             // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            fw = new OutputStreamWriter( new FileOutputStream( pomFile ), "UTF-8" );
-            model.setModelEncoding( "UTF-8" ); // to be removed when encoding is detected instead of forced to UTF-8
+            fw = new OutputStreamWriter( new FileOutputStream( pomFile ), "UTF-8" ); //$NON-NLS-1$
+            model.setModelEncoding( "UTF-8" ); // to be removed when encoding is detected instead of forced to UTF-8 //$NON-NLS-1$
             pomFile.deleteOnExit();
             new MavenXpp3Writer().write( fw, model );
             metadata = new ProjectArtifactMetadata( pomArtifact, pomFile );
@@ -444,7 +444,7 @@ public class EclipseToMavenMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error writing temporary pom file: " + e.getMessage(), e );
+            throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.errorwritingtemporarypom", e.getMessage() ), e ); //$NON-NLS-1$
         }
         finally
         {
@@ -468,15 +468,15 @@ public class EclipseToMavenMojo
         }
         catch ( ArtifactDeploymentException e )
         {
-            throw new MojoExecutionException( "Unable to deploy artifact to repository.", e );
+            throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.errordeployartifacttorepository" ), e ); //$NON-NLS-1$
         }
         catch ( ArtifactInstallationException e )
         {
-            throw new MojoExecutionException( "Unable to install artifact to repository.", e );
+            throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.errorinstallartifacttorepository" ), e ); //$NON-NLS-1$
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error getting the jar file for plugin " + plugin, e );
+            throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.errorgettingjarfileforplugin", plugin ), e ); //$NON-NLS-1$
         }
         finally
         {
@@ -501,21 +501,21 @@ public class EclipseToMavenMojo
      */
     protected String osgiVersionToMavenVersion( String version, String forcedQualifier, boolean stripQualifier )
     {
-        if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
+        if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 ) //$NON-NLS-1$
         {
-            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
+            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) ); //$NON-NLS-1$
         }
-        else if ( StringUtils.countMatches( version, "." ) > 2 )
+        else if ( StringUtils.countMatches( version, "." ) > 2 ) //$NON-NLS-1$
         {
-            int lastDot = version.lastIndexOf( "." );
+            int lastDot = version.lastIndexOf( "." ); //$NON-NLS-1$
             if ( StringUtils.isNotEmpty( forcedQualifier ) )
             {
-                version = StringUtils.substring( version, 0, lastDot ) + "-" + forcedQualifier;
+                version = StringUtils.substring( version, 0, lastDot ) + "-" + forcedQualifier; //$NON-NLS-1$
             }
             else
             {
                 version =
-                    StringUtils.substring( version, 0, lastDot ) + "-"
+                    StringUtils.substring( version, 0, lastDot ) + "-" //$NON-NLS-1$
                         + StringUtils.substring( version, lastDot + 1, version.length() );
             }
         }
@@ -538,8 +538,8 @@ public class EclipseToMavenMojo
 
             if ( !matcher.matches() )
             {
-                throw new MojoFailureException( deployTo, "Invalid syntax for repository.",
-                                                "Invalid syntax for remote repository. Use \"id::layout::url\"." );
+                throw new MojoFailureException( deployTo, Messages.getString( "EclipseToMavenMojo.invalidsyntaxforrepository" ), //$NON-NLS-1$
+                                                Messages.getString( "EclipseToMavenMojo.invalidremoterepositorysyntax" ) ); //$NON-NLS-1$
             }
             else
             {
@@ -554,7 +554,7 @@ public class EclipseToMavenMojo
                 }
                 catch ( ComponentLookupException e )
                 {
-                    throw new MojoExecutionException( "Cannot find repository layout: " + layout, e );
+                    throw new MojoExecutionException( Messages.getString( "EclipseToMavenMojo.cannotfindrepositorylayout", layout ), e ); //$NON-NLS-1$
                 }
 
                 return new DefaultArtifactRepository( id, url, repoLayout );
@@ -580,7 +580,7 @@ public class EclipseToMavenMojo
      */
     protected String createGroupId( String bundleName )
     {
-        int i = bundleName.lastIndexOf( "." );
+        int i = bundleName.lastIndexOf( "." ); //$NON-NLS-1$
         if ( i > 0 )
         {
             return bundleName.substring( 0, i );
@@ -597,7 +597,7 @@ public class EclipseToMavenMojo
      */
     protected String createArtifactId( String bundleName )
     {
-        int i = bundleName.lastIndexOf( "." );
+        int i = bundleName.lastIndexOf( "." ); //$NON-NLS-1$
         if ( i > 0 )
         {
             return bundleName.substring( i + 1 );
@@ -633,12 +633,12 @@ public class EclipseToMavenMojo
             Map attributes = (Map) entry.getValue();
 
             String version = (String) attributes.get( Analyzer.BUNDLE_VERSION.toLowerCase() );
-            boolean optional = "optional".equals( attributes.get( "resolution:" ) );
+            boolean optional = "optional".equals( attributes.get( "resolution:" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 
             if ( version == null )
             {
-                getLog().info( "Missing version for bundle " + bundleName + ", assuming any version > 0" );
-                version = "[0,)";
+                getLog().info( Messages.getString( "EclipseToMavenMojo.missingversionforbundle", bundleName ) ); //$NON-NLS-1$
+                version = "[0,)"; //$NON-NLS-1$
             }
 
             version = fixBuildNumberSeparator( version );
@@ -679,12 +679,12 @@ public class EclipseToMavenMojo
         {
             String group = matcher.group();
 
-            if ( StringUtils.countMatches( group, "." ) > 2 )
+            if ( StringUtils.countMatches( group, "." ) > 2 ) //$NON-NLS-1$
             {
                 // build number found, fix it
-                int lastDot = group.lastIndexOf( "." );
+                int lastDot = group.lastIndexOf( "." ); //$NON-NLS-1$
                 group =
-                    StringUtils.substring( group, 0, lastDot ) + "-"
+                    StringUtils.substring( group, 0, lastDot ) + "-" //$NON-NLS-1$
                         + StringUtils.substring( group, lastDot + 1, group.length() );
             }
             matcher.appendReplacement( newVersionRange, group );
