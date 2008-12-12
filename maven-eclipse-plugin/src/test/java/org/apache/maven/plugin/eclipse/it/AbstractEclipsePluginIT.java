@@ -859,7 +859,7 @@ public abstract class AbstractEclipsePluginIT
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
         }
     }
 
