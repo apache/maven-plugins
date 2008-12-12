@@ -34,6 +34,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -90,7 +91,7 @@ public class IdeUtils
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantcanonicalize", file //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file //$NON-NLS-1$
             .getAbsolutePath() ), e );
         }
     }
@@ -337,7 +338,7 @@ public class IdeUtils
         catch ( ArtifactResolutionException e )
         {
             String message =
-                Messages.getString( "errorresolving", new Object[] { artifact.getClassifier(),
+                Messages.getString( "IdeUtils.errorresolving", new Object[] { artifact.getClassifier(),
                     artifact.getId(), e.getMessage() } );
 
             log.warn( message );

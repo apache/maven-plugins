@@ -63,6 +63,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.eclipse.Constants;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -568,7 +569,7 @@ public abstract class AbstractIdeSupportMojo
                     {
                         getLog().debug( e.getMessage(), e );
                         getLog().error(
-                                        Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                        Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
                                                             e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                 e.getMessage() } ) );
 
@@ -599,7 +600,7 @@ public abstract class AbstractIdeSupportMojo
                             {
                                 getLog().debug( e.getMessage(), e );
                                 getLog().warn(
-                                               Messages.getString( "artifactdownload", new Object[] { //$NON-NLS-1$
+                                               Messages.getString( "AbstractIdeSupportMojo.artifactdownload", new Object[] { //$NON-NLS-1$
                                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                        e.getMessage() } ) );
                             }
@@ -607,7 +608,7 @@ public abstract class AbstractIdeSupportMojo
                             {
                                 getLog().debug( e.getMessage(), e );
                                 getLog().warn(
-                                               Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                               Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
                                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                        e.getMessage() } ) );
                             }
@@ -752,7 +753,7 @@ public abstract class AbstractIdeSupportMojo
             {
                 throw new MojoExecutionException(
                                                   Messages.getString(
-                                                                      "unabletoparseversion", new Object[] { //$NON-NLS-1$
+                                                                      "AbstractIdeSupportMojo.unabletoparseversion", new Object[] { //$NON-NLS-1$
                                                                       dependency.getArtifactId(),
                                                                           dependency.getVersion(),
                                                                           dependency.getManagementKey(), e.getMessage() } ),
@@ -864,7 +865,7 @@ public abstract class AbstractIdeSupportMojo
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "unabletoparseversion", new Object[] { //$NON-NLS-1$
+                    throw new MojoExecutionException( Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion", new Object[] { //$NON-NLS-1$
                                                                           projectId, d.getVersion(),
                                                                               d.getManagementKey(), e.getMessage() } ),
                                                       e );
@@ -951,7 +952,7 @@ public abstract class AbstractIdeSupportMojo
 
             if (forceRecheck && notAvailableMarkerFile.exists()) {
                 if (!notAvailableMarkerFile.delete()) {
-                    getLog().warn( Messages.getString( "unabletodeletenotavailablemarkerfile", notAvailableMarkerFile ) );
+                    getLog().warn( Messages.getString( "AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile", notAvailableMarkerFile ) );
                 }
             }
             
@@ -977,11 +978,11 @@ public abstract class AbstractIdeSupportMojo
                         try
                         {
                             notAvailableMarkerFile.createNewFile();
-                            getLog().debug( Messages.getString( "creatednotavailablemarkerfile", notAvailableMarkerFile ) );
+                            getLog().debug( Messages.getString( "AbstractIdeSupportMojo.creatednotavailablemarkerfile", notAvailableMarkerFile ) );
                         }
                         catch ( IOException e )
                         {
-                            getLog().warn( Messages.getString( "failedtocreatenotavailablemarkerfile",
+                            getLog().warn( Messages.getString( "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
                                                                notAvailableMarkerFile ) );
                         }
                     }
@@ -1010,17 +1011,17 @@ public abstract class AbstractIdeSupportMojo
         {
             if ( getDownloadSources() )
             {
-                msg.append( Messages.getString( "sourcesnotavailable" ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) ); //$NON-NLS-1$
             }
             else
             {
-                msg.append( Messages.getString( "sourcesnotdownloaded" ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotdownloaded" ) ); //$NON-NLS-1$
             }
 
             for ( Iterator it = missingSourceDependencies.iterator(); it.hasNext(); )
             {
                 IdeDependency art = (IdeDependency) it.next();
-                msg.append( Messages.getString( "sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
@@ -1029,17 +1030,17 @@ public abstract class AbstractIdeSupportMojo
         {
             if ( getDownloadJavadocs() )
             {
-                msg.append( Messages.getString( "javadocnotavailable" ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) ); //$NON-NLS-1$
             }
             else
             {
-                msg.append( Messages.getString( "javadocnotdownloaded" ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotdownloaded" ) ); //$NON-NLS-1$
             }
 
             for ( Iterator it = missingJavadocDependencies.iterator(); it.hasNext(); )
             {
                 IdeDependency art = (IdeDependency) it.next();
-                msg.append( Messages.getString( "javadocmissingitem", art.getId() ) ); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocmissingitem", art.getId() ) ); //$NON-NLS-1$
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
