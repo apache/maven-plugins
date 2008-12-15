@@ -37,6 +37,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -82,6 +83,50 @@ public class IdeUtils
      */
     private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
 
+    /**
+     * The suffix used to mark a file as not available.
+     */
+    public static final String NOT_AVAILABLE_MARKER_FILE_SUFFIX = "-not-available";
+    
+    /**
+     * Delete a file, handling log messages and exceptions
+     * 
+     * @param f File to be deleted
+     * @throws MojoExecutionException only if a file exists and can't be deleted
+     */
+    public static void delete( File f, Log log ) throws MojoExecutionException
+    {
+        if ( f.isDirectory() )
+        {
+            log.info( Messages.getString( "EclipseCleanMojo.deletingDirectory", f.getName() ) ); //$NON-NLS-1$
+        }
+        else
+        {
+            log.info( Messages.getString( "EclipseCleanMojo.deletingFile", f.getName() ) ); //$NON-NLS-1$
+        }
+
+        if ( f.exists() )
+        {
+            if ( !f.delete() )
+            {
+                try
+                {
+                    FileUtils.forceDelete( f );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
+                                                                          new Object[] { f.getName(),
+                                                                              f.getAbsolutePath() } ) );
+                }
+            }
+        }
+        else
+        {
+            log.debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) ); //$NON-NLS-1$
+        }
+    }
+    
     public static String getCanonicalPath( File file )
         throws MojoExecutionException
     {
@@ -309,8 +354,8 @@ public class IdeUtils
      * @param artifact the artifact 
      * @return the not-available marker file for the specified artifact
      */
-    public static File getNotAvailableMarkerFile(ArtifactRepository localRepository, Artifact artifact) {
-        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) + "-not-available");        
+    public static File getNotAvailableMarkerFile( ArtifactRepository localRepository, Artifact artifact ) {
+        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) + NOT_AVAILABLE_MARKER_FILE_SUFFIX);        
     }
     
     /**
