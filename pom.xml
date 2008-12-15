@@ -48,6 +48,11 @@ under the License.
   </properties>
   <dependencies>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
       <version>1.0-alpha-7</version>

@@ -19,11 +19,10 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.plugin.ide.IdeUtils;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
@@ -165,35 +164,7 @@ public class EclipseCleanMojo
     protected void delete( File f )
         throws MojoExecutionException
     {
-        if ( f.isDirectory() )
-        {
-            getLog().info( Messages.getString( "EclipseCleanMojo.deletingDirectory", f.getName() ) ); //$NON-NLS-1$
-        }
-        else
-        {
-            getLog().info( Messages.getString( "EclipseCleanMojo.deletingFile", f.getName() ) ); //$NON-NLS-1$
-        }
-
-        if ( f.exists() )
-        {
-            if ( !f.delete() )
-            {
-                try
-                {
-                    FileUtils.forceDelete( f );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
-                                                                          new Object[] { f.getName(),
-                                                                              f.getAbsolutePath() } ) );
-                }
-            }
-        }
-        else
-        {
-            getLog().debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) ); //$NON-NLS-1$
-        }
+        IdeUtils.delete( f, getLog() );
     }
 
     /**
