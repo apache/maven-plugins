@@ -889,6 +889,18 @@ public abstract class AbstractEclipsePluginIT
         }
     }
     
+    /**
+     * Return the not available marker file for the specified artifact details.
+     * 
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
+     * @param inClassifier the sources/javadocs to be attached
+     * @return the not available marker file
+     * @throws Exception failures.
+     * @see IdeUtils#createArtifactWithClassifier(String, String, String, String, String, ArtifactFactory)
+     */
     protected File getNotAvailableMarkerFile( String groupId, String artifactId, String version,
                                                      String classifier, String inClassifier )
         throws Exception
@@ -922,6 +934,16 @@ public abstract class AbstractEclipsePluginIT
         return IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
     }
     
+    /**
+     * Assert that the not available marker file exists for the specified artifact details.
+     * 
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
+     * @param inClassifier the sources/javadocs to be attached
+     * @throws Exception failures
+     */
     protected void assertNotAvailableMarkerFileExists( String groupId, String artifactId, String version,
                                                        String classifier, String inClassifier ) throws Exception
     {
@@ -929,6 +951,16 @@ public abstract class AbstractEclipsePluginIT
         assertTrue( "The \"Not Available\" marker file does not exist: " + markerFile, markerFile.exists() );
     }
     
+    /**
+     * Assert that the not available marker file does not exist for the specified artifact details.
+     * 
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
+     * @param inClassifier the sources/javadocs to be attached
+     * @throws Exception failures
+     */
     protected void assertNotAvailableMarkerFileDoesNotExist( String groupId, String artifactId, String version,
                                                        String classifier, String inClassifier ) throws Exception
     {
