@@ -22,11 +22,18 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor into the
- * target directory structure but do not generate the final archive.
- * This goal is suitable for binding to the lifecycle if you are not aggregating the content of any modules.
- * It is the unarchived counterpart to <code>assembly:single</code>.
+ * Like the <code>assembly:attached</code> goal, assemble an application bundle 
+ * or distribution from an assembly descriptor. This goal is suitable either for 
+ * binding to the lifecycle or calling directly from the command line (provided 
+ * all required files are available before the build starts, or are produced 
+ * by another goal specified before this one on the command line). 
+ * <br/>
+ * 
+ * This goal differs from <code>assembly:single</code> in that it ignores the &lt;formats/&gt;
+ * section of the assembly descriptor, and forces the assembly to be created as
+ * a directory in the project's build-output directory (usually <code>./target</code>).
  *
+ * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * @version $Id$
  *
