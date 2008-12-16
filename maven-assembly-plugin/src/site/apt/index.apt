@@ -106,42 +106,10 @@ The Maven Assembly Plugin
   modules, file-sets, and individual files are packaged in the assembly.
 
 
-* Goals Overview
+* Goals
 
-  The Assembly Plugin has six goals:
+  For more information about the goals that are available in the Assembly Plugin, see {{{plugin-info.html}the plugin documentation page}}.
 
-  * {{{assembly-mojo.html}assembly:assembly}} Assembles an application bundle
-  or distribution based on an assembly descriptor into an archive of a chosen
-  format. Executed from the command-line.
-
-  * {{{attached-mojo.html}assembly:attached}} Assembles an application bundle
-  or distribution from an assembly descriptor into an archive of a chosen
-  format. Executed within the Maven Lifecycle.
-
-  * {{{directory-mojo.html}assembly:directory}} Assembles an application bundle
-  from an assembly descriptor or distribution into a directory. Executed from
-  the command-line.*
-
-  * {{{directory-inline-mojo.html}assembly:directory-inline}} Assembles an
-  application bundle or distribution into a directory. Executed within the Maven
-  Lifecycle.*
-
-  * {{{unpack-mojo.html}assembly:unpack}} Assembles an application bundle or
-  distribution from an assembly descriptor into an archive of a chosen format
-  but with the dependencies unpacked inside the archive.
-
-  * {{{single-mojo.html}assembly:single}} An assembly mojo created as a
-  work-around for lifecycle issues until addressed in the Maven 2.1 release.
-
-  * {{{directory-single-mojo.html}assembly:directory-single}} An assembly mojo 
-  created as a work-around for lifecycle issues until addressed in the Maven 2.1 
-  release. This mojo will generate an assembly into a directory.
-  
-  []
-  
-  \* <<NOTE:>> Directory-based assemblies cannot be attached to a project for
-  deployment or installation, since they do not represent a single,
-  self-contained file which can be transferred across network connections.
 
 * Assembly Descriptor Schemas (XSD)
 

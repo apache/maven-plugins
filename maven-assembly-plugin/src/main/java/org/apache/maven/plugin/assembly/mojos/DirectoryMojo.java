@@ -22,12 +22,24 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor into the
- * target directory structure but do not generate the final archive. This goal should be used from
- * the command line, and if building a multimodule project it should be used from the root POM.
- * It is the unarchived counterpart to <code>assembly:assembly</code>.
- * Consider using <code>assembly:directory-inline</code> or <code>assembly:directory-single</code> for binding assembly generation to the lifecycle.
+ * Like the <code>assembly:attached</code> goal, assemble an application bundle 
+ * or distribution using an assembly descriptor from the command line.
+ * This goal will force Maven to build all included POMs up to the <code>package</code> phase BEFORE
+ * the assembly is processed. This goal
+ * differs from <code>assembly:assembly</code> in that it ignores the &lt;formats/&gt;
+ * section of the assembly descriptor, and forces the assembly to be created as
+ * a directory in the project's build-output directory (usually <code>./target</code>).
+ * <br/>
+ * 
+ * This goal is also functionally equivalent to using the <code>assembly:assembly</code>
+ * goal in conjunction with the <code>dir</code> assembly format.
+ * <br/>
  *
+ * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project 
+ * it should be used from the root POM. Use the <code>assembly:directory-single</code> goal for binding 
+ * your assembly to the lifecycle.
+ *
+ * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @version $Id$
  * @goal directory
  * @execute phase="package"

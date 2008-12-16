@@ -41,6 +41,50 @@ under the License.
       </answer>
     </faq>
   </part>
+  <part id="Build Lifecycle">
+    <faq id="binding">
+      <question>What goal should I use to create an assembly as part of my normal build process?</question>
+      <answer>
+        <p>Use the <a href="single-mojo.html">single</a> or <a href="directory-single-mojo.html">directory-single</a> goal.</p>
+        <p>Since the <a href="assembly-mojo.html">assembly</a>, <a href="attached-mojo.html">attached</a>, <a href="directory-mojo.html">directory</a>, and <a href="directory-inline-mojo.html">directory-inline</a> goals are all aggregators, they will execute at most once 
+           per execution of Maven. See <a href="http://docs.codehaus.org/display/MAVEN/Atypical+Plugin+Use+Cases">Atypical+Plugin+Use+Cases</a> (wiki) for more
+           information on the problems associated with aggregator mojos.
+        </p>
+      </answer>
+    </faq>
+    <faq id="module-binaries">
+      <question>The Assembly Plugin is saying it cannot find files for the module binaries included by my assembly descriptor. What gives?</question>
+      <answer>
+        <p>If your assembly includes module binaries, those binaries won't be available to the assembly plugin except in special cases. This is normally seen
+           when the Assembly Plugin is bound to a phase of the standard build lifecycle. It happens because of the way Maven sorts and executes the build process for
+           a multimodule project layout.
+        </p>
+        <p>In a multimodule hierarchy, when a child module declares the parent POM in its &lt;parent/&gt; section, Maven interprets this to mean that the parent
+           project's build must be completed before the child build can start. This ensures that the parent project is in its final form by the time the child 
+           needs access to its POM information. In cases where the Assembly Plugin is included as part of that parent project's build process, it will execute
+           along with everything else as part of the parent build - <b>before the child build can start</b>. If the assembly descriptor used in that parent build
+           references module binaries, it effectively expects the child build to be completed <b>before the assembly is processed</b>. This leads to a recursive 
+           dependency situation, where the child build depends on the parent build to complete before it can start, while the parent build depends on the presence
+           of child-module artifacts to complete successfully. Since these artifacts are missing, the Assembly Plugin will complain about missing artifacts, and 
+           the build will fail.
+        </p>
+        <p>In many cases, you can avoid this problem by adding a new child module whose sole purpose is to produce your assembly. In the POM for this new project,
+           add dependency definitions for any of the module binaries you had previously referenced. Then, move your assembly descriptor into this new child module,
+           and change all module-binary references to dependencySet references. Obviously, any fileSet or file references you may have in this descriptor may need 
+           to be adjusted or have the files they reference moved into the new child module alongside the descriptor itself.
+        </p>
+        <p>In cases where you absolutely must use module-binaries references, you should avoid binding your assembly into the main build lifecycle. Modify your POM
+           so that the Assembly Plugin configuration is defined in the main the plugin declaration, then remove the executions block from that plugin declaration
+           (which supplies the phase and goal specifications that create the lifecycle binding). Finally, to process this assembly, you'll need to execute something like
+           this:
+        </p>
+        <p><code>mvn package assembly:assembly</code></p>
+        <p>to force Maven to build the entire multimodule structure to the 'package' phase <b>before</b> attempting
+           to process the assembly. This ensures the module artifacts are present to satisfy your module-binaries definitions.
+        </p>
+      </answer>
+    </faq>
+  </part>
   <part id="Artifact and Directory Formatting">
     <faq id="dashClassifier">
       <question>
