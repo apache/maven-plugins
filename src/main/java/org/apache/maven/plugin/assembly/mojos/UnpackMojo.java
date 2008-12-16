@@ -40,6 +40,7 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
  * @version $Id$
  * @goal unpack
  * @requiresDependencyResolution test
+ * @deprecated Use org.apache.maven.plugins:maven-dependency-plugin goal: unpack or unpack-dependencies instead.
  */
 public class UnpackMojo
     extends AbstractMojo

@@ -349,6 +349,11 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
 
 * {Including Module Binaries}
 
+  *WARNING!* Using the <<<binaries>>> section of a <<<moduleSet>>> definition
+  involves some tricky considerations that are a result of the way Maven
+  sorts and executes project builds within a multimodule context. Please
+  read {{{faq.html#module-binaries}this FAQ entry}} if you decide to use them.
+
   In cases where your assembly artifact is meant to be used in a runtime
   context, you'll most likely want to include the binaries from any modules 
   processed by the assembly plugin. This can be as simple as adding the module's

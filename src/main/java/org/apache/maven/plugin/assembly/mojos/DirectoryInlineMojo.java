@@ -22,15 +22,30 @@ package org.apache.maven.plugin.assembly.mojos;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Assemble an application bundle or distribution from an assembly descriptor into the
- * target directory structure but do not generate the final archive. This goal is suitable
- * for using at the root of a multimodule project, and is the unarchived counterpart to <code>assembly:attached</code>.
+ * Like the <code>assembly:attached</code> goal, assemble an application bundle 
+ * or distribution from an assembly descriptor, 
+ * WITHOUT first forcing Maven to build all POMs to the <code>package</code> 
+ * phase (as is required by the <code>assembly:assembly</code> goal). This goal
+ * differs from <code>assembly:attached</code> in that it ignores the &lt;formats/&gt;
+ * section of the assembly descriptor, and forces the assembly to be created as
+ * a directory in the project's build-output directory (usually <code>./target</code>).
+ * <br/>
+ * 
+ * This goal is also functionally equivalent to using the <code>assembly:attached</code>
+ * goal in conjunction with the <code>dir</code> assembly format.
+ * <br/>
  *
+ * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project 
+ * it should be used from the root POM. Use the <code>assembly:directory-single</code> goal for binding 
+ * your assembly to the lifecycle.
+ *
+ * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * @version $Id$
  *
  * @goal directory-inline
  * @aggregator
+ * @deprecated Use goal: 'directory' (from the command line) or 'directory-single' (from a lifecycle binding) instead.
  */
 public class DirectoryInlineMojo
     extends AbstractDirectoryMojo

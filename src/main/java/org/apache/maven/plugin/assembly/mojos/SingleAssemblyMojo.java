@@ -23,8 +23,12 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor.
- * This goal is suitable for binding to the lifecycle if you are not aggregating the content of any modules.
+ * This goal is suitable either for binding to the lifecycle or calling directly
+ * from the command line (provided all required files are available before the 
+ * build starts, or are produced by another goal specified before this one 
+ * on the command line).
  *
+ * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @goal single
