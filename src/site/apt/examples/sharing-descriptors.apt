@@ -71,7 +71,7 @@ my-assembly-descriptor
 <assembly>
   <id>my-assembly-descriptor-id</id>
   <formats>
-    <format>zip</format>
+    <format>jar</format>
   </formats>
   <fileSets>
     <fileSet>

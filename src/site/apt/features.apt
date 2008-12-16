@@ -36,7 +36,7 @@ Features
   
   * All assembly inclusions controlled by include/exclude pattern sets
 
-  * Option to unpack artifact files into the assembly
+  * Option to unpack artifact files into the assembly <[deprecated in 2.2]>
 
   * Project modules can be included as source files or in binary form <[2.1]>
   
