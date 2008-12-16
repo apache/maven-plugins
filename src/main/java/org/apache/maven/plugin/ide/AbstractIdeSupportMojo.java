@@ -19,10 +19,7 @@
 package org.apache.maven.plugin.ide;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
@@ -67,7 +63,6 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A plugin extending
