@@ -187,8 +187,8 @@ target
   If you need to ensure that assemblies are produced whenever your project
   builds, or when a particular profile is activated (also useful for configuring
   other plugins during this special process), then the following two mojos are
-  probably what you're looking for. The <<<attached>>> and
-  <<<directory-inline>>> mojos are functional counterparts of the mojos
+  probably what you're looking for. The <<<single>>> and
+  <<<single-directory>>> mojos are functional counterparts of the mojos
   discussed above, except that they are meant to bind into the default build
   lifecycle.
   
@@ -199,16 +199,16 @@ target
   once again in a forked lifecycle which is spawned by the <<<assembly>>> mojo
   itself.
   
-  By contrast, the <<<attached>>> mojo assumes that the build has already
+  By contrast, the <<<single>>> mojo assumes that the build has already
   produced project binaries or whatever else it needs prior to building the
   assembly itself. Because they depend on correct binding to the lifecycle in
   order to gain access to the files required by your project assembly, the
-  <<<attached>>> and <<<directory-inline>>> mojos require the user to have much
+  <<<single>>> and <<<single-directory>>> mojos require the user to have much
   more intimate knowledge of the build process.
 
 *** Normal Assemblies
 
-  To bind the <<<attached>>> mojo to a project's build lifecycle, you can add
+  To bind the <<<single>>> mojo to a project's build lifecycle, you can add
   this configuration (assuming you're using the <<<jar-with-dependencies>>>
   prefabricated descriptor):
   
@@ -230,7 +230,7 @@ target
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
             <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
-              <goal>attached</goal> <!-- goals == mojos -->
+              <goal>single</goal> <!-- goals == mojos -->
             </goals>
           </execution>
         </executions>
@@ -259,7 +259,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 *** Assembly Directories
 
-  If instead you want to bind the <<<directory-inline>>> mojo to a project's
+  If instead you want to bind the <<<single-directory>>> mojo to a project's
   build lifecycle - so you can construct a directory containing your assembly -
   you can add this configuration (assuming you're using the
   <<<jar-with-dependencies>>> prefabricated descriptor):
@@ -282,7 +282,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
             <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
-              <goal>directory-inline</goal> <!-- goals == mojos -->
+              <goal>single-directory</goal> <!-- goals == mojos -->
             </goals>
           </execution>
         </executions>
@@ -302,7 +302,7 @@ mvn package
   
 +---+
 target
-|-- sample-1.0-SNAPSHOT-jar-with-dependencies
+|-- sample-1.0-SNAPSHOT-jar-with-dependencies.dir
 |   |-- META-INF
 |   |   |-- MANIFEST.MF
 |   |   `-- maven
@@ -322,18 +322,21 @@ target
 
 * Advanced Configuration
 
-** Creating Assemblies from Multiple Projects in a Multimodule Build
-
-  In certain cases, you may need to create several assembly archives from
-  different points in a multimodule build. For this reason, two new assembly
-  mojos have been introduced: <<<assembly:single>>>, and
-  <<<assembly:directory-single>>>. These mojos will perform the usual tasks
-  associated with creating assembly archives or directories, without running in
-  a once-per-build mode. However, it's important to note that the use of the
-  <<<\<moduleSets\>>>> section in the assembly descriptor may be limited in
-  these cases, since the assembly mojo will not have access to the full list of
-  projects in the current build. See the examples entry in the
-  {{{#Resources}Resources}} section below for more information.
+~~
+~~ 'single' and 'single-directory' should nearly always replace 'attached' and 'directory-inline'.
+~~
+~~** Creating Assemblies from Multiple Projects in a Multimodule Build
+~~
+~~  In certain cases, you may need to create several assembly archives from
+~~  different points in a multimodule build. For this reason, two new assembly
+~~  mojos have been introduced: <<<assembly:single>>>, and
+~~  <<<assembly:directory-single>>>. These mojos will perform the usual tasks
+~~  associated with creating assembly archives or directories, without running in
+~~  a once-per-build mode. However, it's important to note that the use of the
+~~  <<<\<moduleSets\>>>> section in the assembly descriptor may be limited in
+~~  these cases, since the assembly mojo will not have access to the full list of
+~~  projects in the current build. See the examples entry in the
+~~  {{{#Resources}Resources}} section below for more information.
 
 ** Creating an Executable Jar
 
@@ -370,7 +373,7 @@ target
 </project>
 +---+
 
-  If we add this configuration to the <<<attached>>> mojo example above and
+  If we add this configuration to the <<<single>>> mojo example above and
   rebuild, we will see an entry like this in the META-INF/MANIFEST.MF file of
   the resulting jar:
   
