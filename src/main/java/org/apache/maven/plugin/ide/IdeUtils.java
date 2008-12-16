@@ -521,6 +521,21 @@ public class IdeUtils
     {
         return StringUtils.replace( filename, '\\', '/' );
     }
+    
+    /**
+     * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix. On a Windows
+     * box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir" is mapped to
+     * "file:/home/dir". So, in the first case the slash after "file:" is not part of the corresponding filesystem path
+     * while in the later case it is. This discrepancy makes verifying the javadoc attachments in ".classpath" a little
+     * tricky.
+     * 
+     * @param input string input that may contain a windows URI
+     * @return all windows URI convert "file:C:/dir" to "file:/C:/dir"
+     */
+    public static String fixWindowsDriveURI( String input )
+    {
+        return input.replaceAll( "file:([a-zA-Z]):", "file:/$1:" );
+    }    
 
     /**
      * Returns a compiler plugin settings from a list of plugins .
