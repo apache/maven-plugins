@@ -506,12 +506,12 @@ public class EclipsePlugin
      */
     private String ajdtVersion;
 
-    protected boolean isJavaProject()
+    protected final boolean isJavaProject()
     {
         return isJavaProject;
     }
 
-    protected boolean isPdeProject()
+    protected final boolean isPdeProject()
     {
         return pde;
     }
@@ -521,7 +521,7 @@ public class EclipsePlugin
      * 
      * @return Returns the buildcommands.
      */
-    public List getBuildcommands()
+    public final List getBuildcommands()
     {
         return buildcommands;
     }
@@ -531,7 +531,7 @@ public class EclipsePlugin
      * 
      * @param buildcommands The buildcommands to set.
      */
-    public void setBuildcommands( List buildcommands )
+    public final void setBuildcommands( List buildcommands )
     {
         this.buildcommands = buildcommands;
     }
@@ -541,7 +541,7 @@ public class EclipsePlugin
      * 
      * @return Returns the buildOutputDirectory.
      */
-    public File getBuildOutputDirectory()
+    public final File getBuildOutputDirectory()
     {
         return buildOutputDirectory;
     }
@@ -551,7 +551,7 @@ public class EclipsePlugin
      * 
      * @param buildOutputDirectory The buildOutputDirectory to set.
      */
-    public void setBuildOutputDirectory( File buildOutputDirectory )
+    public final void setBuildOutputDirectory( File buildOutputDirectory )
     {
         this.buildOutputDirectory = buildOutputDirectory;
     }
@@ -561,7 +561,7 @@ public class EclipsePlugin
      * 
      * @return Returns the classpathContainers.
      */
-    public List getClasspathContainers()
+    public final List getClasspathContainers()
     {
         return classpathContainers;
     }
@@ -571,7 +571,7 @@ public class EclipsePlugin
      * 
      * @param classpathContainers The classpathContainers to set.
      */
-    public void setClasspathContainers( List classpathContainers )
+    public final void setClasspathContainers( List classpathContainers )
     {
         this.classpathContainers = classpathContainers;
     }
@@ -581,7 +581,7 @@ public class EclipsePlugin
      * 
      * @return Returns the eclipseProjectDir.
      */
-    public File getEclipseProjectDir()
+    public final File getEclipseProjectDir()
     {
         return eclipseProjectDir;
     }
@@ -591,7 +591,7 @@ public class EclipsePlugin
      * 
      * @param eclipseProjectDir The eclipseProjectDir to set.
      */
-    public void setEclipseProjectDir( File eclipseProjectDir )
+    public final void setEclipseProjectDir( File eclipseProjectDir )
     {
         this.eclipseProjectDir = eclipseProjectDir;
     }
@@ -601,7 +601,7 @@ public class EclipsePlugin
      * 
      * @return Returns the projectnatures.
      */
-    public List getProjectnatures()
+    public final List getProjectnatures()
     {
         return projectnatures;
     }
@@ -611,7 +611,7 @@ public class EclipsePlugin
      * 
      * @param projectnatures The projectnatures to set.
      */
-    public void setProjectnatures( List projectnatures )
+    public final void setProjectnatures( List projectnatures )
     {
         this.projectnatures = projectnatures;
     }
@@ -621,7 +621,7 @@ public class EclipsePlugin
      * 
      * @return Returns the useProjectReferences.
      */
-    public boolean getUseProjectReferences()
+    public final boolean getUseProjectReferences()
     {
         return useProjectReferences;
     }
@@ -631,7 +631,7 @@ public class EclipsePlugin
      * 
      * @param useProjectReferences The useProjectReferences to set.
      */
-    public void setUseProjectReferences( boolean useProjectReferences )
+    public final void setUseProjectReferences( boolean useProjectReferences )
     {
         this.useProjectReferences = useProjectReferences;
     }
@@ -641,7 +641,7 @@ public class EclipsePlugin
      * 
      * @return Returns the wtpversion.
      */
-    public String getWtpversion()
+    public final String getWtpversion()
     {
         return wtpversion;
     }
@@ -651,7 +651,7 @@ public class EclipsePlugin
      * 
      * @param wtpversion The wtpversion to set.
      */
-    public void setWtpversion( String wtpversion )
+    public final void setWtpversion( String wtpversion )
     {
         this.wtpversion = wtpversion;
     }
@@ -661,7 +661,7 @@ public class EclipsePlugin
      * 
      * @return Returns the additionalBuildcommands.
      */
-    public List getAdditionalBuildcommands()
+    public final List getAdditionalBuildcommands()
     {
         return additionalBuildcommands;
     }
@@ -671,7 +671,7 @@ public class EclipsePlugin
      * 
      * @param additionalBuildcommands The additionalBuildcommands to set.
      */
-    public void setAdditionalBuildcommands( List additionalBuildcommands )
+    public final void setAdditionalBuildcommands( List additionalBuildcommands )
     {
         this.additionalBuildcommands = additionalBuildcommands;
     }
@@ -681,7 +681,7 @@ public class EclipsePlugin
      * 
      * @return Returns the additionalProjectnatures.
      */
-    public List getAdditionalProjectnatures()
+    public final List getAdditionalProjectnatures()
     {
         return additionalProjectnatures;
     }
@@ -691,7 +691,7 @@ public class EclipsePlugin
      * 
      * @param additionalProjectnatures The additionalProjectnatures to set.
      */
-    public void setAdditionalProjectnatures( List additionalProjectnatures )
+    public final void setAdditionalProjectnatures( List additionalProjectnatures )
     {
         this.additionalProjectnatures = additionalProjectnatures;
     }
@@ -699,7 +699,7 @@ public class EclipsePlugin
     /**
      * Getter for <code>addVersionToProjectName</code>.
      */
-    public boolean isAddVersionToProjectName()
+    public final boolean isAddVersionToProjectName()
     {
         return addVersionToProjectName;
     }
@@ -707,7 +707,7 @@ public class EclipsePlugin
     /**
      * Setter for <code>addVersionToProjectName</code>.
      */
-    public void setAddVersionToProjectName( boolean addVersionToProjectName )
+    public final void setAddVersionToProjectName( boolean addVersionToProjectName )
     {
         this.addVersionToProjectName = addVersionToProjectName;
     }
@@ -715,7 +715,7 @@ public class EclipsePlugin
     /**
      * Getter for <code>addGroupIdToProjectName</code>.
      */
-    public boolean isAddGroupIdToProjectName()
+    public final boolean isAddGroupIdToProjectName()
     {
         return addGroupIdToProjectName;
     }
@@ -723,17 +723,27 @@ public class EclipsePlugin
     /**
      * Setter for <code>addGroupIdToProjectName</code>.
      */
-    public void setAddGroupIdToProjectName( boolean addGroupIdToProjectName )
+    public final void setAddGroupIdToProjectName( boolean addGroupIdToProjectName )
     {
         this.addGroupIdToProjectName = addGroupIdToProjectName;
     }
 
-    public String getProjectNameTemplate()
+    /**
+     * Getter for <code>projectNameTemplate</code>
+     * 
+     * @return projectNameTemplate
+     */
+    public final String getProjectNameTemplate()
     {
         return projectNameTemplate;
     }
 
-    public void setProjectNameTemplate( String projectNameTemplate )
+    /**
+     * Setter for <code>projectNameTemplate</code>.
+     * 
+     * @param projectNameTemplate projectNameTemplate
+     */
+    public final void setProjectNameTemplate( String projectNameTemplate )
     {
         this.projectNameTemplate = projectNameTemplate;
     }
@@ -741,7 +751,7 @@ public class EclipsePlugin
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public boolean setup()
+    public final boolean setup()
         throws MojoExecutionException
     {
         boolean ready = true;
@@ -804,7 +814,13 @@ public class EclipsePlugin
         return ready;
     }
 
-    protected void convertBuildCommandList( List commands )
+    /**
+     * Convert any Strings in the <code>commands</code> List to <code>BuildCommand</code>s. The conversion happens
+     * in situ.
+     * 
+     * @param commands a list of commands to convert into <code>BuildCommand</code>
+     */
+    protected final void convertBuildCommandList( List commands )
     {
         if ( commands != null )
         {
@@ -845,13 +861,20 @@ public class EclipsePlugin
         }
     }
 
+    /**
+     * Extension point for subclasses.
+     * <p>
+     * Called during <code>setup</code>.
+     * 
+     * @throws MojoExecutionException mojo failures.
+     */
     protected void setupExtras()
         throws MojoExecutionException
     {
         // extension point.
     }
 
-    protected void verifyClasspathContainerListIsComplete()
+    private void verifyClasspathContainerListIsComplete()
     {
         boolean containsJREContainer = false;
         // Check if classpathContainer contains a JRE (default, alternate or
@@ -932,7 +955,14 @@ public class EclipsePlugin
         return true;
     }
 
-    protected void validateExtras()
+    /**
+     * Extension point for subclasses.
+     * <p>
+     * Called during <code>setup</code> and used to validate that the configuration is sane.
+     * 
+     * @throws MojoExecutionException mojo failures.
+     */
+    protected void validateExtras() throws MojoExecutionException
     {
         // provided for extension.
     }
@@ -948,15 +978,20 @@ public class EclipsePlugin
             downloadSources = true;
         }
 
-        checkExtraDeprecations();
+        checkDeprecationsExtras();
     }
 
-    protected void checkExtraDeprecations()
+    /**
+     * Extension point for subclasses.
+     * <p>
+     * Check for any extra deprecations and log warnings. Called during <code>setup</code>
+     */
+    protected void checkDeprecationsExtras()
     {
         // provided for extension.
     }
 
-    public void writeConfiguration( IdeDependency[] deps )
+    public final void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
     {
         EclipseWriterConfig config = createEclipseWriterConfig( deps );
@@ -966,7 +1001,7 @@ public class EclipsePlugin
             EclipseManifestWriter.addManifestResource( getLog(), config );
         }
         // NOTE: This could change the config!
-        writeExtraConfiguration( config );
+        writeConfigurationExtras( config );
 
         if ( wtpVersionFloat == 0.7f )
         {
@@ -1020,7 +1055,7 @@ public class EclipsePlugin
                                            config.getEclipseProjectName(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
-    protected void writeAdditionalConfig()
+    private void writeAdditionalConfig()
         throws MojoExecutionException
     {
         if ( additionalConfig != null )
@@ -1081,7 +1116,14 @@ public class EclipsePlugin
         }
     }
 
-    protected EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )
+    /**
+     * Create the <code>EclipseWriterConfig</code> for the specified dependencies.
+     * 
+     * @param deps the project dependencies
+     * @return a configured <code>EclipseWriterConfig</code>
+     * @throws MojoExecutionException mojo failures.
+     */
+    protected final EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )
         throws MojoExecutionException
     {
         File projectBaseDir = executedProject.getFile().getParentFile();
@@ -1231,7 +1273,7 @@ public class EclipsePlugin
      * @param config
      * @throws MojoExecutionException
      */
-    protected void writeExtraConfiguration( EclipseWriterConfig config )
+    protected void writeConfigurationExtras( EclipseWriterConfig config )
         throws MojoExecutionException
     {
         // extension point.
@@ -1245,7 +1287,15 @@ public class EclipsePlugin
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
         }
     }
-
+    
+    /**
+     * Fill getProjectnatures() with values.
+     * <p>
+     * Subclasses should call super and then calculate their own additions and insert them via
+     * <code>getProjectnatures().addAll()</code>.
+     * 
+     * @param packaging the pom's packaging
+     */    
     protected void fillDefaultNatures( String packaging )
     {
         projectnatures = new ArrayList();
@@ -1282,6 +1332,14 @@ public class EclipsePlugin
 
     }
 
+    /**
+     * Fill getClasspathContainers() with values.
+     * <p>
+     * Subclasses should call super and then calculate their own additions and insert them via
+     * <code>getClasspathContainers().addAll()</code>.
+     * 
+     * @param packaging the pom's packaging
+     */
     protected void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
@@ -1304,6 +1362,14 @@ public class EclipsePlugin
         }
     }
 
+    /**
+     * Fill getBuildcommands() with values.
+     * <p>
+     * Subclasses should call super and then calculate their own additions and insert them via
+     * <code>getBuildcommands().addAll()</code>.
+     * 
+     * @param packaging the pom's packaging
+     */
     protected void fillDefaultBuilders( String packaging )
     {
         buildcommands = new ArrayList();
@@ -1348,7 +1414,7 @@ public class EclipsePlugin
         }
     }
 
-    public EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, File buildOutputDirectory )
+    public final EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, File buildOutputDirectory )
         throws MojoExecutionException
     {
         File projectBaseDir = project.getFile().getParentFile();
@@ -1427,7 +1493,7 @@ public class EclipsePlugin
         }
     }
 
-    void extractResourceDirs( Set directories, List resources, File basedir, File workspaceProjectBaseDir,
+    final void extractResourceDirs( Set directories, List resources, File basedir, File workspaceProjectBaseDir,
                               boolean test, final String output )
         throws MojoExecutionException
     {
@@ -1693,12 +1759,12 @@ public class EclipsePlugin
     /**
      * {@inheritDoc}
      */
-    protected IdeDependency[] getWorkspaceArtefacts()
+    protected final IdeDependency[] getWorkspaceArtefacts()
     {
         return getWorkspaceConfiguration().getWorkspaceArtefacts();
     }
 
-    public WorkspaceConfiguration getWorkspaceConfiguration()
+    public final WorkspaceConfiguration getWorkspaceConfiguration()
     {
         if ( workspaceConfiguration == null )
         {
@@ -1735,7 +1801,7 @@ public class EclipsePlugin
         }
     }
 
-    public List getExcludes()
+    public final List getExcludes()
     {
         return excludes;
     }
@@ -1774,24 +1840,13 @@ public class EclipsePlugin
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.plugin.ide.AbstractIdeSupportMojo#doDependencyResolution()
-     */
-    protected IdeDependency[] doDependencyResolution()
-        throws MojoExecutionException
-    {
-
-        return super.doDependencyResolution();
-    }
-
     /**
      * Checks if jar has to be resolved for the given artifact
      * 
      * @param art the artifact to check
      * @return true if resolution should happen
      */
-    protected boolean hasToResolveJar( Artifact art )
+    protected final boolean hasToResolveJar( Artifact art )
     {
         return !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) )
             || ( limitProjectReferencesToWorkspace && !( getUseProjectReferences() && isAvailableAsAWorkspaceProject( art ) ) );
@@ -1803,7 +1858,7 @@ public class EclipsePlugin
      * @param art the artifact to check
      * @return true if a project reference has to be used.
      */
-    protected boolean useProjectReference( Artifact art )
+    protected final boolean useProjectReference( Artifact art )
     {
         boolean isReactorProject = getUseProjectReferences() && isAvailableAsAReactorProject( art );
         boolean isWorkspaceProject = getUseProjectReferences() && isAvailableAsAWorkspaceProject( art );
