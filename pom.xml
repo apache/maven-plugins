@@ -57,7 +57,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
     	<groupId>org.codehaus.plexus</groupId>
@@ -120,7 +120,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.4-SNAPSHOT</version>
+      <version>2.4</version>
     </dependency>
     <!-- FIXME: I'm specifying a dependency on plexus-container-default
                 in order to force the version to be compatible with maven
