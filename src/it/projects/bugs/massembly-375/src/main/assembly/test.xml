@@ -1,0 +1,16 @@
+<assembly>
+  <id>test</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>test.txt</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
