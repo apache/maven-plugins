@@ -133,10 +133,10 @@ public class RadPlugin
      * @param deps resolved dependencies to handle
      * @throws MojoExecutionException if the config files could not be written.
      */
-    protected void writeExtraConfiguration( EclipseWriterConfig config )
+    protected void writeConfigurationExtras( EclipseWriterConfig config )
         throws MojoExecutionException
     {
-        super.writeExtraConfiguration( config );
+        super.writeConfigurationExtras( config );
 
         new RadJ2EEWriter().init( getLog(), config ).write();
 
