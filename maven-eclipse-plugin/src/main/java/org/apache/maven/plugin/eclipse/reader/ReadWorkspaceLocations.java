@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -464,7 +465,12 @@ public class ReadWorkspaceLocations
                         MessageFormat.format( ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
                                               new Object[] { typeId, name } );
                     String jrePath = new File( path ).getCanonicalPath();
-                    JarFile rtJar = new JarFile( new File( new File( jrePath ), "jre/lib/rt.jar" ) );
+                    File rtJarFile = new File( new File( jrePath ), "jre/lib/rt.jar" );
+                    if ( !rtJarFile.exists() ) {
+                        logger.warn( Messages.getString( "EclipsePlugin.invalidvminworkspace", jrePath ) );
+                        continue;
+                    }
+                    JarFile rtJar = new JarFile( rtJarFile );
                     String version = rtJar.getManifest().getMainAttributes().getValue( "Specification-Version" );
                     if ( defaultJRE.endsWith( "," + vmId ) )
                     {
@@ -490,7 +496,7 @@ public class ReadWorkspaceLocations
                 }
                 catch ( IOException e )
                 {
-                    logger.warn( "Could not interpret entry: " + vm.toString() );
+                    logger.warn( "Could not interpret entry: " + vm[vmIndex].toString() );
                 }
             }
         }
