@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig;
-import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseHibernateWriter;
 import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseMetadataWriter;
 import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseSpringBeansWriter;
@@ -106,14 +106,14 @@ public class MyEclipsePlugin
      * @parameter
      */
     private Map struts;
-
-    public void writeConfiguration( IdeDependency[] deps )
+   
+    /**
+     * {@inheritDoc}
+     */
+    protected void writeConfigurationExtras( EclipseWriterConfig config )
         throws MojoExecutionException
     {
-        EclipseWriterConfig config = createEclipseWriterConfig( deps );
-
-        new EclipseSettingsWriter().init( getLog(), config ).write();
-
+        super.writeConfigurationExtras( config );
         if ( isJavaProject() )
         {
             // If the project is a Web Project, make it compile in WEB-INF/classes
@@ -133,14 +133,8 @@ public class MyEclipsePlugin
                     }
                 }
             }
-
-            new MyEclipseClasspathWriter().init( getLog(), config ).write();
         }
-
-        new EclipseProjectWriter().init( getLog(), config ).write();
-
-        writeAdditionalConfig();
-
+        
         // the MyEclipse part ...
 
         new MyEclipseMetadataWriter().init( getLog(), config ).write();
@@ -164,7 +158,7 @@ public class MyEclipsePlugin
             }
 
             new MyEclipseHibernateWriter( getHibernate() ).init( getLog(), config ).write();
-        }
+        }                
     }
 
     /**
