@@ -385,18 +385,6 @@ public class EclipseClasspathWriter
         }
 
         // ----------------------------------------------------------------------
-        // Container classpath entries
-        // ----------------------------------------------------------------------
-
-        for ( Iterator it = config.getClasspathContainers().iterator(); it.hasNext(); )
-        {
-            writer.startElement( ELT_CLASSPATHENTRY );
-            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_PATH, (String) it.next() );
-            writer.endElement(); // name
-        }
-
-        // ----------------------------------------------------------------------
         // The dependencies
         // ----------------------------------------------------------------------
         for ( int j = 0; j < depsToWrite.length; j++ )
@@ -415,6 +403,18 @@ public class EclipseClasspathWriter
             }
         }
 
+        // ----------------------------------------------------------------------
+        // Container classpath entries
+        // ----------------------------------------------------------------------
+
+        for ( Iterator it = config.getClasspathContainers().iterator(); it.hasNext(); )
+        {
+            writer.startElement( ELT_CLASSPATHENTRY );
+            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_PATH, (String) it.next() );
+            writer.endElement(); // name
+        }
+        
         writer.endElement();
 
         IOUtil.close( w );
