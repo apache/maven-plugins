@@ -67,7 +67,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>1.0-alpha-11-SNAPSHOT</version>
+      <version>1.0-alpha-11</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -99,7 +99,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>1.0-alpha-3-SNAPSHOT</version>
+      <version>1.0-alpha-3</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
