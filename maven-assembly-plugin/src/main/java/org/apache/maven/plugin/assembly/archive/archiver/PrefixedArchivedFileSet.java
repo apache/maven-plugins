@@ -40,7 +40,7 @@ public class PrefixedArchivedFileSet
         this.fileSet = fileSet;
         this.selectors = selectors;
 
-        if ( ! rootPrefix.endsWith( "/" ) )
+        if ( rootPrefix.length() > 0 && ! rootPrefix.endsWith( "/" ) )
         {
             this.rootPrefix = rootPrefix + "/";
         }
