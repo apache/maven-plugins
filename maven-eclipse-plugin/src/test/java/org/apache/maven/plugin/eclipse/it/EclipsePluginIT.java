@@ -606,6 +606,18 @@ public class EclipsePluginIT
         assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "sources" );
         assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "javadoc" );
     }   
+
+
+    /**
+     * [MECLIPSE-415] settings are stored in wrong directory if project is not in the workspace.
+     * 
+     * @throws Exception
+     */
+    public void testProject50MECLIPSE415()
+        throws Exception
+    {
+        testProject( "project-50-MECLIPSE-415" );
+    }    
     
     public void testJeeSimple()
         throws Exception
