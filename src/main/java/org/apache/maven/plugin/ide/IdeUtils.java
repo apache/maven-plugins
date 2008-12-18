@@ -314,6 +314,44 @@ public class IdeUtils
     }
 
     /**
+     * Calculate the project name template from the specified value <code>projectNameTemplate</code>,
+     * <code>addVersionToProjectName</code> and <code>addGroupIdToProjectName</code>
+     * <p>
+     * Note: if projectNameTemplate is not null then that value will be used regardless of the values for
+     * addVersionToProjectName or addGroupIdToProjectName and a warning will be issued.
+     * 
+     * @param projectNameTemplate the current projectNameTemplate, if available
+     * @param addVersionToProjectName whether to include Version in the project name
+     * @param addGroupIdToProjectName whether to include GroupId in the project name.
+     * @return the project name template.
+     */
+    public static String calculateProjectNameTemplate( String projectNameTemplate, boolean addVersionToProjectName,
+                                                 boolean addGroupIdToProjectName, Log log )
+    {
+        if ( projectNameTemplate != null )
+        {
+            if ( addVersionToProjectName || addGroupIdToProjectName )
+            {
+                log.warn( "projectNameTemplate definition overrides "
+                    + "addVersionToProjectName or addGroupIdToProjectName" );
+            }
+            return projectNameTemplate;
+        }
+        else if ( addVersionToProjectName && addGroupIdToProjectName )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE;
+        }
+        else if ( addVersionToProjectName )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE;
+        }
+        else if ( addGroupIdToProjectName )
+        {
+            return IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE;
+        }
+        return IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE;
+    }    
+    /**
      * Use {@link IdeDependency#getEclipseProjectName()} instead.
      */
     protected static String getProjectName( String template, IdeDependency dep )
