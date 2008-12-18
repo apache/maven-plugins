@@ -49,4 +49,14 @@
       <systemPath>${basedir}/refproject-sysdep.jar</systemPath>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <projectNameTemplate>prefix-[artifactId]-[version]</projectNameTemplate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
