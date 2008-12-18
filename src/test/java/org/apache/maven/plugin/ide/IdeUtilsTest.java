@@ -19,6 +19,7 @@
 package org.apache.maven.plugin.ide;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -32,8 +33,8 @@ import org.codehaus.plexus.util.Os;
  */
 public class IdeUtilsTest
     extends TestCase
-{  
-    
+{
+
     public void testGetProjectNameStringIdeDependency()
     {
         IdeDependency dependency = new IdeDependency();
@@ -69,7 +70,17 @@ public class IdeUtilsTest
         }
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "D:\\ide\\workspace\\maven\\maven-eclipse-plugin\\target\\main-output" );
-
+        try
+        {
+            fileToAdd.getCanonicalPath();
+        }
+        catch ( IOException e )
+        {
+            // skip the test if the fileToAdd can't be canonicalized.
+            // Likely it is because D refers to a CD drive that is not ready.
+            return;
+        }
+        
         String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
         String expected = "D:/ide/workspace/maven/maven-eclipse-plugin/target/main-output";
 
@@ -88,7 +99,7 @@ public class IdeUtilsTest
         if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
             return;
         }
-        
+
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "target/main-output" );
 
@@ -115,7 +126,7 @@ public class IdeUtilsTest
         if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
             return;
         }
-        
+
         File basedir = new File( "Z:" );
         File fileToAdd = new File( "target/main-output" );
 
