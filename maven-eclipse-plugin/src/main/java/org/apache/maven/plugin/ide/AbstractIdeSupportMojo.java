@@ -802,6 +802,16 @@ public abstract class AbstractIdeSupportMojo
      */
     protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
+        return getReactorProject( artifact ) != null;
+    }
+    
+    /**
+     * Checks the list of reactor projects to see if the artifact is included.
+     * 
+     * @param artifact the artifact to check if it is in the reactor
+     * @return the reactor project or null if it is not in the reactor
+     */
+    protected MavenProject getReactorProject( Artifact artifact ) {
         if ( reactorProjects != null )
         {
             for ( Iterator iter = reactorProjects.iterator(); iter.hasNext(); )
@@ -813,7 +823,7 @@ public abstract class AbstractIdeSupportMojo
                 {
                     if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
                     {
-                        return true;
+                        return reactorProject;
                     }
                     else
                     {
@@ -825,8 +835,8 @@ public abstract class AbstractIdeSupportMojo
                     }
                 }
             }
-        }
-        return false;
+        } 
+        return null;
     }
 
     /**
