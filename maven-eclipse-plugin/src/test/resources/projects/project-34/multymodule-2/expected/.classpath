@@ -24,7 +24,7 @@
   <classpathentry kind="var" path="M2_REPO/eclipsetest/direct-provided/1.0/direct-provided-1.0.jar"/>
   <classpathentry kind="lib" path="direct-sysdep.jar"/>
   <classpathentry kind="var" path="M2_REPO/eclipsetest/direct-test/1.0/direct-test-1.0.jar"/>
-  <classpathentry kind="src" path="/multymodule-1-1.0"/>
+  <classpathentry kind="src" path="/prefix-multymodule-1-1.0"/>
   <classpathentry kind="src" path="/multymodule-4-1.0"/>
   <classpathentry kind="var" path="M2_REPO/eclipsetest/refproject-compile/1.0/refproject-compile-1.0.jar">
     <attributes>

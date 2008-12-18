@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -82,7 +83,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @execute phase="generate-resources"
  */
 public class EclipsePlugin
-    extends AbstractIdeSupportMojo
+extends AbstractIdeSupportMojo
 {
     private static final String WEAVE_DEPENDENCY = "weaveDependency";
 
@@ -757,6 +758,8 @@ public class EclipsePlugin
         boolean ready = true;
 
         checkDeprecations();
+        setProjectNameTemplate( IdeUtils.calculateProjectNameTemplate( getProjectNameTemplate(), isAddVersionToProjectName(),
+                                                              isAddGroupIdToProjectName(), getLog() ) );
         ajdt = enableAjdt( executedProject ) && !ajdtVersion.equals( "none" );
         ready = validate();
 
@@ -1136,7 +1139,7 @@ public class EclipsePlugin
 
         config.setWorkspaceConfiguration( getWorkspaceConfiguration() );
 
-        config.setProjectNameTemplate( calculateProjectNameTemplate() );
+        config.setProjectNameTemplate( getProjectNameTemplate() );
 
         String projectName = IdeUtils.getProjectName( config.getProjectNameTemplate(), project );
 
@@ -1700,40 +1703,7 @@ public class EclipsePlugin
             }
         }
     }
-
-    /**
-     * Calculate the project name template from the fields {@link #projectNameTemplate},
-     * {@link #addVersionToProjectName} and {@link #addGroupIdToProjectName}
-     * 
-     * @return the project name template that should be used after considering the plugin configuration
-     */
-    private String calculateProjectNameTemplate()
-    {
-        if ( getProjectNameTemplate() != null )
-        {
-            if ( isAddVersionToProjectName() || isAddGroupIdToProjectName() )
-            {
-                getLog().warn(
-                               "projectNameTemplate definition overrides "
-                                   + "addVersionToProjectName or addGroupIdToProjectName" );
-            }
-            return getProjectNameTemplate();
-        }
-        else if ( isAddVersionToProjectName() && isAddGroupIdToProjectName() )
-        {
-            return IdeUtils.PROJECT_NAME_WITH_GROUP_AND_VERSION_TEMPLATE;
-        }
-        else if ( isAddVersionToProjectName() )
-        {
-            return IdeUtils.PROJECT_NAME_WITH_VERSION_TEMPLATE;
-        }
-        else if ( isAddGroupIdToProjectName() )
-        {
-            return IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE;
-        }
-        return IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE;
-    }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -1753,7 +1723,45 @@ public class EclipsePlugin
                 }
             }
         }
-        return IdeUtils.getProjectName( calculateProjectNameTemplate(), artifact );
+        MavenProject reactorProject = getReactorProject( artifact );
+        if ( reactorProject != null ) {
+            return IdeUtils.getProjectName( getProjectNameTemplateForMavenProject( reactorProject ), artifact );
+        }
+        return IdeUtils.getProjectName( getProjectNameTemplate(), artifact );
+    }
+    
+    /**
+     * @param mavenProject the project to get the projectNameTemplate configuration from
+     * @return the projectNameTemplate configuration from the specified MavenProject 
+     */
+    private String getProjectNameTemplateForMavenProject( MavenProject mavenProject )
+    {
+        String projectNameTemplate = null;
+        boolean addVersionToProjectName = false;
+        boolean addGroupIdToProjectName = false;
+
+        Build build = mavenProject.getBuild();
+        if ( build != null )
+        {
+            Plugin plugin = (Plugin) build.getPluginsAsMap().get( "org.apache.maven.plugins:maven-eclipse-plugin" );
+            if ( plugin != null )
+            {
+                Xpp3Dom config = (Xpp3Dom) plugin.getConfiguration();
+                if ( config != null )
+                {
+                    Xpp3Dom projectNameTemplateNode = config.getChild( "projectNameTemplate" );
+                    if ( projectNameTemplateNode != null )
+                    {
+                        projectNameTemplate = projectNameTemplateNode.getValue();
+                    }
+                    Xpp3Dom addVersionToProjectNameNode = config.getChild( "addVersionToProjectName" );
+                    addVersionToProjectName = addVersionToProjectNameNode != null;
+                    Xpp3Dom addGroupIdToProjectNameNode = config.getChild( "addGroupIdToProjectName" );
+                    addGroupIdToProjectName = addGroupIdToProjectNameNode != null;
+                }
+            }
+        }
+        return IdeUtils.calculateProjectNameTemplate(projectNameTemplate, addVersionToProjectName, addGroupIdToProjectName, getLog());
     }
 
     /**
