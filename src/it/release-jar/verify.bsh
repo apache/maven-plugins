@@ -1,0 +1,21 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/plugins/deploy/release-jar/maven-metadata.xml",
+    "org/apache/maven/its/plugins/deploy/release-jar/1.0/release-jar-1.0.pom",
+    "org/apache/maven/its/plugins/deploy/release-jar/1.0/release-jar-1.0.jar",
+};
+
+for ( String path : paths )
+{
+    File file = new File( new File( basedir, "target/repo" ), path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
