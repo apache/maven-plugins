@@ -1661,22 +1661,34 @@ public class InvokerMojo
             props.putAll( filterProperties );
         }
         props.put( "basedir", this.project.getBasedir().getAbsolutePath() );
+        props.put( "baseurl", toUrl( this.project.getBasedir().getAbsolutePath() ) );
         if ( settings.getLocalRepository() != null )
         {
             props.put( "localRepository", settings.getLocalRepository() );
-            /*
-             * NOTE: Maven fails to properly handle percent-encoded "file:" URLs (WAGON-111) so don't use File.toURI()
-             * here and just do it the simple way.
-             */
-            String url = settings.getLocalRepository();
-            if ( !url.startsWith( "/" ) )
-            {
-                url = '/' + url;
-            }
-            url = "file://" + url.replace( '\\', '/' );
-            props.put( "localRepositoryUrl", url );
+            props.put( "localRepositoryUrl", toUrl( settings.getLocalRepository() ) );
         }
         return new CompositeMap( this.project, props );
+    }
+
+    /**
+     * Converts the specified filesystem path to a URL. The resulting URL has no trailing slash regardless whether the
+     * path denotes a file or a directory.
+     * 
+     * @param filename The filesystem path to convert, must not be <code>null</code>.
+     * @return The <code>file:</code> URL for the specified path, never <code>null</code>.
+     */
+    private static String toUrl( String filename )
+    {
+        /*
+         * NOTE: Maven fails to properly handle percent-encoded "file:" URLs (WAGON-111) so don't use File.toURI() here
+         * as-is but use the decoded path component in the URL.
+         */
+        String url = "file://" + new File( filename ).toURI().getPath();
+        if ( url.endsWith( "/" ) )
+        {
+            url = url.substring( 0, url.length() - 1 );
+        }
+        return url;
     }
 
     /**
