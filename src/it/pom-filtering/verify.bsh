@@ -34,6 +34,8 @@ try
             "<prop6>PASSED</prop6>",
             "<prop7>PASSED</prop7>",
             "<prop8>PASSED</prop8>",
+            "<prop10>file:///",
+            "<prop12>file:///",
         };
     for ( String value : values )
     {
@@ -48,8 +50,10 @@ try
     String[] badValues = {
             "<prop9>@basedir@</prop9>",
             "<prop9>FAILED</prop9>",
-            "<prop10>@localRepository@</prop10>",
-            "<prop11>@localRepositoryUrl@</prop11>",
+            "<prop10>@baseurl@</prop10>",
+            "<prop10>FAILED</prop10>",
+            "<prop11>@localRepository@</prop11>",
+            "<prop12>@localRepositoryUrl@</prop12>",
         };
     for ( String value : badValues )
     {

@@ -116,6 +116,8 @@ Filtering Files
 *--------------------------+----------------------------------------------------------------------------------+--------+
 | <<<basedir>>>            | The absolute path to the project base directory of the main build.               | 1.1    |
 *--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<baseurl>>>            | The <<<file:>>> URL to the project base directory of the main build.             | 1.4    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
 | <<<localRepository>>>    | The absolute path to the local repository used for the main build.               | 1.2    |
 *--------------------------+----------------------------------------------------------------------------------+--------+
 | <<<localRepositoryUrl>>> | The <<<file:>>> URL to the local repository used for the main build.             | 1.3    |
