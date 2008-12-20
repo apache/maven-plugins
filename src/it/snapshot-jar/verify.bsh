@@ -1,0 +1,22 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/plugins/deploy/snapshot-jar/maven-metadata.xml",
+    "org/apache/maven/its/plugins/deploy/snapshot-jar/1.0-SNAPSHOT/maven-metadata.xml",
+    "org/apache/maven/its/plugins/deploy/snapshot-jar/1.0-SNAPSHOT/snapshot-jar-1.0-SNAPSHOT.pom",
+    "org/apache/maven/its/plugins/deploy/snapshot-jar/1.0-SNAPSHOT/snapshot-jar-1.0-SNAPSHOT.jar",
+};
+
+for ( String path : paths )
+{
+    File file = new File( new File( basedir, "target/repo" ), path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
