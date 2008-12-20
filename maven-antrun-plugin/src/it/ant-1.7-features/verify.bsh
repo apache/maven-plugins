@@ -1,13 +1,14 @@
 import java.io.*;
 import org.codehaus.plexus.util.*;
-import org.custommonkey.xmlunit.*;
+
 try
 {
-    File actual = new File( basedir, "echo.xml" );
-    File expected = new File( basedir, "echo.xml.expected" );
-    Reader actualReader = ReaderFactory.newXmlReader(actual);
-    Reader expectedReader = ReaderFactory.newXmlReader(expected);
-    XMLAssert.assertXMLEqual(expectedReader, actualReader);
+    File xmlFile = new File( basedir, "echo.xml" );
+    String xml = FileUtils.fileRead( xmlFile, "UTF-8" );
+    if ( xml.indexOf( "<test" ) < 0 )
+    {
+        throw new IllegalStateException( "Bad XML output: " + xml );
+    }
     return true;
 }
 catch( Throwable t )
