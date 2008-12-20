@@ -15,7 +15,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
 				<configuration>
 			    <!-- because i don't know your distribution management, deployments will be written to ${basedir}/target -->
 					<altDeploymentRepository>mine::default::file://${basedir}/target</altDeploymentRepository>
