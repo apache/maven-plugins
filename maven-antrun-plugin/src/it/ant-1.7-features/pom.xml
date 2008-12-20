@@ -38,11 +38,7 @@
             <configuration>
               <tasks>
                 <echoxml file="echo.xml">
-                  <project default="foo">
-                    <target name="foo">
-                      <echo>foo</echo>
-                    </target>
-                  </project>
+                  <test/>
                 </echoxml>
               </tasks>
             </configuration>
