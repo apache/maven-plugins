@@ -110,7 +110,7 @@ under the License.
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${basedir}/target/local-repo</localRepositoryPath>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
                 <goal>process-test-resources</goal>
