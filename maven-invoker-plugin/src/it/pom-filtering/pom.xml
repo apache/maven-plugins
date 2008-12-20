@@ -58,6 +58,7 @@ under the License.
             <itProperty>PASSED</itProperty>
             <project.nonExistingPomValue>PASSED</project.nonExistingPomValue>
             <basedir>FAILED</basedir>
+            <baseurl>FAILED</baseurl>
           </filterProperties>
         </configuration>
         <executions>
