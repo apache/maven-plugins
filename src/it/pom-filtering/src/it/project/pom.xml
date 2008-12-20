@@ -45,8 +45,9 @@ under the License.
     <prop8>@project.nonExistingPomValue@</prop8>
     <!-- built-in properties must not be overridden by properties from the plugin configuration -->
     <prop9>@basedir@</prop9>
-    <prop10>@localRepository@</prop10>
-    <prop11>@localRepositoryUrl@</prop11>
+    <prop10>@baseurl@</prop10>
+    <prop11>@localRepository@</prop11>
+    <prop12>@localRepositoryUrl@</prop12>
   </properties>
 
   <build>
