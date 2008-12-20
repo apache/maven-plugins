@@ -312,7 +312,7 @@ under the License.
       </pluginRepositories>
 
       <properties>
-        <invokerPluginVersion>1.2.1</invokerPluginVersion>
+        <invokerPluginVersion>1.3</invokerPluginVersion>
         <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
         <it.pomIncludes>**/pom.xml</it.pomIncludes>
@@ -383,7 +383,7 @@ under the License.
                     <pomExclude>**/handler-def/pom.xml</pomExclude>
                     <pomExclude>**/assembly/pom.xml</pomExclude>
                   </pomExcludes>
-                  <postBuildHookScript>verify.bsh</postBuildHookScript>
+                  <postBuildHookScript>verify</postBuildHookScript>
                 </configuration>
               </execution>
            </executions>
