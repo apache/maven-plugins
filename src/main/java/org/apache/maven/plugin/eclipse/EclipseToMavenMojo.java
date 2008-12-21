@@ -218,7 +218,7 @@ public class EclipseToMavenMojo
         int i = 1;
         for ( Iterator it = plugins.keySet().iterator(); it.hasNext(); )
         {
-            getLog().info( Messages.getString("EclipseToMavenMojo.processingplugin", new Object[] { Integer.valueOf( i++ ), Integer.valueOf( plugins.keySet().size() ) } ) ); //$NON-NLS-1$
+            getLog().info( Messages.getString("EclipseToMavenMojo.processingplugin", new Object[] { new Integer( i++ ), new Integer( plugins.keySet().size() ) } ) ); //$NON-NLS-1$
             String key = (String) it.next();
             EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
             Model model = (Model) models.get( key );
