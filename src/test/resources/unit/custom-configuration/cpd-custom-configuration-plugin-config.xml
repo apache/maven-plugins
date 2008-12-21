@@ -45,7 +45,8 @@ under the License.
           </excludes>
           <compileSourceRoots>
             <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
-          </compileSourceRoots>          
+          </compileSourceRoots>
+          <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
       </plugin>
     </plugins>
