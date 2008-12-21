@@ -21,7 +21,7 @@ package org.apache.maven.plugin.eclipse.it;
 import java.util.Properties;
 
 /**
- * @version $Id:$
+ * @version $Id$
  */
 public class M2EclipseMojoIT
     extends AbstractEclipsePluginIT

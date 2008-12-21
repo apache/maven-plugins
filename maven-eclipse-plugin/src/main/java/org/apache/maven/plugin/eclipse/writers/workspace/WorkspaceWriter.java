@@ -21,7 +21,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author Dan T. Tran
- * @version $Id:$
+ * @version $Id$
  */
 
 public interface WorkspaceWriter
