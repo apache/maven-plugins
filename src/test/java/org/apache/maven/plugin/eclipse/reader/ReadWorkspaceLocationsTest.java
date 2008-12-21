@@ -29,7 +29,7 @@ import org.easymock.MockControl;
 
 /**
  * @author <a href="mailto:baerrach@apache.org">Barrie Treloar</a>
- * @version $Id: AbstractEclipsePluginIT.java 696588 2008-09-18 07:55:03Z baerrach $
+ * @version $Id$
  */
 public class ReadWorkspaceLocationsTest
     extends TestCase
