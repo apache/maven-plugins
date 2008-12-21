@@ -62,7 +62,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Creates a PMD report.
  *
  * @author Brett Porter
- * @version $Id: PmdReport.java,v 1.3 2005/02/23 00:08:53 brett Exp $
+ * @version $Id$
  * @since 2.0
  * @goal pmd
  */
