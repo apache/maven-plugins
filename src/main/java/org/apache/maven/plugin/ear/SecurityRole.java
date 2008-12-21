@@ -26,7 +26,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * application.xml file.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id: SecurityRole.java 332974 2005-11-13 12:42:44Z snicoll $
+ * @version $Id$
  */
 class SecurityRole
 {

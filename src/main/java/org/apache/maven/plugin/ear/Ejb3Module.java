@@ -25,8 +25,8 @@ import org.apache.maven.artifact.Artifact;
  * The {@link EarModule} implementation for an Ejb3 module.
  *
  * @author Stephane Nicoll <snicoll@apache.org>
- * @author $Author: $ (last edit)
- * @version $Revision:  $
+ * @author $Author$ (last edit)
+ * @version $Revision$
  */
 public class Ejb3Module
     extends EjbModule
