@@ -23,7 +23,9 @@ under the License.
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub">
+            <testId>c-min</testId>
+          </project>
         </configuration>
       </plugin>
     </plugins>

@@ -23,7 +23,9 @@ under the License.
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithScmConnectionWithPipeStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithScmConnectionWithPipeStub">
+            <testId>w-pipe</testId>
+          </executedProject>
           <localRepo>${localRepository}</localRepo>
           <overwrite>false</overwrite>
         </configuration>

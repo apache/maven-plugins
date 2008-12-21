@@ -40,6 +40,9 @@ import java.util.List;
 public class SimpleMavenProjectStub
     extends MavenProjectStub
 {
+
+    private String testId;
+
     private List collectedProjects;
 
     private Build build;
@@ -48,24 +51,13 @@ public class SimpleMavenProjectStub
 
     private List remoteRepositories;
 
-    public SimpleMavenProjectStub()
+    protected String getTestId()
     {
-        TestCounter.nextCount();
-
-        build = new Build();
-        build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
-        build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
-        build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
-
-        Resource resource = new Resource();
-        resource.setDirectory( getBasedir().getAbsolutePath() + "/src/main/resources" );
-        resource.setFiltering( false );
-        build.setResources( Collections.singletonList( resource ) );
-
-        resource = new Resource();
-        resource.setFiltering( false );
-        resource.setDirectory( getBasedir().getAbsolutePath() + "/src/test/resources" );
-        build.setTestResources( Collections.singletonList( resource ) );
+        if ( testId == null )
+        {
+            throw new IllegalStateException( "missing test id, project stub has not been properly initialized" );
+        }
+        return testId;
     }
 
     public String getGroupId()
@@ -75,17 +67,17 @@ public class SimpleMavenProjectStub
 
     public String getArtifactId()
     {
-        return "plugin-test-" + TestCounter.currentCount();
+        return "plugin-test-" + getTestId();
     }
 
     public String getVersion()
     {
-        return String.valueOf( TestCounter.currentCount() );
+        return "1.0";
     }
 
     public File getBasedir()
     {
-        File basedir = new File( PlexusTestCase.getBasedir(), "target/test-harness/" + TestCounter.currentCount() );
+        File basedir = new File( PlexusTestCase.getBasedir(), "target/test-harness/" + getTestId() );
 
         if ( !basedir.exists() )
         {
@@ -150,6 +142,24 @@ public class SimpleMavenProjectStub
 
     public Build getBuild()
     {
+        if ( build == null )
+        {
+            build = new Build();
+            build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
+            build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
+            build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
+
+            Resource resource = new Resource();
+            resource.setDirectory( getBasedir().getAbsolutePath() + "/src/main/resources" );
+            resource.setFiltering( false );
+            build.setResources( Collections.singletonList( resource ) );
+
+            resource = new Resource();
+            resource.setFiltering( false );
+            resource.setDirectory( getBasedir().getAbsolutePath() + "/src/test/resources" );
+            build.setTestResources( Collections.singletonList( resource ) );
+        }
+
         return build;
     }
 
@@ -220,6 +230,6 @@ public class SimpleMavenProjectStub
 
     public List getBuildPlugins()
     {
-        return build.getPlugins();
+        return getBuild().getPlugins();
     }
 }
