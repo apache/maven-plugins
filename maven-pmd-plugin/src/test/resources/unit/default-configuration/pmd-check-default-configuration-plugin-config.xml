@@ -37,6 +37,7 @@ under the License.
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>true</failOnViolation>
           <language>java</language>
+          <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
       </plugin>
     </plugins>
