@@ -35,7 +35,7 @@ import java.util.Map;
  * Allows to map custom artifact type to standard type.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id: EarModule.java 332974 2005-11-13 12:42:44Z snicoll $
+ * @version $Id$
  */
 public class ArtifactTypeMappingService
 {

@@ -26,7 +26,7 @@ import java.util.Properties;
 
 /**
  * @author <a href="mailto:baerrach@apache.org">Barrie Treloar</a>
- * @version $Id:$
+ * @version $Id$
  */
 public class RemoveCacheMojoIT
     extends AbstractEclipsePluginIT

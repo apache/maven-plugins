@@ -33,7 +33,7 @@ import java.util.Iterator;
  * Tests for the {@link ArtifactTypeMappingService}
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id: AbstractEarModule.java 314956 2005-10-12 18:27:15 +0200 (Wed, 12 Oct 2005) brett $
+ * @version $Id$
  */
 public class ArtifactTypeMappingServiceTest
     extends TestCase
