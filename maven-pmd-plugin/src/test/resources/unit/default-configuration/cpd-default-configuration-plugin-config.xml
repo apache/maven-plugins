@@ -44,7 +44,7 @@ under the License.
           <compileSourceRoots>
             <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
           </compileSourceRoots>
-          
+          <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
       </plugin>
     </plugins>
