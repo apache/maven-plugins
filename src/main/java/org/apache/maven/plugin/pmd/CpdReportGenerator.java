@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Class that generated the CPD report.
  *
  * @author mperham
- * @version $Id: $
+ * @version $Id$
  */
 public class CpdReportGenerator
 {

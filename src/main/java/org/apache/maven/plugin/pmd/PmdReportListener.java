@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Handle events from PMD, converting them into Doxia events.
  *
  * @author Brett Porter
- * @version $Id: PmdReportListener.java,v 1.1.1.1 2005/02/17 07:16:22 brett Exp $
+ * @version $Id$
  */
 public class PmdReportListener
     implements ReportListener
