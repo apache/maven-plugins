@@ -84,7 +84,7 @@ public class IdeUtilsTest
         String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
         String expected = "D:/ide/workspace/maven/maven-eclipse-plugin/target/main-output";
 
-        assertEquals( actual, expected );
+        assertEquals( expected, actual );
     }
 
     /**
@@ -96,7 +96,8 @@ public class IdeUtilsTest
     public void testToRelativeAndFixSeparator_WhereOnDifferentDrivesAndFileToAddRelative()
         throws Exception
     {
-        if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
+        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
+        {
             return;
         }
 
@@ -106,7 +107,7 @@ public class IdeUtilsTest
         String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
         String expected = "target/main-output";
 
-        assertEquals( actual, expected );
+        assertEquals( expected, actual );
     }
 
     /**
@@ -123,17 +124,18 @@ public class IdeUtilsTest
     public void testToRelativeAndFixSeparator_MECLIPSE_261()
         throws Exception
     {
-        if (!Os.isFamily( Os.FAMILY_WINDOWS ) ) {
+        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
+        {
             return;
         }
 
-        File basedir = new File( "Z:" );
+        File basedir = new File( new File( "" ).getAbsolutePath().substring( 0, 3 ) );
         File fileToAdd = new File( "target/main-output" );
 
         String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
         String expected = "target/main-output";
 
-        assertEquals( actual, expected );
+        assertEquals( expected, actual );
     }
 
 }
