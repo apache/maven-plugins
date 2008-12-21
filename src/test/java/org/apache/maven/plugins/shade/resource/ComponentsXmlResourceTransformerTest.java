@@ -30,7 +30,7 @@ import org.codehaus.plexus.util.IOUtil;
  * Test for {@link ComponentsXmlResourceTransformer}.
  * 
  * @author Brett Porter
- * @version $Id: XmlAppendingTransformerTest.java 644743 2008-04-04 15:52:02Z bentmann $
+ * @version $Id$
  */
 public class ComponentsXmlResourceTransformerTest
     extends TestCase

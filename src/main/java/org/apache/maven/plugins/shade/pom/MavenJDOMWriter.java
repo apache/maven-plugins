@@ -88,7 +88,7 @@ import org.jdom.output.XMLOutputter;
 /**
  * Class MavenJDOMWriter.
  *
- * @version $Revision: 3974 $ $Date: 2007-04-23 19:55:40 -0400 (Mon, 23 Apr 2007) $
+ * @version $Revision$ $Date$
  */
 public class MavenJDOMWriter {
 
@@ -1959,7 +1959,7 @@ public class MavenJDOMWriter {
     /**
      * Class Counter.
      *
-     * @version $Revision: 3974 $ $Date: 2007-04-23 19:55:40 -0400 (Mon, 23 Apr 2007) $
+     * @version $Revision$ $Date$
      */
     public class Counter {
 
