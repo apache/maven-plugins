@@ -23,7 +23,7 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * @version $Id: $
+ * @version $Id$
  */
 public class EclipseWorkspaceIT
     extends AbstractEclipsePluginIT
