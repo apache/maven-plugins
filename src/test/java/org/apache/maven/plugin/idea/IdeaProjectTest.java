@@ -19,7 +19,6 @@ package org.apache.maven.plugin.idea;
  * under the License.
  */
 
-import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -93,7 +92,7 @@ public class IdeaProjectTest
 
         el = (Element) modules.get( 0 );
         assertEquals( "Test project module",
-                      "$PROJECT_DIR$/plugin-test-" + TestCounter.currentCount() + ".iml",
+                      "$PROJECT_DIR$/plugin-test-p-mod.iml",
                       el.attributeValue( "filepath" ) );
 
         el = (Element) modules.get( 1 );

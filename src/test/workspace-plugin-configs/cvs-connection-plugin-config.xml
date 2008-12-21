@@ -23,7 +23,9 @@ under the License.
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithCvsScmConnectionStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithCvsScmConnectionStub">
+            <testId>w-cvs</testId>
+          </executedProject>
           <localRepo>${localRepository}</localRepo>
           <overwrite>false</overwrite>
         </configuration>

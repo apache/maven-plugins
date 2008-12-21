@@ -27,25 +27,16 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 public class ReactorMavenProjectStub
     extends MavenProjectStub
 {
-    private static int reactorProjectCounter = 0;
 
-    private String artifactId;
+    private String testId;
 
-    public ReactorMavenProjectStub()
+    protected String getTestId()
     {
-        reactorProjectCounter++;
-
-        setArtifactId( "plugin-reactor-project-" + reactorProjectCounter );
-    }
-
-    public void setArtifactId( String artifactId )
-    {
-        this.artifactId = artifactId;
-    }
-
-    public String getArtifactId()
-    {
-        return artifactId;
+        if ( testId == null )
+        {
+            throw new IllegalStateException( "missing test id, project stub has not been properly initialized" );
+        }
+        return testId;
     }
 
     public String getGroupId()
@@ -53,13 +44,14 @@ public class ReactorMavenProjectStub
         return "org.apache.maven.plugin.test";
     }
 
+    public String getArtifactId()
+    {
+        return "plugin-reactor-project-" + getTestId();
+    }
+
     public String getVersion()
     {
         return "1.0";
     }
 
-    public static int getCurrentCount()
-    {
-        return reactorProjectCounter;
-    }
 }

@@ -19,7 +19,6 @@ package org.apache.maven.plugin.idea;
  * under the License.
  */
 
-import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.codehaus.plexus.PlexusTestCase;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -50,7 +49,7 @@ public class IdeaModuleTest
     public void testExcludeDirectoryConfig()
         throws Exception
     {
-        File projectBasedir = new File( getBasedir(), "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
+        File projectBasedir = new File( getBasedir(), "target/test-harness/m-dir-excl" );
 
         projectBasedir.mkdirs();
 
@@ -558,7 +557,7 @@ public class IdeaModuleTest
                 assertEquals( "Test Library module method", "6", method.attributeValue( "value" ) );
 
                 Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
-                assertEquals( "Test Library module method", "/lib/plugin-reactor-project-42.jar", uri.attributeValue( "value" ) );
+                assertEquals( "Test Library module method", "/lib/plugin-reactor-project-m-ejb-mod-1.jar", uri.attributeValue( "value" ) );
 
                 ejbModuleFound = true;
             }

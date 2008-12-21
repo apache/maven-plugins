@@ -24,15 +24,23 @@ under the License.
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
 
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub">
+            <testId>i-min</testId>
+          </executedProject>
           <localRepo>${localRepository}</localRepo>
           <ideaVersion>4</ideaVersion>
           <overwrite>false</overwrite>
 
           <reactorProjects>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>i-min-1</testId>
+            </reactorProject>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>i-min-2</testId>
+            </reactorProject>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>i-min-3</testId>
+            </reactorProject>
           </reactorProjects>
           <linkModules>true</linkModules>
           <useFullNames>false</useFullNames>

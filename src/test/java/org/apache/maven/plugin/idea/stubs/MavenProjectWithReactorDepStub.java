@@ -34,8 +34,8 @@ public class MavenProjectWithReactorDepStub
 
         artifacts.addAll(  super.getTestArtifacts() );
 
-        artifacts.add( createArtifact( "org.apache.maven.plugin.test", "plugin-reactor-project-" +
-                                       ReactorMavenProjectStub.getCurrentCount(), "1.0" ) );
+        artifacts.add( createArtifact( "org.apache.maven.plugin.test", "plugin-reactor-project-" + getTestId() + "-1",
+                                       "1.0" ) );
 
         return artifacts;
     }

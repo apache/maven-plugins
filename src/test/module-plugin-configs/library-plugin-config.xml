@@ -23,13 +23,21 @@ under the License.
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.LibraryMavenProjectStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.LibraryMavenProjectStub">
+            <testId>m-lib</testId>
+          </executedProject>
           <localRepo>${localRepository}</localRepo>
           <overwrite>false</overwrite>
           <reactorProjects>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
-            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub"/>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>m-lib-1</testId>
+            </reactorProject>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>m-lib-2</testId>
+            </reactorProject>
+            <reactorProject implementation="org.apache.maven.plugin.idea.stubs.ReactorMavenProjectStub">
+              <testId>m-lib-3</testId>
+            </reactorProject>
           </reactorProjects>
           <linkModules>true</linkModules>
           <useFullNames>false</useFullNames>
