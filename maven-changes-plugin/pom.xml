@@ -322,9 +322,11 @@ under the License.
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-maven-plugin</artifactId>
+        <version>1.3.8</version>
         <executions>
           <execution>
             <id>create-component-descriptor</id>
+            <phase>generate-resources</phase>
             <goals>
               <goal>descriptor</goal>
             </goals>
@@ -334,6 +336,7 @@ under the License.
             <configuration>
               <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output>
               <descriptors>
+                <descriptor>${project.build.outputDirectory}/META-INF/plexus/components.xml</descriptor>
                 <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
               </descriptors>
             </configuration>
