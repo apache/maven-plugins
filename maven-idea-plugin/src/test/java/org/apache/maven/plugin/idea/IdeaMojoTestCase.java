@@ -21,8 +21,6 @@ package org.apache.maven.plugin.idea;
 
 import junit.framework.TestCase;
 
-import java.io.File;
-
 /**
  * @author Dennis Lundberg
  */

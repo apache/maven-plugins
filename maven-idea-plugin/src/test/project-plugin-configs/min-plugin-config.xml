@@ -23,7 +23,9 @@ under the License.
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub">
+            <testId>p-min</testId>
+          </executedProject>
           <localRepo>${localRepository}</localRepo>
           <ideaVersion>4</ideaVersion>
           <overwrite>false</overwrite>

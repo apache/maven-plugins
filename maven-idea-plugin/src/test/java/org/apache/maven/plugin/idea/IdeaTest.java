@@ -21,7 +21,6 @@ package org.apache.maven.plugin.idea;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.dom4j.io.SAXReader;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -43,9 +42,9 @@ public class IdeaTest
 
         mojo.execute();
 
-        File basedir = new File( getBasedir(),  "target/test-harness/" + TestCounter.currentCount() );
+        File basedir = new File( getBasedir(),  "target/test-harness/i-min" );
 
-        String artifactId = "plugin-test-" + TestCounter.currentCount();
+        String artifactId = "plugin-test-i-min";
 
         File iprFile = new File( basedir, artifactId + ".ipr" );
         assertTrue( "Test creation of project files", iprFile.exists() );
@@ -66,11 +65,9 @@ public class IdeaTest
 
         mojo.execute();
 
-        int testCounter = TestCounter.currentCount();
+        File basedir = new File( getBasedir(), "target/test-harness/i-macro" );
 
-        File basedir = new File( getBasedir(), "target/test-harness/" + TestCounter.currentCount() );
-
-        String artifactId = "plugin-test-" + testCounter;
+        String artifactId = "plugin-test-i-macro";
 
         File iprFile = new File( basedir, artifactId + ".ipr" );
         assertTrue( "Test creation of project files", iprFile.exists() );
@@ -81,7 +78,7 @@ public class IdeaTest
         File iwsFile = new File( basedir, artifactId + ".iws" );
         assertTrue( "Test creation of project files", iwsFile.exists() );
 
-        File outputFile = new File( getBasedir(), "target/test-harness/" + testCounter + "/plugin-test-" + testCounter + ".ipr" );
+        File outputFile = new File( getBasedir(), "target/test-harness/i-macro/plugin-test-i-macro.ipr" );
 
         SAXReader reader = new SAXReader();
 

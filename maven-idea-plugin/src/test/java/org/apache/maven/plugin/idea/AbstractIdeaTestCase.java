@@ -23,10 +23,9 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
-import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.Mojo;
-import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.util.Iterator;
@@ -51,10 +50,10 @@ public abstract class AbstractIdeaTestCase
 
         mojo.execute();
 
-        int testCounter = TestCounter.currentCount();
+        MavenProject executedProject = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
 
-        File outputFile = new File( PlexusTestCase.getBasedir(), "target/test-harness/" + testCounter +
-                                 "/plugin-test-" + testCounter + "." + targetExtension );
+        File outputFile =
+            new File( executedProject.getBasedir(), executedProject.getArtifactId() + '.' + targetExtension );
 
         assertTrue( "Target file was created", outputFile.exists() );
 
