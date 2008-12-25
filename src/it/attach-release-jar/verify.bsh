@@ -3,10 +3,10 @@ import java.util.*;
 
 String[] paths =
 {
-    "org/apache/maven/its/plugins/deploy/attach-release-jar/maven-metadata.xml",
-    "org/apache/maven/its/plugins/deploy/attach-release-jar/1.0/attach-release-jar-1.0.pom",
-    "org/apache/maven/its/plugins/deploy/attach-release-jar/1.0/attach-release-jar-1.0.jar",
-    "org/apache/maven/its/plugins/deploy/attach-release-jar/1.0/attach-release-jar-1.0-sources.jar",
+    "org/apache/maven/its/deploy/arj/test/maven-metadata.xml",
+    "org/apache/maven/its/deploy/arj/test/1.0/test-1.0.pom",
+    "org/apache/maven/its/deploy/arj/test/1.0/test-1.0.jar",
+    "org/apache/maven/its/deploy/arj/test/1.0/test-1.0-sources.jar",
 };
 
 for ( String path : paths )

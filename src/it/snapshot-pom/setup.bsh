@@ -3,7 +3,7 @@ import java.util.*;
 
 import org.codehaus.plexus.util.*;
 
-File file = new File( localRepositoryPath, "org/apache/maven/its/plugins/deploy/snapshot-pom" );
+File file = new File( localRepositoryPath, "org/apache/maven/its/deploy/sp" );
 System.out.println( "Deleting " + file );
 FileUtils.deleteDirectory( file );
 
