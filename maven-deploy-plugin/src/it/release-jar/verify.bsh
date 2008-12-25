@@ -3,9 +3,9 @@ import java.util.*;
 
 String[] paths =
 {
-    "org/apache/maven/its/plugins/deploy/release-jar/maven-metadata.xml",
-    "org/apache/maven/its/plugins/deploy/release-jar/1.0/release-jar-1.0.pom",
-    "org/apache/maven/its/plugins/deploy/release-jar/1.0/release-jar-1.0.jar",
+    "org/apache/maven/its/deploy/rj/test/maven-metadata.xml",
+    "org/apache/maven/its/deploy/rj/test/1.0/test-1.0.pom",
+    "org/apache/maven/its/deploy/rj/test/1.0/test-1.0.jar",
 };
 
 for ( String path : paths )
