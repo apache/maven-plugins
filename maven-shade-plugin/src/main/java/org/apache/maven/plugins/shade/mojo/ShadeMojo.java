@@ -368,11 +368,10 @@ public class ShadeMojo
             if ( shadedArtifactAttached )
             {
                 getLog().info( "Attaching shaded artifact." );
-                projectHelper.attachArtifact( getProject(), "jar", shadedClassifierName, outputJar );
+                projectHelper.attachArtifact( project, "jar", shadedClassifierName, outputJar );
                 if ( createSourcesJar )
                 {
-                    projectHelper.attachArtifact( getProject(), "jar",
-                                                  shadedClassifierName + "-sources", sourcesJar );
+                    projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
                 }
             }
 
@@ -670,24 +669,12 @@ public class ShadeMojo
         return new File( outputDirectory, shadedName );
     }
 
-    protected MavenProject getProject()
-    {
-        if ( project.getExecutionProject() != null )
-        {
-            return project.getExecutionProject();
-        }
-        else
-        {
-            return project;
-        }
-    }
-
     // We need to find the direct dependencies that have been included in the uber JAR so that we can modify the
     // POM accordingly.
     private void createDependencyReducedPom( Set artifactsToRemove )
         throws IOException, DependencyTreeBuilderException, ProjectBuildingException
     {
-        Model model = getProject().getOriginalModel();
+        Model model = project.getOriginalModel();
         List dependencies = new ArrayList();
 
         boolean modified = false;
@@ -715,7 +702,7 @@ public class ShadeMojo
 
             transitiveDeps.add( dep );
         }
-        List origDeps = getProject().getDependencies();
+        List origDeps = project.getDependencies();
 
         if ( promoteTransitiveDependencies )
         {
