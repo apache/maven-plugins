@@ -264,7 +264,7 @@ public class PmdReport
                         catch ( PMDException pe )
                         {
                             String msg = pe.getLocalizedMessage();
-                            Exception r = pe.getReason();
+                            Throwable r = pe.getCause();
                             if ( r != null )
                             {
                                 msg = msg + ": " + r.getLocalizedMessage();
