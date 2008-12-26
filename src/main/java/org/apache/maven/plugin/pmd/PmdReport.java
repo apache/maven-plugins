@@ -175,8 +175,7 @@ public class PmdReport
                     {
                         String set = rulesets[idx];
                         getLog().debug( "Preparing ruleset: " + set );
-                        File ruleset = null;
-                        ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
+                        File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
                         
                         if ( null == ruleset )
                         {
@@ -184,7 +183,14 @@ public class PmdReport
                         }
     
                         InputStream rulesInput = new FileInputStream( ruleset );
-                        sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                        try
+                        {
+                            sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                        }
+                        finally
+                        {
+                            rulesInput.close();
+                        }
                     }
                 }
                 catch ( IOException e )
@@ -222,9 +228,9 @@ public class PmdReport
                     Map.Entry entry = (Map.Entry) i.next();
                     File file = (File) entry.getKey();
                     PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
-    
+
                     // TODO: lazily call beginFile in case there are no rules
-    
+
                     reportSink.beginFile( file , fileInfo );
                     ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
                     for ( int idx = 0; idx < rulesets.length; idx++ )
@@ -242,7 +248,14 @@ public class PmdReport
                             {
                                 reader = ReaderFactory.newPlatformReader( file );
                             }
-                            pmd.processFile( reader, sets[idx], ruleContext );
+                            try
+                            {
+                                pmd.processFile( reader, sets[idx], ruleContext );
+                            }
+                            finally
+                            {
+                                reader.close();
+                            }
                         }
                         catch ( UnsupportedEncodingException e1 )
                         {
