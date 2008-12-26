@@ -236,13 +236,19 @@ public class PmdReportTest
         throws IOException
     {
         String str = "", strTmp = "";
-        BufferedReader in = new BufferedReader( new FileReader( file ) );
 
-        while ( ( strTmp = in.readLine() ) != null )
+        BufferedReader in = new BufferedReader( new FileReader( file ) );
+        try
         {
-            str = str + " " + strTmp;
+            while ( ( strTmp = in.readLine() ) != null )
+            {
+                str += " " + strTmp;
+            }
         }
-        in.close();
+        finally
+        {
+            in.close();
+        }
 
         return str;
     }
