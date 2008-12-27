@@ -143,6 +143,22 @@ public class PmdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        try
+        {
+            execute( locale );
+        }
+        finally
+        {
+            if ( getSink() != null )
+            {
+                getSink().close();
+            }
+        }
+    }
+
+    private void execute( Locale locale )
+        throws MavenReportException
+    {
         //configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
