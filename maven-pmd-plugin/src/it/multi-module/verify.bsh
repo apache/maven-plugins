@@ -1,0 +1,50 @@
+import java.io.*;
+import java.util.*;
+
+String[] expectedPaths =
+{
+    "mod-1/target/site/pmd.html",
+    "mod-1/target/site/pmd.xml",
+    "mod-1/target/site/cpd.html",
+    "mod-1/target/site/cpd.xml",
+    "mod-2/target/site/pmd.html",
+    "mod-2/target/site/pmd.xml",
+    "mod-2/target/site/cpd.html",
+    "mod-2/target/site/cpd.xml",
+    "mod-3/target/site/pmd.html",
+    "mod-3/target/site/pmd.xml",
+    "mod-3/target/site/cpd.html",
+    "mod-3/target/site/cpd.xml",
+};
+
+for ( String path : expectedPaths )
+{
+    File file = new File( basedir, path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+}
+
+String[] unexpectedPaths =
+{
+    "target/site/pmd.html",
+    "target/site/pmd.xml",
+    "target/site/cpd.html",
+    "target/site/cpd.xml",
+    "target/pmd.xml",
+    "target/cpd.xml",
+};
+
+for ( String path : unexpectedPaths )
+{
+    File file = new File( basedir, path );
+    System.out.println( "Checking for absence of " + file );
+    if ( file.exists() )
+    {
+        throw new IOException( "Banned: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
