@@ -389,6 +389,11 @@ public abstract class AbstractPmdReport
             return false;
         }
 
+        if ( "pom".equals( project.getPackaging() ) && !aggregate )
+        {
+            return false;
+        }
+
         // if format is XML, we need to output it even if the file list is empty
         // so the "check" goals can check for failures
         if ( "xml".equals( format ) )
