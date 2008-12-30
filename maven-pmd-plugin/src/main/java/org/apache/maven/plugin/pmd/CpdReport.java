@@ -39,6 +39,7 @@ import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -101,6 +102,22 @@ public class CpdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        try
+        {
+            execute( locale );
+        }
+        finally
+        {
+            if ( getSink() != null )
+            {
+                getSink().close();
+            }
+        }
+    }
+
+    private void execute( Locale locale )
+        throws MavenReportException
+    {
         if ( !skip && canGenerateReport() )
         {         
             ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
@@ -160,7 +177,8 @@ public class CpdReport
         }
     }
 
-    void writeNonHtml( CPD cpd ) throws MavenReportException
+    void writeNonHtml( CPD cpd )
+        throws MavenReportException
     {
         Renderer r = createRenderer();
         String buffer = r.render( cpd.getMatches() );
@@ -169,17 +187,26 @@ public class CpdReport
             targetDirectory.mkdirs();
             FileOutputStream tStream = new FileOutputStream( new File( targetDirectory, "cpd." + format ) );
             Writer writer = new OutputStreamWriter( tStream, "UTF-8" );
-            writer.write( buffer, 0, buffer.length() );
-            writer.close();
-            
-            
+            try
+            {
+                writer.write( buffer );
+            }
+            finally
+            {
+                IOUtil.close( writer );
+            }
+
             File siteDir = getReportOutputDirectory();
             siteDir.mkdirs();
-            writer = new FileWriter( new File( siteDir,
-                                                 "cpd." + format ) );
-            writer.write( buffer, 0, buffer.length() );
-            writer.close();
-            
+            writer = new FileWriter( new File( siteDir, "cpd." + format ) );
+            try
+            {
+                writer.write( buffer, 0, buffer.length() );
+            }
+            finally
+            {
+                IOUtil.close( writer );
+            }
         }
         catch ( IOException ioe )
         {
