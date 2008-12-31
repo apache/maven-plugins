@@ -189,7 +189,7 @@ public class InstallFileMojo
 
         File pom = null;
 
-        if ( pomFile != null && pomFile.exists() )
+        if ( pomFile != null && pomFile.isFile() )
         {
             processModel( readPom( pomFile ) );
 
@@ -343,9 +343,16 @@ public class InstallFileMojo
         {
             this.artifactId = model.getArtifactId();
         }
-        if ( this.version == null && model.getVersion() != null )
+        if ( this.version == null )
         {
-            this.version = model.getVersion();
+            if ( parent != null && parent.getVersion() != null )
+            {
+                this.version = parent.getVersion();
+            }
+            if ( model.getVersion() != null )
+            {
+                this.version = model.getVersion();
+            }
         }
         if ( this.packaging == null && model.getPackaging() != null )
         {
