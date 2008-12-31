@@ -189,19 +189,35 @@ public class InstallFileMojo
 
         File pom = null;
 
-        if ( pomFile != null && pomFile.isFile() )
+        if ( pomFile != null )
         {
-            processModel( readPom( pomFile ) );
-
-            pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
-        }
-        else //if pomFile is not provided check the groupId, artifactId, version and packaging
-        {
-            // Verify arguments
-            if ( groupId == null || artifactId == null || version == null || packaging == null )
+            if ( pomFile.isFile() )
             {
-                throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
+                processModel( readPom( pomFile ) );
+
+                pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
             }
+            else
+            {
+                getLog().warn( "Ignored non-existent POM file " + pomFile );
+            }
+        }
+
+        if ( StringUtils.isEmpty( groupId ) )
+        {
+            throw new MojoExecutionException( "Missing group identifier, please specify -DgroupId=..." );
+        }
+        if ( StringUtils.isEmpty( artifactId ) )
+        {
+            throw new MojoExecutionException( "Missing artifact identifier, please specify -DartifactId=..." );
+        }
+        if ( StringUtils.isEmpty( version ) )
+        {
+            throw new MojoExecutionException( "Missing version, please specify -Dversion=..." );
+        }
+        if ( StringUtils.isEmpty( packaging ) )
+        {
+            throw new MojoExecutionException( "Missing packaging type, please specify -Dpackaging=..." );
         }
 
         Artifact artifact =
@@ -225,7 +241,6 @@ public class InstallFileMojo
                 model.setDescription( "POM was created from install:install-file" );
 
                 fw = WriterFactory.newXmlWriter( tempFile );
-                tempFile.deleteOnExit();
                 new MavenXpp3Writer().write( fw, model );
                 metadata = new ProjectArtifactMetadata( artifact, tempFile );
                 artifact.addMetadata( metadata );
@@ -248,7 +263,7 @@ public class InstallFileMojo
 
             File destination = new File( localRepository.getBasedir(), localPath );
 
-            if ( !file.getPath().equals( destination.getPath() ) )
+            if ( !file.equals( destination ) )
             {
                 installer.install( file, artifact, localRepository );
 
@@ -265,7 +280,7 @@ public class InstallFileMojo
                     installCheckSum( file, artifact, false );
                 }
 
-                if ( pomFile != null && pomFile.exists() )
+                if ( pomFile != null && pomFile.isFile() )
                 {
                     installer.install( pomFile, pomArtifact, localRepository );
 
