@@ -29,7 +29,7 @@ under the License.
 
   <description>
     Tests the installation of a non-POM project that has no main artifact file but only attached artifacts (see
-    MINSTALL-18, MINSTALL-40). This variant of the test checks the build when target/classes is non-existent.
+    MINSTALL-18, MINSTALL-40, MINSTALL-41). This variant of the test checks the build when target/classes is non-existent.
   </description>
 
   <properties>
