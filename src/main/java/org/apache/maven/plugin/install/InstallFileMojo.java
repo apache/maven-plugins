@@ -179,8 +179,6 @@ public class InstallFileMojo
 
         Artifact pomArtifact = null;
 
-        File pom = null;
-
         if ( pomFile != null )
         {
             if ( pomFile.isFile() )
@@ -215,14 +213,16 @@ public class InstallFileMojo
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
 
+        File generatedPomFile = null;
+
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
         {
             Writer fw = null;
             try
             {
-                File tempFile = File.createTempFile( "mvninstall", ".pom" );
-                tempFile.deleteOnExit();
+                generatedPomFile = File.createTempFile( "mvninstall", ".pom" );
+                generatedPomFile.deleteOnExit();
 
                 Model model = new Model();
                 model.setModelVersion( "4.0.0" );
@@ -232,9 +232,9 @@ public class InstallFileMojo
                 model.setPackaging( packaging );
                 model.setDescription( "POM was created from install:install-file" );
 
-                fw = WriterFactory.newXmlWriter( tempFile );
+                fw = WriterFactory.newXmlWriter( generatedPomFile );
                 new MavenXpp3Writer().write( fw, model );
-                metadata = new ProjectArtifactMetadata( artifact, tempFile );
+                metadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
                 artifact.addMetadata( metadata );
             }
             catch ( IOException e )
@@ -258,28 +258,16 @@ public class InstallFileMojo
             if ( !file.equals( destination ) )
             {
                 installer.install( file, artifact, localRepository );
-
-                if ( createChecksum )
+                installChecksums( file, getLocalRepoFile( artifact ) );
+                if ( generatePom )
                 {
-                    if ( generatePom )
-                    {
-                        //create checksums for pom and artifact
-                        pom = new File( localRepository.getBasedir(),
-                                        localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
-
-                        installCheckSum( pom, true );
-                    }
-                    installCheckSum( file, artifact, false );
+                    installChecksums( generatedPomFile, getLocalRepoFile( metadata ) );
                 }
 
                 if ( pomFile != null && pomFile.isFile() )
                 {
                     installer.install( pomFile, pomArtifact, localRepository );
-
-                    if ( createChecksum )
-                    {
-                        installCheckSum( pomFile, pomArtifact, false );
-                    }
+                    installChecksums( pomFile, getLocalRepoFile( pomArtifact ) );
                 }
             }
             else
