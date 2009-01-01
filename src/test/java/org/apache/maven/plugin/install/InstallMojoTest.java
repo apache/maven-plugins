@@ -236,12 +236,12 @@ public class InstallMojoTest
         assertTrue( pom.exists() );
 
         //get the actual checksum of the pom
-        String actualPomMd5Sum = mojo.getChecksum( pom, "MD5" );
-        String actualPomSha1Sum = mojo.getChecksum( pom, "SHA-1" );
+        String actualPomMd5Sum = mojo.md5Digester.calc( pom );
+        String actualPomSha1Sum = mojo.sha1Digester.calc( pom );
 
         //get the actual checksum of the artifact
-        String actualMd5Sum = mojo.getChecksum( file, "MD5" );
-        String actualSha1Sum = mojo.getChecksum( file, "SHA-1" );
+        String actualMd5Sum = mojo.md5Digester.calc( file );
+        String actualSha1Sum = mojo.sha1Digester.calc( file );
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
@@ -263,10 +263,10 @@ public class InstallMojoTest
         assertTrue( md5.exists() );
         assertTrue( sha1.exists() );
 
-        String generatedMd5 = FileUtils.fileRead( md5 );
-        String generatedSha1 = FileUtils.fileRead( sha1 );
-        String generatedPomMd5 = FileUtils.fileRead( pomMd5 );
-        String generatedPomSha1 = FileUtils.fileRead( pomSha1 );
+        String generatedMd5 = FileUtils.fileRead( md5, "UTF-8" );
+        String generatedSha1 = FileUtils.fileRead( sha1, "UTF-8" );
+        String generatedPomMd5 = FileUtils.fileRead( pomMd5, "UTF-8" );
+        String generatedPomSha1 = FileUtils.fileRead( pomSha1, "UTF-8" );
 
         assertEquals( actualMd5Sum, generatedMd5 );
         assertEquals( actualSha1Sum, generatedSha1 );
