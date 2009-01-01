@@ -20,6 +20,7 @@ package org.apache.maven.plugin.install;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,10 +42,14 @@ import java.security.NoSuchAlgorithmException;
 public abstract class AbstractInstallMojo
     extends AbstractMojo
 {
+
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.installer.ArtifactInstaller}"
-     * @required
-     * @readonly
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * @component
      */
     protected ArtifactInstaller installer;
 
