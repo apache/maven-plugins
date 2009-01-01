@@ -241,8 +241,8 @@ public class InstallFileMojoTest
         mojo.execute();
 
         //get the actual checksum of the artifact
-        String actualMd5Sum = mojo.getChecksum( file, "MD5" );
-        String actualSha1Sum = mojo.getChecksum( file, "SHA-1" );
+        String actualMd5Sum = mojo.md5Digester.calc( file );
+        String actualSha1Sum = mojo.sha1Digester.calc( file );
 
         String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
             artifactId + "-" + version;
@@ -255,8 +255,8 @@ public class InstallFileMojoTest
         assertTrue( md5.exists() );
         assertTrue( sha1.exists() );
 
-        String generatedMd5 = FileUtils.fileRead( md5 );
-        String generatedSha1 = FileUtils.fileRead( sha1 );
+        String generatedMd5 = FileUtils.fileRead( md5, "UTF-8" );
+        String generatedSha1 = FileUtils.fileRead( sha1, "UTF-8" );
 
         assertEquals( actualMd5Sum, generatedMd5 );
         assertEquals( actualSha1Sum, generatedSha1 );

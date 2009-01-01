@@ -93,11 +93,7 @@ public class InstallMojo
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
-
-                if ( createChecksum )
-                {
-                    installCheckSum( pomFile, artifact, false );
-                }
+                installChecksums( pomFile, getLocalRepoFile( artifact ) );
             }
             else
             {
@@ -111,17 +107,8 @@ public class InstallMojo
                 if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
-
-                    if ( createChecksum )
-                    {
-                        //create checksums for pom and artifact
-                        File pom = new File( localRepository.getBasedir(),
-                                             localRepository.pathOfLocalRepositoryMetadata( metadata,
-                                                                                            localRepository ) );
-
-                        installCheckSum( pom, true );
-                        installCheckSum( file, artifact, false );
-                    }
+                    installChecksums( file, getLocalRepoFile( artifact ) );
+                    installChecksums( pomFile, getLocalRepoFile( metadata ) );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -137,10 +124,7 @@ public class InstallMojo
                     }
 
                     installer.install( pomFile, pomArtifact, localRepository );
-                    if ( createChecksum )
-                    {
-                        installCheckSum( pomFile, pomArtifact, false );
-                    }
+                    installChecksums( pomFile, getLocalRepoFile( pomArtifact ) );
                 }
                 else
                 {
@@ -154,13 +138,7 @@ public class InstallMojo
                 Artifact attached = (Artifact) i.next();
 
                 installer.install( attached.getFile(), attached, localRepository );
-
-                boolean signatureFile = attached.getFile().getName().endsWith( ".asc" );
-
-                if ( createChecksum && !signatureFile )
-                {
-                    installCheckSum( attached.getFile(), attached, false );
-                }
+                installChecksums( attached.getFile(), getLocalRepoFile( attached ) );
             }
         }
         catch ( ArtifactInstallationException e )
