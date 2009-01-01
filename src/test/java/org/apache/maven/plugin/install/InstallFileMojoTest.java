@@ -19,7 +19,6 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -234,8 +233,6 @@ public class InstallFileMojoTest
         assertNotNull( mojo );
 
         assignValuesForParameter( mojo );
-
-        ArtifactRepository localRepo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
 
         boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
 
