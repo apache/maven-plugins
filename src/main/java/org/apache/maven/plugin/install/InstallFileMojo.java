@@ -20,7 +20,6 @@ package org.apache.maven.plugin.install;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
@@ -117,13 +116,6 @@ public class InstallFileMojo
      * @parameter expression="${generatePom}" default-value="false"
      */
     private boolean generatePom;
-
-    /**
-     * Used to create artifacts
-     *
-     * @component
-     */
-    private ArtifactFactory artifactFactory;
 
     /**
      * The type of remote repository layout to deploy to. Try <i>legacy</i> for 

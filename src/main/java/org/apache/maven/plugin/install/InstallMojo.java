@@ -126,6 +126,21 @@ public class InstallMojo
                 else if ( !attachedArtifacts.isEmpty() )
                 {
                     getLog().info( "No primary artifact to install, installing attached artifacts instead." );
+
+                    Artifact pomArtifact =
+                        artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                               artifact.getBaseVersion() );
+                    pomArtifact.setFile( pomFile );
+                    if ( updateReleaseInfo )
+                    {
+                        pomArtifact.setRelease( true );
+                    }
+
+                    installer.install( pomFile, pomArtifact, localRepository );
+                    if ( createChecksum )
+                    {
+                        installCheckSum( pomFile, pomArtifact, false );
+                    }
                 }
                 else
                 {
