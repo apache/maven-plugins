@@ -108,7 +108,7 @@ public class InstallMojo
 
                 // Here, we have a temporary solution to MINSTALL-3 (isDirectory() is true if it went through compile
                 // but not package). We are designing in a proper solution for Maven 2.1
-                if ( file != null && !file.isDirectory() )
+                if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
 
