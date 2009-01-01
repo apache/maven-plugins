@@ -1,0 +1,35 @@
+import java.io.*;
+import java.util.*;
+
+import org.apache.maven.plugin.install.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.pom",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.pom.md5",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.pom.sha1",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.jar",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.jar.md5",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.jar.sha1",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT-sources.jar",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT-sources.jar.md5",
+    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT-sources.jar.sha1",
+};
+
+for ( String path : paths )
+{
+    File file = new File( localRepositoryPath, path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+    if ( file.getName().endsWith( ".md5" ) || file.getName().endsWith( ".sha1" ) )
+    {
+        System.out.println( "Verifying " + file );
+        Utils.verifyChecksum( file );
+    }
+}
+
+return true;
