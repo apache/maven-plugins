@@ -93,6 +93,11 @@ public class InstallMojo
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
+
+                if ( createChecksum )
+                {
+                    installCheckSum( pomFile, artifact, false );
+                }
             }
             else
             {
