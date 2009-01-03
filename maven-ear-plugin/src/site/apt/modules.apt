@@ -28,11 +28,11 @@ EAR Modules
 
   The EAR Plugin supports additional configurations of the following modules:
 
-  * {{{#ejb3Module}ejb3Module}}
-
   * {{{#ejbClientModule}ejbClientModule}}
 
   * {{{#ejbModule}ejbModule}}
+
+  * {{{#ejbModule}ejb3Module}} (deprecated. ejbModule provides the same functionality)
 
   * {{{#jarModule}jarModule}} (previously know as javaModule and deprecated)
 
@@ -78,38 +78,6 @@ EAR Modules
       [...]
 </project>
 +-----
-
-* {ejb3Module} Properties
-
-  The following configuration options are available for Ejb3Module:
-
-  * <<groupId>> - sets the groupId of the ejb3 artifact you want to configure.
-
-  * <<artifactId>> - sets the artifactId of the ejb3 artifact you want to
-  configure.
-
-  * <<classifier>> - sets the classifier of the ejb3 artifact you want to
-  configure if multiple ejb3 artifacts matches the groupId/artifact. Use
-  the mainArtifactId ('none' by default) to define the main artifact (e.g.
-  the artifact without a classifier)
-
-  * <<bundleDir>> - sets the location of this artifact inside the ear archive.
-  If not set, this artifact will be packaged in the root of the archive.
-
-  * <<bundleFileName>> - sets the new name of this artifact inside the ear
-  archive. If not set, the artifact's filename in the repository is used.
-
-  * <<excluded>> - set to true to exclude this artifact from being packaged into
-  the ear archive. Default is false.
-
-  * <<uri>> - sets the uri path of this artifact within the ear archive.
-  Automatically determined when not set.
-
-  * <<unpack>> - set to true to unpack this artifact into the ear archive according
-  to its uri. Default is false.
-
-  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
 
 
 * {ejbClientModule} Properties
