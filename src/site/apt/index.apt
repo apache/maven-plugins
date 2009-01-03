@@ -94,6 +94,10 @@ Maven EAR Plugin
   To provide you with better understanding on some usages of the EAR Plugin,
   you can take a look into the following examples:
 
+  * {{{examples/filtering-sources.html}Filtering EAR Resources}}
+
+  * {{{examples/filtering-advanced.html}Advanced Filtering Techniques}}
+
   * {{{examples/customizing-a-module-filename.html}Customizing A Module
   Filename}}
 
