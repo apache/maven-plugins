@@ -20,8 +20,10 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.Properties;
 
 /**
@@ -469,6 +471,54 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-044", new String[]{"ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR and filter the content of the sources directory.
+     */
+    public void testProject045()
+        throws Exception
+    {
+        final File baseDir = doTestProject( "project-045", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
+        final String content = IOUtil.toString(new FileReader(actualReadme));
+        assertTrue("application name and version was not filtered properly",
+                content.indexOf("my-app 99.0") != -1);
+        assertTrue("Escaping did not work properly",
+                content.indexOf("will not be filtered ${application.name}.") != -1);
+    }
+
+    /**
+     * Builds an EAR and filter the content of the sources directory using
+     * a custom filter file.
+     */
+    public void testProject046()
+        throws Exception
+    {
+        final File baseDir = doTestProject( "project-046", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
+        final String content = IOUtil.toString(new FileReader(actualReadme));
+        assertTrue("application name and version was not filtered properly",
+                content.indexOf("my-app 99.0") != -1);
+        assertTrue("application build was not filtered properly",
+                content.indexOf("(Build 2)") != -1);
+        assertTrue("Unknown property should not have been filtered",
+                content.indexOf("will not be filtered ${application.unknown}.") != -1);
+    }
+
+    /**
+     * Builds an EAR and filter the content with a list of extensions.
+     */
+    public void testProject047()
+        throws Exception
+    {
+        final File baseDir = doTestProject( "project-047", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
+        final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
+        final String content = IOUtil.toString(new FileReader(actualReadme));
+        assertTrue("application name and version should not have been filtered",
+                content.indexOf("my-app 99.0") == -1);
+        assertTrue("orignial properties not found",
+                content.indexOf("${application.name} ${project.version}") != -1);
     }
 
 }

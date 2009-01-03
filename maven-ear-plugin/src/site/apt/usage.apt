@@ -68,6 +68,14 @@ Configuration and Usage
 mvn package
 +-----
 
+* Copying resources
+
+  The default resource directory for an EAR is <<<src/main/application>>> as
+  defined by the <<<earSourcesDirectory>>> parameter. The content of this
+  directory may be filterd if necessary using the <<<filtering>>> parameter.
+
+  For more details, have a look to the examples.
+
 * Advanced Configuration
 
   Any EAR module might be further customized as follows:
