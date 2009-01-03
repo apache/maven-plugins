@@ -24,6 +24,8 @@ import org.apache.maven.it.Verifier;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -384,10 +386,14 @@ public abstract class AbstractEarPluginIT
             {
                 expected = new FileReader( expectedDeploymentDescriptor );
                 actual = new FileReader( actualDeploymentDescriptor );
+
+                // Make sure that it matches even if the elements are not in
+                // the exact same order
+                final Diff myDiff = new Diff(expected, actual);
+                myDiff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
                 XMLAssert.assertXMLEqual(
                     "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
-                    expected, actual );
-            }
+                     myDiff, true);             }
             catch ( Exception e )
             {
                 e.printStackTrace();
