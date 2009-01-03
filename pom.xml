@@ -84,7 +84,7 @@ under the License.
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

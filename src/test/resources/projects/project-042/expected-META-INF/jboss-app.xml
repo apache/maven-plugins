@@ -21,4 +21,8 @@ under the License.
 <!DOCTYPE jboss-app PUBLIC
 	"-//JBoss//DTD J2EE Application 1.4//EN"
 	"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd">
-<jboss-app/>
+<jboss-app>
+  <module>
+    <service>my-ds.xml</service>
+  </module>
+</jboss-app>

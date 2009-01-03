@@ -51,44 +51,48 @@ final class ApplicationXmlWriter
         this.version = version;
     }
 
-    public void write( File destinationFile, List earModules, List securityRoles, String displayName,
-                       String description )
+    public void write( ApplicationXmlWriterContext context )
         throws EarPluginException
     {
-        Writer w = initializeWriter( destinationFile );
+        Writer w = initializeWriter( context.getDestinationFile() );
 
         XMLWriter writer = null;
         if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
         {
             writer = initializeRootElementOneDotThree( w );
-            writeDisplayName( displayName, writer );
-            writeDescription( description, writer );
+            writeDisplayName( context.getDisplayName(), writer );
+            writeDescription( context.getDescription(), writer );
         }
         else if ( GenerateApplicationXmlMojo.VERSION_1_4.equals( version ) )
         {
             writer = initializeRootElementOneDotFour( w );
-            writeDescription( description, writer );
-            writeDisplayName( displayName, writer );
+            writeDescription( context.getDescription(), writer );
+            writeDisplayName( context.getDisplayName(), writer );
         }
         else if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
         {
             writer = initializeRootElementFive( w );
-            writeDescription( description, writer );
-            writeDisplayName( displayName, writer );
+            writeDescription( context.getDescription(), writer );
+            writeDisplayName( context.getDisplayName(), writer );
         }
 
-        final Iterator moduleIt = earModules.iterator();
+        final Iterator moduleIt = context.getEarModules().iterator();
         while ( moduleIt.hasNext() )
         {
             EarModule module = (EarModule) moduleIt.next();
             module.appendModule( writer, version );
         }
 
-        final Iterator securityRoleIt = securityRoles.iterator();
+        final Iterator securityRoleIt = context.getSecurityRoles().iterator();
         while ( securityRoleIt.hasNext() )
         {
             SecurityRole securityRole = (SecurityRole) securityRoleIt.next();
             securityRole.appendSecurityRole( writer );
+        }
+
+        if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
+        {
+        	writeLibraryDirectory ( context.getLibraryDirectory(), writer );
         }
 
         writer.endElement();
@@ -112,6 +116,16 @@ final class ApplicationXmlWriter
         {
             writer.startElement( "display-name" );
             writer.writeText( displayName );
+            writer.endElement();
+        }
+    }
+
+    private void writeLibraryDirectory( String libraryDirectory, XMLWriter writer )
+    {
+        if ( libraryDirectory != null )
+        {
+            writer.startElement( "library-directory" );
+            writer.writeText( libraryDirectory );
             writer.endElement();
         }
     }
