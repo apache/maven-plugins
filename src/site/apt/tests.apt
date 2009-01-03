@@ -112,4 +112,9 @@ EAR Plugin Tests
 
   * project-041: builds an EAR with a Jboss 4.2 configuration specifying the module order to use
 
+  * project-042: builds an EAR with a Jboss 4.2 configuration specifying a datasource to add
+
+  * project-043: builds an EAR with a custom descriptor location (generatedDescriptorLocation setting)
+
+  * project-044: builds an EAR with a custom library-directory
    

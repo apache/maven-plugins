@@ -175,8 +175,10 @@ public class GenerateApplicationXmlMojo
 
         File descriptor = new File( outputDir, "application.xml" );
 
-        ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding );
-        writer.write( descriptor, getModules(), buildSecurityRoles(), displayName, description );
+        final ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding );
+        final ApplicationXmlWriterContext context = new ApplicationXmlWriterContext(descriptor, getModules(), 
+                buildSecurityRoles(), displayName, description, defaultLibBundleDir);
+        writer.write( context );
     }
 
     /**

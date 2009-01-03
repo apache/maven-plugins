@@ -462,4 +462,13 @@ public class EarMojoIT
         assertFalse("Application.xml file should not be empty", expectedApplicationXml.length() == 0);
     }
 
+    /**
+     * Builds an EAR with a custom library-directory.
+     */
+    public void testProject044()
+        throws Exception
+    {
+        doTestProject( "project-044", new String[]{"ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar"} );
+    }
+
 }
