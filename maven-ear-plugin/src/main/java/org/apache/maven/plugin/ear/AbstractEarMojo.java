@@ -93,7 +93,7 @@ public abstract class AbstractEarMojo
      *
      * @parameter alias="defaultJavaBundleDir"
      */
-    private String defaultLibBundleDir;
+    protected String defaultLibBundleDir;
 
     /**
      * The file name mapping to use for all dependencies included
