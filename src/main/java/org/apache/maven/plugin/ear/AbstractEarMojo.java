@@ -54,9 +54,9 @@ public abstract class AbstractEarMojo
     /**
      * Character encoding for the auto-generated deployment file(s).
      *
-     * @parameter
+     * @parameter default-value="UTF-8"
      */
-    protected String encoding = UTF_8;
+    protected String encoding;
 
     /**
      * Directory where the deployment descriptor file(s) will be auto-generated.

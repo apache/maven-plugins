@@ -70,11 +70,10 @@ public class EarMojo
 
     /**
      * The comma separated list of tokens to include in the EAR.
-     * Default is '**'.
      *
-     * @parameter alias="includes"
+     * @parameter alias="includes" default-value="**"
      */
-    private String earSourceIncludes = "**";
+    private String earSourceIncludes;
 
     /**
      * The comma separated list of tokens to exclude from the EAR.
@@ -86,10 +85,10 @@ public class EarMojo
     /**
      * Specify that the ear sources should be filtered.
      *
-     * @parameter
+     * @parameter default-value="false"
      * @since 2.3.2     
      */
-    private boolean filtering = false;
+    private boolean filtering;
 
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
@@ -115,7 +114,7 @@ public class EarMojo
      * @parameter expression="${maven.ear.escapedBackslashesInFilePath}" default-value="false"
      * @since 2.3.2
      */
-    private boolean escapedBackslashesInFilePath = false;
+    private boolean escapedBackslashesInFilePath;
 
     /**
      * Expression preceded with the String won't be interpolated
@@ -184,8 +183,7 @@ public class EarMojo
     /**
      * The Jar archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
+     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
      */
     private JarArchiver jarArchiver;
 
