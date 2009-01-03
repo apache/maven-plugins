@@ -60,9 +60,9 @@ public class GenerateApplicationXmlMojo
      * The version of the application.xml to generate. Valid values
      * are 1.3, 1.4 and 5.
      *
-     * @parameter
+     * @parameter default-value="1.3"
      */
-    private String version = VERSION_1_3;
+    private String version;
 
     /**
      * Display name of the application to be used when application.xml
@@ -70,7 +70,7 @@ public class GenerateApplicationXmlMojo
      *
      * @parameter expression="${project.artifactId}"
      */
-    private String displayName = null;
+    private String displayName;
 
     /**
      * Description of the application to be used when application.xml
@@ -78,7 +78,7 @@ public class GenerateApplicationXmlMojo
      *
      * @parameter expression="${project.description}"
      */
-    private String description = null;
+    private String description;
 
     /**
      * The security-roles to be added to the auto-generated
