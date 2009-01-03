@@ -1,0 +1,103 @@
+  ------
+  Filtering Advanced Techniques
+  ------
+  Stephane Nicoll
+  <snicoll@apache.org>
+  ------
+  January 3, 2009
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Filtering: Advanced techniques
+
+  The following features are described in this document:
+
+  * Escaping properties that should not be filtered
+
+  * Ignoring files based on its extension
+
+
+* Escaping properties
+
+  It may be necessary to filters some properties in a file and ignore another. The
+  filtering mechanism won't touch a token that is not recognized (i.e. that
+  represents an unknown property). This won't work if the property is known
+  obviously so it should be escaped explicitely.
+
+  The following configuration defines the value of the <<<escapeString>>> which will
+  stop the interpolation of a property if it starts with that value
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+           <filtering>true</filtering>
+           <escapeString>\</escapeString>
+           [...]
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------
+
+  Assuming the following file
+
++--------
+jdbc.url=${db.url}
+jdbc.user=${db.username}
+jdbc.password=\${db.password}
++--------
+
+  Filtering the content of such a file with this config will produce this content.
+  Note that that the escaped property can now be filtered the usual way later if
+  necessary!
+
++--------
+jdbc.url=jdbc:oracle:thin:@localhost:1521:orcl
+jdbc.user=someuser
+jdbc.password=${db.password}
++--------
+
+
+* Ignoring files based on its extension
+
+  Filtering binary files corrupt them so it may be necessary to exclude files from
+  filtering based on the extension. To do so, configure the plugin as follow
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+           <filtering>true</filtering>
+           <nonFilteredFileExtensions>
+             <nonFilteredFileExtension>png</nonFilteredFileExtension>
+             <nonFilteredFileExtension>jpeg</nonFilteredFileExtension>
+           </nonFilteredFileExtensions>
+           [...]
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------

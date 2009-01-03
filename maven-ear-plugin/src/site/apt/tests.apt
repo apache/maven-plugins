@@ -117,4 +117,10 @@ EAR Plugin Tests
   * project-043: builds an EAR with a custom descriptor location (generatedDescriptorLocation setting)
 
   * project-044: builds an EAR with a custom library-directory
+
+  * project-045: builds an EAR and filter the content of the sources directory
+
+  * project-046: builds an EAR and filter the content of the sources directory using a custom filter file
+
+  * project-047: builds an EAR and filter the content with a list of extensions
    
