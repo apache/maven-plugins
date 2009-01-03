@@ -24,6 +24,11 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.apache.maven.shared.filtering.MavenFilteringException;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -52,6 +57,9 @@ import java.util.List;
 public class EarMojo
     extends AbstractEarMojo
 {
+    private static final String[] EMPTY_STRING_ARRAY = {};
+
+
     /**
      * Single directory for extra files to include in the EAR.
      *
@@ -75,7 +83,48 @@ public class EarMojo
      */
     private String earSourceExcludes;
 
-    private static final String[] EMPTY_STRING_ARRAY = {};
+    /**
+     * Specify that the ear sources should be filtered.
+     *
+     * @parameter
+     * @since 2.3.2     
+     */
+    private boolean filtering = false;
+
+    /**
+     * Filters (property files) to include during the interpolation of the pom.xml.
+     *
+     * @parameter
+     * @since 2.3.2
+     */
+    private List filters;
+
+    /**
+     * A list of file extensions that should not be filtered if
+     * filtering is actived.
+     *
+     * @parameter
+     * @since 2.3.2
+     */
+    private List nonFilteredFileExtensions;
+
+    /**
+     * To escape interpolated value with windows path
+     * c:\foo\bar will be replaced with c:\\foo\\bar
+     *
+     * @parameter expression="${maven.ear.escapedBackslashesInFilePath}" default-value="false"
+     * @since 2.3.2
+     */
+    private boolean escapedBackslashesInFilePath = false;
+
+    /**
+     * Expression preceded with the String won't be interpolated
+     * \${foo} will be replaced with ${foo}
+     *
+     * @parameter expression="${maven.ear.escapeString}"
+     * @since 2.3.2
+     */
+    protected String escapeString;
 
     /**
      * The location of the manifest file to be used within the ear file.
@@ -128,7 +177,7 @@ public class EarMojo
      * The directory to get the resources from.
      *
      * @parameter
-     * @deprecated
+     * @deprecated please use earSourcesDirectory instead
      */
     private File resourcesDir;
 
@@ -159,6 +208,32 @@ public class EarMojo
      * @component
      */
     private ArchiverManager archiverManager;
+
+    /**
+     *
+     * @component role="org.apache.maven.shared.filtering.MavenFileFilter" role-hint="default"
+     * @required
+     */
+    private MavenFileFilter mavenFileFilter;
+
+    /**
+     *
+     * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
+     * @required
+     */
+    private MavenResourcesFiltering mavenResourcesFiltering;
+
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.3.2
+     */
+    private MavenSession session;
+
+
+    private List filterWrappers;
+
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -258,8 +333,8 @@ public class EarMojo
                 String[] fileNames = getEarFiles( earSourceDir );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
-                    FileUtils.copyFile( new File( earSourceDir, fileNames[i] ),
-                                        new File( getWorkDirectory(), fileNames[i] ) );
+                    copyFile( new File( earSourceDir, fileNames[i] ),
+                              new File( getWorkDirectory(), fileNames[i] ) );
                 }
             }
 
@@ -268,7 +343,7 @@ public class EarMojo
                 //rename to application.xml
                 getLog().info( "Including custom application.xml[" + applicationXml + "]" );
                 File metaInfDir = new File( getWorkDirectory(), META_INF );
-                FileUtils.copyFile( new File( applicationXml ), new File( metaInfDir, "/application.xml" ) );
+                copyFile( new File( applicationXml ), new File( metaInfDir, "/application.xml" ) );
             }
 
         }
@@ -276,12 +351,17 @@ public class EarMojo
         {
             throw new MojoExecutionException( "Error copying EAR sources", e );
         }
+        catch ( MavenFilteringException e )
+        {
+            throw new MojoExecutionException( "Error filetering EAR sources", e );
+        }
 
         // Copy resources files
         try
         {
             if ( resourcesDir != null && resourcesDir.exists() )
             {
+                getLog().warn( "resourcesDir is deprecated. Please use the earSourceDirectory property instead.");
                 getLog().info( "Copy ear resources to " + getWorkDirectory().getAbsolutePath() );
                 String[] fileNames = getEarFiles( resourcesDir );
                 for ( int i = 0; i < fileNames.length; i++ )
@@ -471,5 +551,39 @@ public class EarMojo
         return jarArchiver;
     }
 
+    private void copyFile(File source, File target)
+            throws MavenFilteringException, IOException, MojoExecutionException {
+        if ( filtering && !isNonFilteredExtension( source.getName() ) )
+        {
+           mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), null );
+        }
+        else
+        {
+             FileUtils.copyFile(source,target);
+        }
+    }
 
+    public boolean isNonFilteredExtension( String fileName )
+    {
+        return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
+    }
+
+    private List getFilterWrappers() throws MojoExecutionException {
+        if (filterWrappers == null)
+        {
+            try
+            {
+                MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
+                mavenResourcesExecution.setEscapeString( escapeString );
+                filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
+                        escapedBackslashesInFilePath, this.session, mavenResourcesExecution );
+            }
+            catch ( MavenFilteringException e )
+            {
+                getLog().error( "fail to build filering wrappers " + e.getMessage() );
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+        }
+        return filterWrappers;
+    }
 }
