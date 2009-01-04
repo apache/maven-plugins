@@ -50,18 +50,14 @@ public abstract class AbstractDependencyMojo
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     protected org.apache.maven.artifact.factory.ArtifactFactory factory;
 
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
-     * @required
-     * @readonly
+     * @component
      */
     protected org.apache.maven.artifact.resolver.ArtifactResolver resolver;
 
@@ -103,9 +99,7 @@ public abstract class AbstractDependencyMojo
     /**
      * To look up Archiver/UnArchiver implementations
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArchiverManager archiverManager;
 

@@ -141,8 +141,7 @@ public class EjbMojo
     /**
      * The Jar archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
 
@@ -165,17 +164,14 @@ public class EjbMojo
     /**
      * The client Jar archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver clientJarArchiver;
 
     /**
      * The Maven project's helper.
      *
-     * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
-     * @required
-     * @readonly
+     * @component
      */
     private MavenProjectHelper projectHelper;
 

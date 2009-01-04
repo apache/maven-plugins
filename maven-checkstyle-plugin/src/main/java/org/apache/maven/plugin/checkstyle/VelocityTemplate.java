@@ -44,8 +44,7 @@ import java.io.Writer;
  * <pre>
  * /&#042;&#042;
  *  &#042; Velocity Component
- *  &#042; &#064;parameter expression="${component.org.codehaus.plexus.velocity.VelocityComponent}"
- *  &#042; &#064;readonly
+ *  &#042; &#064;component
  *  &#042;/
  *  private VelocityComponent velocity;
  * </pre>

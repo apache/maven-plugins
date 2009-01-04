@@ -80,10 +80,9 @@ public class WarMojo
     private String packagingExcludes;
 
     /**
-     * The Jar archiver.
+     * The War archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#war}"
-     * @required
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
      */
     private WarArchiver warArchiver;
 
