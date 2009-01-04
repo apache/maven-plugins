@@ -32,9 +32,7 @@ public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactDeployer deployer;
 
