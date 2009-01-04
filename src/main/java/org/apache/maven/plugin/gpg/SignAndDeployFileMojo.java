@@ -106,9 +106,7 @@ public class SignAndDeployFileMojo extends DeployFileMojo {
      * the current jar
      */
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactDeployer deployer;
     /**
