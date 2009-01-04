@@ -248,7 +248,8 @@ public class InstallFileMojo
         }
 
         // TODO: validate
-        // TODO: maybe not strictly correct, while we should enfore that packaging has a type handler of the same id, we don't
+        // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id,
+        // we don't
         try
         {
             String localPath = localRepository.pathOf( artifact );
@@ -258,16 +259,12 @@ public class InstallFileMojo
             if ( !file.equals( destination ) )
             {
                 installer.install( file, artifact, localRepository );
-                installChecksums( file, getLocalRepoFile( artifact ) );
-                if ( generatePom )
-                {
-                    installChecksums( generatedPomFile, getLocalRepoFile( metadata ) );
-                }
+                installChecksums( artifact );
 
                 if ( pomFile != null && pomFile.isFile() )
                 {
                     installer.install( pomFile, pomArtifact, localRepository );
-                    installChecksums( pomFile, getLocalRepoFile( pomArtifact ) );
+                    installChecksums( pomArtifact );
                 }
             }
             else

@@ -93,7 +93,7 @@ public class InstallMojo
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
-                installChecksums( pomFile, getLocalRepoFile( artifact ) );
+                installChecksums( artifact );
             }
             else
             {
@@ -107,8 +107,7 @@ public class InstallMojo
                 if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
-                    installChecksums( file, getLocalRepoFile( artifact ) );
-                    installChecksums( pomFile, getLocalRepoFile( metadata ) );
+                    installChecksums( artifact );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -124,7 +123,7 @@ public class InstallMojo
                     }
 
                     installer.install( pomFile, pomArtifact, localRepository );
-                    installChecksums( pomFile, getLocalRepoFile( pomArtifact ) );
+                    installChecksums( pomArtifact );
                 }
                 else
                 {
@@ -138,7 +137,7 @@ public class InstallMojo
                 Artifact attached = (Artifact) i.next();
 
                 installer.install( attached.getFile(), attached, localRepository );
-                installChecksums( attached.getFile(), getLocalRepoFile( attached ) );
+                installChecksums( attached );
             }
         }
         catch ( ArtifactInstallationException e )
