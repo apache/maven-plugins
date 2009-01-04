@@ -32,6 +32,8 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Common fields for installation mojos.
@@ -108,21 +110,54 @@ public abstract class AbstractInstallMojo
     }
 
     /**
-     * Installs the checksums for the specified file if this has been enabled in the plugin configuration.
+     * Installs the checksums for the specified artifact (and its metadata files) if this has been enabled in the plugin
+     * configuration. This method creates checksums for files that have already been installed to the local repo to
+     * account for on-the-fly generated/updated files. For example, in Maven 2.0.4- the
+     * <code>ProjectArtifactMetadata</code> did not install the original POM file (cf. MNG-2820). While the plugin
+     * currently requires Maven 2.0.6, we continue to hash the installed POM for robustness with regard to future
+     * changes like re-introducing some kind of POM filtering.
      * 
-     * @param originalFile The path to the file from which the checksums are generated, must not be <code>null</code>.
-     * @param installedFile The base path from which the paths to the checksum files are derived, must not be
-     *            <code>null</code>.
+     * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( File originalFile, File installedFile )
+    protected void installChecksums( Artifact artifact )
+        throws MojoExecutionException
+    {
+        if ( !createChecksum )
+        {
+            return;
+        }
+
+        File artifactFile = getLocalRepoFile( artifact );
+        installChecksums( artifactFile );
+
+        Collection metadatas = artifact.getMetadataList();
+        if ( metadatas != null )
+        {
+            for ( Iterator it = metadatas.iterator(); it.hasNext(); )
+            {
+                ArtifactMetadata metadata = (ArtifactMetadata) it.next();
+                File metadataFile = getLocalRepoFile( metadata );
+                installChecksums( metadataFile );
+            }
+        }
+    }
+
+    /**
+     * Installs the checksums for the specified file (if it exists).
+     * 
+     * @param installedFile The path to the already installed file in the local repo for which to generate checksums,
+     *            must not be <code>null</code>.
+     * @throws MojoExecutionException If the checksums could not be installed.
+     */
+    private void installChecksums( File installedFile )
         throws MojoExecutionException
     {
         boolean signatureFile = installedFile.getName().endsWith( ".asc" );
-        if ( createChecksum && !signatureFile )
+        if ( installedFile.isFile() && !signatureFile )
         {
-            installChecksum( originalFile, installedFile, md5Digester, ".md5" );
-            installChecksum( originalFile, installedFile, sha1Digester, ".sha1" );
+            installChecksum( installedFile, installedFile, md5Digester, ".md5" );
+            installChecksum( installedFile, installedFile, sha1Digester, ".sha1" );
         }
     }
 
