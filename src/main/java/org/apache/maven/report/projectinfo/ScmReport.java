@@ -58,9 +58,7 @@ public class ScmReport
     /**
      * Maven SCM Manager.
      *
-     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
-     * @required
-     * @readonly
+     * @component
      */
     protected ScmManager scmManager;
 
