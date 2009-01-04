@@ -76,8 +76,7 @@ public abstract class AbstractJarMojo
     /**
      * The Jar archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
 
