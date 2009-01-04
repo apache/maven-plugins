@@ -53,16 +53,12 @@ public class CopyDependenciesMojo
 {
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.installer.ArtifactInstaller}"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArtifactInstaller installer;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.repository.ArtifactRepositoryFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArtifactRepositoryFactory repositoryFactory;
 
