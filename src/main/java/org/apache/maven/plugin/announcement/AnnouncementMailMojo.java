@@ -53,7 +53,7 @@ public class AnnouncementMailMojo
     //=========================================
 
     /**
-     * @parameter expression=${project}
+     * @parameter expression="${project}"
      * @readonly
      */
     private MavenProject project;
