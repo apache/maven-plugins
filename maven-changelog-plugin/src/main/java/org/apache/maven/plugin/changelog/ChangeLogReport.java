@@ -236,9 +236,7 @@ public class ChangeLogReport
     private File outputDirectory;
 
     /**
-     * @parameter expression="${component.org.codehaus.doxia.site.renderer.SiteRenderer}"
-     * @required
-     * @readonly
+     * @component
      */
     private SiteRenderer siteRenderer;
 
@@ -250,9 +248,7 @@ public class ChangeLogReport
     private boolean offline;
 
     /**
-     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
-     * @required
-     * @readonly
+     * @component
      */
     private ScmManager manager;
 

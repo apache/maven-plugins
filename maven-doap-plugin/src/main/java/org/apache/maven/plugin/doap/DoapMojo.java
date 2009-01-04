@@ -108,9 +108,7 @@ public class DoapMojo
     /**
      * Maven SCM Manager.
      *
-     * @parameter expression="${component.org.apache.maven.scm.manager.ScmManager}"
-     * @required
-     * @readonly
+     * @component
      * @since 1.0
      */
     private ScmManager scmManager;

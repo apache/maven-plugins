@@ -80,7 +80,7 @@ public class JavadocJar
     /**
      * The Jar archiver.
      *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      * @since 2.5
      */
     private JarArchiver jarArchiver;
