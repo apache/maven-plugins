@@ -1,0 +1,29 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/install/gpa2/test/maven-metadata-local.xml",
+    "org/apache/maven/its/install/gpa2/test/0.1/test-0.1.jar",
+    "org/apache/maven/its/install/gpa2/test/0.1/test-0.1.pom",
+};
+
+for ( String path : paths )
+{
+    File file = new File( localRepositoryPath, path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+    if ( path.endsWith( ".pom" ) )
+    {
+        System.out.println( "Checking for original state of " + file );
+        if ( file.length() != "test".length() )
+        {
+            throw new Exception( "Overwritten: " + file.getAbsolutePath() );
+        }
+    }
+}
+
+return true;

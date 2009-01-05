@@ -1,0 +1,15 @@
+import java.io.*;
+import java.util.*;
+
+import org.codehaus.plexus.util.*;
+
+File groupDir = new File( localRepositoryPath, "org/apache/maven/its/install/gpa2" );
+System.out.println( "Deleting " + groupDir );
+FileUtils.deleteDirectory( groupDir );
+
+File pomFile = new File( localRepositoryPath, "org/apache/maven/its/install/gpa2/test/0.1/test-0.1.pom" );
+System.out.println( "Writing " + pomFile );
+pomFile.getParentFile().mkdirs();
+FileUtils.fileWrite( pomFile.getPath(), "UTF-8", "test" );
+
+return true;
