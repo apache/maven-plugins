@@ -1,0 +1,34 @@
+import java.io.*;
+import java.util.*;
+
+import org.apache.maven.plugin.install.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml",
+    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.md5",
+    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.sha1",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.md5",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.sha1",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom.md5",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom.sha1",
+};
+
+for ( String path : paths )
+{
+    File file = new File( localRepositoryPath, path );
+    System.out.println( "Checking for existence of " + file );
+    if ( !file.isFile() )
+    {
+        throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    }
+    if ( file.getName().endsWith( ".md5" ) || file.getName().endsWith( ".sha1" ) )
+    {
+        System.out.println( "Verifying " + file );
+        Utils.verifyChecksum( file );
+    }
+}
+
+return true;
