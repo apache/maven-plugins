@@ -23,9 +23,11 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.Reader;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -156,9 +158,18 @@ public class InstallFileMojoTest
         File installedPom = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
             artifactId + "-" + version + "." + "pom" );
 
-        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model;
 
-        Model model = reader.read( new FileReader( installedPom ) );
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( installedPom );
+            model = new MavenXpp3Reader().read( reader );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
 
         assertEquals( "4.0.0", model.getModelVersion() );
 
