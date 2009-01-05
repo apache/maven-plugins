@@ -1,0 +1,10 @@
+import java.io.*;
+import java.util.*;
+
+import org.codehaus.plexus.util.*;
+
+File groupDir = new File( localRepositoryPath, "org/apache/maven/its/install/jsj" );
+System.out.println( "Deleting " + groupDir );
+FileUtils.deleteDirectory( groupDir );
+
+return true;
