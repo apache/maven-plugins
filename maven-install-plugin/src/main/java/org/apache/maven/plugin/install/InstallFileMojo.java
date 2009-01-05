@@ -103,6 +103,22 @@ public class InstallFileMojo
     private File file;
 
     /**
+     * The bundled API docs for the artifact.
+     * 
+     * @parameter expression="${javadoc}"
+     * @since 2.3
+     */
+    private File javadoc;
+
+    /**
+     * The bundled sources for the artifact.
+     * 
+     * @parameter expression="${sources}"
+     * @since 2.3
+     */
+    private File sources;
+
+    /**
      * Location of an existing POM file to be installed alongside the main artifact, given by the {@link #file}
      * parameter.
      * 
@@ -242,6 +258,34 @@ public class InstallFileMojo
             if ( generatedPomFile != null )
             {
                 generatedPomFile.delete();
+            }
+        }
+
+        if ( sources != null )
+        {
+            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
+            try
+            {
+                installer.install( sources, artifact, localRepository );
+                installChecksums( artifact );
+            }
+            catch ( ArtifactInstallationException e )
+            {
+                throw new MojoExecutionException( "Error installing sources " + sources + ": " + e.getMessage(), e );
+            }
+        }
+
+        if ( javadoc != null )
+        {
+            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
+            try
+            {
+                installer.install( javadoc, artifact, localRepository );
+                installChecksums( artifact );
+            }
+            catch ( ArtifactInstallationException e )
+            {
+                throw new MojoExecutionException( "Error installing API docs " + javadoc + ": " + e.getMessage(), e );
             }
         }
     }
