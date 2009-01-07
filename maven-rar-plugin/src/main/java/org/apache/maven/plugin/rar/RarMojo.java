@@ -111,7 +111,6 @@ public class RarMojo
      * @parameter expression="${project}"
      * @required
      * @readonly
-     * @description "the maven project to use"
      */
     private MavenProject project;
 
