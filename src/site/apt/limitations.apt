@@ -32,7 +32,7 @@ Known Bugs and Limitations
 
 * Current limitations
 
-  * Works only with Maven \>\= 2.0.9 using doxia-1.0-beta-1.
+  * Works only with Maven \>\= 2.1 using doxia-1.1.
 
   * Maven generated pages (reports) are ignored.
 
