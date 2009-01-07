@@ -162,7 +162,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-analyzer</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -225,25 +225,12 @@ under the License.
   <profiles>
     <profile>
       <id>run-its</id>
-      <!--remove when SHITTY is released-->
-      <pluginRepositories>
-        <pluginRepository>
-          <id>Codehaus Snapshots</id>
-          <url>http://snapshots.repository.codehaus.org</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </pluginRepository>
-      </pluginRepositories>
       <build>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>shitty-maven-plugin</artifactId>
-            <version>1.0-alpha-3-SNAPSHOT</version>
+            <version>1.0-alpha-3</version>
             <executions>
               <execution>
                 <goals>
