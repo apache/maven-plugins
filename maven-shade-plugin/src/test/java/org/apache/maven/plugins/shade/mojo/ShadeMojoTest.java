@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +34,6 @@ import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
 import org.codehaus.plexus.PlexusTestCase;
-
 
 /**
  * @author Jason van Zyl
@@ -62,7 +61,7 @@ public class ShadeMojoTest
 
         Shader s = (Shader) lookup( Shader.ROLE );
 
-        Set set = new HashSet();
+        Set set = new LinkedHashSet();
         set.add( new File( getBasedir(), "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
         List relocators = new ArrayList();
@@ -90,7 +89,7 @@ public class ShadeMojoTest
     {
         Shader s = (Shader) lookup( Shader.ROLE );
 
-        Set set = new HashSet();
+        Set set = new LinkedHashSet();
 
         set.add( new File( getBasedir(), "src/test/jars/test-project-1.0-SNAPSHOT.jar" ) );
 

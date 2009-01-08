@@ -22,7 +22,7 @@ package org.apache.maven.plugins.shade;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.net.URLClassLoader;
@@ -55,7 +55,7 @@ public class DefaultShaderTest
     {
         Shader s = new DefaultShader();
 
-        Set set = new HashSet();
+        Set set = new LinkedHashSet();
 
         set.add( new File( "src/test/jars/test-artifact-1.0-SNAPSHOT.jar" ) );
 
@@ -94,7 +94,7 @@ public class DefaultShaderTest
     {
         Shader s = new DefaultShader();
 
-        Set set = new HashSet();
+        Set set = new LinkedHashSet();
 
         set.add( new File( "src/test/jars/test-project-1.0-SNAPSHOT.jar" ) );
 
