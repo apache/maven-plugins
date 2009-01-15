@@ -618,7 +618,7 @@ public abstract class AbstractJavadocMojo
      * proxy configuration set in the pom.
      * <br/>
      *
-     * @parameter expression="${proxyHost}" default-value="${settings.activeProxy.host}"
+     * @parameter expression="${proxyHost}"
      * @deprecated since 2.4. Instead of, configure an active proxy host in <code>settings.xml</code>.
      */
     private String proxyHost;
@@ -629,7 +629,7 @@ public abstract class AbstractJavadocMojo
      * proxy configuration set in the pom.
      * <br/>
      *
-     * @parameter expression="${proxyPort}" default-value="${settings.activeProxy.port}"
+     * @parameter expression="${proxyPort}"
      * @deprecated since 2.4. Instead of, configure an active proxy port in <code>settings.xml</code>.
      */
     private int proxyPort;
