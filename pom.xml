@@ -49,15 +49,6 @@ under the License.
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
   </issueManagement>
 
-  <contributors>
-    <contributor>
-      <name>Petar Tahchiev</name>
-      <email>ptahchiev@apache.org</email>
-      <organization>ASF</organization>
-      <timezone>+2</timezone>
-    </contributor>
-  </contributors>
-  
   <properties>
     <mdoVersion>1.1.0</mdoVersion>
   </properties>
