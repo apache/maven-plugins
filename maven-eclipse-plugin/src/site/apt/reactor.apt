@@ -155,5 +155,5 @@ target
 +----+
  []
 
- <<Issue:>> The release plugin does not support the flat structure
-({{{http://jira.codehaus.org/browse/MRELEASE-6}MRELEASE-6}}).
+ <<Issue:>> The Maven Release Plugin does not support the flat structure
+({{{http://jira.codehaus.org/browse/MRELEASE-261}MRELEASE-261}}).
