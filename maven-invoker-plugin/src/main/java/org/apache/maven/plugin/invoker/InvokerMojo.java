@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -471,6 +473,11 @@ public class InvokerMojo
      * <code>null</code> if the POMs have already been filtered during cloning.
      */
     private String filteredPomPrefix = "interpolated-";
+
+    /**
+     * The format for elapsed build time.
+     */
+    private final DecimalFormat SECS_FORMAT = new DecimalFormat( "(0.0 s)", new DecimalFormatSymbols( Locale.ENGLISH ) );
 
     /**
      * Invokes Maven on the configured test projects.
@@ -1011,20 +1018,24 @@ public class InvokerMojo
             }
         }
 
+        long milliseconds = System.currentTimeMillis();
         try
         {
             runBuild( basedir, interpolatedPomFile, settingsFile );
 
             if ( !suppressSummaries )
             {
-                getLog().info( "...SUCCESS." );
+                milliseconds = System.currentTimeMillis() - milliseconds;
+                getLog().info( "..SUCCESS " + formatTime( milliseconds ) );
             }
         }
         catch ( BuildFailureException e )
         {
             if ( !suppressSummaries )
             {
-                getLog().info( "...FAILED. " + e.getMessage() );
+                milliseconds = System.currentTimeMillis() - milliseconds;
+                getLog().info( "..FAILED " + formatTime( milliseconds ) );
+                getLog().info( "  " + e.getMessage() );
             }
             throw e;
         }
@@ -1035,6 +1046,17 @@ public class InvokerMojo
                 interpolatedPomFile.delete();
             }
         }
+    }
+
+    /**
+     * Formats the specified build duration time.
+     * 
+     * @param milliseconds The duration of the build.
+     * @return The formatted time, never <code>null</code>.
+     */
+    private String formatTime( long milliseconds )
+    {
+        return SECS_FORMAT.format( milliseconds / 1000.0 );
     }
 
     /**
