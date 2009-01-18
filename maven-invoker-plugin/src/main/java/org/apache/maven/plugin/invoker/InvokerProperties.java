@@ -42,6 +42,41 @@ class InvokerProperties
     private final Properties properties;
 
     /**
+     * The constant for the invoker property.
+     */
+    private static final String PROJECT = "invoker.project";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String GOALS = "invoker.goals";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String PROFILES = "invoker.profiles";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String MAVEN_OPTS = "invoker.mavenOpts";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String FAILURE_BEHAVIOR = "invoker.failureBehavior";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String NON_RECURSIVE = "invoker.nonRecursive";
+
+    /**
+     * The constant for the invoker property.
+     */
+    private static final String OFFLINE = "invoker.offline";
+
+    /**
      * Creates a new facade for the specified invoker properties. The properties will not be copied, so any changes to
      * them will be reflected by the facade.
      * 
@@ -70,7 +105,15 @@ class InvokerProperties
      */
     public boolean isInvocationDefined( int index )
     {
-        return properties.getProperty( "invoker.goals." + index ) != null;
+        String[] keys = { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE };
+        for ( int i = 0; i < keys.length; i++ )
+        {
+            if ( properties.getProperty( keys[i] + '.' + index ) != null )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -82,7 +125,7 @@ class InvokerProperties
      */
     public void configureInvocation( InvocationRequest request, int index )
     {
-        String project = get( "invoker.project", index );
+        String project = get( PROJECT, index );
         if ( project != null )
         {
             File file = new File( request.getBaseDirectory(), project );
@@ -98,37 +141,37 @@ class InvokerProperties
             }
         }
 
-        String goals = get( "invoker.goals", index );
+        String goals = get( GOALS, index );
         if ( goals != null )
         {
             request.setGoals( new ArrayList( Arrays.asList( StringUtils.split( goals, ", \t\n\r\f" ) ) ) );
         }
 
-        String profiles = get( "invoker.profiles", index );
+        String profiles = get( PROFILES, index );
         if ( profiles != null )
         {
             request.setProfiles( new ArrayList( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
         }
 
-        String mvnOpts = get( "invoker.mavenOpts", index );
+        String mvnOpts = get( MAVEN_OPTS, index );
         if ( mvnOpts != null )
         {
             request.setMavenOpts( mvnOpts );
         }
 
-        String failureBehavior = get( "invoker.failureBehavior", index );
+        String failureBehavior = get( FAILURE_BEHAVIOR, index );
         if ( failureBehavior != null )
         {
             request.setFailureBehavior( failureBehavior );
         }
 
-        String nonRecursive = get( "invoker.nonRecursive", index );
+        String nonRecursive = get( NON_RECURSIVE, index );
         if ( nonRecursive != null )
         {
             request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
         }
 
-        String offline = get( "invoker.offline", index );
+        String offline = get( OFFLINE, index );
         if ( offline != null )
         {
             request.setOffline( Boolean.valueOf( offline ).booleanValue() );
