@@ -19,6 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
@@ -135,6 +136,37 @@ public class InvokerPropertiesTest
         props.setProperty( "invoker.profiles", "" );
         facade.configureInvocation( request, 0 );
         assertEquals( Arrays.asList( new String[0] ), request.getProfiles() );
+    }
+
+    public void testConfigureRequestProject()
+        throws Exception
+    {
+        Properties props = new Properties();
+        InvokerProperties facade = new InvokerProperties( props );
+
+        InvocationRequest request = new DefaultInvocationRequest();
+
+        File tempPom = File.createTempFile( "maven-invoker-plugin-test", ".pom" );
+        File tempDir = tempPom.getParentFile();
+
+        request.setBaseDirectory( tempDir );
+        facade.configureInvocation( request, 0 );
+        assertEquals( tempDir, request.getBaseDirectory() );
+        assertEquals( null, request.getPomFile() );
+
+        props.setProperty( "invoker.project", tempPom.getName() );
+        request.setBaseDirectory( tempDir );
+        facade.configureInvocation( request, 0 );
+        assertEquals( tempDir, request.getBaseDirectory() );
+        assertEquals( tempPom, request.getPomFile() );
+
+        props.setProperty( "invoker.project", "" );
+        request.setBaseDirectory( tempDir );
+        facade.configureInvocation( request, 0 );
+        assertEquals( tempDir, request.getBaseDirectory() );
+        assertEquals( null, request.getPomFile() );
+
+        tempPom.delete();
     }
 
     public void testConfigureRequestMavenOpts()

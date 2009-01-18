@@ -45,34 +45,8 @@ Invoker Properties
 -------------------
 
   There are only a few keys supported in this file and their names typically match the corresponding parameters in the
-  plugin configuration. The snippet below provides a complete overview of supported properties:
-
-+----
-# A comma or space separated list of goals/phases to execute, may
-# specify an empty list to execute the default goal of the project
-invoker.goals=clean install
-
-# Optionally, a list of goals to run during further invocations of Maven
-invoker.goals.2=\${project.groupId}:\${project.artifactId}:\${project.version}:run
-
-# A comma or space separated list of profiles to activate
-invoker.profiles=its,jdk15
-
-# The value for the environment variable MAVEN_OPTS
-invoker.mavenOpts=-Dfile.encoding=UTF-16 -Xms32m -Xmx256m
-
-# Possible values are "fail-fast" (default), "fail-at-end" and "fail-never"
-invoker.failureBehavior=fail-never
-
-# The expected result of the build, possible values are "success" (default) and "failure"
-invoker.buildResult=failure
-
-# A boolean value controlling the aggregator mode of Maven, defaults to "false"
-invoker.nonRecursive=true
-
-# A boolean value controlling the network behavior of Maven, defaults to "false"
-invoker.offline=true
-+----
+  plugin configuration. For a complete overview of supported properties, see the example given in the documentation of
+  the plugin parameter <<<{{{../run-mojo.html#invokerPropertiesFile}invokerPropertiesFile}}>>>.
 
   The comments given in the example should be rather self-explanatory. Looking closely, you can also notice that the
   syntax <<<$\{expression\}>>> can be used to filter the property values. What deserves some more description is the

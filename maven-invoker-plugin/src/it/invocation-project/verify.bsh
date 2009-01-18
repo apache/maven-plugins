@@ -1,0 +1,35 @@
+import java.io.*;
+
+String[] unexpectedPaths =
+{
+    "sub-1/target",
+    "sub-3/target",
+};
+
+for ( String path : unexpectedPaths )
+{
+    File file = new File( new File( basedir, "target/it/project" ), path);
+    System.out.println( "Creating for absence of: " + file );
+    if ( file.exists() )
+    {
+        throw new IOException( "Unexpected path found: " + file );
+    }
+}
+
+String[] expectedPaths =
+{
+    "target",
+    "sub-2/target",
+};
+
+for ( String path : expectedPaths )
+{
+    File file = new File( new File( basedir, "target/it/project" ), path);
+    System.out.println( "Creating for existence of: " + file );
+    if ( !file.exists() )
+    {
+        throw new IOException( "Expected path not found: " + file );
+    }
+}
+
+return true;

@@ -19,6 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -81,6 +82,22 @@ class InvokerProperties
      */
     public void configureInvocation( InvocationRequest request, int index )
     {
+        String project = get( "invoker.project", index );
+        if ( project != null )
+        {
+            File file = new File( request.getBaseDirectory(), project );
+            if ( file.isFile() )
+            {
+                request.setBaseDirectory( file.getParentFile() );
+                request.setPomFile( file );
+            }
+            else
+            {
+                request.setBaseDirectory( file );
+                request.setPomFile( null );
+            }
+        }
+
         String goals = get( "invoker.goals", index );
         if ( goals != null )
         {
