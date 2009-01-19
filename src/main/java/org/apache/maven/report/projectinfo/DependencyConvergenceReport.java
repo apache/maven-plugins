@@ -133,6 +133,7 @@ public class DependencyConvergenceReport
 
         sink.body_();
         sink.flush();
+        sink.close();
     }
 
     // ----------------------------------------------------------------------
