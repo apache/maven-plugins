@@ -120,7 +120,7 @@ public class MakeMojo
         throws MojoExecutionException, MojoFailureException
     {
         if ( artifactList == null && folderList == null ) {
-            throw new MojoFailureException("You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.projects=com.mycompany:foo,com.mycompany:bar");
+            throw new MojoFailureException("You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.artifacts=com.mycompany:foo,com.mycompany:bar");
         }
         String[] reactorIncludes;
         List sortedProjects;
