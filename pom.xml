@@ -70,19 +70,19 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
+      <version>${maven.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.4</version>
+      <version>${maven.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
+      <version>${maven.version}</version>
     </dependency>
 
     <dependency>
@@ -129,7 +129,7 @@ under the License.
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <!-- needed by doc-renderer in doxia 1.1 -->
-      <version>1.5.7-SNAPSHOT</version>
+      <version>1.5.7</version>
     </dependency>
 
     <dependency>
@@ -175,6 +175,7 @@ under the License.
 
   <properties>
     <doxia.version>1.1-SNAPSHOT</doxia.version>
+    <maven.version>2.0.4</maven.version>
   </properties>
 
   <build>
@@ -182,7 +183,7 @@ under the License.
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>2.0-beta-6</version>
-        <!--<version>2.0-beta-8-SNAPSHOT</version>-->
+        <!--<version>2.1-SNAPSHOT</version>-->
       </plugin>
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -201,7 +202,7 @@ under the License.
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0.1</version>
-        <!--<version>2.2-SNAPSHOT</version>-->
+        <!--<version>2.3-SNAPSHOT</version>-->
       </plugin>
     </plugins>
   </reporting>
