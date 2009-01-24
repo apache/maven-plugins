@@ -50,6 +50,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
+        <version>@project.version@</version>
         <configuration>          
           <unpackTypes>jar,sar</unpackTypes>
         </configuration>

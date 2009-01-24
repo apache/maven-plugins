@@ -116,13 +116,25 @@ under the License.
       <build>
         <plugins>
           <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*IT.java</include>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks>
+                    <copy todir="${project.build.testOutputDirectory}/projects" overwrite="true">
+                      <fileset dir="src/test/resources/projects" includes="**/pom.xml"/>
+                      <filterset>
+                        <filter token="project.version" value="${project.version}"/>
+                      </filterset>
+                    </copy>
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
@@ -136,7 +148,8 @@ under the License.
               </pomIncludes>
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <!-- NOTE: Must be synced with the repo path used by AbstractEarPluginIT -->
+              <localRepositoryPath>${project.build.testOutputDirectory}/m2repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
                 <goal>clean</goal>
@@ -150,6 +163,22 @@ under the License.
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>**/*IT.java</include>
+                  </includes>
+                </configuration>
               </execution>
             </executions>
           </plugin>

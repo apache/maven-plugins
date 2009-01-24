@@ -50,6 +50,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
+        <version>@project.version@</version>
         <configuration>
           <modules>
             <ejbModule>
@@ -58,7 +59,6 @@ under the License.
               <unpack>true</unpack>
             </ejbModule>
           </modules>
-
         </configuration>
       </plugin>
     </plugins>

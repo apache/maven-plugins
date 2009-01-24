@@ -74,10 +74,13 @@ public abstract class AbstractEarPluginIT
     protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
     {
+        System.out.println( "  Building: " + projectName );
+
         File testDir = getTestDir( projectName );
         Verifier verifier = new Verifier( testDir.getAbsolutePath() );
         // Let's add alternate settings.xml setting so that the latest dependencies are used
         verifier.getCliOptions().add( "-s \"" + settingsFile.getAbsolutePath() + "\"" );
+        verifier.getCliOptions().add( "-X" );
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
 
         // On linux and macOSX, an exception is thrown if a build failure occurs underneath
@@ -88,7 +91,8 @@ public abstract class AbstractEarPluginIT
         catch ( VerificationException e )
         {
             //@TODO needs to be handled nicely in the verifier
-            if (expectNoError || e.getMessage().indexOf( "Exit code was non-zero") == -1) {
+            if ( expectNoError || e.getMessage().indexOf( "Exit code was non-zero" ) == -1 )
+            {
                 throw e;
             }
         }
