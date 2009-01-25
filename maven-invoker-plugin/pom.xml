@@ -161,7 +161,7 @@ under the License.
               <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
                 <goal>clean</goal>
-                <goal>verify</goal>
+                <goal>initialize</goal>
               </goals>
               <properties>
                 <!-- TODO: Workaround for MINVOKER-50, remove once fixed -->
