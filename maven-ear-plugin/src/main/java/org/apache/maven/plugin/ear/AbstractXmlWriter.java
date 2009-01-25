@@ -19,11 +19,11 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -52,7 +52,7 @@ abstract class AbstractXmlWriter
     {
         try
         {
-            return new FileWriter( destinationFile );
+            return WriterFactory.newXmlWriter( destinationFile );
         }
         catch ( IOException ex )
         {

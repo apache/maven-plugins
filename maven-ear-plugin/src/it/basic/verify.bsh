@@ -3,38 +3,28 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.regex.*;
 
-try
+File jarFile = new File( basedir, "target/test-1.0.ear" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
 {
-    File jarFile = new File( basedir, "target/maven-it-it0033-1.0.ear" );
-    System.out.println( "Checking for existence of " + jarFile );
-    if ( !jarFile.isFile() )
-    {
-        System.out.println( "FAILURE!" );
-        return false;
-    }
-
-    JarFile jar = new JarFile( jarFile );
-
-    String[] includedEntries = {
-        "META-INF/application.xml",
-        "META-INF/appserver-application.xml",
-    };
-    for ( String included : includedEntries )
-    {
-        System.out.println( "Checking for existence of " + included );
-        if ( jar.getEntry( included ) == null )
-        {
-            System.out.println( "FAILURE!" );
-            return false;
-        }
-    }
-
-    jar.close();
+    throw new IllegalStateException( "Missing file: " + jarFile );
 }
-catch( Throwable t )
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "META-INF/application.xml",
+    "META-INF/appserver-application.xml",
+};
+for ( String included : includedEntries )
 {
-    t.printStackTrace();
-    return false;
+    System.out.println( "Checking for existence of " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
 }
+
+jar.close();
 
 return true;
