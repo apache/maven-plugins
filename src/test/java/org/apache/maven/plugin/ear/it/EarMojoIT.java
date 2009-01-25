@@ -21,9 +21,9 @@ package org.apache.maven.plugin.ear.it;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.Properties;
 
 /**
@@ -481,7 +481,7 @@ public class EarMojoIT
     {
         final File baseDir = doTestProject( "project-045", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
-        final String content = IOUtil.toString(new FileReader(actualReadme));
+        final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue("application name and version was not filtered properly",
                 content.indexOf("my-app 99.0") != -1);
         assertTrue("Escaping did not work properly",
@@ -497,7 +497,7 @@ public class EarMojoIT
     {
         final File baseDir = doTestProject( "project-046", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
-        final String content = IOUtil.toString(new FileReader(actualReadme));
+        final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue("application name and version was not filtered properly",
                 content.indexOf("my-app 99.0") != -1);
         assertTrue("application build was not filtered properly",
@@ -514,7 +514,7 @@ public class EarMojoIT
     {
         final File baseDir = doTestProject( "project-047", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
-        final String content = IOUtil.toString(new FileReader(actualReadme));
+        final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue("application name and version should not have been filtered",
                 content.indexOf("my-app 99.0") == -1);
         assertTrue("orignial properties not found",
