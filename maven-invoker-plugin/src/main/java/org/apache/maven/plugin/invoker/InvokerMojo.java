@@ -1338,66 +1338,71 @@ public class InvokerMojo
 
         final File scriptFile = resolveScript( new File( basedir, relativeScriptPath ) );
 
-        if ( scriptFile.exists() )
+        if ( !scriptFile.exists() )
         {
-            List classPath = addTestClassPath ? testClassPath : Collections.EMPTY_LIST;
+            return;
+        }
 
-            Map globalVariables = new HashMap();
-            globalVariables.put( "basedir", basedir );
-            globalVariables.put( "localRepositoryPath", localRepositoryPath );
+        List classPath = addTestClassPath ? testClassPath : Collections.EMPTY_LIST;
 
-            PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
+        Map globalVariables = new HashMap();
+        globalVariables.put( "basedir", basedir );
+        globalVariables.put( "localRepositoryPath", localRepositoryPath );
 
-            ScriptInterpreter interpreter = getInterpreter( scriptFile );
+        PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
+
+        ScriptInterpreter interpreter = getInterpreter( scriptFile );
+        if ( getLog().isDebugEnabled() )
+        {
+            String name = interpreter.getClass().getName();
+            name = name.substring( name.lastIndexOf( '.' ) + 1 );
+            getLog().debug( "Running script with " + name + ": " + scriptFile );
+        }
+
+        String script;
+        try
+        {
+            script = FileUtils.fileRead( scriptFile, encoding );
+        }
+        catch ( IOException e )
+        {
+            String errorMessage =
+                "error reading " + scriptDescription + " " + scriptFile.getPath() + ", " + e.getMessage();
+            throw new MojoExecutionException( errorMessage, e );
+        }
+
+        Object result;
+        try
+        {
+            if ( logger != null )
+            {
+                logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
+            }
+            result = interpreter.evaluateScript( script, classPath, globalVariables, out );
+            if ( logger != null )
+            {
+                logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
+            }
+        }
+        catch ( ScriptEvaluationException e )
+        {
+            Throwable t = ( e.getCause() != null ) ? e.getCause() : e;
+            String msg = ( t.getMessage() != null ) ? t.getMessage() : t.toString();
             if ( getLog().isDebugEnabled() )
             {
-                String name = interpreter.getClass().getName();
-                name = name.substring( name.lastIndexOf( '.' ) + 1 );
-                getLog().debug( "Running script with " + name + ": " + scriptFile );
-            }
-
-            String script;
-            try
-            {
-                script = FileUtils.fileRead( scriptFile, encoding );
-            }
-            catch ( IOException e )
-            {
-                String errorMessage =
-                    "error reading " + scriptDescription + " " + scriptFile.getPath() + ", " + e.getMessage();
-                throw new MojoExecutionException( errorMessage, e );
-            }
-
-            Object result;
-            try
-            {
-                if ( logger != null )
-                {
-                    logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
-                }
-                result = interpreter.evaluateScript( script, classPath, globalVariables, out );
-                if ( logger != null )
-                {
-                    logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
-                }
-            }
-            catch ( ScriptEvaluationException e )
-            {
-                Throwable t = ( e.getCause() != null ) ? e.getCause() : e;
-                String errorMessage =
-                    "error evaluating " + scriptDescription + " " + scriptFile.getPath() + ", " + t.getMessage();
+                String errorMessage = "Error evaluating " + scriptDescription + " " + scriptFile.getPath() + ", " + t;
                 getLog().debug( errorMessage, t );
-                if ( logger != null )
-                {
-                    t.printStackTrace( logger.getPrintStream() );
-                }
-                throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + t.getMessage() );
             }
-
-            if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
+            if ( logger != null )
             {
-                throw new BuildFailureException( "The " + scriptDescription + " returned " + result + "." );
+                t.printStackTrace( logger.getPrintStream() );
             }
+            throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg );
+        }
+
+        if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
+        {
+            throw new BuildFailureException( "The " + scriptDescription + " returned " + result + "." );
         }
     }
 

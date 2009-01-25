@@ -118,7 +118,11 @@ class BeanShellScriptInterpreter
             {
                 throw new ScriptEvaluationException( e.getTarget() );
             }
-            catch ( Exception e )
+            catch ( ThreadDeath e )
+            {
+                throw e;
+            }
+            catch ( Throwable e )
             {
                 throw new ScriptEvaluationException( e );
             }
