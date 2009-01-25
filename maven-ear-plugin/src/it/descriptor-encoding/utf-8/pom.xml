@@ -22,13 +22,13 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.basic</groupId>
-  <artifactId>test</artifactId>
+  <groupId>org.apache.maven.its.ear.dde</groupId>
+  <artifactId>utf-8</artifactId>
   <version>1.0</version>
   <packaging>ear</packaging>
 
-  <name>Maven Integration Test :: it0033</name> 
-  <description>Test an EAR generation</description>
+  <name>MEAR-99 - UTF-8</name> 
+  <description>TEST-CHARS: &#196;&#214;&#220;&#228;&#246;&#252;&#223;</description>
 
   <build>
     <plugins>
@@ -37,7 +37,7 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <generateApplicationXml>true</generateApplicationXml>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
     </plugins>
