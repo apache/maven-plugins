@@ -22,24 +22,33 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ear.basic</groupId>
+  <groupId>org.apache.maven.its.ear.dde</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
-  <packaging>ear</packaging>
+  <packaging>pom</packaging>
 
-  <name>Maven Integration Test :: it0033</name> 
-  <description>Test an EAR generation</description>
+  <name>MEAR-99 - Aggregator</name> 
+  <description>
+    Test proper encoding handling when writing the deployment descriptors.
+  </description>
+
+  <modules>
+    <module>utf-8</module>
+    <module>latin-1</module>
+  </modules>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <generateApplicationXml>true</generateApplicationXml>
-        </configuration>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-ear-plugin</artifactId>
+          <version>@project.version@</version>
+          <configuration>
+            <generateApplicationXml>true</generateApplicationXml>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
