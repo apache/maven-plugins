@@ -1097,10 +1097,12 @@ public class InvokerMojo
 
         Properties systemProperties = getTestProperties( basedir );
 
+        Map context = new LinkedHashMap();
+
         FileLogger logger = setupLogger( basedir );
         try
         {
-            runScript( "pre-build script", basedir, preBuildHookScript, logger );
+            runScript( "pre-build script", basedir, preBuildHookScript, context, logger );
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
@@ -1180,7 +1182,7 @@ public class InvokerMojo
                 verify( result, invocationIndex, invokerProperties, logger );
             }
 
-            runScript( "post-build script", basedir, postBuildHookScript, logger );
+            runScript( "post-build script", basedir, postBuildHookScript, context, logger );
         }
         finally
         {
@@ -1323,12 +1325,13 @@ public class InvokerMojo
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @param relativeScriptPath The path to the script relative to the project base directory, may be <code>null</code>
      *            to skip the script execution.
+     * @param context The key-value storage used to share information between hook scripts, may be <code>null</code>.
      * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
      * @throws MojoExecutionException If an I/O error occurred while reading the script file.
      * @throws BuildFailureException If the script did not return <code>true</code> of threw an exception.
      */
     private void runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
-                            final FileLogger logger )
+                            final Map context, final FileLogger logger )
         throws MojoExecutionException, BuildFailureException
     {
         if ( relativeScriptPath == null )
@@ -1348,6 +1351,7 @@ public class InvokerMojo
         Map globalVariables = new HashMap();
         globalVariables.put( "basedir", basedir );
         globalVariables.put( "localRepositoryPath", localRepositoryPath );
+        globalVariables.put( "context", context );
 
         PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
 
