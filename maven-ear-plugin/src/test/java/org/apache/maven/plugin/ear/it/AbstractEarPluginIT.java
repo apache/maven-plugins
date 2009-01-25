@@ -23,14 +23,15 @@ import junit.framework.TestCase;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.util.ResourceExtractor;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -384,12 +385,12 @@ public abstract class AbstractEarPluginIT
             assertEquals( "File name mismatch", expectedDeploymentDescriptor.getName(),
                           actualDeploymentDescriptor.getName() );
 
-            FileReader expected = null;
-            FileReader actual = null;
+            Reader expected = null;
+            Reader actual = null;
             try
             {
-                expected = new FileReader( expectedDeploymentDescriptor );
-                actual = new FileReader( actualDeploymentDescriptor );
+                expected = ReaderFactory.newXmlReader( expectedDeploymentDescriptor );
+                actual = ReaderFactory.newXmlReader( actualDeploymentDescriptor );
 
                 // Make sure that it matches even if the elements are not in
                 // the exact same order
