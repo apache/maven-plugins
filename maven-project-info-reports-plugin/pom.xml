@@ -335,7 +335,7 @@ under the License.
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>l10n-maven-plugin</artifactId>
-            <version>1.0-alpha-2-SNAPSHOT</version>
+            <version>1.0-alpha-2</version>
             <configuration>
               <locales>
                 <locale>cs</locale>
