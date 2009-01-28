@@ -109,11 +109,11 @@ public class SiteDescriptorAttachMojo
                 MavenProject parentProject = siteTool.getParentProject( project, reactorProjects, localRepository );
                 if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
                 {
-                    siteTool.populateProjectParentMenu( decoration, locale, project, parentProject, true );
+                    siteTool.populateParentMenu( decoration, locale, project, parentProject, true );
                 }
                 try
                 {
-                    siteTool.populateModules( project, reactorProjects, localRepository, decoration, locale, true );
+                    siteTool.populateModulesMenu( project, reactorProjects, localRepository, decoration, locale, true );
                 }
                 catch ( SiteToolException e )
                 {
