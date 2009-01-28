@@ -135,7 +135,8 @@ public class InvokerMojo
     /**
      * Base directory where all reports are written to.
      *
-     * @parameter expression="${project.build.directory}/invoker-reports"
+     * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
+     * @since 1.4
      */
     private File reportsDirectory;
 
