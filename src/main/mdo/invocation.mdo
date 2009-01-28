@@ -19,10 +19,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<model xsd.namespace="http://maven.apache.org/invoker/1.0.0" xsd.target-namespace="http://maven.apache.org/invoker/1.0.0">
-  <id>invocation</id>
-  <name>Invocation</name>
-  <description><![CDATA[An invocation of Maven by maven-invoker-plugin.]]></description>
+<model xsd.namespace="http://maven.apache.org/plugins/maven-invoker-plugin/build-job/1.0.0"
+       xsd.target-namespace="http://maven.apache.org/plugins/maven-invoker-plugin/build-job/1.0.0">
+  <id>build-job</id>
+  <name>BuildJob</name>
+  <description>
+    A build job processed by the Maven Invoker Plugin.
+  </description>
   <defaults>
     <default>
       <key>package</key>
@@ -33,9 +36,12 @@ under the License.
     <type>namespace</type>
   </versionDefinition>
   <classes>
-    <class rootElement="true" xml.tagName="invocation">
-      <name>Invocation</name>
-      <description>Describes an invocation of Maven by maven-invoker-plugin.</description>
+    <class rootElement="true" xml.tagName="build-job">
+      <name>BuildJob</name>
+      <description>
+        Describes a build job processed by the Maven Invoker Plugin. A build job can consist of a pre-build hook script,
+        one ore more invocations of Maven and a post-build hook script.
+      </description>
       <version>1.0.0</version>
       <fields>
         <field xml.attribute="true">
@@ -43,49 +49,49 @@ under the License.
           <version>1.0.0</version>
           <required>true</required>
           <type>String</type>
-          <description>The invoked project.</description>
+          <description>The path to the project to build. This path is usually relative and can denote both a POM file or a project directory.</description>
         </field>
         <field xml.attribute="true">
           <name>name</name>
           <version>1.0.0</version>
           <required>false</required>
           <type>String</type>
-          <description>The name of the invocation.</description>
+          <description>The name of this build job.</description>
         </field>
-        <field>
+        <field xml.attribute="true">
           <name>description</name>
           <version>1.0.0</version>
           <required>false</required>
           <type>String</type>
-          <description>The description of the invocation.</description>
+          <description>The description of this build job.</description>
         </field>
         <field xml.attribute="true">
           <name>result</name>
           <version>1.0.0</version>
           <required>true</required>
           <type>String</type>
-          <description>The result of the invocation.</description>
+          <description>The result of this build job.</description>
         </field>
         <field>
           <name>failureMessage</name>
           <version>1.0.0</version>
           <required>false</required>
           <type>String</type>
-          <description>Any failure message(s) for a failed invocation.</description>
+          <description>Any failure message(s) in case this build job failed.</description>
         </field>
         <field xml.attribute="true">
           <name>time</name>
           <version>1.0.0</version>
           <required>true</required>
           <type>double</type>
-          <description>The number of seconds that invocation too to complete.</description>
+          <description>The number of seconds that this build job took to complete.</description>
         </field>
         <field xml.attribute="true">
           <name>type</name>
           <version>1.0.0</version>
           <required>true</required>
           <type>String</type>
-          <description>The type of the invocation.</description>
+          <description>The type of the build job.</description>
         </field>
       </fields>
       <codeSegments>
@@ -93,54 +99,93 @@ under the License.
           <version>1.0.0+</version>
           <code><![CDATA[
     /**
-     * The result value corresponding with a successful invocation of Maven and completion of all post-hook
-     * scripts.
+     * Creates a new empty build job.
      */
-    public static final String SUCCESS_RESULT = "success";
+    public BuildJob()
+    {
+        // enables no-arg construction
+    }
 
     /**
-     * The result value corresponding with an invocation that was skipped.
+     * Creates a new build job with the specified project path and type.
+     * 
+     * @param project The path to the project.
+     * @param type The type of the build job.
      */
-    public static final String SKIPPED_RESULT = "skipped";
-
-    /**
-     * The result value corresponding with an invocation that failed before Maven was be invoked.
-     */
-    public static final String FAILURE_PRE_HOOK_RESULT = "failure-pre-hook";
-
-    /**
-     * The result value corresponding with an unexpected error trying to invoke Maven.
-     */
-    public static final String ERROR_RESULT = "error";
-
-    /**
-     * The result value corresponding with an invocation that failed while invoking of Maven.
-     */
-    public static final String FAILURE_BUILD_RESULT = "failure-build";
-
-    /**
-     * The result value corresponding with an invocation that failed after the invoking of Maven.
-     */
-    public static final String FAILURE_POST_HOOK_RESULT = "failure-post-hook";
+    public BuildJob( String project, String type )
+    {
+        this.project = project;
+        this.type = type;
+    }
           ]]></code>
         </codeSegment>
         <codeSegment>
           <version>1.0.0+</version>
           <code><![CDATA[
     /**
-     * An invocation that should be invoked before any non-setup invocations.
+     * The various results with which a build job can complete.
      */
-    public static final String SETUP_TYPE = "setup";
+    public static class Result
+    {
 
-    /**
-     * A normal invocation.
-     */
-    public static final String NORMAL_TYPE = "normal";
+        /**
+         * The result value corresponding with a successful invocation of Maven and completion of all post-hook scripts.
+         */
+        public static final String SUCCESS = "success";
 
+        /**
+         * The result value corresponding with an invocation that failed before Maven was be invoked.
+         */
+        public static final String FAILURE_PRE_HOOK = "failure-pre-hook";
+
+        /**
+         * The result value corresponding with an invocation that failed while invoking of Maven.
+         */
+        public static final String FAILURE_BUILD = "failure-build";
+
+        /**
+         * The result value corresponding with an invocation that failed after the invocation of Maven.
+         */
+        public static final String FAILURE_POST_HOOK = "failure-post-hook";
+
+        /**
+         * The result value corresponding with an invocation that was skipped.
+         */
+        public static final String SKIPPED = "skipped";
+
+        /**
+         * The result value corresponding with an unexpected error trying to invoke Maven.
+         */
+        public static final String ERROR = "error";
+
+    }
+          ]]></code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code><![CDATA[
     /**
-     * A direct invocation via the <code>-Dinvoker.test=xxx,yyy</code> parameter.
+     * The various types of a build job.
      */
-    public static final String DIRECT_TYPE = "direct";
+    public static class Type
+    {
+
+        /**
+         * A build job that should be invoked before any non-setup build jobs.
+         */
+        public static final String SETUP = "setup";
+
+        /**
+         * A normal build job.
+         */
+        public static final String NORMAL = "normal";
+
+        /**
+         * A build job that was directly selected via the <code>-Dinvoker.test=xxx,yyy</code> parameter.
+         */
+        public static final String DIRECT = "direct";
+
+    }
           ]]></code>
         </codeSegment>
         <codeSegment>
@@ -148,8 +193,8 @@ under the License.
           <code><![CDATA[
     public String toString()
     {
-        StringBuffer buf = new StringBuffer( "Invocation" );
-        buf.append( "[project = \"" );
+        StringBuffer buf = new StringBuffer( 128 );
+        buf.append( "BuildJob[project = \"" );
         buf.append( project );
         buf.append( "\", type = " );
         buf.append( type );

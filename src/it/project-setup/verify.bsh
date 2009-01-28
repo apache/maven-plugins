@@ -32,20 +32,20 @@ try
         return false;
     }
     
-    File reportFile = new File( basedir, "target/invoker-reports/INVOCATION-project1.xml" );
+    File reportFile = new File( basedir, "target/invoker-reports/BUILD-project1.xml" );
     if ( !reportFile.exists() )
     {
         System.out.println( "reportFile not exists FAILED!" );
         return false;
     }    
-    String report = FileUtils.fileRead( reportFile );
+    String report = FileUtils.fileRead( reportFile, "UTF-8" );
     index = report.indexOf("name=\"Foo\"");
     if ( index < 0 )
     {
         System.out.println( "name missing in the report FAILED!" );
         return false;
     }  
-    index = report.indexOf("<description>good foo</description>");
+    index = report.indexOf("description=\"good foo\"");
     if ( index < 0 )
     {
         System.out.println( "description missing in the report FAILED!" );
