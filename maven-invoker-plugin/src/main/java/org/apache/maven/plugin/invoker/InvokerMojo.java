@@ -22,8 +22,10 @@ package org.apache.maven.plugin.invoker;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -49,6 +51,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.invoker.model.Invocation;
+import org.apache.maven.plugin.invoker.model.io.xpp3.InvocationXpp3Writer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
@@ -58,6 +62,10 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -65,10 +73,6 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.interpolation.InterpolationException;
-import org.codehaus.plexus.interpolation.Interpolator;
-import org.codehaus.plexus.interpolation.MapBasedValueSource;
-import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
@@ -127,6 +131,13 @@ public class InvokerMojo
      * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/it/"
      */
     private File projectsDirectory;
+
+    /**
+     * Base directory where all reports are written to.
+     *
+     * @parameter expression="${project.build.directory}/invoker-reports"
+     */
+    private File reportsDirectory;
 
     /**
      * Directory to which projects should be cloned prior to execution. If not specified, each integration test will be
@@ -501,7 +512,8 @@ public class InvokerMojo
             return;
         }
 
-        String[] includedPoms;
+        reportsDirectory.mkdirs();
+        Invocation[] includedPoms;
         if ( pom != null )
         {
             try
@@ -514,7 +526,7 @@ public class InvokerMojo
                     + " Reason: " + e.getMessage(), e );
             }
 
-            includedPoms = new String[]{ pom.getName() };
+            includedPoms = new Invocation[]{ newInvocation( pom.getName(), Invocation.NORMAL_TYPE )};
         }
         else
         {
@@ -550,7 +562,7 @@ public class InvokerMojo
         Collection collectedProjects = new LinkedHashSet();
         for ( int i = 0; i < includedPoms.length; i++ )
         {
-            collectProjects( projectsDirectory, includedPoms[i], collectedProjects, true );
+            collectProjects( projectsDirectory, includedPoms[i].getProject(), collectedProjects, true );
         }
 
         File projectsDir = projectsDirectory;
@@ -589,7 +601,12 @@ public class InvokerMojo
 
                 for ( final Iterator it = failures.iterator(); it.hasNext(); )
                 {
-                    String item = "*  " + (String) it.next();
+                    Invocation invocation = (Invocation) it.next();
+                    String item = "*  " + invocation.getProject();
+                    if ( invocation.getFailureMessage() != null )
+                    {
+                        item += " (" + invocation.getFailureMessage() + ")";
+                    }
                     if ( ignoreFailures )
                     {
                         getLog().warn( item );
@@ -617,6 +634,14 @@ public class InvokerMojo
                 throw new MojoFailureException( this, message, message );
             }
         }
+    }
+
+    private Invocation newInvocation( String project, String type )
+    {
+        Invocation included = new Invocation();
+        included.setProject( project );
+        included.setType( type );
+        return included;
     }
 
     /**
@@ -918,12 +943,12 @@ public class InvokerMojo
      * Runs the specified projects.
      * 
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
-     * @param projects The relative paths to the projects, either to their POM file or merely to their base directory,
+     * @param invocations The relative paths to the projects, either to their POM file or merely to their base directory,
      *            must not be <code>null</code> nor contain <code>null</code> elements.
      * @return The list of projects that failed, can be empty but never <code>null</code>.
      * @throws MojoExecutionException If any project could not be launched.
      */
-    private List runBuilds( File projectsDir, String[] projects )
+    private List runBuilds( File projectsDir, Invocation[] invocations )
         throws MojoExecutionException
     {
         List failures = new ArrayList();
@@ -950,9 +975,9 @@ public class InvokerMojo
 
         try
         {
-            for ( int i = 0; i < projects.length; i++ )
+            for ( int i = 0; i < invocations.length; i++ )
             {
-                String project = projects[i];
+                Invocation project = invocations[i];
                 try
                 {
                     runBuild( projectsDir, project, interpolatedSettingsFile );
@@ -978,17 +1003,17 @@ public class InvokerMojo
      * Runs the specified project.
      * 
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
-     * @param project The relative path to the project, either to a POM file or merely to a directory, must not be
+     * @param invocation The relative path to the project, either to a POM file or merely to a directory, must not be
      *            <code>null</code>.
      * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
      *            the current user settings.
      * @throws MojoExecutionException If the project could not be launched.
      * @throws BuildFailureException If either a hook script or the build itself failed.
      */
-    private void runBuild( File projectsDir, String project, File settingsFile )
+    private void runBuild( File projectsDir, Invocation invocation, File settingsFile )
         throws MojoExecutionException, BuildFailureException
     {
-        File pomFile = new File( projectsDir, project );
+        File pomFile = new File( projectsDir, invocation.getProject() );
         File basedir;
         if ( pomFile.isDirectory() )
         {
@@ -1000,7 +1025,7 @@ public class InvokerMojo
             }
             else
             {
-                project += File.separator + "pom.xml";
+                invocation.setProject( invocation.getProject() + File.separator + "pom.xml" );
             }
         }
         else
@@ -1008,7 +1033,7 @@ public class InvokerMojo
             basedir = pomFile.getParentFile();
         }
 
-        getLog().info( "Building: " + project );
+        getLog().info( "Building: " + invocation.getProject() );
 
         File interpolatedPomFile = null;
         if ( pomFile != null )
@@ -1024,22 +1049,35 @@ public class InvokerMojo
             }
         }
 
+        InvokerProperties invokerProperties = getInvokerProperties( basedir );
+
+        // let's set what details we can
+        invocation.setName( invokerProperties.getProperties().getProperty( "invoker.name" ) );
+        invocation.setDescription( invokerProperties.getProperties().getProperty( "invoker.description" ) );
+
         long milliseconds = System.currentTimeMillis();
         try
         {
-            runBuild( basedir, interpolatedPomFile, settingsFile );
+            runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
+
+            milliseconds = System.currentTimeMillis() - milliseconds;
+            invocation.setResult( Invocation.SUCCESS_RESULT );
+            invocation.setTime( milliseconds / 1000.0 );
 
             if ( !suppressSummaries )
             {
-                milliseconds = System.currentTimeMillis() - milliseconds;
                 getLog().info( "..SUCCESS " + formatTime( milliseconds ) );
             }
         }
         catch ( BuildFailureException e )
         {
+            milliseconds = System.currentTimeMillis() - milliseconds;
+            invocation.setResult( Invocation.FAILURE_BUILD_RESULT );
+            invocation.setFailureMessage( e.getMessage() );
+            invocation.setTime( milliseconds / 1000.0 );
+
             if ( !suppressSummaries )
             {
-                milliseconds = System.currentTimeMillis() - milliseconds;
                 getLog().info( "..FAILED " + formatTime( milliseconds ) );
                 getLog().info( "  " + e.getMessage() );
             }
@@ -1050,6 +1088,33 @@ public class InvokerMojo
             if ( interpolatedPomFile != null && StringUtils.isNotEmpty( filteredPomPrefix ) )
             {
                 interpolatedPomFile.delete();
+            }
+            // now write the invocation summary
+
+            String safeFileName = invocation.getProject().replace( '/', '_' ).replace( '\\', '_' ).replace( ' ', '_' );
+            if ( safeFileName.endsWith( "_pom.xml" ) )
+            {
+                safeFileName = safeFileName.substring( 0, safeFileName.length() - "_pom.xml".length() );
+            }
+            File reportFile = new File( reportsDirectory, "INVOCATION-" + safeFileName + ".xml" );
+            try
+            {
+                FileOutputStream fos = new FileOutputStream( reportFile );
+                try
+                {
+                    OutputStreamWriter osw = new OutputStreamWriter( fos, invocation.getModelEncoding() );
+                    InvocationXpp3Writer writer = new InvocationXpp3Writer();
+                    writer.write( osw, invocation );
+                    osw.close();
+                }
+                finally
+                {
+                    fos.close();
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
             }
         }
     }
@@ -1072,13 +1137,13 @@ public class InvokerMojo
      * @param pomFile The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
      * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
      *            the current user settings.
+     * @param invokerProperties The properties to use.
      * @throws MojoExecutionException If the project could not be launched.
      * @throws BuildFailureException If either a hook script or the build itself failed.
      */
-    private void runBuild( File basedir, File pomFile, File settingsFile )
+    private void runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
         throws MojoExecutionException, BuildFailureException
     {
-        InvokerProperties invokerProperties = getInvokerProperties( basedir );
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
         {
             Properties props = invokerProperties.getProperties();
@@ -1102,7 +1167,8 @@ public class InvokerMojo
         FileLogger logger = setupLogger( basedir );
         try
         {
-            runScript( "pre-build script", basedir, preBuildHookScript, context, logger );
+            runScript( "pre-build script", basedir, preBuildHookScript, context, logger,
+                       Invocation.FAILURE_PRE_HOOK_RESULT );
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
@@ -1182,7 +1248,8 @@ public class InvokerMojo
                 verify( result, invocationIndex, invokerProperties, logger );
             }
 
-            runScript( "post-build script", basedir, postBuildHookScript, context, logger );
+            runScript( "post-build script", basedir, postBuildHookScript, context, logger,
+                       Invocation.FAILURE_POST_HOOK_RESULT );
         }
         finally
         {
@@ -1298,7 +1365,7 @@ public class InvokerMojo
         if ( result.getExecutionException() != null )
         {
             throw new BuildFailureException( "The Maven invocation failed. "
-                + result.getExecutionException().getMessage() );
+                + result.getExecutionException().getMessage(), Invocation.ERROR_RESULT );
         }
         else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
         {
@@ -1314,7 +1381,7 @@ public class InvokerMojo
             {
                 buffer.append( "See console output for details." );
             }
-            throw new BuildFailureException( buffer.toString() );
+            throw new BuildFailureException( buffer.toString(), Invocation.FAILURE_BUILD_RESULT );
         }
     }
 
@@ -1327,11 +1394,12 @@ public class InvokerMojo
      *            to skip the script execution.
      * @param context The key-value storage used to share information between hook scripts, may be <code>null</code>.
      * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
+     * @param stage
      * @throws MojoExecutionException If an I/O error occurred while reading the script file.
      * @throws BuildFailureException If the script did not return <code>true</code> of threw an exception.
      */
     private void runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
-                            final Map context, final FileLogger logger )
+                            final Map context, final FileLogger logger, String stage )
         throws MojoExecutionException, BuildFailureException
     {
         if ( relativeScriptPath == null )
@@ -1401,12 +1469,12 @@ public class InvokerMojo
             {
                 t.printStackTrace( logger.getPrintStream() );
             }
-            throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg );
+            throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg, stage );
         }
 
         if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
         {
-            throw new BuildFailureException( "The " + scriptDescription + " returned " + result + "." );
+            throw new BuildFailureException( "The " + scriptDescription + " returned " + result + ".", stage );
         }
     }
 
@@ -1502,14 +1570,14 @@ public class InvokerMojo
      * @return The paths to the projects that should be build, may be empty but never <code>null</code>.
      * @throws IOException If the projects directory could not be scanned.
      */
-    String[] getPoms()
+    Invocation[] getPoms()
         throws IOException
     {
-        String[] poms;
+        Invocation[] poms;
 
         if ( ( pom != null ) && pom.exists() )
         {
-            poms = new String[] { pom.getAbsolutePath() };
+            poms = new Invocation[] { newInvocation( pom.getAbsolutePath(), Invocation.NORMAL_TYPE ) };
         }
         else if ( invokerTest != null )
         {
@@ -1522,7 +1590,9 @@ public class InvokerMojo
                 includes.add( testRegexes[i] );
             }
 
-            poms = scanProjectsDirectory( includes, null );
+            // it would be nice if we could figure out what types these are... but perhaps
+            // not necessary for the -Dinvoker.test=xxx t
+            poms = scanProjectsDirectory( includes, null, Invocation.DIRECT_TYPE );
         }
         else
         {
@@ -1537,15 +1607,25 @@ public class InvokerMojo
                 }
             }
 
-            String[] setupPoms = scanProjectsDirectory( setupIncludes, excludes );
+            Invocation[] setupPoms = scanProjectsDirectory( setupIncludes, excludes, Invocation.SETUP_TYPE );
             getLog().debug( "Setup projects: " + Arrays.asList( setupPoms ) );
 
-            String[] normalPoms = scanProjectsDirectory( pomIncludes, excludes );
+            Invocation[] normalPoms = scanProjectsDirectory( pomIncludes, excludes, Invocation.NORMAL_TYPE );
 
-            Collection uniquePoms = new LinkedHashSet();
-            uniquePoms.addAll( Arrays.asList( setupPoms ) );
-            uniquePoms.addAll( Arrays.asList( normalPoms ) );
-            poms = (String[]) uniquePoms.toArray( new String[uniquePoms.size()] );
+            Map uniquePoms = new LinkedHashMap();
+            for ( int i = 0; i < setupPoms.length; i++ )
+            {
+                uniquePoms.put( setupPoms[i].getProject(), setupPoms[i] );
+            }
+            for ( int i = 0; i < normalPoms.length; i++ )
+            {
+                if ( !uniquePoms.containsKey( normalPoms[i].getProject() ) )
+                {
+                    uniquePoms.put( normalPoms[i].getProject(), normalPoms[i] );
+                }
+            }
+
+            poms = (Invocation[]) uniquePoms.values().toArray( new Invocation[uniquePoms.size()] );
         }
 
         poms = relativizeProjectPaths( poms );
@@ -1564,12 +1644,12 @@ public class InvokerMojo
      * @return The relative paths to either POM files or project base directories, never <code>null</code>.
      * @throws IOException If the project directory could not be scanned.
      */
-    private String[] scanProjectsDirectory( List includes, List excludes )
+    private Invocation[] scanProjectsDirectory( List includes, List excludes, String type )
         throws IOException
     {
         if ( !projectsDirectory.isDirectory() )
         {
-            return new String[0];
+            return new Invocation[0];
         }
 
         DirectoryScanner scanner = new DirectoryScanner();
@@ -1586,9 +1666,13 @@ public class InvokerMojo
         scanner.addDefaultExcludes();
         scanner.scan();
 
-        Collection matches = new LinkedHashSet();
+        Map matches = new LinkedHashMap();
 
-        matches.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+        String[] includedFiles = scanner.getIncludedFiles();
+        for ( int i = 0; i < includedFiles.length; i++ )
+        {
+            matches.put( includedFiles[i], newInvocation( includedFiles[i], type ) );
+        }
 
         String[] includedDirs = scanner.getIncludedDirectories();
         for ( int i = 0; i < includedDirs.length; i++ )
@@ -1596,36 +1680,36 @@ public class InvokerMojo
             String includedFile = includedDirs[i] + File.separatorChar + "pom.xml";
             if ( new File( scanner.getBasedir(), includedFile ).isFile() )
             {
-                matches.add( includedFile );
+                matches.put( includedFile, newInvocation( includedFile, type ) );
             }
             else
             {
-                matches.add( includedDirs[i] );
+                matches.put( includedDirs[i], newInvocation( includedDirs[i], type ) );
             }
         }
 
-        return (String[]) matches.toArray( new String[matches.size()] );
+        return (Invocation[]) matches.values().toArray( new Invocation[matches.size()] );
     }
 
     /**
      * Relativizes the specified project paths against the directory specified by {@link #projectsDirectory} (if
      * possible). If a project path does not denote a sub path of the projects directory, it is returned as is.
      * 
-     * @param projectPaths The project paths to relativize, must not be <code>null</code> nor contain <code>null</code>
+     * @param invocations The projects to relativize the paths of, must not be <code>null</code> nor contain <code>null</code>
      *            elements.
-     * @return The relativized project paths, never <code>null</code>.
+     * @return The relativized projects, never <code>null</code>.
      * @throws IOException If any path could not be relativized.
      */
-    private String[] relativizeProjectPaths( String[] projectPaths )
+    private Invocation[] relativizeProjectPaths( Invocation[] invocations )
         throws IOException
     {
         String projectsDirPath = projectsDirectory.getCanonicalPath();
 
-        String[] results = new String[projectPaths.length];
+        Invocation[] results = new Invocation[invocations.length];
 
-        for ( int i = 0; i < projectPaths.length; i++ )
+        for ( int i = 0; i < invocations.length; i++ )
         {
-            String projectPath = projectPaths[i];
+            String projectPath = invocations[i].getProject();
 
             File file = new File( projectPath );
 
@@ -1641,7 +1725,9 @@ public class InvokerMojo
                 relativizedPath = projectPath;
             }
 
-            results[i] = relativizedPath;
+            results[i] = new Invocation();
+            results[i].setProject( relativizedPath );
+            results[i].setType( invocations[i].getType() );
         }
 
         return results;
