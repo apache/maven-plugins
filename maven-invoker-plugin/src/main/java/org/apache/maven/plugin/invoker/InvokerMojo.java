@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.text.DecimalFormat;
@@ -488,9 +487,9 @@ public class InvokerMojo
     private boolean ignoreFailures;
 
     /**
-     * The supported script interpreters, indexed by the file extension of their associated script files.
+     * The scripter runner that is responsible to execute hook scripts.
      */
-    private Map scriptInterpreters;
+    private ScriptRunner scriptRunner;
 
     /**
      * A string used to prefix the file name of the filtered POMs in case the POMs couldn't be filtered in-place (i.e.
@@ -562,9 +561,10 @@ public class InvokerMojo
                                + ", i.e. build is platform dependent!" );
         }
 
-        scriptInterpreters = new LinkedHashMap();
-        scriptInterpreters.put( "bsh", new BeanShellScriptInterpreter() );
-        scriptInterpreters.put( "groovy", new GroovyScriptInterpreter() );
+        scriptRunner = new ScriptRunner( getLog() );
+        scriptRunner.setScriptEncoding( encoding );
+        scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
+        scriptRunner.setClassPath( addTestClassPath ? testClassPath : null );
 
         Collection collectedProjects = new LinkedHashSet();
         for ( int i = 0; i < buildJobs.length; i++ )
@@ -1177,8 +1177,8 @@ public class InvokerMojo
         FileLogger logger = setupLogger( basedir );
         try
         {
-            runScript( "pre-build script", basedir, preBuildHookScript, context, logger,
-                       BuildJob.Result.FAILURE_PRE_HOOK );
+            scriptRunner.run( "pre-build script", basedir, preBuildHookScript, context, logger,
+                              BuildJob.Result.FAILURE_PRE_HOOK );
 
             final InvocationRequest request = new DefaultInvocationRequest();
 
@@ -1259,8 +1259,8 @@ public class InvokerMojo
                 verify( result, invocationIndex, invokerProperties, logger );
             }
 
-            runScript( "post-build script", basedir, postBuildHookScript, context, logger,
-                       BuildJob.Result.FAILURE_POST_HOOK );
+            scriptRunner.run( "post-build script", basedir, postBuildHookScript, context, logger,
+                              BuildJob.Result.FAILURE_POST_HOOK );
         }
         finally
         {
@@ -1394,143 +1394,6 @@ public class InvokerMojo
             }
             throw new BuildFailureException( buffer.toString(), BuildJob.Result.FAILURE_BUILD );
         }
-    }
-
-    /**
-     * Runs the specified hook script of the specified project (if any).
-     * 
-     * @param scriptDescription The description of the script to use for logging, must not be <code>null</code>.
-     * @param basedir The base directory of the project, must not be <code>null</code>.
-     * @param relativeScriptPath The path to the script relative to the project base directory, may be <code>null</code>
-     *            to skip the script execution.
-     * @param context The key-value storage used to share information between hook scripts, may be <code>null</code>.
-     * @param logger The logger to redirect the script output to, may be <code>null</code> to use stdout/stderr.
-     * @param stage The stage of the build job the script is invoked in, must not be <code>null</code>.
-     * @throws MojoExecutionException If an I/O error occurred while reading the script file.
-     * @throws BuildFailureException If the script did not return <code>true</code> of threw an exception.
-     */
-    private void runScript( final String scriptDescription, final File basedir, final String relativeScriptPath,
-                            final Map context, final FileLogger logger, String stage )
-        throws MojoExecutionException, BuildFailureException
-    {
-        if ( relativeScriptPath == null )
-        {
-            return;
-        }
-
-        final File scriptFile = resolveScript( new File( basedir, relativeScriptPath ) );
-
-        if ( !scriptFile.exists() )
-        {
-            return;
-        }
-
-        List classPath = addTestClassPath ? testClassPath : Collections.EMPTY_LIST;
-
-        Map globalVariables = new HashMap();
-        globalVariables.put( "basedir", basedir );
-        globalVariables.put( "localRepositoryPath", localRepositoryPath );
-        globalVariables.put( "context", context );
-
-        PrintStream out = ( logger != null ) ? logger.getPrintStream() : null;
-
-        ScriptInterpreter interpreter = getInterpreter( scriptFile );
-        if ( getLog().isDebugEnabled() )
-        {
-            String name = interpreter.getClass().getName();
-            name = name.substring( name.lastIndexOf( '.' ) + 1 );
-            getLog().debug( "Running script with " + name + ": " + scriptFile );
-        }
-
-        String script;
-        try
-        {
-            script = FileUtils.fileRead( scriptFile, encoding );
-        }
-        catch ( IOException e )
-        {
-            String errorMessage =
-                "error reading " + scriptDescription + " " + scriptFile.getPath() + ", " + e.getMessage();
-            throw new MojoExecutionException( errorMessage, e );
-        }
-
-        Object result;
-        try
-        {
-            if ( logger != null )
-            {
-                logger.consumeLine( "Running " + scriptDescription + " in: " + scriptFile );
-            }
-            result = interpreter.evaluateScript( script, classPath, globalVariables, out );
-            if ( logger != null )
-            {
-                logger.consumeLine( "Finished " + scriptDescription + " in: " + scriptFile );
-            }
-        }
-        catch ( ScriptEvaluationException e )
-        {
-            Throwable t = ( e.getCause() != null ) ? e.getCause() : e;
-            String msg = ( t.getMessage() != null ) ? t.getMessage() : t.toString();
-            if ( getLog().isDebugEnabled() )
-            {
-                String errorMessage = "Error evaluating " + scriptDescription + " " + scriptFile.getPath() + ", " + t;
-                getLog().debug( errorMessage, t );
-            }
-            if ( logger != null )
-            {
-                t.printStackTrace( logger.getPrintStream() );
-            }
-            throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg, stage );
-        }
-
-        if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
-        {
-            throw new BuildFailureException( "The " + scriptDescription + " returned " + result + ".", stage );
-        }
-    }
-
-    /**
-     * Gets the effective path to the specified script. For convenience, we allow to specify a script path as "verify"
-     * and have the plugin auto-append the file extension to search for "verify.bsh" and "verify.groovy".
-     * 
-     * @param scriptFile The script file to resolve, may be <code>null</code>.
-     * @return The effective path to the script file or <code>null</code> if the input was <code>null</code>.
-     */
-    private File resolveScript( File scriptFile )
-    {
-        if ( scriptFile != null && !scriptFile.exists() )
-        {
-            for ( Iterator it = this.scriptInterpreters.keySet().iterator(); it.hasNext(); )
-            {
-                String ext = (String) it.next();
-                File candidateFile = new File( scriptFile.getPath() + '.' + ext );
-                if ( candidateFile.exists() )
-                {
-                    scriptFile = candidateFile;
-                    break;
-                }
-            }
-        }
-        return scriptFile;
-    }
-
-    /**
-     * Determines the script interpreter for the specified script file by looking at its file extension. In this
-     * context, file extensions are considered case-insensitive. For backward compatibility with plugin versions 1.2-,
-     * the BeanShell interpreter will be used for any unrecognized extension.
-     * 
-     * @param scriptFile The script file for which to determine an interpreter, must not be <code>null</code>.
-     * @return The script interpreter for the file, never <code>null</code>.
-     */
-    private ScriptInterpreter getInterpreter( File scriptFile )
-    {
-        String ext = FileUtils.extension( scriptFile.getName() ).toLowerCase( Locale.ENGLISH );
-        ScriptInterpreter interpreter = (ScriptInterpreter) scriptInterpreters.get( ext );
-        if ( interpreter == null )
-        {
-            interpreter = (ScriptInterpreter) scriptInterpreters.get( "bsh" );
-        }
-        return interpreter;
     }
 
     /**
