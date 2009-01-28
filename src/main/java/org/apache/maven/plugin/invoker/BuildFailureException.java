@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.invoker;
 
-import org.apache.maven.plugin.invoker.model.Invocation;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -37,18 +35,10 @@ class BuildFailureException
      */
     private static final long serialVersionUID = 236131530635863815L;
 
-    private final String type;
-
     /**
-     * Creates a new exception with the specified detail message.
-     *
-     * @param message The detail message, may be <code>null</code>.
+     * The type of the build failure.
      */
-    public BuildFailureException( String message )
-    {
-        super( message );
-        type = Invocation.FAILURE_BUILD_RESULT;
-    }
+    private final String type;
 
     /**
      * Creates a new exception with the specified detail message.
@@ -59,17 +49,21 @@ class BuildFailureException
     public BuildFailureException( String message, String type )
     {
         super( message );
-        type.getClass(); // throw NPE if null.
+        if ( type == null )
+        {
+            throw new IllegalArgumentException( "missing failure type" );
+        }
         this.type = type;
     }
 
     /**
      * Returns the type of build failure.
      * 
-     * @return The type of build failure.
+     * @return The type of build failure, never <code>null</code>.
      */
     public String getType()
     {
         return type;
     }
+
 }

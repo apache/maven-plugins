@@ -98,6 +98,26 @@ class InvokerProperties
     }
 
     /**
+     * Gets the name of the corresponding build job.
+     * 
+     * @return The name of the build job or an empty string if not set.
+     */
+    public String getJobName()
+    {
+        return this.properties.getProperty( "invoker.name", "" );
+    }
+
+    /**
+     * Gets the description of the corresponding build job.
+     * 
+     * @return The description of the build job or an empty string if not set.
+     */
+    public String getJobDescription()
+    {
+        return this.properties.getProperty( "invoker.description", "" );
+    }
+
+    /**
      * Determines whether these invoker properties contain a build definition for the specified invocation index.
      * 
      * @param index The one-based index of the invocation to check for, must not be negative.

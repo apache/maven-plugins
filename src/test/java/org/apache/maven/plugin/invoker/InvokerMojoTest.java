@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.plugin.invoker.model.Invocation;
+import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.settings.Settings;
 
 /**
@@ -66,7 +66,7 @@ public class InvokerMojoTest
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*" );
-        Invocation[] poms = invokerMojo.getPoms();
+        BuildJob[] poms = invokerMojo.getBuildJobs();
         System.out.println( Arrays.asList( poms ) );
         assertEquals( 1, poms.length );
     }
@@ -81,7 +81,7 @@ public class InvokerMojoTest
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*,*terpolatio*" );
-        Invocation[] poms = invokerMojo.getPoms();
+        BuildJob[] poms = invokerMojo.getBuildJobs();
         System.out.println( Arrays.asList( poms ) );
         assertEquals( 2, poms.length );
     }
@@ -96,7 +96,7 @@ public class InvokerMojoTest
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
-        Invocation[] poms = invokerMojo.getPoms();
+        BuildJob[] poms = invokerMojo.getBuildJobs();
         System.out.println( Arrays.asList( poms ) );
         assertEquals( 4, poms.length );
     }
