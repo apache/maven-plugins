@@ -1179,7 +1179,8 @@ public class DependenciesRenderer
         {
             String repokey = (String) itrepo.next();
 
-            totalRow[idnum++] = totalByRepo.get( repokey ).toString();
+            Integer dependencies = (Integer) totalByRepo.get( repokey );
+            totalRow[idnum++] = dependencies != null ? dependencies.toString() : "0";
         }
 
         tableRow( totalRow );
