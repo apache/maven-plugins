@@ -25,6 +25,7 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
             <goals>
@@ -34,7 +35,9 @@
         </executions>
         <configuration>
           <version>1.0.0</version>
-          <model>src/main/modello/dummy.mdo</model>
+          <models>
+            <model>src/main/modello/dummy.mdo</model>
+          </models>
         </configuration>
       </plugin>
     </plugins>
