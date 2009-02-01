@@ -395,6 +395,8 @@ public abstract class AbstractEclipsePluginIT
     protected void executeMaven( File pom, Properties properties, List goals, boolean switchLocalRepo )
         throws TestToolsException, ExecutionFailedException
     {
+        System.out.println( "  Building " + pom.getParentFile().getName() );
+
         new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
 
         NullPointerException npe = new NullPointerException();
