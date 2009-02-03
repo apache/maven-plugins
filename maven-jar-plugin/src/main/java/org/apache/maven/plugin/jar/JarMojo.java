@@ -35,7 +35,7 @@ public class JarMojo
     extends AbstractJarMojo
 {
     /**
-     * Directory containing the classes.
+     * Directory containing the classes and resource files that should be packaged into the JAR.
      *
      * @parameter expression="${project.build.outputDirectory}"
      * @required

@@ -45,7 +45,7 @@ public class TestJarMojo
     private boolean skip;
 
     /**
-     * Directory containing the test classes.
+     * Directory containing the test classes and resource files that should be packaged into the JAR.
      *
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
