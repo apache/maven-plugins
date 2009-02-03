@@ -44,14 +44,16 @@ public abstract class AbstractJarMojo
     private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
     /**
-     * List of files to include. Specified as fileset patterns.
+     * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
      *
      * @parameter
      */
     private String[] includes;
 
     /**
-     * List of files to exclude. Specified as fileset patterns.
+     * List of files to exclude. Specified as fileset patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
      *
      * @parameter
      */

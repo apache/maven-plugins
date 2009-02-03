@@ -136,6 +136,9 @@ mvn ... -Dmaven.jar.skip.sign=true
 </project>
 +-----------------+
 
+  Note that the patterns need to be relative to the path specified for the plugin's
+  <<<classesDirectory>>> parameter.
+
 * How to create an additional attached jar artifact from the project
 
   Specify a list of fileset patterns to be included or excluded by adding
