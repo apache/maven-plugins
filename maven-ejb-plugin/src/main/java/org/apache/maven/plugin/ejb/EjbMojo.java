@@ -90,13 +90,11 @@ public class EjbMojo
     private String classifier;
 
     /**
-     * Whether the EJB client jar should be generated or not. Default
-     * is false.
+     * Whether the EJB client jar should be generated or not.
      *
-     * @parameter
-     * @todo boolean instead
+     * @parameter default-value="false"
      */
-    private String generateClient = Boolean.FALSE.toString();
+    private boolean generateClient;
 
     /**
      * The files and directories to exclude from the client jar. Usage:
@@ -260,7 +258,7 @@ public class EjbMojo
             project.getArtifact().setFile( jarFile );
         }
 
-        if ( new Boolean( generateClient ).booleanValue() )
+        if ( generateClient )
         {
             getLog().info( "Building EJB client " + jarName + "-client" );
 
