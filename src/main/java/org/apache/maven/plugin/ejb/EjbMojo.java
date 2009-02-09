@@ -68,7 +68,7 @@ public class EjbMojo
     /**
      * Directory that resources are copied to during the build.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      */
     private String outputDirectory;
@@ -76,7 +76,7 @@ public class EjbMojo
     /**
      * The name of the EJB file to generate.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter default-value="${project.build.finalName}"
      * @required
      */
     private String jarName;
@@ -100,7 +100,7 @@ public class EjbMojo
 
     /**
      * The files and directories to exclude from the client jar. Usage:
-     * 
+     *
      * <pre>
      * &lt;clientExcludes&gt;
      * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Ejb.class&lt;&#47;clientExclude&gt;
@@ -146,7 +146,7 @@ public class EjbMojo
     private JarArchiver jarArchiver;
 
     /**
-     * What EJB version should the ejb-plugin generate? Valid values are "2.x" or "3.x"
+     * What EJB version should the EJB Plugin generate? Valid values are "2.x" or "3.x"
      * (where x is a digit).  When ejbVersion is "3.x", the
      * <code>ejb-jar.xml</code> file is optional.
      * <p/>
@@ -178,6 +178,7 @@ public class EjbMojo
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * This version of the EJB Plugin uses Maven Archiver 2.2.
      *
      * @parameter
      */
