@@ -80,7 +80,7 @@ public class EjbMojoTest
 
         setupDefaultProject( project );
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -101,7 +101,7 @@ public class EjbMojoTest
 
         setupDefaultProject( project );
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
         setVariableValueToObject( mojo, "classifier", "classified" );
 
@@ -123,7 +123,7 @@ public class EjbMojoTest
 
         setupDefaultProject( project );
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -144,7 +144,7 @@ public class EjbMojoTest
 
         setupDefaultProject( project );
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
         setVariableValueToObject( mojo, "classifier", "classified" );
 
@@ -177,7 +177,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -214,7 +214,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -252,7 +252,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -290,7 +290,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -329,7 +329,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -369,7 +369,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
@@ -404,7 +404,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         try
@@ -440,7 +440,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "3.0" );
 
         mojo.execute();
@@ -467,7 +467,7 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "generateClient", Boolean.FALSE );
         setVariableValueToObject( mojo, "ejbVersion", "3.0" );
 
         mojo.execute();
