@@ -73,7 +73,7 @@ public class JarContentChecker
      * files with the same file name but with different data will not
      * be considered.
      *
-     * @param File
+     * @param jarFile
      * @return boolean
      */
     public boolean isOK( JarFile jarFile )
@@ -92,7 +92,7 @@ public class JarContentChecker
 
             if ( entry.isDirectory() )
             {
-                // cross out all files found in the jar file     
+                // cross out all files found in the jar file
                 // found files with incorrect content will not
                 // be counted
                 if ( directoryMap.containsKey( entryFile ) )
