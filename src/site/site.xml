@@ -28,8 +28,8 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Using the ejb client as a dependency" href="examples/ejb-client-dependency.html"/>
-      <item name="Generating an ejb jar client" href="examples/generating-ejb-client.html" />
+      <item name="Generating an EJB client" href="examples/generating-ejb-client.html" />
+      <item name="Using the ejb-client as a dependency" href="examples/ejb-client-dependency.html"/>
     </menu>
   </body>
 </project>

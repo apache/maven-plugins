@@ -53,25 +53,25 @@ Generating an EJB client
     [...]
   </build>
   [...]
-+---------+ 
++---------+
 
 * Client inclusions and exclusions
 
-  The content of the ejb-client archive can also be customized using inclusions and exclusions. 
-  
+  The content of the ejb-client archive can also be customized using inclusions and exclusions.
+
 ** Default Exclusions:
 
-  *<<<\*\*/\*Bean.class>>> 
-  
+  *<<<\*\*/\*Bean.class>>>
+
   *<<<\*\*/\*CMP.class>>>
-  
+
   *<<<\*\*/\*Session.class>>>
-  
+
   *<<<\*\*/package.html>>>
 
   []
-  
-  To customize this, use <<<clientExcludes>>> and <<<clientIncludes>>> element:
+
+  To customize this, use the <<<clientExcludes>>> and <<<clientIncludes>>> elements:
 
 +--------+
   [...]
@@ -87,14 +87,15 @@ Generating an EJB client
              <clientInclude>com/foo/bar/**</clientInclude>
              <!-- this will include all files and directories under com/foo/acme -->
              <clientInclude>com/foo/acme/**</clientInclude>
-             <!-- this will include all files under com/example -->                          
-             <clientInclude>com/example/*</clientInclude>             
+             <!-- this will include all files under com/example -->
+             <clientInclude>com/example/*</clientInclude>
           </clientIncludes>
           <clientExcludes>
-             <!-- this will exclude all files under com/example -->                          
-             <clientExclude>com/example/*</clientExclude>                                     
-             <!-- this will exclude all files and directories with the name sparrow under com/jack -->
-             <clientExclude>com/jack/**/sparrow</clientExclude>                                                  
+             <!-- this will exclude all files under com/example -->
+             <clientExclude>com/example/*</clientExclude>
+             <!-- this will exclude all files and directories with the name
+                  sparrow under com/jack -->
+             <clientExclude>com/jack/**/sparrow</clientExclude>
           </clientExcludes>
         </configuration>
       </plugin>
@@ -104,4 +105,4 @@ Generating an EJB client
   [...]
 +---------+
 
- <<Be careful when mixing excludes and includes, excludes will have a higher priority than includes.>>
+ <<Note:>> Be careful when mixing excludes and includes, excludes will have a higher priority than includes.
