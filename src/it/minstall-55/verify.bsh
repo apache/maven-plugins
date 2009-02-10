@@ -5,6 +5,7 @@ String[] paths =
 {
     "org/apache/maven/its/install/55/test/maven-metadata-local.xml",
     "org/apache/maven/its/install/55/test/1.0/test-1.0.pom",
+    "org/apache/maven/its/install/55/test/1.0/test-1.0.jar",
 };
 
 for ( String path : paths )
