@@ -49,6 +49,12 @@ mvn site
 
   By default, the resulting site will be in the <<<target/site/>>> directory.
 
+  <<Note:>> If you have a multi module project, then the links between the
+  parent and child modules will <not> work when you use '<<<mvn site>>>' or
+  '<<<mvn site:site>>>'. If you want to use those links, you should use
+  '<<<mvn site:stage>>>' instead. You read more about that goal further down on
+  this page in the section called '<Staging a Site>'.
+
 * Deploying a Site
 
   To be able to deploy the site, you must first specify where the site will be
