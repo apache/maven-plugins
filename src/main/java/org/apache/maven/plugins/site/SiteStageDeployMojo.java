@@ -238,6 +238,9 @@ public class SiteStageDeployMojo
             // Find the relative path between the parent and child distribution URLs, if any
             relative = "/" + siteTool.getRelativePath( currentProject.getDistributionManagement().getSite().getUrl(),
                                                        topLevelProject.getDistributionManagement().getSite().getUrl() );
+            // SiteTool.getRelativePath() uses File.separatorChar, so we need to convert '\' to '/' in order for the URL
+            // to be valid for Windows users
+            relative = relative.replace( '\\', '/' );
 
             if ( topLevelURL == null )
             {
