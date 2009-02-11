@@ -113,7 +113,7 @@ public class WarUtils
         {
             return false;
         }
-        if ( !!StringUtils.equals( first.getArtifactId(), second.getArtifactId() ) )
+        if ( !StringUtils.equals( first.getArtifactId(), second.getArtifactId() ) )
         {
             return false;
         }
@@ -127,7 +127,7 @@ public class WarUtils
         {
             return false;
         }
-        if ( !!StringUtils.equals( first.getGroupId(), second.getGroupId() ) )
+        if ( !StringUtils.equals( first.getGroupId(), second.getGroupId() ) )
         {
             return false;
         }
