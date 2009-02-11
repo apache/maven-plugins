@@ -140,6 +140,14 @@ public class InvokerMojo
     private File reportsDirectory;
 
     /**
+     * A flag to disable the generation of build reports.
+     * 
+     * @parameter expression="${invoker.disableReports}" default-value="false"
+     * @since 1.4
+     */
+    private boolean disableReports;
+
+    /**
      * Directory to which projects should be cloned prior to execution. If not specified, each integration test will be
      * run in the directory in which the corresponding IT POM was found. In this case, you most likely want to configure
      * your SCM to ignore <code>target</code> and <code>build.log</code> in the test's base directory.
@@ -583,8 +591,6 @@ public class InvokerMojo
         {
             getLog().warn( "Filtering of parent/child POMs is not supported without cloning the projects" );
         }
-
-        reportsDirectory.mkdirs();
 
         List failures = runBuilds( projectsDir, buildJobs );
 
@@ -1093,7 +1099,7 @@ public class InvokerMojo
     }
 
     /**
-     * Writes the XML report for the specified build job.
+     * Writes the XML report for the specified build job unless report generation has been disabled.
      * 
      * @param buildJob The build job whose report should be written, must not be <code>null</code>.
      * @throws MojoExecutionException If the report could not be written.
@@ -1101,6 +1107,16 @@ public class InvokerMojo
     private void writeBuildReport( BuildJob buildJob )
         throws MojoExecutionException
     {
+        if ( disableReports )
+        {
+            return;
+        }
+
+        if ( !reportsDirectory.exists() )
+        {
+            reportsDirectory.mkdirs();
+        }
+
         String safeFileName = buildJob.getProject().replace( '/', '_' ).replace( '\\', '_' ).replace( ' ', '_' );
         if ( safeFileName.endsWith( "_pom.xml" ) )
         {
