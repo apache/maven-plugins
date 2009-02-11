@@ -31,6 +31,7 @@ import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * Handles the project own resources, that is:
@@ -220,9 +221,8 @@ public class WarProjectPackagingTask
                 }
                 if ( context.isFilteringDeploymentDescriptors() )
                 {
-                    // TODO: web.xml encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( webXml, new File( webinfDir, "web.xml" ), true,
-                                                           context.getFilterWrappers(), "UTF-8" );
+                                                           context.getFilterWrappers(), getEncoding( webXml ) );
                 }
                 else
                 {
@@ -238,9 +238,8 @@ public class WarProjectPackagingTask
                 // if exists we can filter it
                 if ( defaultWebXml.exists() && context.isFilteringDeploymentDescriptors() )
                 {
-                    // TODO: web.xml encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( defaultWebXml, new File( webinfDir, "web.xml" ), true,
-                                                           context.getFilterWrappers(), "UTF-8" );
+                                                           context.getFilterWrappers(), getEncoding( defaultWebXml ) );
                     context.getWebappStructure().getFullStructure().add( WEB_INF_PATH + "/web.xml" );
                 }
             }
@@ -250,9 +249,9 @@ public class WarProjectPackagingTask
                 String xmlFileName = containerConfigXML.getName();
                 if ( context.isFilteringDeploymentDescriptors() )
                 {
-                    // TODO: XML config file encoding can be different from UTF-8
                     context.getMavenFileFilter().copyFile( containerConfigXML, new File( metainfDir, xmlFileName ),
-                                                           true, context.getFilterWrappers(), "UTF-8" );
+                                                           true, context.getFilterWrappers(),
+                                                           getEncoding( containerConfigXML ) );
                 }
                 else
                 {
@@ -272,6 +271,19 @@ public class WarProjectPackagingTask
         }
     }
 
+    /**
+     * Get the encoding from an XML-file.
+     *
+     * @param webXml the XML-file
+     * @return The encoding of the XML-file, or UTF-8 if it's not specified in the file
+     * @throws IOException if an error occurred while reading the file
+     */
+    private String getEncoding( File webXml )
+        throws IOException
+    {
+        XmlStreamReader xmlReader = new XmlStreamReader( webXml );
+        return xmlReader.getEncoding();
+    }
 
     /**
      * Copies webapp webResources from the specified directory.
