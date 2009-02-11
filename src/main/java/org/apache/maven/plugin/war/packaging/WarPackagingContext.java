@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.util.WebappStructure;
 import org.apache.maven.project.MavenProject;
@@ -183,4 +184,6 @@ public interface WarPackagingContext
     boolean isNonFilteredExtension( String fileName );
     
     boolean isFilteringDeploymentDescriptors();
+    
+    ArtifactFactory getArtifactFactory();
 }

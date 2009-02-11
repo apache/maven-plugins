@@ -19,11 +19,14 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
-
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.ClassesPackager;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.interpolation.InterpolationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +39,7 @@ import java.io.IOException;
  * within the <tt>WEB-INF/lib</tt> directory.
  *
  * @author Stephane Nicoll
- * 
+ *
  * @version $Id$
  */
 public class ClassesPackagingTask
@@ -78,18 +81,30 @@ public class ClassesPackagingTask
     protected void generateJarArchive( WarPackagingContext context )
         throws MojoExecutionException
     {
-        //TODO use ArtifactFactory and resolve the final name the usual way instead
-        final String archiveName = context.getProject().getBuild().getFinalName() + ".jar";
+        MavenProject project = context.getProject();
+        ArtifactFactory factory = context.getArtifactFactory();
+        Artifact artifact = factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(),
+                                                         project.getVersion(), "jar" );
+        String archiveName = null;
+        try
+        {
+            archiveName = getArtifactFinalName( context, artifact );
+        }
+        catch ( InterpolationException e )
+        {
+            throw new MojoExecutionException(
+                "Could not get the final name of the artifact[" + artifact.getGroupId() + ":" +
+                    artifact.getArtifactId() + ":" + artifact.getVersion() + "]", e );
+        }
         final String targetFilename = LIB_PATH + archiveName;
 
         if ( context.getWebappStructure().registerFile( Overlay.currentProjectInstance().getId(), targetFilename ) )
         {
-
             final File libDirectory = new File( context.getWebappDirectory(), LIB_PATH );
             final File jarFile = new File( libDirectory, archiveName );
             final ClassesPackager packager = new ClassesPackager();
             packager.packageClasses( context.getClassesDirectory(), jarFile, context.getJarArchiver(),
-                                     context.getProject(), context.getArchive() );
+                                     project, context.getArchive() );
         }
         else
         {
