@@ -22,6 +22,7 @@ package org.apache.maven.plugin.war.util;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.war.AbstractWarMojo;
 import org.apache.maven.plugin.war.stub.AbstractArtifactStub;
 import org.codehaus.plexus.interpolation.InterpolationException;
 
@@ -67,6 +68,18 @@ public class MappingUtilsTest
         assertEquals( "org.apache.sample-maven-test-lib-1.0.jar",
                       MappingUtils.evaluateFileNameMapping( "@{groupId}@-@{artifactId}@-@{version}@.@{extension}@", jar ) );
 
+    }
+
+    public void testMappingWithClassifier()
+        throws MojoExecutionException, InterpolationException
+    {
+        TestArtifactStub jar = new TestArtifactStub();
+        jar.setGroupId( "org.apache.sample" );
+        jar.setArtifactId( "maven-test-lib" );
+        jar.setVersion( "1.0" );
+        jar.setClassifier( "classifier" );
+        assertEquals( "maven-test-lib-1.0-classifier.jar",
+                      MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, jar ) );
     }
 
 

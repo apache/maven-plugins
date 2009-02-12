@@ -64,7 +64,8 @@ public class WarMojo
     private String warName;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * Classifier to add to the generated WAR. If given, the artifact will be an attachment instead.
+     * The classifier will not be applied to the jar file of the project - only to the war file.
      *
      * @parameter
      */
@@ -187,7 +188,7 @@ public class WarMojo
 
         getLog().debug(
             "Excluding " + Arrays.asList( getPackagingExcludes() ) + " for the generated webapp archive." );
-        
+
         warArchiver.addDirectory( getWebappDirectory(), new String[]{"**"}, getPackagingExcludes() );
 
         final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
