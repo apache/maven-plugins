@@ -23,7 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Generate the exploded webapp
+ * Generate the exploded webapp.
  *
  * @goal exploded
  * @phase package
