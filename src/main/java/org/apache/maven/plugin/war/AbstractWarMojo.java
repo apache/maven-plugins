@@ -85,6 +85,7 @@ public abstract class AbstractWarMojo
      * and the classes directory will then be excluded from the webapp.
      *
      * @parameter expression="${archiveClasses}" default-value="false"
+     * @since 2.0.1
      */
     private boolean archiveClasses;
 
@@ -153,7 +154,7 @@ public abstract class AbstractWarMojo
      * set (default) the file is copied with its standard name.
      *
      * @parameter
-     * @since 2.0.3
+     * @since 2.1-alpha-1
      */
     private String outputFileNameMapping;
 
@@ -162,7 +163,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter expression="${project.build.directory}/war/work/webapp-cache.xml"
      * @required
-     * @since 2.1
+     * @since 2.1-alpha-1
      */
     private File cacheFile;
 
@@ -171,7 +172,7 @@ public abstract class AbstractWarMojo
      * accross multiple runs.
      *
      * @parameter expression="${useCache}" default-value="true"
-     * @since 2.1
+     * @since 2.1-alpha-1
      */
     private boolean useCache = true;
 
