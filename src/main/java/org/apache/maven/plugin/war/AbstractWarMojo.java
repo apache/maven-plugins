@@ -55,12 +55,24 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Contains commons jobs for war mojos
+ * Contains commons jobs for war mojos.
+ *
  * @version $Id$
  */
 public abstract class AbstractWarMojo
     extends AbstractMojo
 {
+    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{version}@.@{extension}@";
+
+    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
+        "@{artifactId}@-@{version}@-@{classifier}@.@{extension}@";
+
+    private static final String[] EMPTY_STRING_ARRAY = {};
+
+    private static final String META_INF = "META-INF";
+
+    private static final String WEB_INF = "WEB-INF";
+
     /**
      * The maven project.
      *
@@ -205,15 +217,6 @@ public abstract class AbstractWarMojo
      */
     private MavenResourcesFiltering mavenResourcesFiltering;
 
-    private static final String WEB_INF = "WEB-INF";
-
-    private static final String META_INF = "META-INF";
-
-    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
-        "@{artifactId}@-@{version}@-@{classifier}@.@{extension}@";
-
-    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{version}@.@{extension}@";
-
     /**
      * The comma separated list of tokens to include when copying content
      * of the warSourceDirectory. Default is '**'.
@@ -307,8 +310,6 @@ public abstract class AbstractWarMojo
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
-
-    private static final String[] EMPTY_STRING_ARRAY = {};
 
     private final WebappStructureSerializer webappStructureSerialier = new WebappStructureSerializer();
 
