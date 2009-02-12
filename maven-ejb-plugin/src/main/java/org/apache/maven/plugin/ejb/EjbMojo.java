@@ -68,7 +68,7 @@ public class EjbMojo
     /**
      * Directory that resources are copied to during the build.
      *
-     * @parameter default-value="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}" expression="${outputDirectory}"
      * @required
      */
     private String outputDirectory;
@@ -76,7 +76,7 @@ public class EjbMojo
     /**
      * The name of the EJB file to generate.
      *
-     * @parameter default-value="${project.build.finalName}"
+     * @parameter default-value="${project.build.finalName}" expression="${jarName}"
      * @required
      */
     private String jarName;
@@ -85,14 +85,14 @@ public class EjbMojo
      * Classifier to add to the artifact generated. If given, the artifact will
      * be an attachment instead.
      *
-     * @parameter
+     * @parameter expression="${ejb.classifier}"
      */
     private String classifier;
 
     /**
      * Whether the EJB client jar should be generated or not.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="false" expression="${ejb.generateClient}"
      */
     private boolean generateClient;
 
