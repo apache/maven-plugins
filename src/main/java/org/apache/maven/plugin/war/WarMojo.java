@@ -77,6 +77,7 @@ public class WarMojo
      * case.
      *
      * @parameter alias="packagingExcludes"
+     * @since 2.1-alpha-2
      */
     private String packagingExcludes;
 
@@ -105,6 +106,7 @@ public class WarMojo
      * if you want you war built without a <code>web.xml</code> file.
      *
      * @parameter expression="${failOnMissingWebXml}" default-value="true"
+     * @since 2.1-alpha-2
      */
     private boolean failOnMissingWebXml = true;
 
@@ -113,6 +115,7 @@ public class WarMojo
      * project.
      *
      * @parameter default-value="false"
+     * @since 2.1-alpha-2
      */
     private boolean attachClasses = false;
 
@@ -120,6 +123,7 @@ public class WarMojo
      * The classifier to use for the attached classes artifact.
      *
      * @parameter default-value="classes"
+     * @since 2.1-alpha-2
      */
     private String classesClassifier = "classes";
 
