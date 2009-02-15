@@ -987,7 +987,6 @@ public class InvokerMojo
                 catch ( BuildFailureException e )
                 {
                     failures.add( project );
-                    project.setType( e.getType() );
                 }
             }
         }
