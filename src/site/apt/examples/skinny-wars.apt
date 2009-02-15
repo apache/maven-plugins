@@ -46,9 +46,42 @@ Creating Skinny WARs
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-2</version>
         <configuration>
-          <!-- In version 2.x, this was incorrectly named warSourceExcludes -->
+          <!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
           <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+ Here's another variant of the above example, but this time we use
+ <<<\<packagingIncludes\>>>> to select a few JARs to be included in the WAR.
+ This is useful when there is a need to package a small, but non-empty, subset
+ of JARs into the WAR. When making an EAR of skinny WARs, one wants to package
+ all of the JARs into the EAR. Sometimes a list of JARs must be packaged into
+ the WAR though in order for it to work properly, like tag libraries.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-beta-1</version>
+        <configuration>
+          <!-- Use this to include a selection of jars that will be included in the WAR -->
+          <packagingIncludes>WEB-INF/lib/my-tag-library.jar,WEB-INF/web.xml</packagingIncludes>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
