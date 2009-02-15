@@ -253,7 +253,7 @@ public class InvokerReport
         }
         sinkCell( sink, buffer.toString() );
         // FIXME image
-        sinkCell( sink, buildJob.getType() );
+        sinkCell( sink, buildJob.getResult() );
         sinkCell( sink, Double.toString( buildJob.getTime() ) );
         sinkCell( sink, buildJob.getFailureMessage() );
         sink.tableRow_();
