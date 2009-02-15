@@ -23,12 +23,13 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.invoker</groupId>
-  <artifactId>script-context</artifactId>
+  <artifactId>invoker-report</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>Test</name>
   <description>
-    Test that the hook scripts can share information via a map in the global variable "context" (MINVOKER-79).
+    Test the generation of invoker reports (MINVOKER-77).
   </description>
 
   <properties>
