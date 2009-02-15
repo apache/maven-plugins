@@ -82,6 +82,16 @@ public class WarMojo
     private String packagingExcludes;
 
     /**
+     * The comma separated list of tokens to include in the WAR before
+     * packaging. By default everything is included. This option may be used
+     * to implement the skinny war use case.
+     *
+     * @parameter alias="packagingIncludes"
+     * @since 2.1-beta-1
+     */
+    private String packagingIncludes;
+
+    /**
      * The War archiver.
      *
      * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="war"
@@ -191,9 +201,11 @@ public class WarMojo
         archiver.setOutputFile( warFile );
 
         getLog().debug(
-            "Excluding " + Arrays.asList( getPackagingExcludes() ) + " for the generated webapp archive." );
+            "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated webapp archive." );
+        getLog().debug(
+            "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
 
-        warArchiver.addDirectory( getWebappDirectory(), new String[]{"**"}, getPackagingExcludes() );
+        warArchiver.addDirectory( getWebappDirectory(), getPackagingIncludes(), getPackagingExcludes() );
 
         final File webXmlFile = new File( getWebappDirectory(), "WEB-INF/web.xml" );
         if ( webXmlFile.exists() )
@@ -292,12 +304,28 @@ public class WarMojo
         {
             return StringUtils.split( packagingExcludes, "," );
         }
-
     }
 
     public void setPackagingExcludes( String packagingExcludes )
     {
         this.packagingExcludes = packagingExcludes;
+    }
+
+    public String[] getPackagingIncludes()
+    {
+        if ( StringUtils.isEmpty( packagingIncludes ) )
+        {
+            return new String[]{"**"};
+        }
+        else
+        {
+            return StringUtils.split( packagingIncludes, "," );
+        }
+    }
+
+    public void setPackagingIncludes( String packagingIncludes )
+    {
+        this.packagingIncludes = packagingIncludes;
     }
 
     public String getOutputDirectory()
