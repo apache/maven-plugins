@@ -22,6 +22,7 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,6 +43,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.treeSerializers.GraphmlDependencyNodeVisitor;
+import org.apache.maven.plugin.dependency.treeSerializers.TGFDependencyNodeVisitor;
+import org.apache.maven.plugin.dependency.treeSerializers.DOTDependencyNodeVisitor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
@@ -142,6 +146,18 @@ public class TreeMojo extends AbstractMojo
      * @since 2.0-alpha-5
      */
     private File outputFile;
+
+    /**
+     * If specified, this parameter will cause the dependency tree to be written using the specified format. Currently
+     * supported format are text, dot, graphml and tgf.
+     *
+     * These formats can be plotted to image files. An example of how to plot a dot file using
+     * pygraphviz can be found <a href="http://networkx.lanl.gov/pygraphviz/tutorial.html#layout-and-drawing">here</a>
+     *
+     * @parameter expression="${outputType}" default-value="text"
+     * @since 2.1
+     */
+    private String outputType;
     
     /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
@@ -333,7 +349,7 @@ public class TreeMojo extends AbstractMojo
         StringWriter writer = new StringWriter();
         TreeTokens treeTokens = toTreeTokens( tokens );
 
-        DependencyNodeVisitor visitor = new SerializingDependencyNodeVisitor( writer, treeTokens );
+        DependencyNodeVisitor visitor = getSerializingDependencyNodeVisitor( writer );
 
         // TODO: remove the need for this when the serializer can calculate last nodes from visitor calls only
         visitor = new BuildingDependencyNodeVisitor( visitor );
@@ -353,6 +369,26 @@ public class TreeMojo extends AbstractMojo
         rootNode.accept( visitor );
 
         return writer.toString();
+    }
+
+    public DependencyNodeVisitor getSerializingDependencyNodeVisitor( Writer writer )
+    {
+        if ( "graphml".equals( outputType ) )
+        {
+            return new GraphmlDependencyNodeVisitor( writer );
+        }
+        else if ( "tgf".equals( outputType ) )
+        {
+            return new TGFDependencyNodeVisitor( writer );
+        }
+        else if ( "dot".equals( outputType ) )
+        {
+            return new DOTDependencyNodeVisitor( writer ) ;
+        }
+        else
+        {
+            return new SerializingDependencyNodeVisitor( writer, toTreeTokens( tokens ) );
+        }
     }
 
     /**
