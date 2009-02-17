@@ -81,7 +81,7 @@ Creating Skinny WARs
         <version>2.1-beta-1</version>
         <configuration>
           <!-- Use this to include a selection of jars that will be included in the WAR -->
-          <packagingIncludes>WEB-INF/lib/my-tag-library.jar,WEB-INF/web.xml</packagingIncludes>
+          <packagingIncludes>WEB-INF/lib/my-tag-library.jar,**/*.xml,**/*.properties,**/*.class,**/*.png,**/*.css,**/*.js,**/*.jsp</packagingIncludes>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
