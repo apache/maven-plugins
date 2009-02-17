@@ -155,3 +155,9 @@ Creating Skinny WARs
  |-- war1-1.0.0.war
  `-- war2-1.0.0.war
 +-----------------+
+
+
+* Alternatives
+
+ Our users have submitted alternatives to the above recipe on
+ {{{http://docs.codehaus.org/display/MAVENUSER/Solving+the+Skinny+Wars+problem}the Wiki}}.
