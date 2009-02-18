@@ -29,7 +29,7 @@ under the License.
 
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
-  <version>13-SNAPSHOT</version>
+  <version>14-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Plugins</name>
