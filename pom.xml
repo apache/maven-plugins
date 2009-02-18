@@ -109,7 +109,7 @@ under the License.
       </otherArchives>
     </mailingList>
   </mailingLists>
-
+<!--
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
@@ -137,10 +137,10 @@ under the License.
     <module>maven-one-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pmd-plugin</module>
-    <!-- Excluded as a workaround for MNG-3814
+     Excluded as a workaround for MNG-3814
     <module>maven-project-info-reports-plugin</module>
-    -->
-    <module>maven-rar-plugin</module>
+    
+   <module>maven-rar-plugin</module>
     <module>maven-reactor-plugin</module>
     <module>maven-remote-resources-plugin</module>
     <module>maven-repository-plugin</module>
@@ -152,7 +152,7 @@ under the License.
     <module>maven-toolchains-plugin</module>
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
-  </modules>
+  </modules> -->
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
