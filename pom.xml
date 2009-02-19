@@ -34,11 +34,7 @@ under the License.
   <version>1.0-SNAPSHOT</version>
 
   <prerequisites>
-    <!--
-        NOTE: 2.1.0-M2 trunk does not yet use doxia-1.1, need to build locally.
-        Plan is to switch 2.1.0-M3 to doxia-1.1, see MNG-3402
-    -->
-    <maven>2.1.0-M2-SNAPSHOT</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <developers>
@@ -175,7 +171,7 @@ under the License.
 
   <properties>
     <doxia.version>1.1-SNAPSHOT</doxia.version>
-    <maven.version>2.0.4</maven.version>
+    <maven.version>2.0.6</maven.version>
   </properties>
 
   <build>
@@ -185,14 +181,58 @@ under the License.
         <version>2.0-beta-6</version>
         <!--<version>2.1-SNAPSHOT</version>-->
       </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.1</version>
-        <!--<version>2.5-SNAPSHOT</version>-->
-      </plugin>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.3</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>site-pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.build.finalName}</finalName>
+              <createDependencyReducedPom>
+                false
+              </createDependencyReducedPom>
+              <keepDependenciesWithProvidedScope>
+                true
+              </keepDependenciesWithProvidedScope>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+              </transformers>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.doxia:doxia-sink-api</include>
+                  <include>org.apache.maven.doxia:doxia-logging-api</include>
+                </includes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -203,6 +243,11 @@ under the License.
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0.1</version>
         <!--<version>2.3-SNAPSHOT</version>-->
+      </plugin>
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.4.1</version>
+        <!--<version>2.5-SNAPSHOT</version>-->
       </plugin>
     </plugins>
   </reporting>
