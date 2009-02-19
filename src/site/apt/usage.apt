@@ -63,6 +63,9 @@ Using the PDF plugin
             <goals>
               <goal>pdf</goal>
             </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -71,3 +74,30 @@ Using the PDF plugin
   [...]
 </project>
 +-----
+
+* Document descriptor
+
+  By default, the pdf plugin processes all source files (in unspecified order)
+  found under the site source directory (apt, xdoc, fml,...). You can customize
+  which files to include in which order by using a document descriptor
+  (by default <<<src/site/pdf.xml>>>). An example is given below:
+
++-----
+<document outputName="maven-pdf-plugin">
+
+  <meta>
+    <title>Maven PDF Plugin</title>
+    <author>The Apache Maven Project</author>
+  </meta>
+
+  <toc name="Table of Contents">
+    <item name="Introduction" ref="index.apt"/>
+    <item name="Usage" ref="usage.apt"/>
+  </toc>
+
+</document>
++-----
+
+  The <<<meta>>> information is used for the pdf cover page, while the
+  <<<toc>>> generates a Table of Contents and specifies the order of
+  files to include in the pdf.

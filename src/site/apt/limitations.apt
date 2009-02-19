@@ -32,13 +32,14 @@ Known Bugs and Limitations
 
 * Current limitations
 
-  * Works only with Maven \>\= 2.1 using doxia-1.1.
+  * Current prerequisite is Maven \>\= 2.0.6. It's using Doxia-1.1 via the shade-plugin
+    (see {{{http://jira.codehaus.org/browse/MNG-3402}MNG-3402}}).
 
   * Maven generated pages (reports) are ignored.
 
-  * Xdoc tables don't work due to a bug in the xdoc parser.
-
   * Links to other source documents have to start with "./" or "../".
+
+  * Xdoc sections need to be consecutive, see {{{http://jira.codehaus.org/browse/DOXIA-241}DOXIA-241}}.
 
 * Missing features
 

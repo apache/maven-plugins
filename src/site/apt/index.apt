@@ -42,3 +42,7 @@ Overview
 
   Instructions on the basic usage of the PDF Plugin can be found
   {{{./usage.html}here}}.
+
+* Example
+
+  Have a look at the {{{./maven-pdf-plugin.pdf}pdf}} version of this web site.
