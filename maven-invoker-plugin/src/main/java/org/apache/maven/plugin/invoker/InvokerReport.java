@@ -130,34 +130,36 @@ public class InvokerReport
         sink.text( getText( locale, "report.invoker.result.description" ) );
         sink.paragraph_();
         sink.section1_();
-        
+
         // ----------------------------------
         //  build buildJob beans
         // ----------------------------------
-        File[] reportFiles = reportsDirectory.listFiles();
-        if ( reportFiles == null || reportFiles.length < 1 )
+        File[] reportFiles = getReportFiles();
+        if ( reportFiles.length <= 0 )
         {
             getLog().info( "no invoker report files found, skip report generation" );
             return;
         }
+
         List buildJobs = new ArrayList( reportFiles.length );
-        try
+        for ( int i = 0, size = reportFiles.length; i < size; i++ )
         {
-            for ( int i = 0, size = reportFiles.length; i < size; i++ )
+            File reportFile = reportFiles[i];
+            try
             {
                 BuildJobXpp3Reader reader = new BuildJobXpp3Reader();
-                buildJobs.add( reader.read( ReaderFactory.newXmlReader( reportFiles[i] ) ) );
+                buildJobs.add( reader.read( ReaderFactory.newXmlReader( reportFile ) ) );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new MavenReportException( "Failed to parse report file: " + reportFile, e );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to read report file: " + reportFile, e );
             }
         }
-        catch ( XmlPullParserException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }        
-        
+
         // ----------------------------------
         //  summary
         // ----------------------------------
@@ -205,7 +207,7 @@ public class InvokerReport
         sink.close();        
     }
     
-    protected void constructSummarySection( List /* BuildJob */ buildJobs, Locale locale )
+    private void constructSummarySection( List /* BuildJob */ buildJobs, Locale locale )
     {
         Sink sink = getSink();
         
@@ -276,7 +278,7 @@ public class InvokerReport
         
     }
 
-    protected void renderBuildJob( BuildJob buildJob, Locale locale )
+    private void renderBuildJob( BuildJob buildJob, Locale locale )
     {
         Sink sink = getSink();
         sink.tableRow();
@@ -332,11 +334,22 @@ public class InvokerReport
 
     public boolean canGenerateReport()
     {
-        if ( reportsDirectory == null )
+        return getReportFiles().length > 0;
+    }
+
+    /**
+     * Gets the paths to the available invoker reports to generate the site output from.
+     * 
+     * @return The paths to the invoker reports, can be empty but never <code>null</code>.
+     */
+    private File[] getReportFiles()
+    {
+        File[] reportFiles = ( reportsDirectory != null ) ? reportsDirectory.listFiles() : null;
+        if ( reportFiles == null )
         {
-            return false;
+            reportFiles = new File[0];
         }
-        return reportsDirectory.exists() && reportsDirectory.listFiles().length > 0;
+        return reportFiles;
     }
 
     private String getText( Locale locale, String key )
