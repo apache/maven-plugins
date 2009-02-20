@@ -24,7 +24,7 @@ public class TestMojo extends AbstractMojo {
         try
         {
             writer = new OutputStreamWriter( new FileOutputStream( outputFile ), "UTF-8" );
-            writer.write( System.getProperty( "file.encoding" ) );
+            writer.write( System.getProperty( "maven.invoker.test", "null" ) );
         }
         catch (IOException e)
         {
