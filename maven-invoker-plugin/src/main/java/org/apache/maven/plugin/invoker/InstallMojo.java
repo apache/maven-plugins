@@ -111,6 +111,15 @@ public class InstallMojo
     private Collection reactorProjects;
 
     /**
+     * A flag used to disable the installation procedure. This is primarily intended for usage from the command line to
+     * occasionally adjust the build.
+     * 
+     * @parameter expression="${invoker.skip}" default-value="false"
+     * @since 1.4
+     */
+    private boolean skipInstallation;
+
+    /**
      * Performs this mojo's tasks.
      * 
      * @throws MojoExecutionException If the artifacts could not be installed.
@@ -118,6 +127,12 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skipInstallation )
+        {
+            getLog().info( "Skipping artifact installation per configuration." );
+            return;
+        }
+
         ArtifactRepository testRepository = createTestRepository();
 
         installProjectArtifacts( project, testRepository );
