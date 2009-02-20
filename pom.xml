@@ -157,7 +157,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.0-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.0</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-SNAPSHOT</doxiaSitetoolsVersion>
     <wagonVersion>1.0-beta-4</wagonVersion>
   </properties>
