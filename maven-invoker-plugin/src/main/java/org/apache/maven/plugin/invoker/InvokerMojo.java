@@ -93,7 +93,7 @@ public class InvokerMojo
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      * 
-     * @parameter default-value="false"
+     * @parameter expression="${invoker.skip}" default-value="false"
      * @since 1.1
      */
     private boolean skipInvocation;
