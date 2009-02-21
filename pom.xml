@@ -24,7 +24,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>13-SNAPSHOT</version>
+    <version>13</version>
   </parent>
   <artifactId>maven-eclipse-plugin</artifactId>
   <version>2.6-SNAPSHOT</version>
