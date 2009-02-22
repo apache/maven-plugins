@@ -49,10 +49,11 @@ public class JarModule
         super();
     }
 
-    public JarModule( Artifact a, String defaultLibBundleDir )
+    public JarModule( Artifact a, String defaultLibBundleDir, Boolean includeInApplicationXml )
     {
         super( a );
         setLibBundleDir( defaultLibBundleDir );
+        this.includeInApplicationXml = includeInApplicationXml;
 
     }
 

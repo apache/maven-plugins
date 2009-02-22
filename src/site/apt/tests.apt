@@ -138,4 +138,6 @@ EAR Plugin Tests
 
   * project-054: builds an EAR with deployment descriptor configuration for Java EE 5 and no application.xml
 
+  * project-055: builds an EAR with jar dependencies added in application.xml
+
    

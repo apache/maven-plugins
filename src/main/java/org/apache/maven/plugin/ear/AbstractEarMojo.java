@@ -50,7 +50,7 @@ public abstract class AbstractEarMojo
     public static final String VERSION_1_4 = "1.4";
 
     public static final String VERSION_5 = "5";
-    
+
     public static final String APPLICATION_XML_URI = "META-INF/application.xml";
 
     public static final String META_INF = "META-INF";
@@ -108,6 +108,13 @@ public abstract class AbstractEarMojo
      * @parameter alias="defaultJavaBundleDir"
      */
     protected String defaultLibBundleDir;
+
+    /**
+     * Should libraries be added in application.xml
+     *
+     * @parameter default-value="false"
+     */
+    private Boolean includeLibInApplicationXml = Boolean.FALSE;
 
     /**
      * The file name mapping to use for all dependencies included
@@ -214,7 +221,8 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
                     filter.include( artifact ) )
                 {
-                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultLibBundleDir );
+                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultLibBundleDir,
+                                                                      includeLibInApplicationXml );
                     allModules.add( module );
                 }
             }
