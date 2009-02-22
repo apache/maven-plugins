@@ -471,6 +471,11 @@ public class InvokerMojo
      * # Since plugin version 1.4
      * invoker.offline = true
      * 
+     * # The path to the properties file from which to load system properties, defaults to the
+     * # filename given by the plugin parameter testPropertiesFile
+     * # Since plugin version 1.4
+     * invoker.systemPropertiesFile = test.properties
+     * 
      * # An optional human friendly name for this build job to be included in the build reports. 
      * # Since plugin version 1.4
      * invoker.name = Test Build 01
@@ -1186,8 +1191,6 @@ public class InvokerMojo
 
         List profiles = getProfiles( basedir );
 
-        Properties systemProperties = getTestProperties( basedir );
-
         Map context = new LinkedHashMap();
 
         FileLogger logger = setupLogger( basedir );
@@ -1201,8 +1204,6 @@ public class InvokerMojo
             request.setLocalRepositoryDirectory( localRepositoryPath );
 
             request.setUserSettingsFile( settingsFile );
-
-            request.setProperties( systemProperties );
 
             request.setInteractive( false );
 
@@ -1247,16 +1248,23 @@ public class InvokerMojo
 
                 request.setOffline( false );
 
+                Properties systemProperties =
+                    getSystemProperties( basedir, invokerProperties.getSystemPropertiesFile( invocationIndex ) );
+                request.setProperties( systemProperties );
+
                 invokerProperties.configureInvocation( request, invocationIndex );
 
-                try
+                if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
-                    getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
-                }
-                catch ( CommandLineConfigurationException e )
-                {
-                    getLog().debug( "Failed to display command line: " + e.getMessage() );
+                    try
+                    {
+                        getLog().debug( "Using MAVEN_OPTS: " + request.getMavenOpts() );
+                        getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
+                    }
+                    catch ( CommandLineConfigurationException e )
+                    {
+                        getLog().debug( "Failed to display command line: " + e.getMessage() );
+                    }
                 }
 
                 InvocationResult result;
@@ -1328,10 +1336,12 @@ public class InvokerMojo
      * Gets the system properties to use for the specified project.
      * 
      * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param filename The filename to the properties file to load, may be <code>null</code> to use the default path
+     *            given by {@link #testPropertiesFile}.
      * @return The system properties to use, may be empty but never <code>null</code>.
      * @throws MojoExecutionException If the properties file exists but could not be read.
      */
-    private Properties getTestProperties( final File basedir )
+    private Properties getSystemProperties( final File basedir, final String filename )
         throws MojoExecutionException
     {
         Properties collectedTestProperties = new Properties();
@@ -1346,30 +1356,34 @@ public class InvokerMojo
             collectedTestProperties.putAll( properties );
         }
 
-        if ( testPropertiesFile != null )
+        File propertiesFile = null;
+        if ( filename != null )
         {
-            final File testProperties = new File( basedir, testPropertiesFile );
+            propertiesFile = new File( basedir, filename );
+        }
+        else if ( testPropertiesFile != null )
+        {
+            propertiesFile = new File( basedir, testPropertiesFile );
+        }
 
-            if ( testProperties.exists() )
+        if ( propertiesFile != null && propertiesFile.isFile() )
+        {
+            InputStream fin = null;
+            try
             {
-                InputStream fin = null;
-                try
-                {
-                    fin = new FileInputStream( testProperties );
+                fin = new FileInputStream( propertiesFile );
 
-                    Properties loadedProperties = new Properties();
-                    loadedProperties.load( fin );
-                    collectedTestProperties.putAll( loadedProperties );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error reading system properties for test: "
-                        + testPropertiesFile );
-                }
-                finally
-                {
-                    IOUtil.close( fin );
-                }
+                Properties loadedProperties = new Properties();
+                loadedProperties.load( fin );
+                collectedTestProperties.putAll( loadedProperties );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error reading system properties from " + propertiesFile );
+            }
+            finally
+            {
+                IOUtil.close( fin );
             }
         }
 
