@@ -46,6 +46,9 @@ final class JbossAppXmlWriter
     public static final String DOCTYPE_4_2 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD J2EE Application 1.4//EN\"\n" +
         "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_4_2.dtd\"";
 
+    public static final String DOCTYPE_5 = "jboss-app PUBLIC\n" + "\t\"-//JBoss//DTD Java EE Application 5.0//EN\"\n" +
+        "\t\"http://www.jboss.org/j2ee/dtd/jboss-app_5_0.dtd\"";
+
     private static final String JBOSS_APP_ELEMENT = "jboss-app";
 
     JbossAppXmlWriter( String encoding )
@@ -67,16 +70,32 @@ final class JbossAppXmlWriter
         {
             writer = initializeXmlWriter( w, DOCTYPE_4 );
         }
-        else
+        else if ( jbossConfiguration.isJbossFourDotTwo() )
         {
             writer = initializeXmlWriter( w, DOCTYPE_4_2 );
         }
+        else
+        {
+            writer = initializeXmlWriter( w, DOCTYPE_5 );
+        }
         writer.startElement( JBOSS_APP_ELEMENT );
+
+        // If JBoss 4.2 or 5.0, write the JBoss 4.2 and JBoss 5.0-compatible stuff
+        if ( jbossConfiguration.isJbossFourDotTwo() || jbossConfiguration.isJbossFive() )
+        {
+            // library-directory
+            if ( jbossConfiguration.getLibraryDirectory() != null )
+            {
+                writer.startElement( JbossConfiguration.LIBRARY_DIRECTORY );
+                writer.writeText ( jbossConfiguration.getLibraryDirectory() );
+                writer.endElement();
+            }
+        }
 
         // If JBoss 4.2, write the jboss4.2 specific stuff
         if ( jbossConfiguration.isJbossFourDotTwo() )
         {
-            // module-order
+            // module-order (only available in 4.2 and 4.3)
             if ( jbossConfiguration.getModuleOrder() != null )
             {
                 writer.startElement( JbossConfiguration.MODULE_ORDER );
@@ -103,10 +122,38 @@ final class JbossAppXmlWriter
         }
 
         // classloader repository
-        if ( jbossConfiguration.getLoaderRepository() != null )
+        if ( jbossConfiguration.getLoaderRepository() != null || jbossConfiguration.getLoaderRepositoryConfig() != null)
         {
             writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
-            writer.writeText( jbossConfiguration.getLoaderRepository() );
+
+            // classloader repository class
+            if ( jbossConfiguration.getLoaderRepositoryClass() != null)
+            {
+                writer.addAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS,
+                                     jbossConfiguration.getLoaderRepositoryClass() );
+            }
+
+            // we don't need to write any text if only the loader repo configuration is changed
+            if ( jbossConfiguration.getLoaderRepository() != null )
+            {
+                writer.writeText( jbossConfiguration.getLoaderRepository() );
+            }
+
+            // classloader configuration
+            if ( jbossConfiguration.getLoaderRepositoryConfig() != null )
+            {
+                writer.startElement( JbossConfiguration.LOADER_REPOSITORY_CONFIG );
+
+                // classloader configuration parser
+                if ( jbossConfiguration.getConfigParserClass() != null)
+                {
+                    writer.addAttribute( JbossConfiguration.CONFIG_PARSER_CLASS,
+                                         jbossConfiguration.getConfigParserClass() );
+                }
+                writer.writeText( jbossConfiguration.getLoaderRepositoryConfig() );
+                writer.endElement();
+            }
+            
             writer.endElement();
         }
 

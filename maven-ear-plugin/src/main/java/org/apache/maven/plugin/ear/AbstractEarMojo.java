@@ -290,7 +290,14 @@ public abstract class AbstractEarMojo
                 final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
                 final String unauthenticatedPrincipal =
                     jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
+
                 final String loaderRepository = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY ).getValue();
+                final String loaderRepositoryClass =
+                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CLASS ).getValue();
+                final String loaderRepositoryConfig =
+                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CONFIG ).getValue();
+                final String configParserClass = jboss.getChild( JbossConfiguration.CONFIG_PARSER_CLASS ).getValue();
+
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
                 final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
 
@@ -308,8 +315,11 @@ public abstract class AbstractEarMojo
 
                     }
                 }
+                final String libraryDirectory = jboss.getChild( JbossConfiguration.LIBRARY_DIRECTORY ).getValue();
                 jbossConfiguration = new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
-                                                             loaderRepository, moduleOrder, dataSources );
+                                                             loaderRepository, moduleOrder, dataSources,
+                                                             libraryDirectory, loaderRepositoryConfig,
+                                                             loaderRepositoryClass, configParserClass );
             }
             catch ( PlexusConfigurationException e )
             {
