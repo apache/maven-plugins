@@ -19,7 +19,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -41,7 +42,9 @@ under the License.
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/</developerConnection>
+    <developerConnection>
+      scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/
+    </developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/</url>
   </scm>
   <issueManagement>
@@ -93,7 +96,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -109,7 +112,7 @@ under the License.
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <profile>
       <id>run-its</id>
