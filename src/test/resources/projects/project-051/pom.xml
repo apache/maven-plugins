@@ -49,8 +49,7 @@ under the License.
         <configuration>
           <jboss>
             <version>5</version>
-            <loader-repository>abc</loader-repository>
-            <loader-repository-class>def</loader-repository-class>
+            <loader-repository loaderRepositoryClass="def">abc</loader-repository>
           </jboss>
         </configuration>
       </plugin>
