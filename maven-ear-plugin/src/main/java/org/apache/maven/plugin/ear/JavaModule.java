@@ -43,10 +43,10 @@ public class JavaModule
     }
 
     /**
-     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule(org.apache.maven.artifact.Artifact,String)}} instead
+     * @deprecated use {@link JarModule} instead
      */
-    public JavaModule( Artifact a, String defaultLibBundleDir )
+    public JavaModule( Artifact a, String defaultLibBundleDir, Boolean includeInApplicationXml )
     {
-        super( a, defaultLibBundleDir );
+        super( a, defaultLibBundleDir, includeInApplicationXml );
     }
 }

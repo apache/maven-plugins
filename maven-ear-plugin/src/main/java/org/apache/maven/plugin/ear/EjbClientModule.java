@@ -40,7 +40,7 @@ public class EjbClientModule
 
     public EjbClientModule( Artifact a, String defaultLibBundleDir )
     {
-        super( a, defaultLibBundleDir );
+        super( a, defaultLibBundleDir, Boolean.FALSE );
     }
 
     public String getType()
