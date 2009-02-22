@@ -37,6 +37,8 @@ class JbossConfiguration
 
     static final String VERSION_4_2 = "4.2";
 
+    static final String VERSION_5 = "5";
+
     static final String VERSION = "version";
 
     static final String SECURITY_DOMAIN = "security-domain";
@@ -47,11 +49,19 @@ class JbossConfiguration
 
     static final String LOADER_REPOSITORY = "loader-repository";
 
+    static final String LOADER_REPOSITORY_CONFIG = "loader-repository-config";
+
+    static final String LOADER_REPOSITORY_CLASS = "loader-repository-class";
+
+    static final String CONFIG_PARSER_CLASS = "config-parser-class";
+
     static final String MODULE_ORDER = "module-order";
 
     static final String DATASOURCES = "data-sources";
 
     static final String DATASOURCE = "data-source";
+
+    static final String LIBRARY_DIRECTORY = "library-directory";
 
     private final String version;
 
@@ -61,6 +71,8 @@ class JbossConfiguration
 
     private boolean jbossFourDotTwo;
 
+    private boolean jbossFive;
+
     private final String securityDomain;
 
     private final String unauthenticatedPrincipal;
@@ -69,13 +81,21 @@ class JbossConfiguration
 
     private final String loaderRepository;
 
+    private final String loaderRepositoryConfig;
+
+    private final String loaderRepositoryClass;
+
+    private final String configParserClass;
+
     private final String moduleOrder;
 
     private final List dataSources;
 
+    private final String libraryDirectory;
 
     public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName,
-                               String loaderRepository, String moduleOrder, List dataSources )
+                               String loaderRepository, String moduleOrder, List dataSources, String libraryDirectory,
+                               String loaderRepositoryConfig, String loaderRepositoryClass, String configParserClass )
         throws EarPluginException
     {
         if ( version == null )
@@ -97,6 +117,10 @@ class JbossConfiguration
             {
                 this.jbossFourDotTwo = true;
             }
+            else if ( version.equals( JbossConfiguration.VERSION_5 ) )
+            {
+                this.jbossFive = true;
+            }
             else
             {
                 throw new EarPluginException(
@@ -108,6 +132,10 @@ class JbossConfiguration
             this.loaderRepository = loaderRepository;
             this.moduleOrder = moduleOrder;
             this.dataSources = dataSources;
+            this.libraryDirectory = libraryDirectory;
+            this.loaderRepositoryConfig = loaderRepositoryConfig;
+            this.loaderRepositoryClass = loaderRepositoryClass;
+            this.configParserClass = configParserClass;
         }
     }
 
@@ -150,6 +178,16 @@ class JbossConfiguration
     public boolean isJbossFourDotTwo()
     {
         return jbossFourDotTwo;
+    }
+
+    /**
+     * Returns true if the targeted JBoss version is 5.
+     *
+     * @return if the targeted version is 5
+     */
+    public boolean isJbossFive()
+    {
+        return jbossFive;
     }
 
     /**
@@ -204,7 +242,7 @@ class JbossConfiguration
      * in the ear. It is a unique JMX ObjectName string.
      * <p/>
      * <P>Example:</P>
-     * <loader-repository>jboss.test:loader=cts-cmp2v1-sar.ear</loader-repository>
+     * &lt;loader-repository>jboss.test:loader=cts-cmp2v1-sar.ear&lt;/loader-repository>
      *
      * @return the object name of the ear mbean
      */
@@ -228,7 +266,8 @@ class JbossConfiguration
      * <p/>
      * Returns <tt>null</tt> if no module order is set.
      * <p/>
-     * Only available as from JBoss 4.2.
+     * Only available in JBoss 4.2 and 4.3. Has no effect in JBoss 5 and is
+     * not added when mentioned version is used.
      *
      * @return the module order
      */
@@ -249,4 +288,62 @@ class JbossConfiguration
         return dataSources;
     }
 
+    /**
+     * Returns the library directory to include in the <tt>jboss-app.xml</tt> file.
+     * It tells JBoss where to find non-Java EE libraries included in the EAR.
+     *
+     * @return the library directory
+     */
+    public String getLibraryDirectory()
+    {
+        return libraryDirectory;
+    }
+
+    /**
+     * Returns the class loader repository configuration to include in the <tt>jboss-app.xml</tt> file.
+     * The content of this element is handed to the class loader, thereby altering it's default behaviour.
+     * <p/>
+     * This element is added as a child to the <tt>loader-repository</tt> element. If the element is not
+     * present in the configuration, it will be added.
+     * <p/>
+     * Example: &lt;loader-repository-config>java2ParentDelegaton=true&lt;/loader-repository-config>
+     *
+     * @return the class loader repository configuration
+     */
+    public String getLoaderRepositoryConfig()
+    {
+        return loaderRepositoryConfig;
+    }
+
+    /**
+     * Returns the class loader repository class to include in the <tt>jboss-app.xml</tt> file.
+     * It tells JBoss which loader repository implementation to use.
+     * <p/>
+     * This element is added as an attribute to the <tt>loader-repository</tt> element, therefore it is
+     * not added if no such element configuration is present.
+     * <p/>
+     * Example: &lt;loader-repository-class>org.mindbug.jboss.AlternateLoaderRepository&lt;/loader-repository-class>
+     *
+     * @return the class loader repository class
+     */
+    public String getLoaderRepositoryClass()
+    {
+        return loaderRepositoryClass;
+    }
+
+    /**
+     * Returns the class loader's configuration parser class to include in the <tt>jboss-app.xml</tt> file.
+     * It tells JBoss how to parse the configuration given in the <tt>loader-repository-config</tt> element.
+     * <p/>
+     * This element is added as an attribute to the <tt>loader-repository-config</tt> element, therefore it is
+     * not added if no such element configuration is present.
+     * <p/>
+     * Example: &lt;config-parser-class>org.mindbug.jboss.AlternateLoaderRepositoryConfigParser&lt;/config-parser-class>
+     *
+     * @return the class loader's configuration parser class
+     */
+    public String getConfigParserClass()
+    {
+        return configParserClass;
+    }
 }
