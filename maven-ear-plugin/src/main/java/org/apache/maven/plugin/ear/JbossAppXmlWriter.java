@@ -129,7 +129,7 @@ final class JbossAppXmlWriter
             // classloader repository class
             if ( jbossConfiguration.getLoaderRepositoryClass() != null)
             {
-                writer.addAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS,
+                writer.addAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS_ATTRIBUTE,
                                      jbossConfiguration.getLoaderRepositoryClass() );
             }
 
@@ -147,7 +147,7 @@ final class JbossAppXmlWriter
                 // classloader configuration parser
                 if ( jbossConfiguration.getConfigParserClass() != null)
                 {
-                    writer.addAttribute( JbossConfiguration.CONFIG_PARSER_CLASS,
+                    writer.addAttribute( JbossConfiguration.CONFIG_PARSER_CLASS_ATTRIBUTE,
                                          jbossConfiguration.getConfigParserClass() );
                 }
                 writer.writeText( jbossConfiguration.getLoaderRepositoryConfig() );

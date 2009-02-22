@@ -291,12 +291,15 @@ public abstract class AbstractEarMojo
                 final String unauthenticatedPrincipal =
                     jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
 
-                final String loaderRepository = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY ).getValue();
+                final PlexusConfiguration loaderRepositoryEl = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY );
+                final String loaderRepository = loaderRepositoryEl.getValue();
                 final String loaderRepositoryClass =
-                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CLASS ).getValue();
-                final String loaderRepositoryConfig =
-                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CONFIG ).getValue();
-                final String configParserClass = jboss.getChild( JbossConfiguration.CONFIG_PARSER_CLASS ).getValue();
+                    loaderRepositoryEl.getAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS_ATTRIBUTE );
+                final PlexusConfiguration loaderRepositoryConfigEl =
+                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CONFIG );
+                final String loaderRepositoryConfig = loaderRepositoryConfigEl.getValue();
+                final String configParserClass =
+                    loaderRepositoryConfigEl.getAttribute( JbossConfiguration.CONFIG_PARSER_CLASS_ATTRIBUTE );
 
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
                 final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
