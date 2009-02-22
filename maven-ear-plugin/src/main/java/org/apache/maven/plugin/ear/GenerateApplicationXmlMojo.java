@@ -43,11 +43,7 @@ public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
 
-    public static final String VERSION_1_3 = "1.3";
 
-    public static final String VERSION_1_4 = "1.4";
-
-    public static final String VERSION_5 = "5";
 
     /**
      * Whether the application.xml should be generated or not.
@@ -55,14 +51,6 @@ public class GenerateApplicationXmlMojo
      * @parameter
      */
     private Boolean generateApplicationXml = Boolean.TRUE;
-
-    /**
-     * The version of the application.xml to generate. Valid values
-     * are 1.3, 1.4 and 5.
-     *
-     * @parameter default-value="1.3"
-     */
-    private String version;
 
     /**
      * Display name of the application to be used when application.xml

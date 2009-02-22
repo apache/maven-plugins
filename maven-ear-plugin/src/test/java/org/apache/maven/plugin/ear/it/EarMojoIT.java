@@ -239,9 +239,10 @@ public class EarMojoIT
     public void testProject021()
         throws Exception
     {
-        doTestProject( "project-021", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
-            "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar"},
-                                      new boolean[]{false, true, false, false, true} );
+        doTestProject( "project-021",
+                       new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
+                           "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar"},
+                       new boolean[]{false, true, false, false, true} );
     }
 
     /**
@@ -358,8 +359,9 @@ public class EarMojoIT
     public void testProject033()
         throws Exception
     {
-        doTestProject( "project-033", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
-            "sar-sample-one-1.0.sar", "har-sample-one-1.0.har"} );
+        doTestProject( "project-033",
+                       new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
+                           "har-sample-one-1.0.har"} );
     }
 
     /**
@@ -377,9 +379,10 @@ public class EarMojoIT
     public void testProject035()
         throws Exception
     {
-        doTestProject( "project-035", new String[]{"foo/eartest-ejb-sample-one-1.0.jar",
-            "eartest-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
-            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar"} );
+        doTestProject( "project-035",
+                       new String[]{"foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
+                           "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
+                           "sar-sample-one.sar"} );
     }
 
     /**
@@ -388,10 +391,11 @@ public class EarMojoIT
     public void testProject036()
         throws Exception
     {
-        doTestProject( "project-036", new String[]{"foo/eartest-ejb-sample-one-1.0.jar",
-            "eartest-ejb-sample-two-1.0.jar", "com-foo-bar-ejb-sample-one-1.0.jar",
-            "com-foo-bar-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
-            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar"} );
+        doTestProject( "project-036",
+                       new String[]{"foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
+                           "com-foo-bar-ejb-sample-one-1.0.jar", "com-foo-bar-ejb-sample-two-1.0.jar",
+                           "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
+                           "sar-sample-one.sar"} );
     }
 
     /**
@@ -457,12 +461,12 @@ public class EarMojoIT
      * Builds an EAR with a custom descriptor location (generatedDescriptorLocation setting).
      */
     public void testProject043()
-            throws Exception
+        throws Exception
     {
-        final File baseDir = doTestProject("project-043", new String[]{"ejb-sample-one-1.0.jar"});
-        final File expectedApplicationXml = new File(baseDir, "target/custom-descriptor-dir/application.xml");
-        assertTrue("Application.xml file not found", expectedApplicationXml.exists());
-        assertFalse("Application.xml file should not be empty", expectedApplicationXml.length() == 0);
+        final File baseDir = doTestProject( "project-043", new String[]{"ejb-sample-one-1.0.jar"} );
+        final File expectedApplicationXml = new File( baseDir, "target/custom-descriptor-dir/application.xml" );
+        assertTrue( "Application.xml file not found", expectedApplicationXml.exists() );
+        assertFalse( "Application.xml file should not be empty", expectedApplicationXml.length() == 0 );
     }
 
     /**
@@ -483,10 +487,9 @@ public class EarMojoIT
         final File baseDir = doTestProject( "project-045", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue("application name and version was not filtered properly",
-                content.indexOf("my-app 99.0") != -1);
-        assertTrue("Escaping did not work properly",
-                content.indexOf("will not be filtered ${application.name}.") != -1);
+        assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
+        assertTrue( "Escaping did not work properly",
+                    content.indexOf( "will not be filtered ${application.name}." ) != -1 );
     }
 
     /**
@@ -499,12 +502,10 @@ public class EarMojoIT
         final File baseDir = doTestProject( "project-046", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue("application name and version was not filtered properly",
-                content.indexOf("my-app 99.0") != -1);
-        assertTrue("application build was not filtered properly",
-                content.indexOf("(Build 2)") != -1);
-        assertTrue("Unknown property should not have been filtered",
-                content.indexOf("will not be filtered ${application.unknown}.") != -1);
+        assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
+        assertTrue( "application build was not filtered properly", content.indexOf( "(Build 2)" ) != -1 );
+        assertTrue( "Unknown property should not have been filtered",
+                    content.indexOf( "will not be filtered ${application.unknown}." ) != -1 );
     }
 
     /**
@@ -516,10 +517,10 @@ public class EarMojoIT
         final File baseDir = doTestProject( "project-047", new String[]{"README.txt", "ejb-sample-one-1.0.jar"} );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue("application name and version should not have been filtered",
-                content.indexOf("my-app 99.0") == -1);
-        assertTrue("orignial properties not found",
-                content.indexOf("${application.name} ${project.version}") != -1);
+        assertTrue( "application name and version should not have been filtered",
+                    content.indexOf( "my-app 99.0" ) == -1 );
+        assertTrue( "orignial properties not found",
+                    content.indexOf( "${application.name} ${project.version}" ) != -1 );
     }
 
     /**
@@ -574,5 +575,14 @@ public class EarMojoIT
         throws Exception
     {
         doTestProject( "project-053", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with deployment descriptor configuration for Java EE 5 and no application.xml
+     */
+    public void testProject054()
+        throws Exception
+    {
+        doTestProject( "project-054", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
     }
 }
