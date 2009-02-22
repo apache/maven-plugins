@@ -124,13 +124,44 @@ mvn package
   The EAR plugin can generate the jboss-app.xml automatically. To do so, the 'jboss'
   element must be configured and takes the following child elements:
 
-   * <<version>>: the targeted JBoss version to use, 3.2, 4 or 4.2 (the default is 4).
+   * <<version>>: the targeted JBoss version to use, 3.2, 4, 4.2 or 5 (the default is 4).
 
-   * <<security-domain>>: the JNDI name of the security manager (JBoss 4 only)
+   * <<library-directory>>: the directory where libraries can be found in the ear (JBoss 4.2+ only)
 
-   * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4 only)
+   * <<security-domain>>: the JNDI name of the security manager (JBoss 4+ only)
 
-   * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the ear to provide ear level scoping of classes deployed in the ear 
+   * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4+ only)
+
+   * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the ear to provide ear level scoping of classes deployed in the ear
+
+   * <<loader-repository-class>>: the class loader repository class to use. If no <<loader-repository>> element is defined, it is ignored
+
+   * <<loader-repository-config>>: the class loader repository configuration. If no <<loader-repository>> element is defined, a default one is added
+
+   * <<config-parser-class>>: the class loader's configuration parser class. If no <<loader-repository-config>> element is defined, it is ignored
+
+   The pom snippet below fully configures the following loader repository
+
++-----
+<loader-repository loaderRepositoryClass='dot.com.LoaderRepository'>
+    dot.com:loader=unique-archive-name
+    <loader-repository-config configParserClass='dot.com.LoaderParser'>
+        java2ParentDelegaton=true
+    </loader-repository-config>
+</loader-repository>
++-----
+
++-----
+<configuration>
+  <jboss>
+    [...]
+    <loader-repository>dot.com:loader=unique-archive-name</loader-repository>
+    <loader-repository-class>dot.com.LoaderRepository</loader-repository-class>
+    <loader-repository-config>java2ParentDelegaton=true</loader-repository-config>
+    <config-parser-class>dot.com.LoaderParser</config-parser-class>
+  </jboss>
+</configuration>
++-----
    
    * <<jmx-name>>: the object name of the ear mbean.
 
