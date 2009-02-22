@@ -45,11 +45,25 @@ public abstract class AbstractEarMojo
     extends AbstractMojo
 {
 
+    public static final String VERSION_1_3 = "1.3";
+
+    public static final String VERSION_1_4 = "1.4";
+
+    public static final String VERSION_5 = "5";
+    
     public static final String APPLICATION_XML_URI = "META-INF/application.xml";
 
     public static final String META_INF = "META-INF";
 
     public static final String UTF_8 = "UTF-8";
+
+    /**
+     * The version of the application.xml to generate. Valid values
+     * are 1.3, 1.4 and 5.
+     *
+     * @parameter default-value="1.3"
+     */
+    protected String version;
 
     /**
      * Character encoding for the auto-generated deployment file(s).
