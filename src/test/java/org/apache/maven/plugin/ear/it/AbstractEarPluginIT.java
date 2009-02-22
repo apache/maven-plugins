@@ -20,12 +20,12 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import junit.framework.TestCase;
-import org.apache.maven.it.Verifier;
 import org.apache.maven.it.VerificationException;
+import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 
 import java.io.File;
@@ -368,51 +368,53 @@ public abstract class AbstractEarPluginIT
         else
         {
             assertNotNull( "Missing deployment descriptor", actualDeploymentDescriptors );
-        }
-        // Make sure we have the same number of files
-        assertEquals( "Number of Deployment descriptor(s) mismatch", expectedDeploymentDescriptors.length,
-                      actualDeploymentDescriptors.length );
 
-        // Sort the files so that we have the same behavior here
-        Arrays.sort( expectedDeploymentDescriptors );
-        Arrays.sort( actualDeploymentDescriptors );
+            // Make sure we have the same number of files
+            assertEquals( "Number of Deployment descriptor(s) mismatch", expectedDeploymentDescriptors.length,
+                          actualDeploymentDescriptors.length );
 
-        for ( int i = 0; i < expectedDeploymentDescriptors.length; i++ )
-        {
-            File expectedDeploymentDescriptor = expectedDeploymentDescriptors[i];
-            File actualDeploymentDescriptor = actualDeploymentDescriptors[i];
+            // Sort the files so that we have the same behavior here
+            Arrays.sort( expectedDeploymentDescriptors );
+            Arrays.sort( actualDeploymentDescriptors );
 
-            assertEquals( "File name mismatch", expectedDeploymentDescriptor.getName(),
-                          actualDeploymentDescriptor.getName() );
-
-            Reader expected = null;
-            Reader actual = null;
-            try
+            for ( int i = 0; i < expectedDeploymentDescriptors.length; i++ )
             {
-                expected = ReaderFactory.newXmlReader( expectedDeploymentDescriptor );
-                actual = ReaderFactory.newXmlReader( actualDeploymentDescriptor );
+                File expectedDeploymentDescriptor = expectedDeploymentDescriptors[i];
+                File actualDeploymentDescriptor = actualDeploymentDescriptors[i];
 
-                // Make sure that it matches even if the elements are not in
-                // the exact same order
-                final Diff myDiff = new Diff(expected, actual);
-                myDiff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
-                XMLAssert.assertXMLEqual(
-                    "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
-                     myDiff, true);             }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-                fail( "Could not assert deployment descriptor " + e.getMessage() );
-            }
-            finally
-            {
-                if ( expected != null )
+                assertEquals( "File name mismatch", expectedDeploymentDescriptor.getName(),
+                              actualDeploymentDescriptor.getName() );
+
+                Reader expected = null;
+                Reader actual = null;
+                try
                 {
-                    expected.close();
+                    expected = ReaderFactory.newXmlReader( expectedDeploymentDescriptor );
+                    actual = ReaderFactory.newXmlReader( actualDeploymentDescriptor );
+
+                    // Make sure that it matches even if the elements are not in
+                    // the exact same order
+                    final Diff myDiff = new Diff( expected, actual );
+                    myDiff.overrideElementQualifier( new RecursiveElementNameAndTextQualifier() );
+                    XMLAssert.assertXMLEqual(
+                        "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
+                        myDiff, true );
                 }
-                if ( actual != null )
+                catch ( Exception e )
                 {
-                    actual.close();
+                    e.printStackTrace();
+                    fail( "Could not assert deployment descriptor " + e.getMessage() );
+                }
+                finally
+                {
+                    if ( expected != null )
+                    {
+                        expected.close();
+                    }
+                    if ( actual != null )
+                    {
+                        actual.close();
+                    }
                 }
             }
         }

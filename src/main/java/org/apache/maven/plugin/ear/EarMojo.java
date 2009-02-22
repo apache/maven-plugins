@@ -380,7 +380,7 @@ public class EarMojo
 
         // Check if deployment descriptor is there
         File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
-        if ( !ddFile.exists() )
+        if ( !ddFile.exists() && !version.equals(VERSION_5 ) )
         {
             throw new MojoExecutionException(
                 "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
