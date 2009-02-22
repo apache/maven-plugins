@@ -49,11 +49,11 @@ class JbossConfiguration
 
     static final String LOADER_REPOSITORY = "loader-repository";
 
+    static final String LOADER_REPOSITORY_CLASS_ATTRIBUTE = "loaderRepositoryClass";
+
     static final String LOADER_REPOSITORY_CONFIG = "loader-repository-config";
 
-    static final String LOADER_REPOSITORY_CLASS = "loader-repository-class";
-
-    static final String CONFIG_PARSER_CLASS = "config-parser-class";
+    static final String CONFIG_PARSER_CLASS_ATTRIBUTE = "configParserClass";
 
     static final String MODULE_ORDER = "module-order";
 
