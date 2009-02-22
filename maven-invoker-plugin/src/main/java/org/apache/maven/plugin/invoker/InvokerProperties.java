@@ -77,6 +77,11 @@ class InvokerProperties
     private static final String OFFLINE = "invoker.offline";
 
     /**
+     * The constant for the invoker property.
+     */
+    private static final String SYSTEM_PROPERTIES_FILE = "invoker.systemPropertiesFile";
+
+    /**
      * Creates a new facade for the specified invoker properties. The properties will not be copied, so any changes to
      * them will be reflected by the facade.
      * 
@@ -125,7 +130,8 @@ class InvokerProperties
      */
     public boolean isInvocationDefined( int index )
     {
-        String[] keys = { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE };
+        String[] keys =
+            { PROJECT, GOALS, PROFILES, MAVEN_OPTS, FAILURE_BEHAVIOR, NON_RECURSIVE, OFFLINE, SYSTEM_PROPERTIES_FILE };
         for ( int i = 0; i < keys.length; i++ )
         {
             if ( properties.getProperty( keys[i] + '.' + index ) != null )
@@ -210,6 +216,17 @@ class InvokerProperties
     {
         boolean nonZeroExit = "failure".equalsIgnoreCase( get( "invoker.buildResult", index ) );
         return ( exitCode != 0 ) == nonZeroExit;
+    }
+
+    /**
+     * Gets the path to the properties file used to set the system properties for the specified execution.
+     * 
+     * @param index The index of the invocation for which to check the exit code, must not be negative.
+     * @return The path to the properties file or <code>null</code> if not set.
+     */
+    public String getSystemPropertiesFile( int index )
+    {
+        return get( SYSTEM_PROPERTIES_FILE, index );
     }
 
     /**
