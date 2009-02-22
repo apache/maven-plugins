@@ -29,6 +29,7 @@ import java.util.Properties;
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
+ * @noinspection JavaDoc
  */
 public class EarMojoIT
     extends AbstractEarPluginIT
@@ -521,4 +522,57 @@ public class EarMojoIT
                 content.indexOf("${application.name} ${project.version}") != -1);
     }
 
+    /**
+     * Builds an EAR with a Jboss 5 configuration containing library directory.
+     */
+    public void testProject048()
+        throws Exception
+    {
+        doTestProject( "project-048", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 4.2 configuration containing a library directory.
+     */
+    public void testProject049()
+        throws Exception
+    {
+        doTestProject( "project-049", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 5 configuration containing a loader repository configuration definition.
+     */
+    public void testProject050()
+        throws Exception
+    {
+        doTestProject( "project-050", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 5 configuration containing a loader repository class definition.
+     */
+    public void testProject051()
+        throws Exception
+    {
+        doTestProject( "project-051", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 5 configuration containing a configuration parser class definition.
+     */
+    public void testProject052()
+        throws Exception
+    {
+        doTestProject( "project-052", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 5 configuration containing only the loader repo configuration
+     */
+    public void testProject053()
+        throws Exception
+    {
+        doTestProject( "project-053", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
 }

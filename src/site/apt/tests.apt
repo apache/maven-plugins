@@ -123,4 +123,17 @@ EAR Plugin Tests
   * project-046: builds an EAR and filter the content of the sources directory using a custom filter file
 
   * project-047: builds an EAR and filter the content with a list of extensions
+
+  * project-048: builds an EAR with a Jboss 5 configuration containing library directory
+
+  * project-049: builds an EAR with a Jboss 4.2 configuration containing a library directory
+
+  * project-050: builds an EAR with a Jboss 5 configuration containing a loader repository configuration definition
+
+  * project-051: builds an EAR with a Jboss 5 configuration containing a loader repository class definition
+
+  * project-052: builds an EAR with a Jboss 5 configuration containing a configuration parser class definition
+
+  * project-053: builds an EAR with a Jboss 5 configuration containing only the loader repo configuration
+
    
