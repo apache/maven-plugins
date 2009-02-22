@@ -136,4 +136,6 @@ EAR Plugin Tests
 
   * project-053: builds an EAR with a Jboss 5 configuration containing only the loader repo configuration
 
+  * project-054: builds an EAR with deployment descriptor configuration for Java EE 5 and no application.xml
+
    
