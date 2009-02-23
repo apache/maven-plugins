@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-06-01
+ 2009-02-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -49,7 +49,7 @@ Maven Javadoc Plugin
 
 * Goals Overview
 
-   The Javadoc Plugin has six goals:
+   The Javadoc Plugin has eight goals:
 
    * {{{javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
@@ -68,6 +68,12 @@ Maven Javadoc Plugin
      to the remote repository along with the project's compiled binary and source archive.
 
    * {{{test-jar-mojo.html}javadoc:test-jar}} creates an archive file of the generated Test Javadocs.
+
+   * {{{fix-mojo.html}javadoc:fix}} is an interactive goal which fixes the Javadoc documentation and tags for the Java files.
+
+   * {{{test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags for the test Java files.
+
+   []
 
 * Usage
 
