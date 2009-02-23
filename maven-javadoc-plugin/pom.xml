@@ -26,6 +26,7 @@ under the License.
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
     <version>13</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-javadoc-plugin</artifactId>
@@ -134,6 +135,33 @@ under the License.
       <artifactId>commons-lang</artifactId>
       <version>2.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.qdox</groupId>
+      <artifactId>qdox</artifactId>
+      <version>1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.clirr</groupId>
+      <artifactId>clirr-core</artifactId>
+      <version>0.6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>bcel</groupId>
+          <artifactId>bcel</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.bcel</groupId>
+      <artifactId>bcel</artifactId>
+      <version>5.2</version>
+    </dependency>
+    <!-- to use clirr in the fix goal without reinventing the wheel-->
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>clirr-maven-plugin</artifactId>
+      <version>2.2.2</version>
+    </dependency>
 
     <!-- Plexus -->
     <dependency>
@@ -171,7 +199,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.6</version>
+      <version>1.5.7</version>
     </dependency>
 
     <dependency>
@@ -230,6 +258,7 @@ under the License.
                 <pomInclude>**/MJAVADOC-180/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-194/pom.xml</pomInclude>
                 <pomInclude>**/MJAVADOC-206/pom.xml</pomInclude>
+                <pomInclude>**/MJAVADOC-226/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
