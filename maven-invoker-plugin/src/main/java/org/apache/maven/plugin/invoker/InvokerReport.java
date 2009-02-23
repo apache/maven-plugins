@@ -43,6 +43,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generate a report based on the results of it tests.
+ * <b>This mojo doesn't fork any lifecycle, if you have a clean working copy, 
+ * you have to use a cli like : mvn clean integration-test site<b> 
  * @goal report
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 1.4
