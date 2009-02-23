@@ -43,6 +43,13 @@ under the License.
       <artifactId>minvoker-70</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    <!-- a dependency that does not contribute to the class path but must be staged, too -->
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>pom</artifactId>
+      <version>0.3-SNAPSHOT</version>
+      <type>pom</type>
+    </dependency>
   </dependencies>
 
   <repositories>
