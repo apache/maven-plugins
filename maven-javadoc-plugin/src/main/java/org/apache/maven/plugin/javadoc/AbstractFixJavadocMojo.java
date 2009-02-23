@@ -736,7 +736,18 @@ public abstract class AbstractFixJavadocMojo
         List javaFiles = new LinkedList();
         for ( Iterator i = getProjectSourceRoots( project ).iterator(); i.hasNext(); )
         {
-            javaFiles.addAll( FileUtils.getFiles( new File( (String) i.next() ), includes, excludes, true ) );
+            File f = new File( (String) i.next() );
+            if ( f.isDirectory() )
+            {
+                javaFiles.addAll( FileUtils.getFiles( f, includes, excludes, true ) );
+            }
+            else
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( f + " doesn't exist. Ignored it." );
+                }
+            }
         }
 
         JavaDocBuilder builder = new JavaDocBuilder();
