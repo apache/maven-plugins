@@ -28,9 +28,6 @@ under the License.
   <packaging>pom</packaging>
 
   <name>Test</name>
-  <description>
-    Test the generation of invoker reports (MINVOKER-77).
-  </description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +35,7 @@ under the License.
 
   <build>
     <plugins>
-      <!--plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
         <version>@project.version@</version>
@@ -48,6 +45,7 @@ under the License.
           </pomIncludes>
           <preBuildHookScript>setup</preBuildHookScript>
           <postBuildHookScript>verify</postBuildHookScript>
+          <ignoreFailures>true</ignoreFailures>
           <goals>
             <goal>validate</goal>
           </goals>
@@ -61,7 +59,7 @@ under the License.
             </goals>
           </execution>
         </executions>
-      </plugin-->
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
@@ -88,16 +86,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
         <version>@project.version@</version>
-        <configuration>
-          <pomIncludes>
-            <pomInclude>*/pom.xml</pomInclude>
-          </pomIncludes>
-          <preBuildHookScript>setup</preBuildHookScript>
-          <postBuildHookScript>verify</postBuildHookScript>
-          <goals>
-            <goal>validate</goal>
-          </goals>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>

@@ -43,8 +43,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generate a report based on the results of it tests.
- * Fork an invoker:run 
- * @execute phase="test" lifecycle="invoker-report"
  * @goal report
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 1.4
