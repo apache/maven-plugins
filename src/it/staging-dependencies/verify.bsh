@@ -17,6 +17,9 @@ try
             "junit/junit/3.8.2/junit-3.8.2.jar",
             "org/apache/maven/its/minvoker-70/1.0-SNAPSHOT/minvoker-70-1.0-SNAPSHOT.pom",
             "org/apache/maven/its/minvoker-70/1.0-SNAPSHOT/minvoker-70-1.0-SNAPSHOT.jar",
+            "org/apache/maven/its/parent-b/0.1-SNAPSHOT/parent-b-0.1-SNAPSHOT.pom",
+            "org/apache/maven/its/parent-a/0.1-SNAPSHOT/parent-a-0.1-SNAPSHOT.pom",
+            "org/apache/maven/its/pom/0.3-SNAPSHOT/pom-0.3-SNAPSHOT.pom",
       };
     for ( String file : files )
     {
@@ -24,8 +27,7 @@ try
         System.out.println( "Checking for existence of: " + stagedFile );
         if ( !stagedFile.isFile() )
         {
-            System.out.println( "FAILED!" );
-            return false;
+            throw new IllegalStateException( "Missing: " + stagedFile );
         }
     }
 }

@@ -33,6 +33,8 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -135,9 +137,9 @@ public class InstallMojo
 
         ArtifactRepository testRepository = createTestRepository();
 
-        installProjectArtifacts( project, testRepository );
-        installProjectParents( project, testRepository );
         installProjectDependencies( project, reactorProjects, testRepository );
+        installProjectParents( project, testRepository );
+        installProjectArtifacts( project, testRepository );
     }
 
     /**
@@ -263,6 +265,8 @@ public class InstallMojo
             {
                 if ( parent.getFile() == null )
                 {
+                    installParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), 
+                                       testRepository );
                     break;
                 }
                 installProjectPom( parent, testRepository );
@@ -329,7 +333,7 @@ public class InstallMojo
 
         // collect transitive dependencies
         Collection dependencies = new HashSet();
-        for ( Iterator it = mvnProject.getRuntimeArtifacts().iterator(); it.hasNext(); )
+        for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             String id = ArtifactUtils.versionlessKey( artifact );
@@ -353,7 +357,7 @@ public class InstallMojo
             }
 
             // install remaining dependencies from local repository
-            for ( Iterator it = mvnProject.getRuntimeArtifacts().iterator(); it.hasNext(); )
+            for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
             {
                 Artifact artifact = (Artifact) it.next();
                 String id = ArtifactUtils.versionlessKey( artifact );
@@ -373,9 +377,13 @@ public class InstallMojo
                                                         artifact.getBaseVersion(), null, "pom" );
 
                     File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
-                    if ( pomFile.exists() )
+                    if ( pomFile.isFile() )
                     {
-                        depArtifact.addMetadata( new ProjectArtifactMetadata( depArtifact, pomFile ) );
+                        if ( !pomFile.equals( artifactFile ) )
+                        {
+                            depArtifact.addMetadata( new ProjectArtifactMetadata( depArtifact, pomFile ) );
+                        }
+                        installParentPoms( pomFile, testRepository );
                     }
 
                     installArtifact( artifactFile, depArtifact, testRepository );
@@ -385,6 +393,47 @@ public class InstallMojo
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to install project dependencies: " + mvnProject, e );
+        }
+    }
+
+    /**
+     * Installs all parent POMs of the specified POM file that are available in the local repository.
+     * 
+     * @param pomFile The path to the POM file whose parents should be installed, must not be <code>null</code>.
+     * @param testRepository The local repository to install the POMs to, must not be <code>null</code>.
+     * @throws MojoExecutionException If any (existing) parent POM could not be installed.
+     */
+    private void installParentPoms( File pomFile, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
+        Model model = PomUtils.loadPom( pomFile );
+        Parent parent = model.getParent();
+        if ( parent != null )
+        {
+            installParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), testRepository );
+        }
+    }
+
+    /**
+     * Installs the specified POM and all its parent POMs to the local repository.
+     * 
+     * @param groupId The group id of the POM which should be installed, must not be <code>null</code>.
+     * @param artifactId The artifact id of the POM which should be installed, must not be <code>null</code>.
+     * @param version The version of the POM which should be installed, must not be <code>null</code>.
+     * @param testRepository The local repository to install the POMs to, must not be <code>null</code>.
+     * @throws MojoExecutionException If any (existing) parent POM could not be installed.
+     */
+    private void installParentPoms( String groupId, String artifactId, String version, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
+        Artifact pomArtifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
+
+        File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
+        if ( pomFile.isFile() )
+        {
+            // TODO: track which parents were already installed to prevent needless re-installation
+            installArtifact( pomFile, pomArtifact, testRepository );
+            installParentPoms( pomFile, testRepository );
         }
     }
 

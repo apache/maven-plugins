@@ -46,7 +46,6 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -718,22 +717,7 @@ public class InvokerMojo
         }
         getLog().debug( "Collecting parent/child projects of " + projectPath );
 
-        Model model;
-
-        Reader reader = null;
-        try
-        {
-            reader = ReaderFactory.newXmlReader( pomFile );
-            model = new MavenXpp3Reader().read( reader );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to parse POM: " + pomFile, e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
+        Model model = PomUtils.loadPom( pomFile );
 
         try
         {
