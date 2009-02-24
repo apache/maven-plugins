@@ -70,12 +70,12 @@ Usage
         <version>${project.version}</version>
         <configuration>
           <projectsDirectory>src/it</projectsDirectory>
-          <cloneProjectsTo>target/it</cloneProjectsTo>
+          <cloneProjectsTo>\${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
           <settingsFile>src/it/settings.xml</settingsFile>
-          <localRepositoryPath>target/local-repo</localRepositoryPath>
+          <localRepositoryPath>\${project.build.directory}/local-repo</localRepositoryPath>
           <postBuildHookScript>verify.bsh</postBuildHookScript>
         </configuration>
         <executions>
