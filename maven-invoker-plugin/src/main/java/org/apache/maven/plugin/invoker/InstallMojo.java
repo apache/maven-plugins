@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
@@ -122,6 +123,11 @@ public class InstallMojo
     private boolean skipInstallation;
 
     /**
+     * The identifiers of already installed artifacts, used to avoid multiple installation of the same artifact.
+     */
+    private Collection installedArtifacts;
+
+    /**
      * Performs this mojo's tasks.
      * 
      * @throws MojoExecutionException If the artifacts could not be installed.
@@ -137,9 +143,11 @@ public class InstallMojo
 
         ArtifactRepository testRepository = createTestRepository();
 
-        installProjectDependencies( project, reactorProjects, testRepository );
-        installProjectParents( project, testRepository );
+        installedArtifacts = new HashSet();
+
         installProjectArtifacts( project, testRepository );
+        installProjectParents( project, testRepository );
+        installProjectDependencies( project, reactorProjects, testRepository );
     }
 
     /**
@@ -205,7 +213,15 @@ public class InstallMojo
             {
                 throw new IllegalStateException( "Artifact is not fully assembled: " + file );
             }
-            installer.install( file, artifact, testRepository );
+
+            if ( installedArtifacts.add( artifact.getId() ) )
+            {
+                installer.install( file, artifact, testRepository );
+            }
+            else
+            {
+                getLog().debug( "Not re-installing " + artifact + ", " + file );
+            }
         }
         catch ( Exception e )
         {
@@ -332,7 +348,7 @@ public class InstallMojo
         }
 
         // collect transitive dependencies
-        Collection dependencies = new HashSet();
+        Collection dependencies = new LinkedHashSet();
         for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -428,10 +444,15 @@ public class InstallMojo
     {
         Artifact pomArtifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
 
+        if ( installedArtifacts.contains( pomArtifact.getId() ) )
+        {
+            getLog().debug( "Not re-installing " + pomArtifact );
+            return;
+        }
+
         File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
         if ( pomFile.isFile() )
         {
-            // TODO: track which parents were already installed to prevent needless re-installation
             installArtifact( pomFile, pomArtifact, testRepository );
             installParentPoms( pomFile, testRepository );
         }
