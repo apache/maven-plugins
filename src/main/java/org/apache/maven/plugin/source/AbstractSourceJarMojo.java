@@ -143,14 +143,14 @@ public abstract class AbstractSourceJarMojo
      * @return the compile or test sources
      */
     protected abstract List getSources( MavenProject p )
-		throws MojoExecutionException;
+        throws MojoExecutionException;
 
     /**
      * @param p not null
      * @return the compile or test resources
      */
     protected abstract List getResources( MavenProject p )
-		throws MojoExecutionException;
+        throws MojoExecutionException;
 
     protected void packageSources( MavenProject p )
         throws MojoExecutionException
@@ -187,7 +187,7 @@ public abstract class AbstractSourceJarMojo
             archiveProjectContent( subProject, archiver );
         }
 
-        File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
+        File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
         try
         {
             archiver.setDestFile( outputFile );
@@ -204,7 +204,7 @@ public abstract class AbstractSourceJarMojo
 
         if ( attach )
         {
-            projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
+            projectHelper.attachArtifact( project, getType(), getClassifier(), outputFile );
         }
         else
         {
@@ -343,6 +343,11 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
+    protected String getExtension()
+    {
+        return ".jar";
+    }
+
     protected MavenProject getProject( MavenProject p )
     {
         if ( p.getExecutionProject() != null )
@@ -351,5 +356,10 @@ public abstract class AbstractSourceJarMojo
         }
 
         return p;
+    }
+
+    protected String getType()
+    {
+        return "java-source";
     }
 }
