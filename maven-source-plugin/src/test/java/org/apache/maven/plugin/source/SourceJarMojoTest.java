@@ -27,7 +27,6 @@ import java.io.File;
 public class SourceJarMojoTest
     extends AbstractSourcePluginTestCase
 {
-
     protected String getGoal()
     {
         return "jar";
@@ -40,7 +39,6 @@ public class SourceJarMojoTest
             "foo/project001/App.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"} );
     }
 
-
     public void testExcludes()
         throws Exception
     {
@@ -49,7 +47,6 @@ public class SourceJarMojoTest
 
         } );
     }
-
 
     public void testNoSources()
         throws Exception
@@ -70,5 +67,10 @@ public class SourceJarMojoTest
         } );
     }
 
-
+    public void testIncludePom()
+        throws Exception
+    {
+        doTestProjectWithSourceArchive( "project-009", new String[]{"default-configuration.properties", "pom.xml",
+            "foo/project009/App.java", "foo/project009/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"} );
+    }
 }

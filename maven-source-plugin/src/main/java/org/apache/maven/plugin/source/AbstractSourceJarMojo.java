@@ -74,6 +74,14 @@ public abstract class AbstractSourceJarMojo
     protected boolean excludeResources;
 
     /**
+     * Specifies whether or not to include the POM file in the sources-jar.
+     *
+     * @parameter expression="${source.includePom}" default-value="false"
+     * @since 2.1
+     */
+    protected boolean includePom;
+
+    /**
      * Used for attaching the source jar to the project.
      *
      * @component
@@ -207,6 +215,18 @@ public abstract class AbstractSourceJarMojo
     protected void archiveProjectContent( MavenProject p, Archiver archiver )
         throws MojoExecutionException
     {
+        if ( includePom )
+        {
+            try
+            {
+                archiver.addFile( p.getFile(), p.getFile().getName() );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error adding POM file to target jar file.", e );
+            }
+        }
+
         for ( Iterator i = getSources( p ).iterator(); i.hasNext(); )
         {
             String s = (String) i.next();
