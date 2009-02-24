@@ -42,9 +42,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Generate a report based on the results of it tests.
- * <b>This mojo doesn't fork any lifecycle, if you have a clean working copy, 
- * you have to use a cli like : mvn clean integration-test site<b> 
+ * Generate a report based on the results of the Maven invocations. <strong>Note:</strong> This mojo doesn't fork any
+ * lifecycle, if you have a clean working copy, you have to use a command like
+ * <code>mvn clean integration-test site</code> to ensure the build results are present when this goal is invoked.
+ * 
  * @goal report
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 1.4
@@ -87,7 +88,7 @@ public class InvokerReport
     protected File outputDirectory;    
     
     /**
-     * Base directory where all build reports are written to.
+     * Base directory where all build reports have been written to.
      *
      * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      */

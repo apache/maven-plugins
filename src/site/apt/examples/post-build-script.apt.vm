@@ -42,13 +42,7 @@ Using a Post-Build Script
         <configuration>
           <debug>true</debug>
           <projectsDirectory>src/it</projectsDirectory>
-          <pomIncludes>
-            <pomInclude>**/pom.xml</pomInclude>
-          </pomIncludes>
-          <pomExcludes>
-            <pomExclude>**/child*/pom.xml</pomExclude>
-            <pomExclude>**/module*/pom.xml</pomExclude>
-          </pomExcludes>
+          <preBuildHookScript>setup.bsh</preBuildHookScript>
           <postBuildHookScript>verify.bsh</postBuildHookScript>
         </configuration>
         <executions>
@@ -65,7 +59,7 @@ Using a Post-Build Script
 </project>
 -------------------
 
-  Here is an example post-build BeanShell script (<<<verify.bsh>>>) that checks for the existence of a JAR file after
+  Below is an example post-build BeanShell script (<<<verify.bsh>>>) that checks for the existence of a JAR file after
   the build has run.  If the JAR file does not exist, the script throws an exception which causes the Invoker Plugin to
   log that the build failed. More precisely, any return value which does not equal <<<true>>> will be interpreted as a
   failure condition. And of course, if the script exists abnormally due to an exception, the plugin will flag the
