@@ -365,9 +365,9 @@ public abstract class AbstractFixJavadocMojo
         {
             if ( getLog().isInfoEnabled() )
             {
-                getLog().info( "NOT fix classes, fields and methods specified. Nothing to do." );
-                return;
+                getLog().info( "Specified to NOT fix classes, fields and methods. Nothing to do." );
             }
+            return;
         }
 
         // add warranty msg
@@ -479,64 +479,6 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
-    }
-
-    /**
-     * Calling Clirr to find API differences via clirr-maven-plugin.
-     *
-     * @throws MojoExecutionException if any
-     */
-    protected void executeClirr()
-        throws MojoExecutionException
-    {
-        if ( ignoreClirr )
-        {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Clirr is ignored." );
-            }
-            return;
-        }
-
-        ClirrMojoWrapper wrapper = null;
-        try
-        {
-            wrapper =
-                new ClirrMojoWrapper( getClassesDirectory(), comparisonVersion, getArtifactType( project ),
-                                      artifactFactory, localRepository, mavenProjectBuilder,
-                                      artifactMetadataSource, project, artifactResolver, includes, excludes );
-
-            wrapper.execute();
-        }
-        catch ( Exception e )
-        {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "Error when executing Clirr: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "Error when executing Clirr: " + e.getMessage() );
-            }
-            getLog().error( "Clirr is ignored" );
-            return;
-        }
-
-        clirrNewClasses = wrapper.getNewClasses();
-        clirrNewMethods = wrapper.getNewMethods();
-
-        if ( getLog().isInfoEnabled() )
-        {
-            if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
-            {
-                getLog().info( "Clirr NOT found API differences." );
-            }
-            else
-            {
-                getLog().info( "Clirr found API differences, i.e. new classes or new methods." );
-                writeClirr();
-            }
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -686,6 +628,64 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return true;
+    }
+
+    /**
+     * Calling Clirr to find API differences via clirr-maven-plugin.
+     *
+     * @throws MojoExecutionException if any
+     */
+    private void executeClirr()
+        throws MojoExecutionException
+    {
+        if ( ignoreClirr )
+        {
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Clirr is ignored." );
+            }
+            return;
+        }
+
+        ClirrMojoWrapper wrapper = null;
+        try
+        {
+            wrapper =
+                new ClirrMojoWrapper( getClassesDirectory(), comparisonVersion, getArtifactType( project ),
+                                      artifactFactory, localRepository, mavenProjectBuilder,
+                                      artifactMetadataSource, project, artifactResolver, includes, excludes );
+
+            wrapper.execute();
+        }
+        catch ( Exception e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "Error when executing Clirr: " + e.getMessage(), e );
+            }
+            else
+            {
+                getLog().error( "Error when executing Clirr: " + e.getMessage() );
+            }
+            getLog().error( "Clirr is ignored" );
+            return;
+        }
+
+        clirrNewClasses = wrapper.getNewClasses();
+        clirrNewMethods = wrapper.getNewMethods();
+
+        if ( getLog().isInfoEnabled() )
+        {
+            if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
+            {
+                getLog().info( "Clirr NOT found API differences." );
+            }
+            else
+            {
+                getLog().info( "Clirr found API differences, i.e. new classes or new methods." );
+                writeClirr();
+            }
+        }
     }
 
     /**
