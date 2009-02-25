@@ -530,19 +530,21 @@ public class EjbMojoTest
 
 
     protected void assertJarCreation( final MavenProject project, boolean ejbJarCreated, boolean ejbClientJarCreated,
-                                      String classifer )
+                                      String classifier )
     {
         String checkedJarFile;
-        if ( classifer == null )
+        String checkedClientJarFile;
+
+        if ( classifier == null )
         {
             checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + ".jar";
+            checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-client.jar";
         }
         else
         {
-            checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifer + ".jar";
+            checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + ".jar";
+            checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + "-client.jar";
         }
-
-        final String checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-client.jar";
 
         assertEquals( "Invalid value for ejb-jar creation", ejbJarCreated, FileUtils.fileExists( checkedJarFile ) );
         assertEquals( "Invalid value for ejb-jar client creation", ejbClientJarCreated,
