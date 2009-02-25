@@ -1652,12 +1652,16 @@ public abstract class AbstractFixJavadocMojo
                 String originalTag = getJavadocComment( originalContent, entity, docletTag );
                 originalTag = removeLastEmptyJavadocLines( originalTag );
 
-                StringTokenizer token =
-                    new StringTokenizer( originalTag.substring( originalTag.indexOf( "@" + THROWS_TAG ) + 7 ), EOL
-                        + " " );
-                if ( token.countTokens() > 0 )
+                String atThrows = "@" + THROWS_TAG;
+                if ( originalTag.indexOf( atThrows ) != -1 )
                 {
-                    tagThrows.add( token.nextToken() );
+                    StringTokenizer token =
+                        new StringTokenizer( originalTag.substring( originalTag.indexOf( atThrows )
+                            + atThrows.length() ), EOL + " " );
+                    if ( token.countTokens() > 0 )
+                    {
+                        tagThrows.add( token.nextToken() );
+                    }
                 }
             }
 
@@ -1669,11 +1673,12 @@ public abstract class AbstractFixJavadocMojo
 
                 String param = null;
 
-                if ( docletTag.getName().equals( PARAM_TAG ) )
+                String atParam = "@" + PARAM_TAG;
+                if ( docletTag.getName().equals( PARAM_TAG ) && originalTag.indexOf( atParam ) != -1 )
                 {
                     StringTokenizer token =
-                        new StringTokenizer( originalTag.substring( originalTag.indexOf( "@" + PARAM_TAG ) + 6 ),
-                                             EOL + " " );
+                        new StringTokenizer( originalTag.substring( originalTag.indexOf( atParam )
+                            + atParam.length() ), EOL + " " );
                     if ( token.countTokens() > 0 )
                     {
                         param = token.nextToken();
@@ -1974,12 +1979,6 @@ public abstract class AbstractFixJavadocMojo
 
         if ( fixTag( SINCE_TAG ) )
         {
-            if ( !addSeparator )
-            {
-                addSeparator( sb, indent );
-                addSeparator = true;
-            }
-
             if ( !isJavaMethod )
             {
                 JavaClass javaClass = (JavaClass) entity;
@@ -1988,11 +1987,23 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( isNewClassFromLastVersion( javaClass ) )
                     {
+                        if ( !addSeparator )
+                        {
+                            addSeparator( sb, indent );
+                            addSeparator = true;
+                        }
+
                         addDefaultSince( sb, indent );
                     }
                 }
                 else
                 {
+                    if ( !addSeparator )
+                    {
+                        addSeparator( sb, indent );
+                        addSeparator = true;
+                    }
+
                     addDefaultSince( sb, indent );
                 }
             }
@@ -2004,11 +2015,23 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( isNewMethodFromLastRevision( javaMethod ) )
                     {
+                        if ( !addSeparator )
+                        {
+                            addSeparator( sb, indent );
+                            addSeparator = true;
+                        }
+
                         addDefaultSince( sb, indent );
                     }
                 }
                 else
                 {
+                    if ( !addSeparator )
+                    {
+                        addSeparator( sb, indent );
+                        addSeparator = true;
+                    }
+
                     addDefaultSince( sb, indent );
                 }
             }
