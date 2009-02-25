@@ -2352,7 +2352,7 @@ public abstract class AbstractFixJavadocMojo
                 }
                 if ( !isMaybeGeneric )
                 {
-                    if ( clirrMethod.indexOf( StringUtils.join( javaMethodParams.iterator(), "," ) ) != -1 )
+                    if ( clirrMethod.indexOf( "(" + StringUtils.join( javaMethodParams.iterator(), ", " ) + ")" ) != -1 )
                     {
                         return true;
                     }
@@ -2909,6 +2909,17 @@ public abstract class AbstractFixJavadocMojo
                 }
 
                 if ( msg.startsWith( "Method" ) && msg.endsWith( "added" ) )
+                {
+                    List list = (List) clirrNewMethods.get( diff.getAffectedClass() );
+                    if ( list == null )
+                    {
+                        list = new ArrayList();
+                    }
+                    list.add( diff.getAffectedMethod() );
+                    clirrNewMethods.put( diff.getAffectedClass(), list );
+                }
+
+                if ( msg.startsWith( "Method" ) && msg.endsWith( "added to an interface" ) )
                 {
                     List list = (List) clirrNewMethods.get( diff.getAffectedClass() );
                     if ( list == null )
