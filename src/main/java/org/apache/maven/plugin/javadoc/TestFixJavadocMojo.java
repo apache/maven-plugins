@@ -84,6 +84,7 @@ public class TestFixJavadocMojo
         return "test-jar";
     }
 
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
