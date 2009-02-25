@@ -260,7 +260,13 @@ public class EjbMojo
 
         if ( generateClient )
         {
-            getLog().info( "Building EJB client " + jarName + "-client" );
+            String clientJarName = jarName;
+            if ( classifier != null )
+            {
+                clientJarName += "-" + classifier;
+            }
+
+            getLog().info( "Building EJB client " + clientJarName + "-client" );
 
             String[] excludes = DEFAULT_EXCLUDES;
             String[] includes = DEFAULT_INCLUDES;
@@ -275,7 +281,7 @@ public class EjbMojo
                 excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
             }
 
-            File clientJarFile = new File( basedir, jarName + "-client.jar" );
+            File clientJarFile = new File( basedir, clientJarName + "-client.jar" );
 
             MavenArchiver clientArchiver = new MavenArchiver();
 
