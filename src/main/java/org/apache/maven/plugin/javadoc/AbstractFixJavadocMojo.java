@@ -2308,7 +2308,7 @@ public abstract class AbstractFixJavadocMojo
                 {
                     Type type = javaMethod.getParameters()[i].getType();
 
-                    // Note Qdox: type.getValue() = E instead of real class...
+                    // QDOX-150: type.getValue() = E instead of real class...
                     try
                     {
                         getClass( type.getJavaClass(), project );
