@@ -176,7 +176,7 @@ public class EjbMojo
     /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     * This version of the EJB Plugin uses Maven Archiver 2.2.
+     * This version of the EJB Plugin uses Maven Archiver 2.4.
      *
      * @parameter
      */
