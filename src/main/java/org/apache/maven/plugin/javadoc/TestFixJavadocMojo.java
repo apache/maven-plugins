@@ -84,13 +84,12 @@ public class TestFixJavadocMojo
         return "test-jar";
     }
 
-    /** {@inheritDoc} */
-    protected void executeClirr()
-        throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         // clirr doesn't analyze test code, so ignore it
         ignoreClirr = true;
 
-        return;
+        super.execute();
     }
 }
