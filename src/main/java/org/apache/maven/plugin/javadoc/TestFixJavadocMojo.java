@@ -86,7 +86,7 @@ public class TestFixJavadocMojo
 
     /** {@inheritDoc} */
     protected void executeClirr()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         // clirr doesn't analyze test code, so ignore it
         ignoreClirr = true;

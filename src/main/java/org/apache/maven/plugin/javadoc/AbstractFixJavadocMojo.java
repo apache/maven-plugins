@@ -35,10 +35,12 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -346,9 +348,14 @@ public abstract class AbstractFixJavadocMojo
     private String[] fixTagsSplitted;
 
     /**
-     * API differences found by Clirr.
+     * New classes found by Clirr.
      */
-    private List clirrApiDifferences;
+    private List clirrNewClasses;
+
+    /**
+     * New Methods in a Class (the key) found by Clirr.
+     */
+    private Map clirrNewMethods;
 
     /** {@inheritDoc} */
     public void execute()
@@ -480,7 +487,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws MojoExecutionException if any
      */
     protected void executeClirr()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         if ( ignoreClirr )
         {
@@ -515,37 +522,19 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        this.clirrApiDifferences = wrapper.getClirrDiffListener().getApiDifferences();
+        clirrNewClasses = wrapper.getNewClasses();
+        clirrNewMethods = wrapper.getNewMethods();
 
         if ( getLog().isInfoEnabled() )
         {
-            if ( clirrApiDifferences.isEmpty() )
+            if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
             {
-                getLog().info( "Clirr NOT found Api differences." );
+                getLog().info( "Clirr NOT found API differences." );
             }
             else
             {
-                getLog().info( "Clirr found Api differences." );
-
-                if ( getLog().isDebugEnabled() )
-                {
-                    StringBuffer sb = new StringBuffer();
-
-                    MessageTranslator translator = new MessageTranslator();
-                    translator.setLocale( Locale.ENGLISH );
-                    for ( Iterator it = clirrApiDifferences.iterator(); it.hasNext(); )
-                    {
-                        ApiDifference diff = (ApiDifference) it.next();
-
-                        sb.append( diff.getReport( translator ) );
-                        if ( it.hasNext() )
-                        {
-                            sb.append( EOL );
-                        }
-                    }
-
-                    getLog().debug( sb.toString() );
-                }
+                getLog().info( "Clirr found API differences, i.e. new classes or new methods." );
+                writeClirr();
             }
         }
     }
@@ -697,6 +686,70 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return true;
+    }
+
+    /**
+     * In debug mode, write {@link #clirrNewClasses} and {@link #clirrNewMethods} in the file
+     * <code>project.getBuild().getDirectory()/clirr.diff</code>
+     */
+    private void writeClirr()
+    {
+        if ( !getLog().isDebugEnabled() )
+        {
+            return;
+        }
+
+        StringBuffer sb = new StringBuffer();
+
+        for ( Iterator it = clirrNewClasses.iterator(); it.hasNext(); )
+        {
+            String newClass = (String) it.next();
+
+            sb.append( "Added Class " );
+            sb.append( "'" ).append( newClass ).append( "'" );
+            sb.append( EOL );
+        }
+        for ( Iterator it = clirrNewMethods.entrySet().iterator(); it.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) it.next();
+
+            sb.append( "In the Class " );
+            sb.append( "'" ).append( entry.getKey() ).append( "'" );
+            sb.append( EOL );
+
+            for ( Iterator it2 = ( (List) entry.getValue() ).iterator(); it2.hasNext(); )
+            {
+                String newMethod = (String) it2.next();
+
+                sb.append( "\tAdded Method " );
+                sb.append( "'" ).append( newMethod ).append( "'" );
+                if ( it2.hasNext() )
+                {
+                    sb.append( EOL );
+                }
+            }
+            sb.append( EOL );
+        }
+
+        File f = new File( project.getBuild().getDirectory(), "clirr.diff" );
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newWriter( f, WriterFactory.UTF_8 );
+            writer.write( sb.toString() );
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error( "IOException: " + e.getMessage() );
+            }
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+        getLog().debug( "Writing Clirr difference to: " + f.getAbsolutePath() );
     }
 
     /**
@@ -1364,12 +1417,9 @@ public abstract class AbstractFixJavadocMojo
                     stringWriter.write( EOL );
                 }
             }
-            updateJavadocComment( stringWriter, originalContent, entity, indent );
         }
-        else
-        {
-            updateJavadocComment( stringWriter, originalContent, entity, indent );
-        }
+
+        updateJavadocComment( stringWriter, originalContent, entity, indent );
     }
 
     /**
@@ -1807,7 +1857,14 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                if ( isNewMethodFromLastRevision( (JavaMethod) entity ) )
+                if ( !ignoreClirr )
+                {
+                    if ( isNewMethodFromLastRevision( (JavaMethod) entity ) )
+                    {
+                        addDefaultSince( sb, indent );
+                    }
+                }
+                else
                 {
                     addDefaultSince( sb, indent );
                 }
@@ -1819,9 +1876,11 @@ public abstract class AbstractFixJavadocMojo
      * @param sb not null
      * @param entity not null
      * @param indent not null
+     * @throws MojoExecutionException if any
      */
     private void addDefaultJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
                                         final String indent )
+        throws MojoExecutionException
     {
         boolean isJavaMethod = false;
         if ( entity instanceof JavaMethod )
@@ -1915,19 +1974,35 @@ public abstract class AbstractFixJavadocMojo
 
         if ( fixTag( SINCE_TAG ) )
         {
+            if ( !addSeparator )
+            {
+                addSeparator( sb, indent );
+                addSeparator = true;
+            }
+
             if ( !isJavaMethod )
             {
                 JavaClass javaClass = (JavaClass) entity;
 
-                if ( !addSeparator )
-                {
-                    addSeparator( sb, indent );
-                    addSeparator = true;
-                }
-
                 if ( !ignoreClirr )
                 {
                     if ( isNewClassFromLastVersion( javaClass ) )
+                    {
+                        addDefaultSince( sb, indent );
+                    }
+                }
+                else
+                {
+                    addDefaultSince( sb, indent );
+                }
+            }
+            else
+            {
+                JavaMethod javaMethod = (JavaMethod) entity;
+
+                if ( !ignoreClirr )
+                {
+                    if ( isNewMethodFromLastRevision( javaMethod ) )
                     {
                         addDefaultSince( sb, indent );
                     }
@@ -2166,32 +2241,18 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param javaClass a given class not null
      * @return <code>true</code> if Clirr said that this class is added from the last version,
-     * <code>false</code> otherwise or if clirrApiDifferences is null.
+     * <code>false</code> otherwise or if {@link #clirrNewClasses} is null.
      */
     private boolean isNewClassFromLastVersion( JavaClass javaClass )
     {
-        if ( clirrApiDifferences == null )
+        if ( clirrNewClasses == null )
         {
             return false;
         }
 
-        MessageTranslator translator = new MessageTranslator();
-        translator.setLocale( Locale.ENGLISH );
-
-        for ( Iterator it = clirrApiDifferences.iterator(); it.hasNext(); )
+        if ( clirrNewClasses.contains( javaClass.getFullyQualifiedName() ) )
         {
-            ApiDifference diff = (ApiDifference) it.next();
-            String msg = diff.getReport( translator );
-
-            if ( msg.indexOf( "added" ) == -1 )
-            {
-                continue;
-            }
-
-            if ( msg.indexOf( javaClass.getFullyQualifiedName() ) != -1 )
-            {
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -2202,70 +2263,92 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param javaMethod a given method not null
      * @return <code>true</code> if Clirr said that this method is added from the last version,
-     * <code>false</code> otherwise or if clirrApiDifferences is null.
+     * <code>false</code> otherwise or if {@link #clirrNewMethods} is null.
      * @throws MojoExecutionException  if any
      */
     private boolean isNewMethodFromLastRevision( JavaMethod javaMethod )
         throws MojoExecutionException
     {
-        if ( clirrApiDifferences == null )
+        if ( clirrNewMethods == null )
         {
             return false;
         }
 
-        MessageTranslator translator = new MessageTranslator();
-        translator.setLocale( Locale.ENGLISH );
-
-        boolean notFound = false;
-        for ( Iterator it = clirrApiDifferences.iterator(); it.hasNext(); )
+        List clirrMethods = (List) clirrNewMethods.get( javaMethod.getParentClass().getFullyQualifiedName() );
+        if ( clirrMethods == null )
         {
-            ApiDifference diff = (ApiDifference) it.next();
-            String msg = diff.getReport( translator );
+            return false;
+        }
 
-            if ( msg.indexOf( "added" ) == -1 )
+        for ( Iterator it = clirrMethods.iterator(); it.hasNext(); )
+        {
+            String clirrMethod = (String) it.next(); // see java.lang.reflect.Method#toString()
+
+            String javaMethodSignature = javaMethod.getDeclarationSignature( false );
+            if ( clirrMethod.indexOf( javaMethodSignature ) != -1 )
+            {
+                return true;
+            }
+
+            String smallSignature = javaMethod.getName();
+            if ( javaMethod.getReturns() != null )
+            {
+                smallSignature = javaMethod.getReturns().getValue() + " " + javaMethod.getName();
+            }
+            if ( clirrMethod.indexOf( smallSignature ) == -1 )
             {
                 continue;
             }
-
-            for ( int i = 0; i < javaMethod.getParentClass().getMethods().length; i++ )
+            // Workaround to take care of generics
+            if ( javaMethod.getParameters() != null )
             {
-                JavaMethod method = javaMethod.getParentClass().getMethods()[i];
-
-                if ( javaMethod.getDeclarationSignature( true ).equals( method.getDeclarationSignature( true ) ) )
+                boolean isMaybeGeneric = false;
+                List javaMethodParams = new LinkedList();
+                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
                 {
-                    // Align to Clirr msg
-                    StringBuffer sb = new StringBuffer();
-                    sb.append( method.getName() );
-                    sb.append( "(" );
-                    for ( int j = 0; j < method.getParameters().length; j++ )
+                    Type type = javaMethod.getParameters()[i].getType();
+
+                    // Note Qdox: type.getValue() = E instead of real class...
+                    try
                     {
-                        Class clazz = null;
-                        try
+                        getClass( type.getJavaClass(), project );
+                        if ( type.isArray() )
                         {
-                            clazz = getClass( method.getParameters()[j].getType().getJavaClass(), project );
-                            sb.append( clazz.getName() );
+                            javaMethodParams.add( type.getValue() + "[]" );
                         }
-                        catch ( Exception e )
+                        else
                         {
-                            // maybe generics
-                            notFound = true;
+                            javaMethodParams.add( type.getValue() );
                         }
                     }
-                    sb.append( ")" );
-
-                    if ( msg.indexOf( sb.toString() ) != -1 )
+                    catch ( MojoExecutionException e )
+                    {
+                        isMaybeGeneric = true;
+                        break;
+                    }
+                }
+                if ( !isMaybeGeneric )
+                {
+                    if ( clirrMethod.indexOf( StringUtils.join( javaMethodParams.iterator(), "," ) ) != -1 )
                     {
                         return true;
                     }
                 }
-            }
-        }
+                else
+                {
+                    if ( getLog().isWarnEnabled() )
+                    {
+                        StringBuffer warn = new StringBuffer();
+                        warn.append( "Not sure if " );
+                        warn.append( javaMethod.getParentClass().getFullyQualifiedName() ).append( "#" );
+                        warn.append( javaMethod.getCallSignature() );
+                        warn.append( " is newer or not, it is maybe due to generics. " );
+                        warn.append( "You need to manually review it." );
 
-        if ( notFound )
-        {
-            getLog().warn(
-                           "Ignore difference in " + javaMethod.getParentClass().getFullyQualifiedName() + "#"
-                               + javaMethod.getCallSignature() + " maybe due to generics" );
+                        getLog().warn( warn.toString() );
+                    }
+                }
+            }
         }
 
         return false;
@@ -2727,7 +2810,9 @@ public abstract class AbstractFixJavadocMojo
     private static class ClirrMojoWrapper
         extends AbstractClirrMojo
     {
-        private ClirrDiffListener clirrDiffListener;
+        private List clirrNewClasses;
+
+        private Map clirrNewMethods;
 
         public ClirrMojoWrapper( File classesDirectory, String comparisonVersion, String artifactType,
                                  ArtifactFactory factory, ArtifactRepository localRepository,
@@ -2781,23 +2866,53 @@ public abstract class AbstractFixJavadocMojo
         public void execute()
             throws MojoExecutionException, MojoFailureException
         {
-            clirrDiffListener = executeClirr();
+            ClirrDiffListener clirrDiffListener = executeClirr();
+
+            clirrNewClasses = new ArrayList();
+            clirrNewMethods = new HashMap();
+
+            MessageTranslator translator = new MessageTranslator();
+            translator.setLocale( Locale.ENGLISH );
+
+            for ( Iterator it = clirrDiffListener.getApiDifferences().iterator(); it.hasNext(); )
+            {
+                ApiDifference diff = (ApiDifference) it.next();
+                String msg = diff.getReport( translator );
+
+                // Align to Clirr messages
+                if ( msg.startsWith( "Class" ) && msg.endsWith( "added" ) )
+                {
+                    clirrNewClasses.add( diff.getAffectedClass() );
+                }
+
+                if ( msg.startsWith( "Method" ) && msg.endsWith( "added" ) )
+                {
+                    List list = (List) clirrNewMethods.get( diff.getAffectedClass() );
+                    if ( list == null )
+                    {
+                        list = new ArrayList();
+                    }
+                    list.add( diff.getAffectedMethod() );
+                    clirrNewMethods.put( diff.getAffectedClass(), list );
+                }
+            }
         }
 
         /**
-         * @return the API differences found by Clirr.
-         * @throws MojoExecutionException if any
-         * @throws MojoFailureException if any
+         * @return a list of added classes.
          */
-        public ClirrDiffListener getClirrDiffListener()
-            throws MojoExecutionException, MojoFailureException
+        public List getNewClasses()
         {
-            if ( clirrDiffListener == null )
-            {
-                clirrDiffListener = executeClirr();
-            }
+            return clirrNewClasses;
+        }
 
-            return clirrDiffListener;
+        /**
+         * @return a map with the String of affected class (as key) and a list of the String of added methods
+         * (as value).
+         */
+        public Map getNewMethods()
+        {
+            return clirrNewMethods;
         }
     }
 }
