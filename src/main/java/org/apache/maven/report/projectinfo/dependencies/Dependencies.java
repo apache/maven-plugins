@@ -19,6 +19,13 @@ package org.apache.maven.report.projectinfo.dependencies;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
@@ -26,13 +33,6 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.jar.JarAnalyzer;
 import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @version $Id$
@@ -83,7 +83,8 @@ public class Dependencies
      * @param dependencyTreeNode
      * @param classesAnalyzer
      */
-    public Dependencies( MavenProject project, DependencyNode dependencyTreeNode, JarClassesAnalysis classesAnalyzer )
+    public Dependencies( MavenProject project, DependencyNode dependencyTreeNode,
+                         JarClassesAnalysis classesAnalyzer )
     {
         this.project = project;
         this.dependencyTreeNode = dependencyTreeNode;
