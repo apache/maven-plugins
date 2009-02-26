@@ -19,6 +19,15 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
@@ -44,15 +53,6 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Generates the Project Dependencies report.
@@ -219,23 +219,23 @@ public class DependenciesReport
             getLog().error( "Cannot copy ressources", e );
         }
 
-        RepositoryUtils repoUtils = new RepositoryUtils( getLog(), container.getLoggerManager(), wagonManager,
-                                                         settings, mavenProjectBuilder, factory, resolver, project
-                                                             .getRemoteArtifactRepositories(), project
-                                                             .getPluginArtifactRepositories(), localRepository,
-                                                         repositoryMetadataManager );
+        RepositoryUtils repoUtils =
+            new RepositoryUtils( getLog(), container.getLoggerManager(), wagonManager, settings,
+                                 mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
+                                 project.getPluginArtifactRepositories(), localRepository,
+                                 repositoryMetadataManager );
 
         DependencyNode dependencyTreeNode = resolveProject();
 
         Dependencies dependencies = new Dependencies( project, dependencyTreeNode, classesAnalyzer );
 
-        DependenciesReportConfiguration config = new DependenciesReportConfiguration( dependencyDetailsEnabled,
-                                                                                      dependencyLocationsEnabled );
+        DependenciesReportConfiguration config =
+            new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
             new DependenciesRenderer( getSink(), locale, i18n, getLog(), settings, dependencies,
-                                      dependencyTreeNode, config, repoUtils, artifactFactory,
-                                      mavenProjectBuilder, remoteRepositories, localRepository );
+                                      dependencyTreeNode, config, repoUtils, artifactFactory, mavenProjectBuilder,
+                                      remoteRepositories, localRepository );
         r.render();
     }
 
@@ -281,7 +281,8 @@ public class DependenciesReport
     private void copyResources( File outputDirectory )
         throws IOException
     {
-        InputStream resourceList = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
+        InputStream resourceList =
+            getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
 
         if ( resourceList != null )
         {
