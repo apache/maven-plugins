@@ -315,6 +315,7 @@ public class Dependencies
             Artifact projartifact = (Artifact) projectMap.get( key );
             if ( projartifact != null )
             {
+                anode = new DependencyNode( ArtifactUtils.copyArtifact( projartifact ) );
                 anode.getArtifact().setFile( projartifact.getFile() );
             }
 
