@@ -239,7 +239,7 @@ public class EjbMojoTest
         inclusions.add( "**/*Include.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-includes" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList() );
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList(), null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -277,7 +277,7 @@ public class EjbMojoTest
         exclusions.add( "**/*Exclude.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-excludes" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions, null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -305,6 +305,45 @@ public class EjbMojoTest
 
 
     /**
+     * Main jar exclusions test.
+     *
+     * @throws Exception if any exception occurs
+     */
+    public void testMainJarExclusions()
+        throws Exception
+    {
+        final LinkedList exclusions = new LinkedList();
+        exclusions.add( "**/*Exclude.class" );
+
+        final MavenProjectResourcesStub project = createTestProject( "main-excludes" );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), new LinkedList(), exclusions );
+
+        // put this on the target output dir
+        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb/AppInclude.class", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb/AppExclude.class", MavenProjectResourcesStub.OUTPUT_FILE );
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, true );
+        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
+                          new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+
+    }
+
+
+    /**
      * Client jar inclusion test with a sub-package.
      *
      * @throws Exception if any exception occurs
@@ -316,7 +355,7 @@ public class EjbMojoTest
         inclusions.add( "org/sample/ejb/*.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-includes-subpackage" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList() );
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList(), null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -356,7 +395,7 @@ public class EjbMojoTest
         exclusions.add( "org/sample/ejb/**" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-excludes-emptypackage" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions, null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -508,7 +547,7 @@ public class EjbMojoTest
     }
 
     protected EjbMojo lookupMojoWithSettings( final MavenProject project, LinkedList clientIncludes,
-                                              LinkedList clientExcludes )
+                                              LinkedList clientExcludes, LinkedList excludes )
         throws Exception
     {
         final EjbMojo mojo = lookupMojo();
@@ -518,6 +557,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "jarName", DEFAULT_JAR_NAME );
         setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
         setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
+        setVariableValueToObject( mojo, "excludes", excludes );
 
         return mojo;
     }
@@ -525,7 +565,7 @@ public class EjbMojoTest
     protected EjbMojo lookupMojoWithDefaultSettings( final MavenProject project )
         throws Exception
     {
-        return lookupMojoWithSettings( project, new LinkedList(), new LinkedList() );
+        return lookupMojoWithSettings( project, new LinkedList(), new LinkedList(), null );
     }
 
 
