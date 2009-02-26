@@ -45,15 +45,17 @@ import java.util.List;
 public class EjbMojo
     extends AbstractMojo
 {
+    private static final String EJB_JAR_XML = "META-INF/ejb-jar.xml";
+
     // TODO: will null work instead?
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
 
-    private static final String[] DEFAULT_EXCLUDES =
+    private static final String[] DEFAULT_EXCLUDES = new String[]{EJB_JAR_XML, "**/package.html"};
+
+    private static final String[] DEFAULT_CLIENT_EXCLUDES =
         new String[]{"**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html"};
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
-
-    private static final String EJB_JAR_XML = "META-INF/ejb-jar.xml";
 
     /**
      * The directory for the generated EJB.
@@ -126,6 +128,20 @@ public class EjbMojo
      * @parameter
      */
     private List clientIncludes;
+
+    /**
+     * The files and directories to exclude from the main EJB jar. Usage:
+     *
+     * <pre>
+     * &lt;excludes&gt;
+     *   &lt;exclude&gt;**&#47;*Ejb.class&lt;&#47;exclude&gt;
+     *   &lt;exclude&gt;**&#47;*Bean.class&lt;&#47;exclude&gt;
+     * &lt;&#47;excludes&gt;
+     * </pre>
+     * <br/>Default exclusions: META-INF&#47;ejb-jar.xml, **&#47;package.html
+     * @parameter
+     */
+    private List excludes;
 
     /**
      * The Maven project.
@@ -220,8 +236,13 @@ public class EjbMojo
 
         try
         {
-            archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES,
-                                                 new String[]{EJB_JAR_XML, "**/package.html"} );
+            String[] mainJarExcludes = DEFAULT_EXCLUDES;
+
+            if ( excludes != null && !excludes.isEmpty() ) {
+                mainJarExcludes = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
+            }
+
+            archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES, mainJarExcludes );
 
             if ( deploymentDescriptor.exists() )
             {
@@ -268,7 +289,7 @@ public class EjbMojo
 
             getLog().info( "Building EJB client " + clientJarName + "-client" );
 
-            String[] excludes = DEFAULT_EXCLUDES;
+            String[] excludes = DEFAULT_CLIENT_EXCLUDES;
             String[] includes = DEFAULT_INCLUDES;
 
             if ( clientIncludes != null && !clientIncludes.isEmpty() )
