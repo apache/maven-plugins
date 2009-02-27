@@ -219,12 +219,13 @@ public abstract class AbstractFixJavadocMojo
     /**
      * Default value for the Javadoc tag <code>&#64;version</code>.
      * <br/>
-     * By default, it is a <a href="http://svnbook.red-bean.com/en/1.1/ch07s02.html#svn-ch-7-sect-2.3.4">SVN keyword</a>.
+     * By default, it is <code>&#36;Id:&#36;</code>, corresponding to a
+     * <a href="http://svnbook.red-bean.com/en/1.1/ch07s02.html#svn-ch-7-sect-2.3.4">SVN keyword</a>.
      * Refer to your SCM to use an other SCM keyword.
      *
-     * @parameter expression="${defaultVersion}" default-value="$Id$"
+     * @parameter expression="${defaultVersion}"
      */
-    private String defaultVersion;
+    private String defaultVersion = "\u0024Id: \u0024"; // can't use default-value="\u0024Id: \u0024"
 
     /**
      * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
