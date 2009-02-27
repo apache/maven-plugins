@@ -153,7 +153,7 @@ public class LicenseReport
         // URLs do not contain a valid authority (no hostname).
         // As a workaround accept license URLs that start with the
         // file scheme.
-        if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
+        if ( urlValidator.isValid( url ) || StringUtils.defaultString( url ).startsWith( "file://" ) )
         {
             try
             {
