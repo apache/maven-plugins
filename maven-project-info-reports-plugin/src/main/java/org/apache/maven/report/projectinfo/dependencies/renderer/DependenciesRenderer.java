@@ -48,6 +48,7 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -110,6 +111,11 @@ public class DependenciesRenderer
 
     /** Used to format file length values */
     private final DecimalFormat fileLengthDecimalFormat;
+
+    /**
+     * @since 2.1.1
+     */
+    private int section;
 
     /**
      * Will be filled with license name / set of projects.
@@ -272,6 +278,110 @@ public class DependenciesRenderer
         {
             // === Section: Dependency Repository Locations.
             renderSectionDependencyRepositoryLocations();
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Protected methods
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
+    // workaround for MPIR-140
+    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    protected void startSection( String name )
+    {
+        section = section + 1;
+
+        super.sink.anchor( HtmlTools.encodeId( name ) );
+        super.sink.anchor_();
+
+        switch ( section )
+        {
+            case 1:
+                sink.section1();
+                sink.sectionTitle1();
+                break;
+            case 2:
+                sink.section2();
+                sink.sectionTitle2();
+                break;
+            case 3:
+                sink.section3();
+                sink.sectionTitle3();
+                break;
+            case 4:
+                sink.section4();
+                sink.sectionTitle4();
+                break;
+            case 5:
+                sink.section5();
+                sink.sectionTitle5();
+                break;
+
+            default:
+                // TODO: warning - just don't start a section
+                break;
+        }
+
+        text( name );
+
+        switch ( section )
+        {
+            case 1:
+                sink.sectionTitle1_();
+                break;
+            case 2:
+                sink.sectionTitle2_();
+                break;
+            case 3:
+                sink.sectionTitle3_();
+                break;
+            case 4:
+                sink.sectionTitle4_();
+                break;
+            case 5:
+                sink.sectionTitle5_();
+                break;
+
+            default:
+                // TODO: warning - just don't start a section
+                break;
+        }
+    }
+
+    /** {@inheritDoc} */
+    // workaround for MPIR-140
+    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    protected void endSection()
+    {
+        switch ( section )
+        {
+            case 1:
+                sink.section1_();
+                break;
+            case 2:
+                sink.section2_();
+                break;
+            case 3:
+                sink.section3_();
+                break;
+            case 4:
+                sink.section4_();
+                break;
+            case 5:
+                sink.section5_();
+                break;
+
+            default:
+                // TODO: warning - just don't start a section
+                break;
+        }
+
+        section = section - 1;
+
+        if ( section < 0 )
+        {
+            throw new IllegalStateException( "Too many closing sections" );
         }
     }
 
