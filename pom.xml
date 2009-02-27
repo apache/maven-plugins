@@ -305,31 +305,6 @@ under the License.
   <profiles>
     <profile>
       <id>reporting</id>
-      <!-- TODO: Remove when l10n-maven-plugin is released -->
-      <repositories>
-        <repository>
-          <id>Codehaus Snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>Codehaus Snapshots</id>
-          <url>http://snapshots.repository.codehaus.org/</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </pluginRepository>
-      </pluginRepositories>
       <reporting>
         <plugins>
           <plugin>
