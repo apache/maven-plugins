@@ -129,6 +129,6 @@ Using \<aggregate\> Goals
 
    * <<<aggregate-jar>>> goal to create an archive file of the Javadoc files.
 
-   * <<<test-aggregate>>> goal to create an archive file of the test Javadoc files.
+   * <<<test-aggregate-jar>>> goal to create an archive file of the test Javadoc files.
 
    []
