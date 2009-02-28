@@ -70,7 +70,7 @@ under the License.
   <properties>
     <doxiaVersion>1.0-alpha-11</doxiaVersion>
     <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
-    <wagonVersion>1.0-beta-5</wagonVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
     <scmVersion>1.1</scmVersion>
   </properties>
 
