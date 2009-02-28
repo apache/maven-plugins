@@ -38,9 +38,8 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * Bundles the Javadoc documentation for main source into a jar.
- * <br/>
- * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>false</code>.
+ * Bundles the Javadoc documentation for main <code>Java code</code> into a jar using the standard
+ * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
  * @since 2.0
@@ -166,15 +165,18 @@ public class JavadocJar
             innerDestDir = new File( getOutputDirectory() );
         }
 
-        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        if ( !( "pom".equals( project.getPackaging().toLowerCase( Locale.ENGLISH ) ) && isAggregator() ) )
         {
-            if ( getLog().isInfoEnabled() )
+            ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+            if ( !"java".equals( artifactHandler.getLanguage() ) )
             {
-                getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
-            }
+                if ( getLog().isInfoEnabled() )
+                {
+                    getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
+                }
 
-            return;
+                return;
+            }
         }
 
         try
