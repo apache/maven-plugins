@@ -352,6 +352,11 @@ public class JavadocUtil
                 // handle wildcards (*) in the excludePackageNames
                 String[] excludeName = excludePackages[k].split( "[*]" );
 
+                if ( excludeName.length == 0 )
+                {
+                    continue;
+                }
+
                 if ( excludeName.length > 1 )
                 {
                     int u = 0;
