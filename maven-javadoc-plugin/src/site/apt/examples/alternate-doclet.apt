@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 2008-07-31
+ 2009-02-28
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,7 +33,7 @@ Using Alternate Doclet
 
  In this example, the doclet is UmlGraph. UmlGraph allows the declarative specification and drawing
  of UML class and sequence diagrams.
- For more information about UmlGraph, please refer to {{http://www.spinellis.gr/sw/umlgraph/}}.
+ For more information about UmlGraph, please refer to {{http://www.umlgraph.org/}}.
 
 +-----+
 <project>
@@ -44,15 +44,16 @@ Using Alternate Doclet
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
-              <doclet>gr.spinellis.umlgraph.doclet.UmlGraph</doclet>
+              <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
 
               <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
               <docletArtifact>
-                <groupId>gr.spinellis</groupId>
-                <artifactId>UmlGraph</artifactId>
-                <version>4.4</version>
+                <groupId>org.umlgraph</groupId>
+                <artifactId>doclet</artifactId>
+                <version>5.1</version>
               </docletArtifact>
               <additionalparam>-views</additionalparam>
+              <useStandardDocletOptions>true</useStandardDocletOptions>
             </configuration>
          </plugin>
          ...
@@ -67,7 +68,12 @@ Using Alternate Doclet
    * \<additionalparam/\> is used to set additional parameters on the command line, specifically
      for doclet options.
 
+   * \<useStandardDocletOptions/\> uses the
+   {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#standard}options provided by the Standard Doclet}}.
+
    * If you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
+
+   []
 
  After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the
  destination directory.
