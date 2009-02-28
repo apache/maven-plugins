@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2008-08-13
+ 2009-02-28
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -118,3 +118,17 @@ Project
   ...
 </project>
 +-----+
+
+Using \<aggregate\> Goals
+
+ The plugin contains several \<aggregate/\> goals to be use with an aggregator project:
+
+   * <<<aggregate>>> goal to generate the Javadoc files.
+
+   * <<<test-aggregate>>> goal to generate the test Javadoc files.
+
+   * <<<aggregate-jar>>> goal to create an archive file of the Javadoc files.
+
+   * <<<test-aggregate>>> goal to create an archive file of the test Javadoc files.
+
+   []
