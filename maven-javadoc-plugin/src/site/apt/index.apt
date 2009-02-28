@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2009-02-22
+ 2009-02-28
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -49,19 +49,19 @@ Maven Javadoc Plugin
 
 * Goals Overview
 
-   The Javadoc Plugin has eight goals:
+   The Javadoc Plugin has ten goals:
 
    * {{{javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
-   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes the standard
-     Javadoc tool and supports the parameters used by the tool.
+   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes
+     the standard Javadoc tool and supports the parameters used by the tool.
 
-   * {{{aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes the standard
-     Javadoc tool and supports the parameters used by the tool.
+   * {{{aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes
+     the standard Javadoc tool and supports the parameters used by the tool.
 
-   * {{{test-aggregate-mojo.html}javadoc:test-aggregate}} generates the test Javadoc files for an aggregator project. It executes the standard
-     Javadoc tool and supports the parameters used by the tool.
+   * {{{test-aggregate-mojo.html}javadoc:test-aggregate}} generates the test Javadoc files for an aggregator project.
+     It executes the standard Javadoc tool and supports the parameters used by the tool.
 
    * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated Javadocs. It is used during
      the release process to create the Javadoc artifact for the project's release.  This artifact is uploaded
@@ -69,9 +69,17 @@ Maven Javadoc Plugin
 
    * {{{test-jar-mojo.html}javadoc:test-jar}} creates an archive file of the generated Test Javadocs.
 
-   * {{{fix-mojo.html}javadoc:fix}} is an interactive goal which fixes the Javadoc documentation and tags for the Java files.
+   * {{{aggregate-jar-mojo.html}javadoc:aggregate-jar}} creates an archive file of the generated Javadocs for an
+     aggregator project.
 
-   * {{{test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags for the test Java files.
+   * {{{test-aggregate-jar-mojo.html}javadoc:test-aggregate-jar}} creates an archive file of the generated Test
+     Javadocs for an aggregator project.
+
+   * {{{fix-mojo.html}javadoc:fix}} is an interactive goal which fixes the Javadoc documentation and tags for the
+     Java files.
+
+   * {{{test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags
+     for the test Java files.
 
    []
 
