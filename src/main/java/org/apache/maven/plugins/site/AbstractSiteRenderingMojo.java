@@ -21,7 +21,7 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
@@ -171,7 +171,7 @@ public abstract class AbstractSiteRenderingMojo
         for ( Iterator i = reports.iterator(); i.hasNext(); )
         {
             MavenReport report = (MavenReport) i.next();
-            //noinspection ErrorNotRethrown,UnusedCatchParameter
+            // noinspection ErrorNotRethrown,UnusedCatchParameter
             try
             {
                 if ( report.canGenerateReport() )
@@ -223,10 +223,10 @@ public abstract class AbstractSiteRenderingMojo
         DecorationModel decorationModel;
         try
         {
-            decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories,
-                                                           toRelative( project.getBasedir(),
-                                                                       siteDirectory.getAbsolutePath() ),
-                                                           locale, getInputEncoding(), outputEncoding );
+            decorationModel =
+                siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories,
+                                             toRelative( project.getBasedir(), siteDirectory.getAbsolutePath() ),
+                                             locale, getInputEncoding(), outputEncoding );
         }
         catch ( SiteToolException e )
         {
@@ -247,8 +247,8 @@ public abstract class AbstractSiteRenderingMojo
         File skinFile;
         try
         {
-            skinFile = siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel )
-                .getFile();
+            skinFile =
+                siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel ).getFile();
         }
         catch ( SiteToolException e )
         {
@@ -261,13 +261,15 @@ public abstract class AbstractSiteRenderingMojo
             {
                 throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
             }
-            context = siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decorationModel,
-                                                             project.getName(), locale );
+            context =
+                siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decorationModel,
+                                                       project.getName(), locale );
         }
         else
         {
-            context = siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
-                                                         locale );
+            context =
+                siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
+                                                   locale );
         }
 
         // Generate static site
@@ -368,8 +370,8 @@ public abstract class AbstractSiteRenderingMojo
             String title = i18n.getString( "site-plugin", locale, "report.information.title" );
             String desc1 = i18n.getString( "site-plugin", locale, "report.information.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.information.description2" );
-            DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+            DocumentRenderer renderer =
+                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
@@ -388,8 +390,8 @@ public abstract class AbstractSiteRenderingMojo
             String title = i18n.getString( "site-plugin", locale, "report.project.title" );
             String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.project.description2" );
-            DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+            DocumentRenderer renderer =
+                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {

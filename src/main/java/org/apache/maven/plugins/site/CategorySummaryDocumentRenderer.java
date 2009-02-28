@@ -19,7 +19,7 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
