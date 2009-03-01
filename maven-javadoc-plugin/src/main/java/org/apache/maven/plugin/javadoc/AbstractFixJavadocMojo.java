@@ -90,7 +90,7 @@ import com.thoughtworks.qdox.parser.ParseException;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 2.5.1
+ * @since 2.6
  */
 public abstract class AbstractFixJavadocMojo
     extends AbstractMojo
