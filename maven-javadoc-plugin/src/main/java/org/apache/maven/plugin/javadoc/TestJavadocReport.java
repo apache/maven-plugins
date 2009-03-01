@@ -32,7 +32,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Generates documentation for the <code>Java Test code</code> in the project using the standard
+ * Generates documentation for the <code>Java Test code</code> in an <b>NON aggregator</b> project using the standard
  * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>

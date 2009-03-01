@@ -29,9 +29,8 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Bundles the Javadoc documentation for test source in a jar.
- * <br/>
- * <b>Note</b>: the <code>aggregate</code> parameter is always set to <code>false</code>.
+ * Bundles the Javadoc documentation for <code>test Java code</code> in an <b>NON aggregator</b> project into
+ * a jar using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
