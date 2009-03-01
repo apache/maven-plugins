@@ -206,8 +206,6 @@ public abstract class AbstractEarModule
      * to the application's root directory.
      *
      * @return the alternative deployment descriptor for this module
-     *
-     * @since JavaEE 5
      */
     public String getAltDeploymentDescriptor()
     {
@@ -231,16 +229,16 @@ public abstract class AbstractEarModule
 
     /**
      * Writes the alternative deployment descriptor if necessary.
-     * <p/>
-     * Only writes it if the descriptor is specified and version is JavaEE 5.
      *
-     * @param writer the writer to use
+     * @param writer  the writer to use
      * @param version the java EE version in use
      */
-    protected void writeAltDeploymentDescriptor( XMLWriter writer, String version) {
-        if (GenerateApplicationXmlMojo.VERSION_5.equals(version) && getAltDeploymentDescriptor() != null) {
-            writer.startElement( ALT_DD);
-            writer.writeText( getAltDeploymentDescriptor());
+    protected void writeAltDeploymentDescriptor( XMLWriter writer, String version )
+    {
+        if ( getAltDeploymentDescriptor() != null )
+        {
+            writer.startElement( ALT_DD );
+            writer.writeText( getAltDeploymentDescriptor() );
             writer.endElement();
         }
     }
