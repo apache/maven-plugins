@@ -62,12 +62,12 @@ mvn org.apache.maven.plugins:maven-javadoc-plugin:2.5.1:fix -DcomparisonVersion=
 ...
 [INFO] [javadoc:fix]
 [WARNING]
-
-[WARNING] WARRANTY DISCLAIMER
+[WARNING]     WARRANTY DISCLAIMER
 [WARNING]
-
 [WARNING] All warranties with regard to this Maven goal are disclaimed!
+[WARNING] The changes will be done directly in the source code.
 [WARNING] The Maven Team strongly recommends the use of a SCM software BEFORE executing this goal.
+[WARNING]
 [INFO] Are you sure to proceed? [Y]es [N]o
 y
 [INFO] OK, let's proceed...
