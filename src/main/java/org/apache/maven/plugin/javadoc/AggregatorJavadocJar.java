@@ -24,7 +24,7 @@ package org.apache.maven.plugin.javadoc;
  * using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
- * @since 2.5.1
+ * @since 2.6
  * @goal aggregate-jar
  * @phase package
  * @aggregator

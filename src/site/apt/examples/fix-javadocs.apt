@@ -58,7 +58,7 @@ Fixing Javadoc Comments
 * Example Call
 
 +-----+
-mvn org.apache.maven.plugins:maven-javadoc-plugin:2.5.1:fix -DcomparisonVersion=1.0
+mvn org.apache.maven.plugins:maven-javadoc-plugin:2.6:fix -DcomparisonVersion=1.0
 ...
 [INFO] [javadoc:fix]
 [WARNING]

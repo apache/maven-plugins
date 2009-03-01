@@ -34,7 +34,7 @@ import org.apache.maven.project.MavenProject;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 2.5.1
+ * @since 2.6
  * @goal test-fix
  * @requiresDependencyResolution test
  * @execute phase="test-compile"

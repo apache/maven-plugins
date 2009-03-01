@@ -27,7 +27,7 @@ import java.io.File;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 2.5.1
+ * @since 2.6
  * @goal fix
  * @requiresDependencyResolution compile
  * @execute phase="compile"
