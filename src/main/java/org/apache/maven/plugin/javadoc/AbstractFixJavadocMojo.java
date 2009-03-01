@@ -584,13 +584,15 @@ public abstract class AbstractFixJavadocMojo
 
         if ( getLog().isWarnEnabled() )
         {
-            getLog().warn( EOL );
-            getLog().warn( "WARRANTY DISCLAIMER" );
-            getLog().warn( EOL );
+            getLog().warn( "" );
+            getLog().warn( "    WARRANTY DISCLAIMER" );
+            getLog().warn( "" );
             getLog().warn( "All warranties with regard to this Maven goal are disclaimed!" );
+            getLog().warn( "The changes will be done directly in the source code." );
             getLog().warn(
-                           "The Maven Team strongly recommends the use of a SCM software BEFORE executing "
-                               + "this goal." );
+                           "The Maven Team strongly recommends the use of a SCM software BEFORE executing this "
+                               + "goal." );
+            getLog().warn( "" );
         }
 
         while ( true )
