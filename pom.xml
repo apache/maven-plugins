@@ -147,7 +147,7 @@ under the License.
         NOTE: 2.1.0-M2 trunk does not yet use doxia-1.1, need to build locally.
         Plan is to switch 2.1.0-M3 to doxia-1.1, see MNG-3402
     -->
-    <maven>2.1.0-M2-SNAPSHOT</maven>
+    <maven>2.1.0-SNAPSHOT</maven>
   </prerequisites>
 
   <scm>
