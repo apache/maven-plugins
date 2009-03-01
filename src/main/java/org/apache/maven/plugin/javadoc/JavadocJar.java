@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * Bundles the Javadoc documentation for main <code>Java code</code> into a jar using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * Bundles the Javadoc documentation for <code>main Java code</code> in an <b>NON aggregator</b> project into
+ * a jar using the standard <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id$
  * @since 2.0
