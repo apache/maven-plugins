@@ -111,7 +111,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
 
 * {ejbModule} Properties
@@ -145,7 +145,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
 
 * {jarModule} Properties
@@ -179,7 +179,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
   * <<includeInApplicationXml>> - set to true to if you want to generate an entry
   of this module in <<<application.xml>>>. Default is false.
@@ -216,7 +216,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
 
 * {rarModule} Properties
@@ -250,7 +250,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
 
 * {sarModule} Properties
@@ -315,7 +315,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
   * <<contextRoot>> - sets the context root of this web artifact.
 
@@ -351,7 +351,7 @@ EAR Modules
   to its uri. Default is false.
 
   * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
-  this module. (Java EE5).
+  this module.
 
 
 * {harModule} Properties
