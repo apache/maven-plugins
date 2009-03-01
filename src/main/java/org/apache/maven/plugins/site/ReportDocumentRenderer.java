@@ -34,6 +34,7 @@ import org.apache.maven.reporting.MavenReportException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.io.File;
 import java.io.FileWriter;
@@ -108,6 +109,27 @@ public class ReportDocumentRenderer
             SiteRendererSink sink = new MySink( outputDir, outputName, context );
             sinks.add( sink );
             return sink;
+        }
+
+        public Sink createSink( File arg0, String arg1, String arg2 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0, String arg1 )
+            throws IOException
+        {
+            // Not used
+            return null;
         }
 
         public List sinks()
