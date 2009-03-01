@@ -171,6 +171,10 @@ public class ReportDocumentRenderer
         {
             throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
         }
+        finally
+        {
+            sink.close();
+        }
 
         if ( !report.isExternalReport() )
         {
@@ -188,7 +192,14 @@ public class ReportDocumentRenderer
 
                     Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
 
-                    renderer.generateDocument( out, mySink, siteRenderingContext );
+                    try
+                    {
+                        renderer.generateDocument( out, mySink, siteRenderingContext );
+                    }
+                    finally
+                    {
+                        mySink.close();
+                    }
                 }
             }
             catch ( IOException e )
