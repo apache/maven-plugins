@@ -595,4 +595,14 @@ public class EarMojoIT
         doTestProject( "project-055", new String[]{"jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar",
             "jar-sample-three-with-deps-1.0.jar"} );
     }
+
+    /**
+     * Builds an EAR with deployment descriptor configuration for J2EE 1.4 and
+     * an alternative deployment descriptor.
+     */
+    public void testProject056()
+        throws Exception
+    {
+        doTestProject( "project-056", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
 }
