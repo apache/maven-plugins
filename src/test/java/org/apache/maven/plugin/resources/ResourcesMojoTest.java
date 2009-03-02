@@ -391,7 +391,7 @@ public class ResourcesMojoTest
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
-        String checkString = "current working directory=c\\:\\\\\\\\org\\\\apache\\\\test";
+        String checkString = "current working directory=c:\\\\\\\\org\\\\apache\\\\test";
 
         assertContent( resourcesDir + "/file4.properties", checkString );
     }
