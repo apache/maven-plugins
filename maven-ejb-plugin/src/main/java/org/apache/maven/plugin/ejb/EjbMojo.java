@@ -340,7 +340,14 @@ public class EjbMojo
             }
 
             // TODO: shouldn't need classifer
-            projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
+            }
         }
     }
 
