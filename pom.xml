@@ -36,7 +36,7 @@ under the License.
   <description>Generates a J2EE Enterprise JavaBean (EJB) file as well as the associated client JAR.</description>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <scm>
@@ -53,12 +53,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -70,6 +70,11 @@ under the License.
           <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.8</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
