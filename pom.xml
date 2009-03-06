@@ -68,8 +68,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
+    <doxiaVersion>1.0</doxiaVersion>
+    <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-3</wagonVersion>
     <scmVersion>1.1</scmVersion>
   </properties>
@@ -129,7 +129,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
