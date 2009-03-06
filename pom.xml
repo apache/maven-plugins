@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -55,8 +55,8 @@ under the License.
   <properties>
     <doxiaVersion>1.0-alpha-11</doxiaVersion>
     <doxia-sitetoolsVersion>1.0-alpha-11</doxia-sitetoolsVersion>
-  </properties>  
-  
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -98,7 +98,7 @@ under the License.
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0.4.1</version>
     </dependency>
-    
+
     <!-- Doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -136,8 +136,8 @@ under the License.
           <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>    
-        
+    </dependency>
+
     <dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
@@ -194,7 +194,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
