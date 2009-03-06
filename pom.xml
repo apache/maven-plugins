@@ -23,9 +23,9 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>12</version>
+    <groupId>org.apache.maven.plugins</groupId>
+    <version>13</version>
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
@@ -143,10 +143,6 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <!--
-        NOTE: 2.1.0-M2 trunk does not yet use doxia-1.1, need to build locally.
-        Plan is to switch 2.1.0-M3 to doxia-1.1, see MNG-3402
-    -->
     <maven>2.1.0-SNAPSHOT</maven>
   </prerequisites>
 
@@ -163,6 +159,7 @@ under the License.
   <properties>
     <doxiaVersion>1.1-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.1-SNAPSHOT</doxiaSitetoolsVersion>
+    <mavenVersion>2.0.6</mavenVersion>
     <wagonVersion>1.0-beta-4</wagonVersion>
   </properties>
 
@@ -171,32 +168,32 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact-manager</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.6</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
@@ -366,7 +363,7 @@ under the License.
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>l10n-maven-plugin</artifactId>
-            <version>1.0-alpha-2-SNAPSHOT</version>
+            <version>1.0-alpha-2</version>
             <configuration>
               <locales>
                 <locale>ca</locale>
@@ -388,6 +385,7 @@ under the License.
                 <locale>sv</locale>
                 <locale>tr</locale>
                 <locale>zh_CN</locale>
+                <locale>zh_TW</locale>
               </locales>
             </configuration>
           </plugin>
