@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -71,7 +71,7 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MCHANGES</url>
   </issueManagement>
-  
+
   <properties>
     <doxiaVersion>1.0-alpha-11</doxiaVersion>
     <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
@@ -236,7 +236,7 @@ under the License.
       <artifactId>velocity</artifactId>
       <version>1.5</version>
     </dependency>
-    
+
     <!-- schema validation dependencies : jaxp 1.3 is not included with jdk 1.4 (start with 1.5) -->
     <dependency>
       <groupId>xml-apis</groupId>
@@ -248,9 +248,9 @@ under the License.
       <artifactId>xercesImpl</artifactId>
       <version>2.9.1</version>
     </dependency>
-    
+
     <!-- trac dependencies -->
-    
+
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-client</artifactId>
@@ -264,9 +264,9 @@ under the License.
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
-    
+
   </dependencies>
-    
+
   <build>
     <plugins>
       <plugin>
@@ -283,7 +283,7 @@ under the License.
             </goals>
             <configuration>
               <outputDirectory>src/site/xdoc/</outputDirectory>
-            </configuration>            
+            </configuration>
           </execution>
           <execution>
             <id>standard</id>
@@ -312,7 +312,7 @@ under the License.
             <configuration>
               <outputDirectory>${project.reporting.outputDirectory}/xsd</outputDirectory>
             </configuration>
-          </execution>          
+          </execution>
         </executions>
         <configuration>
           <version>1.0.0</version>
@@ -418,7 +418,7 @@ under the License.
       </build>
     </profile>
   </profiles>
-	
+
   <!-- TODO remove when modello 1.0.1 released -->
   <pluginRepositories>
     <pluginRepository>
