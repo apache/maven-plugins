@@ -17,5 +17,3 @@ for ( String path : paths )
         throw new IOException( "Failed to create directory: " + dir );
     }
 }
-
-return true;
