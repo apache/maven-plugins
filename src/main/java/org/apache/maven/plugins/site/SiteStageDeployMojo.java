@@ -45,9 +45,9 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Deploys the generated site to a staging or mock directory on the site
+ * Deploys the generated site to a staging or mock directory to the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
- * POM. It also supports <code>scp</code> and <code>file</code> protocols for
+ * POM. It supports <code>scp</code> and <code>file</code> protocols for
  * deployment.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
