@@ -1,31 +1,33 @@
  ------
- Deployment of site to web.sourceforge.net
+ Deploying to sourceforge.net
  ------
  Barrie Treloar
  ------
- 8 November 2008
+ 2009-03-08
  ------
 
-Deployment of site to web.sourceforge.net
+Deploying to sourceforge.net
 
   This {{{http://sourceforge.net/community/forum/topic.php?id=3518&page}sf.net announcement}} indicates that the
-  new hostname for project web file management has changed. The new hostname for file management is: web.sourceforge.net and
-  the new accepted methods are: SFTP, SCP, rsync over SSH. Unfortunately web.sourceforge.net also has a restricted shell
-  environment and does not allow remote commands to be executed.
+  new hostname for project web file management has changed. The new hostname for file management is:
+  <<<web.sourceforge.net>>> and
+  the new accepted methods are: SFTP, SCP, rsync over SSH. Unfortunately <<<web.sourceforge.net>>> also has a restricted
+  shell environment and does not allow remote commands to be executed.
 
-  In addition shell access to shell.sourceforge.net now requires creation of a shell before it can be accessed.
+  In addition shell access to <<<shell.sourceforge.net>>> now requires the creation of a shell before it can be
+  accessed.
 
-  Both of these mean that if you attempt to deploy without following these steps you will get an error.
+  Both of these mean that if you attempt to deploy your site without following these steps you will get an error.
 
-Quick Start
+* Quick Start
 
-  * Create a shell to shell.sourceforge.net with your username and project group.
+  * Create a shell on <<<shell.sourceforge.net>>> with your username and project group
 
 ---
 ssh -t <username>,<project name>@shell.sf.net create
 ---
 
-  * Use <<<shell.sourceforge.net>>> (instead of web.sourceforge.net) in you site url.
+  * Use <<<shell.sourceforge.net>>> (instead of <<<web.sourceforge.net>>>) in you site URL
 
 ---
   ...
@@ -38,19 +40,18 @@ ssh -t <username>,<project name>@shell.sf.net create
   </distributionManagement>
 ---
 
-  * run <<<mvn site:deploy>>>.
+  * Run <<<mvn site:deploy>>>
 
-  * verify you have a working web site.
-
-    Open a browser to http://your_project.sf.net
+  * Verify that you have a working web site by opening a browser to <<<http://your_project.sf.net>>>
 
   []
 
-Detailed Instructions with Examples
+* Detailed Instructions with Examples
 
-  The following examples will use the <<<qifcon>>> project and the user <<<barrie>>> as detailed examples.
+  The following examples will use the <<<qifcon>>> project and the user <<<barrie>>>.
+  Substitute these with your own project name and user name.
 
-* Create a shell to shell.sourceforge.net with your username and project group.
+** Create a shell on <<<shell.sourceforge.net>>> with your username and project group
 
 +---+
 $ ssh -t barrie,qifcon@shell.sf.net create
@@ -67,9 +68,9 @@ For path information and login help, type "sf-help".
 -bash-3.2$
 +---+
 
-* Use <<<shell.sourceforge.net>>> (instead of web.sourceforge.net) in you site url.
+** Use <<<shell.sourceforge.net>>> (instead of <<<web.sourceforge.net>>>) in you site URL
 
-  In the projects <<<pom.xml>>>:
+  In the project's <<<pom.xml>>>:
 
 +---+
   ...
@@ -80,9 +81,10 @@ For path information and login help, type "sf-help".
       <url>scp://shell.sourceforge.net/home/groups/q/qi/qifcon/htdocs</url>
     </site>
   </distributionManagement>
+  ...
 +---+
 
-* run <<<mvn site:deploy>>>.
+** Run <<<mvn site:deploy>>>
 
 +---+
 C:\ide\Finance\qifcon\site>mvn site:deploy
@@ -115,26 +117,26 @@ scp://shell.sourceforge.net/home/groups/q/qi/qifcon/htdocs - Session: Disconnect
 [INFO] ------------------------------------------------------------------------
 +---+
 
-* verify you have a working web site.
+** Verify you have a working web site
 
-  Open a browser to http://qifcon.sf.net
+  Open a browser to <<<http://qifcon.sf.net>>>.
 
 
-Trouble Shooting
+* Troubleshooting
 
-* Trying to deploy to web.sourceforge.net
+** Trying to deploy to <<<web.sourceforge.net>>>
 
-  The accepted methods for deploying to web.sourceforge.net are: SFTP, SCP, rsync over SSH.
+  The accepted methods for deploying to <<<web.sourceforge.net>>> are: SFTP, SCP, rsync over SSH.
 
-  This will mean that the zipped archive created by wagon can be uploaded but the commands
-  wagon uses to create directories, unzip and chmod files will fail silently.
+  This will mean that the zipped archive created by Wagon can be uploaded, but the commands
+  that Wagon uses to create directories, unzip and chmod files will fail silently.
 
-  There are two types of failures.
+  There are two types of failures:
 
   [[1]] No such file or directory
 
     This will occur if you are deploying into a subdirectory that does not yet exist.
-    The cause is the mkdir command has failed silently.
+    The cause is that the <<<mkdir>>> command has failed silently.
 
     An example of this error:
 
@@ -169,10 +171,10 @@ Embedded error: SCP terminated with error: 'scp: /home/groups/q/qi/qifcon/htdocs
 [INFO] ------------------------------------------------------------------------
 +---+
 
-  [[2]] Unable to unzip the wagon.zip file
+  [[2]] Unable to unzip the zip file created by Wagon
 
-    If the directory exists then the wagon.zip file can be uploaded site:deploy will appear to
-    succeed but the web site will not work since the wagon.zip can not be unzipped.
+    If the directory exists then the Wagon zip file can be uploaded and <<<site:deploy>>> will appear to
+    succeed, but the web site will not work since the Wagon zip file can not be unzipped.
 
 +---+
 C:\ide\Finance\qifcon\site>mvn site:deploy
@@ -207,9 +209,9 @@ scp://web.sourceforge.net/home/groups/q/qi/qifcon/htdocs/site - Session: Disconn
 
   []
 
-* No shell created error
+** No shell created error
 
-    If you try to run ssh without first creating a shell you will get the following error:
+  If you try to run <<<ssh>>> without first creating a shell you will get the following error:
 
 +---+
 $ ssh barrie,qifcon@shell.sf.net

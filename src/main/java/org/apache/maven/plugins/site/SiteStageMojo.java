@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Generates a site in a local staging or mock directory based on the site url
+ * Generates a site in a local staging or mock directory based on the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
  * POM.
  * <p>
@@ -53,7 +53,7 @@ public class SiteStageMojo
     /**
      * Staging directory location. This needs to be an absolute path, like
      * <code>C:\stagingArea\myProject\</code> on Windows or
-     * <code>/stagingArea/myProject/</code> on Unix. 
+     * <code>/stagingArea/myProject/</code> on Unix.
      *
      * @parameter expression="${stagingDirectory}"
      */

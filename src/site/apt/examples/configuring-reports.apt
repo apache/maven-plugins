@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2008-03-23
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,7 +33,7 @@ Configuring Reports
   current state of the project. These reports take the form of plugins, just
   like those used to build the project.
 
-  There are many standard reports that are available by gleaning information
+  There are many standard reports that are available by extracting information
   from the POM. Currently these are provided by default:
 
   * Continous Integration
@@ -52,10 +52,10 @@ Configuring Reports
 
   []
 
-  To find out more please refer to the
+  To find out more please see to the
   {{{http://maven.apache.org/plugins/maven-project-info-reports-plugin/}Project Info Reports Plugin}}.
 
-  To add these reports to your site, you must add the plugin to a special
+  To add these reports to your site, you must add the plugin to the
   <<<\<reporting\>>>> element in the POM. The following example shows how to
   configure the standard Project Info Reports that display information from the
   POM in a friendly format:
@@ -68,7 +68,7 @@ Configuring Reports
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.0.1</version>
+        <version>2.1.1</version>
       </plugin>
     </plugins>
   </reporting>
@@ -78,7 +78,7 @@ Configuring Reports
 
   If you have included the appropriate <<<\<menu ref="reports"/\>>>> tag in your
   {{{sitedescriptor.html}site descriptor}}, then when you regenerate the site
-  those items will appear in the menu.
+  those items will appear in a menu called "Project Reports".
 
   <<Note:>> Many report plugins provide a parameter called <<<outputDirectory>>>
   or similar to specify the destination for their report outputs. This parameter

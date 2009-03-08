@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- January 2008
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,24 +39,25 @@ Maven Site Plugin
    * {{{site-mojo.html}site:site}} is used generate a site for a single project.
      Note that links between module sites in a multi module build will <<not>> work.
 
-   * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to the site
-     specified in the <<<\<distributionManagement\>>>> section of the POM.
+   * {{{deploy-mojo.html}site:deploy}} is used to deploy the generated site using <<<scp>>> or <<<file>>> protocol to
+     the site URL specified in the <<<\<distributionManagement\>>>> section of the POM.
 
    * {{{run-mojo.html}site:run}} starts the site up, rendering documents as requested for faster editing. It uses Jetty
      as the web server.
 
-   * {{{stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site url specified
-     in the <<<\<distributionManagement\>>>> section of the POM. It can be used
+   * {{{stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site URL
+     specified in the <<<\<distributionManagement\>>>> section of the POM. It can be used
      to test that links between module sites in a multi module build works.
 
-   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site to a staging or mock directory on the site
-     specified in the <<<\<distributionManagement\>>>> section of the POM. It also supports <<<scp>>> and <<<file>>> protocols for deployment.
+   * {{{stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site to a staging or mock directory to the site
+     URL specified in the <<<\<distributionManagement\>>>> section of the POM. It supports <<<scp>>> and <<<file>>>
+     protocols for deployment.
 
-   * {{{attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor to the list of files to be
-     installed/deployed. For more references of the site descriptor,
+   * {{{attach-descriptor-mojo.html}site:attach-descriptor}} adds the site descriptor (<<<site.xml>>>) to the list of
+     files to be installed/deployed. For more references of the site descriptor,
      {{{examples/sitedescriptor.html}here's a link}}.
 
-   * {{{jar-mojo.html}site:jar}} is used to bundle the site output into a jar.
+   * {{{jar-mojo.html}site:jar}} bundles the site output into a JAR so that it can be deployed to a repository.
 
 * Usage
 
@@ -82,15 +83,19 @@ Maven Site Plugin
 
    The following examples show how to use the Site Plugin in more advanced usecases:
 
+   * {{{examples/creating-content.html}Creating Content}}
+
    * {{{examples/sitedescriptor.html}Configuring the Site Descriptor}}
 
-   * {{{examples/templatefile.html}Changing the Template File}}
-
-   * {{{examples/moduleexcludes.html}Excluding Modules}}
+   * {{{examples/configuring-reports.html}Configuring Reports}}
 
    * {{{examples/siterun.html}Configuring Site Run}}
 
-   * {{{examples/creatingskins.html}Creating a Skin for the Maven Site Plugin}}
+   * {{{examples/templatefile.html}Changing the Template File}}
 
-   * {{{examples/site-deploy-to-sourceforge.net.html}Deploy to sourceforge.net}}
+   * {{{examples/creatingskins.html}Creating Skins}}
+
+   * {{{examples/moduleexcludes.html}Excluding Document Formats}}
+
+   * {{{examples/site-deploy-to-sourceforge.net.html}Deploying to sourceforge.net}}
 
