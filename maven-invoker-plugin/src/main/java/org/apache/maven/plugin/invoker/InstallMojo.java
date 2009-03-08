@@ -380,6 +380,9 @@ public class InstallMojo
 
                 if ( dependencies.contains( id ) )
                 {
+                    // workaround for MNG-2961 to ensure the base version does not contain a timestamp
+                    artifact.isSnapshot();
+
                     Artifact depArtifact =
                         artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
                                                                       artifact.getArtifactId(),
