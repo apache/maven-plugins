@@ -83,15 +83,19 @@ Maven Site Plugin
 
    The following examples show how to use the Site Plugin in more advanced usecases:
 
+   * {{{examples/creating-content.html}Creating Content}}
+
    * {{{examples/sitedescriptor.html}Configuring the Site Descriptor}}
 
-   * {{{examples/templatefile.html}Changing the Template File}}
-
-   * {{{examples/moduleexcludes.html}Excluding Modules}}
+   * {{{examples/configuring-reports.html}Configuring Reports}}
 
    * {{{examples/siterun.html}Configuring Site Run}}
 
-   * {{{examples/creatingskins.html}Creating a Skin for the Maven Site Plugin}}
+   * {{{examples/templatefile.html}Changing the Template File}}
+
+   * {{{examples/creatingskins.html}Creating Skins}}
+
+   * {{{examples/moduleexcludes.html}Excluding Document Formats}}
 
    * {{{examples/site-deploy-to-sourceforge.net.html}Deploying to sourceforge.net}}
 

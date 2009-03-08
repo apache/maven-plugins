@@ -2,8 +2,9 @@
  Creating Skins
  ------
  Brett Porter
+ Dennis Lundberg
  ------
- May 11, 2005
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,22 +31,22 @@
 Creating Skins
 
   If you want to tune the way your site looks, you can use a custom skin to
-  provide your own CSS styles. If that is still not enough, you can even tweak
+  provide your own CSS stylesheets. If that is still not enough, you can even tweak
   the output templates that Maven uses to generate the site documentation.
 
-~~  TODO: The following link is currently unavailable. Restore it when it becomes available again  
-~~  For an in-depth discussion of site customization, please have a look at the
-~~  {{{http://www.sonatype.com/book/site-generation.html} Maven User Guide, Chapter 9, "Site Generation"}}.
+  For an in-depth discussion of site customization, please have a look at
+  {{{http://www.sonatype.com/books/maven-book/reference/site-generation.html} Maven: The Definitive Guide, Chapter 15. Site Generation}}
+  provided by Sonatype.
 
 * About
 
-  A Maven 2 site skin contains the following elements:
+  A skin contains the following elements:
 
-    * Resources to copy into each project (such as images used by the CSS).
+    * Resources to copy into each project (such as images used by the CSS)
 
-    * A couple of CSS files, containing the visual styling.
+    * A couple of CSS files, containing the visual styling
 
-    * An optional Velocity template for an alternate HTML rendering of the site.
+    * An optional Velocity template for an alternate HTML rendering of the site
 
 * Building
 
@@ -58,21 +59,25 @@ Creating Skins
 
 * Constructing the CSS
 
-  <<More information is needed here on constructing the CSS.>>
+~~ @todo More information is needed here on constructing the CSS
 
   If you are interested in constructing your own CSS, it is recommended that
-  you copy an existing skin's <<<maven-theme.css>>> file and modify it to suit
-  your needs.
+  you copy the file
+  {{{https://svn.apache.org/repos/asf/maven/skins/trunk/maven-default-skin/src/main/resources/css/maven-theme.css}<<<maven-theme.css>>>}}
+  from Maven Default Skin and modify it to suit your needs.
 
 * Customizing the HTML Output with a Velocity Template
-
-  <<Details on the Velocity template variables and use should be included>>.
 
   The format of the Velocity template is currently out of scope for this
   document. To attempt this, start by copying
   <<<{{{https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default-site.vm}}>>>
   to <<<src/main/resources/META-INF/maven/site.vm>>> in your project and then
   modify it to your needs.
+
+  For more information about how to write Velocity templates see the
+  {{{http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html}Velocity User Guide}}
+  and
+  {{{http://velocity.apache.org/engine/releases/velocity-1.5/vtl-reference-guide.html}Velocity Template Language Reference Guide}}.
 
 * Examples of Existing Skins
 
