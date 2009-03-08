@@ -59,7 +59,7 @@ import java.io.File;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
- * protocol to the site specified in the
+ * protocol to the site URL specified in the
  * <code>&lt;distributionManagement&gt;</code> section of the POM.
  * <p>
  * For <code>scp</code> protocol, the website files are packaged into zip archive,
