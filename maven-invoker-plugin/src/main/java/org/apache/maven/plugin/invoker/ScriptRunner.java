@@ -218,7 +218,7 @@ class ScriptRunner
             throw new BuildFailureException( "The " + scriptDescription + " did not succeed. " + msg, stage );
         }
 
-        if ( !( Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
+        if ( !( result == null || Boolean.TRUE.equals( result ) || "true".equals( result ) ) )
         {
             throw new BuildFailureException( "The " + scriptDescription + " returned " + result + ".", stage );
         }
