@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Build a war/webapp.
+ * Build a WAR file.
  *
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
