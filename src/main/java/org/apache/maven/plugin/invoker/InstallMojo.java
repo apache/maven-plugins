@@ -347,9 +347,10 @@ public class InstallMojo
             projects.put( id, reactorProject );
         }
 
-        // collect transitive dependencies
+        // collect transitive dependencies (even those that don't contribute to the class path like POMs)
+        Collection artifacts = mvnProject.getArtifacts();
         Collection dependencies = new LinkedHashSet();
-        for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             String id = ArtifactUtils.versionlessKey( artifact );
@@ -373,7 +374,7 @@ public class InstallMojo
             }
 
             // install remaining dependencies from local repository
-            for ( Iterator it = mvnProject.getArtifacts().iterator(); it.hasNext(); )
+            for ( Iterator it = artifacts.iterator(); it.hasNext(); )
             {
                 Artifact artifact = (Artifact) it.next();
                 String id = ArtifactUtils.versionlessKey( artifact );
