@@ -52,7 +52,7 @@ mvn site
   <<Note:>> If you have a multi module project, then the links between the
   parent and child modules will <not> work when you use '<<<mvn site>>>' or
   '<<<mvn site:site>>>'. If you want to use those links, you should use
-  '<<<mvn site:stage>>>' instead. You read more about that goal further down on
+  '<<<mvn site:stage>>>' instead. You can read more about that goal further down on
   this page in the section called '<Staging a Site>'.
 
 * Deploying a Site
@@ -81,12 +81,12 @@ mvn site
 
   The <<<\<url\>>>> gives the location to deploy to. Currently, the <<<scp>>>
   and <<<file>>> protocols are supported. In the example above we copy to the
-  host <<<www.mycompany.com>>> in the path <<</www/docs/project/>>>. If
+  host <<<www.mycompany.com>>> using the path <<</www/docs/project/>>>. If
   subprojects inherit the site URL from a parent POM, they will automatically
   append their <<<\<artifactId\>>>> to form their effective deployment location.
 
   Now you can execute the <<<{{{deploy-mojo.html}site:deploy}}>>> goal from
-  your project.
+  your project directory.
 
   <<Note:>> A site must be generated first before executing <<<site:deploy>>>.
 
@@ -130,6 +130,12 @@ mvn site:stage -DstagingDirectory=C:\fullsite
 mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
   -DstagingSiteURL=scp://www.mycompany.com/www/project/
 +-----+
+
+  <<Note:>> Due to a bug in Wagon, the password is not always picked up when
+  you run the <<<site:stage-deploy>>> goal. The bug has been fixed, but the
+  version of Wagon that is used by the Site Plugin is determined by the version
+  of Maven you use. The current 2.0.x releases of Maven use a version where
+  this bug is still present.
 
 * Running a Site
 

@@ -4,8 +4,9 @@
  Vincent Siveton
  <vincent.siveton@gmail.com>
  Maria Odea Ching
+ Dennis Lundberg
  ------
- 2008-09-07
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -40,17 +41,21 @@ Configuring the Site Descriptor
   <<<navigation.xml>>> file has been replaced by the site descriptor in Maven 2.
   The format is nearly the same, so you can probably reuse most of your old file.
 
-  There is also an
+  There is an
   {{{http://maven.apache.org/doxia/doxia-sitetools-1.0.x/doxia-decoration-model/decoration.html}XML Schema Reference for the site descriptor}}
   available.
 
   The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.0.0.xsd}}.
 
+  Have a look at the
+  {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/site/site.xml}site descriptor for Maven Site Plugin}}
+  for a real life example.
+
 * Title
 
   The title of each generated page will be a combination of the <site title>
   and the title of the current page. By default the Site Plugin will use the
-  value of <<<$\{project.name\}>>> from your <<<pom.xml>>> file as the
+  value of the <<<\<name\>>>> element from your <<<pom.xml>>> file as the
   site title. The complete title for this page is "Maven Site Plugin - Configuring
   the Site Descriptor".
 
@@ -74,7 +79,7 @@ Configuring the Site Descriptor
 +-----+
 <project>
   ...
-  <publishDate format="yyyy-MM-dd" position="right"/>
+  <publishDate position="right"/>
   ...
 </project>
 +-----+
@@ -92,9 +97,14 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
+  The format of the "Last Published" date is the ISO date format that is
+  {{{http://www.w3.org/QA/Tips/iso-date}recommended by the W3C}}. Because the
+  web has an international, cross-cultural audience it is recommended to <not>
+  change the date format.
+
 * Version
 
-  You can show the "Version" of your project on the site, by addding a <<<\<version\>>>> element to your
+  You can show the "Version" of your project on the site, by adding a <<<\<version\>>>> element to your
   <<<site.xml>>> like this:
 
 +-----+
@@ -145,7 +155,7 @@ Configuring the Site Descriptor
   site descriptor links.
 
   However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> attribute in the site descriptor. This can
-  be either <<<top>>> or <<<bottom>>>, indicating where in the menu it will be placed after inheritance. For example:
+  be either <<<top>>> or <<<bottom>>>, indicating where the inherited menu will be placed. For example:
 
 +-----+
 <project>
@@ -198,7 +208,7 @@ Configuring the Site Descriptor
 * Skinning
 
   Skins can be created to customize the look and feel of a site in a consistent way. For more information on creating a
-  skin, see {{{creatingskins.html}Creating a Skin}}. To reference a skin in your project, you use the <<<skin>>>
+  skin, see {{{creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<skin>>>
   element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the
   {{{http://maven.apache.org/skins/maven-classic-skin/}Maven Classic Skin}}, you would include:
 
@@ -214,10 +224,15 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-  <<Note:>> The <<<\<version\>>>> element is optional and, like plugins, if omitted the latest version available will be used.
+  <<Note:>> The <<<\<version\>>>> element is optional and, like plugins, if
+  omitted the latest version available will be used. It is recommended that you
+  always specify a version so that your site is reproducible over time.
 
   This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
   template to render the site.
+
+  If you don't specify a skin, the Site Plugin will use
+  {{{http://maven.apache.org/skins/maven-default-skin/}Maven Default Skin}}.
 
 * Expressions
 
@@ -235,6 +250,6 @@ Configuring the Site Descriptor
   []
 
   <<Note:>> Support for some expressions, like <<<$\{project.name\}>>> is present in
-  version 2.0-beta-5 of this plugin. Full support is only available since version
+  version 2.0-beta-5 of this plugin. Full support is available since version
   2.0-beta-6.
 

@@ -19,7 +19,9 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
@@ -28,7 +30,7 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Configuration">
-      <item name="Internationalization" href="i18n.html"/>      
+      <item name="Internationalization" href="i18n.html"/>
     </menu>
 
     <menu name="Examples">
@@ -38,8 +40,8 @@ under the License.
       <item name="Configuring Site Run" href="/examples/siterun.html"/>
       <item name="Changing the Template File" href="/examples/templatefile.html"/>
       <item name="Creating Skins" href="/examples/creatingskins.html"/>
-      <item name="Excluding Modules" href="/examples/moduleexcludes.html"/>
-      <item name="Deploy to sourceforge.net" href="/examples/site-deploy-to-sourceforge.net.html"/>
+      <item name="Excluding Document Formats" href="/examples/moduleexcludes.html"/>
+      <item name="Deploying to sourceforge.net" href="/examples/site-deploy-to-sourceforge.net.html"/>
     </menu>
   </body>
 </project>
