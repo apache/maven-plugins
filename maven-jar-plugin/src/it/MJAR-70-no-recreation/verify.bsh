@@ -20,60 +20,34 @@
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.*;
-import org.codehaus.plexus.util.*;
-import org.codehaus.plexus.util.cli.*;
 
-boolean result = true;
-
-try
+File target = new File( basedir, "target" );
+if ( !target.isDirectory() )
 {
-    File target = new File( basedir, "target" );
-    if ( !target.exists() || !target.isDirectory() )
-    {
-        System.err.println( "target file is missing or not a directory." );
-        return false;
-    }
-    
-    File artifact = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );
-    if ( !artifact.exists() || artifact.isDirectory() )
-    {
-        System.err.println( "artifact file is missing or a directory." );
-        return false;
-    }   
-    
-    long lastModified = artifact.lastModified();
-    String localRepoPath = basedir.getParentFile().getParentFile().getParentFile().getPath() + "/target/local-repo";
-    Commandline commandline = new Commandline();
-    commandline.setExecutable( "mvn" );
-    commandline.setWorkingDirectory( basedir );
-    commandline.createArg().setLine( "-f pom.xml -Dmaven.repo.local=" + localRepoPath + "  package" );     
-    CommandLineUtils.StringStreamConsumer consumer = new CommandLineUtils.StringStreamConsumer();
-    int res = CommandLineUtils.executeCommandLine( commandline, consumer, consumer );
-    System.out.println( consumer.getOutput() );
-    if ( res != 0 )
-    {
-        System.err.println( "mvn cli invocation not return 0 but " + res );
-        return false;
-    }
-    artifact = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );     
-    if ( !artifact.exists() || artifact.isDirectory() )
-    {
-        System.err.println( "artifact file is missing or a directory." );
-        return false;
-    }
-    if ( lastModified != artifact.lastModified() )
-    {
-        System.err.println( "lastModified != artifact.lastModified() jar has been recreated" );
-        return false;    
-    }
-
-    
-}
-catch( Throwable e )
-{
-    e.printStackTrace();
-    result = false;
+    throw new IOException( "target file is missing or not a directory: " + target );
 }
 
-return result;
+File jarFile = new File ( target, "MJAR-70-no-recreation-1.0-SNAPSHOT.jar" );
+if ( !jarFile.isFile() )
+{
+    throw new IOException( "artifact file is missing or a directory: " + jarFile );
+}
+
+File refFile = new File ( target, "reference.jar" );
+if ( !refFile.isFile() )
+{
+    throw new IOException( "reference file is missing or a directory: " + refFile );
+}
+
+long referenceTimestamp = refFile.lastModified();
+System.out.println( "Reference timestamp: " + referenceTimestamp );
+
+long actualTimestamp = jarFile.lastModified();
+System.out.println( "Actual timestamp   : " + actualTimestamp );
+
+if ( referenceTimestamp != actualTimestamp)
+{
+		throw new Exception( "Timestamps don't match, JAR was recreated although contents has not changed" );
+}
+
+return true;
