@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- July 2006
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,13 +26,13 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
- 
+
 Configuring Site Run
 
   For the <<<{{{run-mojo.html}site:run}}>>> goal, you can configure which port to use to start up the site as well as the directory where
   the pages for the site will be rendered.
 
-  For example, you have the following configuration in your POM:
+  For example, you can have the following configuration in your POM:
 
 +-----+
 <project>
@@ -40,12 +40,13 @@ Configuring Site Run
   <build>
     <plugins>
       <plugin>
-       <groupId>org.apache.maven.plugins</groupId>
-       <artifactId>maven-site-plugin</artifactId>
-       <configuration>
-         <port>9000</port>
-         <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
-       </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <port>9000</port>
+          <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -55,4 +56,4 @@ Configuring Site Run
 
   When you execute "<<<mvn site:run>>>", you will see in the command line that the Jetty server is started at port 9000.
   To access the site, type <<<http://localhost:9000>>> in your browser. You will also see that the dummy web application is
-  generated in the <<<$\{basedir\}/target/site/tempdir>>> directory as specified in the <<<tempWebappDirectory>>> parameter.
+  generated in the <<<$\{basedir\}/target/site/tempdir>>> directory as specified by the <<<tempWebappDirectory>>> parameter.
