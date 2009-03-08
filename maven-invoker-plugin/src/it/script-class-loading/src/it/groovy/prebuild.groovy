@@ -30,5 +30,3 @@ catch( Throwable t )
     t.printStackTrace()
     return false
 }
-
-return true

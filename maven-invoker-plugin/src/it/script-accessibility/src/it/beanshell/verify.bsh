@@ -4,5 +4,3 @@ System.out.println( MyClass.PUBLIC );
 System.out.println( MyClass.PROTECTED );
 System.out.println( MyClass.PACKAGE );
 System.out.println( MyClass.PRIVATE );
-
-return true;
