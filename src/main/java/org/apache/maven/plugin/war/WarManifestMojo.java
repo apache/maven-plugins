@@ -33,7 +33,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Generate a manifest for this WAR.
+ * Generate a manifest for this webapp. The manifest file is created in the
+ * <code>warSourceDirectory</code>.
  *
  * @author Mike Perham
  * @version $Id$

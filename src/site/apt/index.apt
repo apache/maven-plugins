@@ -3,9 +3,9 @@
  ------
  Pete Marvin King
  ------
- 2008-08-03
+ 2009-03-08
  ------
- 
+
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
 ~~ distributed with this work for additional information
@@ -28,19 +28,23 @@
 
 Maven WAR Plugin
 
- The war plugin is responsible for collecting all artifact dependencies, classes
+ The WAR Plugin is responsible for collecting all artifact dependencies, classes
  and resources of the web application and packaging them into a web application archive.
- 
+
 * Goals Overview
 
- * {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of <<<war>>>.
- 
+ * {{{war-mojo.html}war:war}} is the default goal invoked during the <<<package>>> phase for projects with a packaging
+   type of <<<war>>>. It builds a WAR file.
+
  * {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
- an exploded war in a specified directory.
- 
- * {{{inplace-mojo.html}war:inplace}} another variation of the war:explode where the war is instead generated in the web source directory
- which is <<<src/main/webapp>>> by default.
- 
+   an exploded webapp in a specified directory.
+
+ * {{{inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> where the webapp is instead generated in the
+   web source directory, which is <<<src/main/webapp>>> by default.
+
+ * {{{manifest-mojo.html}war:manifest}} generates a manifest for this webapp. The manifest file is created in the
+   <<<warSourceDirectory>>>.
+
 * Usage
 
   General instructions on how to use the WAR Plugin can be found on the {{{usage.html}usage page}}. Some more
@@ -63,21 +67,21 @@ Maven WAR Plugin
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
- 
+
  To provide you with better understanding on some usages of the Maven WAR Plugin,
  you can take a look into the following examples:
- 
+
  * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
- 
+
  * {{{examples/war-manifest-guide.html}WAR Manifest Customization}}
 
- * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing Using Jetty6}}
+ * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing the Jetty Plugin}}
 
  * {{{examples/skinny-wars.html}Creating Skinny WARs}}
- 
+
  * {{{examples/file-name-mapping.html}Using File Name Mapping}}
 
 * Related links
- 
+
   * {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
- 
+
