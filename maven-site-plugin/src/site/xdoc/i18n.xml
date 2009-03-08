@@ -34,7 +34,7 @@ under the License.
         that is needed is to download a couple of properties files and start
         translating the texts in them. If you want to provide a patch for an
         unsupported language, there are
-        <a href="#Instructions for Translators">detailed instructions</a> below.
+        <a href="#Instructions_for_Translators">detailed instructions</a> below.
       </p>
 
       <p>
@@ -56,7 +56,7 @@ under the License.
               <th>Languages available</th>
               <th>Site Plugin</th>
               <th>Project Info Reports Plugin</th>
-              <th>Doxia Tools</th>
+              <th>Maven Doxia Tools</th>
             </tr>
             <tr>
               <td>Brazilian Portuguese</td>
@@ -83,7 +83,7 @@ under the License.
               </td>
             </tr>
             <tr>
-              <td>Chinese simplified</td>
+              <td>Chinese (China)</td>
               <td>
                 <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_CN.properties">See</a>
               </td>
@@ -92,6 +92,18 @@ under the License.
               </td>
               <td>
                 <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_zh_CN.properties">See</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Chinese (Taiwan)</td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_TW.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_zh_TW.properties">See</a>
+              </td>
+              <td>
+                <a href="http://svn.apache.org/repos/asf/maven/shared/trunk/maven-doxia-tools/src/main/resources/site-tool_zh_TW.properties">See</a>
               </td>
             </tr>
             <tr>
@@ -324,14 +336,14 @@ under the License.
             <li>
               Rename the files to the wanted locale. For example,
               <code>site-plugin_de.properties</code> for a new German
-              translation for the Maven Site Plugin.
+              translation for Maven Site Plugin.
             </li>
             <li>
               Translate the files contents using your preferred text editor.
               The files must use US-ASCII encoding. For characters that are not
               included in US-ASCII you must use Unicode escapes, like "\u8ff0".
               See the tools section below for examples of tools that can help
-              you to convert your texts to use Unicode escapes. 
+              you to convert your texts to use Unicode escapes.
             </li>
             <li>
               To test your localization
@@ -339,13 +351,13 @@ under the License.
                 <li>Checkout the latest source for
                   <a href="source-repository.html">Site Plugin</a>,
                   <a href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/source-repository.html">Project Info Reports Plugin</a> and
-                  <a href="http://maven.apache.org/shared/maven-doxia-tools/source-repository.html">Doxia Tools</a></li>
+                  <a href="http://maven.apache.org/shared/maven-doxia-tools/source-repository.html">Maven Doxia Tools</a></li>
                 <li>Include your files in <code>src/main/resources</code> for each one</li>
                 <li>Run "<code>mvn install</code>" for each one</li>
                 <li>Configure a project to produce a site in several locales</li>
                 <li>Make sure that it is using the latest SNAPSHOT version of
                   each of the above artifacts</li>
-                <li>Run "<code>mvn site</code>" on that project to test it</li>
+                <li>Run "<code>mvn site</code>" on that project and test it</li>
               </ul>
             </li>
             <li>
@@ -360,7 +372,7 @@ under the License.
       <subsection name="References and Tools">
         <p>
           Please refer to the
-          <a target="_blank" href="http://java.sun.com/j2se/corejava/intl/index.jsp">
+          <a target="_blank" href="http://java.sun.com/javase/technologies/core/basic/intl/">
             Java Internationalization home page</a> for an introduction to the topic.
         </p>
 

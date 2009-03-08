@@ -1,9 +1,9 @@
  ------
- Excluding Modules
+ Excluding Document Formats
  ------
  Maria Odea Ching
  ------
- July 2006
+ 2009-03-08
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,9 +27,9 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Excluding Modules
+Excluding Document Formats
 
-  To exclude specific modules from the site to be generated, you can use the <<<excludeModules>>> parameter.
+  To exclude specific document formats from the generated site, you can use the <<<excludeModules>>> parameter.
 
   For example, you have the following site content in your POM
 
@@ -45,8 +45,9 @@ Module1
 `-- pom.xml
 +-----+
 
-  and you want to exclude the whole fml module from the site to be generated, you need to set the following in your POM
-  then execute "<<<mvn site>>>".
+  and you want to exclude all the documents in the fml format from the
+  generated site, you need to set the following in your POM and then execute
+  "<<<mvn site>>>".
 
 +-----+
 <project>
@@ -56,6 +57,7 @@ Module1
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
+        <version>2.0</version>
         <configuration>
           <excludeModules>fml</excludeModules>
         </configuration>
@@ -66,4 +68,4 @@ Module1
 </project>
 +-----+
 
-  You will see that no <<<sample-fml.html>>> will be generated with the site.
+  You will see that no <<<sample-fml.html>>> will be present in the generated site.

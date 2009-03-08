@@ -114,7 +114,7 @@ under the License.
           <dependency>
             <groupId>org.apache.maven.doxia</groupId>
             <artifactId>doxia-module-twiki</artifactId>
-            <version>1.0-alpha-11</version>
+            <version>1.0</version>
           </dependency>
         </dependencies>
       </plugin>
