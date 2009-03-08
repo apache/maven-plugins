@@ -39,7 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Adds the site descriptor to the list of files to be installed/deployed.
+ * Adds the site descriptor (<code>site.xml</code>) to the list of files to be installed/deployed.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

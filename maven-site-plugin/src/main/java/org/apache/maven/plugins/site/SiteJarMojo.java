@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Bundles the site output into a jar so that it can be deployed to a repository.
+ * Bundles the site output into a JAR so that it can be deployed to a repository.
  *
  * @author <a href="mailto:mbeerman@yahoo.com">Matthew Beermann</a>
  * @version $Id$
