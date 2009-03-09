@@ -24,7 +24,7 @@ under the License.
    <faq id="filtering">
      <question>How is filtering done in the WAR plugin?</question>
      <answer>
-       <p>To enable filtering of <code>web.xml</code> you must configure the war plugin as this:
+       <p>To enable filtering of <code>web.xml</code> you must configure the WAR Plugin like this:
          <source><![CDATA[
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
@@ -39,7 +39,7 @@ under the License.
      </answer>
    </faq>
    <faq id="classifieruse">
-     <question>How does the classifier of dependency artifacts affect my war project?</question>
+     <question>How does the classifier of dependency artifacts affect my WAR project?</question>
      <answer>
        <p>When used, the copy of the dependency artifact in your project will have the classifier appended to its
        filename. This can be used to differentiate duplicate artifacts.</p>
@@ -54,22 +54,22 @@ under the License.
    <faq id="dependentwarexclude">
      <question>What's the difference between using dependentWarExclude and provided scope?</question>
      <answer>
-       <p><code>dependentWarExclude</code> is used in <a href="overlays.html">war overlays</a> for excluding dependent
-       war files from being included in the exploded war.</p>
+       <p><code>dependentWarExclude</code> is used in <a href="overlays.html">overlays</a> for excluding dependent
+       WAR files from the exploded webapp.</p>
      </answer>
    </faq>
    <faq id="webresourcesexclude">
      <question>How do I exclude files in my web resources?</question>
      <answer>
-       <p>Use the <code>webResources</code> <code>exclude</code> parameter to identify the tokens to use for the filtering.</p>
+       <p>Use the <code>webResources</code> <code>exclude</code> parameter to identify the tokens to exclude.</p>
+       <p>For more information refer to <a href="examples/adding-filtering-webresources.html">Adding and Filtering
+       External Web Resources</a>.</p>
      </answer>
    </faq>
    <faq id="waroverlaysexclude">
-     <question>How do I exclude files when doing war overlays?</question>
+     <question>How do I exclude files when doing overlays?</question>
      <answer>
-       <p>Use the <code>dependentWarExcludes</code> parameter to identify the tokens to use for the filtering.</p>
-       <p>For more information refer to <a href="examples/adding-filtering-webresources.html">Adding and Filtering
-       External Web Resources</a>.</p>
+       <p>Use the <code>dependentWarExcludes</code> parameter to identify the tokens to exclude.</p>
      </answer>
    </faq>
    <faq id="configurationdoc">
@@ -81,30 +81,29 @@ under the License.
        <p>
          If you need a specific version, generate it using <code>mvn site:site</code> or use:
          <source><![CDATA[
-mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-war-plugin \
-  -Dfull=true -Dversion=<your-plugin-version-here>
+mvn help:describe -Dplugin=war -Dfull=true -Dversion=<your-plugin-version-here>
 ]]></source>
        </p>
      </answer>
    </faq>
    <faq id="attached">
-     <question>How do I create a jar containing the classes in my webapp?</question>
+     <question>How do I create a JAR containing the classes in my webapp?</question>
        <answer>
-       <p>If you would simply like to package the classes and resources as a jar in <code>WEB-INF/lib</code>
+       <p>If you would simply like to package the classes and resources as a JAR in <code>WEB-INF/lib</code>
            rather than as loose files under <code>WEB-INF/classes</code>, use the following configuration:</p>
        <p>
          <source><![CDATA[
-       <plugin>
-         <artifactId>maven-war-plugin</artifactId>
-         <version>X.Y</version>
-         <configuration>
-           <archiveClasses>true</archiveClasses>
-         </configuration>
-       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>X.Y</version>
+        <configuration>
+          <archiveClasses>true</archiveClasses>
+        </configuration>
+      </plugin>
 ]]></source>
        </p>
-       <p>If you need to re-use this jar in another project, the recommended approach is to move the classes to a
-       separate module that builds a jar, and then declare a dependency on that jar from your webapp as well as from
+       <p>If you need to re-use this JAR in another project, the recommended approach is to move the classes to a
+       separate module that builds a JAR, and then declare a dependency on that JAR from your webapp as well as from
        any other projects that need it.</p>
        <p>If you can't move the classes to another project, you can deploy the classes and resources included in
            your webapp as an "attached" artifact, with a classifier, by using the following configuration:</p>

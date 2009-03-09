@@ -28,15 +28,15 @@
 
 Rapid Testing Using the Jetty Plugin
 
- Normally, testing a web application involves compiling java sources, creating a war and 
+ Normally, testing a web application involves compiling java sources, creating a WAR and
  deploying it to a web container.
 
- But using the Jetty plugin enables you to quickly test your web application by skipping
- the last two steps. By default the Jetty plugin scans your <<<target/classes>>> for
+ Using the Jetty Plugin enables you to quickly test your web application by skipping
+ the last two steps. By default the Jetty Plugin scans your <<<target/classes>>> for
  any changes in your java sources and <<<src/main/webapp>>> for your web sources.
- The Jetty plugin will automatically reload the modified classes and web sources.
+ The Jetty Plugin will automatically reload the modified classes and web sources.
 
- To use the Jetty plugin just add the following in your <<<pom.xml>>>:
+ To use the Jetty Plugin just add the following in your <<<pom.xml>>>:
 
 +-----------------+
 <project>
@@ -64,11 +64,11 @@ Rapid Testing Using the Jetty Plugin
 +-----------------+
 
  Then start Jetty:
- 
+
 +-----------------+
   mvn jetty:run
 +-----------------+
 
  The command will block with Jetty listening on port 8080.
 
- Check the {{{http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin}Jetty plugin documentation}} for more details.
+ Check the {{{http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin}Jetty Plugin documentation}} for more details.
