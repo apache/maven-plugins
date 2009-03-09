@@ -28,26 +28,26 @@
 
 Usage
 
- There are 4 ways to use the war plugin:
- 
+ There are 4 ways to use the WAR Plugin:
+
  * using the <<<package>>> phase with the project package type as <<<war>>>
- 
+
  * invocation of the <<<war:war>>> goal
- 
+
  * invocation of the <<<war:exploded>>> goal
- 
+
  * invocation of the <<<war:inplace>>> goal
 
  []
 
  <<Note:>> When using the <<<war:>>> goals it is assumed that the <<<compile>>> phase is already done.
- The war plugin is not responsible for compiling the java sources or copying of the resources. 
+ The WAR Plugin is not responsible for compiling the java sources or copying the resources.
 
 *Using the <<<package>>> phase with the project package type as war / invocation of the <<<war:war>>> goal
 
- This is the common way of using the war plugin. 
+ This is the general way of using the WAR Plugin.
  To illustrate, here's the <<<pom.xml>>> for our project:
-    
+
 +----------+
 <project>
   ...
@@ -62,7 +62,7 @@ Usage
 +----------+
 
  The project's structure looks like this:
- 
+
 +----------+
  .
  |-- pom.xml
@@ -86,7 +86,7 @@ Usage
 +----------+
 
  Invoking
- 
+
 +----------+
 mvn package
 +----------+
@@ -95,10 +95,10 @@ mvn package
 
 +----------+
 mvn compile war:war
-+----------+ 
++----------+
 
- will generate the war file <<<target/documentedproject-1.0-SNAPSHOT.war>>>. Here are the contents of that war file: 
-  
+ will generate the WAR file <<<target/documentedproject-1.0-SNAPSHOT.war>>>. Here are the contents of that WAR file:
+
 +----------+
 documentedproject-1.0-SNAPSHOT.war
   |-- META-INF
@@ -123,18 +123,18 @@ documentedproject-1.0-SNAPSHOT.war
 +----------+
 
 *Invocation of <<<war:exploded>>> goal
- 
- To speed up testing during the developement phase, <<<war:explode>>> can be use to generate the war in exploded
+
+ To speed up testing during the developement phase, <<<war:explode>>> can be used to generate the WAR in exploded
  form.
  Use the same project as above and invoke:
- 
+
 +----------+
 mvn compile war:exploded
 +----------+
 
- This will generate an exploded version of the war in <<<target/documentedproject-1.0-SNAPSHOT>>>.
+ This will generate an exploded version of the WAR in <<<target/documentedproject-1.0-SNAPSHOT>>>.
  The contents of that directory looks like this:
- 
+
 +----------+
  documentedproject-1.0-SNAPSHOT
  |-- META-INF
@@ -152,10 +152,10 @@ mvn compile war:exploded
      `-- websource.jsp
 +----------+
 
- The default directory for the exploded war is <<<target/\<finalName\>>>>. The <<<finalName>>> is usually in the form
+ The default directory for the exploded WAR is <<<target/\<finalName\>>>>. The <<<finalName>>> is usually in the form
  of <<<\<artifactId\>-\<version\>>>>.
- This default directory can be overridden by specifying the <<<webappDirectory>>> plugin parameter.
-  
+ This default directory can be overridden by specifying the <<<webappDirectory>>> parameter.
+
 +-------+
 <project>
   ...
@@ -166,7 +166,7 @@ mvn compile war:exploded
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0</version>
         <configuration>
-          <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>    
+          <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
         </configuration>
       </plugin>
     </plugins>
@@ -176,17 +176,17 @@ mvn compile war:exploded
 +-------+
 
 *Invocation of <<<war:inplace>>> goal
- 
- Another variation of <<<war:exploded>>> is <<<war:inplace>>>. With <<<war:inplace>>> the exploded war is created
- in the webapp source, which defaults to <<<src/main/webapp>>>. 
+
+ Another variation of <<<war:exploded>>> is <<<war:inplace>>>. With <<<war:inplace>>> the exploded WAR is created
+ in the webapp source, which defaults to <<<src/main/webapp>>>.
  Use our sample project above, and invoke:
- 
+
 +----------+
 mvn compile war:inplace
 +----------+
 
- This will result to:
- 
+ This will result in:
+
 +----------+
  .
  |-- pom.xml
