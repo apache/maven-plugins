@@ -22,9 +22,7 @@ import junit.framework.TestCase;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.shared.tools.easymock.MockManager;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.MockControl;
 
 /**
@@ -59,7 +57,7 @@ public class ReadWorkspaceLocationsTest
      * Project's at the workspace level do not have a .location file.
      * <p>
      * Therefore their project location is directly under the workspace.
-     * 
+     *
      * @throws Exception
      */
     public void testGetProjectLocation_ForProjectAtWorkspaceLevel()
@@ -80,7 +78,7 @@ public class ReadWorkspaceLocationsTest
      * <p>
      * This URI specifies the fully qualified path to the project. Which may be located outside of the workspace as
      * well.
-     * 
+     *
      * @throws Exception
      */
     public void testGetProjectLocation_ForProjectsWithinProjects()
@@ -102,7 +100,7 @@ public class ReadWorkspaceLocationsTest
      * <p>
      * This URI specifies the fully qualified path to the project. Which may be located outside of the workspace as
      * well.
-     * 
+     *
      * @throws Exception
      */
     public void testGetProjectLocation_ForProjectsOutsideWorkspace()
@@ -160,7 +158,7 @@ public class ReadWorkspaceLocationsTest
 
     /**
      * Assert that two files represent the same absolute file.
-     * 
+     *
      * @param expectedFile
      * @param actualFile
      * @throws IOException
