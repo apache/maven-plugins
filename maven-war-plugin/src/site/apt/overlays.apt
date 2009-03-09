@@ -28,11 +28,11 @@
 
 Overlays
 
- Overlays are meant to share common resources accross multiple web applications. In general,
- all dependencies of a war project are collected in <<<WEB-INF/lib>>> except for war
- artifacts that are overlayed on the war source.
+ Overlays are used to share common resources accross multiple web applications. In general,
+ all dependencies of a WAR project are collected in <<<WEB-INF/lib>>> except for WAR
+ artifacts that are overlayed on the WAR source.
 
- In previous versions of the war plugin, no configuration was necessary. This is still the
+ In previous versions of the WAR Plugin, no configuration was necessary. This is still the
  case if you are happy with the default settings. However, if you need more control, read on!
 
 * Overlays at a glance
@@ -84,7 +84,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  `-- index-dependency.jsp
 +-----------------+
 
- Assuming that you've declared the war artifact as a dependency in your <<<pom.xml>>>:
+ Assuming that you've declared the WAR artifact as a dependency in your <<<pom.xml>>>:
 
 +-----------------+
   ...
@@ -101,7 +101,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   ...
 +-----------------+
 
- the resulting war would end up like this:
+ the resulting WAR would end up like this:
 
 +-----------------+
 
@@ -134,7 +134,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
 * Overlay types
 
-  The war plugin handles both <<war>> and <<zip>> artifacts. However, for backard compatibility reason, zip
+  The WAR Plugin handles both <<war>> and <<zip>> artifacts. However, for backard compatibility reason, zip
   overlays are handled only if they are defined explicitely in the plugin's configuration.
 
 
@@ -142,7 +142,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
   The {overlay} element can be configured as follows:
 
-  * <<id>> - sets the id of the overlay. If none is provided, the war plugin will
+  * <<id>> - sets the id of the overlay. If none is provided, the WAR Plugin will
   generate one.
 
   * <<groupId>> - sets the groupId of the overlay artifact you want to configure.
@@ -151,7 +151,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   configure.
 
   * <<type>> - sets the type of the overlay artifact you want to
-  configure. By default, war.
+  configure. Default value is: <<<war>>>.
 
   * <<classifier>> - sets the classifier of the overlay artifact you want to
   configure if multiple artifacts matches the groupId/artifact.
@@ -162,15 +162,15 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   is excluded.
 
   * <<targetPath>> - sets the target relative path in the webapp structure, which is only
-  available for <<war>> overlays. By default, the content of the overlay is added in the root
+  available for <<<war>>> types. By default, the content of the overlay is added in the root
   structure of the webapp.
 
-  * <<skip>> - set to <<<true>>> to skip this overlay. Default is <<<false>>>.
+  * <<skip>> - set to <<<true>>> to skip this overlay. Default value is: <<<false>>>.
 
   []
 
   For instance, to exclude the <<<sampleimage-dependency.jpg>>> of our
-  <<<documentedprojectdependency>>> war overlay above:
+  <<<documentedprojectdependency>>> <<<war>>> overlay above:
 
 +-----------------+
   ...
@@ -230,7 +230,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
               <artifactId>my-webapp</artifactId>
             </overlay>
             <overlay>
-              <!-- empty groupId/artifactId detected as the current build -->
+              <!-- empty groupId/artifactId is detected as the current build -->
             </overlay>
           </overlays>
         </configuration>
@@ -241,12 +241,12 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 +-----------------+
 
   Note that in the scenario above, any other overlay will be applied after the current build
-  since they have not been configured in the <<<overlays>>> section.
+  since they have not been configured in the <<<overlays>>> element.
 
-  To perform an even fine grained overwriting policy, overlays can be packaged multiple times
+  To perform an even more fine grained overwriting policy, overlays can be packaged multiple times
   with different includes/excludes. For instance if the <<<index.jsp>>> file of the
   overlay <<<my-webapp>>> <<must>> be set in the webapp but other files can be controlled the
-  regular way, define two overlays configuration for <<<my-webapp>>>:
+  regular way, define two overlay configurations for <<<my-webapp>>>:
 
 +-----------------+
   ...
@@ -266,7 +266,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
               </includes>
             </overlay>
             <overlay>
-              <!-- empty groupId/artifactId detected as the current build -->
+              <!-- empty groupId/artifactId is detected as the current build -->
             </overlay>
 
             <!-- Other overlays here if necessary -->
@@ -287,10 +287,10 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
 * Overlay global settings
 
-   The following settings can be specified globally and modify further the way overlays are applied.
+   The following settings can be specified globally and modify the way overlays are applied.
 
    * <<dependentWarIncludes>> - sets the default includes to apply to all overlays. Any overlay that
-    has no specific <<<includes>>> section inherit this settings by default.
+    has no specific <<<includes>>> element will inherit this setting by default.
 
 +-----------------+
     ...
@@ -307,7 +307,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 +-----------------+
 
    * <<dependentWarExcludes>> - sets the default excludes to apply to all overlays. Any overlay that
-    has no specific <<<excludes>>> section inherit this settings by default.
+    has no specific <<<excludes>>> element will inherit this setting by default.
 
 +-----------------+
     ...
@@ -340,7 +340,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
     ...
 +-----------------+
 
-  * <<useCache>> - set to <<<false>>> to disable the webapp structure cache. Defaults to <<<true>>>.
+  * <<useCache>> - set to <<<false>>> to disable the webapp structure cache. Default value is: <<<true>>>.
 
 +-----------------+
     ...
