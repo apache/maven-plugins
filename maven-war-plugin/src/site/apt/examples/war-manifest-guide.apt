@@ -1,5 +1,5 @@
  ------
- War Manifest Customization
+ WAR Manifest Customization
  ------
  Pete Marvin King
  ------
@@ -26,9 +26,9 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-War Manifest Customization
+WAR Manifest Customization
 
- The manifest can be customized by configuring the war plugin's archiver. For full information on the different
+ The manifest can be customized by configuring the WAR Plugin's archiver. For full information on the different
  configuration options available check the documentation for
  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}}.
  This version of Maven WAR Plugin uses Maven Archiver 2.4.
@@ -70,9 +70,9 @@ manifest_entry: value
 
 *Generating a manifest classpath
 
-  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since
-  you normally don't want a jar in both the manifest classpath and the <<<WEB-INF/lib>>>.  Customize the war plugin's
-  archiver:
+  Generating a manifest classpath for a WAR is similar to for a JAR, but there are a couple of slight differences since
+  you normally don't want a JAR in both the manifest classpath and the <<<WEB-INF/lib>>> directory.  Customize the WAR
+  Plugin's archiver:
 
 +--------------------+
 <project>
@@ -100,7 +100,8 @@ manifest_entry: value
 
   Now, you can control which dependencies are included in <<<WEB-INF/lib>>> and in the manifest classpath by following
   these examples.  Maven will follow the transitive dependency tree until it gets to artifacts scoped as "provided".
-  Note that no way is shown to include a dependency in <<<WEB-INF/lib>>> but not the manifest classpath.
+
+  <<Note:>> No way is shown how to include a dependency in <<<WEB-INF/lib>>> but not in the manifest classpath.
 
 +--------------------+
 <project>
@@ -132,5 +133,5 @@ manifest_entry: value
 </project>
 +--------------------+
 
-  Check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more
+  Check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to Working with Manifests}} for more
   examples.

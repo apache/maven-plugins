@@ -34,7 +34,7 @@ Creating Skinny WARs
  the J2EE specification allows WARs to reference external JARs packaged within the EAR
  via the <<<Class-Path>>> setting in their <<<MANIFEST.MF>>>.
 
- The Maven WAR and EAR plugins do not directly support this mode of operation but
+ The Maven WAR and EAR Plugins do not directly support this mode of operation but
  we can fake it through some POM and configuration magic.  First you need to tell
  Maven to exclude the dependent JARs and add references to them in the <<<MANIFEST.MF>>>
  instead.  This goes into your WAR project's <<<pom.xml>>>:
