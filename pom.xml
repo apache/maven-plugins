@@ -187,22 +187,6 @@ under the License.
         <version>2.3</version>
       </plugin>
 
-      <plugin>
-        <artifactId>maven-pdf-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>site-pdf</id>
-            <phase>site</phase>
-            <goals>
-              <goal>pdf</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -251,5 +235,32 @@ under the License.
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>pdf</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pdf-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <id>pdf</id>
+                <phase>site</phase>
+                <goals>
+                  <goal>pdf</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
