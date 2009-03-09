@@ -93,8 +93,8 @@ public class ClassesPackagingTask
         catch ( InterpolationException e )
         {
             throw new MojoExecutionException(
-                "Could not get the final name of the artifact[" + artifact.getGroupId() + ":" +
-                    artifact.getArtifactId() + ":" + artifact.getVersion() + "]", e );
+                "Could not get the final name of the artifact[" + artifact.getGroupId() + ":" + artifact.getArtifactId()
+                    + ":" + artifact.getVersion() + "]", e );
         }
         final String targetFilename = LIB_PATH + archiveName;
 
