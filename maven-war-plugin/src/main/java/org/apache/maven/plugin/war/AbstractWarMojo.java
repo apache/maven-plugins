@@ -440,8 +440,8 @@ public abstract class AbstractWarMojo
             mavenResourcesExecution.setEscapeString( escapeString );
 
             defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
-                                                                                   escapedBackslashesInFilePath,
-                                                                                   this.session, mavenResourcesExecution );
+                                                                              escapedBackslashesInFilePath,
+                                                                              this.session, mavenResourcesExecution );
 
         }
         catch ( MavenFilteringException e )
@@ -454,7 +454,7 @@ public abstract class AbstractWarMojo
                                                                             defaultFilterWrappers,
                                                                             getNonFilteredFileExtensions(),
                                                                             filteringDeploymentDescriptors,
-                                                                            this.artifactFactory);
+                                                                            this.artifactFactory );
         final Iterator it = packagingTasks.iterator();
         while ( it.hasNext() )
         {
@@ -671,7 +671,8 @@ public abstract class AbstractWarMojo
             return filteringDeploymentDescriptors;
         }
 
-        public ArtifactFactory getArtifactFactory() {
+        public ArtifactFactory getArtifactFactory()
+        {
             return this.artifactFactory;
         }
 
@@ -868,11 +869,13 @@ public abstract class AbstractWarMojo
         this.nonFilteredFileExtensions = nonFilteredFileExtensions;
     }
 
-    public ArtifactFactory getArtifactFactory() {
+    public ArtifactFactory getArtifactFactory()
+    {
         return this.artifactFactory;
     }
 
-    public void setArtifactFactory(ArtifactFactory artifactFactory) {
+    public void setArtifactFactory( ArtifactFactory artifactFactory )
+    {
         this.artifactFactory = artifactFactory;
     }
 }
