@@ -52,6 +52,8 @@
                 <copy file="target/MJAR-70-recreation-1.0-SNAPSHOT.jar"
                       tofile="target/reference.jar"
                       preservelastmodified="true" overwrite="true"/>
+                <!-- Enforce some time difference prior to building JAR again -->
+                <sleep seconds="2"/>
               </tasks>
             </configuration>
           </execution>
