@@ -180,6 +180,12 @@ under the License.
                   <includes>
                     <include>**/*IT.java</include>
                   </includes>
+                  <systemProperties combine.children="append">
+                    <property>
+                      <name>maven.home</name>
+                      <value>${maven.home}</value>
+                    </property>
+                  </systemProperties>
                 </configuration>
               </execution>
             </executions>
