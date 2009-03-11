@@ -348,15 +348,14 @@ public abstract class AbstractFixJavadocMojo
      */
     private String[] fixTagsSplitted;
 
-    /**
-     * New classes found by Clirr.
-     */
+    /** New classes found by Clirr. */
     private List clirrNewClasses;
 
-    /**
-     * New Methods in a Class (the key) found by Clirr.
-     */
+    /** New Methods in a Class (the key) found by Clirr. */
     private Map clirrNewMethods;
+
+    /** List of classes where <code>&#42;since</code> is added. */
+    private List sinceClasses;
 
     /** {@inheritDoc} */
     public void execute()
@@ -1120,6 +1119,7 @@ public abstract class AbstractFixJavadocMojo
             else
             {
                 addDefaultSince( sb, indent );
+                addSinceClasses( javaClass );
             }
         }
         sb.append( indent ).append( " " ).append( END_JAVADOC );
@@ -1861,6 +1861,7 @@ public abstract class AbstractFixJavadocMojo
                 else
                 {
                     addDefaultSince( sb, indent );
+                    addSinceClasses( (JavaClass) entity );
                 }
             }
             else
@@ -1874,7 +1875,10 @@ public abstract class AbstractFixJavadocMojo
                 }
                 else
                 {
-                    addDefaultSince( sb, indent );
+                    if ( sinceClasses != null && !sinceClassesContains( ( (JavaMethod) entity ).getParentClass() ) )
+                    {
+                        addDefaultSince( sb, indent );
+                    }
                 }
             }
         }
@@ -2008,6 +2012,7 @@ public abstract class AbstractFixJavadocMojo
                     }
 
                     addDefaultSince( sb, indent );
+                    addSinceClasses( javaClass );
                 }
             }
             else
@@ -2029,13 +2034,16 @@ public abstract class AbstractFixJavadocMojo
                 }
                 else
                 {
-                    if ( !addSeparator )
+                    if ( sinceClasses != null && !sinceClassesContains( javaMethod.getParentClass() ) )
                     {
-                        addSeparator( sb, indent );
-                        addSeparator = true;
-                    }
+                        if ( !addSeparator )
+                        {
+                            addSeparator( sb, indent );
+                            addSeparator = true;
+                        }
 
-                    addDefaultSince( sb, indent );
+                        addDefaultSince( sb, indent );
+                    }
                 }
             }
         }
@@ -2437,6 +2445,23 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
+    /**
+     * @param javaClass not null
+     */
+    private void addSinceClasses( JavaClass javaClass )
+    {
+        if ( sinceClasses == null )
+        {
+            sinceClasses = new ArrayList();
+        }
+        sinceClasses.add( javaClass.getFullyQualifiedName() );
+    }
+
+    private boolean sinceClassesContains( JavaClass javaClass )
+    {
+        return sinceClasses.contains( javaClass.getFullyQualifiedName() );
+    }
+
     // ----------------------------------------------------------------------
     // Static methods
     // ----------------------------------------------------------------------
@@ -2548,6 +2573,23 @@ public abstract class AbstractFixJavadocMojo
 
         List originalJavadocLinesAsList = new LinkedList();
         originalJavadocLinesAsList.addAll( Arrays.asList( originalJavadocLines ) );
+
+        Collections.reverse( originalJavadocLinesAsList );
+
+        for ( Iterator it = originalJavadocLinesAsList.iterator(); it.hasNext(); )
+        {
+            String line = (String) it.next();
+
+            if ( line.endsWith( END_JAVADOC ) )
+            {
+                break;
+            }
+
+            it.remove();
+        }
+
+        Collections.reverse( originalJavadocLinesAsList );
+
         boolean toremove = false;
         for ( Iterator it = originalJavadocLinesAsList.iterator(); it.hasNext(); )
         {
