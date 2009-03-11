@@ -134,6 +134,9 @@ public abstract class AbstractFixJavadocMojo
     /** End Javadoc String i.e. <code>&#42;&#47;</code> **/
     private static final String END_JAVADOC = "*/";
 
+    /** Javadoc Separator i.e. <code> &#42; </code> **/
+    private static final String SEPARATOR_JAVADOC = " * ";
+
     /** Inherited Javadoc i.e. <code>&#47;&#42;&#42;{&#64;inheritDoc}&#42;&#47;</code> **/
     private static final String INHERITED_JAVADOC = START_JAVADOC + " " + INHERITED_TAG + " " + END_JAVADOC;
 
@@ -1095,7 +1098,7 @@ public abstract class AbstractFixJavadocMojo
 
         sb.append( indent ).append( START_JAVADOC );
         sb.append( EOL );
-        sb.append( indent ).append( " * " );
+        sb.append( indent ).append( SEPARATOR_JAVADOC );
         sb.append( getDefaultClassJavadocComment( javaClass ) );
         sb.append( EOL );
         addSeparator( sb, indent );
@@ -1315,7 +1318,7 @@ public abstract class AbstractFixJavadocMojo
 
         sb.append( indent ).append( START_JAVADOC );
         sb.append( EOL );
-        sb.append( indent ).append( " * " );
+        sb.append( indent ).append( SEPARATOR_JAVADOC );
         sb.append( getDefaultMethodJavadocComment( javaMethod ) );
         sb.append( EOL );
 
@@ -1491,7 +1494,7 @@ public abstract class AbstractFixJavadocMojo
                     sb.append( EOL );
                     if ( javadoc.indexOf( INHERITED_TAG ) == -1 )
                     {
-                        sb.append( indent ).append( " * " ).append( INHERITED_TAG );
+                        sb.append( indent ).append( SEPARATOR_JAVADOC ).append( INHERITED_TAG );
                         sb.append( EOL );
                         addSeparator( sb, indent );
                     }
@@ -1502,7 +1505,7 @@ public abstract class AbstractFixJavadocMojo
                     }
                     else
                     {
-                        sb.append( indent ).append( " * " ).append( leftTrimmed );
+                        sb.append( indent ).append( SEPARATOR_JAVADOC ).append( leftTrimmed );
                     }
                     sb.append( EOL );
                     if ( javaMethod.getTags() != null )
@@ -1579,7 +1582,7 @@ public abstract class AbstractFixJavadocMojo
         if ( comment.indexOf( START_JAVADOC ) != -1 )
         {
             comment = comment.substring( comment.indexOf( START_JAVADOC ) + START_JAVADOC.length() );
-            comment = indent + " * " + comment.trim();
+            comment = indent + SEPARATOR_JAVADOC + comment.trim();
         }
         if ( comment.indexOf( END_JAVADOC ) != -1 )
         {
@@ -1602,7 +1605,7 @@ public abstract class AbstractFixJavadocMojo
     private void addDefaultJavadocComment( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
                                            final String indent )
     {
-        sb.append( indent ).append( " * " );
+        sb.append( indent ).append( SEPARATOR_JAVADOC );
         if ( entity instanceof JavaMethod )
         {
             sb.append( getDefaultMethodJavadocComment( (JavaMethod) entity ) );
