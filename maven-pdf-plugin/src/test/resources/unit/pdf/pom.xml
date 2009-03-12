@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <configuration>
+          <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/pdf.xml</docDescriptor>
+          <siteDirectory>${basedir}/target/test-classes/unit/pdf/src/site/</siteDirectory>
+          <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
