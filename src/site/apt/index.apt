@@ -14,7 +14,7 @@ Maven Source Plugin
 
 * Goals Overview
 
-   The Source Plugin has three goals:
+   The Source Plugin has five goals:
 
    * {{{aggregate-mojo.html}source:aggregate}} aggregrates sources for all modules in an aggregator project.
 
@@ -22,6 +22,10 @@ Maven Source Plugin
 
    * {{{test-jar-mojo.html}source:test-jar}} on the other hand, is used to bundle the test sources of the project into a
      jar archive.
+
+   * {{{jar-no-fork-mojo.html}source:jar-no-fork}} is similar to <<jar>> but does not fork the build lifecycle.
+
+   * {{{test-jar-no-fork-mojo.html}source:test-jar-no-fork}} is similar to <<test-jar>> but does not fork the build lifecycle.
 
 * Usage
 
