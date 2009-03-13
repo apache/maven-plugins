@@ -46,7 +46,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 
 /**
- * Installs a file in local repository.
+ * Installs a file in the local repository.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
@@ -59,44 +59,44 @@ public class InstallFileMojo
 {
 
     /**
-     * GroupId of the artifact to be installed. Retrieved from POM file if specified.
-     * 
+     * GroupId of the artifact to be installed. Retrieved from POM file if one is specified.
+     *
      * @parameter expression="${groupId}"
      */
     protected String groupId;
 
     /**
-     * ArtifactId of the artifact to be installed. Retrieved from POM file if specified.
-     * 
+     * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified.
+     *
      * @parameter expression="${artifactId}"
      */
     protected String artifactId;
 
     /**
-     * Version of the artifact to be installed. Retrieved from POM file if specified
-     * 
+     * Version of the artifact to be installed. Retrieved from POM file if one is specified.
+     *
      * @parameter expression="${version}"
      */
     protected String version;
 
     /**
-     * Packaging type of the artifact to be installed. Retrieved from POM file if specified
-     * 
+     * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified.
+     *
      * @parameter expression="${packaging}"
      */
     protected String packaging;
 
     /**
      * Classifier type of the artifact to be installed. For example, "sources" or "javadoc". Defaults to none which
-     * means this is the project's main JAR.
-     * 
+     * means this is the project's main artifact.
+     *
      * @parameter expression="${classifier}"
      */
     protected String classifier;
 
     /**
-     * The file to be installed to the local repository.
-     * 
+     * The file to be installed in the local repository.
+     *
      * @parameter expression="${file}"
      * @required
      */
@@ -104,7 +104,7 @@ public class InstallFileMojo
 
     /**
      * The bundled API docs for the artifact.
-     * 
+     *
      * @parameter expression="${javadoc}"
      * @since 2.3
      */
@@ -112,7 +112,7 @@ public class InstallFileMojo
 
     /**
      * The bundled sources for the artifact.
-     * 
+     *
      * @parameter expression="${sources}"
      * @since 2.3
      */
@@ -121,7 +121,7 @@ public class InstallFileMojo
     /**
      * Location of an existing POM file to be installed alongside the main artifact, given by the {@link #file}
      * parameter.
-     * 
+     *
      * @parameter expression="${pomFile}"
      */
     private File pomFile;
@@ -129,37 +129,38 @@ public class InstallFileMojo
     /**
      * Generate a minimal POM for the artifact if none is supplied via the parameter {@link #pomFile}. Defaults to
      * <code>true</code> if there is no existing POM in the local repository yet.
-     * 
+     *
      * @parameter expression="${generatePom}"
      */
     private Boolean generatePom;
 
     /**
-     * The type of remote repository layout to install to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
-     * 
+     * The type of remote repository layout to install to. Try <code>legacy</code> for a Maven 1.x-style repository
+     * layout.
+     *
      * @parameter expression="${repositoryLayout}" default-value="default"
      * @required
      */
     private String repositoryLayout;
 
     /**
-     * Map that contains the layouts.
-     * 
+     * Map that contains the repository layouts.
+     *
      * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
     private Map repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. It will wrap into an <code>ArtifactRepository</code> with
-     * <code>localRepoId</code> as <code>id</code> and with default <code>repositoryLayout</code>.
-     * 
+     * <code>localRepoId</code> as <code>id</code> and with a default <code>repositoryLayout</code>.
+     *
      * @parameter expression="${localRepositoryPath}"
      */
     private File localRepositoryPath;
 
     /**
      * The <code>id</code> for the <code>localRepo</code>.
-     * 
+     *
      * @parameter expression="${localRepositoryId}"
      */
     private String localRepositoryId;
@@ -292,7 +293,7 @@ public class InstallFileMojo
 
     /**
      * Parses a POM.
-     * 
+     *
      * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
      * @return The model from the POM file, never <code>null</code>.
      * @throws MojoExecutionException If the POM could not be parsed.
@@ -326,7 +327,7 @@ public class InstallFileMojo
 
     /**
      * Populates missing mojo parameters from the specified POM.
-     * 
+     *
      * @param model The POM to extract missing artifact coordinates from, must not be <code>null</code>.
      */
     private void processModel( Model model )
@@ -362,7 +363,7 @@ public class InstallFileMojo
     /**
      * Generates a (temporary) POM file from the plugin configuration. It's the responsibility of the caller to delete
      * the generated file when no longer needed.
-     * 
+     *
      * @return The path to the generated POM file, never <code>null</code>.
      * @throws MojoExecutionException If the POM file could not be generated.
      */

@@ -25,7 +25,7 @@ under the License.
      <question>Can I use the <i>install:install-file</i> goal to install artifacts to my remote repository?</question>
      <answer>
        <p>
-            No. You may want to use
+            No. You need to use
             <a href="http://maven.apache.org/plugins/maven-deploy-plugin/"><i>deploy:deploy-file</i></a> instead.
        </p>
      </answer>
