@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  July 2006
+  2009-03-13
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -13,9 +13,9 @@
 ~~ to you under the Apache License, Version 2.0 (the
 ~~ "License"); you may not use this file except in compliance
 ~~ with the License.  You may obtain a copy of the License at
-~~ 
+~~
 ~~   http://www.apache.org/licenses/LICENSE-2.0
-~~ 
+~~
 ~~ Unless required by applicable law or agreed to in writing,
 ~~ software distributed under the License is distributed on an
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,7 +31,7 @@ Usage
 * The <<<install:install>>> Mojo
 
   In most cases, <<<install:install>>> goal doesn't need any configuration, it
-  needs the project's POM and the artifact file to be installed during the 
+  needs the project's POM and the artifact file to be installed during the
   <<<install>>> phase of the default build lifecycle.
 
 +---+
@@ -41,7 +41,7 @@ mvn install
 * The <<<install:install-file>>> Mojo
 
   The <<<install:install-file>>> mojo is used primarily for installing artifacts to
-  the local repository which were not built by Maven. The project's development team 
+  the local repository which were not built by Maven. The project's development team
   may or may not provide a POM for the artifact. Here's a complete example of the
   install-file mojo:
 
@@ -55,17 +55,17 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
                          [-Dversion=1.0] \
                          [-Dpackaging=jar] \
                          [-Dclassifier=sources] \
-                         [-DgeneratePom=true]
+                         [-DgeneratePom=true] \
                          [-DcreateChecksum=true]
 +---+
 
-  * the group, artifact, version and packaging of the file to install. These can
+  * the groupId, artifactId, version and packaging of the file to install. These can
     be taken from the specified pomFile, and overridden or specified using the
     command line. When the pomFile contains a <parent> section, the parent's
     groupId can be considered if the groupId is not specified further for the
     current project or on the command line.
 
-  * the classifier parameter can be used to install secondary artifacts for a project,
-    like a javadoc or sources jar.  If not given, Maven assumes the file is the main 
+  * the <<<classifier>>> parameter can be used to install secondary artifacts for a project,
+    like a <<<javadoc>>> or <<<sources>>> JAR.  If a classifier is not given, Maven assumes the file is the main
     artifact for the project.
 
