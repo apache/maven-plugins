@@ -8,7 +8,8 @@
 
 Usage
 
- The source plugin can be used to create a jar file of the project sources by executing the following command:
+ The source plugin can be used to create a jar file of the project sources from the command line or by binding
+ the goal to the project's build lifecycle.  To generate the jar from the command line, use the following command:
 
 +-----+
 mvn source:jar
@@ -23,7 +24,9 @@ mvn source:test-jar
 *Installing the sources along with your artifact
 
   There are two ways to do this. You can either bind this plugin to a phase or
-  you can add it to a profile.
+  you can add it to a profile.  The goals {{{jar-no-fork-mojo.html}source:jar-no-fork}} and 
+  {{{test-jar-no-fork-mojo.html}source:test-jar-no-fork}} are preferred for binding 
+  the goal to the build lifecycle.
 
 **Installing the sources using a phase binding
 
@@ -43,7 +46,7 @@ mvn source:test-jar
             <id>attach-sources</id>
             <phase>verify</phase>
             <goals>
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -78,7 +81,7 @@ mvn source:test-jar
               <execution>
                 <id>attach-sources</id>
                 <goals>
-                  <goal>jar</goal>
+                  <goal>jar-no-fork</goal>
                 </goals>
               </execution>
             </executions>
