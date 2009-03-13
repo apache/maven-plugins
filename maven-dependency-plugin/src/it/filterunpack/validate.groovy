@@ -19,3 +19,5 @@ for (item in notExpected)
        throw new RuntimeException("This file shouldn't be here: "+file.name);
     }
 }
+
+return true;
