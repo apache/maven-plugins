@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  July 2006
+  2009-03-13
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -13,9 +13,9 @@
 ~~ to you under the Apache License, Version 2.0 (the
 ~~ "License"); you may not use this file except in compliance
 ~~ with the License.  You may obtain a copy of the License at
-~~ 
+~~
 ~~   http://www.apache.org/licenses/LICENSE-2.0
-~~ 
+~~
 ~~ Unless required by applicable law or agreed to in writing,
 ~~ software distributed under the License is distributed on an
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,28 +28,30 @@
 
 Maven Install Plugin
 
-  The Local Repository is the local cache where
-  all artifacts needed for the build are stored. By default, it is located within
-  the user's home directory <<<(~/.m2/repository)>>> but the location can be configured in
-  <<<~/.m2/settings.xml>>> using the \<localRepository\> element.
-
-  The install plugin is used during the install phase to add
-  artifact(s) to the local repository. The install plugin uses
+  The Install Plugin is used during the <<<install>>> phase to add
+  artifact(s) to the local repository. The Install Plugin uses
   the information in the POM (groupId, artifactId, version) to determine
   the proper location for the artifact within the local repository.
 
+  The local repository is the local cache where
+  all artifacts needed for the build are stored. By default, it is located within
+  the user's home directory <<<(~/.m2/repository)>>> but the location can be configured in
+  <<<~/.m2/settings.xml>>> using the <<<\<localRepository\>>>> element.
+
 * Goals Overview
 
-  The install plugin has 2 goals:
+  The install plugin has 3 goals:
 
   * {{{install-mojo.html}install:install}} is used to automatically install the
-    main project artifact (the jar, war or ear), its pom and any attached artifacts
+    project's main artifact (the JAR, WAR or EAR), its POM and any attached artifacts
     (sources, javadoc, etc) produced by a particular project.
 
   * {{{install-file-mojo.html}install:install-file}} is mostly used to install an externally
-    created artifact into the local repository, along with its pom. In that case
+    created artifact into the local repository, along with its POM. In that case
     the project information can be taken from an optionally specified pomFile, but can
-    be given using command line parameters.
+    also be given using command line parameters.
+
+  * {{{help-mojo.html}install:help}} displays help information on maven-install-plugin.
 
 * Usage
 
@@ -76,14 +78,14 @@ Maven Install Plugin
   To provide you with better understanding on some usages of the Maven Install Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/custom-pom-installation.html}Custom POM}}
+  * {{{examples/custom-pom-installation.html}Installing a Custom POM}}
 
-  * {{{examples/generic-pom-generation.html}Generic POM}}
+  * {{{examples/generic-pom-generation.html}Generating a Generic POM}}
 
-  * {{{examples/installing-checksums.html}Installing Checksums}}
+  * {{{examples/installing-checksums.html}Creating Checksums}}
 
   * {{{examples/update-release-info.html}Updating Release Info}}
 
-  * {{{examples/specific-local-repo.html}Installing an artifact on a specific local repository path}}
+  * {{{examples/specific-local-repo.html}Installing an Artifact to a Specific Local Repository Path}}
 
   []

@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Installs project's main artifact in local repository.
+ * Installs the project's main artifact in the local repository.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -55,7 +55,7 @@ public class InstallMojo
     private File pomFile;
 
     /**
-     * Whether to update the metadata to make the artifact as release.
+     * Whether to update the metadata to make the artifact a release version.
      *
      * @parameter expression="${updateReleaseInfo}" default-value="false"
      */
