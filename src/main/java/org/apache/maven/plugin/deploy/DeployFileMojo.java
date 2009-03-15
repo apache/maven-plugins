@@ -235,15 +235,18 @@ public class DeployFileMojo
         }
 
         // Upload the POM if requested, generating one if need be
-        if ( generatePom )
+        if ( !"pom".equals( packaging ) )
         {
-            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
-            artifact.addMetadata( metadata );
-        }
-        else
-        {
-            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
-            artifact.addMetadata( metadata );
+            if ( pomFile != null )
+            {
+                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+                artifact.addMetadata( metadata );
+            }
+            else if ( generatePom )
+            {
+                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
+                artifact.addMetadata( metadata );
+            }
         }
 
         try
