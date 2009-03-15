@@ -21,7 +21,6 @@ package org.apache.maven.plugin.deploy;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -131,13 +130,6 @@ public class DeployFileMojo
      * @required
      */
     private String url;
-
-    /**
-     * Component used to create an artifact
-     *
-     * @component
-     */
-    private ArtifactFactory artifactFactory;
 
     /**
      * Component used to create a repository
