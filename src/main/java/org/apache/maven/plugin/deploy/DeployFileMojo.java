@@ -248,7 +248,7 @@ public class DeployFileMojo
     /**
      * Process the supplied pomFile to get groupId, artifactId, version, and packaging
      *
-     * @throws NullPointerException if model is <code>null</code>
+     * @param model The POM to extract missing artifact coordinates from, must not be <code>null</code>.
      */
     private void processModel( Model model )
     {
@@ -256,16 +256,13 @@ public class DeployFileMojo
 
         if ( this.groupId == null )
         {
-            if ( parent != null && parent.getGroupId() != null )
+            this.groupId = model.getGroupId();
+            if ( this.groupId == null && parent != null )
             {
                 this.groupId = parent.getGroupId();
             }
-            if ( model.getGroupId() != null )
-            {
-                this.groupId = model.getGroupId();
-            }
         }
-        if ( this.artifactId == null && model.getArtifactId() != null )
+        if ( this.artifactId == null )
         {
             this.artifactId = model.getArtifactId();
         }
@@ -277,46 +274,39 @@ public class DeployFileMojo
                 this.version = parent.getVersion();
             }
         }
-        if ( this.packaging == null && model.getPackaging() != null )
+        if ( this.packaging == null )
         {
             this.packaging = model.getPackaging();
         }
     }
 
     /**
-     * Extract the Model from the specified file.
-     *
-     * @param pomFile
-     * @return
-     * @throws MojoExecutionException if the file doesn't exist of cannot be read.
+     * Extract the model from the specified POM file.
+     * 
+     * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
+     * @return The model from the POM file, never <code>null</code>.
+     * @throws MojoExecutionException If the file doesn't exist of cannot be read.
      */
     protected Model readModel( File pomFile )
         throws MojoExecutionException
     {
-
-        if ( !pomFile.exists() )
-        {
-            throw new MojoExecutionException( "Specified pomFile does not exist" );
-        }
-
         Reader reader = null;
         try
         {
             reader = ReaderFactory.newXmlReader( pomFile );
-            MavenXpp3Reader modelReader = new MavenXpp3Reader();
-            return modelReader.read( reader );
+            return new MavenXpp3Reader().read( reader );
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            throw new MojoExecutionException( "POM not found " + pomFile, e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Error reading POM " + pomFile, e );
         }
         catch ( XmlPullParserException e )
         {
-            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Error parsing POM " + pomFile, e );
         }
         finally
         {
