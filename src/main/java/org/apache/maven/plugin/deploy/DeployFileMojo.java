@@ -30,6 +30,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -201,7 +202,7 @@ public class DeployFileMojo
     }
 
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         initProperties();
 
@@ -228,6 +229,11 @@ public class DeployFileMojo
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
 
+        if ( file.equals( getLocalRepoFile( artifact ) ) )
+        {
+            throw new MojoFailureException( "Cannot deploy artifact from the local repository: " + file );
+        }
+
         // Upload the POM if requested, generating one if need be
         if ( generatePom )
         {
@@ -248,6 +254,19 @@ public class DeployFileMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    /**
+     * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
+     * (yet).
+     * 
+     * @param artifact The artifact whose local repo path should be determined, must not be <code>null</code>.
+     * @return The absolute path to the artifact when installed, never <code>null</code>.
+     */
+    private File getLocalRepoFile( Artifact artifact )
+    {
+        String path = getLocalRepository().pathOf( artifact );
+        return new File( getLocalRepository().getBasedir(), path );
     }
 
     /**
