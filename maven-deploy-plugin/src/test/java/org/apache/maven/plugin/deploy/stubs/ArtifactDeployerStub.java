@@ -20,25 +20,15 @@ package org.apache.maven.plugin.deploy.stubs;
  */
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
-import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
-import org.apache.maven.artifact.transform.ArtifactTransformationManager;
-import org.codehaus.plexus.util.FileUtils;
 
 public class ArtifactDeployerStub
     implements ArtifactDeployer
 {
-    private WagonManager wagonManager;
-
-    private ArtifactTransformationManager transformationManager;
-
-    private RepositoryMetadataManager repositoryMetadataManager;
 
     public void deploy( String basedir, String finalName, Artifact artifact, ArtifactRepository deploymentRepository,
                         ArtifactRepository localRepository )
@@ -53,6 +43,6 @@ public class ArtifactDeployerStub
                         ArtifactRepository localRepository )
         throws ArtifactDeploymentException
     {
-
+        // does nothing
     }
 }

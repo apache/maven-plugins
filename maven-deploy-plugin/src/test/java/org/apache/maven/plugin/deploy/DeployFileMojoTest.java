@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -38,8 +36,6 @@ public class DeployFileMojoTest
     private List expectedFiles;
 
     private List fileList;
-
-    private File localRepo;
 
     private File remoteRepo;
 

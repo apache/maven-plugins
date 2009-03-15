@@ -33,7 +33,6 @@ import org.apache.maven.plugin.deploy.stubs.DeployArtifactStub;
 import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -102,8 +101,6 @@ public class DeployMojoTest
                               "deploy-test-file-1.0-SNAPSHOT.jar" );
 
         assertTrue( file.exists() );
-
-        ArtifactRepository loc = ( ArtifactRepository ) getVariableValueFromObject( mojo, "localRepository" );
 
         artifact = ( DeployArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
 
@@ -206,8 +203,6 @@ public class DeployMojoTest
             + "deploy-test-file-1.0-SNAPSHOT.jar" );
 
         assertTrue( file.exists() );
-
-        ArtifactRepository loc = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
 
         artifact = (DeployArtifactStub) getVariableValueFromObject( mojo, "artifact" );
 
