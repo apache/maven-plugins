@@ -168,13 +168,24 @@ public class DeployMojo
             {
                 File file = artifact.getFile();
 
-                if ( file != null && !file.isDirectory() )
+                if ( file != null && file.isFile() )
                 {
                     getDeployer().deploy( file, artifact, repo, getLocalRepository() );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
-                    getLog().info( "No primary artifact to deploy, deploy attached artifacts instead." );
+                    getLog().info( "No primary artifact to deploy, deploying attached artifacts instead." );
+
+                    Artifact pomArtifact =
+                        artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                               artifact.getBaseVersion() );
+                    pomArtifact.setFile( pomFile );
+                    if ( updateReleaseInfo )
+                    {
+                        pomArtifact.setRelease( true );
+                    }
+
+                    getDeployer().deploy( pomFile, pomArtifact, repo, getLocalRepository() );
                 }
                 else
                 {
