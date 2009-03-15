@@ -66,19 +66,20 @@ public abstract class AbstractInstallMojo
      * Flag whether to create checksums (MD5, SHA-1) or not.
      *
      * @parameter expression="${createChecksum}" default-value="false"
+     * @since 2.2
      */
     protected boolean createChecksum;
 
     /**
      * Digester for MD5.
-     * 
+     *
      * @component role-hint="md5"
      */
     protected Digester md5Digester;
 
     /**
      * Digester for SHA-1.
-     * 
+     *
      * @component role-hint="sha1"
      */
     protected Digester sha1Digester;
@@ -86,7 +87,7 @@ public abstract class AbstractInstallMojo
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
      * (yet).
-     * 
+     *
      * @param artifact The artifact whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact when installed, never <code>null</code>.
      */
@@ -99,7 +100,7 @@ public abstract class AbstractInstallMojo
     /**
      * Gets the path of the specified artifact metadata within the local repository. Note that the returned path need
      * not exist (yet).
-     * 
+     *
      * @param metadata The artifact metadata whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact metadata when installed, never <code>null</code>.
      */
@@ -116,7 +117,7 @@ public abstract class AbstractInstallMojo
      * <code>ProjectArtifactMetadata</code> did not install the original POM file (cf. MNG-2820). While the plugin
      * currently requires Maven 2.0.6, we continue to hash the installed POM for robustness with regard to future
      * changes like re-introducing some kind of POM filtering.
-     * 
+     *
      * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
@@ -145,7 +146,7 @@ public abstract class AbstractInstallMojo
 
     /**
      * Installs the checksums for the specified file (if it exists).
-     * 
+     *
      * @param installedFile The path to the already installed file in the local repo for which to generate checksums,
      *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
@@ -163,7 +164,7 @@ public abstract class AbstractInstallMojo
 
     /**
      * Installs a checksum for the specified file.
-     * 
+     *
      * @param originalFile The path to the file from which the checksum is generated, must not be <code>null</code>.
      * @param installedFile The base path from which the path to the checksum files is derived by appending the given
      *            file extension, must not be <code>null</code>.
