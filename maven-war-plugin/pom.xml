@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-war-plugin</artifactId>
-  <version>2.1-beta-2-SNAPSHOT</version>
+  <version>2.1-beta-1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven WAR Plugin</name>
