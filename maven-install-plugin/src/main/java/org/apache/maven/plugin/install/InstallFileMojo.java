@@ -91,6 +91,7 @@ public class InstallFileMojo
      * means this is the project's main artifact.
      *
      * @parameter expression="${classifier}"
+     * @since 2.2
      */
     protected String classifier;
 
@@ -123,6 +124,7 @@ public class InstallFileMojo
      * parameter.
      *
      * @parameter expression="${pomFile}"
+     * @since 2.1
      */
     private File pomFile;
 
@@ -131,6 +133,7 @@ public class InstallFileMojo
      * <code>true</code> if there is no existing POM in the local repository yet.
      *
      * @parameter expression="${generatePom}"
+     * @since 2.1
      */
     private Boolean generatePom;
 
@@ -140,6 +143,7 @@ public class InstallFileMojo
      *
      * @parameter expression="${repositoryLayout}" default-value="default"
      * @required
+     * @since 2.2
      */
     private String repositoryLayout;
 
@@ -155,6 +159,7 @@ public class InstallFileMojo
      * <code>localRepoId</code> as <code>id</code> and with a default <code>repositoryLayout</code>.
      *
      * @parameter expression="${localRepositoryPath}"
+     * @since 2.2
      */
     private File localRepositoryPath;
 
@@ -162,6 +167,7 @@ public class InstallFileMojo
      * The <code>id</code> for the <code>localRepo</code>.
      *
      * @parameter expression="${localRepositoryId}"
+     * @since 2.2
      */
     private String localRepositoryId;
 
