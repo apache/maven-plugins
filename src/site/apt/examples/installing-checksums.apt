@@ -33,7 +33,7 @@ Creating artifact checksums
   functions and are used to check the integrity of the associated file. This can be
   activated by setting the <<<createChecksum>>> parameter to <<<true>>>.
 
-  In the <<<install:install>>> mojo.
+  In the <<<install:install>>> goal.
 
 +---+
 mvn install -DcreateChecksum=true
