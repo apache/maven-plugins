@@ -20,6 +20,7 @@ package org.apache.maven.plugin.deploy;
  */
 
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,6 +36,13 @@ public abstract class AbstractDeployMojo
      * @component
      */
     private ArtifactDeployer deployer;
+
+    /**
+     * Component used to create an artifact.
+     *
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
 
     /**
      * @parameter expression="${localRepository}"
