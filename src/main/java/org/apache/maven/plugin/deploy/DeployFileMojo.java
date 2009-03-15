@@ -34,6 +34,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -189,9 +190,21 @@ public class DeployFileMojo
         }
 
         // Verify arguments
-        if ( groupId == null || artifactId == null || version == null || packaging == null )
+        if ( StringUtils.isEmpty( groupId ) )
         {
-            throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
+            throw new MojoExecutionException( "Missing group identifier, please specify -DgroupId=..." );
+        }
+        if ( StringUtils.isEmpty( artifactId ) )
+        {
+            throw new MojoExecutionException( "Missing artifact identifier, please specify -DartifactId=..." );
+        }
+        if ( StringUtils.isEmpty( version ) )
+        {
+            throw new MojoExecutionException( "Missing version, please specify -Dversion=..." );
+        }
+        if ( StringUtils.isEmpty( packaging ) )
+        {
+            throw new MojoExecutionException( "Missing packaging type, please specify -Dpackaging=..." );
         }
     }
 
@@ -214,7 +227,7 @@ public class DeployFileMojo
 
         String protocol = deploymentRepository.getProtocol();
 
-        if ( "".equals( protocol ) || protocol == null )
+        if ( StringUtils.isEmpty( protocol ) )
         {
             throw new MojoExecutionException( "No transfer protocol found." );
         }
