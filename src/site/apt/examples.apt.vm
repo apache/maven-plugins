@@ -355,7 +355,7 @@ Examples
                   <mainClass>org.sonatype.haven.HavenCli</mainClass>
                 </transformer>
               </transformers>
-            </configuration>          
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -364,7 +364,7 @@ Examples
   ...
 </project>
 +-----
- 
+
 * Shade Plugin where a set of manifest entries are added to the MANIFEST.MF
 
 +-----
@@ -422,7 +422,7 @@ Examples
             <configuration>
               <finalName>haven-1.0</finalName>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServiceResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
             </configuration>
           </execution>
