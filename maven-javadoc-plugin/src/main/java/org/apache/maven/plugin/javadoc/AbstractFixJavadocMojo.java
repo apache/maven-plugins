@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +50,7 @@ import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.MessageTranslator;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -139,6 +141,21 @@ public abstract class AbstractFixJavadocMojo
 
     /** Inherited Javadoc i.e. <code>&#47;&#42;&#42;{&#64;inheritDoc}&#42;&#47;</code> **/
     private static final String INHERITED_JAVADOC = START_JAVADOC + " " + INHERITED_TAG + " " + END_JAVADOC;
+
+    /** <code>all</code> parameter used by {@link #fixTags} **/
+    private static final String FIX_TAGS_ALL = "all";
+
+    /** <code>public</code> parameter used by {@link #level} **/
+    private static final String LEVEL_PUBLIC = "public";
+
+    /** <code>protected</code> parameter used by {@link #level} **/
+    private static final String LEVEL_PROTECTED = "protected";
+
+    /** <code>package</code> parameter used by {@link #level} **/
+    private static final String LEVEL_PACKAGE = "package";
+
+    /** <code>private</code> parameter used by {@link #level} **/
+    private static final String LEVEL_PRIVATE = "private";
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -231,8 +248,8 @@ public abstract class AbstractFixJavadocMojo
     private String defaultVersion = "\u0024Id: \u0024"; // can't use default-value="\u0024Id: \u0024"
 
     /**
-     * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
-     * is not set, the platform default encoding is used.
+     * The file encoding to use when reading the source files. If the property
+     * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
      *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
@@ -357,7 +374,7 @@ public abstract class AbstractFixJavadocMojo
     /** New Methods in a Class (the key) found by Clirr. */
     private Map clirrNewMethods;
 
-    /** List of classes where <code>&#42;since</code> is added. */
+    /** List of classes where <code>&#42;since</code> is added. Will be used to add or not this tag in the methods. */
     private List sinceClasses;
 
     /** {@inheritDoc} */
@@ -373,19 +390,28 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
+        // verify goal params
+        init();
+
+        if ( fixTagsSplitted.length == 0 )
+        {
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "No fix tag specified. Nothing to do." );
+            }
+            return;
+        }
+
         // add warranty msg
         if ( !preCheck() )
         {
             return;
         }
 
-        // verify goal params
-        init();
-
         // run clirr
         executeClirr();
 
-        // run qdox and processing
+        // run qdox and process
         try
         {
             JavaClass[] javaClasses = getQdoxClasses();
@@ -500,37 +526,33 @@ public abstract class AbstractFixJavadocMojo
         }
 
         // defaultSince
-        int i = defaultSince.indexOf( "-SNAPSHOT" );
+        int i = defaultSince.indexOf( "-" + Artifact.SNAPSHOT_VERSION );
         if ( i != -1 )
         {
             defaultSince = defaultSince.substring( 0, i );
         }
 
         // fixTags
-        if ( StringUtils.isEmpty( fixTags ) )
-        {
-            // default
-            fixTags = "all";
-        }
-        if ( !fixTags.trim().equals( "all" ) )
+        if ( !FIX_TAGS_ALL.equalsIgnoreCase( fixTags.trim() ) )
         {
             String[] split = StringUtils.split( fixTags, "," );
             List filtered = new LinkedList();
             for ( int j = 0; j < split.length; j++ )
             {
-                String s = split[j];
-                if ( !( s.equals( "all" ) || s.equals( AUTHOR_TAG ) || s.equals( VERSION_TAG )
-                    || s.equals( SINCE_TAG ) || s.equals( PARAM_TAG ) || s.equals( RETURN_TAG ) || s
-                                                                                                    .equals( THROWS_TAG ) ) )
+                String s = split[j].trim();
+                if ( FIX_TAGS_ALL.equalsIgnoreCase( s.trim() ) || AUTHOR_TAG.equalsIgnoreCase( s.trim() )
+                    || VERSION_TAG.equalsIgnoreCase( s.trim() ) || SINCE_TAG.equalsIgnoreCase( s.trim() )
+                    || PARAM_TAG.equalsIgnoreCase( s.trim() ) || RETURN_TAG.equalsIgnoreCase( s.trim() )
+                    || THROWS_TAG.equalsIgnoreCase( s.trim() ) )
+                {
+                    filtered.add( s );
+                }
+                else
                 {
                     if ( getLog().isWarnEnabled() )
                     {
                         getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
                     }
-                }
-                else
-                {
-                    filtered.add( s );
                 }
             }
             fixTags = StringUtils.join( filtered.iterator(), "," );
@@ -550,8 +572,8 @@ public abstract class AbstractFixJavadocMojo
         }
 
         // level
-        if ( !( "public".equalsIgnoreCase( level.trim() ) || "protected".equalsIgnoreCase( level.trim() )
-            || "package".equalsIgnoreCase( level.trim() ) || "private".equalsIgnoreCase( level.trim() ) ) )
+        if ( !( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) || LEVEL_PROTECTED.equalsIgnoreCase( level.trim() )
+            || LEVEL_PACKAGE.equalsIgnoreCase( level.trim() ) || LEVEL_PRIVATE.equalsIgnoreCase( level.trim() ) ) )
         {
             if ( getLog().isWarnEnabled() )
             {
@@ -672,7 +694,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 getLog().error( "Error when executing Clirr: " + e.getMessage() );
             }
-            getLog().error( "Clirr is ignored" );
+            getLog().error( "Clirr is ignored due to the error above." );
             return;
         }
 
@@ -687,17 +709,33 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                getLog().info( "Clirr found API differences, i.e. new classes or new methods." );
-                writeClirr();
+                getLog().info( "Clirr found API differences, i.e. new classes/interfaces or methods." );
+                try
+                {
+                    writeClirr();
+                }
+                catch ( IOException e )
+                {
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().error( "IOException: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        getLog().error( "IOException: " + e.getMessage() );
+                    }
+                }
             }
         }
     }
 
     /**
      * In debug mode, write {@link #clirrNewClasses} and {@link #clirrNewMethods} in the file
-     * <code>project.getBuild().getDirectory()/clirr.diff</code>
+     * <code>project.getBuild().getDirectory()/clirr.diff</code>.
+     * @throws IOException
      */
     private void writeClirr()
+        throws IOException
     {
         if ( !getLog().isDebugEnabled() )
         {
@@ -714,6 +752,7 @@ public abstract class AbstractFixJavadocMojo
             sb.append( "'" ).append( newClass ).append( "'" );
             sb.append( EOL );
         }
+
         for ( Iterator it = clirrNewMethods.entrySet().iterator(); it.hasNext(); )
         {
             Map.Entry entry = (Map.Entry) it.next();
@@ -737,23 +776,8 @@ public abstract class AbstractFixJavadocMojo
         }
 
         File f = new File( project.getBuild().getDirectory(), "clirr.diff" );
-        Writer writer = null;
-        try
-        {
-            writer = WriterFactory.newWriter( f, WriterFactory.UTF_8 );
-            writer.write( sb.toString() );
-        }
-        catch ( IOException e )
-        {
-            if ( getLog().isErrorEnabled() )
-            {
-                getLog().error( "IOException: " + e.getMessage() );
-            }
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
+        writeFile( f, WriterFactory.UTF_8, sb.toString() );
+
         getLog().debug( "Writing Clirr difference to: " + f.getAbsolutePath() );
     }
 
@@ -763,7 +787,7 @@ public abstract class AbstractFixJavadocMojo
      */
     private boolean fixTag( String tag )
     {
-        if ( fixTagsSplitted.length == 1 && fixTagsSplitted[0].equals( "all" ) )
+        if ( fixTagsSplitted.length == 1 && fixTagsSplitted[0].equals( FIX_TAGS_ALL ) )
         {
             return true;
         }
@@ -856,28 +880,19 @@ public abstract class AbstractFixJavadocMojo
 
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "Reading " + javaClass.getFullyQualifiedName() );
-        }
-        final File javaFile = javaClass.getSource().getFile();
-        Reader fileReader = null;
-        // the original java content in memory
-        String originalContent;
-        try
-        {
-            fileReader = ReaderFactory.newReader( javaFile, encoding );
-            originalContent = StringUtils.unifyLineSeparators( IOUtil.toString( fileReader ) );
-        }
-        finally
-        {
-            IOUtil.close( fileReader );
+            getLog().debug( "Reading '" + javaClass.getFullyQualifiedName() + "' class." );
         }
 
-        final StringWriter stringWriter = new StringWriter();
+        final File javaFile = javaClass.getSource().getFile();
+        // the original java content in memory
+        final String originalContent = readFile( javaFile, encoding );
 
         if ( getLog().isDebugEnabled() )
         {
             getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
         }
+
+        final StringWriter stringWriter = new StringWriter();
         BufferedReader reader = null;
         try
         {
@@ -890,13 +905,28 @@ public abstract class AbstractFixJavadocMojo
                 lineNumber++;
                 final String indent = autodetectIndentation( line );
 
-                if ( lineNumber == javaClass.getLineNumber() )
+                // fixing classes
+                if ( javaClass.getComment() == null && javaClass.getAnnotations() != null
+                    && javaClass.getAnnotations().length != 0 )
                 {
-                    fixClassComment( stringWriter, originalContent, javaClass, indent );
+                    if ( lineNumber == javaClass.getAnnotations()[0].getLineNumber() )
+                    {
+                        fixClassComment( stringWriter, originalContent, javaClass, indent );
 
-                    takeCareSingleComment( stringWriter, originalContent, javaClass );
+                        takeCareSingleComment( stringWriter, originalContent, javaClass );
+                    }
+                }
+                else
+                {
+                    if ( lineNumber == javaClass.getLineNumber() )
+                    {
+                        fixClassComment( stringWriter, originalContent, javaClass, indent );
+
+                        takeCareSingleComment( stringWriter, originalContent, javaClass );
+                    }
                 }
 
+                // fixing fields
                 if ( javaClass.getFields() != null )
                 {
                     for ( int i = 0; i < javaClass.getFields().length; i++ )
@@ -905,11 +935,12 @@ public abstract class AbstractFixJavadocMojo
 
                         if ( lineNumber == field.getLineNumber() )
                         {
-                            fixFieldComment( stringWriter, field, indent );
+                            fixFieldComment( stringWriter, javaClass, field, indent );
                         }
                     }
                 }
 
+                // fixing methods
                 if ( javaClass.getMethods() != null )
                 {
                     for ( int i = 0; i < javaClass.getMethods().length; i++ )
@@ -938,15 +969,7 @@ public abstract class AbstractFixJavadocMojo
         {
             getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
         }
-        final Writer writer = WriterFactory.newWriter( javaFile, encoding );
-        try
-        {
-            writer.write( stringWriter.toString() );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
+        writeFile( javaFile, encoding, stringWriter.toString() );
     }
 
     /**
@@ -977,7 +1000,7 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        String javadocComment = extractOriginalJavadoc( originalContent, entity );
+        String javadocComment = trimRight( extractOriginalJavadoc( originalContent, entity ) );
         String extraComment =
             javadocComment.substring( javadocComment.indexOf( END_JAVADOC ) + END_JAVADOC.length() );
         if ( StringUtils.isNotEmpty( extraComment ) )
@@ -1037,9 +1060,9 @@ public abstract class AbstractFixJavadocMojo
     {
         List modifiersAsList = Arrays.asList( modifiers );
 
-        if ( "public".equalsIgnoreCase( level.trim() ) )
+        if ( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) )
         {
-            if ( modifiersAsList.contains( "public" ) )
+            if ( modifiersAsList.contains( LEVEL_PUBLIC ) )
             {
                 return true;
             }
@@ -1047,9 +1070,9 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        if ( "protected".equalsIgnoreCase( level.trim() ) )
+        if ( LEVEL_PROTECTED.equalsIgnoreCase( level.trim() ) )
         {
-            if ( modifiersAsList.contains( "public" ) || modifiersAsList.contains( "protected" ) )
+            if ( modifiersAsList.contains( LEVEL_PUBLIC ) || modifiersAsList.contains( LEVEL_PROTECTED ) )
             {
                 return true;
             }
@@ -1057,9 +1080,9 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        if ( "package".equalsIgnoreCase( level.trim() ) )
+        if ( LEVEL_PACKAGE.equalsIgnoreCase( level.trim() ) )
         {
-            if ( !modifiersAsList.contains( "private" ) )
+            if ( !modifiersAsList.contains( LEVEL_PRIVATE ) )
             {
                 return true;
             }
@@ -1087,9 +1110,9 @@ public abstract class AbstractFixJavadocMojo
      * @param javaClass not null
      * @param indent not null
      * @see #getDefaultClassJavadocComment(JavaClass)
-     * @see #addDefaultAuthor(StringBuffer, String)
-     * @see #addDefaultSince(StringBuffer, String)
-     * @see #addDefaultVersion(StringBuffer, String)
+     * @see #appendDefaultAuthorTag(StringBuffer, String)
+     * @see #appendDefaultSinceTag(StringBuffer, String)
+     * @see #appendDefaultVersionTag(StringBuffer, String)
      */
     private void addDefaultClassComment( final StringWriter stringWriter, final JavaClass javaClass,
                                          final String indent )
@@ -1101,30 +1124,29 @@ public abstract class AbstractFixJavadocMojo
         sb.append( indent ).append( SEPARATOR_JAVADOC );
         sb.append( getDefaultClassJavadocComment( javaClass ) );
         sb.append( EOL );
-        addSeparator( sb, indent );
-        if ( fixTag( AUTHOR_TAG ) )
-        {
-            addDefaultAuthor( sb, indent );
-        }
-        if ( fixTag( VERSION_TAG ) )
-        {
-            addDefaultVersion( sb, indent );
-        }
+
+        appendSeparator( sb, indent );
+
+        appendDefaultAuthorTag( sb, indent );
+
+        appendDefaultVersionTag( sb, indent );
+
         if ( fixTag( SINCE_TAG ) )
         {
             if ( !ignoreClirr )
             {
                 if ( isNewClassFromLastVersion( javaClass ) )
                 {
-                    addDefaultSince( sb, indent );
+                    appendDefaultSinceTag( sb, indent );
                 }
             }
             else
             {
-                addDefaultSince( sb, indent );
+                appendDefaultSinceTag( sb, indent );
                 addSinceClasses( javaClass );
             }
         }
+
         sb.append( indent ).append( " " ).append( END_JAVADOC );
         sb.append( EOL );
 
@@ -1132,15 +1154,16 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Add Javadoc field comment.
-     * Acutally, only for static fields.
+     * Add Javadoc field comment, only for static fields or interface fields.
      *
      * @param stringWriter not null
+     * @param javaClass not null
      * @param field not null
      * @param indent not null
      * @throws IOException if any
      */
-    private void fixFieldComment( final StringWriter stringWriter, final JavaField field, final String indent )
+    private void fixFieldComment( final StringWriter stringWriter, final JavaClass javaClass,
+                                  final JavaField field, final String indent )
         throws IOException
     {
         if ( !fixFieldComment )
@@ -1148,14 +1171,17 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        if ( !isInLevel( field.getModifiers() ) )
+        if ( !javaClass.isInterface() )
         {
-            return;
-        }
+            if ( !isInLevel( field.getModifiers() ) )
+            {
+                return;
+            }
 
-        if ( !field.isStatic() )
-        {
-            return;
+            if ( !field.isStatic() )
+            {
+                return;
+            }
         }
 
         // add
@@ -1164,12 +1190,14 @@ public abstract class AbstractFixJavadocMojo
             addDefaultFieldComment( stringWriter, field, indent );
             return;
         }
+
+        // no update
     }
 
     /**
      * Add a default Javadoc for the given field, i.e.:
      * <pre>
-     * &#47;&#42;&#42; Field name &#42;&#47;
+     * &#47;&#42;&#42; Constant &lt;code&gt;Field name&lt;/code&gt; &#42;&#47;
      * </pre>
      *
      * @param stringWriter not null
@@ -1197,10 +1225,11 @@ public abstract class AbstractFixJavadocMojo
                 || qualifiedName.equals( Character.TYPE.toString() ) )
             {
                 sb.append( "=" );
+                // QDOX-155 for char
                 sb.append( field.getInitializationExpression().trim() );
             }
 
-            if ( qualifiedName.equals( "java.lang.String" ) )
+            if ( qualifiedName.equals( String.class.getName() ) )
             {
                 StringBuffer value = new StringBuffer();
                 String[] lines = getLines( field.getInitializationExpression() );
@@ -1298,7 +1327,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent not null
      * @throws MojoExecutionException if any
      * @see #getDefaultMethodJavadocComment(JavaMethod)
-     * @see #addDefaultSince(StringBuffer, String)
+     * @see #appendDefaultSinceTag(StringBuffer, String)
      */
     private void addDefaultMethodComment( final StringWriter stringWriter, final JavaMethod javaMethod,
                                           final String indent )
@@ -1322,36 +1351,19 @@ public abstract class AbstractFixJavadocMojo
         sb.append( getDefaultMethodJavadocComment( javaMethod ) );
         sb.append( EOL );
 
-        boolean addSeparator = false;
+        boolean separatorAdded = false;
         if ( fixTag( PARAM_TAG ) && javaMethod.getParameters() != null )
         {
             for ( int i = 0; i < javaMethod.getParameters().length; i++ )
             {
                 JavaParameter javaParameter = javaMethod.getParameters()[i];
 
-                if ( !addSeparator )
-                {
-                    addSeparator( sb, indent );
-                    addSeparator = true;
-                }
-
-                sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-                sb.append( javaParameter.getName() );
-                sb.append( " " );
-                sb.append( getDefaultJavadocForType( javaParameter.getType() ) );
-                sb.append( EOL );
+                separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
             }
         }
         if ( fixTag( RETURN_TAG ) && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
         {
-            if ( !addSeparator )
-            {
-                addSeparator( sb, indent );
-                addSeparator = true;
-            }
-            sb.append( indent ).append( " * @" ).append( RETURN_TAG ).append( " " );
-            sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
-            sb.append( EOL );
+            separatorAdded = appendDefaultReturnTag( sb, indent, separatorAdded, javaMethod );
         }
         if ( fixTag( THROWS_TAG ) && javaMethod.getExceptions() != null && javaMethod.getExceptions().length > 0 )
         {
@@ -1359,26 +1371,12 @@ public abstract class AbstractFixJavadocMojo
             {
                 Type exception = javaMethod.getExceptions()[i];
 
-                if ( !addSeparator )
-                {
-                    addSeparator( sb, indent );
-                    addSeparator = true;
-                }
-
-                sb.append( indent ).append( " * @" ).append( THROWS_TAG ).append( " " );
-                sb.append( exception.getJavaClass().getFullyQualifiedName() );
-                sb.append( " if any." );
-                sb.append( EOL );
+                separatorAdded = appendDefaultThrowsTag( sb, indent, separatorAdded, exception );
             }
         }
         if ( fixTag( SINCE_TAG ) && isNewMethodFromLastRevision( javaMethod ) )
         {
-            if ( !addSeparator )
-            {
-                addSeparator( sb, indent );
-                addSeparator = true;
-            }
-            addDefaultSince( sb, indent );
+            separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
         }
 
         sb.append( indent ).append( " " ).append( END_JAVADOC );
@@ -1403,26 +1401,14 @@ public abstract class AbstractFixJavadocMojo
         int i = s.lastIndexOf( START_JAVADOC );
         if ( i != -1 )
         {
-            int eol = 0;
-            for ( int j = i - 1; j > 0; j-- )
+            String tmp = s.substring( 0, i );
+            if ( tmp.lastIndexOf( EOL ) != -1 )
             {
-                if ( !Character.isWhitespace( s.charAt( j ) ) )
-                {
-                    eol = StringUtils.countMatches( s.substring( j, i + 1 ), EOL );
-                    break;
-                }
+                tmp = tmp.substring( 0, tmp.lastIndexOf( EOL ) );
             }
-
-            String tmp = trimRight( s.substring( 0, i ) );
             stringWriter.getBuffer().delete( 0, stringWriter.getBuffer().length() );
             stringWriter.write( tmp );
-            if ( eol > 0 )
-            {
-                for ( int j = 0; j < eol; j++ )
-                {
-                    stringWriter.write( EOL );
-                }
-            }
+            stringWriter.write( EOL );
         }
 
         updateJavadocComment( stringWriter, originalContent, entity, indent );
@@ -1445,19 +1431,25 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
+        boolean isJavaMethod = false;
+        if ( entity instanceof JavaMethod )
+        {
+            isJavaMethod = true;
+        }
+
         StringBuffer sb = new StringBuffer();
 
         // special case for inherited method
-        if ( entity instanceof JavaMethod )
+        if ( isJavaMethod )
         {
             JavaMethod javaMethod = (JavaMethod) entity;
 
             if ( isInherited( javaMethod ) )
             {
+                // QDOX-154 could be empty
                 if ( StringUtils.isEmpty( javaMethod.getComment() ) )
                 {
                     sb.append( indent ).append( INHERITED_JAVADOC );
-                    sb.append( EOL );
                     sb.append( EOL );
                     stringWriter.write( sb.toString() );
                     return;
@@ -1481,11 +1473,10 @@ public abstract class AbstractFixJavadocMojo
                 {
                     javadoc = javadoc.substring( 0, javadoc.indexOf( END_JAVADOC ) );
                 }
-
-                if ( javadoc.trim().equals( INHERITED_TAG )
+                if ( StringUtils.removeDuplicateWhitespace( javadoc.trim() ).equals( "* " + INHERITED_TAG )
                     && ( javaMethod.getTags() == null || javaMethod.getTags().length == 0 ) )
                 {
-                    sb.append( indent ).append( START_JAVADOC ).append( javadoc ).append( END_JAVADOC );
+                    sb.append( indent ).append( START_JAVADOC ).append( INHERITED_TAG ).append( END_JAVADOC );
                     sb.append( EOL );
                 }
                 else
@@ -1496,7 +1487,7 @@ public abstract class AbstractFixJavadocMojo
                     {
                         sb.append( indent ).append( SEPARATOR_JAVADOC ).append( INHERITED_TAG );
                         sb.append( EOL );
-                        addSeparator( sb, indent );
+                        appendSeparator( sb, indent );
                     }
                     String leftTrimmed = trimLeft( javadoc );
                     if ( leftTrimmed.startsWith( "* " ) )
@@ -1514,7 +1505,7 @@ public abstract class AbstractFixJavadocMojo
                         {
                             DocletTag docletTag = javaMethod.getTags()[i];
 
-                            // volontary ignore these tags
+                            // Voluntary ignore these tags
                             if ( docletTag.getName().equals( PARAM_TAG )
                                 || docletTag.getName().equals( RETURN_TAG )
                                 || docletTag.getName().equals( THROWS_TAG ) )
@@ -1546,17 +1537,17 @@ public abstract class AbstractFixJavadocMojo
         }
         else
         {
-            addDefaultJavadocComment( sb, entity, indent );
+            addDefaultJavadocComment( sb, entity, indent, isJavaMethod );
         }
 
         // tags
         if ( entity.getTags() != null && entity.getTags().length > 0 )
         {
-            updateJavadocTags( sb, originalContent, entity, indent );
+            updateJavadocTags( sb, originalContent, entity, indent, isJavaMethod );
         }
         else
         {
-            addDefaultJavadocTags( sb, entity, indent );
+            addDefaultJavadocTags( sb, entity, indent, isJavaMethod );
         }
 
         sb.append( indent ).append( " " ).append( END_JAVADOC );
@@ -1601,12 +1592,13 @@ public abstract class AbstractFixJavadocMojo
      * @param sb not null
      * @param entity not null
      * @param indent not null
+     * @param isJavaMethod
      */
     private void addDefaultJavadocComment( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
-                                           final String indent )
+                                           final String indent, final boolean isJavaMethod )
     {
         sb.append( indent ).append( SEPARATOR_JAVADOC );
-        if ( entity instanceof JavaMethod )
+        if ( isJavaMethod )
         {
             sb.append( getDefaultMethodJavadocComment( (JavaMethod) entity ) );
         }
@@ -1622,287 +1614,315 @@ public abstract class AbstractFixJavadocMojo
      * @param originalContent not null
      * @param entity not null
      * @param indent not null
+     * @param isJavaMethod
      * @throws IOException if any
      * @throws MojoExecutionException if any
      */
     private void updateJavadocTags( final StringBuffer sb, final String originalContent,
-                                    final AbstractInheritableJavaEntity entity, final String indent )
+                                    final AbstractInheritableJavaEntity entity, final String indent,
+                                    final boolean isJavaMethod )
         throws IOException, MojoExecutionException
     {
-        boolean isJavaMethod = false;
-        if ( entity instanceof JavaMethod )
-        {
-            isJavaMethod = true;
-        }
+        appendSeparator( sb, indent );
 
-        addSeparator( sb, indent );
+        // parse tags
+        JavaEntityTags javaEntityTags = parseJavadocTags( originalContent, entity, isJavaMethod );
 
-        List tagNames = new LinkedList();
-        List tagParams = new LinkedList();
-        boolean hasTagReturn = false;
-        List tagThrows = new LinkedList();
+        // update and write tags
+        updateJavadocTags( sb, entity, isJavaMethod, javaEntityTags );
 
+        // add missing tags...
+        addMissingJavadocTags( sb, entity, indent, isJavaMethod, javaEntityTags );
+    }
+
+    /**
+     * Parse entity tags
+     *
+     * @param originalContent not null
+     * @param entity not null
+     * @param isJavaMethod
+     * @return an instance of {@link JavaEntityTags}
+     * @throws IOException if any
+     */
+    private JavaEntityTags parseJavadocTags( final String originalContent,
+                                             final AbstractInheritableJavaEntity entity, final boolean isJavaMethod )
+        throws IOException
+    {
+        JavaEntityTags javaEntityTags = new JavaEntityTags( entity, isJavaMethod );
         for ( int i = 0; i < entity.getTags().length; i++ )
         {
             DocletTag docletTag = entity.getTags()[i];
 
-            tagNames.add( docletTag.getName() );
+            String originalJavadocTag = getJavadocComment( originalContent, entity, docletTag );
+            originalJavadocTag = removeLastEmptyJavadocLines( originalJavadocTag );
 
-            if ( docletTag.getName().equals( RETURN_TAG ) )
+            javaEntityTags.getNamesTags().add( docletTag.getName() );
+
+            if ( isJavaMethod )
             {
-                hasTagReturn = true;
-            }
-
-            if ( docletTag.getName().equals( THROWS_TAG ) )
-            {
-                String originalTag = getJavadocComment( originalContent, entity, docletTag );
-                originalTag = removeLastEmptyJavadocLines( originalTag );
-
-                String atThrows = "@" + THROWS_TAG;
-                if ( originalTag.indexOf( atThrows ) != -1 )
+                String[] params = docletTag.getParameters();
+                if ( params.length < 1 )
                 {
-                    StringTokenizer token =
-                        new StringTokenizer( originalTag.substring( originalTag.indexOf( atThrows )
-                            + atThrows.length() ), EOL + " " );
-                    if ( token.countTokens() > 0 )
-                    {
-                        tagThrows.add( token.nextToken() );
-                    }
-                }
-            }
-
-            if ( docletTag.getValue().length() > 0 )
-            {
-                String originalTag = getJavadocComment( originalContent, entity, docletTag );
-                originalTag = removeLastEmptyJavadocLines( originalTag );
-                originalTag = trimRight( originalTag );
-
-                String param = null;
-
-                String atParam = "@" + PARAM_TAG;
-                if ( docletTag.getName().equals( PARAM_TAG ) && originalTag.indexOf( atParam ) != -1 )
-                {
-                    StringTokenizer token =
-                        new StringTokenizer( originalTag.substring( originalTag.indexOf( atParam )
-                            + atParam.length() ), EOL + " " );
-                    if ( token.countTokens() > 0 )
-                    {
-                        param = token.nextToken();
-                        tagParams.add( param );
-                    }
+                    continue;
                 }
 
-                if ( isJavaMethod && param != null )
+                String paramName = params[0];
+                if ( docletTag.getName().equals( PARAM_TAG ) )
                 {
-                    JavaMethod javaMethod = (JavaMethod) entity;
-
-                    JavaParameter javaParam = javaMethod.getParameterByName( param );
-                    if ( javaParam == null )
+                    if ( paramName.equals( "<" ) )
                     {
-                        if ( getLog().isWarnEnabled() )
-                        {
-                            StringBuffer warn = new StringBuffer();
-
-                            warn.append( "Fixed unknown param '" ).append( param ).append( "' defined in " );
-                            warn.append( javaMethod.getParentClass().getFullyQualifiedName() );
-                            warn.append( "#" ).append( javaMethod.getCallSignature() );
-
-                            getLog().warn( warn.toString() );
-                        }
-
-                        if ( sb.toString().endsWith( EOL ) )
-                        {
-                            sb.delete( sb.toString().lastIndexOf( EOL ), sb.toString().length() );
-                        }
+                        paramName = params[1];
                     }
-                    else
-                    {
-                        sb.append( originalTag );
-                        if ( StringUtils.removeDuplicateWhitespace( originalContent ).indexOf( "param " + param ) == -1 )
-                        {
-                            sb.append( " " );
-                            sb.append( getDefaultJavadocForType( javaParam.getType() ) );
-                        }
-                    }
+                    javaEntityTags.putJavadocParamTag( paramName, originalJavadocTag );
+                }
+                else if ( docletTag.getName().equals( RETURN_TAG ) )
+                {
+                    javaEntityTags.setJavadocReturnTag( originalJavadocTag );
+                }
+                else if ( docletTag.getName().equals( THROWS_TAG ) )
+                {
+                    javaEntityTags.putJavadocThrowsTag( paramName, originalJavadocTag );
                 }
                 else
                 {
-                    if ( isJavaMethod && docletTag.getName().equals( THROWS_TAG ) && tagThrows.size() > 0 )
+                    javaEntityTags.getUnknownTags().add( originalJavadocTag );
+                }
+            }
+            else
+            {
+                javaEntityTags.getUnknownTags().add( originalJavadocTag );
+            }
+        }
+
+        return javaEntityTags;
+    }
+
+    /**
+     * Write tags according javaEntityTags.
+     *
+     * @param sb not null
+     * @param entity not null
+     * @param isJavaMethod
+     * @param javaEntityTags not null
+     */
+    private void updateJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+                                    final boolean isJavaMethod, final JavaEntityTags javaEntityTags )
+    {
+        for ( int i = 0; i < entity.getTags().length; i++ )
+        {
+            DocletTag docletTag = entity.getTags()[i];
+
+            if ( isJavaMethod )
+            {
+                JavaMethod javaMethod = (JavaMethod) entity;
+
+                String[] params = docletTag.getParameters();
+                if ( params.length < 1 )
+                {
+                    continue;
+                }
+
+                if ( docletTag.getName().equals( PARAM_TAG ) )
+                {
+                    writeParamTag( sb, javaMethod, javaEntityTags, params );
+                }
+                else if ( docletTag.getName().equals( RETURN_TAG ) )
+                {
+                    writeReturnTag( sb, javaMethod, javaEntityTags );
+                }
+                else if ( docletTag.getName().equals( THROWS_TAG ) )
+                {
+                    writeThrowsTag( sb, javaMethod, javaEntityTags, params );
+                }
+                else
+                {
+                    // write unknown tags
+                    for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                     {
-                        JavaMethod javaMethod = (JavaMethod) entity;
+                        String originalJavadocTag = it.next().toString();
 
-                        if ( javaMethod.getExceptions() != null )
+                        if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
+                                        .indexOf( "@" + docletTag.getName() ) != -1 )
                         {
-                            for ( int j = 0; j < javaMethod.getExceptions().length; j++ )
-                            {
-                                Type exception = javaMethod.getExceptions()[j];
-
-                                String throwException = tagThrows.get( tagThrows.size() - 1 ).toString();
-                                if ( exception.getValue().endsWith( throwException ) )
-                                {
-                                    originalTag =
-                                        StringUtils.replace( originalTag, throwException, exception.getValue() );
-                                    tagThrows.add( tagThrows.size() - 1, exception.getValue() );
-                                    if ( originalTag.endsWith( exception.getValue() ) )
-                                    {
-                                        originalTag += " if any";
-                                    }
-
-                                    break;
-                                }
-                            }
+                            sb.append( originalJavadocTag );
                         }
-                        if ( !originalTag.trim().startsWith( "*" ) )
-                        {
-                            sb.append( indent ).append( " *" );
-                        }
-                        sb.append( originalTag );
-                    }
-                    else
-                    {
-                        if ( !originalTag.trim().startsWith( "*" ) )
-                        {
-                            sb.append( indent ).append( " *" );
-                        }
-                        sb.append( originalTag );
                     }
                 }
             }
             else
             {
-                if ( docletTag.getName().equals( RETURN_TAG ) )
+                for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                 {
-                    if ( isJavaMethod )
-                    {
-                        JavaMethod javaMethod = (JavaMethod) entity;
+                    String originalJavadocTag = it.next().toString();
 
-                        if ( javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
-                        {
-                            sb.append( indent ).append( " * @" ).append( RETURN_TAG ).append( " " );
-                            sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
-                        }
-                    }
-                    else
+                    if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
+                                    .indexOf( "@" + docletTag.getName() ) != -1 )
                     {
-                        sb.append( indent ).append( " * @" );
-                        sb.append( docletTag.getName() );
+                        sb.append( originalJavadocTag );
                     }
-                }
-                else if ( !docletTag.getName().equals( PARAM_TAG ) )
-                {
-                    sb.append( indent ).append( " * @" );
-                    sb.append( docletTag.getName() );
                 }
             }
+
+            if ( sb.toString().endsWith( EOL ) )
+            {
+                sb.delete( sb.toString().lastIndexOf( EOL ), sb.toString().length() );
+            }
+
             sb.append( EOL );
         }
+    }
 
-        // add missing tags...
-        if ( isJavaMethod )
+    private void writeParamTag( final StringBuffer sb, final JavaMethod javaMethod,
+                                final JavaEntityTags javaEntityTags, String[] params )
+    {
+        String paramName = params[0];
+
+        boolean genericParam = false;
+        if ( paramName.equals( "<" ) )
         {
-            JavaMethod javaMethod = (JavaMethod) entity;
-
-            for ( int i = 0; i < javaMethod.getParameters().length; i++ )
-            {
-                JavaParameter param = javaMethod.getParameters()[i];
-
-                if ( !tagParams.contains( param.getName() ) )
-                {
-                    sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-                    sb.append( param.getName() );
-                    sb.append( " " );
-                    sb.append( getDefaultJavadocForType( param.getType() ) );
-                    sb.append( EOL );
-                }
-            }
-
-            if ( !hasTagReturn && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
-            {
-                sb.append( indent ).append( " * @" ).append( RETURN_TAG ).append( " " );
-                sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
-                sb.append( EOL );
-            }
-
-            if ( javaMethod.getExceptions() != null )
-            {
-                for ( int i = 0; i < javaMethod.getExceptions().length; i++ )
-                {
-                    Type exception = javaMethod.getExceptions()[i];
-
-                    if ( !tagThrows.contains( exception.getValue() ) )
-                    {
-                        sb.append( indent ).append( " * @" ).append( THROWS_TAG ).append( " " );
-                        sb.append( getDefaultJavadocForType( exception ) );
-                        sb.append( " if any" );
-                        sb.append( EOL );
-                    }
-                }
-            }
+            paramName = params[1];
+            genericParam = true;
         }
-        if ( !isJavaMethod )
+
+        if ( !fixTag( PARAM_TAG ) )
         {
-            if ( fixTag( AUTHOR_TAG ) && !tagNames.contains( AUTHOR_TAG ) )
+            // write original param tag if found
+            String originalJavadocTag = javaEntityTags.getJavadocParamTag( paramName );
+            if ( originalJavadocTag != null )
             {
-                addDefaultAuthor( sb, indent );
+                sb.append( originalJavadocTag );
             }
-            if ( fixTag( VERSION_TAG ) && !tagNames.contains( VERSION_TAG ) )
-            {
-                addDefaultVersion( sb, indent );
-            }
+            return;
         }
-        if ( fixTag( SINCE_TAG ) && !tagNames.contains( SINCE_TAG ) )
+
+        JavaParameter javaParam = javaMethod.getParameterByName( paramName );
+        if ( javaParam == null )
         {
-            if ( !isJavaMethod )
+            if ( genericParam )
             {
-                if ( !ignoreClirr )
+                String originalJavadocTag = javaEntityTags.getJavadocParamTag( paramName );
+                if ( originalJavadocTag != null )
                 {
-                    if ( isNewClassFromLastVersion( (JavaClass) entity ) )
-                    {
-                        addDefaultSince( sb, indent );
-                    }
-                }
-                else
-                {
-                    addDefaultSince( sb, indent );
-                    addSinceClasses( (JavaClass) entity );
+                    sb.append( originalJavadocTag );
                 }
             }
             else
             {
-                if ( !ignoreClirr )
+                if ( getLog().isWarnEnabled() )
                 {
-                    if ( isNewMethodFromLastRevision( (JavaMethod) entity ) )
-                    {
-                        addDefaultSince( sb, indent );
-                    }
+                    StringBuffer warn = new StringBuffer();
+
+                    warn.append( "Fixed unknown param '" ).append( paramName ).append( "' defined in " );
+                    warn.append( javaMethod.getParentClass().getFullyQualifiedName() );
+                    warn.append( "#" ).append( javaMethod.getCallSignature() );
+
+                    getLog().warn( warn.toString() );
                 }
-                else
+
+                if ( sb.toString().endsWith( EOL ) )
                 {
-                    if ( sinceClasses != null && !sinceClassesContains( ( (JavaMethod) entity ).getParentClass() ) )
+                    sb.delete( sb.toString().lastIndexOf( EOL ), sb.toString().length() );
+                }
+            }
+        }
+        else
+        {
+            String originalJavadocTag = javaEntityTags.getJavadocParamTag( paramName );
+            if ( originalJavadocTag != null )
+            {
+                sb.append( originalJavadocTag );
+                String s = "@" + PARAM_TAG + " " + paramName;
+                if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().endsWith( s ) )
+                {
+                    sb.append( " " );
+                    sb.append( getDefaultJavadocForType( javaParam.getType() ) );
+                }
+            }
+        }
+    }
+
+    private void writeReturnTag( final StringBuffer sb, final JavaMethod javaMethod,
+                                 final JavaEntityTags javaEntityTags )
+    {
+        if ( !fixTag( RETURN_TAG ) )
+        {
+            // write original tag if found
+            if ( StringUtils.isNotEmpty( javaEntityTags.getJavadocReturnTag() ) )
+            {
+                sb.append( javaEntityTags.getJavadocReturnTag() );
+            }
+            return;
+        }
+
+        if ( StringUtils.isNotEmpty( javaEntityTags.getJavadocReturnTag() ) && javaMethod.getReturns() != null
+            && !javaMethod.getReturns().isVoid() )
+        {
+            sb.append( javaEntityTags.getJavadocReturnTag() );
+            if ( javaEntityTags.getJavadocReturnTag().trim().endsWith( "@" + RETURN_TAG ) )
+            {
+                sb.append( " " );
+                sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
+            }
+        }
+    }
+
+    private void writeThrowsTag( final StringBuffer sb, final JavaMethod javaMethod,
+                                 final JavaEntityTags javaEntityTags, final String[] params )
+    {
+        String paramName = params[0];
+
+        String originalJavadocTag = javaEntityTags.getJavadocThrowsTag( paramName );
+        if ( originalJavadocTag == null )
+        {
+            return;
+        }
+
+        if ( !fixTag( THROWS_TAG ) )
+        {
+            // write original param tag if found
+            sb.append( originalJavadocTag );
+            return;
+        }
+
+        if ( javaMethod.getExceptions() != null )
+        {
+            for ( int j = 0; j < javaMethod.getExceptions().length; j++ )
+            {
+                Type exception = javaMethod.getExceptions()[j];
+
+                if ( exception.getValue().endsWith( paramName ) )
+                {
+                    originalJavadocTag = StringUtils.replace( originalJavadocTag, paramName, exception.getValue() );
+                    if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
+                                    .endsWith( "@" + THROWS_TAG + " " + exception.getValue() ) )
                     {
-                        addDefaultSince( sb, indent );
+                        originalJavadocTag += " if any.";
                     }
+
+                    sb.append( originalJavadocTag );
+
+                    // added qualified name
+                    javaEntityTags.putJavadocThrowsTag( exception.getValue(), originalJavadocTag );
                 }
             }
         }
     }
 
     /**
+     * Add missing tags not already written.
+     *
      * @param sb not null
      * @param entity not null
      * @param indent not null
+     * @param isJavaMethod
+     * @param javaEntityTags not null
      * @throws MojoExecutionException if any
      */
-    private void addDefaultJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
-                                        final String indent )
+    private void addMissingJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+                                        final String indent, final boolean isJavaMethod,
+                                        final JavaEntityTags javaEntityTags )
         throws MojoExecutionException
     {
-        boolean isJavaMethod = false;
-        if ( entity instanceof JavaMethod )
-        {
-            isJavaMethod = true;
-        }
-        boolean addSeparator = false;
         if ( isJavaMethod )
         {
             JavaMethod javaMethod = (JavaMethod) entity;
@@ -1913,17 +1933,103 @@ public abstract class AbstractFixJavadocMojo
                 {
                     JavaParameter javaParameter = javaMethod.getParameters()[i];
 
-                    if ( !addSeparator )
+                    if ( javaEntityTags.getJavadocParamTag( javaParameter.getName(), true ) == null )
                     {
-                        addSeparator( sb, indent );
-                        addSeparator = true;
+                        appendDefaultParamTag( sb, indent, javaParameter );
                     }
+                }
+            }
 
-                    sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-                    sb.append( javaParameter.getName() );
-                    sb.append( " " );
-                    sb.append( getDefaultJavadocForType( javaParameter.getType() ) );
-                    sb.append( EOL );
+            if ( fixTag( RETURN_TAG ) && StringUtils.isEmpty( javaEntityTags.getJavadocReturnTag() )
+                && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
+            {
+                appendDefaultReturnTag( sb, indent, javaMethod );
+            }
+
+            if ( fixTag( THROWS_TAG ) && javaMethod.getExceptions() != null )
+            {
+                for ( int i = 0; i < javaMethod.getExceptions().length; i++ )
+                {
+                    Type exception = javaMethod.getExceptions()[i];
+
+                    if ( javaEntityTags.getJavadocThrowsTag( exception.getValue(), true ) == null )
+                    {
+                        appendDefaultThrowsTag( sb, indent, exception );
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ( !javaEntityTags.getNamesTags().contains( AUTHOR_TAG ) )
+            {
+                appendDefaultAuthorTag( sb, indent );
+            }
+            if ( !javaEntityTags.getNamesTags().contains( VERSION_TAG ) )
+            {
+                appendDefaultVersionTag( sb, indent );
+            }
+        }
+        if ( fixTag( SINCE_TAG ) && !javaEntityTags.getNamesTags().contains( SINCE_TAG ) )
+        {
+            if ( !isJavaMethod )
+            {
+                if ( !ignoreClirr )
+                {
+                    if ( isNewClassFromLastVersion( (JavaClass) entity ) )
+                    {
+                        appendDefaultSinceTag( sb, indent );
+                    }
+                }
+                else
+                {
+                    appendDefaultSinceTag( sb, indent );
+                    addSinceClasses( (JavaClass) entity );
+                }
+            }
+            else
+            {
+                if ( !ignoreClirr )
+                {
+                    if ( isNewMethodFromLastRevision( (JavaMethod) entity ) )
+                    {
+                        appendDefaultSinceTag( sb, indent );
+                    }
+                }
+                else
+                {
+                    if ( sinceClasses != null && !sinceClassesContains( ( (JavaMethod) entity ).getParentClass() ) )
+                    {
+                        appendDefaultSinceTag( sb, indent );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param sb not null
+     * @param entity not null
+     * @param indent not null
+     * @param isJavaMethod
+     * @throws MojoExecutionException if any
+     */
+    private void addDefaultJavadocTags( final StringBuffer sb, final AbstractInheritableJavaEntity entity,
+                                        final String indent, final boolean isJavaMethod )
+        throws MojoExecutionException
+    {
+        boolean separatorAdded = false;
+        if ( isJavaMethod )
+        {
+            JavaMethod javaMethod = (JavaMethod) entity;
+
+            if ( fixTag( PARAM_TAG ) && javaMethod.getParameters() != null )
+            {
+                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                {
+                    JavaParameter javaParameter = javaMethod.getParameters()[i];
+
+                    separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
                 }
             }
 
@@ -1931,15 +2037,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 if ( javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
                 {
-                    if ( !addSeparator )
-                    {
-                        addSeparator( sb, indent );
-                        addSeparator = true;
-                    }
-
-                    sb.append( indent ).append( " * @" ).append( RETURN_TAG ).append( " " );
-                    sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
-                    sb.append( EOL );
+                    separatorAdded = appendDefaultReturnTag( sb, indent, separatorAdded, javaMethod );
                 }
             }
 
@@ -1949,42 +2047,15 @@ public abstract class AbstractFixJavadocMojo
                 {
                     Type exception = javaMethod.getExceptions()[i];
 
-                    if ( !addSeparator )
-                    {
-                        addSeparator( sb, indent );
-                        addSeparator = true;
-                    }
-
-                    sb.append( indent ).append( " * @" ).append( THROWS_TAG ).append( " " );
-                    sb.append( getDefaultJavadocForType( exception ) );
-                    sb.append( " if any" );
-                    sb.append( EOL );
+                    separatorAdded = appendDefaultThrowsTag( sb, indent, separatorAdded, exception );
                 }
             }
         }
-
-        if ( !isJavaMethod )
+        else
         {
-            if ( fixTag( AUTHOR_TAG ) )
-            {
-                if ( !addSeparator )
-                {
-                    addSeparator( sb, indent );
-                    addSeparator = true;
-                }
+            separatorAdded = appendDefaultAuthorTag( sb, indent, separatorAdded );
 
-                addDefaultAuthor( sb, indent );
-            }
-            if ( fixTag( VERSION_TAG ) )
-            {
-                if ( !addSeparator )
-                {
-                    addSeparator( sb, indent );
-                    addSeparator = true;
-                }
-
-                addDefaultVersion( sb, indent );
-            }
+            separatorAdded = appendDefaultVersionTag( sb, indent, separatorAdded );
         }
 
         if ( fixTag( SINCE_TAG ) )
@@ -1997,24 +2068,13 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( isNewClassFromLastVersion( javaClass ) )
                     {
-                        if ( !addSeparator )
-                        {
-                            addSeparator( sb, indent );
-                            addSeparator = true;
-                        }
-
-                        addDefaultSince( sb, indent );
+                        separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
                     }
                 }
                 else
                 {
-                    if ( !addSeparator )
-                    {
-                        addSeparator( sb, indent );
-                        addSeparator = true;
-                    }
+                    separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
 
-                    addDefaultSince( sb, indent );
                     addSinceClasses( javaClass );
                 }
             }
@@ -2026,26 +2086,14 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( isNewMethodFromLastRevision( javaMethod ) )
                     {
-                        if ( !addSeparator )
-                        {
-                            addSeparator( sb, indent );
-                            addSeparator = true;
-                        }
-
-                        addDefaultSince( sb, indent );
+                        separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
                     }
                 }
                 else
                 {
                     if ( sinceClasses != null && !sinceClassesContains( javaMethod.getParentClass() ) )
                     {
-                        if ( !addSeparator )
-                        {
-                            addSeparator( sb, indent );
-                            addSeparator = true;
-                        }
-
-                        addDefaultSince( sb, indent );
+                        separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
                     }
                 }
             }
@@ -2055,9 +2103,37 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb not null
      * @param indent not null
+     * @param separatorAdded
+     * @return true if separator has been added.
      */
-    private void addDefaultAuthor( final StringBuffer sb, final String indent )
+    private boolean appendDefaultAuthorTag( final StringBuffer sb, final String indent, boolean separatorAdded )
     {
+        if ( !fixTag( AUTHOR_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultAuthorTag( sb, indent );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     */
+    private void appendDefaultAuthorTag( final StringBuffer sb, final String indent )
+    {
+        if ( !fixTag( AUTHOR_TAG ) )
+        {
+            return;
+        }
+
         sb.append( indent ).append( " * @" ).append( AUTHOR_TAG ).append( " " );
         sb.append( defaultAuthor );
         sb.append( EOL );
@@ -2066,9 +2142,37 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb not null
      * @param indent not null
+     * @param separatorAdded
+     * @return true if separator has been added.
      */
-    private void addDefaultSince( final StringBuffer sb, final String indent )
+    private boolean appendDefaultSinceTag( final StringBuffer sb, final String indent, boolean separatorAdded )
     {
+        if ( !fixTag( SINCE_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultSinceTag( sb, indent );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     */
+    private void appendDefaultSinceTag( final StringBuffer sb, final String indent )
+    {
+        if ( !fixTag( SINCE_TAG ) )
+        {
+            return;
+        }
+
         sb.append( indent ).append( " * @" ).append( SINCE_TAG ).append( " " );
         sb.append( defaultSince );
         sb.append( EOL );
@@ -2077,9 +2181,37 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb not null
      * @param indent not null
+     * @param separatorAdded
+     * @return true if separator has been added.
      */
-    private void addDefaultVersion( final StringBuffer sb, final String indent )
+    private boolean appendDefaultVersionTag( final StringBuffer sb, final String indent, boolean separatorAdded )
     {
+        if ( !fixTag( VERSION_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultVersionTag( sb, indent );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     */
+    private void appendDefaultVersionTag( final StringBuffer sb, final String indent )
+    {
+        if ( !fixTag( VERSION_TAG ) )
+        {
+            return;
+        }
+
         sb.append( indent ).append( " * @" ).append( VERSION_TAG ).append( " " );
         sb.append( defaultVersion );
         sb.append( EOL );
@@ -2088,8 +2220,138 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb not null
      * @param indent not null
+     * @param separatorAdded
+     * @param javaParameter not null
+     * @return true if separator has been added.
      */
-    private void addSeparator( final StringBuffer sb, final String indent )
+    private boolean appendDefaultParamTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+                                           final JavaParameter javaParameter )
+    {
+        if ( !fixTag( PARAM_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultParamTag( sb, indent, javaParameter );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param javaParameter not null
+     */
+    private void appendDefaultParamTag( final StringBuffer sb, final String indent,
+                                        final JavaParameter javaParameter )
+    {
+        if ( !fixTag( PARAM_TAG ) )
+        {
+            return;
+        }
+
+        sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
+        sb.append( javaParameter.getName() );
+        sb.append( " " );
+        sb.append( getDefaultJavadocForType( javaParameter.getType() ) );
+        sb.append( EOL );
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param separatorAdded
+     * @param javaMethod not null
+     * @return true if separator has been added.
+     */
+    private boolean appendDefaultReturnTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+                                            final JavaMethod javaMethod )
+    {
+        if ( !fixTag( RETURN_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultReturnTag( sb, indent, javaMethod );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param javaMethod not null
+     */
+    private void appendDefaultReturnTag( final StringBuffer sb, final String indent, final JavaMethod javaMethod )
+    {
+        if ( !fixTag( RETURN_TAG ) )
+        {
+            return;
+        }
+
+        sb.append( indent ).append( " * @" ).append( RETURN_TAG ).append( " " );
+        sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
+        sb.append( EOL );
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param separatorAdded
+     * @param exception not null
+     * @return true if separator has been added.
+     */
+    private boolean appendDefaultThrowsTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+                                            final Type exception )
+    {
+        if ( !fixTag( THROWS_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultThrowsTag( sb, indent, exception );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param exception not null
+     */
+    private void appendDefaultThrowsTag( final StringBuffer sb, final String indent, final Type exception )
+    {
+        if ( !fixTag( THROWS_TAG ) )
+        {
+            return;
+        }
+
+        sb.append( indent ).append( " * @" ).append( THROWS_TAG ).append( " " );
+        sb.append( exception.getJavaClass().getFullyQualifiedName() );
+        sb.append( " if any." );
+        sb.append( EOL );
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     */
+    private void appendSeparator( final StringBuffer sb, final String indent )
     {
         sb.append( indent ).append( " *" );
         sb.append( EOL );
@@ -2235,39 +2497,44 @@ public abstract class AbstractFixJavadocMojo
 
         if ( type.isPrimitive() )
         {
-            sb.append( "a " );
+            if ( type.isArray() )
+            {
+                sb.append( "an array of " );
+            }
+            else
+            {
+                sb.append( "a " );
+            }
             sb.append( type.getJavaClass().getFullyQualifiedName() );
             sb.append( "." );
+            return sb.toString();
         }
-        else if ( type.isArray() )
+
+        StringBuffer javadocLink = new StringBuffer();
+        try
+        {
+            getClass( type.getJavaClass(), project );
+
+            javadocLink.append( "{@link " );
+            String s = type.getJavaClass().getFullyQualifiedName();
+            s = StringUtils.replace( s, "$", "." );
+            javadocLink.append( s );
+            javadocLink.append( "}" );
+        }
+        catch ( Exception e )
+        {
+            javadocLink.append( type.getJavaClass().getFullyQualifiedName() );
+        }
+
+        if ( type.isArray() )
         {
             sb.append( "an array of " );
-            sb.append( type.getJavaClass().getFullyQualifiedName() );
-            sb.append( "." );
+            sb.append( javadocLink.toString() );
+            sb.append( " objects." );
         }
         else
         {
-            try
-            {
-                Class clazz = getClass( type.getJavaClass(), project );
-
-                if ( Exception.class.isAssignableFrom( clazz ) )
-                {
-                    sb.append( type.getJavaClass().getFullyQualifiedName() );
-                }
-                else
-                {
-                    sb.append( "a {@link " );
-                    String s = type.getJavaClass().getFullyQualifiedName();
-                    s = StringUtils.replace( s, "$", "." );
-                    sb.append( s );
-                    sb.append( "} object." );
-                }
-            }
-            catch ( Exception e )
-            {
-                sb.append( type.getJavaClass().getFullyQualifiedName() );
-            }
+            sb.append( "a " ).append( javadocLink.toString() ).append( " object." );
         }
 
         return sb.toString();
@@ -2470,8 +2737,52 @@ public abstract class AbstractFixJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
-     * @param javaClass
-     * @return
+     * @param javaFile not null
+     * @param encoding not null
+     * @return the content of javaFile using the wanted encoding.
+     * @throws IOException if any
+     */
+    private static String readFile( File javaFile, String encoding )
+        throws IOException
+    {
+        Reader fileReader = null;
+        try
+        {
+            fileReader = ReaderFactory.newReader( javaFile, encoding );
+            return StringUtils.unifyLineSeparators( IOUtil.toString( fileReader ) );
+        }
+        finally
+        {
+            IOUtil.close( fileReader );
+        }
+    }
+
+    /**
+     * @param javaFile not null
+     * @param encoding not null
+     * @param content not null
+     * @throws IOException if any
+     */
+    private static void writeFile( File javaFile, String encoding, String content )
+        throws IOException
+    {
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newWriter( javaFile, encoding );
+            writer.write( content );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+    }
+
+    /**
+     * Default comment for class.
+     *
+     * @param javaClass not null
+     * @return a default comment for class.
      */
     private static String getDefaultClassJavadocComment( JavaClass javaClass )
     {
@@ -2500,10 +2811,10 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Take care of getter/setter in the javaMethod.getName()
+     * Default comment for method with taking care of getter/setter in the javaMethod name.
      *
-     * @param javaMethod
-     * @return
+     * @param javaMethod not null
+     * @return a default comment for method.
      */
     private static String getDefaultMethodJavadocComment( JavaMethod javaMethod )
     {
@@ -2555,7 +2866,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param javaClassContent original class content not null
      * @param entity not null
-     * @return the javadoc comment for the entity without Javadoc tags.
+     * @return the javadoc comment for the entity without any tags.
      * @throws IOException if any
      */
     private static String getJavadocComment( String javaClassContent, AbstractJavaEntity entity )
@@ -2671,35 +2982,33 @@ public abstract class AbstractFixJavadocMojo
         {
             return originalJavadocLines[0];
         }
+
+        // Note: docletTag.getValue() removes duplicate whitespace
         String[] docletTagLines = getLines( docletTag.getValue() );
 
         StringBuffer sb = new StringBuffer();
-
-        boolean intag = false;
-        for ( int i = 0; i < originalJavadocLines.length; i++ )
+        for ( int i = 0; i < docletTagLines.length; i++ )
         {
-            String line = originalJavadocLines[i];
-
-            if ( intag )
+            boolean found = false;
+            for ( int j = 0; j < originalJavadocLines.length; j++ )
             {
-                Matcher matcher = JAVADOC_TAG_LINE_PATTERN.matcher( line );
-                if ( matcher.find() || line.indexOf( END_JAVADOC ) != -1 )
+                String line = originalJavadocLines[j];
+
+                if ( line.indexOf( "@" + docletTag.getName() ) != -1 )
                 {
-                    break;
+                    found = true;
                 }
-                sb.append( line );
-                sb.append( EOL );
-            }
-
-            if ( !intag
-                && line.indexOf( "@" + docletTag.getName() ) != -1
-                && StringUtils.removeDuplicateWhitespace( line )
-                              .endsWith( StringUtils.removeDuplicateWhitespace( docletTagLines[0] ) ) )
-            {
-                intag = true;
-
-                sb.append( line );
-                sb.append( EOL );
+                if ( found
+                    && StringUtils.removeDuplicateWhitespace( line ).trim()
+                                  .endsWith( StringUtils.removeDuplicateWhitespace( docletTagLines[i] ).trim() ) )
+                {
+                    sb.append( line );
+                    sb.append( EOL );
+                    if ( docletTag.getParameters().length == 1 )
+                    {
+                        break;
+                    }
+                }
             }
         }
 
@@ -2995,6 +3304,137 @@ public abstract class AbstractFixJavadocMojo
         public Map getNewMethods()
         {
             return clirrNewMethods;
+        }
+    }
+
+    /**
+     * Wrapper class for the entity's tags.
+     */
+    private class JavaEntityTags
+    {
+        private final AbstractInheritableJavaEntity entity;
+
+        private final boolean isJavaMethod;
+
+        /** List of tag names. */
+        private List namesTags;
+
+        /** Map with java parameter as key and original Javadoc lines as values. */
+        private Map tagParams;
+
+        /** Original javadoc lines. */
+        private String tagReturn;
+
+        /** Map with java throw as key and original Javadoc lines as values. */
+        private Map tagThrows;
+
+        /** Original javadoc lines for unknown tags. */
+        private List unknownsTags;
+
+        public JavaEntityTags( AbstractInheritableJavaEntity entity, boolean isJavaMethod )
+        {
+            this.entity = entity;
+            this.isJavaMethod = isJavaMethod;
+            this.namesTags = new LinkedList();
+            this.tagParams = new LinkedHashMap();
+            this.tagThrows = new LinkedHashMap();
+            this.unknownsTags = new LinkedList();
+        }
+
+        public List getNamesTags()
+        {
+            return namesTags;
+        }
+
+        public String getJavadocReturnTag()
+        {
+            return tagReturn;
+        }
+
+        public void setJavadocReturnTag( String s )
+        {
+            tagReturn = s;
+        }
+
+        public List getUnknownTags()
+        {
+            return unknownsTags;
+        }
+
+        public void putJavadocParamTag( String paramName, String originalJavadocTag )
+        {
+            tagParams.put( paramName, originalJavadocTag );
+        }
+
+        public String getJavadocParamTag( String paramName )
+        {
+            return getJavadocParamTag( paramName, false );
+        }
+
+        public String getJavadocParamTag( String paramName, boolean nullable )
+        {
+            String originalJavadocTag = (String) tagParams.get( paramName );
+            if ( !nullable && originalJavadocTag == null && getLog().isWarnEnabled() )
+            {
+                getLog().warn( getMessage( paramName, "javaEntityTags.tagParams" ) );
+            }
+
+            return originalJavadocTag;
+        }
+
+        public void putJavadocThrowsTag( String paramName, String originalJavadocTag )
+        {
+            tagThrows.put( paramName, originalJavadocTag );
+        }
+
+        public String getJavadocThrowsTag( String paramName )
+        {
+            return getJavadocThrowsTag( paramName, false );
+        }
+
+        public String getJavadocThrowsTag( String paramName, boolean nullable )
+        {
+            String originalJavadocTag = (String) tagThrows.get( paramName );
+            if ( !nullable && originalJavadocTag == null && getLog().isWarnEnabled() )
+            {
+                getLog().warn( getMessage( paramName, "javaEntityTags.tagThrows" ) );
+            }
+
+            return originalJavadocTag;
+        }
+
+        private String getMessage( String paramName, String mapName )
+        {
+            StringBuffer msg = new StringBuffer();
+            msg.append( "No param '" ).append( paramName );
+            msg.append( "' key found in " + mapName + " for the entity: " );
+            if ( isJavaMethod )
+            {
+                JavaMethod javaMethod = (JavaMethod) entity;
+                msg.append( javaMethod.getParentClass().getFullyQualifiedName() );
+                msg.append( "#" ).append( javaMethod.getCallSignature() );
+            }
+            else
+            {
+                JavaClass javaClass = (JavaClass) entity;
+                msg.append( javaClass.getFullyQualifiedName() );
+            }
+
+            return msg.toString();
+        }
+
+        /** {@inheritDoc} */
+        public String toString()
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append( "namesTags=" ).append( namesTags ).append( "\n" );
+            sb.append( "tagParams=" ).append( tagParams ).append( "\n" );
+            sb.append( "tagReturn=" ).append( tagReturn ).append( "\n" );
+            sb.append( "tagThrows=" ).append( tagThrows ).append( "\n" );
+            sb.append( "unknownsTags=" ).append( unknownsTags ).append( "\n" );
+
+            return sb.toString();
         }
     }
 }
