@@ -23,8 +23,6 @@ import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * @version $Id$
@@ -50,10 +48,14 @@ public abstract class AbstractDeployMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
-    
-    public abstract void execute() 
-        throws MojoExecutionException, MojoFailureException;
-    
+
+    /**
+     * Parameter used to update the metadata to make the artifact as release.
+     * 
+     * @parameter expression="${updateReleaseInfo}" default-value="false"
+     */
+    protected boolean updateReleaseInfo;
+
     /* Setters and Getters */
 
     public ArtifactDeployer getDeployer()
