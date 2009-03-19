@@ -247,6 +247,11 @@ public class InstallFileMojo
             }
         }
 
+        if ( updateReleaseInfo )
+        {
+            artifact.setRelease( true );
+        }
+
         // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id,
         // we don't
         try
