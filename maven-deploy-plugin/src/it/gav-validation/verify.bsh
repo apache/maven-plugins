@@ -1,0 +1,19 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/deploy/gv",
+};
+
+for ( String path : paths )
+{
+    File file = new File( new File( basedir, "target/repo" ), path );
+    System.out.println( "Checking for absence of " + file );
+    if ( file.exists() )
+    {
+        throw new Exception( "Existing: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
