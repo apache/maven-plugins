@@ -55,13 +55,6 @@ public class InstallMojo
     private File pomFile;
 
     /**
-     * Whether to update the metadata to make the artifact a release version.
-     *
-     * @parameter expression="${updateReleaseInfo}" default-value="false"
-     */
-    private boolean updateReleaseInfo;
-
-    /**
      * @parameter expression="${project.artifact}"
      * @required
      * @readonly

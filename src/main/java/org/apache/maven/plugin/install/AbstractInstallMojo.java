@@ -71,6 +71,13 @@ public abstract class AbstractInstallMojo
     protected boolean createChecksum;
 
     /**
+     * Whether to update the metadata to make the artifact a release version.
+     *
+     * @parameter expression="${updateReleaseInfo}" default-value="false"
+     */
+    protected boolean updateReleaseInfo;
+
+    /**
      * Digester for MD5.
      *
      * @component role-hint="md5"
