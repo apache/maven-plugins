@@ -1232,13 +1232,13 @@ public abstract class AbstractFixJavadocMojo
             if ( qualifiedName.equals( String.class.getName() ) )
             {
                 StringBuffer value = new StringBuffer();
+                // QDOX-156 and QDOX-157
                 String[] lines = getLines( field.getInitializationExpression() );
                 for ( int i = 0; i < lines.length; i++ )
                 {
                     String line = lines[i];
 
                     StringTokenizer token = new StringTokenizer( line.trim(), "\"\n\r" );
-
                     while ( token.hasMoreTokens() )
                     {
                         String s = token.nextToken();
