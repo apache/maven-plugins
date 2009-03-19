@@ -243,7 +243,12 @@ public class InstallFileMojo
                 if ( Boolean.TRUE.equals( generatePom )
                     || ( generatePom == null && !getLocalRepoFile( pomMetadata ).exists() ) )
                 {
+                    getLog().debug( "Installing generated POM" );
                     artifact.addMetadata( pomMetadata );
+                }
+                else if ( generatePom == null )
+                {
+                    getLog().debug( "Skipping installation of generated POM, already present in local repository" );
                 }
             }
         }
