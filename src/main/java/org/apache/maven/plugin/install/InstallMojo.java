@@ -41,28 +41,28 @@ public class InstallMojo
     extends AbstractInstallMojo
 {
     /**
-     * @parameter expression="${project.packaging}"
+     * @parameter default-value="${project.packaging}"
      * @required
      * @readonly
      */
     protected String packaging;
 
     /**
-     * @parameter expression="${project.file}"
+     * @parameter default-value="${project.file}"
      * @required
      * @readonly
      */
     private File pomFile;
 
     /**
-     * @parameter expression="${project.artifact}"
+     * @parameter default-value="${project.artifact}"
      * @required
      * @readonly
      */
     private Artifact artifact;
 
     /**
-     * @parameter expression="${project.attachedArtifacts}
+     * @parameter default-value="${project.attachedArtifacts}
      * @required
      * @readonly
      */
