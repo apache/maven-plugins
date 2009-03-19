@@ -1,0 +1,19 @@
+import java.io.*;
+import java.util.*;
+
+String[] paths =
+{
+    "org/apache/maven/its/install/gv",
+};
+
+for ( String path : paths )
+{
+    File file = new File( localRepositoryPath, path );
+    System.out.println( "Checking for absence of " + file );
+    if ( file.exists() )
+    {
+        throw new FileNotFoundException( "Existing: " + file.getAbsolutePath() );
+    }
+}
+
+return true;
