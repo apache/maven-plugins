@@ -58,21 +58,21 @@ public class DeployMojo
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
 
     /**
-     * @parameter expression="${project.artifact}"
+     * @parameter default-value="${project.artifact}"
      * @required
      * @readonly
      */
     private Artifact artifact;
 
     /**
-     * @parameter expression="${project.packaging}"
+     * @parameter default-value="${project.packaging}"
      * @required
      * @readonly
      */
     private String packaging;
 
     /**
-     * @parameter expression="${project.file}"
+     * @parameter default-value="${project.file}"
      * @required
      * @readonly
      */
@@ -95,7 +95,7 @@ public class DeployMojo
     private String altDeploymentRepository;
     
     /**
-     * @parameter expression="${project.attachedArtifacts}
+     * @parameter default-value="${project.attachedArtifacts}
      * @required
      * @readonly
      */
