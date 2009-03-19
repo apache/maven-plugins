@@ -22,6 +22,7 @@ package org.apache.maven.plugin.changelog.stubs;
 import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.command.branch.BranchScmResult;
@@ -420,5 +421,12 @@ public class ScmProviderStub
     public boolean validateTagName( String tag )
     {
         return true;
+    }
+
+    public TagScmResult tag( ScmRepository arg0, ScmFileSet arg1, String arg2, ScmTagParameters arg3 )
+        throws ScmException
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
