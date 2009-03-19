@@ -102,13 +102,6 @@ public class DeployMojo
     private List attachedArtifacts;
 
     /**
-     * Parameter used to update the metadata to make the artifact as release.
-     * 
-     * @parameter expression="${updateReleaseInfo}" default-value="false"
-     */
-    private boolean updateReleaseInfo;
-
-    /**
      * Contextualized.
      */
     private PlexusContainer container;
