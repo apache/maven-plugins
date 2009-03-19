@@ -249,6 +249,11 @@ public class DeployFileMojo
             }
         }
 
+        if ( updateReleaseInfo )
+        {
+            artifact.setRelease( true );
+        }
+
         try
         {
             getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
