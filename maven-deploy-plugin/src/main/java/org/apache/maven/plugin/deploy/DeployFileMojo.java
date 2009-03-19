@@ -32,6 +32,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.apache.maven.project.validation.ModelValidationResult;
+import org.apache.maven.project.validation.ModelValidator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -169,7 +171,14 @@ public class DeployFileMojo
      */
     private boolean uniqueVersion;
 
-    protected void initProperties()
+    /**
+     * The component used to validate the user-supplied artifact coordinates.
+     * 
+     * @component
+     */
+    private ModelValidator modelValidator;
+
+    void initProperties()
         throws MojoExecutionException
     {
         // Process the supplied POM (if there is one)
@@ -181,30 +190,14 @@ public class DeployFileMojo
 
             processModel( model );
         }
-
-        // Verify arguments
-        if ( StringUtils.isEmpty( groupId ) )
-        {
-            throw new MojoExecutionException( "Missing group identifier, please specify -DgroupId=..." );
-        }
-        if ( StringUtils.isEmpty( artifactId ) )
-        {
-            throw new MojoExecutionException( "Missing artifact identifier, please specify -DartifactId=..." );
-        }
-        if ( StringUtils.isEmpty( version ) )
-        {
-            throw new MojoExecutionException( "Missing version, please specify -Dversion=..." );
-        }
-        if ( StringUtils.isEmpty( packaging ) )
-        {
-            throw new MojoExecutionException( "Missing packaging type, please specify -Dpackaging=..." );
-        }
     }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         initProperties();
+
+        validateArtifactInformation();
 
         if ( !file.exists() )
         {
@@ -319,7 +312,7 @@ public class DeployFileMojo
      * @return The model from the POM file, never <code>null</code>.
      * @throws MojoExecutionException If the file doesn't exist of cannot be read.
      */
-    protected Model readModel( File pomFile )
+    Model readModel( File pomFile )
         throws MojoExecutionException
     {
         Reader reader = null;
@@ -349,19 +342,13 @@ public class DeployFileMojo
     private File generatePomFile()
         throws MojoExecutionException
     {
+        Model model = generateModel();
+
         Writer fw = null;
         try
         {
-            File tempFile = File.createTempFile( "mvninstall", ".pom" );
+            File tempFile = File.createTempFile( "mvndeploy", ".pom" );
             tempFile.deleteOnExit();
-
-            Model model = new Model();
-            model.setModelVersion( "4.0.0" );
-            model.setGroupId( groupId );
-            model.setArtifactId( artifactId );
-            model.setVersion( version );
-            model.setPackaging( packaging );
-            model.setDescription( description );
 
             fw = WriterFactory.newXmlWriter( tempFile );
             new MavenXpp3Writer().write( fw, model );
@@ -376,6 +363,46 @@ public class DeployFileMojo
         {
             IOUtil.close( fw );
         }
+    }
+
+    /**
+     * Validates the user-supplied artifact information.
+     * 
+     * @throws MojoExecutionException If any artifact coordinate is invalid.
+     */
+    private void validateArtifactInformation()
+        throws MojoExecutionException
+    {
+        Model model = generateModel();
+
+        ModelValidationResult result = modelValidator.validate( model );
+
+        if ( result.getMessageCount() > 0 )
+        {
+            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
+                + result.render( "  " ) );
+        }
+    }
+
+    /**
+     * Generates a minimal model from the user-supplied artifact information.
+     * 
+     * @return The generated model, never <code>null</code>.
+     */
+    private Model generateModel()
+    {
+        Model model = new Model();
+
+        model.setModelVersion( "4.0.0" );
+
+        model.setGroupId( groupId );
+        model.setArtifactId( artifactId );
+        model.setVersion( version );
+        model.setPackaging( packaging );
+
+        model.setDescription( description );
+
+        return model;
     }
 
     void setGroupId( String groupId )
