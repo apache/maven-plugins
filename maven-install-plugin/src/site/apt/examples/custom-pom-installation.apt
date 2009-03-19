@@ -28,15 +28,11 @@
 
 Installing an artifact with a custom POM
 
-  The install plugin can include a pre-built custom POM with the artifact
+  The Maven Install Plugin can include a pre-built custom POM with the artifact
   in the local repository.  Just set the value of the <<<pomFile>>> parameter
   to the path of the custom POM.
 
 +---+
 mvn install:install-file  -Dfile=path-to-your-artifact-jar \
-                          -DgroupId=your.groupId \
-                          -DartifactId=your-artifactId \
-                          -Dversion=version \
-                          -Dpackaging=jar \
                           -DpomFile=path-to-pom
 +---+
