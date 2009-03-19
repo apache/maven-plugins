@@ -31,6 +31,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.apache.maven.project.validation.ModelValidationResult;
+import org.apache.maven.project.validation.ModelValidator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -172,6 +174,13 @@ public class InstallFileMojo
     private String localRepositoryId;
 
     /**
+     * The component used to validate the user-supplied artifact coordinates.
+     * 
+     * @component
+     */
+    private ModelValidator modelValidator;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -201,22 +210,7 @@ public class InstallFileMojo
             processModel( readModel( pomFile ) );
         }
 
-        if ( StringUtils.isEmpty( groupId ) )
-        {
-            throw new MojoExecutionException( "Missing group identifier, please specify -DgroupId=..." );
-        }
-        if ( StringUtils.isEmpty( artifactId ) )
-        {
-            throw new MojoExecutionException( "Missing artifact identifier, please specify -DartifactId=..." );
-        }
-        if ( StringUtils.isEmpty( version ) )
-        {
-            throw new MojoExecutionException( "Missing version, please specify -Dversion=..." );
-        }
-        if ( StringUtils.isEmpty( packaging ) )
-        {
-            throw new MojoExecutionException( "Missing packaging type, please specify -Dpackaging=..." );
-        }
+        validateArtifactInformation();
 
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
@@ -372,6 +366,46 @@ public class InstallFileMojo
     }
 
     /**
+     * Validates the user-supplied artifact information.
+     * 
+     * @throws MojoExecutionException If any artifact coordinate is invalid.
+     */
+    private void validateArtifactInformation()
+        throws MojoExecutionException
+    {
+        Model model = generateModel();
+
+        ModelValidationResult result = modelValidator.validate( model );
+
+        if ( result.getMessageCount() > 0 )
+        {
+            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
+                + result.render( "  " ) );
+        }
+    }
+
+    /**
+     * Generates a minimal model from the user-supplied artifact information.
+     * 
+     * @return The generated model, never <code>null</code>.
+     */
+    private Model generateModel()
+    {
+        Model model = new Model();
+
+        model.setModelVersion( "4.0.0" );
+
+        model.setGroupId( groupId );
+        model.setArtifactId( artifactId );
+        model.setVersion( version );
+        model.setPackaging( packaging );
+
+        model.setDescription( "POM was created from install:install-file" );
+
+        return model;
+    }
+
+    /**
      * Generates a (temporary) POM file from the plugin configuration. It's the responsibility of the caller to delete
      * the generated file when no longer needed.
      *
@@ -381,13 +415,7 @@ public class InstallFileMojo
     private File generatePomFile()
         throws MojoExecutionException
     {
-        Model model = new Model();
-        model.setModelVersion( "4.0.0" );
-        model.setGroupId( groupId );
-        model.setArtifactId( artifactId );
-        model.setVersion( version );
-        model.setPackaging( packaging );
-        model.setDescription( "POM was created from install:install-file" );
+        Model model = generateModel();
 
         Writer writer = null;
         try
