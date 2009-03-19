@@ -510,6 +510,20 @@ public abstract class AbstractFixJavadocMojo
         return new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
     }
 
+    /**
+     * @param javaMethod not null
+     * @return the fully qualify name of javaMethod with signature
+     */
+    protected static String getJavaMethodAsString( JavaMethod javaMethod )
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( javaMethod.getParentClass().getFullyQualifiedName() );
+        sb.append( "#" ).append( javaMethod.getCallSignature() );
+
+        return sb.toString();
+    }
+
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
@@ -1813,8 +1827,7 @@ public abstract class AbstractFixJavadocMojo
                     StringBuffer warn = new StringBuffer();
 
                     warn.append( "Fixed unknown param '" ).append( paramName ).append( "' defined in " );
-                    warn.append( javaMethod.getParentClass().getFullyQualifiedName() );
-                    warn.append( "#" ).append( javaMethod.getCallSignature() );
+                    warn.append( getJavaMethodAsString( javaMethod ) );
 
                     getLog().warn( warn.toString() );
                 }
@@ -2644,8 +2657,7 @@ public abstract class AbstractFixJavadocMojo
                     {
                         StringBuffer warn = new StringBuffer();
                         warn.append( "Not sure if " );
-                        warn.append( javaMethod.getParentClass().getFullyQualifiedName() ).append( "#" );
-                        warn.append( javaMethod.getCallSignature() );
+                        warn.append( getJavaMethodAsString( javaMethod ) );
                         warn.append( " is newer or not, it is maybe due to generics. " );
                         warn.append( "You need to manually review it." );
 
@@ -3411,8 +3423,7 @@ public abstract class AbstractFixJavadocMojo
             if ( isJavaMethod )
             {
                 JavaMethod javaMethod = (JavaMethod) entity;
-                msg.append( javaMethod.getParentClass().getFullyQualifiedName() );
-                msg.append( "#" ).append( javaMethod.getCallSignature() );
+                msg.append( getJavaMethodAsString( javaMethod ) );
             }
             else
             {
