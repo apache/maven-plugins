@@ -99,9 +99,6 @@ public class InstallFileMojoTest
 
         assignValuesForParameter( mojo );
 
-        //test harness doesn't like expressions.
-        mojo.setLocalRepositoryId( "id" );
-
         mojo.setLocalRepositoryPath( new File( getBasedir(), LOCAL_REPO ) );
 
         mojo.execute();
