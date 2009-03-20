@@ -35,7 +35,6 @@ import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -157,21 +156,13 @@ public class InstallFileMojo
     private Map repositoryLayouts;
 
     /**
-     * The path for a specific local repository directory. It will wrap into an <code>ArtifactRepository</code> with
-     * <code>localRepoId</code> as <code>id</code> and with a default <code>repositoryLayout</code>.
-     *
+     * The path for a specific local repository directory. If not specified the local repository path configured in the
+     * Maven settings will be used.
+     * 
      * @parameter expression="${localRepositoryPath}"
      * @since 2.2
      */
     private File localRepositoryPath;
-
-    /**
-     * The <code>id</code> for the <code>localRepo</code>.
-     *
-     * @parameter expression="${localRepositoryId}"
-     * @since 2.2
-     */
-    private String localRepositoryId;
 
     /**
      * The component used to validate the user-supplied artifact coordinates.
@@ -189,7 +180,7 @@ public class InstallFileMojo
         // ----------------------------------------------------------------------
         // Override the default localRepository variable
         // ----------------------------------------------------------------------
-        if ( StringUtils.isNotEmpty( localRepositoryId ) && ( localRepositoryPath != null ) )
+        if ( localRepositoryPath != null )
         {
             try
             {
@@ -197,7 +188,7 @@ public class InstallFileMojo
                 getLog().debug( "Layout: " + layout.getClass() );
 
                 localRepository =
-                    new DefaultArtifactRepository( localRepositoryId, localRepositoryPath.toURL().toString(), layout );
+                    new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(), layout );
             }
             catch ( MalformedURLException e )
             {
@@ -440,22 +431,6 @@ public class InstallFileMojo
         {
             IOUtil.close( writer );
         }
-    }
-
-    /**
-     * @return the localRepositoryId
-     */
-    public String getLocalRepositoryId()
-    {
-        return this.localRepositoryId;
-    }
-
-    /**
-     * @param theLocalRepositoryId the localRepositoryId to set
-     */
-    public void setLocalRepositoryId( String theLocalRepositoryId )
-    {
-        this.localRepositoryId = theLocalRepositoryId;
     }
 
     /**
