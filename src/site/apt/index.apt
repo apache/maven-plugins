@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  2009-03-13
+  2009-03-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -40,7 +40,7 @@ Maven Install Plugin
 
 * Goals Overview
 
-  The install plugin has 3 goals:
+  The Install Plugin has 3 goals:
 
   * {{{install-mojo.html}install:install}} is used to automatically install the
     project's main artifact (the JAR, WAR or EAR), its POM and any attached artifacts
@@ -87,5 +87,7 @@ Maven Install Plugin
   * {{{examples/update-release-info.html}Updating Release Info}}
 
   * {{{examples/specific-local-repo.html}Installing an Artifact to a Specific Local Repository Path}}
+
+  * {{{examples/installing-secondary-artifacts.html}Installing Secondary Artifacts}}
 
   []

@@ -3,7 +3,7 @@
   ------
   Vincent Siveton
   ------
-  2009-03-13
+  2009-03-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,6 +39,5 @@ mvn install:install-file  -Dfile=path-to-your-artifact-jar \
                           -DartifactId=your-artifactId \
                           -Dversion=version \
                           -Dpackaging=jar \
-                          -DpomFile=path-to-pom \
-                          -DlocalRepositoryPath=path-to-specific-local-repo \
+                          -DlocalRepositoryPath=path-to-specific-local-repo
 +---+
