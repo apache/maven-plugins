@@ -357,7 +357,7 @@ public class EclipsePluginIT
         {
             testProject( "project-31" );
 
-            // disabling this test for now. See comments in MECLIPSE-185 - Bfox
+            // TODO: disabling this test for now. See comments in MECLIPSE-185 - Bfox
             // fail("Expected to receive a MojoExecutionException");
         }
         catch ( MojoExecutionException e )
@@ -617,6 +617,17 @@ public class EclipsePluginIT
         throws Exception
     {
         testProject( "project-50-MECLIPSE-415" );
+    }    
+
+    /**
+     * [MECLIPSE-415] settings are stored in wrong directory if project is not in the workspace.
+     * 
+     * @throws Exception
+     */
+    public void testProject51MECLIPSE415()
+        throws Exception
+    {
+        testProject( "project-51-MECLIPSE-415" );
     }    
     
     public void testJeeSimple()

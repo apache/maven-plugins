@@ -26,6 +26,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <wtpversion>R7</wtpversion>
           <outputDirectory>target/eclipse-classes</outputDirectory>
           <outputDir>../../../../target/project-9-test/</outputDir>
