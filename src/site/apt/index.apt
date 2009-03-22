@@ -88,4 +88,6 @@ Maven Install Plugin
 
   * {{{examples/specific-local-repo.html}Installing an Artifact to a Specific Local Repository Path}}
 
+  * {{{examples/installing-secondary-artifacts.html}Installing Secondary Artifacts}}
+
   []
