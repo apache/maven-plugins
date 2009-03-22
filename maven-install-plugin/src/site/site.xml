@@ -33,6 +33,7 @@ under the License.
       <item name="Creating Checksums" href="examples/installing-checksums.html"/>
       <item name="Updating Release Info" href="examples/update-release-info.html"/>
       <item name="Installing to a Specific Local Repository Path" href="examples/specific-local-repo.html"/>
+      <item name="Installing Secondary Artifacts" href="examples/installing-secondary-artifacts.html"/>
     </menu>
   </body>
 </project>
