@@ -158,7 +158,7 @@ public class InstallFileMojo
     /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the
      * Maven settings will be used.
-     * 
+     *
      * @parameter expression="${localRepositoryPath}"
      * @since 2.2
      */
@@ -166,7 +166,7 @@ public class InstallFileMojo
 
     /**
      * The component used to validate the user-supplied artifact coordinates.
-     * 
+     *
      * @component
      */
     private ModelValidator modelValidator;
@@ -188,7 +188,8 @@ public class InstallFileMojo
                 getLog().debug( "Layout: " + layout.getClass() );
 
                 localRepository =
-                    new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(), layout );
+                    new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(),
+                                                   layout );
             }
             catch ( MalformedURLException e )
             {
@@ -363,7 +364,7 @@ public class InstallFileMojo
 
     /**
      * Validates the user-supplied artifact information.
-     * 
+     *
      * @throws MojoExecutionException If any artifact coordinate is invalid.
      */
     private void validateArtifactInformation()
@@ -382,7 +383,7 @@ public class InstallFileMojo
 
     /**
      * Generates a minimal model from the user-supplied artifact information.
-     * 
+     *
      * @return The generated model, never <code>null</code>.
      */
     private Model generateModel()
