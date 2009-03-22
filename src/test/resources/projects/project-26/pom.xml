@@ -34,6 +34,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <wtpversion>1.5</wtpversion>
         </configuration>
       </plugin>

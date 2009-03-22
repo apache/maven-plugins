@@ -21,6 +21,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <outputDir>../../../../target/project-18-test/</outputDir>
         </configuration>
       </plugin>

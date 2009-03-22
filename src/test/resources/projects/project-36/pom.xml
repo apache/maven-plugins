@@ -14,7 +14,7 @@
         <version>test</version>
         <configuration>
           <wtpversion>2.0</wtpversion>
-          <workspace>${basedir}</workspace>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
         </configuration>
       </plugin>
       <plugin>

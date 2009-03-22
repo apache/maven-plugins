@@ -31,6 +31,6 @@
       <attribute value="/WEB-INF/lib" name="org.eclipse.jst.component.dependency"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="lib" path="${basedir}/target/test-classes/projects/project-34/multymodule-1/refproject-sysdep.jar"/>
+  <classpathentry kind="lib" path="${basedir}/target/test-classes/projects/project-51-MECLIPSE-415/multymodule-1/refproject-sysdep.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>
