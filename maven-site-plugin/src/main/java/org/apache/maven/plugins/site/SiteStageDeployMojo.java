@@ -25,6 +25,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.CommandExecutionException;
+import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -156,6 +158,14 @@ public class SiteStageDeployMojo
             }
 
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
+
+            // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
+            //  Force group writeable
+            if ( wagon instanceof CommandExecutor )
+            {
+                CommandExecutor exec = (CommandExecutor) wagon;
+                exec.executeCommand( "chmod -Rf g+w,a+rX " + repository.getBasedir() );
+            }
         }
         catch ( ResourceDoesNotExistException e )
         {
@@ -174,6 +184,10 @@ public class SiteStageDeployMojo
             throw new MojoExecutionException( "Error uploading site", e );
         }
         catch ( AuthenticationException e )
+        {
+            throw new MojoExecutionException( "Error uploading site", e );
+        }
+        catch ( CommandExecutionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
