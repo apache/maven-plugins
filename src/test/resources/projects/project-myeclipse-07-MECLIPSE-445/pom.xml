@@ -14,7 +14,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
-          <workspace>${basedir}</workspace>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
           <wtpmanifest>true</wtpmanifest>
           <wtpapplicationxml>true</wtpapplicationxml>

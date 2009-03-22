@@ -22,6 +22,7 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>test</version>
 				<configuration>
+                    <!-- "eclipse.workspace" command line property is used -->
 					<wtpdefaultserver>6.0</wtpdefaultserver>
 					<wtpmanifest>true</wtpmanifest>
 					<wtpapplicationxml>true</wtpapplicationxml>

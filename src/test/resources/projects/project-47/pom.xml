@@ -24,6 +24,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <downloadSources>true</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
         </configuration>
