@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  2009-03-13
+  2009-03-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,6 +33,5 @@ Installing an artifact with a custom POM
   to the path of the custom POM.
 
 +---+
-mvn install:install-file  -Dfile=path-to-your-artifact-jar \
-                          -DpomFile=path-to-pom
+mvn install:install-file -Dfile=path-to-your-artifact-jar -DpomFile=path-to-pom
 +---+
