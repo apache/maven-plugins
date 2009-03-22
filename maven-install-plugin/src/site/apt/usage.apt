@@ -65,7 +65,8 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
     groupId can be considered if the groupId is not specified further for the
     current project or on the command line.
 
-  * the optional <<<classifier>>> parameter can be used to install secondary artifacts for a project,
+  * the optional <<<classifier>>> parameter can be used to
+    {{{examples/installing-secondary-artifacts.html}install secondary artifacts}} for a project,
     like a <<<javadoc>>> or <<<sources>>> JAR.  If a classifier is not given, Maven assumes the file is the main
     artifact for the project.
 
