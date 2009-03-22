@@ -34,6 +34,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
+          <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <wtpversion>R7</wtpversion>
           <outputDir>../../../../target/project-4-test/</outputDir>
           <projectnatures>

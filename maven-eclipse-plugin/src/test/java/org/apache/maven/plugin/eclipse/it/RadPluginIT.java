@@ -146,17 +146,29 @@ public class RadPluginIT
 
         assertNotNull( modulesmapsXml );
 
-        Xpp3Dom webappModule = applicationXml.getChildren( "module" )[0];
-        Xpp3Dom ejbModule = applicationXml.getChildren( "module" )[1];
-        if ( webappModule.getChild( "web" ) == null )
+        Xpp3Dom[] children = applicationXml.getChildren( "module" );
+        assertEquals( 2, children.length );
+        // The module children can be in ANY order.
+        boolean ejbVerified = false;
+        boolean warVerified = false;
+        for ( int i = 0; i < children.length; i++ )
         {
-            webappModule = applicationXml.getChildren( "module" )[1];
-            ejbModule = applicationXml.getChildren( "module" )[0];
-        }
+            Xpp3Dom child = children[i];
 
-        assertEquals( "project-rad-5_2.war", webappModule.getChild( "web" ).getChild( "web-uri" ).getValue() );
-        assertEquals( "project-rad-5_2", webappModule.getChild( "web" ).getChild( "context-root" ).getValue() );
-        assertEquals( "project-rad-5_3.jar", ejbModule.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
+            if ( child.getAttribute( "id" ).startsWith( "WebModule_" ) )
+            {
+                assertEquals( "project-rad-5_2.war", child.getChild( "web" ).getChild( "web-uri" ).getValue() );
+                assertEquals( "project-rad-5_2", child.getChild( "web" ).getChild( "context-root" ).getValue() );
+                warVerified = true;
+            }
+            else if ( child.getAttribute( "id" ).startsWith( "EjbModule_" ) )
+            {
+                assertEquals( "project-rad-5_3.jar", child.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
+                ejbVerified = true;
+            }
+        }
+        assertTrue( warVerified );
+        assertTrue( ejbVerified );
 
         Xpp3Dom websettings =
             Xpp3DomBuilder.build( new InputStreamReader(
@@ -224,17 +236,23 @@ public class RadPluginIT
         assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
                     new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
 
-        File modulemaps = new File( basedir, "project-rad-1/META-INF/.modulemaps" );
-
-        assertNotNull( modulemaps );
-
-        File application = new File( basedir, "project-rad-1/META-INF/application.xml" );
-
         Xpp3Dom applicationXml =
-            Xpp3DomBuilder.build( new InputStreamReader( new FileInputStream( application ), "UTF-8" ) );
+            Xpp3DomBuilder.build( new InputStreamReader(
+                                                         new FileInputStream(
+                                                                              new File( basedir,
+                                                                                        "project-rad-1/META-INF/application.xml" ) ),
+                                                         "UTF-8" ) );
+
+        Xpp3Dom modulesmapsXml =
+            Xpp3DomBuilder.build( new InputStreamReader(
+                                                         new FileInputStream(
+                                                                              new File( basedir,
+                                                                                        "project-rad-1/META-INF/.modulemaps" ) ),
+                                                         "UTF-8" ) );
+
+        assertNotNull( modulesmapsXml );
 
         Xpp3Dom[] children = applicationXml.getChildren( "module" );
-
         assertEquals( 2, children.length );
 
         boolean ejbVerified = false;
@@ -258,6 +276,18 @@ public class RadPluginIT
 
         assertTrue( warVerified );
         assertTrue( ejbVerified );
+        
+        Xpp3Dom websettings =
+            Xpp3DomBuilder.build( new InputStreamReader(
+                                                         new FileInputStream( new File( basedir,
+                                                                                        "project-rad-2/.websettings" ) ),
+                                                         "UTF-8" ) );
+
+        assertEquals( "project-rad-5_4.jar",
+                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "jar" ).getValue() );
+        assertEquals( "project-rad-5_4",
+                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "project" ).getValue() );
+        
     }
 
     public void testProject6()
