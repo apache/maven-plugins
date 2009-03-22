@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  2009-03-13
+  2009-03-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,7 @@
 
 Creating artifact checksums
 
-  The install plugin can create integrity checksums (MD5, SHA-1)
+  The Install Plugin can create integrity checksums (MD5, SHA-1)
   for the artifacts during installation. Checksums are cryptographic hash
   functions and are used to check the integrity of the associated file. This can be
   activated by setting the <<<createChecksum>>> parameter to <<<true>>>.
