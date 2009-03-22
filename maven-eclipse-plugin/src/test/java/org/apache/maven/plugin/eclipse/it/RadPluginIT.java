@@ -113,20 +113,6 @@ public class RadPluginIT
 
         executeMaven( pom0, props, goals );
 
-        // this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-        // .asList( new String[] {
-        // "install",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-        // new Properties(), basedir );
-        // this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-        // .asList( new String[] {
-        // "install",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-        // new Properties(), basedir );
-
-        // jar muss reincoliert sein
         assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
                     new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
 
@@ -180,114 +166,6 @@ public class RadPluginIT
                       websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "jar" ).getValue() );
         assertEquals( "project-rad-5_4",
                       websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "project" ).getValue() );
-    }
-
-    public void testProject5_2()
-        throws Exception
-    {
-        File basedir = getTestFile( "target/test-classes/projects/project-rad-5" );
-
-        FileUtils.deleteDirectory( new File( basedir, "project-rad-1/META-INF" ) );
-
-        File pom0 = new File( basedir, "pom.xml" );
-
-        MavenProject project = readProject( pom0 );
-
-        String outputDirPath =
-            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
-        File outputDir;
-
-        if ( outputDirPath == null )
-        {
-            outputDir = basedir;
-        }
-        else
-        {
-            outputDir = new File( basedir, outputDirPath );
-            outputDir.mkdirs();
-            new File( outputDir, project.getArtifactId() );
-        }
-
-        List goals = new ArrayList();
-
-        String pluginSpec = getPluginCLISpecification();
-
-        goals.add( pluginSpec + "rad-clean" );
-        goals.add( pluginSpec + "rad" );
-
-        Properties props = new Properties();
-
-        executeMaven( pom0, props, goals );
-
-        // this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-        // .asList( new String[] {
-        // "install",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-        // new Properties(), basedir );
-        //        
-        // this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-        // .asList( new String[] {
-        // "install",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-        // "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-        // new Properties(), basedir );
-
-        assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
-                    new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
-
-        Xpp3Dom applicationXml =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream(
-                                                                              new File( basedir,
-                                                                                        "project-rad-1/META-INF/application.xml" ) ),
-                                                         "UTF-8" ) );
-
-        Xpp3Dom modulesmapsXml =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream(
-                                                                              new File( basedir,
-                                                                                        "project-rad-1/META-INF/.modulemaps" ) ),
-                                                         "UTF-8" ) );
-
-        assertNotNull( modulesmapsXml );
-
-        Xpp3Dom[] children = applicationXml.getChildren( "module" );
-        assertEquals( 2, children.length );
-
-        boolean ejbVerified = false;
-        boolean warVerified = false;
-
-        for ( int i = 0; i < children.length; i++ )
-        {
-            Xpp3Dom child = children[i];
-
-            if ( child.getAttribute( "id" ).startsWith( "WebModule_" ) )
-            {
-                assertEquals( "project-rad-5_2.war", child.getChild( "web" ).getChild( "web-uri" ).getValue() );
-                warVerified = true;
-            }
-            else if ( child.getAttribute( "id" ).startsWith( "EjbModule_" ) )
-            {
-                assertEquals( "project-rad-5_3.jar", child.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
-                ejbVerified = true;
-            }
-        }
-
-        assertTrue( warVerified );
-        assertTrue( ejbVerified );
-        
-        Xpp3Dom websettings =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream( new File( basedir,
-                                                                                        "project-rad-2/.websettings" ) ),
-                                                         "UTF-8" ) );
-
-        assertEquals( "project-rad-5_4.jar",
-                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "jar" ).getValue() );
-        assertEquals( "project-rad-5_4",
-                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "project" ).getValue() );
-        
     }
 
     public void testProject6()
