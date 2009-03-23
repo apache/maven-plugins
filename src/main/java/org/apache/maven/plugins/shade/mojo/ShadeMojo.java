@@ -368,7 +368,7 @@ public class ShadeMojo
             if ( shadedArtifactAttached )
             {
                 getLog().info( "Attaching shaded artifact." );
-                projectHelper.attachArtifact( project, "jar", shadedClassifierName, outputJar );
+                projectHelper.attachArtifact( project, project.getArtifact().getType(), shadedClassifierName, outputJar );
                 if ( createSourcesJar )
                 {
                     projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
