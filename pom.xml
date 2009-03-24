@@ -73,8 +73,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
-    <doxiaSitetoolsVersion>1.0-alpha-11</doxiaSitetoolsVersion>
+    <doxiaVersion>1.0</doxiaVersion>
+    <doxiaSitetoolsVersion>1.0</doxiaSitetoolsVersion>
   </properties>
 
   <dependencies>
@@ -250,7 +250,6 @@ under the License.
     </dependency>
 
     <!-- trac dependencies -->
-
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-client</artifactId>
