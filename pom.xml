@@ -59,7 +59,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <scm>
@@ -75,6 +75,7 @@ under the License.
   <properties>
     <doxiaVersion>1.0</doxiaVersion>
     <doxiaSitetoolsVersion>1.0</doxiaSitetoolsVersion>
+    <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
   <dependencies>
@@ -82,28 +83,30 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.4</version>
+      <version>${mavenVersion}</version>
     </dependency>
+
+    <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
