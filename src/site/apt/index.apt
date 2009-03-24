@@ -46,7 +46,7 @@ Maven Changes Plugin
 
   * {{{jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from JIRA.
   
-  * {{{changes-validate-mojo.html.html}changes:changes-validate}} validate the <<<changes.xml>>> file.
+  * {{{changes-validate-mojo.html}changes:changes-validate}} validate the <<<changes.xml>>> file.
 
   []
 
