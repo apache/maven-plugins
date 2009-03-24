@@ -176,70 +176,81 @@ public class ChangesReportGenerator
 
     private void constructActions( Sink sink, List actionList, ResourceBundle bundle )
     {
-        sink.table();
-
-        sink.tableRow();
-
-        sinkHeader( sink, bundle.getString( "report.changes.label.type" ) );
-
-        sinkHeader( sink, bundle.getString( "report.changes.label.changes" ) );
-
-        sinkHeader( sink, bundle.getString( "report.changes.label.by" ) );
-
-        if ( this.isAddActionDate() )
+        if( actionList.isEmpty() )
         {
-            sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
+            sink.paragraph();
+
+            sink.text( bundle.getString("report.changes.text.no.changes") );
+
+            sink.paragraph_();
         }
-        sink.tableRow_();
-
-        for ( int idx = 0; idx < actionList.size(); idx++ )
+        else
         {
-            Action action = (Action) actionList.get( idx );
+            sink.table();
 
             sink.tableRow();
 
-            sinkShowTypeIcon( sink, action.getType() );
+            sinkHeader( sink, bundle.getString( "report.changes.label.type" ) );
 
-            sink.tableCell();
+            sinkHeader( sink, bundle.getString( "report.changes.label.changes" ) );
 
-            sink.rawText( action.getAction() );
-
-            // no null check needed classes from modello return a new ArrayList
-            if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
-            {
-                sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
-
-                String system = action.getSystem();
-                system = StringUtils.isEmpty( system ) ? DEFAULT_ISSUE_SYSTEM_KEY : system;
-                if ( !canGenerateIssueLinks( system ) )
-                {
-                    constructIssueText( action.getIssue(), sink, action.getFixedIssues() );
-                }
-                else
-                {
-                    constructIssueLink( action.getIssue(), system, sink, action.getFixedIssues() );
-                }
-                sink.text( "." );
-            }
-
-            if ( StringUtils.isNotEmpty( action.getDueTo() ) || ( !action.getDueTos().isEmpty() ) )
-            {
-                constructDueTo( sink, action, bundle, action.getDueTos() );
-            }
-
-            sink.tableCell_();
-
-            sinkCellLink( sink, action.getDev(), "team-list.html#" + action.getDev() );
+            sinkHeader( sink, bundle.getString( "report.changes.label.by" ) );
 
             if ( this.isAddActionDate() )
             {
-                sinkCell( sink, action.getDate() );
+                sinkHeader( sink, bundle.getString( "report.changes.label.date" ) );
+            }
+            sink.tableRow_();
+
+            for ( int idx = 0; idx < actionList.size(); idx++ )
+            {
+                Action action = (Action) actionList.get( idx );
+
+                sink.tableRow();
+
+                sinkShowTypeIcon( sink, action.getType() );
+
+                sink.tableCell();
+
+                sink.rawText( action.getAction() );
+
+                // no null check needed classes from modello return a new ArrayList
+                if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
+                {
+                    sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
+
+                    String system = action.getSystem();
+                    system = StringUtils.isEmpty( system ) ? DEFAULT_ISSUE_SYSTEM_KEY : system;
+                    if ( !canGenerateIssueLinks( system ) )
+                    {
+                        constructIssueText( action.getIssue(), sink, action.getFixedIssues() );
+                    }
+                    else
+                    {
+                        constructIssueLink( action.getIssue(), system, sink, action.getFixedIssues() );
+                    }
+                    sink.text( "." );
+                }
+
+                if ( StringUtils.isNotEmpty( action.getDueTo() ) || ( !action.getDueTos().isEmpty() ) )
+                {
+                    constructDueTo( sink, action, bundle, action.getDueTos() );
+                }
+
+                sink.tableCell_();
+
+                sinkCellLink( sink, action.getDev(), "team-list.html#" + action.getDev() );
+
+                if ( this.isAddActionDate() )
+                {
+                    sinkCell( sink, action.getDate() );
+                }
+
+                sink.tableRow_();
             }
 
-            sink.tableRow_();
+            sink.table_();
         }
-
-        sink.table_();
     }
 
     private void constructReleaseHistory( Sink sink, ResourceBundle bundle )
