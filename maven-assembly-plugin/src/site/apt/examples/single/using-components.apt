@@ -46,7 +46,9 @@ Using Component Descriptors
   should like this:
 
 +-----
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>appserverA</id>
   <formats>
     <format>zip</format>
@@ -68,7 +70,9 @@ Using Component Descriptors
   The assembly descriptor for appserver B distribution would then be similar:
 
 +-----
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>appserverB</id>
   <formats>
     <format>zip</format>
@@ -110,7 +114,9 @@ Using Component Descriptors
   Then the final assembly descriptor for the appserver A would be:
 
 +-----
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>appserverA</id>
   <formats>
     <format>zip</format>
@@ -132,7 +138,9 @@ Using Component Descriptors
   And the corresponding assembly descriptor for the appserver B then would be:
 
 +-----
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>appserverB</id>
   <formats>
     <format>zip</format>
