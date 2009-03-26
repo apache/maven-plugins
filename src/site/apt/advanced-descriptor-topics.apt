@@ -155,7 +155,9 @@ Advanced Assembly-Descriptor Topics
   those <<<war>>> dependencies.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <dependencySets>
     <dependencySet>
@@ -188,7 +190,9 @@ Advanced Assembly-Descriptor Topics
   classifier) from the binary jars.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <dependencySets>
     <dependencySet>
@@ -231,7 +235,9 @@ Advanced Assembly-Descriptor Topics
   expand it, then simply type <<<svn up>>>.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <fileSets>
     <fileSet>
@@ -273,7 +279,9 @@ Advanced Assembly-Descriptor Topics
   software foundation's policies.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <fileSets>
     <fileSet>
@@ -319,7 +327,9 @@ Advanced Assembly-Descriptor Topics
   part of the assembly root directory.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <baseDirectory>maven</baseDirectory>
   [...]
@@ -331,7 +341,9 @@ Advanced Assembly-Descriptor Topics
   should, just to minimize the maintenance of these files.
   
 ---
-<assembly>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
   <baseDirectory>${artifactId}</baseDirectory>
   [...]
