@@ -143,6 +143,10 @@ extends AbstractIdeSupportMojo
 
     // warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
+    
+    private static final String ASPECTJ_FILE_PATTERN = "**/*.aj";
+    
+    private static final String JAVA_FILE_PATTERN = "**/*.java"; 
 
     /**
      * Constant for 'artifactId' element in POM.xml.
@@ -1001,6 +1005,7 @@ extends AbstractIdeSupportMojo
 
         if ( wtpmanifest && isJavaProject() )
         {
+            // NOTE: This could change the config!            
             EclipseManifestWriter.addManifestResource( getLog(), config );
         }
         // NOTE: This could change the config!
@@ -1480,6 +1485,18 @@ extends AbstractIdeSupportMojo
                                     String output )
         throws MojoExecutionException
     {
+        List includes = new ArrayList();
+        // automatically include java files only: eclipse doesn't have the concept of a source only directory so it 
+        // will try to include non-java files found in maven source dirs        
+        includes.add( JAVA_FILE_PATTERN );
+        if ( ajdt ) {
+            includes.add( ASPECTJ_FILE_PATTERN );
+        }
+        String includePattern = StringUtils.join( includes.iterator(), "|" );
+        
+        List excludes = new ArrayList();       
+        String excludePattern = StringUtils.join( excludes.iterator(), "|" );
+        
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
 
@@ -1491,7 +1508,7 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, null, null, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, includePattern, excludePattern, false ) );
             }
         }
     }
@@ -1506,18 +1523,13 @@ extends AbstractIdeSupportMojo
 
             getLog().debug( "Processing resource dir: " + resource.getDirectory() );
 
-            String includePattern = null;
-            String excludePattern = null;
-
-            if ( resource.getIncludes().size() != 0 )
-            {
-                includePattern = StringUtils.join( resource.getIncludes().iterator(), "|" );
-            }
-
-            if ( resource.getExcludes().size() != 0 )
-            {
-                excludePattern = StringUtils.join( resource.getExcludes().iterator(), "|" );
-            }
+            String includePattern = StringUtils.join( resource.getIncludes().iterator(), "|" );         
+            
+            List excludes = new ArrayList( resource.getExcludes() );
+            // automatically exclude java files: eclipse doesn't have the concept of resource directory so it will
+            // try to compile any java file found in maven resource dirs
+            excludes.add( JAVA_FILE_PATTERN );
+            String excludePattern = StringUtils.join( excludes.iterator(), "|" );
 
             // TODO: figure out how to merge if the same dir is specified twice
             // with different in/exclude patterns.
@@ -1574,6 +1586,11 @@ extends AbstractIdeSupportMojo
         Xpp3Dom configuration = getAspectjConfiguration( project );
         if ( configuration != null )
         {
+            List includes = new ArrayList();
+            includes.add( JAVA_FILE_PATTERN );
+            includes.add( ASPECTJ_FILE_PATTERN) ;
+            String includePattern = StringUtils.join( includes.iterator(), "|" );   
+            
             String aspectDirectory = DEFAULT_ASPECT_DIRECTORY;
             Xpp3Dom aspectDirectoryElement = configuration.getChild( ASPECT_DIRECTORY );
             if ( aspectDirectoryElement != null )
@@ -1588,7 +1605,7 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, null, null, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, includePattern, null, false ) );
             }
 
             String testAspectDirectory = DEFAULT_TEST_ASPECT_DIRECTORY;
@@ -1605,7 +1622,7 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, null, null, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, includePattern, null, false ) );
             }
         }
     }
