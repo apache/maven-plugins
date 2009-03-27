@@ -199,4 +199,21 @@ public class EclipseSourceDir
     {
         return this.path.compareTo( ( (EclipseSourceDir) obj ).path );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString()
+    {       
+        StringBuffer buffer = new StringBuffer(); 
+        buffer.append( ( isResource ? "re" : "" ) + "source " );
+        buffer.append( path );
+        buffer.append( ": " );
+        buffer.append( "output=" ).append( output ).append( ", " );
+        buffer.append( "include=" ).append( include ).append( ", " );
+        buffer.append( "exclude=" ).append( exclude ).append( ", " );
+        buffer.append( "test=" ).append( test ).append( ", " );
+        buffer.append( "filtering=" ).append( filtering );
+        return buffer.toString();        
+    }
 }
