@@ -19,11 +19,6 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-
-import java.util.Collections;
-import java.util.List;
-
 /**
  * This plugin bundles all the test sources into a jar archive.
  *
@@ -33,28 +28,7 @@ import java.util.List;
  * @since 2.0.3
  */
 public class TestSourceJarMojo
-    extends AbstractSourceJarMojo
+    extends TestSourceJarNoForkMojo
 {
-    /** {@inheritDoc} */
-    protected List getSources( MavenProject p )
-    {
-        return p.getTestCompileSourceRoots();
-    }
 
-    /** {@inheritDoc} */
-    protected List getResources( MavenProject p )
-    {
-        if ( excludeResources )
-        {
-            return Collections.EMPTY_LIST;
-        }
-
-        return p.getTestResources();
-    }
-
-    /** {@inheritDoc} */
-    protected String getClassifier()
-    {
-        return "test-sources";
-    }
 }
