@@ -64,7 +64,6 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
-import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
@@ -926,11 +925,11 @@ public class ProcessRemoteResourcesMojo
 
                 if ( null == f || !f.exists() )
                 {
-                    throw new MavenReportException( "Cold not resolve " + set );
+                    throw new MojoExecutionException( "Cold not resolve " + set );
                 }
                 if ( !f.canRead() )
                 {
-                    throw new MavenReportException( "Supplemental data models won't be loaded. " + "File " +
+                    throw new MojoExecutionException( "Supplemental data models won't be loaded. " + "File " +
                         f.getAbsolutePath() + " cannot be read, check permissions on the file." );
                 }
 
