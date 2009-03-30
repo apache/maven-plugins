@@ -510,6 +510,27 @@ extends AbstractIdeSupportMojo
      * @parameter expression="${eclipse.ajdtVersion}" default-value="1.5"
      */
     private String ajdtVersion;
+    
+    /**
+     * List of exclusions to add to the source directories on the classpath.
+     * Adds excluding="" to the classpathentry of the eclipse .classpath file.
+     * [MECLIPSE-104]
+     * 
+     * @since 2.6.1
+     * @parameter 
+     */
+    private List sourceExcludes;
+    
+    /**
+     * List of inclusions to add to the source directories on the classpath.
+     * Adds including="" to the classpathentry of the eclipse .classpath file.
+     * Defaults to "**\/*.java"
+     * [MECLIPSE-104]
+     * 
+     * @since 2.6.1
+     * @parameter
+     */
+    private List sourceIncludes;
 
     protected final boolean isJavaProject()
     {
@@ -776,6 +797,20 @@ extends AbstractIdeSupportMojo
             pde
                 || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
+        if ( sourceIncludes == null ) {
+            sourceIncludes = new ArrayList();
+        }
+        if ( isJavaProject ) {
+            sourceIncludes.add( JAVA_FILE_PATTERN );
+        }
+        if ( ajdt ) {
+            sourceIncludes.add( ASPECTJ_FILE_PATTERN );
+        }
+
+        if ( sourceExcludes == null ) {
+            sourceExcludes = new ArrayList();
+        }
+        
         setupExtras();
 
         parseConfigurationOptions();
@@ -1485,17 +1520,8 @@ extends AbstractIdeSupportMojo
                                     String output )
         throws MojoExecutionException
     {
-        List includes = new ArrayList();
-        // automatically include java files only: eclipse doesn't have the concept of a source only directory so it 
-        // will try to include non-java files found in maven source dirs        
-        includes.add( JAVA_FILE_PATTERN );
-        if ( ajdt ) {
-            includes.add( ASPECTJ_FILE_PATTERN );
-        }
-        String includePattern = StringUtils.join( includes.iterator(), "|" );
-        
-        List excludes = new ArrayList();       
-        String excludePattern = StringUtils.join( excludes.iterator(), "|" );
+        String includePattern = StringUtils.join( sourceIncludes.iterator(), "|" );
+        String excludePattern = StringUtils.join( sourceExcludes.iterator(), "|" );
         
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
@@ -1586,10 +1612,8 @@ extends AbstractIdeSupportMojo
         Xpp3Dom configuration = getAspectjConfiguration( project );
         if ( configuration != null )
         {
-            List includes = new ArrayList();
-            includes.add( JAVA_FILE_PATTERN );
-            includes.add( ASPECTJ_FILE_PATTERN) ;
-            String includePattern = StringUtils.join( includes.iterator(), "|" );   
+            String includePattern = StringUtils.join( sourceIncludes.iterator(), "|" );
+            String excludePattern = StringUtils.join( sourceExcludes.iterator(), "|" );
             
             String aspectDirectory = DEFAULT_ASPECT_DIRECTORY;
             Xpp3Dom aspectDirectoryElement = configuration.getChild( ASPECT_DIRECTORY );
@@ -1605,7 +1629,7 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, includePattern, null, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, includePattern, excludePattern, false ) );
             }
 
             String testAspectDirectory = DEFAULT_TEST_ASPECT_DIRECTORY;
@@ -1622,7 +1646,7 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, includePattern, null, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, includePattern, excludePattern, false ) );
             }
         }
     }
