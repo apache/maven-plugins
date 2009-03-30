@@ -295,11 +295,11 @@ public abstract class AbstractAssemblyMojo
      * that will be used to reflectively setup the options on the archiver instance.
      * <br/>
      * For instance, to direct an assembly with the "ear" format to use a particular
-     * appXml file, you should specify the following for the archiverConfig value
+     * deployment descriptor, you should specify the following for the archiverConfig value
      * in your plugin configuration:
      * <br/>
      * <pre>
-     * &lt;appXml&gt;${project.basedir}/somepath/app.xml&lt;/appXml&gt;
+     * &lt;appxml&gt;${project.basedir}/somepath/app.xml&lt;/appxml&gt;
      * </pre>
      *  
      * @parameter
