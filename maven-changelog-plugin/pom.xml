@@ -128,7 +128,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <maven-scm.version>1.2-SNAPSHOT</maven-scm.version>
+    <maven-scm.version>1.2</maven-scm.version>
   </properties>
 
   <dependencies>
