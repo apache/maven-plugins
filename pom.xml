@@ -27,7 +27,7 @@ under the License.
     <version>13</version>
   </parent>
   <artifactId>maven-eclipse-plugin</artifactId>
-  <version>2.7-SNAPSHOT</version>
+  <version>2.6.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven Eclipse Plugin</name>
   <description>The Eclipse Plugin is used to generate Eclipse IDE files (.project, .classpath and the .settings folder) from a POM.</description>

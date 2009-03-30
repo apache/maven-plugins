@@ -630,6 +630,17 @@ public class EclipsePluginIT
         testProject( "project-51-MECLIPSE-415" );
     }    
     
+    /**
+     * [MECLIPSE-104] Add the ability to specify source exclusions
+     * 
+     * @throws Exception
+     */
+    public void testProject52MECLIPSE104()
+        throws Exception
+    {
+        testProject( "project-52-MECLIPSE-104" );
+    }
+
     public void testJeeSimple()
         throws Exception
     {
