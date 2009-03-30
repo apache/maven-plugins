@@ -262,15 +262,15 @@ public class JavadocJar
      * Method that creates the jar file
      *
      * @param javadocFiles the directory where the generated jar file will be put
-     * @param target the filename of the generated jar file
+     * @param jarFileName the filename of the generated jar file
      * @return a File object that contains the generated jar file
      * @throws ArchiverException if any
      * @throws IOException if any
      */
-    private File generateArchive( File javadocFiles, String target )
+    private File generateArchive( File javadocFiles, String jarFileName )
         throws ArchiverException, IOException
     {
-        File javadocJar = new File( jarOutputDirectory, target );
+        File javadocJar = new File( jarOutputDirectory, jarFileName );
 
         if ( javadocJar.exists() )
         {
