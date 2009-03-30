@@ -21,6 +21,7 @@ package org.apache.maven.plugin.eclipse;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -87,7 +88,19 @@ public class EclipsePluginUnitTest
         File pom = new File( basedir, "pom.xml" );
         project.setFile( pom );
 
-        EclipseSourceDir[] result = newMojo().buildDirectoryList( project, basedir, new File( "target/classes" ) );
+        EclipsePlugin mojo = newMojo();
+        
+        ArrayList sourceIncludes = new ArrayList();        
+        Field field = EclipsePlugin.class.getDeclaredField( "sourceIncludes" );
+        field.setAccessible( true );
+        field.set( mojo, sourceIncludes );
+        
+        ArrayList sourceExcludes = new ArrayList();
+        field = EclipsePlugin.class.getDeclaredField( "sourceExcludes" );
+        field.setAccessible( true );
+        field.set( mojo, sourceExcludes );
+        
+        EclipseSourceDir[] result = mojo.buildDirectoryList( project, basedir, new File( "target/classes" ) );
 
         assertEquals( "should have added 1 resource.", 1, result.length );
 

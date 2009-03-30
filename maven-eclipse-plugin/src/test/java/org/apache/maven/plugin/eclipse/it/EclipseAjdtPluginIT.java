@@ -92,5 +92,11 @@ public class EclipseAjdtPluginIT
     {
         testProject( "project-ajdt10-MECLIPSE-538" );
     }
+
+  public void testProjectAjdt11()
+        throws Exception
+    {
+        testProject( "project-ajdt-11-MECLIPSE-104" );
+    }
     
 }
