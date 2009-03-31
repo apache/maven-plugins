@@ -204,6 +204,9 @@ public abstract class AbstractJavadocMojo
      */
     private MavenProjectBuilder mavenProjectBuilder;
 
+    /** @component */
+    private ToolchainManager toolchainManager; 
+    
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -1935,21 +1938,9 @@ public abstract class AbstractJavadocMojo
     private Toolchain getToolchain()
     {
         Toolchain tc = null;
-        try
+        if ( toolchainManager != null )
         {
-            if ( session != null ) // session is null in tests..
-            {
-                ToolchainManager toolchainManager =
-                    (ToolchainManager) session.getContainer().lookup( ToolchainManager.ROLE );
-                if ( toolchainManager != null )
-                {
-                    tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
-                }
-            }
-        }
-        catch ( ComponentLookupException componentLookupException )
-        {
-            // just ignore, could happen in pre-3.0.9 builds..
+            tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
 
         return tc;
