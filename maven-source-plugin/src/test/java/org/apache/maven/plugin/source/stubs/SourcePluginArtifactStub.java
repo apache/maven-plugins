@@ -19,6 +19,8 @@ package org.apache.maven.plugin.source.stubs;
  * under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 /**
@@ -38,6 +40,12 @@ public class SourcePluginArtifactStub
 
     private String classifier;
 
+    private String baseVersion;
+    
+    private VersionRange versionRange;
+
+    private ArtifactHandler handler;
+
     public SourcePluginArtifactStub( String groupId, String artifactId, String version, String type, String classifier )
     {
         this.groupId = groupId;
@@ -45,6 +53,7 @@ public class SourcePluginArtifactStub
         this.version = version;
         this.type = type;
         this.classifier = classifier;
+        versionRange = VersionRange.createFromVersion( version );
     }
 
     public void setGroupId( String groupId )
@@ -114,6 +123,36 @@ public class SourcePluginArtifactStub
         id = id + version;
 
         return id;
+    }
+
+    public VersionRange getVersionRange()
+    {
+        return versionRange;
+    }
+
+    public void setVersionRange( VersionRange versionRange )
+    {
+        this.versionRange = versionRange;
+    }
+
+    public String getBaseVersion()
+    {
+        return baseVersion;
+    }
+
+    public void setBaseVersion( String baseVersion )
+    {
+        this.baseVersion = baseVersion;
+    }
+    
+    public ArtifactHandler getArtifactHandler()
+    {
+        return handler;
+    }
+
+    public void setArtifactHandler( ArtifactHandler handler )
+    {
+        this.handler = handler;
     }
 
 }
