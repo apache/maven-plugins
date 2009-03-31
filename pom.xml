@@ -221,6 +221,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
+        <version>1.0.1</version>
         <executions>
           <execution>
             <goals>
@@ -229,7 +230,7 @@ under the License.
           </execution>
         </executions>
         <configuration>
-          <version>1.0.1</version>
+          <version>1.0.0</version>
           <models>
             <model>src/main/mdo/javadocOptions.mdo</model>
           </models>
