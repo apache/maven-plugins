@@ -103,3 +103,5 @@ Maven Eclipse Plugin
   * {{{examples/multi-module-projects.html}Multi-module projects with WTP}}
       
   * {{{examples/ajdt-projects.html}AJDT projects}}  
+  
+  * {{{examples/specifying-source-path-inclusions-and-exclusions.html}Specifying source path inclusions and exclusions}}
