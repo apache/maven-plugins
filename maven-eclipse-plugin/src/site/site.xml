@@ -41,6 +41,7 @@ under the License.
       <item name="Load Code Style file" href="examples/load-code-styles.html"/>
       <item name="Configure Checkstyle" href="examples/configure-checkstyle.html"/>
       <item name="Multi-module projects with WTP" href="examples/multi-module-projects.html"/>
+      <item name="Specifying source path inclusions and exclusions" href="examples/specifying-source-path-inclusions-and-exclusions.html"/>
     </menu>
   </body>
 </project>

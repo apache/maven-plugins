@@ -524,7 +524,11 @@ extends AbstractIdeSupportMojo
     /**
      * List of inclusions to add to the source directories on the classpath.
      * Adds including="" to the classpathentry of the eclipse .classpath file.
-     * Defaults to "**\/*.java"
+     * <p>
+     * Java projects will always include "**&#47;*.java"
+     * <p>
+     * Ajdt projects will always include "**&#47;*.aj"
+     * <p>
      * [MECLIPSE-104]
      * 
      * @since 2.6.1
