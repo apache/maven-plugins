@@ -498,7 +498,7 @@ public class ProcessRemoteResourcesMojo
                 MavenProject p = null;
                 try
                 {
-                    p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository, true );
+                    p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository );
                 }
                 catch ( InvalidProjectModelException e )
                 {
