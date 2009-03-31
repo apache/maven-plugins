@@ -36,7 +36,7 @@ under the License.
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
 
   <prerequisites>
-    <maven>2.0.9</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <scm>
