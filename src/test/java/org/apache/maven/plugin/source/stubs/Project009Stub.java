@@ -78,8 +78,11 @@ public class Project009Stub
             setResources( model.getBuild().getResources() );
             setTestResources( model.getBuild().getTestResources() );
 
-            Artifact artifact =
+            SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
+            artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
+            artifact.setType( "jar" );
+            artifact.setBaseVersion( "1.0-SNAPSHOT" );
             setArtifact( artifact );
         }
         catch ( Exception e )

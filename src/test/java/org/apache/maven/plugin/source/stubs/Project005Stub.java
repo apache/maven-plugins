@@ -64,8 +64,11 @@ public class Project005Stub
             build.setDirectory( getBasedir() + "/target/test/unit/project-005/target" );
             setBuild( build );
 
-            Artifact artifact =
+            SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
+            artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
+            artifact.setType( "jar" );
+            artifact.setBaseVersion( "1.0-SNAPSHOT" );
             setArtifact( artifact );
 
         }

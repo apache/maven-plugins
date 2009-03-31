@@ -19,6 +19,9 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,6 +30,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -47,6 +51,8 @@ public abstract class AbstractSourceJarMojo
 {
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/*"};
 
+    private static final String[] DEFAULT_EXCLUDES = new String[]{};
+    
     /**
      * The Maven Project Object
      *
@@ -55,6 +61,42 @@ public abstract class AbstractSourceJarMojo
      * @required
      */
     protected MavenProject project;
+
+    /**
+     * The Jar archiver.
+     *
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
+     */
+    private JarArchiver jarArchiver;
+
+    /**
+     * The archive configuration to use.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     *
+     * @parameter
+     * @since 2.1
+     */
+    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+
+    /**
+     * Path to the default MANIFEST file to use. It will be used if
+     * <code>useDefaultManifestFile</code> is set to <code>true</code>.
+     *
+     * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+     * @required
+     * @readonly
+     * @since 2.1
+     */
+    private File defaultManifestFile;
+
+    /**
+     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
+     * <br/>
+     *
+     * @parameter default-value="false"
+     * @since 2.1
+     */
+    private boolean useDefaultManifestFile;
 
     /**
      * Specifies whether or not to attach the artifact to the project
@@ -173,7 +215,7 @@ public abstract class AbstractSourceJarMojo
             return;
         }
 
-        Archiver archiver = createArchiver();
+        MavenArchiver archiver = createArchiver();
 
         for ( Iterator i = projects.iterator(); i.hasNext(); )
         {
@@ -184,20 +226,35 @@ public abstract class AbstractSourceJarMojo
                 continue;
             }
 
-            archiveProjectContent( subProject, archiver );
+            archiveProjectContent( subProject, archiver.getArchiver() );
         }
 
+        if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
+        {
+            getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
+            archive.setManifestFile( defaultManifestFile );
+        }
+        
         File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
         try
         {
-            archiver.setDestFile( outputFile );
-            archiver.createArchive();
+            archiver.setOutputFile( outputFile );
+            archive.setAddMavenDescriptor( false );
+            archiver.createArchive( project, archive );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
         }
         catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+        }
+        catch ( ManifestException e )
         {
             throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
         }
@@ -293,11 +350,12 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected Archiver createArchiver()
+    protected MavenArchiver createArchiver()
         throws MojoExecutionException
     {
-        Archiver archiver = new JarArchiver();
-
+        MavenArchiver archiver = new MavenArchiver();
+        archiver.setArchiver( jarArchiver );
+ 
         if ( project.getBuild() != null )
         {
             List resources = project.getBuild().getResources();
@@ -308,7 +366,7 @@ public abstract class AbstractSourceJarMojo
 
                 if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
                 {
-                    addDirectory( archiver, new File( r.getDirectory() ), DEFAULT_INCLUDES, new String[]{} );
+                    addDirectory( archiver.getArchiver(), new File( r.getDirectory() ), DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
                 }
             }
         }
