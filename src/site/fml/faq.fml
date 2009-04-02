@@ -20,7 +20,10 @@ under the License.
 -->
 
 <faqs title="Frequently Asked Questions">
+
   <part id="General">
+    <title>General</title>
+
     <faq id="create_book">
       <question>Is it possible to create a book?</question>
       <answer>
@@ -41,5 +44,54 @@ under the License.
         </p>
       </answer>
     </faq>
+
+  </part>
+
+  <part id="Specific_problems">
+    <title>Specific problems</title>
+
+    <faq id="image_resolution">
+      <question>Why does my image not fit on the page?</question>
+      <answer>
+        <p>
+          This is most likely a resolution problem. Try to use an image with a higher resolution.
+          This is the only solution if you include the image from an apt source file
+          (since in apt there is no possibility to specify the size of an image), if you are using
+          xdoc, you may additionally indicate the size of the image using the width/height attributes
+          of the <code>img</code> tag.
+        </p>
+      </answer>
+    </faq>
+
+    <faq id="centered_image">
+      <question>How can I center/in-line my image?</question>
+      <answer>
+        <p>
+          If you are using apt then your images will always be block-level elements,
+          ie they will get centered in a separate paragraph.
+          Apt does not support in-line images.
+        </p>
+        <p>
+          Using xdoc you are more flexible. By default a simple <code>&lt;img&gt;</code>
+          tag can be used for an in-line image, eg:
+        </p>
+        <source><![CDATA[<p>
+  Here's a little icon: <img src="image.jpg"/> inside my text.
+</p>]]></source>
+        <p>
+          If you want your image centered you may put it explicitly inside a centered paragraph:
+        </p>
+        <source><![CDATA[<p align="center">
+  <img src="image.jpg"/>
+</p>]]></source>
+        <p>
+          or you may use the Doxia-specific class attribute in a surrounding <code>&lt;div&gt;</code> block:
+        </p>
+        <source><![CDATA[<div class="figure">
+  <img src="image.jpg"/>
+</div>]]></source>
+      </answer>
+    </faq>
+
   </part>
 </faqs>
