@@ -486,7 +486,7 @@ public class ProcessRemoteResourcesMojo
             Artifact artifact = (Artifact) it.next();
             try
             {
-                List remoteRepo = repositories;
+                List remoteRepo = null;
                 if ( artifact.isSnapshot() )
                 {
                     VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
@@ -496,6 +496,14 @@ public class ProcessRemoteResourcesMojo
                                                                          artifact.getScope(), null,
                                                                          artifact.isOptional() );
                     remoteRepo = remoteArtifactRepositories;
+                }
+                else
+                {
+                    remoteRepo =
+                        ProjectUtils.buildArtifactRepositories( repositories,
+                                                                artifactRepositoryFactory,
+                                                                mavenSession.getContainer() );
+
                 }
 
                 getLog().debug( "Building project for " + artifact );
@@ -534,6 +542,10 @@ public class ProcessRemoteResourcesMojo
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+            catch ( InvalidRepositoryException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
             }
         }
         Collections.sort( projects, new ProjectComparator() );
