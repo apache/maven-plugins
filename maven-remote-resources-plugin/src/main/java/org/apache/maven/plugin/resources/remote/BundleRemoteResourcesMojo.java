@@ -83,6 +83,15 @@ public class BundleRemoteResourcesMojo
      */
     private String[] excludes;
 
+    /**
+     * Encoding of the bundle.
+     *
+     * @since 1.1
+     * @optional
+     * @parameter expression="${project.build.sourceEncoding}"
+     */
+    private String sourceEncoding;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -95,6 +104,7 @@ public class BundleRemoteResourcesMojo
         // so that velocity can easily process any resources inside the JAR that need to be processed.
 
         RemoteResourcesBundle remoteResourcesBundle = new RemoteResourcesBundle();
+        remoteResourcesBundle.setSourceEncoding( sourceEncoding );
 
         DirectoryScanner scanner = new DirectoryScanner();
 

@@ -19,12 +19,16 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.MalformedURLException;
@@ -298,11 +302,11 @@ public class ProcessRemoteResourcesMojo
      * @readonly
      */
     private ResourceManager locator;
-    
-    
+
+
     /**
      * Scope to include. An Empty string indicates all scopes (default).
-     * 
+     *
      * @since 1.0
      * @parameter expression="${includeScope}" default-value="runtime"
      * @optional
@@ -311,16 +315,16 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
-     * 
+     *
      * @since 1.0
      * @parameter expression="${excludeScope}" default-value=""
      * @optional
      */
     protected String excludeScope;
-    
+
     /**
      * Comma separated list of Artifact names too exclude.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeArtifactIds}" default-value=""
@@ -329,7 +333,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of Artifact names to include.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${includeArtifactIds}" default-value=""
@@ -338,7 +342,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of GroupId Names to exclude.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeGroupIds}" default-value=""
@@ -347,7 +351,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Comma separated list of GroupIds to include.
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${includeGroupIds}" default-value=""
@@ -356,7 +360,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * If we should exclude transitive dependencies
-     * 
+     *
      * @since 1.0
      * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
@@ -455,7 +459,7 @@ public class ProcessRemoteResourcesMojo
         throws MojoExecutionException
     {
         List projects = new ArrayList();
-        
+
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
 
@@ -776,10 +780,30 @@ public class ProcessRemoteResourcesMojo
                         {
                             if ( doVelocity )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f ) );
+                                PrintWriter writer;
+                                if ( bundle.getSourceEncoding() == null )
+                                {
+                                    writer = new PrintWriter( new FileWriter( f ) );
+                                }
+                                else
+                                {
+                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ),
+                                                                                      bundle.getSourceEncoding() ) );
+
+                                }
+
                                 try
                                 {
-                                    velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                                    if ( bundle.getSourceEncoding() == null )
+                                    {
+                                        velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                                    }
+                                    else
+                                    {
+                                        velocity.getEngine().mergeTemplate( bundleResource, bundle.getSourceEncoding(),
+                                                                            context, writer );
+
+                                    }
                                 }
                                 finally
                                 {
@@ -799,31 +823,36 @@ public class ProcessRemoteResourcesMojo
                                                                     projectResource + ".vm" );
                             if ( appendedResourceFile.exists() )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
-                                FileReader freader = new FileReader( appendedResourceFile );
-                                BufferedReader breader = new BufferedReader( freader );
+                                final InputStream in = new FileInputStream( appendedResourceFile );
+                                final OutputStream append = new FileOutputStream( f, true );
 
                                 try
                                 {
-                                    String line = breader.readLine();
-    
-                                    while ( line != null )
-                                    {
-                                        writer.println( line );
-                                        line = breader.readLine();
-                                    }
+                                    IOUtil.copy( in, append );
                                 }
                                 finally
                                 {
-                                    IOUtil.close(writer);
-                                    IOUtil.close(breader);
+                                    IOUtil.close( in );
+                                    IOUtil.close( append );
                                 }
-                            } 
-                            else if ( appendedVmResourceFile.exists() ) 
+                            }
+                            else if ( appendedVmResourceFile.exists() )
                             {
-                                PrintWriter writer = new PrintWriter( new FileWriter( f, true ) );
+                                PrintWriter writer;
                                 FileReader freader = new FileReader( appendedVmResourceFile );
-                                try 
+
+                                if ( bundle.getSourceEncoding() == null )
+                                {
+                                    writer = new PrintWriter( new FileWriter( f, true ) );
+                                }
+                                else
+                                {
+                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f, true ),
+                                                                                      bundle.getSourceEncoding() ) );
+
+                                }
+
+                                try
                                 {
                                     Velocity.init();
                                     Velocity.evaluate( context, writer, "remote-resources", freader );
@@ -834,7 +863,7 @@ public class ProcessRemoteResourcesMojo
                                     IOUtil.close(freader);
                                 }
                             }
-                            
+
                         }
                     }
                 }

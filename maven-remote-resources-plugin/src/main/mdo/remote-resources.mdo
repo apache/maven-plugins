@@ -33,12 +33,12 @@ under the License.
   <classes>
     <class rootElement="true" xml.tagName="remoteResourcesBundle">
       <name>RemoteResourcesBundle</name>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
       <description>Root element of the remote-resources.xml file.</description>
       <fields>
         <field>
           <name>remoteResources</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <description><![CDATA[
             Remote resources that are contained in a remote resources bundle.
           ]]></description>
@@ -46,6 +46,14 @@ under the License.
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
+        </field>
+        <field>
+          <name>sourceEncoding</name>
+          <version>1.1.0</version>
+          <description><![CDATA[
+            Source encoding of the remote resources contained in the bundle.
+          ]]></description>
+          <type>String</type>
         </field>
       </fields>
     </class>
