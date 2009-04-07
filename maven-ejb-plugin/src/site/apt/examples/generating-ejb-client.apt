@@ -5,7 +5,7 @@
  <snicoll@apache.org>
  Pete Marvin King
  ------
- 2008-07-07
+ 2009-04-07
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -32,9 +32,9 @@
 Generating an EJB client
 
  Normally a thick-client application would only need the stubs and utility classes of the EJB project.
- The EJB Plugin is capable of generating an EJB jar for client use.
+ The EJB Plugin is capable of generating an EJB JAR for client use.
 
- To generate the ejb-client jar, you need to set <<<generateClient>>> to <<<true>>> in the plugin's configuration:
+ To generate the ejb-client JAR, you need to set <<<generateClient>>> to <<<true>>> in the plugin's configuration:
 
 +--------+
   [...]
