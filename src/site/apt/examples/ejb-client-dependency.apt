@@ -3,7 +3,7 @@
  ------
  Pete Marvin King
  ------
- 2008-07-07
+ 2009-04-07
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@
 Using the ejb-client as a dependency
 
  The EJB Plugin is capable of generating another artifact aside from the primary one which is EJB. To choose the EJB client
- as the dependency just specify the type as <<<ejb-client>>>.
+ as the dependency just specify the <<<type>>> as <<<ejb-client>>>.
 
 * Normal way of adding an EJB dependency
 
