@@ -5,7 +5,7 @@
  <snicoll@apache.org>
  Pete Marvin King
  ------
- 2008-07-07
+ 2009-04-07
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,7 @@ Maven EJB Plugin
 
 * Goals Overview
 
-  {{{ejb-mojo.html}ejb:ejb}} - used by Maven for projects with ejb package type.
+  {{{ejb-mojo.html}ejb:ejb}} - used by Maven for projects with <<<ejb>>> package type.
 
 * Usage
 

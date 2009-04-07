@@ -22,7 +22,7 @@ under the License.
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="How can I specify a Class-Path: entry in the manifest of an EJB jar?">
-      <question>How can I specify a Class-Path: entry in the manifest of an EJB jar?</question>
+      <question>How can I specify a Class-Path: entry in the manifest of an EJB JAR?</question>
       <answer>
         <p>
           You just have to configure it:
@@ -56,7 +56,7 @@ under the License.
      <question>How does the classifier affect artifacts in my EJB project?</question>
      <answer>
        <p>When used, the copy of the artifact in your project will have the classifier appended to its
-       filename. This can be used to differentiate duplicate artifacts.</p>
+       filename. This can be used to differentiate multiple artifacts.</p>
      </answer>
    </faq>
   </part>
