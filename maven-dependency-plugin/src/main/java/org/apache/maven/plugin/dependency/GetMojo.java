@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.dependency;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import java.util.ArrayList;
@@ -41,38 +44,38 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @goal get
  * @requiresProject false
- * 
+ *
  */
 public class GetMojo
     extends AbstractMojo
 {
-    
+
     /**
      * @component
      * @readonly
      */
     private ArtifactFactory artifactFactory;
-    
+
     /**
      * @component
      * @readonly
      */
     private ArtifactResolver artifactResolver;
-    
+
     /**
      * @component
      * @readonly
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
-    
+
     /**
      * @component
      * @readonly
      */
     private ArtifactMetadataSource source;
-    
+
     /**
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @readonly
      */
@@ -120,30 +123,30 @@ public class GetMojo
      * @readonly
      */
     private String remoteRepositories;
-    
+
     /**
      * A string of the form groupId:artifactId:version[:packaging].
      * @parameter expression="${artifact}"
      */
     private String artifact;
-    
+
     /**
-     * 
+     *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
      */
     private List pomRemoteRepositories;
-    
+
     /**
      * Download transitively, retrieving the specified artifact and all of its dependencies.
      * @parameter expression="{$transitive}" default-value=true
      */
     private boolean transitive = true;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
-    {        
+    {
 
         if ( artifactId == null && artifact == null )
             throw new MojoFailureException( "You must specify an artifact, "
@@ -196,7 +199,7 @@ public class GetMojo
             {
                 artifactResolver.resolve ( toDownload, repoList, localRepository );
             }
-            
+
         }
         catch ( AbstractArtifactResolutionException e )
         {
