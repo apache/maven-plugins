@@ -101,3 +101,28 @@ Using the PDF plugin
   The <<<meta>>> information is used for the pdf cover page, while the
   <<<toc>>> generates a Table of Contents and specifies the order of
   files to include in the pdf.
+
+* Configuration properties
+
+  All the layout properties that are used for the pdf conversion are read
+  from a default configuration file. The properties in this file may be
+  overridden by  using a custom configuration file <<<pdf-config.xml>>>
+  located in <<<src/sire/resources/>>>.
+
+  The format of this file has to be exactly the same as the original
+  {{{http://svn.apache.org/repos/asf/maven/doxia/doxia/trunk/doxia-modules/doxia-module-fo/src/main/resources/fo-styles.xslt}default configuration file}}.
+  However, you only need to specify the properties that you want to override,
+  <e.g.> to change the font size of pre-formatted text, you could use:
+
++-----
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+            xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
+
+    <xsl:attribute-set name="body.pre" use-attribute-sets="base.pre.style">
+        <xsl:attribute name="font-size">8pt</xsl:attribute>
+    </xsl:attribute-set>
+
+</xsl:stylesheet>
++-----
