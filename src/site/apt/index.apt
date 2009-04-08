@@ -46,6 +46,9 @@ Maven Dependency Plugin
   *{{{analyze-report-mojo.html}dependency:analyze-report}} analyzes the dependencies of this project and produces a report
   that summarises which are: used and declared; used and undeclared; unused and declared.
 
+  *{{{analyze-duplicate-mojo.html}dependency:analyze-duplicate}} analyzes the <dependencies/> and <dependencyManagement/>
+  tags in the pom.xml and determines the duplicate declared dependencies.
+
   *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
   Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp.
   The classpath file may also be attached and installed/deployed along with the main artifact.
