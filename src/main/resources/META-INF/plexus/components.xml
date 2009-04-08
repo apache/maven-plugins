@@ -1,6 +1,24 @@
 <component-set>
-  <components>	  
-    <!-- UnArchiver -->  
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+  <components>
+    <!-- UnArchiver -->
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>zip</role-hint>
@@ -34,21 +52,21 @@
       <!-- there is no implementation of SWCUnArchiver, but ZipUnArchive will do the job -->
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>	
+    </component>
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>nar</role-hint>
       <!-- there is no implementation of NARUnArchiver, but ZipUnArchive will do the job -->
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>  
+    </component>
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>esb</role-hint>
       <!-- there is no implementation of ESBUnArchiver, but ZipUnArchive will do the job -->
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>    
+    </component>
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>sar</role-hint>
@@ -62,14 +80,14 @@
       <!-- there is no implementation of CARUnArchiver, but ZipUnArchive will do the job -->
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>  
+    </component>
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>par</role-hint>
       <!-- there is no implementation of PARUnArchiver, but ZipUnArchive will do the job -->
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>  
+    </component>
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>rar</role-hint>
@@ -77,6 +95,6 @@
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
     </component>
-    
+
   </components>
 </component-set>
