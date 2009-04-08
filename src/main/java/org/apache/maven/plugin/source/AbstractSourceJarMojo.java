@@ -42,20 +42,44 @@ import java.util.List;
 
 /**
  * Base class for bundling sources into a jar archive.
- *
+ * 
  * @version $Id$
  * @since 2.0.3
  */
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
 {
-    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*"};
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*" };
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{};
-    
+    private static final String[] DEFAULT_EXCLUDES = new String[] {};
+
+    /**
+     * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
+     * 
+     * @parameter
+     */
+    private String[] includes;
+
+    /**
+     * List of files to exclude. Specified as fileset patterns which are relative to the input directory whose contents
+     * is being packaged into the JAR.
+     * 
+     * @parameter
+     */
+    private String[] excludes;
+
+    /**
+     * Exclude commonly excluded files such as SCM configuration. These are defined in the plexus
+     * FileUtils.getDefaultExcludes()
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useDefaultExcludes;
+
     /**
      * The Maven Project Object
-     *
+     * 
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -70,17 +94,17 @@ public abstract class AbstractSourceJarMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
-     *
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
+     * 
      * @parameter
      * @since 2.1
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * Path to the default MANIFEST file to use. It will be used if
-     * <code>useDefaultManifestFile</code> is set to <code>true</code>.
+     * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
+     * <code>true</code>.
      *
      * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
      * @required
@@ -90,8 +114,7 @@ public abstract class AbstractSourceJarMojo
     private File defaultManifestFile;
 
     /**
-     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
-     * <br/>
+     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>. <br/>
      *
      * @parameter default-value="false"
      * @since 2.1
@@ -199,7 +222,7 @@ public abstract class AbstractSourceJarMojo
     {
         if ( !"pom".equals( p.getPackaging() ) )
         {
-            packageSources( Arrays.asList( new Object[]{p} ) );
+            packageSources( Arrays.asList( new Object[] { p } ) );
         }
     }
 
@@ -234,7 +257,7 @@ public abstract class AbstractSourceJarMojo
             getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
             archive.setManifestFile( defaultManifestFile );
         }
-        
+
         File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
         try
         {
@@ -292,7 +315,7 @@ public abstract class AbstractSourceJarMojo
 
             if ( sourceDirectory.exists() )
             {
-                addDirectory( archiver, sourceDirectory, DEFAULT_INCLUDES, FileUtils.getDefaultExcludes() );
+                addDirectory( archiver, sourceDirectory, getCombinedIncludes( null ), getCombinedExcludes( null ) );
             }
         }
 
@@ -309,30 +332,12 @@ public abstract class AbstractSourceJarMojo
             }
 
             List resourceIncludes = resource.getIncludes();
-            String includes[];
-            if ( resourceIncludes == null || resourceIncludes.size() == 0 )
-            {
-                includes = DEFAULT_INCLUDES;
-            }
-            else
-            {
-                includes = (String[]) resourceIncludes.toArray( new String[resourceIncludes.size()] );
-            }
+
+            String[] combinedIncludes = getCombinedIncludes( resourceIncludes );
 
             List resourceExcludes = resource.getExcludes();
-            String[] excludes;
 
-            if ( resourceExcludes == null || resourceExcludes.size() == 0 )
-            {
-                excludes = FileUtils.getDefaultExcludes();
-            }
-            else
-            {
-                List allExcludes = new ArrayList();
-                allExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
-                allExcludes.addAll( resourceExcludes );
-                excludes = (String[]) allExcludes.toArray( new String[allExcludes.size()] );
-            }
+            String[] combinedExcludes = getCombinedExcludes( resourceExcludes );
 
             String targetPath = resource.getTargetPath();
             if ( targetPath != null )
@@ -341,11 +346,11 @@ public abstract class AbstractSourceJarMojo
                 {
                     targetPath += "/";
                 }
-                addDirectory( archiver, sourceDirectory, targetPath, includes, excludes );
+                addDirectory( archiver, sourceDirectory, targetPath, combinedIncludes, combinedExcludes );
             }
             else
             {
-                addDirectory( archiver, sourceDirectory, includes, excludes );
+                addDirectory( archiver, sourceDirectory, combinedIncludes, combinedExcludes );
             }
         }
     }
@@ -355,7 +360,7 @@ public abstract class AbstractSourceJarMojo
     {
         MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver( jarArchiver );
- 
+
         if ( project.getBuild() != null )
         {
             List resources = project.getBuild().getResources();
@@ -366,7 +371,8 @@ public abstract class AbstractSourceJarMojo
 
                 if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
                 {
-                    addDirectory( archiver.getArchiver(), new File( r.getDirectory() ), DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+                    addDirectory( archiver.getArchiver(), new File( r.getDirectory() ), getCombinedIncludes( null ),
+                                  getCombinedExcludes( null ) );
                 }
             }
         }
@@ -419,5 +425,70 @@ public abstract class AbstractSourceJarMojo
     protected String getType()
     {
         return "java-source";
+    }
+
+    /**
+     * Combines the includes parameter and additional includes. Defaults to {@link #DEFAULT_INCLUDES} If the
+     * additionalIncludes parameter is null, it is not added to the combined includes.
+     * 
+     * @param additionalIncludes The includes specified in the pom resources section
+     * @return The combined array of includes.
+     */
+    private String[] getCombinedIncludes( List additionalIncludes )
+    {
+        ArrayList combinedIncludes = new ArrayList();
+
+        if ( includes != null && includes.length > 0 )
+        {
+            combinedIncludes.addAll( Arrays.asList( includes ) );
+        }
+
+        if ( additionalIncludes != null && additionalIncludes.size() > 0 )
+        {
+            combinedIncludes.addAll( additionalIncludes );
+        }
+
+        // If there are no other includes, use the default.
+        if ( combinedIncludes.size() == 0 )
+        {
+            combinedIncludes.addAll( Arrays.asList( DEFAULT_INCLUDES ) );
+        }
+
+        return (String[]) combinedIncludes.toArray( new String[combinedIncludes.size()] );
+    }
+
+    /**
+     * Combines the user parameter {@link #excludes}, the default excludes from plexus FileUtils,
+     * and the contents of the parameter addionalExcludes.
+     * 
+     * @param additionalExcludes Additional excludes to add to the array
+     * @return The combined list of excludes.
+     */
+
+    private String[] getCombinedExcludes( List additionalExcludes )
+    {
+        ArrayList combinedExcludes = new ArrayList();
+
+        if ( useDefaultExcludes )
+        {
+            combinedExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
+        }
+
+        if ( excludes != null && excludes.length > 0 )
+        {
+            combinedExcludes.addAll( Arrays.asList( excludes ) );
+        }
+
+        if ( additionalExcludes != null && additionalExcludes.size() > 0 )
+        {
+            combinedExcludes.addAll( additionalExcludes );
+        }
+
+        if ( combinedExcludes.size() == 0 )
+        {
+            combinedExcludes.addAll( Arrays.asList( DEFAULT_EXCLUDES ) );
+        }
+
+        return (String[]) combinedExcludes.toArray( new String[combinedExcludes.size()] );
     }
 }
