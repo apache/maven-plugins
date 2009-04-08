@@ -37,10 +37,6 @@ Known Bugs and Limitations
 
   * Maven generated pages (reports) are ignored.
 
-  * Links to other source documents have to start with "./" or "../".
-
-  * Xdoc sections need to be consecutive, see {{{http://jira.codehaus.org/browse/DOXIA-241}DOXIA-241}}.
-
 * Missing features
 
   * Cover page not configurable (only title and author).
