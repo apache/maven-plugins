@@ -58,6 +58,7 @@ public abstract class AbstractSourceJarMojo
      * is being packaged into the JAR.
      * 
      * @parameter
+     * @since 2.1
      */
     private String[] includes;
 
@@ -66,6 +67,7 @@ public abstract class AbstractSourceJarMojo
      * is being packaged into the JAR.
      * 
      * @parameter
+     * @since 2.1
      */
     private String[] excludes;
 
@@ -74,6 +76,7 @@ public abstract class AbstractSourceJarMojo
      * FileUtils.getDefaultExcludes()
      * 
      * @parameter default-value="true"
+     * @since 2.1
      */
     private boolean useDefaultExcludes;
 
