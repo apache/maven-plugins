@@ -180,6 +180,16 @@ public abstract class AbstractSourceJarMojo
      */
     protected List reactorProjects;
 
+    /**
+     * Whether creating the archive should be forced.  If set to true, the jar will
+     * always be created.  If set to false, the jar will only be created when the
+     * sources are newer than the jar.
+     *
+     * @parameter expression="${source.forceCreation}" default-value="false"
+     * @since 2.1
+     */
+    private boolean forceCreation;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -256,10 +266,14 @@ public abstract class AbstractSourceJarMojo
         }
 
         File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + getExtension() );
+        
         try
         {
             archiver.setOutputFile( outputFile );
+
             archive.setAddMavenDescriptor( false );
+            archive.setForced( forceCreation );
+
             archiver.createArchive( project, archive );
         }
         catch ( IOException e )
