@@ -109,7 +109,7 @@ public abstract class AbstractSourceJarMojo
      * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
      * <code>true</code>.
      *
-     * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+     * @parameter default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
      * @required
      * @readonly
      * @since 2.1
@@ -158,11 +158,8 @@ public abstract class AbstractSourceJarMojo
 
     /**
      * The directory where the generated archive file will be put.
-     * Defaults to ${project.build.directory} specified in the pom or
-     * inherited from the super pom.
      *
-     * @parameter expression="${project.build.directory}"
-     * @required
+     * @parameter default-value="${project.build.directory}"
      */
     protected File outputDirectory;
 
@@ -170,11 +167,8 @@ public abstract class AbstractSourceJarMojo
      * The filename to be used for the generated archive file.
      * For the source:jar goal, "-sources" is appended to this filename.
      * For the source:test-jar goal, "-test-sources" is appended.
-     * Defaults to ${project.build.finalName} specified in the pom
-     * or inherited from the super pom.
      *
-     * @parameter expression="${project.build.finalName}"
-     * @required
+     * @parameter default-value="${project.build.finalName}"
      */
     protected String finalName;
 
