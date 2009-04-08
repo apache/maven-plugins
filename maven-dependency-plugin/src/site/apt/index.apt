@@ -13,15 +13,15 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Introduction
   ------
   Allan Ramirez
   Brian Fox
   ------
-  Mar 2007
+  2009-04-08
   ------
 
 Maven Dependency Plugin
@@ -34,52 +34,55 @@ Maven Dependency Plugin
 
   The Dependency plugin has several goals:
 
-  *{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in
-  the plugin configuration section and copies them to a specified location,
-  renaming them or stripping the version if desired. This goal can resolve
+  *{{{analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used
+  and declared; used and undeclared; unused and declared.
+
+  *{{{analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches
+  between resolved dependencies and those listed in your dependencyManagement section.
+
+  *{{{analyze-only-mojo.html}dependency:analyze-only}} is the same as analyze, but is meant to be bound in a pom. It
+  does not fork the build and execute test-compile.
+
+  *{{{analyze-report-mojo.html}dependency:analyze-report}} analyzes the dependencies of this project and produces a report
+  that summarises which are: used and declared; used and undeclared; unused and declared.
+
+  *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
+  Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp.
+  The classpath file may also be attached and installed/deployed along with the main artifact.
+
+  *{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in the plugin configuration section and
+  copies them to a specified location, renaming them or stripping the version if desired. This goal can resolve
   the artifacts from remote repositories if they don't exist in local.
 
-  *{{{copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the
-  list of project direct dependencies and optionally transitive dependencies and
-  copies them to a specified location, stripping the version if desired.
+  *{{{copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the list of project direct dependencies and
+  optionally transitive dependencies and copies them to a specified location, stripping the version if desired.
   This goal can also be run from the command line.
 
-  *{{{unpack-mojo.html}dependency:unpack}} like copy but unpacks.
+  *{{{get-mojo.html}dependency:get}} downloads a single artifact transitively from a specified remote repository.
+
+  *{{{go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
+  (dependencies, plugins, reports) in preparation for going offline.
+
+  *{{{list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
+
+  *{{{purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear all dependency-artifact
+  files out of the local repository, and optionally re-resolve them.
+
+  *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
+
+  *{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to resolve plugins and their dependencies.
+
+  *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments,
+  and displays the version.
+
+  *{{{tree-mojo.html}dependency:tree}} displays the dependency tree for this project.
+
+  *{{{unpack-mojo.html}dependency:unpack}} removes the project dependencies from the local repository, and optionally
+  re-resolve them.
 
   *{{{unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
   copy-dependencies but unpacks.
 
-  *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
-  
-  *{{{resolve-mojo.html}dependency:list}} is an alias for dependency:resolve
-
-  *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments, and displays the version.
-
-  *{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to
-  resolve plugins and their dependencies.
-
-  *{{{list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
-
-  *{{{go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve
-  everything this project is dependent on (dependencies, plugins, reports)
-  in preparation for going offline.
-
-  *{{{purge-local-repository-mojo.html}dependency:purge-local-repository}} tells
-  Maven to clear all dependency-artifact files out of the local repository,
-  and optionally re-resolve them.
-
-  *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
-  Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp. The
-  classpath file may also be attached and installed/deployed along with the main artifact.
-
-  *{{{analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used and declared; used and undeclared; unused and declared.
-  
-  *{{{analyze-only-mojo.html}dependency:analyze-only}} is the same as analyze, but is meant to be bound in a pom. It does not fork the build and execute test-compile.
-  
-  *{{{analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches between resolved dependencies and those listed in your dependencyManagement section.
-
-  *{{{tree-mojo.html}dependency:tree}} displays the dependency tree for this project.
-  
   []
 
 * Usage
@@ -105,7 +108,7 @@ Maven Dependency Plugin
 * Examples
 
   The following examples show how to use the dependency plugin in more advanced use-cases:
-  
+
   * {{{examples/preparing-dependencies.html}Instructions on how to prepare your dependencies for upgrade to Maven 2.0.6 / 2.1}}.
 
   * {{{examples/copying-artifacts.html}Copying Specific Artifacts}}
