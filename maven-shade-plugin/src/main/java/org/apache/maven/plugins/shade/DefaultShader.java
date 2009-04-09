@@ -302,9 +302,52 @@ public class DefaultShader
                         value = r.relocateClass( name );
                         break;
                     }
+                    if ( name.length() > 0 && name.charAt( 0 ) == '[' ) 
+                    {
+                        int count = 0;
+                        while ( name.length() > 0 && name.charAt(0) == '[' ) 
+                        {
+                            name = name.substring( 1 );
+                            ++count;
+                        }
+                        
+                        if ( name.length() > 0 
+                             && name.charAt( 0 ) == 'L'
+                             && name.charAt( name.length() - 1 ) == ';' ) 
+                        {
+                            name = name.substring( 1, name.length() - 1 );
+                                                        
+                            if ( r.canRelocatePath( name ) )
+                            {
+                                value = 'L' + r.relocatePath( name ) + ';';
+                                while ( count > 0 ) 
+                                {
+                                    value = '[' + value;
+                                    --count;
+                                }
+                                break;
+                            }
+
+                            if ( r.canRelocateClass( name ) )
+                            {
+                                value = 'L' + r.relocateClass( name ) + ';';
+                                while (count > 0) 
+                                {
+                                    value = '[' + value;
+                                    --count;
+                                }
+                                break;
+                            }
+                            
+                        }
+                    }
                 }
 
                 return value;
+            } 
+            else 
+            {
+                object = super.mapValue( object );
             }
             return object;
         }
