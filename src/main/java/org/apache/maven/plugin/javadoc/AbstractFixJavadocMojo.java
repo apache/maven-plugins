@@ -1754,13 +1754,11 @@ public abstract class AbstractFixJavadocMojo
                     for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                     {
                         String originalJavadocTag = it.next().toString();
-                        it.remove();
 
                         if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                         .indexOf( "@" + docletTag.getName() ) != -1 )
                         {
                             sb.append( originalJavadocTag );
-                            sb.append( EOL );
                         }
                     }
                 }
@@ -1770,13 +1768,11 @@ public abstract class AbstractFixJavadocMojo
                 for ( Iterator it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                 {
                     String originalJavadocTag = it.next().toString();
-                    it.remove();
 
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                     .indexOf( "@" + docletTag.getName() ) != -1 )
                     {
                         sb.append( originalJavadocTag );
-                        sb.append( EOL );
                     }
                 }
             }
