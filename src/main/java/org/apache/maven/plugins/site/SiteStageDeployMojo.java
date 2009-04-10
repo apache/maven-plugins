@@ -74,6 +74,16 @@ public class SiteStageDeployMojo
     private String stagingSiteURL;
 
     /**
+     * The identifier of the repository where the staging site will be deployed. This id will be used to lookup a
+     * corresponding <code>&lt;server&gt;</code> entry from the <code>settings.xml</code>. If a matching
+     * <code>&lt;server&gt;</code> entry is found, its configured credentials will be used for authentication.
+     * 
+     * @parameter expression="${stagingRepositoryId}" default-value="stagingSite"
+     * @since 2.0.1
+     */
+    private String stagingRepositoryId;
+
+    /**
      * @component
      */
     private WagonManager wagonManager;
@@ -88,8 +98,6 @@ public class SiteStageDeployMojo
     private Settings settings;
 
     private PlexusContainer container;
-
-    private static final String STAGING_SERVER_ID = "stagingSite";
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -116,13 +124,13 @@ public class SiteStageDeployMojo
         stagingSiteURL = getStagingSiteURL( project, reactorProjects, stagingSiteURL );
         getLog().info( "Using this URL for staging: " + stagingSiteURL );
 
-        Repository repository = new Repository( STAGING_SERVER_ID, stagingSiteURL );
+        Repository repository = new Repository( stagingRepositoryId, stagingSiteURL );
 
         Wagon wagon;
         try
         {
             wagon = wagonManager.getWagon( repository );
-            SiteDeployMojo.configureWagon( wagon, STAGING_SERVER_ID, settings, container, getLog() );
+            SiteDeployMojo.configureWagon( wagon, stagingRepositoryId, settings, container, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -150,11 +158,11 @@ public class SiteStageDeployMojo
             ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( STAGING_SERVER_ID ), proxyInfo );
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( stagingRepositoryId ), proxyInfo );
             }
             else
             {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( STAGING_SERVER_ID ) );
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( stagingRepositoryId ) );
             }
 
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
