@@ -25,7 +25,13 @@ under the License.
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="Examples" href="examples.html"/>
+    </menu>
+    <menu name="Examples">
+      <item name="Selecting Contents for Uber JAR" href="examples/includes-excludes.html"/>
+      <item name="Relocating Classes" href="examples/class-relocation.html"/>
+      <item name="Attaching the Shaded Artifact" href="examples/attached-artifact.html"/>
+      <item name="Executable JAR" href="examples/executable-jar.html"/>
+      <item name="Resource Transformers" href="examples/resource-transformers.html"/>
     </menu>
   </body>
 </project>
