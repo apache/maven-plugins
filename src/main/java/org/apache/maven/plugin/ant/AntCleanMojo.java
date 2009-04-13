@@ -26,7 +26,6 @@ import java.util.Locale;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 
 /**
@@ -42,16 +41,6 @@ public class AntCleanMojo
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
-
-    /**
-     * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     * @since 2.1.1
-     */
-    private Settings settings;
 
     /**
      * Input handler, needed for command line handling.
@@ -81,6 +70,16 @@ public class AntCleanMojo
      * @since 2.1.1
      */
     private boolean force;
+
+    /**
+     * The flag whether Maven is operating in interactive mode or in batch mode.
+     * 
+     * @parameter default-value="${settings.interactiveMode}"
+     * @required
+     * @readonly
+     * @since 2.1.1
+     */
+    private boolean interactiveMode;
 
     /** {@inheritDoc} */
     public void execute()
@@ -139,7 +138,7 @@ public class AntCleanMojo
             return true;
         }
 
-        if ( !settings.isInteractiveMode() )
+        if ( !interactiveMode )
         {
             if ( getLog().isErrorEnabled() )
             {
