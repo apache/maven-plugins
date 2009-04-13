@@ -42,7 +42,6 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.XmlWriterUtil;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -952,7 +951,7 @@ public class AntBuildWriterUtil
         {
             Object next = it.next();
 
-            Xpp3Dom pluginConf = null;
+            Object pluginConf = null;
 
             if ( next instanceof Plugin )
             {
@@ -965,7 +964,7 @@ public class AntBuildWriterUtil
                     continue;
                 }
 
-                pluginConf = (Xpp3Dom) plugin.getConfiguration();
+                pluginConf = plugin.getConfiguration();
             }
 
             if ( next instanceof ReportPlugin )
@@ -979,7 +978,7 @@ public class AntBuildWriterUtil
                     continue;
                 }
 
-                pluginConf = (Xpp3Dom) reportPlugin.getConfiguration();
+                pluginConf = reportPlugin.getConfiguration();
             }
 
             if ( pluginConf == null )
