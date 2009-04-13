@@ -1,0 +1,100 @@
+ ------
+ Resource Transformers
+ ------
+ Mauro Talevi
+ ------
+ 2008-07-21
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+Resource Transformers
+
+  Aggregating classes/resources from several artifacts into one uber JAR is straight forward as long as there is no
+  overlap. Otherwise, some kind of logic to merge resources from several JARs is required. This is where resource
+  transformers kick in.
+
+* Merging Plexus Component Descriptors
+
+  JARs for components targeting the Plexus IoC container contain a <<<META-INF/plexus/components.xml>>> entry that
+  declares the component and its requirements. If the uber JAR aggregates multiple Plexus components, a
+  <<<ComponentsXmlResourceTransformer>>> needs to be used to merge the XML descriptors:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+* Concatenating Service Entries
+
+  JAR files providing implementations of some interfaces often ship with a <<<META-INF/services/>>> directory that
+  maps interfaces to their implementation classes for lookup by the service locator. To merge multiple implementations
+  of the same interface into one service entry, the <<<ServicesResourceTransformer>>> can be used:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----

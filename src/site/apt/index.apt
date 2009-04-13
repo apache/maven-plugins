@@ -57,6 +57,16 @@ Maven Shade Plugin
 
 * Examples
 
-  To provide you with better understanding on some usages of the Shade
-  Plugin, you can take a look at the {{{examples.html}examples}} page.
+  To provide you with better understanding on some usages of the Shade Plugin, 
+  you can take a look into the following examples:
+
+  * {{{examples/includes-excludes.html}Selecting Contents for Uber JAR}}
+
+  * {{{examples/class-relocation.html}Relocating Classes}}
+
+  * {{{examples/attached-artifact.html}Attaching the Shaded Artifact}}
+
+  * {{{examples/executable-jar.html}Executable JAR}}
+
+  * {{{examples/resource-transformers.html}Resource Transformers}}
 
