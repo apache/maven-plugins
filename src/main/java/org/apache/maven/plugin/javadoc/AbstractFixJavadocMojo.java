@@ -1758,7 +1758,9 @@ public abstract class AbstractFixJavadocMojo
                         if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                         .indexOf( "@" + docletTag.getName() ) != -1 )
                         {
+                            it.remove();
                             sb.append( originalJavadocTag );
+                            sb.append( EOL );
                         }
                     }
                 }
@@ -1772,7 +1774,9 @@ public abstract class AbstractFixJavadocMojo
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                     .indexOf( "@" + docletTag.getName() ) != -1 )
                     {
+                        it.remove();
                         sb.append( originalJavadocTag );
+                        sb.append( EOL );
                     }
                 }
             }
