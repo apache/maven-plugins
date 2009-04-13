@@ -42,14 +42,9 @@ import java.util.List;
 public class AntMojo
     extends AbstractMojo
 {
-    /**
-     * The project to create a build for.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
 
     /**
      * Used for resolving artifacts.
@@ -64,6 +59,19 @@ public class AntMojo
      * @component
      */
     private ArtifactFactory factory;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * The project to create a build for.
+     *
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * The local repository where the artifacts are located.
@@ -98,9 +106,7 @@ public class AntMojo
      */
     private boolean overwrite;
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {

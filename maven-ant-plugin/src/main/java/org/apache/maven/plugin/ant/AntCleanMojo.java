@@ -39,6 +39,10 @@ import org.codehaus.plexus.components.interactivity.InputHandler;
 public class AntCleanMojo
     extends AbstractMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
     /**
      * The current user system settings for use in Maven.
      *
@@ -57,6 +61,10 @@ public class AntCleanMojo
      */
     private InputHandler inputHandler;
 
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
     /**
      * The working project.
      *
@@ -74,9 +82,7 @@ public class AntCleanMojo
      */
     private boolean force;
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
