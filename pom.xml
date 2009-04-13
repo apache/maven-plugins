@@ -83,7 +83,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.5</version>
+      <version>1.5.8</version>
     </dependency>
     <dependency>
       <groupId>ant</groupId>
@@ -99,6 +99,11 @@ under the License.
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
       <version>1.0.b2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interactivity-jline</artifactId>
+      <version>1.0-alpha-5</version>
     </dependency>
 
     <!-- test -->
