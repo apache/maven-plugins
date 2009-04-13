@@ -20,13 +20,10 @@ package org.apache.maven.plugin.ant;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Locale;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.components.interactivity.InputHandler;
 
 /**
  * Clean all Ant build files.
@@ -41,14 +38,6 @@ public class AntCleanMojo
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
-
-    /**
-     * Input handler, needed for command line handling.
-     *
-     * @component
-     * @since 2.1.1
-     */
-    private InputHandler inputHandler;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -66,26 +55,32 @@ public class AntCleanMojo
     /**
      * Forcing the deletion of the custom <code>build.xml</code>.
      *
-     * @parameter expression="${force}"
+     * @parameter expression="${deleteCustomFiles}" default-value="false"
      * @since 2.1.1
      */
-    private boolean force;
-
-    /**
-     * The flag whether Maven is operating in interactive mode or in batch mode.
-     * 
-     * @parameter default-value="${settings.interactiveMode}"
-     * @required
-     * @readonly
-     * @since 2.1.1
-     */
-    private boolean interactiveMode;
+    private boolean deleteCustomFiles;
 
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
-        deleteCustomBuild();
+        File buildXml = new File( project.getBasedir(), AntBuildWriter.DEFAULT_BUILD_FILENAME );
+        if ( buildXml.exists() )
+        {
+            if ( deleteCustomFiles )
+            {
+                if ( !buildXml.delete() )
+                {
+                    throw new MojoExecutionException( "Cannot delete " + buildXml.getAbsolutePath() );
+                }
+            }
+            else if ( getLog().isInfoEnabled() )
+            {
+                getLog().info(
+                               "Not deleting custom " + buildXml.getName()
+                                   + ", use -DdeleteCustomFiles=true to force its deletion" );
+            }
+        }
 
         File mavenBuildXml = new File( project.getBasedir(), AntBuildWriter.DEFAULT_MAVEN_BUILD_FILENAME );
         if ( mavenBuildXml.exists() && !mavenBuildXml.delete() )
@@ -101,98 +96,8 @@ public class AntCleanMojo
         }
 
         getLog().info(
-                       "Deleted Ant project for " + project.getArtifactId() + " in "
+                       "Deleted Ant build files for project " + project.getArtifactId() + " in "
                            + project.getBasedir().getAbsolutePath() );
     }
 
-    /**
-     * Deleting the <code>build.xml</code> depending the user interaction.
-     *
-     * @throws MojoExecutionException if any
-     */
-    private void deleteCustomBuild()
-        throws MojoExecutionException
-    {
-        // add warranty msg
-        if ( !preCheck() )
-        {
-            return;
-        }
-
-        File buildXml = new File( project.getBasedir(), AntBuildWriter.DEFAULT_BUILD_FILENAME );
-        if ( buildXml.exists() && !buildXml.delete() )
-        {
-            throw new MojoExecutionException( "Cannot delete " + buildXml.getAbsolutePath() );
-        }
-    }
-
-    /**
-     * @return <code>true</code> if the user wants to proceed, <code>false</code> otherwise.
-     * @throws MojoExecutionException if any
-     */
-    private boolean preCheck()
-        throws MojoExecutionException
-    {
-        if ( force )
-        {
-            return true;
-        }
-
-        if ( !interactiveMode )
-        {
-            if ( getLog().isErrorEnabled() )
-            {
-                getLog().error(
-                                "Maven is not attempt to interact with the user for input. "
-                                    + "Verify the <interactiveMode/> configuration in your settings." );
-            }
-            return false;
-        }
-
-        if ( getLog().isWarnEnabled() )
-        {
-            getLog().warn( "" );
-            getLog().warn( "    WARRANTY DISCLAIMER" );
-            getLog().warn( "" );
-            getLog().warn( "This Maven goal will delete your build.xml." );
-            getLog().warn( "" );
-        }
-
-        while ( true )
-        {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Are you sure to proceed? [Y]es [N]o" );
-            }
-
-            try
-            {
-                String userExpression = inputHandler.readLine();
-                if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "Y" )
-                    || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "Yes" ) )
-                {
-                    if ( getLog().isInfoEnabled() )
-                    {
-                        getLog().info( "OK, let's proceed..." );
-                    }
-                    break;
-                }
-                if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "N" )
-                    || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "No" ) )
-                {
-                    if ( getLog().isInfoEnabled() )
-                    {
-                        getLog().info( "No changes on the build.xml occur." );
-                    }
-                    return false;
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to read from standard input.", e );
-            }
-        }
-
-        return true;
-    }
 }
