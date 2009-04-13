@@ -1,0 +1,14 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+File buildFile = new File( basedir, "build.xml" );
+System.out.println( "Checking for existence of " + buildFile );
+if ( !buildFile.isFile() )
+{
+    throw new IllegalStateException( "Custom build.xml was deleted!" );
+}
+
+return true;
