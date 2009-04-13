@@ -45,8 +45,9 @@ public class AntMojo
     /**
      * The project to create a build for.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
 
@@ -67,22 +68,24 @@ public class AntMojo
     /**
      * The local repository where the artifacts are located.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
+     * @readonly
      */
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where artifacts are located.
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @readonly
      */
     private List remoteRepositories;
 
     /**
      * The current user system settings for use in Maven.
      *
-     * @parameter expression="${settings}"
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
