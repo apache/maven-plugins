@@ -56,7 +56,7 @@ public class AntCleanMojo
      * Forcing the deletion of the custom <code>build.xml</code>.
      *
      * @parameter expression="${deleteCustomFiles}" default-value="false"
-     * @since 2.1.1
+     * @since 2.2
      */
     private boolean deleteCustomFiles;
 
