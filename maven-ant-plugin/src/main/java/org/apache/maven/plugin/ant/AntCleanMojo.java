@@ -38,8 +38,9 @@ public class AntCleanMojo
     /**
      * The working project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
 
