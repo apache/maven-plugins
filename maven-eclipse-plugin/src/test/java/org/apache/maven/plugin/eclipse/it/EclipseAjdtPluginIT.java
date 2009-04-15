@@ -36,61 +36,61 @@ public class EclipseAjdtPluginIT
     public void testProjectAjdt01()
         throws Exception
     {
-        testProject( "project-ajdt01" );
+        testProject( "project-ajdt-01" );
     }
 
     public void testProjectAjdt02()
         throws Exception
     {
-        testProject( "project-ajdt02" );
+        testProject( "project-ajdt-02" );
     }
 
     public void testProjectAjdt03()
         throws Exception
     {
-        testProject( "project-ajdt03" );
+        testProject( "project-ajdt-03" );
     }
 
     public void testProjectAjdt04()
         throws Exception
     {
-        testProject( "project-ajdt04" );
+        testProject( "project-ajdt-04" );
     }
 
     public void testProjectAjdt05()
         throws Exception
     {
-        testProject( "project-ajdt05" );
+        testProject( "project-ajdt-05" );
     }
 
     public void testProjectAjdt06()
         throws Exception
     {
-        testProject( "project-ajdt06" );
+        testProject( "project-ajdt-06" );
     }
 
     public void testProjectAjdt07()
         throws Exception
     {
-        testProject( "project-ajdt07" );
+        testProject( "project-ajdt-07" );
     }
 
     public void testProjectAjdt08()
         throws Exception
     {
-        testProject( "project-ajdt08" );
+        testProject( "project-ajdt-08" );
     }
 
     public void testProjectAjdt09()
         throws Exception
     {
-        testProject( "project-ajdt09" );
+        testProject( "project-ajdt-09" );
     }
 
     public void testProjectAjdt10()
         throws Exception
     {
-        testProject( "project-ajdt10-MECLIPSE-538" );
+        testProject( "project-ajdt-10-MECLIPSE-538" );
     }
 
   public void testProjectAjdt11()
