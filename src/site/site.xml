@@ -34,13 +34,14 @@ under the License.
     </menu>
 
     <menu name="Examples">
-      <item name="Prevent Module References" href="examples/prevent-module-references.html"/>
-      <item name="Attach Library Sources" href="examples/attach-library-sources.html"/>
-      <item name="Provide Project Natures And Build Commands" href="examples/provide-project-natures-and-build-commands.html"/>
       <item name="Adding additional facets" href="examples/additional-facets.html"/>
-      <item name="Load Code Style file" href="examples/load-code-styles.html"/>
+      <item name="AJDT Projects" href="examples/ajdt-projects.html"/>
+      <item name="Attach Library Sources" href="examples/attach-library-sources.html"/>
       <item name="Configure Checkstyle" href="examples/configure-checkstyle.html"/>
+      <item name="Load Code Style file" href="examples/load-code-styles.html"/>
       <item name="Multi-module projects with WTP" href="examples/multi-module-projects.html"/>
+      <item name="Prevent Module References" href="examples/prevent-module-references.html"/>
+      <item name="Provide Project Natures And Build Commands" href="examples/provide-project-natures-and-build-commands.html"/>
       <item name="Specifying source path inclusions and exclusions" href="examples/specifying-source-path-inclusions-and-exclusions.html"/>
     </menu>
   </body>
