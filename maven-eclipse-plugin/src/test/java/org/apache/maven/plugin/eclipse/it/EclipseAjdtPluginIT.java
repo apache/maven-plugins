@@ -33,60 +33,60 @@ public class EclipseAjdtPluginIT
         super.setUp();
     }
 
-    public void testProjectAjdt1()
+    public void testProjectAjdt01()
         throws Exception
     {
-        testProject( "project-ajdt1" );
+        testProject( "project-ajdt01" );
     }
 
-    public void testProjectAjdt2()
+    public void testProjectAjdt02()
         throws Exception
     {
-        testProject( "project-ajdt2" );
+        testProject( "project-ajdt02" );
     }
 
-    public void testProjectAjdt3()
+    public void testProjectAjdt03()
         throws Exception
     {
-        testProject( "project-ajdt3" );
+        testProject( "project-ajdt03" );
     }
 
-    public void testProjectAjdt4()
+    public void testProjectAjdt04()
         throws Exception
     {
-        testProject( "project-ajdt4" );
+        testProject( "project-ajdt04" );
     }
 
-    public void testProjectAjdt5()
+    public void testProjectAjdt05()
         throws Exception
     {
-        testProject( "project-ajdt5" );
+        testProject( "project-ajdt05" );
     }
 
-    public void testProjectAjdt6()
+    public void testProjectAjdt06()
         throws Exception
     {
-        testProject( "project-ajdt6" );
+        testProject( "project-ajdt06" );
     }
 
-    public void testProjectAjdt7()
+    public void testProjectAjdt07()
         throws Exception
     {
-        testProject( "project-ajdt7" );
+        testProject( "project-ajdt07" );
     }
 
-    public void testProjectAjdt8()
+    public void testProjectAjdt08()
         throws Exception
     {
-        testProject( "project-ajdt8" );
+        testProject( "project-ajdt08" );
     }
 
-    public void testProjectAjdt9()
+    public void testProjectAjdt09()
         throws Exception
     {
-        testProject( "project-ajdt9" );
+        testProject( "project-ajdt09" );
     }
-    
+
     public void testProjectAjdt10()
         throws Exception
     {
@@ -98,5 +98,5 @@ public class EclipseAjdtPluginIT
     {
         testProject( "project-ajdt-11-MECLIPSE-104" );
     }
-    
+
 }
