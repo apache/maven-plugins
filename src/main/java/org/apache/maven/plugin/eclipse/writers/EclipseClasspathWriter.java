@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- * 
+ *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -56,32 +56,32 @@ public class EclipseClasspathWriter
 {
 
     /**
-     * 
+     *
      */
     private static final String ORG_ECLIPSE_AJDT_INPATH = "org.eclipse.ajdt.inpath";
 
     /**
-     * 
+     *
      */
     private static final String ORG_ECLIPSE_AJDT_ASPECTPATH = "org.eclipse.ajdt.aspectpath";
 
     /**
-     * 
+     *
      */
     private static final String NAME = "name";
 
     /**
-     * 
+     *
      */
     private static final String VALUE = "value";
 
     /**
-     * 
+     *
      */
     private static final String ATTRIBUTE = "attribute";
 
     /**
-     * 
+     *
      */
     private static final String ATTRIBUTES = "attributes";
 
@@ -397,7 +397,7 @@ public class EclipseClasspathWriter
             writer.addAttribute( ATTR_PATH, (String) it.next() );
             writer.endElement(); // name
         }
-        
+
         writer.endElement();
 
         IOUtil.close( w );
@@ -526,7 +526,7 @@ public class EclipseClasspathWriter
         }
 
         // Skip aspectj libraries since they are in the container.
-        if ( ( config.getAjdtVersion() != 0 ) && dep.getArtifactId().toLowerCase().startsWith( "aspectj" ) )
+        if ( ( config.getAjdtVersion() != 0 ) && dep.getArtifactId().toLowerCase().indexOf( "aspectj" ) >= 0 )
         {
             return;
         }
