@@ -19,6 +19,7 @@ try
         "META-INF/MANIFEST.MF",
         "MyTest.java",
         "test.properties",
+        "generated.properties",
     };
     for ( String included : includedEntries )
     {
