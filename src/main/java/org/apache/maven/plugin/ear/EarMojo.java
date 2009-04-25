@@ -86,7 +86,7 @@ public class EarMojo
      * Specify that the ear sources should be filtered.
      *
      * @parameter default-value="false"
-     * @since 2.3.2     
+     * @since 2.3.2
      */
     private boolean filtering;
 
@@ -126,9 +126,12 @@ public class EarMojo
     protected String escapeString;
 
     /**
-     * The location of the manifest file to be used within the ear file.
+     * The location of the manifest file to be used within the ear file. If
+     * not value if specified, the default location in the workDirectory is
+     * taken. If the file does not exist, a manifest will be generated
+     * automatically.
      *
-     * @parameter expression="${basedir}/src/main/application/META-INF/MANIFEST.MF"
+     * @parameter
      */
     private File manifestFile;
 
@@ -467,16 +470,19 @@ public class EarMojo
 
     private void includeCustomManifestFile()
     {
-        File customManifestFile = manifestFile;
+        if ( manifestFile == null )
+        {
+            manifestFile = new File( getWorkDirectory(), "META-INF/MANIFEST.MF" );
+        }
 
-        if ( !customManifestFile.exists() )
+        if ( !manifestFile.exists() )
         {
             getLog().info( "Could not find manifest file: " + manifestFile + " - Generating one" );
         }
         else
         {
-            getLog().info( "Including custom manifest file[" + customManifestFile + "]" );
-            archive.setManifestFile( customManifestFile );
+            getLog().info( "Including custom manifest file[" + manifestFile + "]" );
+            archive.setManifestFile( manifestFile );
         }
     }
 
