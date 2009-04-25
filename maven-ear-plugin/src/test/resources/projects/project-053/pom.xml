@@ -50,6 +50,9 @@ under the License.
           <jboss>
             <version>5</version>
             <loader-repository-config>abc</loader-repository-config>
+	        <module-order>strict</module-order>
+            <security-domain>java:/jaas/test</security-domain>
+            <unauthenticated-principal>guest</unauthenticated-principal>				    
           </jboss>
         </configuration>
       </plugin>

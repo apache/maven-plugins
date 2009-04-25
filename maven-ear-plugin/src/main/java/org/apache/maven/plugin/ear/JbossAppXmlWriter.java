@@ -81,19 +81,19 @@ final class JbossAppXmlWriter
         writer.startElement( JBOSS_APP_ELEMENT );
 
         // If JBoss 4.2 or 5.0, write the JBoss 4.2 and JBoss 5.0-compatible stuff
-        if ( jbossConfiguration.isJbossFourDotTwo() || jbossConfiguration.isJbossFive() )
+        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() )
         {
             // library-directory
             if ( jbossConfiguration.getLibraryDirectory() != null )
             {
                 writer.startElement( JbossConfiguration.LIBRARY_DIRECTORY );
-                writer.writeText ( jbossConfiguration.getLibraryDirectory() );
+                writer.writeText( jbossConfiguration.getLibraryDirectory() );
                 writer.endElement();
             }
         }
 
-        // If JBoss 4.2, write the jboss4.2 specific stuff
-        if ( jbossConfiguration.isJbossFourDotTwo() )
+        // If JBoss 4.2+, write the jboss4.2+ specific stuff
+        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() )
         {
             // module-order (only available in 4.2 and 4.3)
             if ( jbossConfiguration.getModuleOrder() != null )
@@ -105,7 +105,7 @@ final class JbossAppXmlWriter
         }
 
         // If JBoss 4, write the jboss4 specific stuff
-        if ( jbossConfiguration.isJbossFour() || jbossConfiguration.isJbossFourDotTwo() )
+        if ( jbossConfiguration.isJbossFourOrHigher() )
         {
             if ( jbossConfiguration.getSecurityDomain() != null )
             {
@@ -122,12 +122,13 @@ final class JbossAppXmlWriter
         }
 
         // classloader repository
-        if ( jbossConfiguration.getLoaderRepository() != null || jbossConfiguration.getLoaderRepositoryConfig() != null)
+        if ( jbossConfiguration.getLoaderRepository() != null ||
+            jbossConfiguration.getLoaderRepositoryConfig() != null )
         {
             writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
 
             // classloader repository class
-            if ( jbossConfiguration.getLoaderRepositoryClass() != null)
+            if ( jbossConfiguration.getLoaderRepositoryClass() != null )
             {
                 writer.addAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS_ATTRIBUTE,
                                      jbossConfiguration.getLoaderRepositoryClass() );
@@ -145,7 +146,7 @@ final class JbossAppXmlWriter
                 writer.startElement( JbossConfiguration.LOADER_REPOSITORY_CONFIG );
 
                 // classloader configuration parser
-                if ( jbossConfiguration.getConfigParserClass() != null)
+                if ( jbossConfiguration.getConfigParserClass() != null )
                 {
                     writer.addAttribute( JbossConfiguration.CONFIG_PARSER_CLASS_ATTRIBUTE,
                                          jbossConfiguration.getConfigParserClass() );
@@ -153,7 +154,7 @@ final class JbossAppXmlWriter
                 writer.writeText( jbossConfiguration.getLoaderRepositoryConfig() );
                 writer.endElement();
             }
-            
+
             writer.endElement();
         }
 
