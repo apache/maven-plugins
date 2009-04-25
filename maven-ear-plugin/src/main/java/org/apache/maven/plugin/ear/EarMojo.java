@@ -23,6 +23,7 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.ear.util.EarMavenArchiver;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
@@ -392,7 +393,7 @@ public class EarMojo
         try
         {
             File earFile = getEarFile( outputDirectory, finalName, classifier );
-            MavenArchiver archiver = new MavenArchiver();
+            final MavenArchiver archiver = new EarMavenArchiver(getModules());
             final JarArchiver jarArchiver = getJarArchiver();
             getLog().debug( "Jar archiver implementation[" + jarArchiver.getClass().getName() + "]" );
             archiver.setArchiver( jarArchiver );

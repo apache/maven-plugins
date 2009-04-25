@@ -308,4 +308,14 @@ public abstract class AbstractEarModule
             return second == null;
         }
     }
+
+    /**
+     * Sets the URI of the module explicitely for testing purposes.
+     *
+     * @param uri the uri
+     */
+    void setUri(String uri) {
+        this.uri = uri;
+
+    }
 }
