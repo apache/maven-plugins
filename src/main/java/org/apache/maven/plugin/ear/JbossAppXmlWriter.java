@@ -80,28 +80,14 @@ final class JbossAppXmlWriter
         }
         writer.startElement( JBOSS_APP_ELEMENT );
 
-        // If JBoss 4.2 or 5.0, write the JBoss 4.2 and JBoss 5.0-compatible stuff
-        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() )
-        {
-            // library-directory
-            if ( jbossConfiguration.getLibraryDirectory() != null )
-            {
-                writer.startElement( JbossConfiguration.LIBRARY_DIRECTORY );
-                writer.writeText( jbossConfiguration.getLibraryDirectory() );
-                writer.endElement();
-            }
-        }
+        // Make sure to write the things in the right order so that the DTD validates
 
-        // If JBoss 4.2+, write the jboss4.2+ specific stuff
-        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() )
+        // module-order (only available as from 4.2)
+        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() && jbossConfiguration.getModuleOrder() != null )
         {
-            // module-order (only available in 4.2 and 4.3)
-            if ( jbossConfiguration.getModuleOrder() != null )
-            {
-                writer.startElement( JbossConfiguration.MODULE_ORDER );
-                writer.writeText( jbossConfiguration.getModuleOrder() );
-                writer.endElement();
-            }
+            writer.startElement( JbossConfiguration.MODULE_ORDER );
+            writer.writeText( jbossConfiguration.getModuleOrder() );
+            writer.endElement();
         }
 
         // If JBoss 4, write the jboss4 specific stuff
@@ -165,6 +151,16 @@ final class JbossAppXmlWriter
             writer.writeText( jbossConfiguration.getJmxName() );
             writer.endElement();
         }
+
+        // library-directory (only available as from 4.2)
+        if ( jbossConfiguration.isJbossFourDotTwoOrHigher() && jbossConfiguration.getLibraryDirectory() != null )
+        {
+            writer.startElement( JbossConfiguration.LIBRARY_DIRECTORY );
+            writer.writeText( jbossConfiguration.getLibraryDirectory() );
+            writer.endElement();
+        }
+
+        // Modules
 
         List dataSources = jbossConfiguration.getDataSources();
         // Write out data source modules first

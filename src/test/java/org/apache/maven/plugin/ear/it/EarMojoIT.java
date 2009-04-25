@@ -605,4 +605,15 @@ public class EarMojoIT
     {
         doTestProject( "project-056", new String[]{"ejb-sample-one-1.0.jar"} );
     }
+
+
+    /**
+     * Builds an EAR with a complete JBoss 4.2 configuration and validate it
+     * matches the DTD (MEAR-104).
+     */
+    public void testProject057()
+        throws Exception
+    {
+        doTestProject( "project-057", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
 }
