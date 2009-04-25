@@ -169,6 +169,17 @@ class JbossConfiguration
         return jbossFour;
     }
 
+    /**
+     * Returns true if the targeted JBoss version if 4 or higher (that is
+     * 4, 4.2 or 5).
+     *
+     * @return true if the targeted version is 4+
+     */
+    public boolean isJbossFourOrHigher()
+    {
+        return jbossFour || jbossFourDotTwo || jbossFive;
+    }
+
 
     /**
      * Returns true if the targeted JBoss version is 4.2.
@@ -179,6 +190,18 @@ class JbossConfiguration
     {
         return jbossFourDotTwo;
     }
+
+    /**
+     * Returns true if the targeted JBoss version if 4.2 or higher (that is
+     * 4.2 or 5).
+     *
+     * @return true if the targeted version is 4.2+
+     */
+    public boolean isJbossFourDotTwoOrHigher()
+    {
+        return jbossFourDotTwo || jbossFive;
+    }
+
 
     /**
      * Returns true if the targeted JBoss version is 5.

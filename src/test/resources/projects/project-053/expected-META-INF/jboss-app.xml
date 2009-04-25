@@ -22,6 +22,9 @@ under the License.
     "-//JBoss//DTD Java EE Application 5.0//EN"
     "http://www.jboss.org/j2ee/dtd/jboss-app_5_0.dtd">
 <jboss-app>
+  <module-order>strict</module-order>
+  <security-domain>java:/jaas/test</security-domain>
+  <unauthenticated-principal>guest</unauthenticated-principal>
   <loader-repository>
     <loader-repository-config>abc</loader-repository-config>
   </loader-repository>
