@@ -19,18 +19,14 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
-import junit.framework.TestCase;
-import org.apache.maven.plugin.ear.ArtifactTestStub;
-
-import java.util.Set;
-import java.util.TreeSet;
+import org.apache.maven.plugin.ear.AbstractEarTest;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
 public class ArtifactRepositoryTest
-    extends TestCase
+    extends AbstractEarTest
 {
 
 
@@ -41,9 +37,6 @@ public class ArtifactRepositoryTest
         ArtifactTypeMappingService.getInstance().configure( null );
     }
 
-    public static final String DEFAULT_GROUPID = "eartest";
-
-    public static final String DEFAULT_TYPE = "jar";
 
     public static final String MAIN_ARTIFACT_ID = "none";
 
@@ -74,9 +67,9 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithMultipleClassifiedArtifacts()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts(
-            new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-            new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID );
+        ArtifactRepository repo = new ArtifactRepository(
+            createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
+                             new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );
@@ -87,9 +80,9 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithMultipleClassifiedArtifactsAndMainArtifact()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts(
-            new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
-            new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID );
+        ArtifactRepository repo = new ArtifactRepository(
+            createArtifacts( new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
+                             new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );
@@ -97,54 +90,4 @@ public class ArtifactRepositoryTest
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", MAIN_ARTIFACT_ID ) );
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
     }
-
-
-    private Set createArtifacts( String[] artifactsId )
-    {
-        return createArtifacts( artifactsId, null );
-    }
-
-    private Set createArtifacts( String[] artifactsId, String[] types )
-    {
-        return createArtifacts( artifactsId, types, null );
-    }
-
-    private Set createArtifacts( String[] artifactsId, String[] types, String[] groupsId )
-    {
-        return createArtifacts( artifactsId, types, groupsId, null );
-    }
-
-    private Set createArtifacts( String[] artifactsId, String[] types, String[] groupsId, String[] classifiers )
-    {
-        Set result = new TreeSet();
-        if ( artifactsId == null || artifactsId.length == 0 )
-        {
-            return result;
-        }
-        for ( int i = 0; i < artifactsId.length; i++ )
-        {
-            String artifactId = artifactsId[i];
-            String type = getData( types, i, DEFAULT_TYPE );
-            String groupId = getData( groupsId, i, DEFAULT_GROUPID );
-            String classifier = getData( classifiers, i, null );
-            result.add( new ArtifactTestStub( groupId, artifactId, type, classifier ) );
-
-        }
-        return result;
-    }
-
-    private String getData( String[] data, int i, String defaultValue )
-    {
-        if ( data == null || data[i] == null )
-        {
-            return defaultValue;
-        }
-        else
-        {
-            return data[i];
-
-        }
-    }
-
-
 }
