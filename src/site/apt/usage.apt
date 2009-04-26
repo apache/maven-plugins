@@ -1,0 +1,118 @@
+ ------
+ Usage
+ ------
+ Christian Schulte
+ ------
+ 08 April 2009
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Usage
+
+ Some brief examples on how to use this plugin.
+
+* Signing a project artifact and attachments
+
+  If you need to sign a project artifact and all attached artifacts, just
+  configure the sign goal appropriately in your <<<pom.xml>>> for the
+  signing to occur automatically during the package phase.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jarsigner-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign</id>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <keystore>/path/to/the/keystore</keystore>
+          <alias>Alias name</alias>
+          <storepass>Store password</storepass>
+          <keypass>Key password</keypass>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+* Verifying the signature of a project artifact and attachments
+
+  If you need to verify the signatures of a project artifact and all attached
+  artifacts, just configure the verify goal appropriately in your <<<pom.xml>>>
+  for the verification to occur automatically during the verify phase.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jarsigner-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <verbose>true</verbose>
+          <certs>true</certs>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+* How to disable attachment processing
+
++-----------------+
+mvn ... -Djarsigner.attachments=false
++-----------------+
+
+
+* How to disable the Jarsigner Plugin
+
++-----------------+
+mvn ... -Djarsigner.skip=true
++-----------------+
+
+  For full documentation, click {{{plugin-info.html}here}}.
