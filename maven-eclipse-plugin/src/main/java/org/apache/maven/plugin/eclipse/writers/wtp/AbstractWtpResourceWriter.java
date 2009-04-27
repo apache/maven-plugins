@@ -171,15 +171,19 @@ public abstract class AbstractWtpResourceWriter
             // </dependent-module>
 
             handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName(); //$NON-NLS-1$ //$NON-NLS-2$
+             
+            String archiveExtension = dep.getType();
             if ( Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
             {
                 dependentObject = "EjbModule_";
+                // an EJB module is packed as a .jar file
+                archiveExtension = Constants.PROJECT_PACKAGING_JAR;
             }
             else if ( Constants.PROJECT_PACKAGING_WAR.equals( dep.getType() ) )
             {
                 dependentObject = "WebModule_";
             }
-            archiveName = dep.getEclipseProjectName() + "." + dep.getType();
+            archiveName = dep.getEclipseProjectName() + "." + archiveExtension;
         }
         else
         {
