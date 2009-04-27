@@ -297,7 +297,7 @@ public class AnnouncementMailMojo
     protected MailSender getActualMailSender()
         throws MojoExecutionException
     {
-        if ( mailSender != null )
+        if ( mailSender != null && mailSender.getEmail() != null )
         {
             return mailSender;
         }
