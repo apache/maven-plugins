@@ -43,6 +43,7 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -53,6 +54,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -396,13 +399,21 @@ public class ChangeLogReport
             {
                 throw new MavenReportException( "Can't create " + outputXML.getAbsolutePath(), e );
             }
+            catch ( UnsupportedEncodingException e )
+            {
+                throw new MavenReportException( "Can't create " + outputXML.getAbsolutePath(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Can't create " + outputXML.getAbsolutePath(), e );
+            }
         }
 
         return changelogList;
     }
 
     private void writeChangelogXml( List changelogList )
-        throws FileNotFoundException
+        throws FileNotFoundException, UnsupportedEncodingException, IOException
     {
         StringBuffer changelogXml = new StringBuffer();
 
@@ -429,11 +440,16 @@ public class ChangeLogReport
         changelogXml.append( "\n</changelog>" );
 
         outputXML.getParentFile().mkdirs();
-
-        PrintWriter pw = new PrintWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ) );
-        pw.write( changelogXml.toString() );
-        pw.flush();
-        pw.close();
+        
+        //PrintWriter pw = new PrintWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ) );
+        //pw.write( changelogXml.toString() );
+        //pw.flush();
+        //pw.close();
+        // MCHANGELOG-86
+        Writer writer = WriterFactory.newWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ), outputEncoding );
+        writer.write( changelogXml.toString() );
+        writer.flush();
+        writer.close();
     }
 
     /**
