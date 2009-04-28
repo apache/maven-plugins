@@ -129,6 +129,7 @@ under the License.
 
   <properties>
     <maven-scm.version>1.2</maven-scm.version>
+    <doxiaVersion>1.0</doxiaVersion>
   </properties>
 
   <dependencies>
@@ -160,7 +161,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
-      <version>1.0-alpha-11</version>
+      <version>${doxiaVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
