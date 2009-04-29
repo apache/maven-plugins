@@ -21,15 +21,18 @@ package org.apache.maven.plugin.changelog;
 
 // java imports
 
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Change log task. It uses a ChangeLogGenerator and ChangeLogParser to create
@@ -61,9 +64,22 @@ public class ChangeLog
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
         List changeLogSets = new ArrayList();
-
+        
         parser.parse( stream, new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
     }
+    
+    public static List loadChangedSets( Reader reader )
+        throws ParserConfigurationException, SAXException, IOException
+    {
+        SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+
+        List changeLogSets = new ArrayList();
+
+        parser.parse( new InputSource( reader ), new ChangeLogHandler( changeLogSets ) );
+
+        return changeLogSets;
+    }    
+    
 } // end of ChangeLog
