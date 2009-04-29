@@ -19,6 +19,31 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -42,35 +67,9 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 /**
  * Generate a changelog report.
@@ -362,11 +361,12 @@ public class ChangeLogReport
             {
                 try
                 {
-                    FileInputStream fIn = new FileInputStream( outputXML );
+                    //ReaderFactory.newReader( outputXML, outputEncoding );
+                    //FileInputStream fIn = new FileInputStream( outputXML );
 
                     getLog().info( "Using existing changelog.xml..." );
 
-                    changelogList = ChangeLog.loadChangedSets( fIn );
+                    changelogList = ChangeLog.loadChangedSets( ReaderFactory.newReader( outputXML, outputEncoding ) );
                 }
                 catch ( FileNotFoundException e )
                 {
