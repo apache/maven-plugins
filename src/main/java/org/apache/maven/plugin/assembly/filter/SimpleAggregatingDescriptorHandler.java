@@ -153,6 +153,8 @@ public class SimpleAggregatingDescriptorHandler
 
         String name = fileInfo.getName();
 
+        name = name.replace( File.separatorChar, '/' );
+
         if ( fileInfo.isFile() && name.matches( filePattern ) )
         {
             readProperties( fileInfo );
