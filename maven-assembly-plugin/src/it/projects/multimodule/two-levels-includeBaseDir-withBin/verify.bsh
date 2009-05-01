@@ -2,7 +2,7 @@ import java.io.*;
 
 boolean result = true;
 
-String finalName = "two-levels-includeBaseDirectory-withBinaries-1.0-SNAPSHOT";
+String finalName = "two-levels-includeBaseDir-withBin-1.0-SNAPSHOT";
 String rootDir = "target/" + finalName + "-bin/" + finalName + "/modules/";
 
 result = result && new File( basedir, rootDir + "child-level1-project1-1.0-SNAPSHOT.jar" ).exists();   
