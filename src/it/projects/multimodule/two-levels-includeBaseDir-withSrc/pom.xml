@@ -8,7 +8,7 @@
   </parent>
   
   <groupId>test</groupId>
-  <artifactId>two-levels-includeBaseDirectory-withSources</artifactId>
+  <artifactId>two-levels-includeBaseDir-withSrc</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
