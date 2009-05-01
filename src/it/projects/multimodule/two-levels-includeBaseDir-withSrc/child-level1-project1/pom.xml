@@ -1,7 +1,7 @@
 <?xml version="1.0"?><project>
   <parent>
     <groupId>test</groupId>
-    <artifactId>two-levels-includeBaseDirectory-withSources</artifactId>
+    <artifactId>two-levels-includeBaseDir-withSrc</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
