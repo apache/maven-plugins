@@ -946,6 +946,13 @@ public class AntBuildWriterUtil
         {
             plugins.add( it.next() );
         }
+        if ( project.getBuild().getPluginManagement() != null )
+        {
+            for ( Iterator it = project.getBuild().getPluginManagement().getPlugins().iterator(); it.hasNext(); )
+            {
+                plugins.add( it.next() );
+            }
+        }
 
         for ( Iterator it = plugins.iterator(); it.hasNext(); )
         {
