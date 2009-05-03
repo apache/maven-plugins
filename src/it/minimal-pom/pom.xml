@@ -20,7 +20,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.project-info-reports</groupId>
@@ -37,7 +37,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-7</version>
+        <version>2.0</version>
+        <configuration>
+          <locales>en,cs,de,es,fr,hu,it,ja,ko,nl,no,pl,pt,pt_BR,sk,sv,tr,zh_CN,zh_TW</locales>
+        </configuration>
       </plugin>
     </plugins>
   </build>
