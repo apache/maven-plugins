@@ -130,19 +130,19 @@ public class GpgSigner
     
         if ( useAgent )
         {
-            cmd.createArgument().setValue( "--use-agent" );
+            cmd.createArg().setValue( "--use-agent" );
         }
         else
         {
-            cmd.createArgument().setValue( "--no-use-agent" );
+            cmd.createArg().setValue( "--no-use-agent" );
         }
     
         InputStream in = null;
         if ( null != pass) 
         {
-            cmd.createArgument().setValue( "--passphrase-fd" );
+            cmd.createArg().setValue( "--passphrase-fd" );
     
-            cmd.createArgument().setValue( "0" );
+            cmd.createArg().setValue( "0" );
     
             // Prepare the input stream which will be used to pass the passphrase to the executable
             in = new ByteArrayInputStream( pass.getBytes() );
@@ -150,24 +150,24 @@ public class GpgSigner
     
         if ( null != keyname)
         {
-            cmd.createArgument().setValue( "--local-user" );
+            cmd.createArg().setValue( "--local-user" );
     
-            cmd.createArgument().setValue( keyname );
+            cmd.createArg().setValue( keyname );
         }
     
-        cmd.createArgument().setValue( "--armor" );
+        cmd.createArg().setValue( "--armor" );
     
-        cmd.createArgument().setValue( "--detach-sign" );
+        cmd.createArg().setValue( "--detach-sign" );
         
         if ( !isInteractive )
         {
-            cmd.createArgument().setValue( "--no-tty" );
+            cmd.createArg().setValue( "--no-tty" );
         }
         
-        cmd.createArgument().setValue( "--output" );
-        cmd.createArgument().setFile( signature );
+        cmd.createArg().setValue( "--output" );
+        cmd.createArg().setFile( signature );
         
-        cmd.createArgument().setFile( file );
+        cmd.createArg().setFile( file );
     
     
         try
