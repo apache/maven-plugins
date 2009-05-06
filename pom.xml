@@ -73,26 +73,22 @@ under the License.
   </developers>
 
   <dependencies>
-
     <!-- maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <version>${maven.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>${maven.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${maven.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
@@ -115,7 +111,6 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-doc-renderer</artifactId>
@@ -139,7 +134,6 @@ under the License.
       <!-- needed by doc-renderer in doxia 1.1 -->
       <version>1.5.7</version>
     </dependency>
-
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
@@ -163,14 +157,12 @@ under the License.
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.1</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
@@ -178,7 +170,6 @@ under the License.
       <version>1.0-alpha-9</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <properties>
@@ -274,5 +265,4 @@ under the License.
       </build>
     </profile>
   </profiles>
-
 </project>
