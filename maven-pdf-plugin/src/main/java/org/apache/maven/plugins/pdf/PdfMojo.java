@@ -21,25 +21,32 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-
+import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generates a PDF document for a project.
@@ -186,13 +193,14 @@ public class PdfMojo
      * @return DocumentModel.
      * @throws DocumentRendererException if any.
      * @throws IOException if any.
+     * @see #readAndFilterDocumentDescriptor(MavenProject, File, Log)
      */
     private DocumentModel getDocumentModel()
         throws DocumentRendererException, IOException
     {
         if ( docDescriptor.exists() )
         {
-            return docRenderer.readDocumentModel( docDescriptor );
+            return readAndFilterDocumentDescriptor( project, docDescriptor, getLog() );
         }
 
         return generateDefaultDocDescriptor();
@@ -287,5 +295,78 @@ public class PdfMojo
         return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
                 ? "UTF-8"
                 : project.getModel().getModelEncoding() );
+    }
+
+    /**
+     * Read and filter the <code>docDescriptor</code> file.
+     *
+     * @param project not null
+     * @param docDescriptor not null
+     * @param log not null
+     * @return a DocumentModel instance
+     * @throws DocumentRendererException if any
+     * @throws IOException if any
+     */
+    private static DocumentModel readAndFilterDocumentDescriptor( MavenProject project, File docDescriptor, Log log )
+        throws DocumentRendererException, IOException
+    {
+        Reader reader = null;
+        try
+        {
+            // System properties
+            Properties filterProperties = new Properties( System.getProperties() );
+            // Project properties
+            if ( project != null && project.getProperties() != null )
+            {
+                filterProperties.putAll( project.getProperties() );
+            }
+
+            reader =
+                new InterpolationFilterReader( ReaderFactory.newXmlReader( docDescriptor ), filterProperties,
+                                               "${", "}" );
+            reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, log ), "${", "}" );
+
+            return new DocumentXpp3Reader().read( reader );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new DocumentRendererException( "Error parsing document descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+
+    static class ReflectionProperties
+        extends Properties
+    {
+        private MavenProject project;
+
+        private Log log;
+
+        public ReflectionProperties( MavenProject aProject, Log aLog )
+        {
+            super();
+
+            this.project = aProject;
+            this.log = aLog;
+        }
+
+        /** {@inheritDoc} */
+        public Object get( Object key )
+        {
+            Object value = null;
+            try
+            {
+                value = ReflectionValueExtractor.evaluate( key.toString(), project );
+            }
+            catch ( Exception e )
+            {
+                log.error( e.getMessage(), e );
+            }
+
+            return value;
+        }
     }
 }
