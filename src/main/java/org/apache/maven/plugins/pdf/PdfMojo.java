@@ -22,23 +22,34 @@ package org.apache.maven.plugins.pdf;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentTOC;
+import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.Menu;
+import org.apache.maven.doxia.site.decoration.MenuItem;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.tools.SiteToolException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
@@ -46,6 +57,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -126,6 +138,16 @@ public class PdfMojo
      */
     private DocumentRenderer docRenderer;
 
+    /**
+     * Default locale
+     */
+    private Locale defaultLocale;
+
+    /**
+     * Default decoration model
+     */
+    private DecorationModel defaultDecorationModel;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -193,10 +215,11 @@ public class PdfMojo
      * @return DocumentModel.
      * @throws DocumentRendererException if any.
      * @throws IOException if any.
+     * @throws MojoExecutionException if any
      * @see #readAndFilterDocumentDescriptor(MavenProject, File, Log)
      */
     private DocumentModel getDocumentModel()
-        throws DocumentRendererException, IOException
+        throws DocumentRendererException, IOException, MojoExecutionException
     {
         if ( docDescriptor.exists() )
         {
@@ -227,9 +250,10 @@ public class PdfMojo
     /**
      * @return Generate a default document descriptor from the Maven project
      * @throws IOException if any
+     * @throws MojoExecutionException if any
      */
     private DocumentModel generateDefaultDocDescriptor()
-        throws IOException
+        throws IOException, MojoExecutionException
     {
         File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
 
@@ -252,6 +276,31 @@ public class PdfMojo
         docModel.setModelEncoding( getModelEncoding() );
         docModel.setOutputName( project.getArtifactId() );
         docModel.setMeta( meta );
+
+        // Populate docModel from defaultDecirationModel
+        DecorationModel decorationModel = getDefaultDecorationModel();
+        if ( decorationModel != null )
+        {
+            DocumentTOC toc = new DocumentTOC();
+
+            toc.setName( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
+            for ( Iterator it = decorationModel.getMenus().iterator(); it.hasNext(); )
+            {
+                Menu menu = (Menu) it.next();
+
+                for ( Iterator it2 = menu.getItems().iterator(); it2.hasNext(); )
+                {
+                    MenuItem item = (MenuItem) it2.next();
+
+                    DocumentTOCItem documentTOCItem = new DocumentTOCItem();
+                    documentTOCItem.setName( item.getName() );
+                    documentTOCItem.setRef( item.getHref() );
+                    toc.addItem( documentTOCItem );
+                }
+            }
+
+            docModel.setToc( toc );
+        }
 
         if ( getLog().isDebugEnabled() )
         {
@@ -295,6 +344,78 @@ public class PdfMojo
         return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
                 ? "UTF-8"
                 : project.getModel().getModelEncoding() );
+    }
+
+    /**
+     * @return the default locale from <code>siteTool</code>.
+     */
+    private Locale getDefaultLocale()
+    {
+        if ( this.defaultLocale == null )
+        {
+            List localesList = getSiteTool().getAvailableLocales( getLocales() );
+            this.defaultLocale = (Locale) localesList.get( 0 );
+        }
+
+        return this.defaultLocale;
+    }
+
+    /**
+     * @return the DecorationModel instance from <code>site.xml</code>
+     * @throws MojoExecutionException if any
+     */
+    private DecorationModel getDefaultDecorationModel()
+        throws MojoExecutionException
+    {
+        if ( this.defaultDecorationModel == null )
+        {
+            Locale locale = getDefaultLocale();
+
+            File descriptorFile =
+                getSiteTool()
+                             .getSiteDescriptorFromBasedir(
+                                                            PathUtils.toRelative( project.getBasedir(),
+                                                                                  siteDirectory.getAbsolutePath() ),
+                                                            project.getBasedir(), locale );
+            DecorationModel decoration = null;
+            if ( descriptorFile.exists() )
+            {
+                Map props = new HashMap();
+
+                XmlStreamReader reader = null;
+                try
+                {
+                    reader = ReaderFactory.newXmlReader( descriptorFile );
+                    String siteDescriptorContent = IOUtil.toString( reader );
+
+                    siteDescriptorContent =
+                        getSiteTool().getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
+                                                                            reader.getEncoding(), "UTF-8" );
+
+                    decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Error parsing site descriptor", e );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error reading site descriptor", e );
+                }
+                catch ( SiteToolException e )
+                {
+                    throw new MojoExecutionException( "Error when interpoling site descriptor", e );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
+            }
+
+            this.defaultDecorationModel = decoration;
+        }
+
+        return this.defaultDecorationModel;
     }
 
     /**
