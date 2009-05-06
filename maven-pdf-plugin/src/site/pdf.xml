@@ -35,4 +35,12 @@
     <item name="FAQ" ref="faq.fml"/>
   </toc>
 
+  <cover>
+    <coverTitle>${project.name}</coverTitle>
+    <coverSubTitle>v. ${project.version}</coverSubTitle>
+    <coverType>User Guide</coverType>
+    <coverDate>2009</coverDate>
+    <companyName>The Apache Software Foundation</companyName>
+  </cover>
+
 </document>
