@@ -245,11 +245,11 @@ public class PdfMojo
 
         // TODO Improve metadata
         DocumentMeta meta = new DocumentMeta();
-        meta.setAuthor( documentAuthor() );
-        meta.setTitle( documentTitle() );
+        meta.setAuthor( getDocumentAuthor() );
+        meta.setTitle( getDocumentTitle() );
 
         DocumentModel docModel = new DocumentModel();
-        docModel.setModelEncoding( modelEncoding() );
+        docModel.setModelEncoding( getModelEncoding() );
         docModel.setOutputName( project.getArtifactId() );
         docModel.setMeta( meta );
 
@@ -275,7 +275,7 @@ public class PdfMojo
         return docModel;
     }
 
-    private String documentAuthor()
+    private String getDocumentAuthor()
     {
         return ( project.getOrganization() != null
             && StringUtils.isNotEmpty( project.getOrganization().getName() )
@@ -283,14 +283,14 @@ public class PdfMojo
                 : System.getProperty( "user.name" ) );
     }
 
-    private String documentTitle()
+    private String getDocumentTitle()
     {
         return ( StringUtils.isEmpty( project.getName() )
                 ? project.getGroupId() + ":" + project.getArtifactId()
                 : project.getName() );
     }
 
-    private String modelEncoding()
+    private String getModelEncoding()
     {
         return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
                 ? "UTF-8"
