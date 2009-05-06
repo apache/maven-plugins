@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Properties;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOC;
@@ -255,35 +257,34 @@ public class PdfMojo
     private DocumentModel generateDefaultDocDescriptor()
         throws IOException, MojoExecutionException
     {
-        File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
-
-        if ( outputDir.isFile() )
-        {
-            throw new IOException( outputDir + " is not a directory!" );
-        }
-
-        if ( !outputDir.exists() )
-        {
-            outputDir.mkdirs();
-        }
-
-        // TODO Improve metadata
         DocumentMeta meta = new DocumentMeta();
-        meta.setAuthor( getDocumentAuthor() );
-        meta.setTitle( getDocumentTitle() );
+        meta.setAuthor( getProjectOrganizationName() );
+        meta.setTitle( getProjectName() );
+        meta.setDescription( project.getDescription() );
+
+        DocumentCover cover = new DocumentCover();
+        cover.setCoverTitle( getProjectName() );
+        cover.setCoverVersion( project.getVersion() );
+        cover.setCoverType( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
+        cover.setCoverDate( Integer.toString( Calendar.getInstance().get( Calendar.YEAR ) ) );
+        cover.setProjectName( getProjectName() );
+        cover.setCompanyName( getProjectOrganizationName() );
 
         DocumentModel docModel = new DocumentModel();
-        docModel.setModelEncoding( getModelEncoding() );
+        docModel.setModelEncoding( getProjectModelEncoding() );
         docModel.setOutputName( project.getArtifactId() );
         docModel.setMeta( meta );
+        docModel.setCover( cover );
 
-        // Populate docModel from defaultDecirationModel
+        // Populate docModel from defaultDecorationModel
         DecorationModel decorationModel = getDefaultDecorationModel();
+
         if ( decorationModel != null )
         {
             DocumentTOC toc = new DocumentTOC();
 
             toc.setName( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
+
             for ( Iterator it = decorationModel.getMenus().iterator(); it.hasNext(); )
             {
                 Menu menu = (Menu) it.next();
@@ -304,6 +305,18 @@ public class PdfMojo
 
         if ( getLog().isDebugEnabled() )
         {
+            File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
+
+            if ( outputDir.isFile() )
+            {
+                throw new IOException( outputDir + " is not a directory!" );
+            }
+
+            if ( !outputDir.exists() )
+            {
+                outputDir.mkdirs();
+            }
+
             File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
 
             getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
@@ -324,7 +337,7 @@ public class PdfMojo
         return docModel;
     }
 
-    private String getDocumentAuthor()
+    private String getProjectOrganizationName()
     {
         return ( project.getOrganization() != null
             && StringUtils.isNotEmpty( project.getOrganization().getName() )
@@ -332,14 +345,14 @@ public class PdfMojo
                 : System.getProperty( "user.name" ) );
     }
 
-    private String getDocumentTitle()
+    private String getProjectName()
     {
         return ( StringUtils.isEmpty( project.getName() )
                 ? project.getGroupId() + ":" + project.getArtifactId()
                 : project.getName() );
     }
 
-    private String getModelEncoding()
+    private String getProjectModelEncoding()
     {
         return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
                 ? "UTF-8"
@@ -462,6 +475,7 @@ public class PdfMojo
     static class ReflectionProperties
         extends Properties
     {
+        private static final long serialVersionUID = 1L;
         private MavenProject project;
 
         private Log log;
