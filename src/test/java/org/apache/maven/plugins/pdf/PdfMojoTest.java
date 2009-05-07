@@ -48,15 +48,12 @@ public class PdfMojoTest
     public void testPdfMojo() throws Exception
     {
         File testPom = new File( getBasedir(), "/target/test-classes/unit/pdf/pom.xml" );
-
         assertTrue( "testPom does not exist!", testPom.exists() );
 
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
-
         assertNotNull( "pdf mojo not found!", mojo );
 
         File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
-
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -65,7 +62,6 @@ public class PdfMojoTest
         mojo.execute();
 
         assertTrue( "FO: Pdf file not created!", pdfFile.exists() );
-
         assertTrue( "FO: Pdf file has no content!", pdfFile.length() > 0 );
     }
 
@@ -77,15 +73,12 @@ public class PdfMojoTest
     public void testITextImpl() throws Exception
     {
         File testPom = new File( getBasedir(), "/target/test-classes/unit/pdf/iText_pom.xml" );
-
         assertTrue( "testPom does not exist!", testPom.exists() );
 
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
-
         assertNotNull( "pdf mojo not found!", mojo );
 
         File pdfFile = new File( getBasedir(), "/target/test-output/pdf/index.pdf" );
-
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -94,7 +87,6 @@ public class PdfMojoTest
         mojo.execute();
 
         assertTrue( "iText: Pdf file not created!", pdfFile.exists() );
-
         assertTrue( "iText: Pdf file has no content!", pdfFile.length() > 0 );
      }
 
