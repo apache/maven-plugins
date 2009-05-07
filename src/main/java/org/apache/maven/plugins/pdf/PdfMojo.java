@@ -475,7 +475,8 @@ public class PdfMojo
     static class ReflectionProperties
         extends Properties
     {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 4283750804305363781L;
+
         private MavenProject project;
 
         private Log log;
