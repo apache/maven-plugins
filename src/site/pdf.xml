@@ -21,7 +21,8 @@
  */
  -->
 
-<document outputName="maven-pdf-plugin">
+<!-- START SNIPPET: docDescriptor -->
+<document outputName="maven-pdf-plugin-${project.version}">
 
   <meta>
     <title>Maven PDF Plugin</title>
@@ -44,3 +45,4 @@
   </cover>
 
 </document>
+<!-- END SNIPPET: docDescriptor -->
