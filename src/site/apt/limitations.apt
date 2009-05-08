@@ -39,8 +39,6 @@ Known Bugs and Limitations
 
 * Missing features
 
-  * Cover page not configurable (only title and author).
-
   * Menu sub-items are not supported in TOC (every source document starts a new chapter).
 
 * Known bugs

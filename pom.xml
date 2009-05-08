@@ -244,6 +244,7 @@ under the License.
       <id>pdf</id>
       <build>
         <plugins>
+<!-- START SNIPPET: configuration -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-pdf-plugin</artifactId>
@@ -261,6 +262,7 @@ under the License.
               </execution>
             </executions>
           </plugin>
+<!-- END SNIPPET: configuration -->
         </plugins>
       </build>
     </profile>
