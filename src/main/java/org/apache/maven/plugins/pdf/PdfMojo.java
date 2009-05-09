@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -126,14 +127,14 @@ public class PdfMojo
      *
      * @component role-hint="fo"
      */
-    private DocumentRenderer foRenderer;
+    private PdfRenderer foRenderer;
 
     /**
      * IText Document Renderer.
      *
      * @component role-hint="itext"
      */
-    private DocumentRenderer itextRenderer;
+    private PdfRenderer itextRenderer;
 
     /**
      * Document Renderer.
