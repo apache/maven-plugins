@@ -40,7 +40,7 @@
     <coverTitle>${project.name}</coverTitle>
     <coverSubTitle>v. ${project.version}</coverSubTitle>
     <coverType>User Guide</coverType>
-    <coverDate>2009</coverDate>
+    <date>2009</date>
     <companyName>The Apache Software Foundation</companyName>
   </cover>
 
