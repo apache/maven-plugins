@@ -186,8 +186,9 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives, a
-     * status cache is mantained. To reset this cache run <code>mvn eclipse:remove-cache</code>, or use the
-     * <code>forceRecheck</code> option.
+     * status cache is mantained. With versions 2.6+ of the plugin to reset this cache run 
+     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions.
+     * With older versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
      * 
      * @parameter expression="${downloadSources}"
      */
@@ -196,8 +197,9 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of javadoc attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for javadocs: in order to avoid repeated check for unavailable javadoc archives,
-     * a status cache is mantained. To reset this cache run <code>mvn eclipse:remove-cache</code>, or use the
-     * <code>forceRecheck</code> option.
+     * a status cache is mantained. With versions 2.6+ of the plugin to reset this cache run 
+     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions.
+     * With older versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
      * 
      * @parameter expression="${downloadJavadocs}"
      */
