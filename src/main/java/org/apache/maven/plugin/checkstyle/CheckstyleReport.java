@@ -19,42 +19,7 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import com.puppycrawl.tools.checkstyle.Checker;
-import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
-import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
-import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.ModuleFactory;
-import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
-import com.puppycrawl.tools.checkstyle.PropertiesExpander;
-import com.puppycrawl.tools.checkstyle.XMLLogger;
-import com.puppycrawl.tools.checkstyle.api.AuditListener;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
-import com.puppycrawl.tools.checkstyle.api.FilterSet;
-import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
-import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.doxia.tools.SiteTool;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.exception.VelocityException;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringInputStream;
-import org.codehaus.plexus.util.StringOutputStream;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.velocity.VelocityComponent;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,6 +40,44 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
+import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.StringInputStream;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.velocity.VelocityComponent;
+
+import com.puppycrawl.tools.checkstyle.Checker;
+import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
+import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
+import com.puppycrawl.tools.checkstyle.DefaultLogger;
+import com.puppycrawl.tools.checkstyle.PackageNamesLoader;
+import com.puppycrawl.tools.checkstyle.PropertiesExpander;
+import com.puppycrawl.tools.checkstyle.XMLLogger;
+import com.puppycrawl.tools.checkstyle.api.AuditListener;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
+import com.puppycrawl.tools.checkstyle.api.FilterSet;
+import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
+
 /**
  * Perform a Checkstyle analysis, and generate a report on violations.
  *
@@ -86,6 +89,7 @@ import java.util.ResourceBundle;
  */
 public class CheckstyleReport
     extends AbstractMavenReport
+    implements Serviceable
 {
     private static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
 
@@ -485,7 +489,7 @@ public class CheckstyleReport
      * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
      * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
      * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
-     * 
+     *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.2
      */
@@ -500,15 +504,28 @@ public class CheckstyleReport
 
     /**
      * Velocity Component.
-     *
-     * @component role="org.codehaus.plexus.velocity.VelocityComponent"
-     * @required
      */
+    // Not declared as @component to fix MCHECKSTYLE-101
     private VelocityComponent velocityComponent;
+
+    /**
+     * ServiceLocator used to lookup VelocityComponent
+     */
+    private ServiceLocator serviceLocator;
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable#service(org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator)
+     */
+    public void service( ServiceLocator locator )
+    {
+        this.serviceLocator = locator;
+    }
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
-    private StringOutputStream stringOutputStream;
+    private ByteArrayOutputStream stringOutputStream;
 
     /**
      * @component
@@ -598,11 +615,8 @@ public class CheckstyleReport
 
                 String configFile = getConfigFile();
                 Properties overridingProperties = getOverridingProperties();
-                ModuleFactory moduleFactory;
                 Configuration config;
                 CheckstyleResults results;
-
-                moduleFactory = getModuleFactory();
 
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
@@ -618,8 +632,8 @@ public class CheckstyleReport
                 for ( int i = 0; i < modules.length; i++ )
                 {
                     Configuration module = modules[i];
-                    if ( "TreeWalker".equals( module.getName() )
-                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
+                    if ( "Checker".equals( module.getName() )
+                        || "com.puppycrawl.tools.checkstyle.Checker".equals( module.getName() ) )
                     {
                         if ( module instanceof DefaultConfiguration )
                         {
@@ -630,13 +644,25 @@ public class CheckstyleReport
                             getLog().warn( "Failed to configure file encoding on module " + module );
                         }
                     }
+                    if ("TreeWalker".equals(module.getName())
+                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals(module.getName()))
+                    {
+                        if (module instanceof DefaultConfiguration)
+                        {
+                            ((DefaultConfiguration) module).addAttribute("cacheFile", cacheFile);
+                        }
+                        else
+                        {
+                            getLog().warn("Failed to configure cache file on module " + module);
+                        }
+                    }
                 }
 
-                results = executeCheckstyle( config, moduleFactory );
+                results = executeCheckstyle( config );
 
                 ResourceBundle bundle = getBundle( locale );
                 generateReportStatics();
-                generateMainReport( results, config, moduleFactory, bundle );
+                generateMainReport( results, config, bundle );
                 if ( enableRSS )
                 {
                     generateRSS( results );
@@ -672,6 +698,18 @@ public class CheckstyleReport
     private void generateRSS( CheckstyleResults results )
         throws MavenReportException
     {
+        if ( velocityComponent == null )
+        {
+            try
+            {
+                velocityComponent = (VelocityComponent) serviceLocator.lookup( VelocityComponent.ROLE );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MavenReportException( "Failed to setup Velocity", e );
+            }
+        }
+
         VelocityTemplate vtemplate = new VelocityTemplate( velocityComponent, PLUGIN_RESOURCES );
         vtemplate.setLog( getLog() );
 
@@ -727,8 +765,7 @@ public class CheckstyleReport
         return copyright;
     }
 
-    private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory,
-                                     ResourceBundle bundle )
+    private void generateMainReport( CheckstyleResults results, Configuration config, ResourceBundle bundle )
     {
         CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
 
@@ -738,7 +775,6 @@ public class CheckstyleReport
         generator.setEnableFilesSummary( enableFilesSummary );
         generator.setEnableRSS( enableRSS );
         generator.setCheckstyleConfig( config );
-        generator.setCheckstyleModuleFactory( moduleFactory );
         if ( linkXRef )
         {
             String relativePath = PathTool.getRelativePath( getOutputDirectory(), xrefLocation.getAbsolutePath() );
@@ -821,7 +857,7 @@ public class CheckstyleReport
         }
     }
 
-    private CheckstyleResults executeCheckstyle( Configuration config, ModuleFactory moduleFactory )
+    private CheckstyleResults executeCheckstyle( Configuration config )
         throws MavenReportException, CheckstyleException
     {
         File[] files;
@@ -905,10 +941,7 @@ public class CheckstyleReport
         URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
         checker.setClassloader( projectClassLoader );
 
-        if ( moduleFactory != null )
-        {
-            checker.setModuleFactory( moduleFactory );
-        }
+        checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
 
         if ( filterSet != null )
         {
@@ -938,7 +971,11 @@ public class CheckstyleReport
 
         checker.addListener( sinkListener );
 
-        int nbErrors = checker.process( files );
+        ArrayList filesList = new ArrayList();
+        for (int i = 0; i < files.length; i++) {
+            filesList.add(files[i]);
+        }
+        int nbErrors = checker.process( filesList );
 
         checker.destroy();
 
@@ -1150,31 +1187,6 @@ public class CheckstyleReport
 
     }
 
-    private ModuleFactory getModuleFactory()
-        throws CheckstyleException
-    {
-        // default to internal module factory.
-        ModuleFactory moduleFactory = PackageNamesLoader.loadModuleFactory( Thread.currentThread()
-            .getContextClassLoader() );
-
-        try
-        {
-            // attempt to locate any specified package file.
-            File packageNamesFile = locator.resolveLocation( packageNamesLocation, "checkstyle-packages.xml" );
-
-            if ( packageNamesFile != null )
-            {
-                // load resolved location.
-                moduleFactory = PackageNamesLoader.loadModuleFactory( packageNamesFile.getAbsolutePath() );
-            }
-        }
-        catch ( IOException e )
-        {
-            getLog().error( "Unable to process package names location: " + packageNamesLocation, e );
-        }
-        return moduleFactory;
-    }
-
     private String getSuppressionLocation()
         throws MavenReportException
     {
@@ -1226,13 +1238,12 @@ public class CheckstyleReport
 
         if ( useFile == null )
         {
-            stringOutputStream = new StringOutputStream();
+            stringOutputStream = new ByteArrayOutputStream();
             consoleListener = new DefaultLogger( stringOutputStream, false );
         }
         else
         {
             OutputStream out = getOutputStream( useFile );
-
             consoleListener = new DefaultLogger( out, true );
         }
 
