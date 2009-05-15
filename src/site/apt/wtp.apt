@@ -20,7 +20,7 @@ WTP support
  In order to create a configuration for WTP you have to specify the version of
  WTP you are using.
  
- The plugin actually can create WTP R7, 1.0 and 1.5 configuration files.
+ The plugin actually can create WTP R7, 1.0, 1.5 and 2.0 configuration files.
  
  Note that R7/1.0 configuration files are totally different, so be sure to
  check the version you are using. WTP 1.5 configuration is slightly changed
@@ -32,7 +32,7 @@ WTP support
 mvn -Dwtpversion=R7 eclipse:eclipse
 +-----------------------------------------------------+
  
- Where wtpversion can be <<<R7>>>, <<<1.0>>>, <<<1.5>>> or <<<none>>> (default).
+ Where wtpversion can be <<<R7>>>, <<<1.0>>>, <<<1.5>>>, <<<2.0>>> or <<<none>>> (default).
  
  <Note that in the 2.0 version of the plugin the default was R7 and WTP
  configuration was always generated. Now that different incompatible versions
