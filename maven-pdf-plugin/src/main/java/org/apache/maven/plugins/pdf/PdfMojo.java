@@ -267,7 +267,7 @@ public class PdfMojo
         cover.setCoverTitle( getProjectName() );
         cover.setCoverVersion( project.getVersion() );
         cover.setCoverType( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
-        cover.setCoverDate( Integer.toString( Calendar.getInstance().get( Calendar.YEAR ) ) );
+        cover.setDate( Integer.toString( Calendar.getInstance().get( Calendar.YEAR ) ) );
         cover.setProjectName( getProjectName() );
         cover.setCompanyName( getProjectOrganizationName() );
 
