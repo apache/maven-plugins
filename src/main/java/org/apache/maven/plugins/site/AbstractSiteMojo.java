@@ -32,7 +32,6 @@ import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -99,13 +98,6 @@ public abstract class AbstractSiteMojo
      * @readonly
      */
     protected List reactorProjects;
-
-    /**
-     * Project builder
-     *
-     * @component
-     */
-    protected MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Specifies the input encoding.
