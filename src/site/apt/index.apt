@@ -46,3 +46,9 @@ Overview
 * Example
 
   Have a look at the {{{./maven-pdf-plugin.pdf}pdf}} version of this web site.
+
+  The following examples show how to use the PDF Plugin in more advanced usecases:
+
+    * {{{examples/filtering.html}Filtering Document Descriptor}}
+
+    []
