@@ -43,7 +43,7 @@
     <coverTitle>${project.name}</coverTitle>
     <coverSubTitle>v. ${project.version}</coverSubTitle>
     <coverType>User Guide</coverType>
-    <coverDate>2009-05-16T00:00:00Z</coverDate>
+    <coverDate>2009-05-16T00:00:00.000</coverDate>
     <companyName>The Apache Software Foundation</companyName>
   </cover>
 
