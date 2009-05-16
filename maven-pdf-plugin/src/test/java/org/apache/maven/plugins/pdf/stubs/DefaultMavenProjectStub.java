@@ -21,6 +21,8 @@ package org.apache.maven.plugins.pdf.stubs;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -63,5 +65,17 @@ public class DefaultMavenProjectStub
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/target/test-classes/unit/pdf/" );
+    }
+
+    /** {@inheritDoc} */
+    public List getDevelopers()
+    {
+        return getModel().getDevelopers();
+    }
+
+    /** {@inheritDoc} */
+    public Properties getProperties()
+    {
+        return getModel().getProperties();
     }
 }

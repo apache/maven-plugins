@@ -53,9 +53,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -404,7 +409,7 @@ public class PdfMojo
 
                     siteDescriptorContent =
                         getSiteTool().getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
-                                                                            reader.getEncoding(), "UTF-8" );
+                                                                            reader.getEncoding(), reader.getEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
@@ -442,68 +447,66 @@ public class PdfMojo
      * @throws DocumentRendererException if any
      * @throws IOException if any
      */
-    private static DocumentModel readAndFilterDocumentDescriptor( MavenProject project, File docDescriptor, Log log )
+    private DocumentModel readAndFilterDocumentDescriptor( final MavenProject project, File docDescriptor, Log log )
         throws DocumentRendererException, IOException
     {
         Reader reader = null;
         try
         {
             // System properties
-            Properties filterProperties = new Properties( System.getProperties() );
+            Properties filterProperties = System.getProperties();
             // Project properties
             if ( project != null && project.getProperties() != null )
             {
                 filterProperties.putAll( project.getProperties() );
             }
 
-            reader =
-                new InterpolationFilterReader( ReaderFactory.newXmlReader( docDescriptor ), filterProperties,
-                                               "${", "}" );
-            reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, log ), "${", "}" );
+            Interpolator interpolator = new RegexBasedInterpolator();
+            interpolator.addValueSource( new MapBasedValueSource( filterProperties ) );
+            interpolator.addValueSource( new EnvarBasedValueSource() );
+            interpolator.addValueSource( new ObjectBasedValueSource( project )
+            {
+                /** {@inheritDoc} */
+                public Object getValue( String expression )
+                {
+                    try
+                    {
+                        return ReflectionValueExtractor.evaluate( expression, project );
+                    }
+                    catch ( Exception e )
+                    {
+                        addFeedback( "Failed to extract \'" + expression + "\' from: " + project, e );
+                    }
 
-            return new DocumentXpp3Reader().read( reader );
+                    return null;
+                }
+            } );
+
+            reader = ReaderFactory.newXmlReader( docDescriptor );
+
+            String interpolatedDoc = interpolator.interpolate( IOUtil.toString( reader ) );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug(
+                                "Interpolated document descriptor (" + docDescriptor.getAbsolutePath() + ")\n"
+                                    + interpolatedDoc );
+            }
+
+            // No Strict
+            return new DocumentXpp3Reader().read( new StringReader( interpolatedDoc ), false );
         }
         catch ( XmlPullParserException e )
         {
             throw new DocumentRendererException( "Error parsing document descriptor", e );
         }
+        catch ( InterpolationException e )
+        {
+            throw new DocumentRendererException( "Error interpolating document descriptor", e );
+        }
         finally
         {
             IOUtil.close( reader );
-        }
-    }
-
-    static class ReflectionProperties
-        extends Properties
-    {
-        private static final long serialVersionUID = 4283750804305363781L;
-
-        private MavenProject project;
-
-        private Log log;
-
-        public ReflectionProperties( MavenProject aProject, Log aLog )
-        {
-            super();
-
-            this.project = aProject;
-            this.log = aLog;
-        }
-
-        /** {@inheritDoc} */
-        public Object get( Object key )
-        {
-            Object value = null;
-            try
-            {
-                value = ReflectionValueExtractor.evaluate( key.toString(), project );
-            }
-            catch ( Exception e )
-            {
-                log.error( e.getMessage(), e );
-            }
-
-            return value;
         }
     }
 }
