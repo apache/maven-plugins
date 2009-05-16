@@ -68,6 +68,8 @@ Using the PDF plugin
   For a complete description of the file format, see the
   {{{http://maven.apache.org/doxia/doxia/doxia-core/document.html}Document Model Reference}}.
 
+  <<Note>>: Only a few of document metadatas are used by the Fo sink: author and title.
+
 * Configuration properties
 
   All the layout properties that are used for the pdf conversion are read
