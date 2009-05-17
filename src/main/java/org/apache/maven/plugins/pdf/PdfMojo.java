@@ -24,13 +24,16 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
@@ -481,6 +484,8 @@ public class PdfMojo
                     return null;
                 }
             } );
+            final DateBean bean = new DateBean();
+            interpolator.addValueSource( new ObjectBasedValueSource( bean ) );
 
             reader = ReaderFactory.newXmlReader( docDescriptor );
 
@@ -507,6 +512,102 @@ public class PdfMojo
         finally
         {
             IOUtil.close( reader );
+        }
+    }
+
+    /**
+     * Simple bean to allow date interpolation in the document descriptor, i.e.
+     * <pre>
+     * ${year}  = 2009
+     * ${date}  = 2009-05-17
+     * </pre>
+     */
+    public static class DateBean
+    {
+        private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone( "UTC" );
+
+        /**
+         * @return the current year.
+         */
+        public String getYear()
+        {
+            return new SimpleDateFormat( "yyyy", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current month.
+         */
+        public String getMonth()
+        {
+            return new SimpleDateFormat( "MM", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current day.
+         */
+        public String getDay()
+        {
+            return new SimpleDateFormat( "dd", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current hour.
+         */
+        public String getHour()
+        {
+            return new SimpleDateFormat( "HH", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current minute.
+         */
+        public String getMinute()
+        {
+            return new SimpleDateFormat( "mm", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current second.
+         */
+        public String getSecond()
+        {
+            return new SimpleDateFormat( "ss", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current millisecond.
+         */
+        public String getMillisecond()
+        {
+            return new SimpleDateFormat( "SSS", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current date using the ISO 8601 format, i.e. <code>yyyy-MM-dd</code>.
+         */
+        public String getDate()
+        {
+            return new SimpleDateFormat( "yyyy-MM-dd", Locale.US ).format( new Date() );
+        }
+
+        /**
+         * @return the current time using the ISO 8601 format and UTC time zone, i.e. <code>HH:mm:ss'Z'</code>.
+         */
+        public String getTime()
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat( "HH:mm:ss'Z'", Locale.US );
+            sdf.setTimeZone( UTC_TIME_ZONE );
+            return sdf.format( new Date() );
+        }
+
+        /**
+         * @return the current datetime using the ISO 8601 format, i.e. <code>yyyy-MM-dd'T'HH:mm:ss'Z'</code>.
+         */
+        public String getDateTime()
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US );
+            sdf.setTimeZone( UTC_TIME_ZONE );
+            return sdf.format( new Date() );
         }
     }
 }
