@@ -140,6 +140,8 @@ public class PdfMojoTest
         }
         // ${project.developers[0].email}
         assertTrue( foContent.indexOf( "vsiveton@apache.org ltheussl@apache.org" ) > 0 );
+        // ${date}
+        assertTrue( foContent.indexOf( new PdfMojo.DateBean().getDate() ) > 0 );
     }
 
 }

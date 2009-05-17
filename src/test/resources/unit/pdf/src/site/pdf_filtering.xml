@@ -27,7 +27,7 @@
   outputName="maven-pdf-plugin-doc-${project.version}">
 
   <meta>
-    <title>User guide in ${pdf.language} of ${pom.name} version ${pom.version} for ${M2_HOME}</title>
+    <title>User guide in ${pdf.language} of ${pom.name} version ${pom.version} for ${M2_HOME} ${date}</title>
     <author>${project.developers[0].email} ${project.developers[1].email}</author>
   </meta>
 
