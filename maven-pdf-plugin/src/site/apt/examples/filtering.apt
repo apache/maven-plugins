@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-05-16
+ 2009-05-17
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,24 @@
 
 Filtering Document Descriptor
 
-  The document descriptor (aka src/site/pdf.xml) could be filtered by System properties or POM properties.
+  The document descriptor (aka src/site/pdf.xml) could be filtered by System properties, Maven project properties and
+  some date properties.
+
+*----------------------------------+--------------+
+|| Expression Samples              || Description
+*----------------------------------+--------------+
+| $\{JAVA_HOME\}                   | The JAVA_HOME environment value.
+*----------------------------------+--------------+
+| $\{project.name\}                | The project name defined in \<name/\> tag in the pom.xml.
+*----------------------------------+--------------+
+| $\{project.developers[0].email\} | The email of the first developed defined in \<developers/\> tag in the pom.xml.
+*----------------------------------+--------------+
+| $\{date} $\{time\} $\{dateTime\} | The current date/time/dateTime displayed in ISO-8601 format, i.e. yyyy-MM-dd.
+*----------------------------------+--------------+
+| $\{year} $\{month\} $\{hour\}... | The single date or time informations.
+*----------------------------------+--------------+
+
+Example
 
   For instance, if you have defined the following pom.xml and pdf.xml:
 
