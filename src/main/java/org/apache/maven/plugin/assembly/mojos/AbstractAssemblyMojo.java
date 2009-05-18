@@ -334,7 +334,7 @@ public abstract class AbstractAssemblyMojo
         //run only at the execution root.
         if (runOnlyAtExecutionRoot && !isThisTheExecutionRoot())
         {
-            getLog().info( "Skipping this project because it's not the Execution Root" );
+            getLog().info( "Skipping the assembly in this project because it's not the Execution Root" );
             return;
         }
 
