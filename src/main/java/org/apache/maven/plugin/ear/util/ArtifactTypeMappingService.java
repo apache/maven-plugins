@@ -19,11 +19,11 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
+import org.apache.maven.plugin.ear.EarModuleFactory;
+import org.apache.maven.plugin.ear.EarPluginException;
+import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-import org.apache.maven.plugin.ear.EarPluginException;
-import org.apache.maven.plugin.ear.EarModuleFactory;
-import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
