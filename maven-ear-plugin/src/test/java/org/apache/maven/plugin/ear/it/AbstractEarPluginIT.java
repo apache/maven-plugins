@@ -20,6 +20,7 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import junit.framework.TestCase;
+
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
