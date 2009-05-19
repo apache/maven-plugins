@@ -20,7 +20,6 @@ package org.apache.maven.plugin.ear;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * The {@link EarModule} implementation for an ejb client module.

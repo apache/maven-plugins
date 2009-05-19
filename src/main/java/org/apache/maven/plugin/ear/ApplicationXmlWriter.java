@@ -21,10 +21,8 @@ package org.apache.maven.plugin.ear;
 
 import org.codehaus.plexus.util.xml.XMLWriter;
 
-import java.io.File;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * An <tt>XmlWriter</tt> based implementation used to generate an
