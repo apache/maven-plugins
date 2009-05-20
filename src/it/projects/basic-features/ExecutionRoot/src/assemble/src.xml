@@ -9,6 +9,7 @@
       <directory>/</directory>
       <excludes>
         <exclude>**/*.log</exclude>
+        <exclude>target</exclude>
       </excludes>
     </fileSet>
   </fileSets>
