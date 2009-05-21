@@ -6,10 +6,11 @@
   <includeBaseDirectory>true</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>/</directory>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>**/*.log</exclude>
-        <exclude>target</exclude>
+        <exclude>target/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
