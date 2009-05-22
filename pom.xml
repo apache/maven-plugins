@@ -329,6 +329,7 @@ under the License.
             <executions>
               <execution>
                 <id>del-IT-clone-destination</id>
+                <phase>package</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
