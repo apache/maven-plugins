@@ -19,21 +19,15 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.InterpolationPostProcessor;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
@@ -47,6 +41,15 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 /**
  * @version $Id$
  */
@@ -56,7 +59,7 @@ public class AssemblyInterpolator
     private static final Set INTERPOLATION_BLACKLIST;
 
     private static final Properties ENVIRONMENT_VARIABLES;
-
+    
     static
     {
         Set blacklist = new HashSet();
@@ -139,7 +142,7 @@ public class AssemblyInterpolator
         return assembly;
     }
 
-    public static Interpolator buildInterpolator( MavenProject project, AssemblerConfigurationSource configSource )
+    public static Interpolator buildInterpolator( final MavenProject project, AssemblerConfigurationSource configSource )
     {
         StringSearchInterpolator interpolator = new StringSearchInterpolator();
         interpolator.setCacheAnswers( true );
@@ -189,7 +192,8 @@ public class AssemblyInterpolator
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );
         interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), ENVIRONMENT_VARIABLES,
                                                                         true ) );
-
+        
+        interpolator.addPostProcessor( new PathTranslatingPostProcessor( project.getBasedir() ) );
         return interpolator;
     }
 
@@ -205,5 +209,23 @@ public class AssemblyInterpolator
         }
 
         return logger;
+    }
+    
+    private static final class PathTranslatingPostProcessor implements InterpolationPostProcessor
+    {
+
+        private final File basedir;
+
+        public PathTranslatingPostProcessor( File basedir )
+        {
+            this.basedir = basedir;
+        }
+
+        public Object execute( String expression, Object value )
+        {
+            String path = String.valueOf( value );
+            return AssemblyFileUtils.makePathRelativeTo( path, basedir );
+        }
+        
     }
 }
