@@ -213,4 +213,9 @@ public final class AssemblyFileUtils
         c2.close();
     }
 
+    public static String normalizePath( String path )
+    {
+        return path.replace( '\\', '/' );
+    }
+
 }

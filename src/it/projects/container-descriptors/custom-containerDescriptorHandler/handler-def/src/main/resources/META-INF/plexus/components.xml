@@ -5,7 +5,7 @@
       <role-hint>file.txt</role-hint>
       <implementation>org.apache.maven.plugin.assembly.filter.SimpleAggregatingDescriptorHandler</implementation>
       <configuration>
-        <filePattern>.*file.txt</filePattern>
+        <filePattern>.*/file.txt</filePattern>
         <outputPath>file.txt</outputPath>
         <commentChars>#</commentChars>
       </configuration>

@@ -23,8 +23,8 @@
   to "component.mdo".
 -->
 
-<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
-       xsd.target-namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0">
+<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1" 
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1">
        
   <id>assembly</id>
   <name>Assembly</name>
@@ -120,7 +120,7 @@
         </field>
         <field>
           <name>baseDirectory</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>String</type>
           <description>
             Sets the base directory of the resulting assembly archive. If this is not
@@ -140,7 +140,7 @@
         </field>
         <field>
           <name>containerDescriptorHandlers</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <association>
             <type>ContainerDescriptorHandlerConfig</type>
             <multiplicity>*</multiplicity>
@@ -256,7 +256,7 @@
       <fields>
         <field>
           <name>useStrictFiltering</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -268,7 +268,7 @@
         </field>
         <field>
           <name>useDefaultExcludes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -392,7 +392,7 @@
         </field>
         <field>
           <name>filtered</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Whether to filter symbols in the files as they are copied, using
           properties from the build configuration. (Since 2.2)
@@ -520,7 +520,7 @@
         </field>
         <field>
           <name>unpackOptions</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
           unpacked from a dependency artifact. (Since 2.2)
@@ -542,7 +542,7 @@
         </field>
         <field>
           <name>useProjectArtifact</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description><![CDATA[
@@ -553,7 +553,7 @@
         </field>
         <field>
           <name>useProjectAttachments</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description><![CDATA[
@@ -563,7 +563,7 @@
         </field>
         <field>
           <name>useTransitiveDependencies</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -577,7 +577,7 @@
         </field>
         <field>
           <name>useTransitiveFiltering</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -610,7 +610,7 @@
       <fields>
         <field>
           <name>includeSubModules</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -686,7 +686,7 @@
       <fields>
         <field>
           <name>fileSets</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <association>
             <type>FileSet</type>
             <multiplicity>*</multiplicity>
@@ -700,7 +700,7 @@
         </field>
         <field>
           <name>includeModuleDirectory</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -712,7 +712,7 @@
         </field>
         <field>
           <name>excludeSubModuleDirectories</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -727,7 +727,7 @@
         </field>
         <field>
           <name>outputDirectoryMapping</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>String</type>
           <defaultValue>${module.artifactId}</defaultValue>
           <description>
@@ -750,7 +750,7 @@
       <fields>
         <field>
           <name>attachmentClassifier</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>String</type>
           <description>
           When specified, the attachmentClassifier will cause the assembler to look at artifacts
@@ -772,7 +772,7 @@
         </field>
         <field>
           <name>dependencySets</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <association>
             <type>DependencySet</type>
             <multiplicity>*</multiplicity>
@@ -799,7 +799,7 @@
         </field>
         <field>
           <name>unpackOptions</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
           unpacked from a module artifact. (Since 2.2)
@@ -869,7 +869,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.1.0</version>              
+          <version>1.1.0+</version>              
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -924,14 +924,14 @@
     </class>
     <class>
       <name>UnpackOptions</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <description>
       Specifies options for including/excluding/filtering items extracted from an archive. (Since 2.2)
       </description>
       <fields>
         <field>
           <name>includes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Set of patterns for matching items to be included from an archive as it is unpacked. (Since 2.2)
           </description>
@@ -942,7 +942,7 @@
         </field>
         <field>
           <name>excludes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Set of patterns for matching items to be excluded from an archive as it is unpacked. (Since 2.2)
           </description>
@@ -953,7 +953,7 @@
         </field>
         <field>
           <name>filtered</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Whether to filter symbols in the files as they are unpacked from the archive, using
           properties from the build configuration. (Since 2.2)
@@ -965,7 +965,7 @@
     </class>
     <class>
       <name>ContainerDescriptorHandlerConfig</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <description>
         Configures a filter for files headed into the assembly archive, to enable
         aggregation of various types of descriptor fragments, such as components.xml,
@@ -974,23 +974,21 @@
       <fields>
         <field>
           <name>handlerName</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
             The handler's plexus role-hint, for lookup from the container.
           </description>
           <type>String</type>
           <required>true</required>
         </field>
-        <!-- Commented out until it can be implemented and tested...
         <field>
           <name>configuration</name>
-          <version>1.1.0</version>
+          <version>1.1.1</version>
           <description>
             Configuration options for the handler.
           </description>
           <type>DOM</type>
         </field>
-         -->
       </fields>
     </class>
   </classes>
