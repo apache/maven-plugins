@@ -312,6 +312,8 @@ under the License.
       </pluginRepositories>
 
       <properties>
+        <itParent>${java.io.tmpdir}/assembly-ITs/it-project-parent</itParent>
+        <itProjects>${java.io.tmpdir}/assembly-ITs/projects</itProjects>
         <invokerPluginVersion>1.2.1</invokerPluginVersion>
         <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
@@ -322,6 +324,22 @@ under the License.
 
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>del-IT-clone-destination</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks>
+                    <delete dir="${itProjects}" failonerror="false" />
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>${invokerPluginVersion}</version>
@@ -348,7 +366,7 @@ under the License.
                     <goal>install</goal>
                   </goals>
                   <projectsDirectory>src/it/it-project-parent</projectsDirectory>
-                  <cloneProjectsTo>${project.build.directory}/it/it-project-parent</cloneProjectsTo>
+                  <cloneProjectsTo>${itParent}</cloneProjectsTo>
                   <pomIncludes>
                     <pomInclude>pom.xml</pomInclude>
                   </pomIncludes>
@@ -363,7 +381,7 @@ under the License.
                 </goals>
                 <configuration>
                   <projectsDirectory>src/it/projects</projectsDirectory>
-                  <cloneProjectsTo>${project.build.directory}/it/projects</cloneProjectsTo>
+                  <cloneProjectsTo>${itProjects}</cloneProjectsTo>
                   <testPropertiesFile>test.properties</testPropertiesFile>
                   <debug>true</debug>
 
