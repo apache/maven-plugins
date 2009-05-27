@@ -121,10 +121,10 @@ public class PdfMojo
     /**
      * Identifies the framework to use for pdf generation: either "fo" (default) or "itext".
      *
-     * @parameter expression="fo"
+     * @parameter expression="${implementation}" default-value="fo"
      * @required
      */
-    private String implementation = "fo";
+    private String implementation;
 
     // ----------------------------------------------------------------------
     // Mojo components
