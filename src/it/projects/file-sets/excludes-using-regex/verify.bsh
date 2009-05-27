@@ -14,7 +14,7 @@ try
 	}
 	
 	JarFile jf = new JarFile( f );
-	JarEntry je = jf.getEntry( "parent/src/main/java/org/test/target/file.properties" );
+	JarEntry je = jf.getEntry( "parent-1.0/src/main/java/org/test/target/file.properties" );
 	
 	if ( je == null )
 	{
@@ -22,11 +22,27 @@ try
 		return false;
 	}
 	
-	je = jf.getEntry( "parent/child/src/main/resources/target/file.txt" );
+	je = jf.getEntry( "parent-1.0/child/src/main/resources/target/file.txt" );
 	
 	if ( je == null )
 	{
 		System.out.println( "target/file.txt in child resources is missing from the jar." );
+		return false;
+	}
+	
+	je = jf.getEntry( "parent-1.0/target/omit.txt" );
+	
+	if ( je != null )
+	{
+		System.out.println( "target/omit.txt in parent project was included the jar." );
+		return false;
+	}
+	
+	je = jf.getEntry( "parent-1.0/child/target/omit.txt" );
+	
+	if ( je != null )
+	{
+		System.out.println( "target/omit.txt in child project was included the jar." );
 		return false;
 	}
 }
