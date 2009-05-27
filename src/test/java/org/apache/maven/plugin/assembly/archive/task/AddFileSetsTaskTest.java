@@ -207,9 +207,9 @@ public class AddFileSetsTaskTest
 
         macTask.expectGetProject( null );
 
-        macTask.archiver.getDefaultDirectoryMode();
+        macTask.archiver.getOverrideDirectoryMode();
         macTask.archiverCtl.setReturnValue( -1 );
-        macTask.archiver.getDefaultFileMode();
+        macTask.archiver.getOverrideFileMode();
         macTask.archiverCtl.setReturnValue( -1 );
 
         MavenProject project = new MavenProject( new Model() );

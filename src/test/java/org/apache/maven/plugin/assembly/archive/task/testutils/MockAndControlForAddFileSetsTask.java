@@ -54,15 +54,15 @@ public class MockAndControlForAddFileSetsTask
         configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
         mockManager.add( configSourceCtl );
 
-        configSource = ( AssemblerConfigurationSource ) configSourceCtl.getMock();
+        configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
 
         archiverCtl = MockControl.createControl( Archiver.class );
         mockManager.add( archiverCtl );
 
-        archiver = ( Archiver ) archiverCtl.getMock();
+        archiver = (Archiver) archiverCtl.getMock();
 
         archiveBaseDir = fileManager.createTempDir();
-        
+
         configSource.getMavenSession();
         configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
     }
@@ -81,23 +81,37 @@ public class MockAndControlForAddFileSetsTask
 
     public void expectModeChanges( int[] modes, int modeChangeCount )
     {
-        archiver.getDefaultDirectoryMode();
+        archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( modes[0] );
 
-        archiver.getDefaultFileMode();
+        archiver.getOverrideFileMode();
         archiverCtl.setReturnValue( modes[1] );
 
         if ( modeChangeCount > 1 )
         {
             for ( int i = 1; i < modeChangeCount; i++ )
             {
-                archiver.setDefaultDirectoryMode( modes[2] );
-                archiver.setDefaultFileMode( modes[3] );
+                if ( modes[2] > -1 )
+                {
+                    archiver.setDirectoryMode( modes[2] );
+                }
+                
+                if ( modes[3] > -1 )
+                {
+                    archiver.setFileMode( modes[3] );
+                }
             }
         }
 
-        archiver.setDefaultDirectoryMode( modes[0] );
-        archiver.setDefaultFileMode( modes[1] );
+        if ( modes[2] > -1 )
+        {
+            archiver.setDirectoryMode( modes[0] );
+        }
+        
+        if ( modes[3] > -1 )
+        {
+            archiver.setFileMode( modes[1] );
+        }
     }
 
     public void expectAdditionOfSingleFileSet( MavenProject project, File basedir, String finalName,
@@ -116,10 +130,10 @@ public class MockAndControlForAddFileSetsTask
         // the logger sends a debug message with this info inside the addFileSet(..) method..
         if ( isDebugEnabled )
         {
-            archiver.getDefaultDirectoryMode();
+            archiver.getOverrideDirectoryMode();
             archiverCtl.setReturnValue( modes[0] );
 
-            archiver.getDefaultFileMode();
+            archiver.getOverrideFileMode();
             archiverCtl.setReturnValue( modes[1] );
         }
 
@@ -161,7 +175,7 @@ public class MockAndControlForAddFileSetsTask
         configSource.getMavenSession();
         configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectGetFinalName( String finalName )
     {
         configSource.getFinalName();

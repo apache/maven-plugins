@@ -121,10 +121,10 @@ public class MockAndControlForAddDependencySetsTask
     public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
                                             int numberOfChanges )
     {
-        archiver.getDefaultDirectoryMode();
+        archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( originalDirMode );
 
-        archiver.getDefaultFileMode();
+        archiver.getOverrideFileMode();
         archiverCtl.setReturnValue( originalFileMode );
 
         // one of the changes will occur below, when we restore the original mode.
@@ -132,13 +132,13 @@ public class MockAndControlForAddDependencySetsTask
         {
             for( int i = 1; i< numberOfChanges; i++ )
             {
-                archiver.setDefaultDirectoryMode( dirMode );
-                archiver.setDefaultFileMode( fileMode );
+                archiver.setDirectoryMode( dirMode );
+                archiver.setFileMode( fileMode );
             }
         }
 
-        archiver.setDefaultDirectoryMode( originalDirMode );
-        archiver.setDefaultFileMode( originalFileMode );
+        archiver.setDirectoryMode( originalDirMode );
+        archiver.setFileMode( originalFileMode );
     }
 
     public void expectAddFile( File file, String outputLocation )

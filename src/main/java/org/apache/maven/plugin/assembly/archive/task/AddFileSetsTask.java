@@ -118,8 +118,8 @@ public class AddFileSetsTask
         if ( logger.isDebugEnabled() )
         {
             logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "
-                + Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: "
-                + Integer.toString( archiver.getDefaultFileMode(), 8 )
+                + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
+                + Integer.toString( archiver.getOverrideFileMode(), 8 )
                 + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 

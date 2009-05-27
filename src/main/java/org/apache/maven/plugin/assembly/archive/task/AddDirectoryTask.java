@@ -68,19 +68,24 @@ public class AddDirectoryTask
                 + outputDirectory + ". All paths must be within the archive root directory." );
         }
         
-        int oldDirMode = archiver.getDefaultDirectoryMode();
-        int oldFileMode = archiver.getDefaultFileMode();
+        int oldDirMode = archiver.getOverrideDirectoryMode();
+        int oldFileMode = archiver.getOverrideFileMode();
 
+        boolean fileModeSet = false;
+        boolean dirModeSet = false;
+        
         try
         {
             if ( directoryMode != -1 )
             {
-                archiver.setDefaultDirectoryMode( directoryMode );
+                archiver.setDirectoryMode( directoryMode );
+                dirModeSet = true;
             }
 
             if ( fileMode != -1 )
             {
-                archiver.setDefaultFileMode( fileMode );
+                archiver.setFileMode( fileMode );
+                fileModeSet = true;
             }
 
             if ( directory.exists() )
@@ -123,8 +128,15 @@ public class AddDirectoryTask
         }
         finally
         {
-            archiver.setDefaultDirectoryMode( oldDirMode );
-            archiver.setDefaultFileMode( oldFileMode );
+            if ( dirModeSet )
+            {
+                archiver.setDirectoryMode( oldDirMode );
+            }
+            
+            if ( fileModeSet )
+            {
+                archiver.setFileMode( oldFileMode );
+            }
         }
     }
 

@@ -61,7 +61,7 @@ public final class TypeConversionUtils
     public static int modeToInt( String mode, Logger logger )
         throws AssemblyFormattingException
     {
-        if ( mode == null )
+        if ( mode == null || mode.trim().length() < 1 )
         {
             return -1;
         }
