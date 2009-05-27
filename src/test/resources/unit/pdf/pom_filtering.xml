@@ -58,6 +58,7 @@
           <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/pdf_filtering.xml</docDescriptor>
           <siteDirectory>${basedir}/target/test-classes/unit/pdf/src/site/</siteDirectory>
           <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
+          <implementation>fo</implementation>
         </configuration>
       </plugin>
     </plugins>
