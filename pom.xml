@@ -430,7 +430,7 @@ under the License.
                 </goals>
                 <configuration>
                   <descriptors>
-                    <descriptor>src/main/assembly/project.xml</descriptor>
+                    <descriptor>src/main/assembly/source-release.xml</descriptor>
                   </descriptors>
                   <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
