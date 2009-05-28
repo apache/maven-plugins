@@ -10,6 +10,7 @@
       <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
+        <exclude>build.log</exclude>
         <exclude>${project.build.directory}/**</exclude>
       </excludes>
     </fileSet>
