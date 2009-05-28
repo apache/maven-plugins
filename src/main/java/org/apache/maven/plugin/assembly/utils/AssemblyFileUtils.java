@@ -79,10 +79,10 @@ public final class AssemblyFileUtils
                 }
             }
             
-//            if ( path.length() == 0 )
-//            {
-//                path = ".";
-//            }
+            if ( path.length() == 0 )
+            {
+                path = ".";
+            }
         }
 
         if ( !new File( path ).isAbsolute() )

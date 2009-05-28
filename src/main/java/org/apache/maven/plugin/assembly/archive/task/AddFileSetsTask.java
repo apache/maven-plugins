@@ -173,7 +173,7 @@ public class AddFileSetsTask
     {
         String sourceDirectory = fileSet.getDirectory();
 
-        if ( sourceDirectory == null )
+        if ( sourceDirectory == null || sourceDirectory.trim().length() < 1 )
         {
             sourceDirectory = basedir.getAbsolutePath();
         }
