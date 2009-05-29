@@ -18,11 +18,19 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Represent an eclipse source dir. Eclipse has no "main", "test" or "resource" concepts, so two source dirs with the
  * same path are equal.
+ * <p>
+ * source directories should always have a null output value.
  * 
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  * @version $Id$
@@ -30,13 +38,24 @@ import org.apache.maven.plugin.ide.IdeUtils;
 public class EclipseSourceDir
     implements Comparable
 {
+    private static final String PATTERN_SEPARATOR = "|";
+
     private String path;
 
+    /**
+     * source directories should always have a null output value.
+     */
     private String output;
 
-    private String include;
+    /**
+     * List<String>
+     */
+    private List include;
 
-    private String exclude;
+    /**
+     * List<String>
+     */
+    private List exclude;
 
     private boolean isResource;
 
@@ -44,24 +63,34 @@ public class EclipseSourceDir
 
     private boolean filtering;
 
-    public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include,
-                             String exclude, boolean filtering )
+    /**
+     * @param path the eclipse source directory
+     * @param output path output directory
+     * @param isResource true if the directory only contains resources, false if a compilation directory
+     * @param test true if is a test directory, false otherwise
+     * @param include a string in the eclipse pattern format for the include filter
+     * @param exclude a string in the eclipse pattern format for the exclude filter
+     * @param filtering true if filtering should be applied, false otherwise. Note: Filtering will only be applied if
+     *            this become a "special directory" by being nested within the default output directory.
+     */
+    public EclipseSourceDir( String path, String output, boolean isResource, boolean test, List include, List exclude,
+                             boolean filtering )
     {
         setPath( path );
         this.output = output;
         this.isResource = isResource;
         this.test = test;
-        this.include = include;
-        this.exclude = exclude;
+        setInclude( include );
+        setExclude( exclude );
         this.filtering = filtering;
     }
 
     /**
      * Getter for <code>exclude</code>.
      * 
-     * @return Returns the exclude.
+     * @return Returns the exclude. Never null.
      */
-    public String getExclude()
+    public List getExclude()
     {
         return this.exclude;
     }
@@ -71,17 +100,21 @@ public class EclipseSourceDir
      * 
      * @param exclude The exclude to set.
      */
-    public void setExclude( String exclude )
+    public void setExclude( List exclude )
     {
-        this.exclude = exclude;
+        this.exclude = new ArrayList();
+        if ( exclude != null )
+        {
+            this.exclude.addAll( exclude );
+        }
     }
 
     /**
      * Getter for <code>include</code>.
      * 
-     * @return Returns the include.
-     */
-    public String getInclude()
+     * @return Returns the include. Never null.
+     */     
+    public List getInclude()
     {
         return this.include;
     }
@@ -91,13 +124,35 @@ public class EclipseSourceDir
      * 
      * @param include The include to set.
      */
-    public void setInclude( String include )
+    public void setInclude( List include )
     {
-        this.include = include;
+        this.include = new ArrayList();
+        if ( include != null )
+        {
+            this.include.addAll( include );
+        }
+    }
+
+    /**
+     * @return Returns the exclude as a string pattern suitable for eclipse 
+     */
+    public String getExcludeAsString()
+    {
+        return StringUtils.join( exclude.iterator(), PATTERN_SEPARATOR );
+    }
+
+    /**
+     * @return Returns the include as a string pattern suitable for eclipse 
+     */
+    public String getIncludeAsString()
+    {
+        return StringUtils.join( include.iterator(), PATTERN_SEPARATOR );
     }
 
     /**
      * Getter for <code>output</code>.
+     * <p>
+     * source directories should always have a null output value.
      * 
      * @return Returns the output.
      */
@@ -215,5 +270,68 @@ public class EclipseSourceDir
         buffer.append( "test=" ).append( test ).append( ", " );
         buffer.append( "filtering=" ).append( filtering );
         return buffer.toString();        
+    }
+
+    /**
+     * Merge with the provided directory.
+     * <p>
+     * If one directory is a source and the other is a resource directory then the result will be a source directory and
+     * any includes or excludes will be removed since Eclipse has no "main", "test" or "resource" concepts. The output
+     * directory will be the source directories value.
+     * <p>
+     * If the two directories are the same resources type (i.e isResource is equal) then the result will be the same
+     * resource type with the includes from each merged together (duplicates will be removed), similarly for the
+     * excludes. No effort is made to ensure that the includes and excludes are disjointed sets. Please fix your pom
+     * instead.
+     * <p>
+     * No support for cases where the test, or filtering values are not identical.
+     * 
+     * @param mergeWith the directory to merge with
+     * @throws MojoExecutionException test or filtering values are not identical, or isResource true and output are not identical
+     */
+    public void merge( EclipseSourceDir mergeWith )
+        throws MojoExecutionException
+    {
+        if ( test != mergeWith.test )
+        {
+            throw new MojoExecutionException( "Request to merge when 'test' is not identical. Original=" + toString()
+                + ", merging with=" + mergeWith.toString() );
+        }
+        if ( filtering != mergeWith.filtering )
+        {
+            throw new MojoExecutionException( "Request to merge when 'filtering' is not identical. Original="
+                + toString() + ", merging with=" + mergeWith.toString() );
+        }
+
+        if ( isResource != mergeWith.isResource )
+        {
+            if ( isResource )
+            {
+                // the output directory is set to the source directory's value
+                output = mergeWith.output;
+            }
+            isResource = false;
+            setInclude( null );
+            setExclude( null );
+
+        }
+        else
+        {
+            if ( !StringUtils.equals( output, mergeWith.output ) )
+            {
+                throw new MojoExecutionException( "Request to merge when 'output' is not identical. Original="
+                    + toString() + ", merging with=" + mergeWith.toString() );
+            }
+
+            LinkedHashSet includesAsSet = new LinkedHashSet();
+            includesAsSet.addAll( include );
+            includesAsSet.addAll( mergeWith.include );
+            include = new ArrayList( includesAsSet );
+
+            LinkedHashSet excludesAsSet = new LinkedHashSet();
+            excludesAsSet.addAll( exclude );
+            excludesAsSet.addAll( mergeWith.exclude );
+            exclude = new ArrayList( excludesAsSet );
+        }
     }
 }

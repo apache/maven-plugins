@@ -244,13 +244,13 @@ public class EclipseClasspathWriter
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
 
-            String includes = dir.getInclude();
+            String includes = dir.getIncludeAsString();
             if ( StringUtils.isNotEmpty( includes ) )
             {
                 writer.addAttribute( ATTR_INCLUDING, includes );
             }
 
-            String excludes = dir.getExclude();
+            String excludes = dir.getExcludeAsString();
             if ( StringUtils.isNotEmpty( excludes ) )
             {
                 writer.addAttribute( ATTR_EXCLUDING, excludes );
@@ -295,13 +295,13 @@ public class EclipseClasspathWriter
 
                     buildXmlPrinter.startElement( "fileset" );
                     buildXmlPrinter.addAttribute( "dir", dir.getPath() );
-                    if ( dir.getInclude() != null )
+                    if ( dir.getIncludeAsString() != null )
                     {
-                        buildXmlPrinter.addAttribute( "includes", dir.getInclude() );
+                        buildXmlPrinter.addAttribute( "includes", dir.getIncludeAsString() );
                     }
-                    if ( dir.getExclude() != null )
+                    if ( dir.getExcludeAsString() != null )
                     {
-                        buildXmlPrinter.addAttribute( "excludes", dir.getExclude() );
+                        buildXmlPrinter.addAttribute( "excludes", dir.getExcludeAsString() );
                     }
                     buildXmlPrinter.endElement();
 
