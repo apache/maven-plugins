@@ -265,8 +265,8 @@ public class EclipseSourceDir
         buffer.append( path );
         buffer.append( ": " );
         buffer.append( "output=" ).append( output ).append( ", " );
-        buffer.append( "include=" ).append( include ).append( ", " );
-        buffer.append( "exclude=" ).append( exclude ).append( ", " );
+        buffer.append( "include=[" ).append( getIncludeAsString() ).append( "], " );
+        buffer.append( "exclude=[" ).append( getExcludeAsString() ).append( "], " );
         buffer.append( "test=" ).append( test ).append( ", " );
         buffer.append( "filtering=" ).append( filtering );
         return buffer.toString();        
