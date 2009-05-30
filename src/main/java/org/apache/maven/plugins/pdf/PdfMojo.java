@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
@@ -49,6 +50,8 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -126,6 +129,13 @@ public class PdfMojo
      */
     private String implementation;
 
+    /**
+     * The local repository.
+     *
+     * @parameter expression="${localRepository}"
+     */
+    private ArtifactRepository localRepository;
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -143,6 +153,13 @@ public class PdfMojo
      * @component role-hint="itext"
      */
     private PdfRenderer itextRenderer;
+
+    /**
+     * Site renderer.
+     *
+     * @component
+     */
+    private Renderer siteRenderer;
 
     /**
      * Document Renderer.
@@ -186,7 +203,6 @@ public class PdfMojo
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
-
             Locale.setDefault( defaultLocale );
 
             for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
@@ -196,11 +212,13 @@ public class PdfMojo
                 File outputDir = getOutputDirectory( locale, defaultLocale );
 
                 File siteDirectoryFile = siteDirectory;
-
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
                 {
                     siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
                 }
+
+                // Copy extra-resources
+                copyResources( locale );
 
                 docRenderer.render( siteDirectoryFile, outputDir, getDocumentModel() );
             }
@@ -438,6 +456,61 @@ public class PdfMojo
         }
 
         return this.defaultDecorationModel;
+    }
+
+    /**
+     * Parse the decoration model to find the skin artifact and copy its resources to the output dir.
+     *
+     * @param locale not null
+     * @throws MojoExecutionException if any
+     * @see #getDefaultDecorationModel()
+     */
+    private void copyResources( Locale locale )
+        throws MojoExecutionException
+    {
+        DecorationModel decorationModel = getDefaultDecorationModel();
+
+        File skinFile;
+        try
+        {
+            skinFile =
+                getSiteTool().getSkinArtifactFromRepository( localRepository,
+                                                             project.getRemoteArtifactRepositories(),
+                                                             decorationModel ).getFile();
+        }
+        catch ( SiteToolException e )
+        {
+            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
+        }
+
+        if ( skinFile == null )
+        {
+            return;
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Copy resources from skin artifact: '" + skinFile + "'..." );
+        }
+
+        try
+        {
+            SiteRenderingContext context =
+                siteRenderer.createContextForSkin( skinFile, new HashMap(), decorationModel, project.getName(),
+                                                   locale );
+            context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
+
+            for ( Iterator i = context.getSiteDirectories().iterator(); i.hasNext(); )
+            {
+                File siteDirectoryFile = (File) i.next();
+
+                siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), outputDirectory );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
+        }
     }
 
     /**
