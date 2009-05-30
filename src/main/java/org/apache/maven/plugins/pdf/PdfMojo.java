@@ -53,13 +53,16 @@ import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
@@ -80,11 +83,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *
  * @author ltheussl
  * @version $Id$
- *
  * @goal pdf
  */
 public class PdfMojo
-    extends AbstractPdfMojo
+    extends AbstractMojo
 {
     /** ISO 8601 date format, i.e. <code>yyyy-MM-dd</code> **/
     private static final DateFormat ISO_8601_FORMAT = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
@@ -152,6 +154,13 @@ public class PdfMojo
     private PdfRenderer foRenderer;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * IText Document Renderer.
      *
      * @component role-hint="itext"
@@ -159,11 +168,26 @@ public class PdfMojo
     private PdfRenderer itextRenderer;
 
     /**
+     * A comma separated list of locales supported by Maven.
+     * The first valid token will be the default Locale for this instance of the Java Virtual Machine.
+     *
+     * @parameter expression="${locales}"
+     */
+    private String locales;
+
+    /**
      * Site renderer.
      *
      * @component
      */
     private Renderer siteRenderer;
+
+    /**
+     * SiteTool.
+     *
+     * @component
+     */
+    private SiteTool siteTool;
 
     /**
      * Document Renderer.
@@ -203,7 +227,7 @@ public class PdfMojo
 
         try
         {
-            List localesList = getSiteTool().getAvailableLocales( getLocales() );
+            List localesList = siteTool.getAvailableLocales( locales );
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
@@ -296,7 +320,7 @@ public class PdfMojo
         DocumentCover cover = new DocumentCover();
         cover.setCoverTitle( getProjectName() );
         cover.setCoverVersion( project.getVersion() );
-        cover.setCoverType( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
+        cover.setCoverType( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
         cover.setDate( ISO_8601_FORMAT.format( Calendar.getInstance().getTime() ) );
         cover.setProjectName( getProjectName() );
         cover.setCompanyName( getProjectOrganizationName() );
@@ -314,7 +338,7 @@ public class PdfMojo
         {
             DocumentTOC toc = new DocumentTOC();
 
-            toc.setName( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
+            toc.setName( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
 
             for ( Iterator it = decorationModel.getMenus().iterator(); it.hasNext(); )
             {
@@ -397,7 +421,7 @@ public class PdfMojo
     {
         if ( this.defaultLocale == null )
         {
-            List localesList = getSiteTool().getAvailableLocales( getLocales() );
+            List localesList = siteTool.getAvailableLocales( locales );
             this.defaultLocale = (Locale) localesList.get( 0 );
         }
 
@@ -416,11 +440,9 @@ public class PdfMojo
             Locale locale = getDefaultLocale();
 
             File descriptorFile =
-                getSiteTool()
-                             .getSiteDescriptorFromBasedir(
-                                                            PathUtils.toRelative( project.getBasedir(),
-                                                                                  siteDirectory.getAbsolutePath() ),
-                                                            project.getBasedir(), locale );
+                siteTool.getSiteDescriptorFromBasedir( PathUtils.toRelative( project.getBasedir(),
+                                                                             siteDirectory.getAbsolutePath() ),
+                                                       project.getBasedir(), locale );
             DecorationModel decoration = null;
             if ( descriptorFile.exists() )
             {
@@ -433,8 +455,8 @@ public class PdfMojo
                     String siteDescriptorContent = IOUtil.toString( reader );
 
                     siteDescriptorContent =
-                        getSiteTool().getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
-                                                                            reader.getEncoding(), reader.getEncoding() );
+                        siteTool.getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
+                                                                       reader.getEncoding(), reader.getEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
@@ -478,9 +500,8 @@ public class PdfMojo
         try
         {
             skinFile =
-                getSiteTool().getSkinArtifactFromRepository( localRepository,
-                                                             project.getRemoteArtifactRepositories(),
-                                                             decorationModel ).getFile();
+                siteTool.getSkinArtifactFromRepository( localRepository, project.getRemoteArtifactRepositories(),
+                                                        decorationModel ).getFile();
         }
         catch ( SiteToolException e )
         {
