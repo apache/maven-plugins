@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -85,6 +86,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class PdfMojo
     extends AbstractPdfMojo
 {
+    /** ISO 8601 date format, i.e. <code>yyyy-MM-dd</code> **/
+    private static final DateFormat ISO_8601_FORMAT = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
+
     // ----------------------------------------------------------------------
     // Mojo Parameters
     // ----------------------------------------------------------------------
@@ -293,7 +297,7 @@ public class PdfMojo
         cover.setCoverTitle( getProjectName() );
         cover.setCoverVersion( project.getVersion() );
         cover.setCoverType( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
-        cover.setDate( Integer.toString( Calendar.getInstance().get( Calendar.YEAR ) ) );
+        cover.setDate( ISO_8601_FORMAT.format( Calendar.getInstance().getTime() ) );
         cover.setProjectName( getProjectName() );
         cover.setCompanyName( getProjectOrganizationName() );
 
