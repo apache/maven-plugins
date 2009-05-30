@@ -35,6 +35,29 @@ under the License.
   <name>Maven PDF Plugin</name>
   <description>Generates a PDF document from the project site.</description>
 
+  <developers>
+    <developer>
+      <id>vsiveton</id>
+      <name>Vincent Siveton</name>
+      <email>vsiveton@apache.org</email>
+      <organization>Apache Software Foundation</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <id>ltheussl</id>
+      <name>Lukas Theussl</name>
+      <email>ltheussl@apache.org</email>
+      <organization>Apache Software Foundation</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
@@ -49,45 +72,27 @@ under the License.
     <url>http://jira.codehaus.org/browse/MPDF</url>
   </issueManagement>
 
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-          <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-    <developer>
-      <id>ltheussl</id>
-      <name>Lukas Theussl</name>
-      <email>ltheussl@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-          <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
+  <properties>
+    <doxiaVersion>1.1.1-SNAPSHOT</doxiaVersion>
+    <mavenVersion>2.0.6</mavenVersion>
+  </properties>
 
   <dependencies>
     <!-- maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${maven.version}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>${maven.version}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
+      <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -99,7 +104,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-      <version>${doxia.version}</version>
+      <version>${doxiaVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -114,7 +119,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-doc-renderer</artifactId>
-      <version>${doxiaSitetoolsVersion}</version>
+      <version>${doxiaVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -129,7 +134,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaSitetoolsVersion}</version>
+      <version>${doxiaVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -144,7 +149,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaSitetoolsVersion}</version>
+      <version>${doxiaVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -207,29 +212,25 @@ under the License.
     </dependency>
   </dependencies>
 
-  <properties>
-    <doxia.version>1.1.1-SNAPSHOT</doxia.version>
-    <doxiaSitetoolsVersion>1.1.1-SNAPSHOT</doxiaSitetoolsVersion>
-    <maven.version>2.0.6</maven.version>
-  </properties>
-
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0</version>
+          <!--<version>2.1-SNAPSHOT</version>-->
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>2.0</version>
-        <!--<version>2.1-SNAPSHOT</version>-->
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-
       <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.2</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -267,15 +268,11 @@ under the License.
         <version>2.0.1</version>
         <!--<version>2.3-SNAPSHOT</version>-->
       </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.1</version>
-        <!--<version>2.5-SNAPSHOT</version>-->
-      </plugin>
     </plugins>
   </reporting>
 
   <profiles>
+    <!-- TODO Should be by default when release will be done -->
     <profile>
       <id>pdf</id>
       <build>
