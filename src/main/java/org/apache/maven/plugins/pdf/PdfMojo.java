@@ -92,6 +92,53 @@ public class PdfMojo
     private static final DateFormat ISO_8601_FORMAT = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
 
     // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * FO Document Renderer.
+     *
+     * @component role-hint="fo"
+     */
+    private PdfRenderer foRenderer;
+
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
+     * IText Document Renderer.
+     *
+     * @component role-hint="itext"
+     */
+    private PdfRenderer itextRenderer;
+
+    /**
+     * A comma separated list of locales supported by Maven.
+     * The first valid token will be the default Locale for this instance of the Java Virtual Machine.
+     *
+     * @parameter expression="${locales}"
+     */
+    private String locales;
+
+    /**
+     * Site renderer.
+     *
+     * @component
+     */
+    private Renderer siteRenderer;
+
+    /**
+     * SiteTool.
+     *
+     * @component
+     */
+    private SiteTool siteTool;
+
+    // ----------------------------------------------------------------------
     // Mojo Parameters
     // ----------------------------------------------------------------------
 
@@ -139,55 +186,9 @@ public class PdfMojo
      * The local repository.
      *
      * @parameter expression="${localRepository}"
+     * @required
      */
     private ArtifactRepository localRepository;
-
-    // ----------------------------------------------------------------------
-    // Mojo components
-    // ----------------------------------------------------------------------
-
-    /**
-     * FO Document Renderer.
-     *
-     * @component role-hint="fo"
-     */
-    private PdfRenderer foRenderer;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
-    /**
-     * IText Document Renderer.
-     *
-     * @component role-hint="itext"
-     */
-    private PdfRenderer itextRenderer;
-
-    /**
-     * A comma separated list of locales supported by Maven.
-     * The first valid token will be the default Locale for this instance of the Java Virtual Machine.
-     *
-     * @parameter expression="${locales}"
-     */
-    private String locales;
-
-    /**
-     * Site renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * SiteTool.
-     *
-     * @component
-     */
-    private SiteTool siteTool;
 
     /**
      * Document Renderer.
