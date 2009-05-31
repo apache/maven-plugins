@@ -19,7 +19,7 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import com.puppycrawl.tools.checkstyle.Checker;
+import com.puppycrawl.tools.checkstyle.ModuleFactory;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
@@ -55,6 +55,8 @@ public class CheckstyleReportGenerator
 
     private Configuration checkstyleConfig;
 
+    private ModuleFactory checkstyleModuleFactory;
+
     private boolean enableRulesSummary;
 
     private boolean enableSeveritySummary;
@@ -66,7 +68,7 @@ public class CheckstyleReportGenerator
     private SiteTool siteTool;
 
     private String xrefLocation;
-    
+
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
     {
         this.bundle = bundle;
@@ -518,6 +520,17 @@ public class CheckstyleReportGenerator
     private String countRuleViolation( Iterator files, String ruleName, String message, String severity )
     {
         long count = 0;
+        String sourceName;
+
+        try
+        {
+            sourceName = checkstyleModuleFactory.createModule( ruleName ).getClass().getName();
+        }
+        catch ( CheckstyleException e )
+        {
+            getLog().error( "Unable to obtain Source Name for Rule '" + ruleName + "'.", e );
+            return "(report failure)";
+        }
 
         while ( files.hasNext() )
         {
@@ -527,10 +540,7 @@ public class CheckstyleReportGenerator
             {
                 AuditEvent event = (AuditEvent) error.next();
 
-                String eventSrcName = event.getSourceName();
-                if ( eventSrcName != null
-                        && ( eventSrcName.endsWith( ruleName )
-                        || eventSrcName.endsWith( ruleName + "Check" ) ) )
+                if ( event.getSourceName().equals( sourceName ) )
                 {
                     // check message too, for those that have a specific one.
                     // like GenericIllegalRegexp and Regexp
@@ -564,6 +574,7 @@ public class CheckstyleReportGenerator
                 }
             }
         }
+
         return String.valueOf( count );
     }
 
@@ -868,4 +879,13 @@ public class CheckstyleReportGenerator
         this.checkstyleConfig = config;
     }
 
+    public ModuleFactory getCheckstyleModuleFactory()
+    {
+        return checkstyleModuleFactory;
+    }
+
+    public void setCheckstyleModuleFactory( ModuleFactory checkstyleModuleFactory )
+    {
+        this.checkstyleModuleFactory = checkstyleModuleFactory;
+    }
 }
