@@ -38,6 +38,7 @@
 
     <menu name="Examples">
       <item name="Filtering Document Descriptor" href="/examples/filtering.html"/>
+      <item name="Site Phase Integration" href="/examples/site-phase-integration.html"/>
     </menu>
   </body>
 </project>
