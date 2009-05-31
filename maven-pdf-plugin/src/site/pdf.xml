@@ -36,6 +36,7 @@
     <item name="Introduction" ref="index.apt"/>
     <item name="Usage" ref="usage.apt"/>
     <item name="Filtering" ref="examples/filtering.apt"/>
+    <item name="Site Phase Integration" ref="examples/site-phase-integration.apt"/>
     <item name="Limitations" ref="limitations.apt"/>
     <item name="FAQ" ref="faq.fml"/>
   </toc>
@@ -47,6 +48,5 @@
     <coverDate>2009-05-16T00:00:00.000</coverDate>
     <companyName>The Apache Software Foundation</companyName>
   </cover>
-
 </document>
 <!-- END SNIPPET: docDescriptor -->
