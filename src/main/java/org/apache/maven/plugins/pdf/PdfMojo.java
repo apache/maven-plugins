@@ -160,12 +160,20 @@ public class PdfMojo
     private File siteDirectory;
 
     /**
-     * Directory containing the generated project sites and report distributions.
+     * Output directory where PDF files should be created.
      *
-     * @parameter alias="workingDirectory" expression="${project.build.directory}/pdf"
+     * @parameter expression="${project.build.directory}/pdf"
      * @required
      */
     private File outputDirectory;
+
+    /**
+     * Working directory for working files like temp files/resources.
+     *
+     * @parameter expression="${project.build.directory}/pdf"
+     * @required
+     */
+    private File workingDirectory;
 
     /**
      * File that contains the DocumentModel of the PDF to generate.
@@ -238,7 +246,7 @@ public class PdfMojo
             {
                 Locale locale = (Locale) iterator.next();
 
-                File outputDir = getOutputDirectory( locale, defaultLocale );
+                File workingDir = getWorkingDirectory( locale, defaultLocale );
 
                 File siteDirectoryFile = siteDirectory;
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
@@ -249,7 +257,19 @@ public class PdfMojo
                 // Copy extra-resources
                 copyResources( locale );
 
-                docRenderer.render( siteDirectoryFile, outputDir, getDocumentModel() );
+                docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel() );
+            }
+
+            if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
+            {
+                List pdfs = FileUtils.getFiles( workingDirectory, "**/*.pdf", null );
+                for ( Iterator it = pdfs.iterator(); it.hasNext(); )
+                {
+                    File pdf = (File) it.next();
+
+                    FileUtils.copyFile( pdf, new File( outputDirectory, pdf.getName() ) );
+                    pdf.delete();
+                }
             }
         }
         catch ( DocumentRendererException e )
@@ -288,21 +308,20 @@ public class PdfMojo
     }
 
     /**
-     * Return the output directory for a given Locale and the current default Locale.
+     * Return the working directory for a given Locale and the current default Locale.
      *
      * @param locale a Locale.
      * @param defaultLocale the current default Locale.
      * @return File.
-     * @todo can be re-used
      */
-    private File getOutputDirectory( Locale locale, Locale defaultLocale )
+    private File getWorkingDirectory( Locale locale, Locale defaultLocale )
     {
         if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
-            return outputDirectory;
+            return workingDirectory;
         }
 
-        return new File( outputDirectory, locale.getLanguage() );
+        return new File( workingDirectory, locale.getLanguage() );
     }
 
     /**
@@ -530,7 +549,7 @@ public class PdfMojo
             {
                 File siteDirectoryFile = (File) i.next();
 
-                siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), outputDirectory );
+                siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), workingDirectory );
             }
         }
         catch ( IOException e )
