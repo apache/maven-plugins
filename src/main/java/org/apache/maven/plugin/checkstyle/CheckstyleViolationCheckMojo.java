@@ -90,6 +90,15 @@ public class CheckstyleViolationCheckMojo
     private boolean skip;
 
     /**
+     * Ouput detected violations in the console
+     *
+     * @parameter expression="${checkstyle.console}" default-value="false"
+     * @since 2.3
+     */
+    private boolean logViolationsToConsole;
+
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -149,11 +158,30 @@ public class CheckstyleViolationCheckMojo
         int count = 0;
 
         int eventType = xpp.getEventType();
+        String file = "";
         while ( eventType != XmlPullParser.END_DOCUMENT )
         {
+            if ( eventType == XmlPullParser.START_TAG && "file".equals( xpp.getName() ) )
+            {
+                file = xpp.getAttributeValue( "", "name" );
+                file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+            }
+
             if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() )
                 && isViolation( xpp.getAttributeValue( "", "severity" ) ) )
             {
+                if ( logViolationsToConsole )
+                {
+                    StringBuffer stb = new StringBuffer();
+                    stb.append( file );
+                    stb.append( '[' );
+                    stb.append( xpp.getAttributeValue( "", "line" ) );
+                    stb.append( ':' );
+                    stb.append( xpp.getAttributeValue( "", "column" ) );
+                    stb.append( "] " );
+                    stb.append( xpp.getAttributeValue( "", "message" ) );
+                    getLog().error( stb.toString() );
+                }
                 count++;
             }
             eventType = xpp.next();
