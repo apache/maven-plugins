@@ -45,6 +45,9 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
@@ -86,6 +89,7 @@ import java.util.ResourceBundle;
  */
 public class CheckstyleReport
     extends AbstractMavenReport
+    implements Serviceable
 {
     private static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
 
@@ -485,7 +489,7 @@ public class CheckstyleReport
      * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
      * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
      * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
-     * 
+     *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.2
      */
@@ -500,11 +504,24 @@ public class CheckstyleReport
 
     /**
      * Velocity Component.
-     *
-     * @component role="org.codehaus.plexus.velocity.VelocityComponent"
-     * @required
      */
     private VelocityComponent velocityComponent;
+
+    /**
+     * ServiceLocator used to lookup VelocityComponent
+     * Fix for MCHECKSTYLE-101 to avoid VelocityComponent beeing initialized when skip=true
+     */
+    private ServiceLocator serviceLocator;
+
+    /**
+     * ${inheritDoc}
+     *
+     * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable#service(org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator)
+     */
+    public void service( ServiceLocator locator )
+    {
+        this.serviceLocator = locator;
+    }
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
@@ -672,6 +689,18 @@ public class CheckstyleReport
     private void generateRSS( CheckstyleResults results )
         throws MavenReportException
     {
+        if ( velocityComponent == null )
+        {
+            try
+            {
+                velocityComponent = (VelocityComponent) serviceLocator.lookup( VelocityComponent.ROLE );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MavenReportException( "Failed to setup Velocity", e );
+            }
+        }
+
         VelocityTemplate vtemplate = new VelocityTemplate( velocityComponent, PLUGIN_RESOURCES );
         vtemplate.setLog( getLog() );
 
