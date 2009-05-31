@@ -1,7 +1,7 @@
  ------
- Maven PDF Plugin
+ Site Phase Integration
  ------
- Lukas Theussl
+ Vincent Siveton
  ------
  2009-05-31
  ------
@@ -26,31 +26,35 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Overview
+Site Phase Integration
 
-  This plug-in allows you to generate a PDF version of your
-  project's documentation.
+  The PDF plugin could be coupled with the Maven Site plugin to generate both site documentation and pdfs.
+  To do it, you need to define a custom \<execution/\> tag:
 
-* Goals Overview
-
-  The PDF Plugin only has one goal.
-
-  * {{{./pdf-mojo.html}pdf:pdf}} Generates a PDF document containing
-  all project documentation.
-
-* Usage
-
-  Instructions on the basic usage of the PDF Plugin can be found
-  {{{./usage.html}here}}.
-
-* Example
-
-  Have a look at the {{{./maven-pdf-plugin.pdf}pdf}} version of this web site.
-
-  The following examples show how to use the PDF Plugin in more advanced usecases:
-
-    * {{{./examples/filtering.html}Filtering Document Descriptor}}
-
-    * {{{./examples/site-phase-integration.html}Site Phase Integration}}
-
-    []
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
