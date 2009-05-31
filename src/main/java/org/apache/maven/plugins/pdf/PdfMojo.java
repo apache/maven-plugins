@@ -154,7 +154,7 @@ public class PdfMojo
     /**
      * Directory containing source for apt, fml and xdoc docs.
      *
-     * @parameter expression="${basedir}/src/site"
+     * @parameter default-value="${basedir}/src/site"
      * @required
      */
     private File siteDirectory;
@@ -162,7 +162,7 @@ public class PdfMojo
     /**
      * Output directory where PDF files should be created.
      *
-     * @parameter expression="${project.build.directory}/pdf"
+     * @parameter default-value="${project.build.directory}/pdf"
      * @required
      */
     private File outputDirectory;
@@ -170,7 +170,7 @@ public class PdfMojo
     /**
      * Working directory for working files like temp files/resources.
      *
-     * @parameter expression="${project.build.directory}/pdf"
+     * @parameter default-value="${project.build.directory}/pdf"
      * @required
      */
     private File workingDirectory;
@@ -178,7 +178,7 @@ public class PdfMojo
     /**
      * File that contains the DocumentModel of the PDF to generate.
      *
-     * @parameter expression="src/site/pdf.xml"
+     * @parameter default-value="src/site/pdf.xml"
      */
     private File docDescriptor;
 

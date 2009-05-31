@@ -268,6 +268,11 @@ under the License.
         <version>2.0.1</version>
         <!--<version>2.3-SNAPSHOT</version>-->
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
     </plugins>
   </reporting>
 
