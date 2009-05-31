@@ -127,7 +127,12 @@ under the License.
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.0</version>
+      <version>4.4</version>
+    </dependency>
+    <dependency>
+      <groupId>checkstyle</groupId>
+      <artifactId>checkstyle-optional</artifactId>
+      <version>4.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
