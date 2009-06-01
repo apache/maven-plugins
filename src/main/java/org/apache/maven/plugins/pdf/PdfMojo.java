@@ -26,6 +26,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
+import org.apache.maven.doxia.document.DocumentAuthor;
 import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -56,6 +58,7 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 
+import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -333,9 +336,12 @@ public class PdfMojo
         throws IOException, MojoExecutionException
     {
         DocumentMeta meta = new DocumentMeta();
-        meta.setAuthor( getProjectOrganizationName() );
         meta.setTitle( getProjectName() );
         meta.setDescription( project.getDescription() );
+        meta.setAuthors( getAuthors() );
+        meta.setCreator( System.getProperty( "user.name" ) );
+        meta.setCreationDate( new Date() );
+        // Note: no default keywords
 
         DocumentCover cover = new DocumentCover();
         cover.setCoverTitle( getProjectName() );
@@ -344,6 +350,7 @@ public class PdfMojo
         cover.setDate( ISO_8601_FORMAT.format( Calendar.getInstance().getTime() ) );
         cover.setProjectName( getProjectName() );
         cover.setCompanyName( getProjectOrganizationName() );
+        cover.setAuthors( getAuthors() );
 
         DocumentModel docModel = new DocumentModel();
         docModel.setModelEncoding( getProjectModelEncoding() );
@@ -412,26 +419,90 @@ public class PdfMojo
         return docModel;
     }
 
+    /**
+     * @return the project organization name if not empty, or the current System user name otherwise.
+     */
     private String getProjectOrganizationName()
     {
-        return ( project.getOrganization() != null
-            && StringUtils.isNotEmpty( project.getOrganization().getName() )
-                ? project.getOrganization().getName()
-                : System.getProperty( "user.name" ) );
+        if ( project.getOrganization() != null && StringUtils.isNotEmpty( project.getOrganization().getName() ) )
+        {
+            return project.getOrganization().getName();
+        }
+
+        return System.getProperty( "user.name" );
     }
 
+    /**
+     * @return the project name if not empty, or the project groupId and artifactId.
+     */
     private String getProjectName()
     {
-        return ( StringUtils.isEmpty( project.getName() )
-                ? project.getGroupId() + ":" + project.getArtifactId()
-                : project.getName() );
+        if ( StringUtils.isEmpty( project.getName() ) )
+        {
+            return project.getGroupId() + ":" + project.getArtifactId();
+        }
+
+        return project.getName();
     }
 
+    /**
+     * @return the project encoding if defined, or UTF-8 otherwise.
+     */
     private String getProjectModelEncoding()
     {
-        return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
-                ? "UTF-8"
-                : project.getModel().getModelEncoding() );
+        if ( StringUtils.isEmpty( project.getModel().getModelEncoding() ) )
+        {
+            return "UTF-8";
+        }
+
+        return project.getModel().getModelEncoding();
+    }
+
+    /**
+     * Wrap the list of project {@link Developer} to a list of {@link DocumentAuthor}.
+     *
+     * @return a list of authors from the project developers.
+     */
+    private List getAuthors()
+    {
+        if ( project.getDevelopers() == null )
+        {
+            return null;
+        }
+
+        List ret = new ArrayList();
+        for ( Iterator it = project.getDevelopers().iterator(); it.hasNext(); )
+        {
+            Developer developer = (Developer) it.next();
+
+            DocumentAuthor author = new DocumentAuthor();
+            author.setName( developer.getName() );
+            author.setEmail( developer.getEmail() );
+            author.setCompanyName( developer.getOrganization() );
+            StringBuffer roles = null;
+            for ( Iterator it2 = developer.getRoles().iterator(); it2.hasNext(); )
+            {
+                String role = (String) it2.next();
+
+                if ( roles == null )
+                {
+                    roles = new StringBuffer();
+                }
+                roles.append( role );
+                if ( it2.hasNext() )
+                {
+                    roles.append( "," );
+                }
+            }
+            if ( roles != null )
+            {
+                author.setPosition( roles.toString() );
+            }
+
+            ret.add( author );
+        }
+
+        return ret;
     }
 
     /**
