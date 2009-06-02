@@ -108,3 +108,7 @@ Maven Eclipse Plugin
   * {{{examples/ajdt-projects.html}AJDT projects}}  
   
   * {{{examples/specifying-source-path-inclusions-and-exclusions.html}Specifying source path inclusions and exclusions}}
+
+* Trouble Shooting
+
+  See {{{trouble-shooting/index.html}Trouble Shooting}} for more details.
