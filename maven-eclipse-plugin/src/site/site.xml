@@ -26,6 +26,7 @@ under the License.
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
+      <item name="Trouble Shooting" href="trouble-shooting/index.html"/>
     </menu>
     <menu name="Configuration">
       <item name="Multiple Module Projects" href="reactor.html"/>
