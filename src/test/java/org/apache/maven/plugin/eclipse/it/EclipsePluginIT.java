@@ -640,6 +640,17 @@ public class EclipsePluginIT
     {
         testProject( "project-52-MECLIPSE-104" );
     }
+    
+    /**
+     * [MECLIPSE-551] Source directory and resource directory are the same
+     * 
+     * @throws Exception
+     */
+    public void testProject53MECLIPS551()
+        throws Exception
+    {
+        testProject( "project-53-MECLIPSE-551" );
+    }
 
     public void testJeeSimple()
         throws Exception

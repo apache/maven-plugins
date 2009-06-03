@@ -11,6 +11,9 @@ Maven Eclipse Plugin
 
   The Eclipse Plugin is used to generate Eclipse IDE files (*.classpath,
   *.wtpmodules and the .settings folder) for use with a project.
+  
+  Note: Starting at version 2.6 the generated .classpath now includes "**/*.java" for source directories
+  and excludes "**/*.java" for resource directories. See {{{http://jira.codehaus.org/browse/MECLIPSE-443}MECLIPSE-443}}.  
 
 * Goals Overview
 
@@ -105,3 +108,7 @@ Maven Eclipse Plugin
   * {{{examples/ajdt-projects.html}AJDT projects}}  
   
   * {{{examples/specifying-source-path-inclusions-and-exclusions.html}Specifying source path inclusions and exclusions}}
+
+* Trouble Shooting
+
+  See {{{trouble-shooting/index.html}Trouble Shooting}} for more details.

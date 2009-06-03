@@ -1,0 +1,18 @@
+ ------
+ Trouble Shooting
+ ------
+ Barrie Treloar
+ ------
+ 03 June 2009
+ ------
+
+Trouble Shooting
+
+  A list of more in-depth trouble shooting guides
+  
+* The JDK being used is different than you expected.
+
+  After running mvn eclipse:eclipse your project's are using a different JDK than expected.
+  
+  See {{{jdk-being-used-is-different-than-expected.html}jdk being used is different than expected}}.
+  
