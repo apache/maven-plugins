@@ -42,6 +42,13 @@
     </component>
     
     <component>
+      <role>org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler</role>
+      <role-hint>file-aggregator</role-hint>
+      <implementation>org.apache.maven.plugin.assembly.filter.SimpleAggregatingDescriptorHandler</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+    </component>
+    
+    <component>
       <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
       <role-hint>assembly-component</role-hint>
       <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>

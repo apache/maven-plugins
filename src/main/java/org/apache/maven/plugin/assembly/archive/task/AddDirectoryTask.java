@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.archive.task;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -68,19 +69,24 @@ public class AddDirectoryTask
                 + outputDirectory + ". All paths must be within the archive root directory." );
         }
         
-        int oldDirMode = archiver.getDefaultDirectoryMode();
-        int oldFileMode = archiver.getDefaultFileMode();
+        int oldDirMode = archiver.getOverrideDirectoryMode();
+        int oldFileMode = archiver.getOverrideFileMode();
 
+        boolean fileModeSet = false;
+        boolean dirModeSet = false;
+        
         try
         {
             if ( directoryMode != -1 )
             {
-                archiver.setDefaultDirectoryMode( directoryMode );
+                archiver.setDirectoryMode( directoryMode );
+                dirModeSet = true;
             }
 
             if ( fileMode != -1 )
             {
-                archiver.setDefaultFileMode( fileMode );
+                archiver.setFileMode( fileMode );
+                fileModeSet = true;
             }
 
             if ( directory.exists() )
@@ -100,11 +106,49 @@ public class AddDirectoryTask
                     String[] includesArray = null;
                     if ( includes != null && !includes.isEmpty() )
                     {
-                        includesArray = (String[]) includes.toArray( new String[0] );
+                        includesArray = new String[includes.size()];
+                        
+                        int i = 0;
+                        for ( Iterator it = includes.iterator(); it.hasNext(); )
+                        {
+                            String value = (String) it.next();
+                            if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
+                            {
+                                value = value.substring( 2 );
+                            }
+                            
+                            if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
+                            {
+                                value = value.substring( 1 );
+                            }
+                            
+                            includesArray[i] = value;
+                            
+                            i++;
+                        }
                     }
 
                     // this one is guaranteed to be non-null by code above.
-                    String[] excludesArray = (String[]) directoryExcludes.toArray( new String[0] );
+                    String[] excludesArray = new String[directoryExcludes.size()];
+                    
+                    int i = 0;
+                    for ( Iterator it = directoryExcludes.iterator(); it.hasNext(); )
+                    {
+                        String value = (String) it.next();
+                        if ( value.startsWith( "./" ) || value.startsWith( ".\\" ) )
+                        {
+                            value = value.substring( 2 );
+                        }
+                        
+                        if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
+                        {
+                            value = value.substring( 1 );
+                        }
+                        
+                        excludesArray[i] = value;
+                        
+                        i++;
+                    }
 
                     DefaultFileSet fs = new DefaultFileSet();
                     fs.setUsingDefaultExcludes( useDefaultExcludes );
@@ -123,8 +167,15 @@ public class AddDirectoryTask
         }
         finally
         {
-            archiver.setDefaultDirectoryMode( oldDirMode );
-            archiver.setDefaultFileMode( oldFileMode );
+            if ( dirModeSet )
+            {
+                archiver.setDirectoryMode( oldDirMode );
+            }
+            
+            if ( fileModeSet )
+            {
+                archiver.setFileMode( oldFileMode );
+            }
         }
     }
 

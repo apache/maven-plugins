@@ -172,20 +172,34 @@ public class AddDirectoryTaskTest
     private void configureModeExpectations( int defaultDirMode, int defaultFileMode, int dirMode, int fileMode,
                                             boolean expectTwoSets )
     {
-        archiver.getDefaultDirectoryMode();
+        archiver.getOverrideDirectoryMode();
         archiverControl.setReturnValue( defaultDirMode );
 
-        archiver.getDefaultFileMode();
+        archiver.getOverrideFileMode();
         archiverControl.setReturnValue( defaultFileMode );
 
         if ( expectTwoSets )
         {
-            archiver.setDefaultDirectoryMode( dirMode );
-            archiver.setDefaultFileMode( fileMode );
+            if ( dirMode > -1 )
+            {
+                archiver.setDirectoryMode( dirMode );
+            }
+            
+            if ( fileMode > -1 )
+            {
+                archiver.setFileMode( fileMode );
+            }
         }
 
-        archiver.setDefaultDirectoryMode( defaultDirMode );
-        archiver.setDefaultFileMode( defaultFileMode );
+        if ( dirMode > -1 )
+        {
+            archiver.setDirectoryMode( defaultDirMode );
+        }
+        
+        if ( fileMode > -1 )
+        {
+            archiver.setFileMode( defaultFileMode );
+        }
     }
 
 }

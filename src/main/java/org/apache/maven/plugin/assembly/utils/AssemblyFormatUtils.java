@@ -233,6 +233,8 @@ public final class AssemblyFormatUtils
         
         value = StringUtils.replace( value, "//", "/" );
         value = StringUtils.replace( value, "\\\\", "\\" );
+        value = StringUtils.replace( value, "./", "" );
+        value = StringUtils.replace( value, ".\\", "" );
 
         return value;
     }
@@ -423,6 +425,8 @@ public final class AssemblyFormatUtils
 
         value = StringUtils.replace( value, "//", "/" );
         value = StringUtils.replace( value, "\\\\", "\\" );
+        value = StringUtils.replace( value, "./", "" );
+        value = StringUtils.replace( value, ".\\", "" );
         
         return value;
     }

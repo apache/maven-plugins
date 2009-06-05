@@ -9,7 +9,6 @@
   
   <artifactId>child1</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

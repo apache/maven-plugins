@@ -12,7 +12,8 @@
       <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-        <exclude>target</exclude>
+        <exclude>build.log</exclude>
+        <exclude>${project.build.directory}/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
