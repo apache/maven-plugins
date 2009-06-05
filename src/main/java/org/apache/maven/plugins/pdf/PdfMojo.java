@@ -21,13 +21,12 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -91,9 +90,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class PdfMojo
     extends AbstractMojo
 {
-    /** ISO 8601 date format, i.e. <code>yyyy-MM-dd</code> **/
-    private static final DateFormat ISO_8601_FORMAT = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
-
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -260,7 +256,7 @@ public class PdfMojo
                 // Copy extra-resources
                 copyResources( locale );
 
-                docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel() );
+                docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel( locale ) );
             }
 
             if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
@@ -293,21 +289,31 @@ public class PdfMojo
      * Constructs a DocumentModel for the current project. The model is either read from
      * a descriptor file, if it exists, or constructed from information in the pom and site.xml.
      *
+     * @param locale not null
      * @return DocumentModel.
      * @throws DocumentRendererException if any.
      * @throws IOException if any.
      * @throws MojoExecutionException if any
      * @see #readAndFilterDocumentDescriptor(MavenProject, File, Log)
      */
-    private DocumentModel getDocumentModel()
+    private DocumentModel getDocumentModel( Locale locale )
         throws DocumentRendererException, IOException, MojoExecutionException
     {
         if ( docDescriptor.exists() )
         {
-            return readAndFilterDocumentDescriptor( project, docDescriptor, getLog() );
+            DocumentModel doc = readAndFilterDocumentDescriptor( project, docDescriptor, getLog() );
+            if ( StringUtils.isEmpty( doc.getMeta().getLanguage() ) )
+            {
+                doc.getMeta().setLanguage( locale.getLanguage() );
+            }
+            if ( StringUtils.isEmpty( doc.getMeta().getGenerator() ) )
+            {
+                doc.getMeta().setGenerator( getDefaultGenerator() );
+            }
+            return doc;
         }
 
-        return generateDefaultDocDescriptor();
+        return generateDefaultDocDescriptor( locale );
     }
 
     /**
@@ -328,29 +334,38 @@ public class PdfMojo
     }
 
     /**
+     * @param locale not null
      * @return Generate a default document descriptor from the Maven project
      * @throws IOException if any
      * @throws MojoExecutionException if any
      */
-    private DocumentModel generateDefaultDocDescriptor()
+    private DocumentModel generateDefaultDocDescriptor( Locale locale )
         throws IOException, MojoExecutionException
     {
         DocumentMeta meta = new DocumentMeta();
-        meta.setTitle( getProjectName() );
-        meta.setDescription( project.getDescription() );
         meta.setAuthors( getAuthors() );
-        meta.setCreator( System.getProperty( "user.name" ) );
         meta.setCreationDate( new Date() );
-        // Note: no default keywords
+        meta.setCreator( System.getProperty( "user.name" ) );
+        meta.setDate( new Date() );
+        meta.setDescription( project.getDescription() );
+        meta.setGenerator( getDefaultGenerator() );
+        meta.setInitialCreator( System.getProperty( "user.name" ) );
+        meta.setLanguage( locale.getLanguage() );
+        //meta.setPageSize( pageSize );
+        meta.setSubject( getProjectName() );
+        meta.setTitle( getProjectName() );
 
         DocumentCover cover = new DocumentCover();
-        cover.setCoverTitle( getProjectName() );
-        cover.setCoverVersion( project.getVersion() );
-        cover.setCoverType( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
-        cover.setCoverdate( ISO_8601_FORMAT.format( Calendar.getInstance().getTime() ) );
-        cover.setProjectName( getProjectName() );
-        cover.setCompanyName( getProjectOrganizationName() );
         cover.setAuthors( getAuthors() );
+        //cover.setCompanyLogo( companyLogo );
+        cover.setCompanyName( getProjectOrganizationName() );
+        cover.setCoverDate( new Date() );
+        cover.setCoverSubTitle( "v. " + project.getVersion() );
+        cover.setCoverTitle( getProjectName() );
+        cover.setCoverType( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
+        cover.setCoverVersion( project.getVersion() );
+        //cover.setProjectLogo( projectLogo );
+        cover.setProjectName( getProjectName() );
 
         DocumentModel docModel = new DocumentModel();
         docModel.setModelEncoding( getProjectModelEncoding() );
@@ -360,7 +375,6 @@ public class PdfMojo
 
         // Populate docModel from defaultDecorationModel
         DecorationModel decorationModel = getDefaultDecorationModel();
-
         if ( decorationModel != null )
         {
             DocumentTOC toc = new DocumentTOC();
@@ -407,7 +421,7 @@ public class PdfMojo
             Writer w = null;
             try
             {
-                w = WriterFactory.newPlatformWriter( doc );
+                w = WriterFactory.newXmlWriter( doc );
                 xpp3.write( w, docModel );
             }
             finally
@@ -587,6 +601,11 @@ public class PdfMojo
     {
         DecorationModel decorationModel = getDefaultDecorationModel();
 
+        if ( decorationModel == null )
+        {
+            return;
+        }
+
         File skinFile;
         try
         {
@@ -702,6 +721,34 @@ public class PdfMojo
         {
             IOUtil.close( reader );
         }
+    }
+
+    /**
+     * @return the PDF producer ie <code>Apache Doxia 1.1.1, 'fo' implementation</code>
+     */
+    private String getDefaultGenerator()
+    {
+        String doxiaVersion = "unknown";
+        InputStream resourceAsStream;
+        try
+        {
+            Properties properties = new Properties();
+            resourceAsStream = getClass().getClassLoader()
+                .getResourceAsStream( "META-INF/maven/org.apache.maven.doxia/doxia-core/pom.properties" );
+
+            if ( resourceAsStream != null )
+            {
+                properties.load( resourceAsStream );
+
+                doxiaVersion = properties.getProperty( "version", doxiaVersion );
+            }
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Unable to determine version from JAR file: " + e.getMessage() );
+        }
+
+        return "Apache Doxia " + doxiaVersion + ", '" + implementation + "' implementation.";
     }
 
     /**
