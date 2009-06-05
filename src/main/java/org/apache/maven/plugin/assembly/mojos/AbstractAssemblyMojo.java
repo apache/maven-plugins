@@ -34,6 +34,7 @@ import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -306,6 +307,14 @@ public abstract class AbstractAssemblyMojo
      * @since 2.2-beta-3
      */
     private PlexusConfiguration archiverConfig;
+    
+    /**
+     * This will cause the assembly to run only at the top of a given module tree. That is, run in the project 
+     * contained in the same folder where the mvn execution was launched.
+     * @parameter expression="${runOnlyAtExecutionRoot}" default-value="false"
+     * @since 2.2-beta-4
+     */
+    private boolean runOnlyAtExecutionRoot;
 
     /**
      * Create the binary distribution.
@@ -319,6 +328,13 @@ public abstract class AbstractAssemblyMojo
         if ( skipAssembly )
         {
             getLog().info( "Assemblies have been skipped per configuration of the skipAssembly parameter." );
+            return;
+        }
+        
+        //run only at the execution root.
+        if (runOnlyAtExecutionRoot && !isThisTheExecutionRoot())
+        {
+            getLog().info( "Skipping the assembly in this project because it's not the Execution Root" );
             return;
         }
 
@@ -416,6 +432,28 @@ public abstract class AbstractAssemblyMojo
         }
     }
 
+    /**
+     * Returns true if the current project is located at the Execution Root Directory (where mvn was launched)
+     * @return
+     */
+    protected boolean isThisTheExecutionRoot()
+    {
+        Log log = this.getLog();
+        log.debug("Root Folder:" + mavenSession.getExecutionRootDirectory());
+        log.debug("Current Folder:"+ basedir );
+        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase(basedir.toString());
+        if (result)
+        {
+            log.debug( "This is the execution root." );
+        }
+        else
+        {
+            log.debug( "This is NOT the execution root." );
+        }
+        
+        return result;
+    }
+    
     protected AssemblyArchiver getAssemblyArchiver()
     {
         return assemblyArchiver;

@@ -573,6 +573,36 @@ public class ComponentsXmlArchiverFileFilterTest
         public void setDuplicateBehavior( String duplicate )
         {
         }
+
+        public int getDirectoryMode()
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public int getFileMode()
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public int getOverrideDirectoryMode()
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public int getOverrideFileMode()
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void setDirectoryMode( int mode )
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void setFileMode( int mode )
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
     }
 
 }

@@ -1,0 +1,26 @@
+<assembly>
+  <id>bin</id>
+  
+  <formats>
+    <format>dir</format>
+  </formats>
+  
+  <includeBaseDirectory>false</includeBaseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>src/config</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+  
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>file-aggregator</handlerName>
+      <configuration>
+        <filePattern>.*/file.txt</filePattern>
+        <outputPath>file.txt</outputPath>
+      </configuration>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>

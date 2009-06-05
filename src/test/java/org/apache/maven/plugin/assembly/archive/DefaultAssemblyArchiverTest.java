@@ -703,6 +703,9 @@ public class DefaultAssemblyArchiverTest
         protected void execute()
             throws ArchiverException, IOException
         {
+            defaultDirMode = getOverrideDirectoryMode();
+            defaultFileMode = getOverrideFileMode();
+            
             archiveCreated = true;
             super.createArchive();
         }
@@ -717,18 +720,6 @@ public class DefaultAssemblyArchiverTest
         {
             compressionMethod = mode;
             super.setCompression( mode );
-        }
-
-        public void setDefaultDirectoryMode( int mode )
-        {
-            defaultDirMode = mode;
-            super.setDefaultDirectoryMode( mode );
-        }
-
-        public void setDefaultFileMode( int mode )
-        {
-            defaultFileMode = mode;
-            super.setDefaultFileMode( mode );
         }
 
         public void setLongfile( TarLongFileMode mode )
@@ -927,6 +918,34 @@ public class DefaultAssemblyArchiverTest
         }
 
         public void setDuplicateBehavior( String duplicate )
+        {
+        }
+
+        public int getDirectoryMode()
+        {
+            return 0;
+        }
+
+        public int getFileMode()
+        {
+            return 0;
+        }
+
+        public int getOverrideDirectoryMode()
+        {
+            return 0;
+        }
+
+        public int getOverrideFileMode()
+        {
+            return 0;
+        }
+
+        public void setDirectoryMode( int mode )
+        {
+        }
+
+        public void setFileMode( int mode )
         {
         }
 

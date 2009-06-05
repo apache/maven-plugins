@@ -52,6 +52,46 @@ public final class AssemblyFileUtils
     private AssemblyFileUtils()
     {
     }
+    
+    public static String makePathRelativeTo( String path, final File basedir )
+    {
+        if ( basedir == null )
+        {
+            return path;
+        }
+
+        if ( path == null )
+        {
+            return null;
+        }
+
+        path = path.trim();
+
+        String base = basedir.getAbsolutePath();
+        if ( path.startsWith( base ) )
+        {
+            path = path.substring( base.length() );
+            if ( path.length() > 0 )
+            {
+                if ( path.startsWith( "/" ) || path.startsWith( "\\" ) )
+                {
+                    path = path.substring( 1 );
+                }
+            }
+            
+            if ( path.length() == 0 )
+            {
+                path = ".";
+            }
+        }
+
+        if ( !new File( path ).isAbsolute() )
+        {
+            path = path.replace( '\\', '/' );
+        }
+
+        return path;
+    }
 
     public static void verifyTempDirectoryAvailability( final File tempDir, final Logger logger )
     {
@@ -171,6 +211,11 @@ public final class AssemblyFileUtils
         c1.close();
         c2.force( true );
         c2.close();
+    }
+
+    public static String normalizePath( String path )
+    {
+        return path.replace( '\\', '/' );
     }
 
 }

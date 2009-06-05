@@ -169,7 +169,7 @@ public class DefaultAssemblyArchiver
                                                                   null, finalName, configSource );
             }
 
-            List containerHandlers = selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers() );
+            List containerHandlers = selectContainerDescriptorHandlers( assembly.getContainerDescriptorHandlers(), configSource );
 
             Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource,
                                                 containerHandlers );
@@ -217,7 +217,7 @@ public class DefaultAssemblyArchiver
         return destFile;
     }
 
-    private List selectContainerDescriptorHandlers( List requestedContainerDescriptorHandlers )
+    private List selectContainerDescriptorHandlers( List requestedContainerDescriptorHandlers, AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
         getLogger().debug(
@@ -247,8 +247,15 @@ public class DefaultAssemblyArchiver
                     throw new InvalidAssemblerConfigurationException( "Cannot find ContainerDescriptorHandler with hint: " + hint );
                 }
 
-                System.out.println( "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
-
+                getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
+                
+                if ( config.getConfiguration() != null )
+                {
+                    getLogger().debug( "Configuring handler with:\n\n" + config.getConfiguration() + "\n\n" );
+                    
+                    configureContainerDescriptorHandler( handler, (Xpp3Dom) config.getConfiguration(), configSource );
+                }
+                
                 handlers.add( handler );
 
                 if ( "plexus".equals( hint ) )
@@ -323,6 +330,40 @@ public class DefaultAssemblyArchiver
         archiver = new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers, getLogger(), configSource.isDryRun() );
 
         return archiver;
+    }
+    
+    private void configureContainerDescriptorHandler( ContainerDescriptorHandler handler, Xpp3Dom config,
+                                                      AssemblerConfigurationSource configSource )
+        throws InvalidAssemblerConfigurationException
+    {
+        ComponentConfigurator configurator;
+        try
+        {
+            configurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new InvalidAssemblerConfigurationException( "Failed to lookup configurator component for setup of handler: " + handler.getClass().getName(), e );
+        }
+        
+        XmlPlexusConfiguration configuration = new XmlPlexusConfiguration( config );
+        
+        ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
+        ExpressionEvaluator expressionEvaluator = new AssemblyExpressionEvaluator( configSource );
+
+        getLogger().debug( "Configuring handler: '" + handler.getClass().getName() + "' -->" );
+        
+        try
+        {
+            configurator.configureComponent( handler, configuration, expressionEvaluator,
+                                             container.getContainerRealm(), listener );
+        }
+        catch ( ComponentConfigurationException e )
+        {
+            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: " + handler.getClass().getName(), e );
+        }
+        
+        getLogger().debug( "-- end configuration --" );
     }
 
     private void configureArchiver( Archiver archiver, AssemblerConfigurationSource configSource )

@@ -802,13 +802,29 @@ public class AssemblyProxyArchiver
                              int permissions )
         throws ArchiverException
     {
-        delegate.addResource( resource, destFileName, permissions );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.addResource( resource, destFileName, permissions );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public void addResources( PlexusIoResourceCollection resources )
         throws ArchiverException
     {
-        delegate.addResources( resources );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.addResources( resources );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
     public ResourceIterator getResources()
@@ -824,7 +840,61 @@ public class AssemblyProxyArchiver
 
     public void setDuplicateBehavior( String duplicate )
     {
-        delegate.setDuplicateBehavior( duplicate );
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setDuplicateBehavior( duplicate );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
+    }
+
+    public int getDirectoryMode()
+    {
+        return delegate.getDirectoryMode();
+    }
+
+    public int getFileMode()
+    {
+        return delegate.getFileMode();
+    }
+
+    public int getOverrideDirectoryMode()
+    {
+        return delegate.getOverrideDirectoryMode();
+    }
+
+    public int getOverrideFileMode()
+    {
+        return delegate.getOverrideFileMode();
+    }
+
+    public void setDirectoryMode( int mode )
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setDirectoryMode( mode );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
+    }
+
+    public void setFileMode( int mode )
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            delegate.setFileMode( mode );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
     }
 
 }

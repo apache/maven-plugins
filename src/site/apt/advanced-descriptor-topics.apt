@@ -256,6 +256,52 @@ Advanced Assembly-Descriptor Topics
   included in archives, unless your goal is to create project binaries or
   similar.>
   
+* Using Regular Expressions to Exclude Files
+
+  <<Since: 2.2-beta-4>>
+
+  Sometimes, you may find you need to specify an extremely fine-grained inclusion or 
+  exclusion pattern for a <<<fileSet>>>. In these cases, you have the option of specifying
+  your pattern in the form of a regular expression by using the <<<%regex[...]>>> syntax.
+  
+  <Note:> For completeness, the default pattern type - Ant-style patterns - can also be
+  specified using the new <<<%ant[...]>>> syntax. This will allow room for future expansion
+  of <<<fileSet>>> patterns, including the option to change the default pattern syntax
+  someday.
+  
+** Example: Including directories named <<<target>>> in the <<<src>>> directory
+
+  In this example, we want to produce a buildable source distribution of a 
+  Maven project hierarchy. Obviously, each project's <<<target>>> directory is
+  a temporary workspace for the build process, so we want to exclude these
+  directories. However, if one or more of the projects also includes a subdirectory
+  named <<<target>>> in the <<<src>>> directory structure - perhaps as part of
+  a Java package name - we want to make sure the files in this directory are
+  included in the assembly.
+  
+---
+<assembly>
+  [...]
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>%regex[(?!.*src/).*target.*]</exclude>
+      </excludes>
+    </fileSet>
+    [...]
+  </fileSets>
+  [...]
+</assembly>
+---
+
+  The above <<<fileSet>>> uses a somewhat obscure feature of regular 
+  expressions called <negative lookahead>, which means our exclude pattern
+  will only match paths that contain the word <<<target>>> but <<don't>> 
+  contain <<<src>>>. Effectively, any <<<target>>> directory within the
+  <<<src>>> directory structure will be preserved in the assembly.
+  
 * Using Strict-Filtering to Catch Obsolete Patterns or Incorrect Builds
 
   At times, you want to build in a set of sanity checks when creating your

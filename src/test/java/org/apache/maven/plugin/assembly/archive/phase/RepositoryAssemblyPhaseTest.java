@@ -294,20 +294,20 @@ public class RepositoryAssemblyPhaseTest
 
         void expectModeChange( int defaultDirMode, int defaultFileMode, int dirMode, int fileMode, boolean expectTwoSets )
         {
-            archiver.getDefaultDirectoryMode();
+            archiver.getOverrideDirectoryMode();
             control.setReturnValue( defaultDirMode );
 
-            archiver.getDefaultFileMode();
+            archiver.getOverrideFileMode();
             control.setReturnValue( defaultFileMode );
 
             if ( expectTwoSets )
             {
-                archiver.setDefaultDirectoryMode( dirMode );
-                archiver.setDefaultFileMode( fileMode );
+                archiver.setDirectoryMode( dirMode );
+                archiver.setFileMode( fileMode );
             }
 
-            archiver.setDefaultDirectoryMode( defaultDirMode );
-            archiver.setDefaultFileMode( defaultFileMode );
+            archiver.setDirectoryMode( defaultDirMode );
+            archiver.setFileMode( defaultFileMode );
         }
 
         // public void expectAddFile( File file, String outputLocation, int fileMode )
