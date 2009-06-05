@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -71,6 +72,8 @@ public class SimpleAggregatingDescriptorHandler
     public void finalizeArchiveCreation( Archiver archiver )
         throws ArchiverException
     {
+        checkConfig();
+        
         if ( outputPath.endsWith( "/" ) )
         {
             throw new ArchiverException(
@@ -139,12 +142,16 @@ public class SimpleAggregatingDescriptorHandler
 
     public List getVirtualFiles()
     {
+        checkConfig();
+        
         return Collections.singletonList( outputPath );
     }
 
     public boolean isSelected( FileInfo fileInfo )
         throws IOException
     {
+        checkConfig();
+        
         if ( overrideFilterAction )
         {
             System.out.println( "Filtering overridden. Returning true." );
@@ -152,6 +159,7 @@ public class SimpleAggregatingDescriptorHandler
         }
 
         String name = fileInfo.getName();
+        name = AssemblyFileUtils.normalizePath( name );
 
         name = name.replace( File.separatorChar, '/' );
 
@@ -164,6 +172,14 @@ public class SimpleAggregatingDescriptorHandler
         }
 
         return true;
+    }
+
+    private void checkConfig()
+    {
+        if ( filePattern == null || outputPath == null )
+        {
+            throw new IllegalStateException( "You must configure filePattern and outputPath in your containerDescriptorHandler declaration." );
+        }
     }
 
     private void readProperties( FileInfo fileInfo )
@@ -204,14 +220,14 @@ public class SimpleAggregatingDescriptorHandler
         this.logger = logger;
     }
 
-    public String getPropertiesPattern()
+    public String getFilePattern()
     {
         return filePattern;
     }
 
-    public void setPropertiesPattern( String propertiesPattern )
+    public void setFilePattern( String filePattern )
     {
-        filePattern = propertiesPattern;
+        this.filePattern = filePattern;
     }
 
     public String getOutputPath()

@@ -110,10 +110,10 @@ public class MockAndControlForAddArtifactTask
     public void expectModeChange( int originalDirMode, int originalFileMode, int dirMode, int fileMode,
                                             int numberOfChanges )
     {
-        archiver.getDefaultDirectoryMode();
+        archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( originalDirMode );
 
-        archiver.getDefaultFileMode();
+        archiver.getOverrideFileMode();
         archiverCtl.setReturnValue( originalFileMode );
 
         // one of the changes will occur below, when we restore the original mode.
@@ -121,13 +121,27 @@ public class MockAndControlForAddArtifactTask
         {
             for( int i = 1; i< numberOfChanges; i++ )
             {
-                archiver.setDefaultDirectoryMode( dirMode );
-                archiver.setDefaultFileMode( fileMode );
+                if ( dirMode > -1 )
+                {
+                    archiver.setDirectoryMode( dirMode );
+                }
+                
+                if ( fileMode > -1 )
+                {
+                    archiver.setFileMode( fileMode );
+                }
             }
         }
 
-        archiver.setDefaultDirectoryMode( originalDirMode );
-        archiver.setDefaultFileMode( originalFileMode );
+        if ( dirMode > -1 )
+        {
+            archiver.setDirectoryMode( originalDirMode );
+        }
+        
+        if ( fileMode > -1 )
+        {
+            archiver.setFileMode( originalFileMode );
+        }
     }
 
     public void expectAddFile( File file, String outputLocation, int fileMode )

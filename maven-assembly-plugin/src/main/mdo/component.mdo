@@ -21,8 +21,8 @@
      Modello currently does not have capability to share files
 -->
 
-<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0" 
-       xsd.target-namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0">
+<model xsd.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.1" 
+       xsd.targetNamespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.1">
        
   <id>component</id>
   <name>Component</name>
@@ -101,7 +101,7 @@
         </field>
         <field>
           <name>repositories</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <association>
             <type>Repository</type>
             <multiplicity>*</multiplicity>
@@ -116,7 +116,7 @@
         </field>
         <field>
           <name>containerDescriptorHandlers</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <association>
             <type>ContainerDescriptorHandlerConfig</type>
             <multiplicity>*</multiplicity>
@@ -137,7 +137,7 @@
       <fields>
         <field>
           <name>useStrictFiltering</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -149,7 +149,7 @@
         </field>
         <field>
           <name>useDefaultExcludes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -273,7 +273,7 @@
         </field>
         <field>
           <name>filtered</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Whether to filter symbols in the files as they are copied, using
           properties from the build configuration.
@@ -402,7 +402,7 @@
         </field>
         <field>
           <name>unpackOptions</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
           unpacked from a dependency artifact.
@@ -424,7 +424,7 @@
         </field>
         <field>
           <name>useProjectArtifact</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description><![CDATA[
@@ -435,7 +435,7 @@
         </field>
         <field>
           <name>useProjectAttachments</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description><![CDATA[
@@ -445,7 +445,7 @@
         </field>
         <field>
           <name>useTransitiveDependencies</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -459,7 +459,7 @@
         </field>
         <field>
           <name>useTransitiveFiltering</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -477,13 +477,13 @@
 
     <class>
       <name>Repository</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <superClass>SetBase</superClass>
       <description>Defines a Maven repository to be included in the assembly.</description>
       <fields>
         <field>
           <name>includeMetadata</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -494,7 +494,7 @@
         </field>
         <field>
           <name>groupVersionAlignments</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>Align a group to a version or an individual artifact.</description>
           <association>
             <type>GroupVersionAlignment</type>
@@ -503,7 +503,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.1.0</version>              
+          <version>1.1.0+</version>              
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -516,24 +516,24 @@
     </class>
     <class>
       <name>GroupVersionAlignment</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <description>Defines a Maven repository to be included in the assembly.</description>
       <fields>
         <field>
           <name>id</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>String</type>
           <description>The groupId for which you want to align the versions.</description>
         </field>
         <field>
           <name>version</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <type>String</type>
           <description>The version you want to align this group to.</description>
         </field>
         <field>
           <name>excludes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
           <association>
             <type>String</type>
@@ -544,14 +544,14 @@
     </class>
     <class>
       <name>UnpackOptions</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <description>
       Specifies options for including/excluding/filtering items extracted from an archive.
       </description>
       <fields>
         <field>
           <name>includes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Set of patterns for matching items to be included from an archive as it is unpacked.
           </description>
@@ -562,7 +562,7 @@
         </field>
         <field>
           <name>excludes</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Set of patterns for matching items to be excluded from an archive as it is unpacked.
           </description>
@@ -573,7 +573,7 @@
         </field>
         <field>
           <name>filtered</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
           Whether to filter symbols in the files as they are unpacked from the archive, using
           properties from the build configuration.
@@ -585,7 +585,7 @@
     </class>
     <class>
       <name>ContainerDescriptorHandlerConfig</name>
-      <version>1.1.0</version>
+      <version>1.1.0+</version>
       <description>
         Configures a filter for files headed into the assembly archive, to enable
         aggregation of various types of descriptor fragments, such as components.xml,
@@ -594,23 +594,21 @@
       <fields>
         <field>
           <name>handlerName</name>
-          <version>1.1.0</version>
+          <version>1.1.0+</version>
           <description>
             The handler's plexus role-hint, for lookup from the container.
           </description>
           <type>String</type>
           <required>true</required>
         </field>
-        <!-- Commented out until it can be implemented and tested...
         <field>
           <name>configuration</name>
-          <version>1.1.0</version>
+          <version>1.1.1</version>
           <description>
             Configuration options for the handler.
           </description>
           <type>DOM</type>
         </field>
-         -->
       </fields>
     </class>
   </classes>
