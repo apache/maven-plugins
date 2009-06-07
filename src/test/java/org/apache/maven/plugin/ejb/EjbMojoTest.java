@@ -552,8 +552,8 @@ public class EjbMojoTest
     {
         final EjbMojo mojo = lookupMojo();
         setVariableValueToObject( mojo, "project", project );
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "basedir", new File( project.getBuild().getDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "jarName", DEFAULT_JAR_NAME );
         setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
         setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
