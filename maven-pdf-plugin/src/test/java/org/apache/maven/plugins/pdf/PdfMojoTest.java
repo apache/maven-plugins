@@ -80,7 +80,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/index.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();

@@ -198,6 +198,14 @@ public class PdfMojo
     private ArtifactRepository localRepository;
 
     /**
+     * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
+     * source document.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean aggregate;
+
+    /**
      * Document Renderer.
      */
     private DocumentRenderer docRenderer;
@@ -256,7 +264,14 @@ public class PdfMojo
                 // Copy extra-resources
                 copyResources( locale );
 
-                docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel( locale ) );
+                if ( aggregate )
+                {
+                    docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel( locale ) );
+                }
+                else
+                {
+                    docRenderer.render( siteDirectoryFile, workingDir, null );
+                }
             }
 
             if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
