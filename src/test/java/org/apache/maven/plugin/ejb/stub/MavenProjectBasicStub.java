@@ -56,7 +56,7 @@ public class MavenProjectBasicStub
         // most values are hardcoded to have a controlled environment
         super( new ModelStub() );
 
-        model = (ModelStub) getModel();
+        model = (ModelStub) super.getModel();
         properties = new Properties();
         artifact = new ArtifactStub();
         identifier = id;

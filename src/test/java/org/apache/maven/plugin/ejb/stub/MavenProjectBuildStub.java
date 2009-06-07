@@ -88,6 +88,8 @@ public class MavenProjectBuildStub
         targetClassesList = new ArrayList();
         dataMap = new HashMap();
         setupBuild();
+        
+        model.setBuild( build );
     }
 
     public void addDirectory( String name )
