@@ -237,9 +237,8 @@ public class InstallMojo
      * Installs the specified artifact to the local repository. This method serves basically the same purpose as
      * {@link #installArtifact(File, Artifact, ArtifactRepository)} but is meant for artifacts that have been resolved
      * from the user's local repository (and not the current build outputs). The subtle difference here is that
-     * artifacts from the repository have already undergone transformations and such and these manipulations should be
-     * not be redone by the artifact installer. For this reason, this method performs plain copy operations to install
-     * the artifacts.
+     * artifacts from the repository have already undergone transformations and these manipulations should not be redone
+     * by the artifact installer. For this reason, this method performs plain copy operations to install the artifacts.
      * 
      * @param file The file associated with the artifact, must not be <code>null</code>.
      * @param artifact The artifact to install, must not be <code>null</code>.
