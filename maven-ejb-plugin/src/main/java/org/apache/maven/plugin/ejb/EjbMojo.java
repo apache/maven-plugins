@@ -60,12 +60,11 @@ public class EjbMojo
     /**
      * The directory for the generated EJB.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      * @readonly
-     * @todo use File instead
      */
-    private String basedir;
+    private File basedir;
 
     /**
      * Directory that resources are copied to during the build.
@@ -73,7 +72,7 @@ public class EjbMojo
      * @parameter default-value="${project.build.outputDirectory}" expression="${outputDirectory}"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The name of the EJB file to generate.
@@ -242,7 +241,7 @@ public class EjbMojo
                 mainJarExcludes = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
             }
 
-            archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES, mainJarExcludes );
+            archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
 
             if ( deploymentDescriptor.exists() )
             {
@@ -312,7 +311,7 @@ public class EjbMojo
 
             try
             {
-                clientArchiver.getArchiver().addDirectory( new File( outputDirectory ), includes, excludes );
+                clientArchiver.getArchiver().addDirectory( outputDirectory, includes, excludes );
 
                 // create archive
                 clientArchiver.createArchive( project, archive );
@@ -359,7 +358,7 @@ public class EjbMojo
      * @param classifier an optional classifier
      * @return the EJB file to generate
      */
-    private static File getEJBJarFile( String basedir, String finalName, String classifier )
+    private static File getEJBJarFile( File basedir, String finalName, String classifier )
     {
         if ( classifier == null )
         {
