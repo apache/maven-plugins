@@ -36,6 +36,10 @@ under the License.
     <module>ear</module>
   </modules>
 
+  <properties>
+    <build.compiler>extJavac</build.compiler>
+  </properties>
+
   <build>
     <plugins>
       <plugin>

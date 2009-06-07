@@ -451,13 +451,14 @@ public class AntBuildWriterUtil
      *
      * @param writer not null
      * @param project not null
-     * @param localRepository not null
+     * @param artifactResolverWrapper not null
      * @throws IOException if any
      */
-    public static void writeEarTask( XMLWriter writer, MavenProject project, File localRepository )
+    public static void writeEarTask( XMLWriter writer, MavenProject project,
+                                     ArtifactResolverWrapper artifactResolverWrapper )
         throws IOException
     {
-        writeCopyLib( writer, project, localRepository, "${maven.build.dir}/${maven.build.finalName}" );
+        writeCopyLib( writer, project, artifactResolverWrapper, "${maven.build.dir}/${maven.build.finalName}" );
 
         writer.startElement( "ear" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.ear" );
@@ -489,10 +490,11 @@ public class AntBuildWriterUtil
      *
      * @param writer not null
      * @param project not null
-     * @param localRepository not null
+     * @param artifactResolverWrapper not null
      * @throws IOException if any
      */
-    public static void writeWarTask( XMLWriter writer, MavenProject project, File localRepository )
+    public static void writeWarTask( XMLWriter writer, MavenProject project,
+                                     ArtifactResolverWrapper artifactResolverWrapper )
         throws IOException
     {
         String webXml =
@@ -502,7 +504,7 @@ public class AntBuildWriterUtil
             webXml = webXml.substring( "${basedir}/".length() );
         }
         
-        writeCopyLib( writer, project, localRepository, "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
+        writeCopyLib( writer, project, artifactResolverWrapper, "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
 
         writer.startElement( "war" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.war" );
@@ -1115,10 +1117,11 @@ public class AntBuildWriterUtil
      *
      * @param writer not null
      * @param project not null
-     * @param localRepository not null
+     * @param artifactResolverWrapper not null
      * @param outputDir not null
      */
-    private static void writeCopyLib( XMLWriter writer, MavenProject project, File localRepository, String outputDir )
+    private static void writeCopyLib( XMLWriter writer, MavenProject project,
+                                      ArtifactResolverWrapper artifactResolverWrapper, String outputDir )
     {
         writer.startElement( "mkdir" );
         writer.addAttribute( "dir", outputDir );
@@ -1133,8 +1136,7 @@ public class AntBuildWriterUtil
                 if ( !artifact.getScope().equals( Artifact.SCOPE_PROVIDED )
                     && !artifact.getScope().equals( Artifact.SCOPE_TEST ) )
                 {
-                    String path = artifact.getFile().getPath();
-                    path = toRelative( localRepository, path );
+                    String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
                     if ( !new File( path ).isAbsolute() )
                     {
                         path = "${maven.repo.local}/" + path;
