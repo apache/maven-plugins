@@ -154,4 +154,23 @@ public class ArtifactResolverWrapper
             throw new IOException( "Unable to find artifact: " + groupId + ":" + artifactId + ":" + version );
         }
     }
+
+    /**
+     * Gets the path to the specified artifact relative to the local repository's base directory. Note that this method
+     * does not actually resolve the artifact, it merely calculates the path at which the artifact is or would be stored
+     * in the local repository.
+     * 
+     * @param artifact The artifact whose path should be determined, must not be <code>null</code>.
+     * @return The path to the artifact, never <code>null</code>.
+     */
+    public String getLocalArtifactPath( Artifact artifact )
+    {
+        /*
+         * NOTE: Don't use Artifact.getFile() here because this method could return the path to a JAR from the build
+         * output, e.g. ".../target/some-0.1.jar". The other special case are system-scope artifacts that reside
+         * somewhere outside of the local repository.
+         */
+        return localRepository.pathOf( artifact );
+    }
+
 }

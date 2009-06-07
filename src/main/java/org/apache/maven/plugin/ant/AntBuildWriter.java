@@ -591,8 +591,9 @@ public class AntBuildWriter
             for ( Iterator i = project.getCompileArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
+                String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
                 writer.startElement( "include" );
-                writer.addAttribute( "name", AntBuildWriterUtil.toRelative( localRepository, artifact.getFile().getPath() ) );
+                writer.addAttribute( "name", path );
                 writer.endElement(); // include
             }
         }
@@ -614,8 +615,9 @@ public class AntBuildWriter
             for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
+                String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
                 writer.startElement( "include" );
-                writer.addAttribute( "name", AntBuildWriterUtil.toRelative( localRepository, artifact.getFile().getPath() ) );
+                writer.addAttribute( "name", path );
                 writer.endElement(); // include
             }
         }
@@ -1047,12 +1049,12 @@ public class AntBuildWriter
             }
             else if ( AntBuildWriterUtil.isEarPackaging( project ) )
             {
-                AntBuildWriterUtil.writeEarTask( writer, project, localRepository );
+                AntBuildWriterUtil.writeEarTask( writer, project, artifactResolverWrapper );
                 synonym = "ear";
             }
             else if ( AntBuildWriterUtil.isWarPackaging( project ) )
             {
-                AntBuildWriterUtil.writeWarTask( writer, project, localRepository );
+                AntBuildWriterUtil.writeWarTask( writer, project, artifactResolverWrapper );
                 synonym = "war";
             }
             else
@@ -1260,7 +1262,7 @@ public class AntBuildWriter
             Artifact artifact = (Artifact) i.next();
 
             // TODO: should the artifacthandler be used instead?
-            String path = AntBuildWriterUtil.toRelative( localRepository, artifact.getFile().getPath() );
+            String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
 
             if ( !new File( path ).exists() )
             {
