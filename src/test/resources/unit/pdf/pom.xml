@@ -34,6 +34,7 @@
           <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
           <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>
           <implementation>fo</implementation>
+          <aggregate>true</aggregate>
         </configuration>
       </plugin>
     </plugins>

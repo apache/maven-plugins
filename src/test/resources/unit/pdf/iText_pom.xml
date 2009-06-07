@@ -34,6 +34,7 @@
           <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
           <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>
           <implementation>itext</implementation>
+          <aggregate>true</aggregate>
         </configuration>
       </plugin>
     </plugins>
