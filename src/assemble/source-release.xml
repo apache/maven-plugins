@@ -23,12 +23,13 @@
   <id>source-release</id>
   <formats>
     <format>tar.gz</format>
+    <format>tar.bz2</format>    
     <format>zip</format>
   </formats>
   <fileSets>
     <fileSet>    
       <directory>.</directory>
-      <outputDirectory></outputDirectory>
+      <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
         <exclude>target/**</exclude>
@@ -37,5 +38,9 @@
         <exclude>.settings/**</exclude>
       </excludes>
     </fileSet>
+    <fileSet>
+      <directory>target/maven-shared-archive-resources/META-INF</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>    
   </fileSets>
 </assembly>
