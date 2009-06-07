@@ -234,9 +234,9 @@ public class InvokerMojo
      * Relative path of a pre-build hook script to run prior to executing the build. This script may be written with
      * either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>prebuild</code>), the plugin
      * searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>. If this
-     * script exists for a particular project but returns any value different from <code>true</code> or throws an
-     * exception, the corresponding build is flagged as a failure. In this case, neither Maven nor the post-build hook
-     * script will be invoked.
+     * script exists for a particular project but returns any non-null value different from <code>true</code> or throws
+     * an exception, the corresponding build is flagged as a failure. In this case, neither Maven nor the post-build
+     * hook script will be invoked.
      * 
      * @parameter expression="${invoker.preBuildHookScript}" default-value="prebuild"
      */
@@ -246,8 +246,8 @@ public class InvokerMojo
      * Relative path of a cleanup/verification hook script to run after executing the build. This script may be written
      * with either BeanShell or Groovy (since 1.3). If the file extension is omitted (e.g. <code>verify</code>), the
      * plugin searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>.
-     * If this script exists for a particular project but returns any value different from <code>true</code> or throws
-     * an exception, the corresponding build is flagged as a failure.
+     * If this script exists for a particular project but returns any non-null value different from <code>true</code> or
+     * throws an exception, the corresponding build is flagged as a failure.
      * 
      * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild"
      */
