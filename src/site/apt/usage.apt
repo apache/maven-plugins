@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 2009-05-16
+ 2009-06-07
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -42,6 +42,9 @@ Using the PDF plugin
 
   where the first <<<pdf>>> refers to the plugin's alias, and the second
   <<<pdf>>> refers to a plugin goal.
+
+  <<Note>>: By default, the PDF plugin generates a PDF document which aggregates all your site documents.
+  If you want to generate each site document individually, you need to add <<<-Daggregate=false>>>.
 
 * Running the PDF plugin automatically during a build
 
