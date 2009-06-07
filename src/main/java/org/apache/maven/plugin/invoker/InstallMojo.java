@@ -32,6 +32,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.model.Model;
@@ -40,6 +41,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Installs the project artifacts of the main build into the local repository as a preparation to run the sub projects.
@@ -190,7 +192,9 @@ public class InstallMojo
     }
 
     /**
-     * Installs the specified artifact to the local repository.
+     * Installs the specified artifact to the local repository. Note: This method should only be used for artifacts that
+     * originate from the current (reactor) build. Artifacts that have been grabbed from the user's local repository
+     * should be installed to the test repository via {@link #stageArtifact(File, Artifact, ArtifactRepository)}.
      * 
      * @param file The file associated with the artifact, must not be <code>null</code>. This is in most cases the value
      *            of <code>artifact.getFile()</code> with the exception of the main artifact from a project with
@@ -230,6 +234,58 @@ public class InstallMojo
     }
 
     /**
+     * Installs the specified artifact to the local repository. This method serves basically the same purpose as
+     * {@link #installArtifact(File, Artifact, ArtifactRepository)} but is meant for artifacts that have been resolved
+     * from the user's local repository (and not the current build outputs). The subtle difference here is that
+     * artifacts from the repository have already undergone transformations and such and these manipulations should be
+     * not be redone by the artifact installer. For this reason, this method performs plain copy operations to install
+     * the artifacts.
+     * 
+     * @param file The file associated with the artifact, must not be <code>null</code>.
+     * @param artifact The artifact to install, must not be <code>null</code>.
+     * @param testRepository The local repository to install the artifact to, must not be <code>null</code>.
+     * @throws MojoExecutionException If the artifact could not be installed (e.g. has no associated file).
+     */
+    private void stageArtifact( File file, Artifact artifact, ArtifactRepository testRepository )
+        throws MojoExecutionException
+    {
+        try
+        {
+            if ( file == null )
+            {
+                throw new IllegalStateException( "Artifact has no associated file: " + file );
+            }
+            if ( !file.isFile() )
+            {
+                throw new IllegalStateException( "Artifact is not fully assembled: " + file );
+            }
+
+            if ( installedArtifacts.add( artifact.getId() ) )
+            {
+                File destination = new File( testRepository.getBasedir(), testRepository.pathOf( artifact ) );
+
+                getLog().debug( "Installing " + file + " to " + destination );
+
+                FileUtils.copyFile( file, destination );
+
+                for ( Iterator it = artifact.getMetadataList().iterator(); it.hasNext(); )
+                {
+                    ArtifactMetadata metadata = (ArtifactMetadata) it.next();
+                    metadata.storeInLocalRepository( testRepository, testRepository );
+                }
+            }
+            else
+            {
+                getLog().debug( "Not re-installing " + artifact + ", " + file );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to stage artifact: " + artifact, e );
+        }
+    }
+
+    /**
      * Installs the main artifact and any attached artifacts of the specified project to the local repository.
      * 
      * @param mvnProject The project whose artifacts should be installed, must not be <code>null</code>.
@@ -241,6 +297,7 @@ public class InstallMojo
     {
         try
         {
+            // Install POM (usually attached as metadata but that happens only as a side effect of the Install Plugin)
             installProjectPom( mvnProject, testRepository );
 
             // Install the main project artifact (if the project has one, e.g. has no "pom" packaging)
@@ -281,8 +338,7 @@ public class InstallMojo
             {
                 if ( parent.getFile() == null )
                 {
-                    installParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), 
-                                       testRepository );
+                    stageParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), testRepository );
                     break;
                 }
                 installProjectPom( parent, testRepository );
@@ -403,10 +459,10 @@ public class InstallMojo
                         {
                             depArtifact.addMetadata( new ProjectArtifactMetadata( depArtifact, pomFile ) );
                         }
-                        installParentPoms( pomFile, testRepository );
+                        stageParentPoms( pomFile, testRepository );
                     }
 
-                    installArtifact( artifactFile, depArtifact, testRepository );
+                    stageArtifact( artifactFile, depArtifact, testRepository );
                 }
             }
         }
@@ -423,14 +479,14 @@ public class InstallMojo
      * @param testRepository The local repository to install the POMs to, must not be <code>null</code>.
      * @throws MojoExecutionException If any (existing) parent POM could not be installed.
      */
-    private void installParentPoms( File pomFile, ArtifactRepository testRepository )
+    private void stageParentPoms( File pomFile, ArtifactRepository testRepository )
         throws MojoExecutionException
     {
         Model model = PomUtils.loadPom( pomFile );
         Parent parent = model.getParent();
         if ( parent != null )
         {
-            installParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), testRepository );
+            stageParentPoms( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), testRepository );
         }
     }
 
@@ -443,7 +499,7 @@ public class InstallMojo
      * @param testRepository The local repository to install the POMs to, must not be <code>null</code>.
      * @throws MojoExecutionException If any (existing) parent POM could not be installed.
      */
-    private void installParentPoms( String groupId, String artifactId, String version, ArtifactRepository testRepository )
+    private void stageParentPoms( String groupId, String artifactId, String version, ArtifactRepository testRepository )
         throws MojoExecutionException
     {
         Artifact pomArtifact = artifactFactory.createProjectArtifact( groupId, artifactId, version );
@@ -457,8 +513,8 @@ public class InstallMojo
         File pomFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
         if ( pomFile.isFile() )
         {
-            installArtifact( pomFile, pomArtifact, testRepository );
-            installParentPoms( pomFile, testRepository );
+            stageArtifact( pomFile, pomArtifact, testRepository );
+            stageParentPoms( pomFile, testRepository );
         }
     }
 
