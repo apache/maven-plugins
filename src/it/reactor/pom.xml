@@ -22,28 +22,17 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.its.ejb.default</groupId>
-  <artifactId>maven-it-it0017</artifactId>
+  <groupId>org.apache.maven.its.ejb.reactor</groupId>
+  <artifactId>aggregator</artifactId>
   <version>1.0</version>
-  <packaging>ejb</packaging>
+  <packaging>pom</packaging>
 
-  <name>Maven Integration Test :: it0017</name> 
-  <description>Test an EJB generation</description>
+  <name>Maven Integration Test</name> 
+  <description>
+    Test that the plugin resolves relative paths properly.
+  </description>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ejb-plugin</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <generateClient>true</generateClient>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <modules>
+    <module>sub</module>
+  </modules>
 </project>
