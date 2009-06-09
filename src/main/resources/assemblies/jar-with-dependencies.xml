@@ -30,6 +30,7 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
