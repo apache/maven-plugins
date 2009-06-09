@@ -216,6 +216,7 @@ under the License.
               <descriptors>
                 <descriptor>src/assemble/source-release.xml</descriptor>
               </descriptors>
+              <tarLongFileMode>gnu</tarLongFileMode>
             </configuration>
           </execution>
         </executions>
