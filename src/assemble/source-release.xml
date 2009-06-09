@@ -43,6 +43,8 @@
         <exclude>**/*.diff</exclude>
         <exclude>**/*.patch</exclude>
         <exclude>**/*.log</exclude>
+        <exclude>**/pom.xml.releaseBackup</exclude>
+        <exclude>**/release.properties</exclude>
       </excludes>
     </fileSet>
     <fileSet>
