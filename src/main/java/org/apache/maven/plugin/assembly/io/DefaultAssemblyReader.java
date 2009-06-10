@@ -447,6 +447,10 @@ public class DefaultAssemblyReader
 
             Location resolvedLocation = locator.resolve( location );
 
+            if ( resolvedLocation == null )
+            {
+                throw new AssemblyReadException( "Failed to locate component descriptor: " + location );
+            }
             Component component = null;
             Reader reader = null;
             try
