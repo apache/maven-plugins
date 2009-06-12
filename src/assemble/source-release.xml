@@ -28,14 +28,14 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>.</directory>
+      <directory>${project.basedir}</directory>
       <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
-        <exclude>**/target/**</exclude>
-        <exclude>**/.classpath</exclude>
-        <exclude>**/.project</exclude>
-        <exclude>**/.settings/**</exclude>
+        <exclude>${project.build.directory}/**</exclude>
+        <exclude>.classpath</exclude>
+        <exclude>.project</exclude>
+        <exclude>.settings/**</exclude>
         <exclude>**/*.iml</exclude>
         <exclude>**/*.ipr</exclude>
         <exclude>**/*.iws</exclude>
@@ -44,11 +44,11 @@
         <exclude>**/*.patch</exclude>
         <exclude>**/*.log</exclude>
         <exclude>**/pom.xml.releaseBackup</exclude>
-        <exclude>**/release.properties</exclude>
+        <exclude>**/release.properties</exclude>        
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>target/maven-shared-archive-resources/META-INF</directory>
+      <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
