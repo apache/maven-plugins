@@ -174,6 +174,8 @@ public class SiteDeployMojo
 
             wagon.addTransferListener( debug );
 
+            /*
+            FIXME proxy Info
             ProxyInfo proxyInfo = getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
@@ -183,9 +185,9 @@ public class SiteDeployMojo
             {
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
             }
-
+            */
             wagon.putDirectory( inputDirectory, "." );
-
+            
             // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
             //  Force group writeable
             if ( wagon instanceof CommandExecutor )
@@ -206,14 +208,14 @@ public class SiteDeployMojo
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
-        catch ( ConnectionException e )
+        /*catch ( ConnectionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
         catch ( AuthenticationException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
-        }
+        }*/
         catch ( CommandExecutionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
@@ -246,9 +248,12 @@ public class SiteDeployMojo
      * </p>
      *
      * @return a ProxyInfo object instantiated or <code>null</code> if no matching proxy is found
+     * FIXME FIXME take care about proxy use
      */
     public static ProxyInfo getProxyInfo( Repository repository, WagonManager wagonManager )
     {
+        return null;
+        /*
         ProxyInfo proxyInfo = wagonManager.getProxy( repository.getProtocol() );
 
         if ( proxyInfo == null )
@@ -291,7 +296,9 @@ public class SiteDeployMojo
                 return null;
             }
         }
+                
         return proxyInfo;
+        */
     }
 
     /**

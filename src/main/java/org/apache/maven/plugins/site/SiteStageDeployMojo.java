@@ -155,6 +155,8 @@ public class SiteStageDeployMojo
 
             wagon.addTransferListener( debug );
 
+            /*
+             FIXME take care about proxy use
             ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( repository, wagonManager );
             if ( proxyInfo != null )
             {
@@ -164,7 +166,7 @@ public class SiteStageDeployMojo
             {
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( stagingRepositoryId ) );
             }
-
+            */
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
 
             // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
@@ -187,14 +189,14 @@ public class SiteStageDeployMojo
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
-        catch ( ConnectionException e )
+        /*catch ( ConnectionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
         catch ( AuthenticationException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
-        }
+        }*/
         catch ( CommandExecutionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );

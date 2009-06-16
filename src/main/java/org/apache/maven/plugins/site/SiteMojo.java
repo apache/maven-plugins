@@ -23,7 +23,12 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.repository.Repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +68,8 @@ public class SiteMojo
      * @parameter expression="${generateReports}" default-value="true"
      */
     private boolean generateReports;
-
+    
+    protected PluginManager pluginManager;
 
     /**
      * Generate the project site
@@ -75,10 +81,13 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        
+        //pluginManager.executeMojo( session, execution )
+        
         List filteredReports;
         if ( generateReports )
         {
-            filteredReports = filterReports( reports );
+            filteredReports = filterReports( getReports() );
         }
         else
         {
@@ -161,4 +170,5 @@ public class SiteMojo
 
         return file;
     }
+    
 }

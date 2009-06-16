@@ -31,6 +31,8 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.PluginManager;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -38,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -141,12 +144,6 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected Renderer siteRenderer;
 
-    /**
-     * @parameter expression="${reports}"
-     * @required
-     * @readonly
-     */
-    protected List reports;
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
@@ -164,7 +161,40 @@ public abstract class AbstractSiteRenderingMojo
      * @todo should we deprecate in favour of reports?
      */
     protected File generatedSiteDirectory;
+    
+    /**
+     * The Maven project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
 
+
+    /**
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    //protected List reports;
+    
+    /**
+     * 
+     * @component
+     */
+    protected PluginManager pluginManager;
+    
+    protected List/* MavenReport */ getReports()
+    {
+        if (this.project.getReporting() == null)
+        {
+            return Collections.EMPTY_LIST;
+        }
+        List mavenReports = new ArrayList();
+        return mavenReports;
+    }
+    
     protected List filterReports( List reports )
     {
         List filteredReports = new ArrayList( reports.size() );
