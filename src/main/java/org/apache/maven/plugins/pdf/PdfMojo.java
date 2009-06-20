@@ -45,8 +45,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-//TODO: replace with something equivalent in plexus.util
-import org.apache.maven.wagon.PathUtils;
 
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.FileUtils;
@@ -390,11 +388,13 @@ public class PdfMojo
         {
             final Locale locale = getDefaultLocale();
 
-            final File descriptorFile =
-                siteTool.getSiteDescriptorFromBasedir( PathUtils.toRelative( project.getBasedir(),
-                                                                             siteDirectory.getAbsolutePath() ),
-                                                       project.getBasedir(), locale );
+            final File basedir = project.getBasedir();
+            final String relativePath = siteTool.getRelativePath(
+                    basedir.getAbsolutePath(), siteDirectory.getAbsolutePath() );
+
+            final File descriptorFile = siteTool.getSiteDescriptorFromBasedir( relativePath, basedir, locale );
             DecorationModel decoration = null;
+
             if ( descriptorFile.exists() )
             {
                 XmlStreamReader reader = null;
