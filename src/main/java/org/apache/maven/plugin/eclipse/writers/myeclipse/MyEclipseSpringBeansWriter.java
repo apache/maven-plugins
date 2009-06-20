@@ -66,10 +66,10 @@ public class MyEclipseSpringBeansWriter
     public void write()
         throws MojoExecutionException
     {
-        FileWriter sprintFileWriter;
+        FileWriter springFileWriter;
         try
         {
-            sprintFileWriter =
+            springFileWriter =
                 new FileWriter( new File( config.getEclipseProjectDirectory(), MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
         }
         catch ( IOException ex )
@@ -77,7 +77,7 @@ public class MyEclipseSpringBeansWriter
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
-        XMLWriter writer = new PrettyPrintXMLWriter( sprintFileWriter, "UTF-8", null );
+        XMLWriter writer = new PrettyPrintXMLWriter( springFileWriter, "UTF-8", null );
 
         writer.startElement( MYECLIPSE_SPRING_BEANS_PROJECT_DESCRIPTION );
         // Configuration extension
@@ -122,7 +122,7 @@ public class MyEclipseSpringBeansWriter
 
         writer.endElement();
 
-        IOUtil.close( sprintFileWriter );
+        IOUtil.close( springFileWriter );
     }
 
     /**
