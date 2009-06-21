@@ -1,0 +1,7 @@
+<project-modules id="moduleCoreId" project-version="2.0">
+  <wb-module deploy-name="ejbs-1.0-SNAPSHOT">
+    <wb-resource deploy-path="/" source-path="src/main/java"/>
+    <wb-resource deploy-path="/" source-path="src/main/resources"/>
+    <wb-resource deploy-path="/" source-path="target/generated-resources/eclipse"/>
+  </wb-module>
+</project-modules>
