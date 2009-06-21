@@ -96,7 +96,7 @@ public class DateBean
 
 
     /**
-     * @return the current year.
+     * @return the year in format "yyyy".
      */
     public String getYear()
     {
@@ -107,7 +107,7 @@ public class DateBean
     }
 
     /**
-     * @return the current month.
+     * @return the month in format "MM".
      */
     public String getMonth()
     {
@@ -118,7 +118,7 @@ public class DateBean
     }
 
     /**
-     * @return the current day.
+     * @return the day in format "dd".
      */
     public String getDay()
     {
@@ -129,7 +129,7 @@ public class DateBean
     }
 
     /**
-     * @return the current hour.
+     * @return the hour in format "HH".
      */
     public String getHour()
     {
@@ -140,7 +140,7 @@ public class DateBean
     }
 
     /**
-     * @return the current minute.
+     * @return the minute in format "mm".
      */
     public String getMinute()
     {
@@ -151,7 +151,7 @@ public class DateBean
     }
 
     /**
-     * @return the current second.
+     * @return the second in format "ss".
      */
     public String getSecond()
     {
@@ -162,7 +162,7 @@ public class DateBean
     }
 
     /**
-     * @return the current millisecond.
+     * @return the millisecond in format "SSS".
      */
     public String getMillisecond()
     {
@@ -173,7 +173,7 @@ public class DateBean
     }
 
     /**
-     * @return the current date using the ISO 8601 format, i.e. <code>yyyy-MM-dd</code>.
+     * @return the date using the ISO 8601 format, i.e. <code>yyyy-MM-dd</code>.
      */
     public String getDate()
     {
@@ -184,7 +184,7 @@ public class DateBean
     }
 
     /**
-     * @return the current time using the ISO 8601 format and UTC time zone, i.e. <code>HH:mm:ss'Z'</code>.
+     * @return the time using the ISO 8601 format and UTC time zone, i.e. <code>HH:mm:ss'Z'</code>.
      */
     public String getTime()
     {
@@ -195,7 +195,7 @@ public class DateBean
     }
 
     /**
-     * @return the current datetime using the ISO 8601 format, i.e. <code>yyyy-MM-dd'T'HH:mm:ss'Z'</code>.
+     * @return the datetime using the ISO 8601 format, i.e. <code>yyyy-MM-dd'T'HH:mm:ss'Z'</code>.
      */
     public String getDateTime()
     {

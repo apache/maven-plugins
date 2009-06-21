@@ -238,7 +238,7 @@ public class PdfMojo
             {
                 final Locale locale = (Locale) iterator.next();
 
-                final File workingDir = getWorkingDirectory( locale, defaultLocale );
+                final File workingDir = getWorkingDirectory( locale );
 
                 File siteDirectoryFile = siteDirectory;
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
@@ -295,8 +295,6 @@ public class PdfMojo
      *
      * @param locale not null
      * @return DocumentModel.
-     * @throws DocumentRendererException if any.
-     * @throws IOException if any.
      * @throws MojoExecutionException if any
      * @see #readAndFilterDocumentDescriptor(MavenProject, File, Log)
      */
@@ -318,11 +316,18 @@ public class PdfMojo
         model.getCover().setCoverType( i18n.getString( "pdf-plugin", defaultLocale, "toc.type" ) );
         model.getToc().setName( i18n.getString( "pdf-plugin", defaultLocale, "toc.title" ) );
 
-        debugLogGeneratedModel( project, model );
+        debugLogGeneratedModel( model );
 
         return model;
     }
 
+    /**
+     * Read a DocumentModel from a file.
+     *
+     * @param locale used to set the language.
+     * @return the DocumentModel read from the configured document descriptor.
+     * @throws org.apache.maven.plugin.MojoExecutionException if the model could not be read.
+     */
     private DocumentModel getDocumentModelFromDescriptor( Locale locale )
             throws MojoExecutionException
     {
@@ -358,10 +363,9 @@ public class PdfMojo
      * Return the working directory for a given Locale and the current default Locale.
      *
      * @param locale a Locale.
-     * @param defaultLocale the current default Locale.
      * @return File.
      */
-    private File getWorkingDirectory( Locale locale, Locale defaultLocale )
+    private File getWorkingDirectory( Locale locale )
     {
         if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
@@ -504,8 +508,6 @@ public class PdfMojo
     /**
      * Construct a default producer.
      *
-     * @param version the current plugin version. May be null.
-     * @param implementation the pdf implementation. May be null.
      * @return A String in the form <code>Maven PDF Plugin v. 1.1.1, 'fo' implementation</code>.
      */
     private String getDefaultGenerator()
@@ -513,7 +515,12 @@ public class PdfMojo
         return "Maven PDF Plugin v. " + pluginVersion + ", '" + implementation + "' implementation.";
     }
 
-    private void debugLogGeneratedModel( MavenProject project, final DocumentModel docModel )
+    /**
+     * Write the auto-generated model to disc.
+     *
+     * @param docModel the model to write.
+     */
+    private void debugLogGeneratedModel( final DocumentModel docModel )
     {
         if ( getLog().isDebugEnabled() && project != null )
         {
