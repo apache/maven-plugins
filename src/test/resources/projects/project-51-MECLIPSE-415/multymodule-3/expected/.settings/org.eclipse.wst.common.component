@@ -1,0 +1,9 @@
+<project-modules id="moduleCoreId" project-version="2.0">
+  <wb-module deploy-name="multymodule-3-1.0">
+    <wb-resource deploy-path="/" source-path="target/eclipseEar"/>
+    <dependent-module archiveName="multymodule-2-1.0.war" deploy-path="/" handle="module:/resource/multymodule-2-1.0/multymodule-2-1.0">
+      <dependent-object>WebModule_00000000</dependent-object>
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
+  </wb-module>
+</project-modules>

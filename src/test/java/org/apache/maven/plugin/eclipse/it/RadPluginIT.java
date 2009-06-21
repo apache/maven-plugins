@@ -19,28 +19,17 @@
 package org.apache.maven.plugin.eclipse.it;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.plugin.eclipse.Constants;
-import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
+ * @author <a href="mailto:berrach@apache.org">Barrie Treloar</a>
  */
 public class RadPluginIT
     extends AbstractEclipsePluginIT
 {
-
-    private static final String PROJECTS_BASEDIR = "target/test-classes/projects";
-
     public void testProject1()
         throws Exception
     {
@@ -51,21 +40,12 @@ public class RadPluginIT
         throws Exception
     {
         testProject( "project-rad-2", new Properties(), "rad-clean", "rad" );
-        File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" );
-        File expectedManifest =
-            getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( expectedManifest, generatedManifest );
-
     }
 
     public void testProject3()
         throws Exception
     {
         testProject( "project-rad-3", new Properties(), "rad-clean", "rad" );
-        File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/MANIFEST.MF" );
-        File expectedManifest =
-            getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( expectedManifest, generatedManifest );
     }
 
     public void testProject4()
@@ -78,94 +58,9 @@ public class RadPluginIT
         throws Exception
     {
         File basedir = getTestFile( "target/test-classes/projects/project-rad-5" );
-
         FileUtils.deleteDirectory( new File( basedir, "project-rad-1/META-INF" ) );
         new File( basedir, "project-rad-1/META-INF" ).mkdirs();
-
-        File pom0 = new File( basedir, "pom.xml" );
-
-        MavenProject project = readProject( pom0 );
-
-        String outputDirPath =
-            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
-        File outputDir;
-
-        if ( outputDirPath == null )
-        {
-            outputDir = basedir;
-        }
-        else
-        {
-            outputDir = new File( basedir, outputDirPath );
-            outputDir.mkdirs();
-            new File( outputDir, project.getArtifactId() );
-        }
-
-        List goals = new ArrayList();
-
-        String pluginSpec = getPluginCLISpecification();
-
-        goals.add( pluginSpec + "rad-clean" );
-        goals.add( pluginSpec + "rad" );
-        goals.add( "install" );
-
-        Properties props = new Properties();
-
-        executeMaven( pom0, props, goals );
-
-        assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
-                    new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
-
-        Xpp3Dom applicationXml =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream(
-                                                                              new File( basedir,
-                                                                                        "project-rad-1/META-INF/application.xml" ) ),
-                                                         "UTF-8" ) );
-
-        Xpp3Dom modulesmapsXml =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream(
-                                                                              new File( basedir,
-                                                                                        "project-rad-1/META-INF/.modulemaps" ) ),
-                                                         "UTF-8" ) );
-
-        assertNotNull( modulesmapsXml );
-
-        Xpp3Dom[] children = applicationXml.getChildren( "module" );
-        assertEquals( 2, children.length );
-        // The module children can be in ANY order.
-        boolean ejbVerified = false;
-        boolean warVerified = false;
-        for ( int i = 0; i < children.length; i++ )
-        {
-            Xpp3Dom child = children[i];
-
-            if ( child.getAttribute( "id" ).startsWith( "WebModule_" ) )
-            {
-                assertEquals( "project-rad-5_2.war", child.getChild( "web" ).getChild( "web-uri" ).getValue() );
-                assertEquals( "project-rad-5_2", child.getChild( "web" ).getChild( "context-root" ).getValue() );
-                warVerified = true;
-            }
-            else if ( child.getAttribute( "id" ).startsWith( "EjbModule_" ) )
-            {
-                assertEquals( "project-rad-5_3.jar", child.getChild( Constants.PROJECT_PACKAGING_EJB ).getValue() );
-                ejbVerified = true;
-            }
-        }
-        assertTrue( warVerified );
-        assertTrue( ejbVerified );
-
-        Xpp3Dom websettings =
-            Xpp3DomBuilder.build( new InputStreamReader(
-                                                         new FileInputStream( new File( basedir,
-                                                                                        "project-rad-2/.websettings" ) ),
-                                                         "UTF-8" ) );
-
-        assertEquals( "project-rad-5_4.jar",
-                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "jar" ).getValue() );
-        assertEquals( "project-rad-5_4",
-                      websettings.getChild( "lib-modules" ).getChild( "lib-module" ).getChild( "project" ).getValue() );
+        testProject( "project-rad-5", new Properties(), "rad-clean", "rad", true );
     }
 
     public void testProject6()
@@ -184,32 +79,8 @@ public class RadPluginIT
         throws Exception
     {
         testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
-
-        /*
-         * testing libs in web content directory
-         */
-        File basedir = getTestFile( "target/test-classes/projects/project-rad-7" );
-        File pom = new File( basedir, "pom.xml" );
-        MavenProject project = readProject( pom );
-        File outputDir;
-        File projectOutputDir = basedir;
-
-        String outputDirPath =
-            IdeUtils.getPluginSetting( project, "org.apache.maven.plugins:maven-eclipse-plugin", "outputDir", null );
-        if ( outputDirPath == null )
-        {
-            outputDir = basedir;
-        }
-        else
-        {
-            outputDir = new File( basedir, outputDirPath );
-            outputDir.mkdirs();
-            projectOutputDir = new File( outputDir, project.getArtifactId() );
-        }
-
-        compareDirectoryContent( basedir, projectOutputDir );
         assertFalse( "Default path should not exist because it is overridden!",
-                     new File( basedir + "/src/main/webapp" ).exists() );
+                     new File( getTestFile( "target/test-classes/projects/project-rad-7" ), "/src/main/webapp" ).exists() );
 
     }
 
@@ -217,10 +88,5 @@ public class RadPluginIT
         throws Exception
     {
         testProject( "project-rad-8", new Properties(), "rad-clean", "rad" );
-        File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-8/src/main/webapp/META-INF/MANIFEST.MF" );
-        File expectedManifest =
-            getTestFile( PROJECTS_BASEDIR + "/project-rad-8/src/main/webapp/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( expectedManifest, generatedManifest );
-
     }
 }

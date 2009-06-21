@@ -1,0 +1,23 @@
+<projectDescription>
+  <name>project-rad-5_3</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.validation.validationbuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.wtp.j2ee.LibCopyBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.sse.model.structuredbuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>com.ibm.wtp.ejb.EJBNature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

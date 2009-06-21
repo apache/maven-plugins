@@ -262,10 +262,37 @@ public abstract class AbstractEclipsePluginIT
     protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal )
         throws Exception
     {
+        testProject( projectName, properties, cleanGoal, genGoal, false );
+    }
+    
+    /**
+     * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     *
+     * @param projectName project directory
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @param withInstall true to include the install goal, false to exclude it.
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal, boolean withInstall )
+        throws Exception
+    {
         File basedir = getTestFile( "target/test-classes/projects/" + projectName );
-        testProject( basedir, properties, cleanGoal, genGoal );
+        testProject( basedir, properties, cleanGoal, genGoal, withInstall );
     }
 
+    /**
+     * @param basedir Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal ) throws Exception {
+        testProject( basedir, properties, cleanGoal, genGoal, false );
+    }
+    
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      *
@@ -273,9 +300,10 @@ public abstract class AbstractEclipsePluginIT
      * @param properties additional properties
      * @param cleanGoal TODO
      * @param genGoal TODO
+     * @param withInstall true to include the install goal, false to exclude it.
      * @throws Exception any exception generated during test
      */
-    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal )
+    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal, boolean withInstall )
         throws Exception
     {
         File pom = new File( basedir, "pom.xml" );
@@ -286,6 +314,9 @@ public abstract class AbstractEclipsePluginIT
 
         goals.add( pluginSpec + cleanGoal );
         goals.add( pluginSpec + genGoal );
+        if ( withInstall ) {
+            goals.add( "install" );
+        }
 
         executeMaven( pom, properties, goals );
 
@@ -544,7 +575,7 @@ public abstract class AbstractEclipsePluginIT
      * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
      * @param actualFile the actual file - only used for path information
-     * @param actualFileContents the contents of the actual fiel
+     * @param actualFileContents the contents of the actual file
      * @throws MojoExecutionException failures.
      */
     private void assertXmlFileEquals( File expectedFile, String expectedFileContents, File actualFile,
