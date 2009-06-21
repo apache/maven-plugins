@@ -305,31 +305,8 @@ public class PdfMojo
     {
         if ( docDescriptor.exists() )
         {
-            DocumentModel doc = null;
-
-            try
-            {
-                doc = new DocumentDescriptorReader( project, getLog() )
-                        .readAndFilterDocumentDescriptor( docDescriptor );
-            }
-            catch ( XmlPullParserException ex )
-            {
-                throw new MojoExecutionException( "Error reading DocumentDescriptor!", ex );
-            }
-            catch ( IOException io )
-            {
-                throw new MojoExecutionException( "Error opening DocumentDescriptor!", io );
-            }
-
-            if ( StringUtils.isEmpty( doc.getMeta().getLanguage() ) )
-            {
-                doc.getMeta().setLanguage( locale.getLanguage() );
-            }
-
-            if ( StringUtils.isEmpty( doc.getMeta().getGenerator() ) )
-            {
-                doc.getMeta().setGenerator( getDefaultGenerator() );
-            }
+            DocumentModel doc = getDocumentModelFromDescriptor( locale );
+            // TODO: descriptor model should get merged into default model, see MODELLO-63
 
             return doc;
         }
@@ -342,6 +319,37 @@ public class PdfMojo
         model.getToc().setName( i18n.getString( "pdf-plugin", defaultLocale, "toc.title" ) );
 
         debugLogGeneratedModel( project, model );
+
+        return model;
+    }
+
+    private DocumentModel getDocumentModelFromDescriptor( Locale locale )
+            throws MojoExecutionException
+    {
+        DocumentModel model = null;
+
+        try
+        {
+            model = new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
+        }
+        catch ( XmlPullParserException ex )
+        {
+            throw new MojoExecutionException( "Error reading DocumentDescriptor!", ex );
+        }
+        catch ( IOException io )
+        {
+            throw new MojoExecutionException( "Error opening DocumentDescriptor!", io );
+        }
+
+        if ( StringUtils.isEmpty( model.getMeta().getLanguage() ) )
+        {
+            model.getMeta().setLanguage( locale.getLanguage() );
+        }
+
+        if ( StringUtils.isEmpty( model.getMeta().getGenerator() ) )
+        {
+            model.getMeta().setGenerator( getDefaultGenerator() );
+        }
 
         return model;
     }
