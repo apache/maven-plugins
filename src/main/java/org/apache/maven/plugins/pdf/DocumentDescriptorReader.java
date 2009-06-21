@@ -51,7 +51,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class DocumentDescriptorReader
 {
+    /** A MavenProject to extract additional info. */
     private final MavenProject project;
+
+    /** Used to log the interpolated document descriptor. */
     private final Log log;
 
     /**

@@ -47,7 +47,10 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class DocumentModelBuilder
 {
+    /** A MavenProject to extract the information. */
     private final MavenProject project;
+
+    /** A DecorationModel to extract additional information. */
     private final DecorationModel decorationModel;
 
     /**
