@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  title="Frequently Asked Questions">
 
   <part id="General">
     <title>General</title>
@@ -41,6 +44,7 @@ under the License.
           You can use the same graphics formats as are supported by the chosen implementation, eg see
           <a href="http://xmlgraphics.apache.org/fop/0.94/graphics.html">Apache FOP Graphics Formats</a>
           and <a href="http://itextdocs.lowagie.com/tutorial/objects/images/index.php">iText Images</a>.
+          You should probably take care of image resolution, see bellow.
         </p>
       </answer>
     </faq>
@@ -54,7 +58,9 @@ under the License.
       <question>Why does my image not fit on the page?</question>
       <answer>
         <p>
-          This is most likely a resolution problem. Try to use an image with a higher resolution.
+          This is most likely a resolution problem, for instance your image was saved with a 72 dpi resolution.
+          Try to use an image with a higher resolution, like 96 dpi. You could resize your image whith this
+          program: <a href="http://www.gimp.org/">gimp</a>.
           This is the only solution if you include the image from an apt source file
           (since in apt there is no possibility to specify the size of an image), if you are using
           xdoc, you may additionally indicate the size of the image using the width/height attributes
