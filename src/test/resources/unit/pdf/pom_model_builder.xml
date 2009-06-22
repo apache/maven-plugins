@@ -28,4 +28,22 @@
   <name>Test Name</name>
   <description>Test Description</description>
 
+  <developers>
+    <developer>
+      <id>devid</id>
+      <name>dev name</name>
+      <email>dev@email</email>
+      <organization>dev broetchengeber</organization>
+      <roles>
+        <role>dev main role</role>
+        <role>dev second role</role>
+      </roles>
+      <timezone>-15</timezone>
+    </developer>
+    <developer>
+      <id>devid2</id>
+      <name>dev name 2</name>
+    </developer>
+  </developers>
+
 </project>
