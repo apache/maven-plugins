@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-05-17
+ 2009-06-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -40,9 +40,15 @@ Filtering Document Descriptor
 *----------------------------------+--------------+
 | $\{project.developers[0].email\} | The email of the first developed defined in \<developers/\> tag in the pom.xml.
 *----------------------------------+--------------+
-| $\{date} $\{time\} $\{dateTime\} | The current date/time/dateTime displayed in ISO-8601 format, i.e. yyyy-MM-dd.
+| $\{date}                         | The current date displayed in ISO-8601 format (i.e. <<<yyyy-MM-dd>>>), for instance <<<2009-06-22>>>.
 *----------------------------------+--------------+
-| $\{year} $\{month\} $\{hour\}... | The single date or time informations.
+| $\{time\}                        | The current time displayed in ISO-8601 format (i.e. <<<HH:mm:ss'Z>>>), for instance <<<12:26:48Z>>>.
+*----------------------------------+--------------+
+| $\{dateTime\}                    | The current dateTime displayed in ISO-8601 format (i.e. <<<yyyy-MM-dd'T'HH:mm:ss'Z>>>), for instance <<<2009-06-22T12:24:17Z>>>.
+*----------------------------------+--------------+
+| $\{year} $\{month\} $\{day\}     | The single date informations.
+*----------------------------------+--------------+
+| $\{hour} $\{minutes\} $\{second\}| The single time informations.
 *----------------------------------+--------------+
 
 Example
@@ -70,9 +76,9 @@ Example
 +-----+
 
 +-----+
-<document xmlns="http://maven.apache.org/DOCUMENT/1.0.0"
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.0 http://maven.apache.org/xsd/document-1.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
   outputName="maven-pdf-plugin-doc-${project.version}">
 
   <meta>
@@ -83,6 +89,12 @@ Example
   <toc name="Table of Contents">
     ...
   </toc>
+
+  <cover>
+    <coverdate>${date}</coverdate> <!-- current date in ISO 8601 format -->
+    <!-- <coverdate>${day}/${month}/${year}</coverdate> current date in French format -->
+    ...
+  </cover>
 </document>
 +-----+
 
