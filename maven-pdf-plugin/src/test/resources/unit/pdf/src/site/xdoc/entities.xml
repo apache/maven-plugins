@@ -28,8 +28,9 @@
 %HTMLsymbol;
 ]>
 
-<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
   <properties>
     <title>List of XML and HTML character entity references</title>
@@ -985,7 +986,7 @@
         <td>ISOnum</td>
         <td>division sign</td>
         </tr>
- 
+
         <tr>
         <td>oslash</td>
         <td>&oslash;</td>
@@ -1815,7 +1816,7 @@
         <td><i>NEW</i></td>
         <td>double low-9 quotation mark</td>
         </tr>
- 
+
         <tr>
         <td>dagger</td>
         <td>&dagger;</td>
