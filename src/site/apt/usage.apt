@@ -78,7 +78,7 @@ Using the PDF plugin
   All the layout properties that are used for the pdf conversion are read
   from a default configuration file. The properties in this file may be
   overridden by  using a custom configuration file <<<pdf-config.xml>>>
-  located in <<<src/sire/resources/>>>.
+  located in <<<src/site/resources/>>>.
 
   The format of this file has to be exactly the same as the original
   {{{http://svn.apache.org/repos/asf/maven/doxia/doxia/trunk/doxia-modules/doxia-module-fo/src/main/resources/fo-styles.xslt}default configuration file}}.
