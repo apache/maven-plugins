@@ -19,14 +19,23 @@ package org.apache.maven.plugins.pdf;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 
 import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
-
 import org.apache.maven.doxia.document.DocumentTOC;
+import org.apache.maven.doxia.document.DocumentTOCItem;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.plugins.pdf.stubs.ModelBuilderMavenProjectStub;
+
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  *
@@ -34,7 +43,7 @@ import org.apache.maven.plugins.pdf.stubs.ModelBuilderMavenProjectStub;
  * @version $Id$
  */
 public class DocumentModelBuilderTest
-        extends TestCase
+        extends PlexusTestCase
 {
     /**
      * Test of getDocumentModel method, of class DocumentModelBuilder.
@@ -76,5 +85,46 @@ public class DocumentModelBuilderTest
 
         DocumentTOC toc = model.getToc();
         assertEquals( 0, toc.getItems().size() );
+    }
+
+    /**
+     * Test of getDocumentModel method, of class DocumentModelBuilder.
+     * @throws Exception if something happens.
+     */
+    public void testGetDocumentModelWithSiteDescriptor()
+            throws Exception
+    {
+        System.out.println( "basedir: " + getBasedir() );
+        File descriptorFile = new File( testBaseDir() + "src/site/", "model_builder_site.xml" );
+        DecorationModel dModel = getDecorationModelFromFile( descriptorFile );
+        DocumentModel model =
+                new DocumentModelBuilder( new ModelBuilderMavenProjectStub(), dModel ).getDocumentModel();
+
+        DocumentTOC toc = model.getToc();
+        assertEquals( 1, toc.getItems().size() );
+        assertEquals( "Intro", ( (DocumentTOCItem) toc.getItems().get( 0 ) ).getName() );
+
+    }
+
+    private DecorationModel getDecorationModelFromFile( File descriptorFile )
+            throws IOException, XmlPullParserException
+    {
+        Reader reader = null;
+
+        try
+        {
+            reader = ReaderFactory.newXmlReader( descriptorFile );
+
+            return new DecorationXpp3Reader().read( reader );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+
+    private String testBaseDir()
+    {
+        return getBasedir() + "/src/test/resources/unit/pdf/";
     }
 }
