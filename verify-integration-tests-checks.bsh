@@ -1,4 +1,10 @@
-source("maven-antrun.bsh");
+addMavenClasspath() {
+    maven_plugin_classpath = project.getReference("maven.test.classpath");
+    paths = maven_plugin_classpath.list();
+    for( path : paths ) {
+        addClassPath( path );
+    }
+}
 addMavenClasspath();
 
 import org.apache.tools.ant.BuildException;
