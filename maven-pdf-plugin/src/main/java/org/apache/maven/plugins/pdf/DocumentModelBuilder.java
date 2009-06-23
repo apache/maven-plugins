@@ -117,7 +117,8 @@ public class DocumentModelBuilder
         final DocumentModel docModel = new DocumentModel();
 
         docModel.setModelEncoding( getProjectModelEncoding( project ) );
-        docModel.setOutputName( project == null ? null : project.getArtifactId() );
+        docModel.setOutputName( project == null || project.getArtifactId() == null
+                ? "unnamed" : project.getArtifactId() );
         docModel.setMeta( getDocumentMeta( project, now ) );
         docModel.setCover( getDocumentCover( project, now ) );
         docModel.setToc( getDocumentTOC( decorationModel ) );

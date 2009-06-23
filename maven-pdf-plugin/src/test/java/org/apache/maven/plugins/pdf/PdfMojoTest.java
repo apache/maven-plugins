@@ -144,4 +144,29 @@ public class PdfMojoTest
         // TODO: this might fail on NewYear's eve! :)
         assertTrue( foContent.indexOf( new DateBean().getDate() ) > 0 );
     }
+
+    /**
+     * Tests the basic functioning of the pdf generation using the FO implementation.
+     *
+     * @throws Exception if any.
+     */
+    public void testPdfMojoNoDocDesriptor() throws Exception
+    {
+        File testPom = new File( getBasedir(), "/target/test-classes/unit/pdf/no_docdescriptor_pom.xml" );
+        assertTrue( "testPom does not exist!", testPom.exists() );
+
+        PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
+        assertNotNull( "pdf mojo not found!", mojo );
+
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/unnamed.pdf" );
+        if ( pdfFile.exists() )
+        {
+            pdfFile.delete();
+        }
+
+        mojo.execute();
+
+        assertTrue( "FO: Pdf file not created!", pdfFile.exists() );
+        assertTrue( "FO: Pdf file has no content!", pdfFile.length() > 0 );
+    }
 }
