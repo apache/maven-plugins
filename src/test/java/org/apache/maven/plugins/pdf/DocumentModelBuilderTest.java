@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.apache.maven.doxia.document.DocumentAuthor;
 import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -75,11 +76,14 @@ public class DocumentModelBuilderTest
         assertEquals( "Test Name", cover.getProjectName() );
         assertEquals( "Test Name", cover.getCoverTitle() );
         assertEquals( "v. Test Version", cover.getCoverSubTitle() );
-        assertEquals( 0, cover.getAuthors().size() );
+        assertEquals( "Test Organization", cover.getCompanyName() );
+        assertEquals( 2, cover.getAuthors().size() );
+        assertFirstDocumentAuthor( (DocumentAuthor) cover.getAuthors().get( 0 ) );
 
         DocumentMeta meta = model.getMeta();
         assertEquals( "Test Description", meta.getDescription() );
-        assertEquals( 0, meta.getAuthors().size() );
+        assertEquals( 2, meta.getAuthors().size() );
+        assertFirstDocumentAuthor( (DocumentAuthor) meta.getAuthors().get( 0 ) );
         assertEquals( "Test Name", meta.getSubject() );
         assertEquals( "Test Name", meta.getTitle() );
 
@@ -94,7 +98,6 @@ public class DocumentModelBuilderTest
     public void testGetDocumentModelWithSiteDescriptor()
             throws Exception
     {
-        System.out.println( "basedir: " + getBasedir() );
         File descriptorFile = new File( testBaseDir() + "src/site/", "model_builder_site.xml" );
         DecorationModel dModel = getDecorationModelFromFile( descriptorFile );
         DocumentModel model =
@@ -103,7 +106,15 @@ public class DocumentModelBuilderTest
         DocumentTOC toc = model.getToc();
         assertEquals( 1, toc.getItems().size() );
         assertEquals( "Intro", ( (DocumentTOCItem) toc.getItems().get( 0 ) ).getName() );
+        assertEquals( "index.html", ( (DocumentTOCItem) toc.getItems().get( 0 ) ).getRef() );
+    }
 
+    private void assertFirstDocumentAuthor( DocumentAuthor author )
+    {
+        assertEquals( "dev name", author.getName() );
+        assertEquals( "dev@email", author.getEmail() );
+        assertEquals( "dev broetchengeber", author.getCompanyName() );
+        assertEquals( "dev main role, dev second role", author.getPosition() );
     }
 
     private DecorationModel getDecorationModelFromFile( File descriptorFile )
