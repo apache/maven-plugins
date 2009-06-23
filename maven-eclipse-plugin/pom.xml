@@ -219,17 +219,15 @@ under the License.
         <executions>
           <execution>
             <id>verify-integration-tests-checks</id>
-            <phase>validate</phase>
-            <!-- 
             <phase>post-integration-test</phase>
+            <!-- 
+            <phase>validate</phase>
              -->
             <configuration>
               <tasks>
-                <property name="cwd" location="."/>
-                <echo message="cwd = ${cwd}"/>
-                <!-- 
-                <script language="beanshell" src="verify-integration-tests-checks.bsh" />
-                -->
+                <property name="script" location="verify-integration-tests-checks.bsh"/>
+                <echo message="script = ${script}"/>
+                <script language="beanshell" src="${script}" />
               </tasks>
             </configuration>
             <goals>
