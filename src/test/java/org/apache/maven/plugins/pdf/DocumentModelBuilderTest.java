@@ -55,7 +55,7 @@ public class DocumentModelBuilderTest
 
         assertNotNull( model );
         assertNull( model.getModelEncoding() );
-        assertNull( model.getOutputName() );
+        assertEquals( "unnamed", model.getOutputName() );
         assertNotNull( model.getCover() );
         assertNotNull( model.getMeta() );
         assertNotNull( model.getToc() );
