@@ -248,7 +248,7 @@ public class DocumentModelBuilder
 
                 if ( it2.hasNext() )
                 {
-                    roles.append( ',' );
+                    roles.append( ',' ).append( ' ' );
                 }
             }
             if ( roles != null )

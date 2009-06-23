@@ -21,8 +21,11 @@ package org.apache.maven.plugins.pdf.stubs;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
 
+import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -49,6 +52,8 @@ public class ModelBuilderMavenProjectStub
             setVersion( model.getVersion() );
             setName( model.getName() );
             setDescription( model.getDescription() );
+            setDevelopers( model.getDevelopers() );
+            setOrganization( model.getOrganization() );
         }
         catch ( Exception e )
         {
@@ -62,5 +67,45 @@ public class ModelBuilderMavenProjectStub
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/target/test-classes/unit/pdf/" );
+    }
+
+    /** {@inheritDoc}
+     * @param developer
+     */
+    public void addDeveloper( Developer developer )
+    {
+        getModel().addDeveloper( developer );
+    }
+
+    /** {@inheritDoc}
+     * @return
+     */
+    public List getDevelopers()
+    {
+        return getModel().getDevelopers();
+    }
+
+    /** {@inheritDoc}
+     * @return
+     */
+    public Organization getOrganization()
+    {
+        return getModel().getOrganization();
+    }
+
+    /** {@inheritDoc}
+     * @param list
+     */
+    public void setDevelopers( List list )
+    {
+        getModel().setDevelopers( list );
+    }
+
+    /** {@inheritDoc}
+     * @param organization
+     */
+    public void setOrganization( Organization organization )
+    {
+        getModel().setOrganization( organization );
     }
 }
