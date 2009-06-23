@@ -28,6 +28,11 @@
   <name>Test Name</name>
   <description>Test Description</description>
 
+  <organization>
+    <name>Test Organization</name>
+    <url>Test Organization URL</url>
+  </organization>
+
   <developers>
     <developer>
       <id>devid</id>
