@@ -402,7 +402,7 @@ public class PdfMojo
 
             final File basedir = project.getBasedir();
             final String relativePath = siteTool.getRelativePath(
-                    basedir.getAbsolutePath(), siteDirectory.getAbsolutePath() );
+                    siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
 
             final File descriptorFile = siteTool.getSiteDescriptorFromBasedir( relativePath, basedir, locale );
             DecorationModel decoration = null;
