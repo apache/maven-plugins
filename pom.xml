@@ -220,13 +220,9 @@ under the License.
           <execution>
             <id>verify-integration-tests-checks</id>
             <phase>post-integration-test</phase>
-            <!-- 
-            <phase>validate</phase>
-             -->
             <configuration>
               <tasks>
                 <property name="script" location="verify-integration-tests-checks.bsh"/>
-                <echo message="script = ${script}"/>
                 <script language="beanshell" src="${script}" />
               </tasks>
             </configuration>
