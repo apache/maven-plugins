@@ -74,7 +74,7 @@ under the License.
 
   <properties>
     <doxiaVersion>1.1.1-SNAPSHOT</doxiaVersion>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.0.9</mavenVersion>
   </properties>
 
   <dependencies>
