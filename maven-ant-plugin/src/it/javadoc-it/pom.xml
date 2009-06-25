@@ -49,6 +49,16 @@
               <head>Software Requirement:</head>
             </tag>
           </tags>
+          <groups>
+            <group>
+              <title>Repository API</title>
+              <packages>org.openrdf.repository*</packages>
+            </group>
+            <group>
+              <title>RDF Model API</title>
+              <packages>org.openrdf.model*</packages>
+            </group>
+          </groups>
         </configuration>
       </plugin>
     </plugins>
