@@ -328,6 +328,7 @@ under the License.
             <version>1.0-alpha-2</version>
             <configuration>
               <locales>
+                <locale>de</locale>
                 <locale>en</locale>
                 <locale>fr</locale>
               </locales>
