@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question1">
+     <question>Where did the standard came from?</question>
+     <answer>
+       <p>
+         The plugin documentation standard was created to address the frequent
+         complaint of lack of documentation, specifically for the Maven plugins.
+         The standard was based on suggestions made on the Maven dev mailing
+         list with some refinements. It is a community consensus of what basic
+         documentation a Maven plugin should have.
+       </p>
+     </answer>
+   </faq>
+   <faq id="question2">
+     <question>Why do we need a documentation standard?</question>
+     <answer>
+       <p>
+         The standard is not a set of rules but a guide to help plugin
+         developers document their plugins better, for the benefit of the users
+         of the plugin. The standard also reminds the plugin developers of the
+         important details that needs to be documented, to help speed up the
+         adoption of the plugin.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
