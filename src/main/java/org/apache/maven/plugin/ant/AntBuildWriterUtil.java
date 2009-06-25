@@ -332,9 +332,10 @@ public class AntBuildWriterUtil
         {
             for ( int i = 0; i < groups.length; i++ )
             {
+                Map group = (Map) groups[i].get( "group" );
                 writer.startElement( "group" );
-                writer.addAttribute( "title", (String) groups[i].get( "title" ) );
-                addWrapAttribute( writer, "javadoc", "package", (String) groups[i].get( "package" ), 4 );
+                writer.addAttribute( "title", (String) group.get( "title" ) );
+                addWrapAttribute( writer, "javadoc", "package", (String) group.get( "package" ), 4 );
                 writer.endElement(); // group
             }
         }
