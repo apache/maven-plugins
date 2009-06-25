@@ -52,7 +52,7 @@ Using The PDF Plugin
   The plugin also supports the {{{http://www.lowagie.com/iText/}iText}} implementation, you just need to add
   <<<-Dimplementation=itext>>> in the comand line.
 
-* As Part Of Your Build Process
+* {As Part Of Your Build Process}
 
   The PDF plugin can be put into a project's pom.xml so that it gets executed
   everytime the project is built.  Below is a sample configuration

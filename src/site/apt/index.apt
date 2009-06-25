@@ -66,6 +66,6 @@ Overview
 
     * {{{./examples/filtering.html}Filtering Document Descriptor}}
 
-    * {{{./examples/site-phase-integration.html}Site Phase Integration}}
+    * {{{./usage.html#As_Part_Of_Your_Build_Process}Site Phase Integration}}
 
     []
