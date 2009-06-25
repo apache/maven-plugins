@@ -45,6 +45,7 @@ try
         }
 
         String test = new String( baos.toByteArray() );
+        System.out.println( test );
 
         result = test.indexOf( "one" ) > -1 && test.indexOf( "two" ) > -1;
     }
