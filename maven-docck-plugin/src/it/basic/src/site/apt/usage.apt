@@ -1,0 +1,138 @@
+ ------
+ Usage
+ ------
+ ------
+ 2008-09-14
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Usage
+
+  This document is intended to provide instructions for using the
+  Maven DOCCK Plugin. In order for this discussion to be useful, it's
+  critical to cover two topics: Configuring your project's <<<pom.xml>>> to run
+  the plugin during every build and using the plugin from the command-line.
+
+* Configuring the plugin in <<<pom.xml>>>
+
+   You can use the following configuration in your <<<pom.xml>>> to run the DOCCK
+   Plugin everytime the project is built.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-docck-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+
+* Using the plugin from the command-line
+
+  The DOCCK Plugin is easily executed from the command line since it can run
+  without any parameter configuration.
+
+  To run the DOCCK Plugin on a project, type:
+
++---+
+mvn docck:check
++---+
+
+* Sample Output
+
+** Run with no documentation errors
+
++---+
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'docck'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Mojo Project
+[INFO]    task-segment: [docck:check] (aggregator-style)
+[INFO] ----------------------------------------------------------------------------
+[INFO] [docck:check]
+[INFO] Checking project: Mojo Project
+[INFO] Using 2 extractors.
+[INFO] Applying extractor for language: java
+[INFO] Extractor for language: java found 1 mojo descriptors.
+[INFO] Applying extractor for language: bsh
+[INFO] Extractor for language: bsh found 0 mojo descriptors.
+[INFO] No documentation errors were found.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3 seconds
+[INFO] Finished at: Mon Jun 19 16:06:25 CST 2006
+[INFO] Final Memory: 3M/7M
+[INFO] ------------------------------------------------------------------------
++---+
+
+** Run with documentation errors
+
++---+
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'docck'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Mojo Project
+[INFO]    task-segment: [docck:check] (aggregator-style)
+[INFO] ----------------------------------------------------------------------------
+[INFO] [docck:check]
+[INFO] Checking project: Mojo Project
+[INFO] Using 2 extractors.
+[INFO] Applying extractor for language: java
+[INFO] Extractor for language: java found 1 mojo descriptors.
+[INFO] Applying extractor for language: bsh
+[INFO] Extractor for language: bsh found 0 mojo descriptors.
+[ERROR] The following documentation problems were found:
+
+o Maven Documentation Checker Plugin (3 errors)
+  [ERROR] There is no 'index' file in your site directory (in apt|html|xml[.vm] format).
+  [ERROR] There are no example files in your site directory (in apt|html|xml[.vm] format). They should either be called 'example*.(apt|html|xml)[.vm]' or they should be located in the 'examples' directory.
+  [ERROR] Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
+
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Documentation problems were found. Please see the console output above for more information.
+[INFO] ------------------------------------------------------------------------
+[INFO] For more information, run Maven with the -e switch
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3 seconds
+[INFO] Finished at: Mon Jun 19 15:54:58 CST 2006
+[INFO] Final Memory: 3M/7M
+[INFO] ------------------------------------------------------------------------
++---+
