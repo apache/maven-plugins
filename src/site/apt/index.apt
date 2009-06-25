@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 12 September 2007
+ 2009-05-31
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -46,3 +46,11 @@ Overview
 * Example
 
   Have a look at the {{{./maven-pdf-plugin.pdf}pdf}} version of this web site.
+
+  The following examples show how to use the PDF Plugin in more advanced usecases:
+
+    * {{{./examples/filtering.html}Filtering Document Descriptor}}
+
+    * {{{./examples/site-phase-integration.html}Site Phase Integration}}
+
+    []

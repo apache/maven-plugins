@@ -21,45 +21,37 @@ package org.apache.maven.plugins.pdf;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
-import org.apache.maven.doxia.document.DocumentCover;
-import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
-import org.apache.maven.doxia.document.DocumentTOC;
-import org.apache.maven.doxia.document.DocumentTOCItem;
-import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Writer;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Menu;
-import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.wagon.PathUtils;
+
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -68,12 +60,58 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *
  * @author ltheussl
  * @version $Id$
- *
  * @goal pdf
  */
 public class PdfMojo
-    extends AbstractPdfMojo
+    extends AbstractMojo
 {
+    // ----------------------------------------------------------------------
+    // Mojo components
+    // ----------------------------------------------------------------------
+
+    /**
+     * FO Document Renderer.
+     *
+     * @component role-hint="fo"
+     */
+    private PdfRenderer foRenderer;
+
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
+     * IText Document Renderer.
+     *
+     * @component role-hint="itext"
+     */
+    private PdfRenderer itextRenderer;
+
+    /**
+     * A comma separated list of locales supported by Maven.
+     * The first valid token will be the default Locale for this instance of the Java Virtual Machine.
+     *
+     * @parameter expression="${locales}"
+     */
+    private String locales;
+
+    /**
+     * Site renderer.
+     *
+     * @component
+     */
+    private Renderer siteRenderer;
+
+    /**
+     * SiteTool.
+     *
+     * @component
+     */
+    private SiteTool siteTool;
+
     // ----------------------------------------------------------------------
     // Mojo Parameters
     // ----------------------------------------------------------------------
@@ -90,51 +128,57 @@ public class PdfMojo
     /**
      * Directory containing source for apt, fml and xdoc docs.
      *
-     * @parameter expression="${basedir}/src/site"
+     * @parameter default-value="${basedir}/src/site"
      * @required
      */
     private File siteDirectory;
 
     /**
-     * Directory containing the generated project sites and report distributions.
+     * Output directory where PDF files should be created.
      *
-     * @parameter alias="workingDirectory" expression="${project.build.directory}/pdf"
+     * @parameter default-value="${project.build.directory}/pdf"
      * @required
      */
     private File outputDirectory;
 
     /**
+     * Working directory for working files like temp files/resources.
+     *
+     * @parameter default-value="${project.build.directory}/pdf"
+     * @required
+     */
+    private File workingDirectory;
+
+    /**
      * File that contains the DocumentModel of the PDF to generate.
      *
-     * @parameter expression="src/site/pdf.xml"
+     * @parameter default-value="src/site/pdf.xml"
      */
     private File docDescriptor;
 
     /**
      * Identifies the framework to use for pdf generation: either "fo" (default) or "itext".
      *
-     * @parameter expression="fo"
+     * @parameter expression="${implementation}" default-value="fo"
      * @required
      */
-    private String implementation = "fo";
-
-    // ----------------------------------------------------------------------
-    // Mojo components
-    // ----------------------------------------------------------------------
+    private String implementation;
 
     /**
-     * FO Document Renderer.
+     * The local repository.
      *
-     * @component role-hint="fo"
+     * @parameter expression="${localRepository}"
+     * @required
      */
-    private PdfRenderer foRenderer;
+    private ArtifactRepository localRepository;
 
     /**
-     * IText Document Renderer.
+     * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
+     * source document.
      *
-     * @component role-hint="itext"
+     * @parameter default-value="true"
      */
-    private PdfRenderer itextRenderer;
+    private boolean aggregate;
 
     /**
      * Document Renderer.
@@ -151,11 +195,21 @@ public class PdfMojo
      */
     private DecorationModel defaultDecorationModel;
 
+    /**
+     * @parameter expression="${plugin.version}"
+     */
+    private String pluginVersion;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws MojoExecutionException if an exception ocurred during mojo execution.
+     * @throws MojoFailureException if the mojo could not be executed.
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -174,32 +228,56 @@ public class PdfMojo
 
         try
         {
-            List localesList = getSiteTool().getAvailableLocales( getLocales() );
+            final List localesList = siteTool.getAvailableLocales( locales );
 
             // Default is first in the list
-            Locale defaultLocale = (Locale) localesList.get( 0 );
-
+            this.defaultLocale = (Locale) localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+            for ( final Iterator iterator = localesList.iterator(); iterator.hasNext(); )
             {
-                Locale locale = (Locale) iterator.next();
+                final Locale locale = (Locale) iterator.next();
 
-                File outputDir = getOutputDirectory( locale, defaultLocale );
+                final File workingDir = getWorkingDirectory( locale );
 
                 File siteDirectoryFile = siteDirectory;
-
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
                 {
                     siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
                 }
 
-                docRenderer.render( siteDirectoryFile, outputDir, getDocumentModel() );
+                // Copy extra-resources
+                copyResources( locale );
+
+                try
+                {
+                    if ( aggregate )
+                    {
+                        docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel( locale ) );
+                    }
+                    else
+                    {
+                        docRenderer.render( siteDirectoryFile, workingDir, null );
+                    }
+                }
+                catch ( DocumentRendererException e )
+                {
+                    throw new MojoExecutionException( "Error during document generation", e );
+                }
             }
-        }
-        catch ( DocumentRendererException e )
-        {
-            throw new MojoExecutionException( "Error during document generation", e );
+
+            if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
+            {
+                final List pdfs = FileUtils.getFiles( workingDirectory, "**/*.pdf", null );
+
+                for ( final Iterator it = pdfs.iterator(); it.hasNext(); )
+                {
+                    final File pdf = (File) it.next();
+
+                    FileUtils.copyFile( pdf, new File( outputDirectory, pdf.getName() ) );
+                    pdf.delete();
+                }
+            }
         }
         catch ( IOException e )
         {
@@ -215,149 +293,86 @@ public class PdfMojo
      * Constructs a DocumentModel for the current project. The model is either read from
      * a descriptor file, if it exists, or constructed from information in the pom and site.xml.
      *
+     * @param locale not null
      * @return DocumentModel.
-     * @throws DocumentRendererException if any.
-     * @throws IOException if any.
      * @throws MojoExecutionException if any
      * @see #readAndFilterDocumentDescriptor(MavenProject, File, Log)
      */
-    private DocumentModel getDocumentModel()
-        throws DocumentRendererException, IOException, MojoExecutionException
+    private DocumentModel getDocumentModel( Locale locale )
+        throws MojoExecutionException
     {
         if ( docDescriptor.exists() )
         {
-            return readAndFilterDocumentDescriptor( project, docDescriptor, getLog() );
+            DocumentModel doc = getDocumentModelFromDescriptor( locale );
+            // TODO: descriptor model should get merged into default model, see MODELLO-63
+
+            return doc;
         }
 
-        return generateDefaultDocDescriptor();
+        DocumentModel model = new DocumentModelBuilder( project, getDefaultDecorationModel() ).getDocumentModel();
+
+        model.getMeta().setGenerator( getDefaultGenerator() );
+        model.getMeta().setLanguage( locale.getLanguage() );
+        model.getCover().setCoverType( i18n.getString( "pdf-plugin", defaultLocale, "toc.type" ) );
+        model.getToc().setName( i18n.getString( "pdf-plugin", defaultLocale, "toc.title" ) );
+
+        debugLogGeneratedModel( model );
+
+        return model;
     }
 
     /**
-     * Return the output directory for a given Locale and the current default Locale.
+     * Read a DocumentModel from a file.
+     *
+     * @param locale used to set the language.
+     * @return the DocumentModel read from the configured document descriptor.
+     * @throws org.apache.maven.plugin.MojoExecutionException if the model could not be read.
+     */
+    private DocumentModel getDocumentModelFromDescriptor( Locale locale )
+            throws MojoExecutionException
+    {
+        DocumentModel model = null;
+
+        try
+        {
+            model = new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
+        }
+        catch ( XmlPullParserException ex )
+        {
+            throw new MojoExecutionException( "Error reading DocumentDescriptor!", ex );
+        }
+        catch ( IOException io )
+        {
+            throw new MojoExecutionException( "Error opening DocumentDescriptor!", io );
+        }
+
+        if ( StringUtils.isEmpty( model.getMeta().getLanguage() ) )
+        {
+            model.getMeta().setLanguage( locale.getLanguage() );
+        }
+
+        if ( StringUtils.isEmpty( model.getMeta().getGenerator() ) )
+        {
+            model.getMeta().setGenerator( getDefaultGenerator() );
+        }
+
+        return model;
+    }
+
+    /**
+     * Return the working directory for a given Locale and the current default Locale.
      *
      * @param locale a Locale.
-     * @param defaultLocale the current default Locale.
      * @return File.
-     * @todo can be re-used
      */
-    private File getOutputDirectory( Locale locale, Locale defaultLocale )
+    private File getWorkingDirectory( Locale locale )
     {
         if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
-            return outputDirectory;
+            return workingDirectory;
         }
 
-        return new File( outputDirectory, locale.getLanguage() );
-    }
-
-    /**
-     * @return Generate a default document descriptor from the Maven project
-     * @throws IOException if any
-     * @throws MojoExecutionException if any
-     */
-    private DocumentModel generateDefaultDocDescriptor()
-        throws IOException, MojoExecutionException
-    {
-        DocumentMeta meta = new DocumentMeta();
-        meta.setAuthor( getProjectOrganizationName() );
-        meta.setTitle( getProjectName() );
-        meta.setDescription( project.getDescription() );
-
-        DocumentCover cover = new DocumentCover();
-        cover.setCoverTitle( getProjectName() );
-        cover.setCoverVersion( project.getVersion() );
-        cover.setCoverType( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
-        cover.setCoverDate( Integer.toString( Calendar.getInstance().get( Calendar.YEAR ) ) );
-        cover.setProjectName( getProjectName() );
-        cover.setCompanyName( getProjectOrganizationName() );
-
-        DocumentModel docModel = new DocumentModel();
-        docModel.setModelEncoding( getProjectModelEncoding() );
-        docModel.setOutputName( project.getArtifactId() );
-        docModel.setMeta( meta );
-        docModel.setCover( cover );
-
-        // Populate docModel from defaultDecorationModel
-        DecorationModel decorationModel = getDefaultDecorationModel();
-
-        if ( decorationModel != null )
-        {
-            DocumentTOC toc = new DocumentTOC();
-
-            toc.setName( getI18n().getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
-
-            for ( Iterator it = decorationModel.getMenus().iterator(); it.hasNext(); )
-            {
-                Menu menu = (Menu) it.next();
-
-                for ( Iterator it2 = menu.getItems().iterator(); it2.hasNext(); )
-                {
-                    MenuItem item = (MenuItem) it2.next();
-
-                    DocumentTOCItem documentTOCItem = new DocumentTOCItem();
-                    documentTOCItem.setName( item.getName() );
-                    documentTOCItem.setRef( item.getHref() );
-                    toc.addItem( documentTOCItem );
-                }
-            }
-
-            docModel.setToc( toc );
-        }
-
-        if ( getLog().isDebugEnabled() )
-        {
-            File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
-
-            if ( outputDir.isFile() )
-            {
-                throw new IOException( outputDir + " is not a directory!" );
-            }
-
-            if ( !outputDir.exists() )
-            {
-                outputDir.mkdirs();
-            }
-
-            File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
-
-            getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
-
-            DocumentXpp3Writer xpp3 = new DocumentXpp3Writer();
-            Writer w = null;
-            try
-            {
-                w = WriterFactory.newPlatformWriter( doc );
-                xpp3.write( w, docModel );
-            }
-            finally
-            {
-                IOUtil.close( w );
-            }
-        }
-
-        return docModel;
-    }
-
-    private String getProjectOrganizationName()
-    {
-        return ( project.getOrganization() != null
-            && StringUtils.isNotEmpty( project.getOrganization().getName() )
-                ? project.getOrganization().getName()
-                : System.getProperty( "user.name" ) );
-    }
-
-    private String getProjectName()
-    {
-        return ( StringUtils.isEmpty( project.getName() )
-                ? project.getGroupId() + ":" + project.getArtifactId()
-                : project.getName() );
-    }
-
-    private String getProjectModelEncoding()
-    {
-        return ( StringUtils.isEmpty( project.getModel().getModelEncoding() )
-                ? "UTF-8"
-                : project.getModel().getModelEncoding() );
+        return new File( workingDirectory, locale.getLanguage() );
     }
 
     /**
@@ -367,7 +382,7 @@ public class PdfMojo
     {
         if ( this.defaultLocale == null )
         {
-            List localesList = getSiteTool().getAvailableLocales( getLocales() );
+            final List localesList = siteTool.getAvailableLocales( locales );
             this.defaultLocale = (Locale) localesList.get( 0 );
         }
 
@@ -383,19 +398,17 @@ public class PdfMojo
     {
         if ( this.defaultDecorationModel == null )
         {
-            Locale locale = getDefaultLocale();
+            final Locale locale = getDefaultLocale();
 
-            File descriptorFile =
-                getSiteTool()
-                             .getSiteDescriptorFromBasedir(
-                                                            PathUtils.toRelative( project.getBasedir(),
-                                                                                  siteDirectory.getAbsolutePath() ),
-                                                            project.getBasedir(), locale );
+            final File basedir = project.getBasedir();
+            final String relativePath = siteTool.getRelativePath(
+                    siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
+
+            final File descriptorFile = siteTool.getSiteDescriptorFromBasedir( relativePath, basedir, locale );
             DecorationModel decoration = null;
+
             if ( descriptorFile.exists() )
             {
-                Map props = new HashMap();
-
                 XmlStreamReader reader = null;
                 try
                 {
@@ -403,8 +416,8 @@ public class PdfMojo
                     String siteDescriptorContent = IOUtil.toString( reader );
 
                     siteDescriptorContent =
-                        getSiteTool().getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent,
-                                                                            reader.getEncoding(), "UTF-8" );
+                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), project, siteDescriptorContent,
+                                                                       reader.getEncoding(), reader.getEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }
@@ -433,77 +446,110 @@ public class PdfMojo
     }
 
     /**
-     * Read and filter the <code>docDescriptor</code> file.
+     * Parse the decoration model to find the skin artifact and copy its resources to the output dir.
      *
-     * @param project not null
-     * @param docDescriptor not null
-     * @param log not null
-     * @return a DocumentModel instance
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @param locale not null
+     * @throws MojoExecutionException if any
+     * @see #getDefaultDecorationModel()
      */
-    private static DocumentModel readAndFilterDocumentDescriptor( MavenProject project, File docDescriptor, Log log )
-        throws DocumentRendererException, IOException
+    private void copyResources( Locale locale )
+        throws MojoExecutionException
     {
-        Reader reader = null;
+        final DecorationModel decorationModel = getDefaultDecorationModel();
+
+        if ( decorationModel == null )
+        {
+            return;
+        }
+
+        File skinFile;
+
         try
         {
-            // System properties
-            Properties filterProperties = new Properties( System.getProperties() );
-            // Project properties
-            if ( project != null && project.getProperties() != null )
+            skinFile =
+                siteTool.getSkinArtifactFromRepository( localRepository, project.getRemoteArtifactRepositories(),
+                                                        decorationModel ).getFile();
+        }
+        catch ( SiteToolException e )
+        {
+            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
+        }
+
+        if ( skinFile == null )
+        {
+            return;
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Copy resources from skin artifact: '" + skinFile + "'..." );
+        }
+
+        try
+        {
+            final SiteRenderingContext context =
+                siteRenderer.createContextForSkin( skinFile, new HashMap(), decorationModel, project.getName(),
+                                                   locale );
+            context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
+
+            for ( final Iterator i = context.getSiteDirectories().iterator(); i.hasNext(); )
             {
-                filterProperties.putAll( project.getProperties() );
+                final File siteDirectoryFile = (File) i.next();
+
+                siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), workingDirectory );
             }
-
-            reader =
-                new InterpolationFilterReader( ReaderFactory.newXmlReader( docDescriptor ), filterProperties,
-                                               "${", "}" );
-            reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, log ), "${", "}" );
-
-            return new DocumentXpp3Reader().read( reader );
         }
-        catch ( XmlPullParserException e )
+        catch ( IOException e )
         {
-            throw new DocumentRendererException( "Error parsing document descriptor", e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
+            throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
         }
     }
 
-    static class ReflectionProperties
-        extends Properties
+    /**
+     * Construct a default producer.
+     *
+     * @return A String in the form <code>Maven PDF Plugin v. 1.1.1, 'fo' implementation</code>.
+     */
+    private String getDefaultGenerator()
     {
-        private static final long serialVersionUID = 4283750804305363781L;
+        return "Maven PDF Plugin v. " + pluginVersion + ", '" + implementation + "' implementation.";
+    }
 
-        private MavenProject project;
-
-        private Log log;
-
-        public ReflectionProperties( MavenProject aProject, Log aLog )
+    /**
+     * Write the auto-generated model to disc.
+     *
+     * @param docModel the model to write.
+     */
+    private void debugLogGeneratedModel( final DocumentModel docModel )
+    {
+        if ( getLog().isDebugEnabled() && project != null )
         {
-            super();
+            final File outputDir = new File( project.getBuild().getDirectory(), "pdf" );
 
-            this.project = aProject;
-            this.log = aLog;
-        }
+            if ( !outputDir.exists() )
+            {
+                outputDir.mkdirs();
+            }
 
-        /** {@inheritDoc} */
-        public Object get( Object key )
-        {
-            Object value = null;
+            final File doc = FileUtils.createTempFile( "pdf", ".xml", outputDir );
+            final DocumentXpp3Writer xpp3 = new DocumentXpp3Writer();
+
+            Writer w = null;
+
             try
             {
-                value = ReflectionValueExtractor.evaluate( key.toString(), project );
+                w = WriterFactory.newXmlWriter( doc );
+                xpp3.write( w, docModel );
+                getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
             }
-            catch ( Exception e )
+            catch ( IOException io )
             {
-                log.error( e.getMessage(), e );
+                getLog().debug( "Failed to write document model: " + doc.getAbsolutePath(), io );
             }
-
-            return value;
+            finally
+            {
+                IOUtil.close( w );
+            }
         }
     }
 }

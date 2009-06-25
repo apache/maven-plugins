@@ -1,0 +1,101 @@
+ ------
+ Filtering Document Descriptor
+ ------
+ Vincent Siveton
+ ------
+ 2009-06-22
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Filtering Document Descriptor
+
+  The document descriptor (aka src/site/pdf.xml) could be filtered by System properties, Maven project properties and
+  some date properties.
+
+*----------------------------------+--------------+
+|| Expression Samples              || Description
+*----------------------------------+--------------+
+| $\{JAVA_HOME\}                   | The JAVA_HOME environment value.
+*----------------------------------+--------------+
+| $\{project.name\}                | The project name defined in \<name/\> tag in the pom.xml.
+*----------------------------------+--------------+
+| $\{project.developers[0].email\} | The email of the first developed defined in \<developers/\> tag in the pom.xml.
+*----------------------------------+--------------+
+| $\{date}                         | The current date displayed in ISO-8601 format (i.e. <<<yyyy-MM-dd>>>), for instance <<<2009-06-22>>>.
+*----------------------------------+--------------+
+| $\{time\}                        | The current time displayed in ISO-8601 format (i.e. <<<HH:mm:ss'Z>>>), for instance <<<12:26:48Z>>>.
+*----------------------------------+--------------+
+| $\{dateTime\}                    | The current dateTime displayed in ISO-8601 format (i.e. <<<yyyy-MM-dd'T'HH:mm:ss'Z>>>), for instance <<<2009-06-22T12:24:17Z>>>.
+*----------------------------------+--------------+
+| $\{year} $\{month\} $\{day\}     | The single date informations.
+*----------------------------------+--------------+
+| $\{hour} $\{minutes\} $\{second\}| The single time informations.
+*----------------------------------+--------------+
+
+Example
+
+  For instance, if you have defined the following pom.xml and pdf.xml:
+
++-----+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <version>1.0-SNAPSHOT</version>
+  <name>Your project</name>
+
+  ...
+
+  <developers>
+    <developer>
+      <email>your@email.com</email>
+      ...
+    </developer>
+  </developers>
+
+  ...
+</project>
++-----+
+
++-----+
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
+  outputName="maven-pdf-plugin-doc-${project.version}">
+
+  <meta>
+    <title>User guide of ${project.name} version ${project.version}</title>
+    <author>${project.developers[0].email}</author>
+  </meta>
+
+  <toc name="Table of Contents">
+    ...
+  </toc>
+
+  <cover>
+    <coverdate>${date}</coverdate> <!-- current date in ISO 8601 format -->
+    <!-- <coverdate>${day}/${month}/${year}</coverdate> current date in French format -->
+    ...
+  </cover>
+</document>
++-----+
+
+  The title will be <<<User guide of Your project version 1.0-SNAPSHOT>>> and the author will be <<<your@email.com>>>.

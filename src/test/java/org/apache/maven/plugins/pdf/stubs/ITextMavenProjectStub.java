@@ -35,27 +35,21 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class DefaultMavenProjectStub
+public class ITextMavenProjectStub
     extends MavenProjectStub
 {
-    public DefaultMavenProjectStub()
+    public ITextMavenProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         try
         {
-            Model model = pomReader.read( new FileReader( new File( getBasedir() + "/pom.xml" ) ) );
+            Model model = pomReader.read( new FileReader( new File( getBasedir() + "/iText_pom.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getName()
-    {
-        return getModel().getName();
     }
 
     /** {@inheritDoc} */

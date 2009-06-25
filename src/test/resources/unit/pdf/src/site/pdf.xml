@@ -21,7 +21,10 @@
  */
  -->
 
-<document outputName="maven-pdf-plugin-doc">
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
+  outputName="maven-pdf-plugin-doc">
 
   <meta>
     <title>Maven PDF Plugin</title>
@@ -34,6 +37,7 @@
     <item name="Limitations" ref="limitations.apt"/>
     <item name="Links" ref="ref/links.apt"/>
     <item name="FAQ" ref="faq.fml"/>
+    <item name="Entities" ref="entities.xml"/>
   </toc>
 
 </document>

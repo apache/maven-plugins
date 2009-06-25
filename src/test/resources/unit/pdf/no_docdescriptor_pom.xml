@@ -29,7 +29,7 @@
         <configuration>
           <project implementation="org.apache.maven.plugins.pdf.stubs.DefaultMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
-          <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/pdf.xml</docDescriptor>
+          <docDescriptor>${basedir}/target/test-classes/unit/pdf/src/site/no-pdf.xml</docDescriptor>
           <siteDirectory>${basedir}/target/test-classes/unit/pdf/src/site/</siteDirectory>
           <outputDirectory>${basedir}/target/test-output/pdf</outputDirectory>
           <workingDirectory>${basedir}/target/test-output/pdf</workingDirectory>

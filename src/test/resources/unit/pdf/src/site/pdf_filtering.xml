@@ -21,11 +21,14 @@
  */
  -->
 
-<document outputName="maven-pdf-plugin-doc-${project.version}">
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
+  outputName="maven-pdf-plugin-doc-${project.version}">
 
   <meta>
-    <title>${project.name}</title>
-    <author>The Apache Maven Project</author>
+    <title>User guide in ${pdf.language} of ${pom.name} version ${pom.version} for ${M2_HOME} ${date}</title>
+    <author>${project.developers[0].email} ${project.developers[1].email}</author>
   </meta>
 
   <toc name="Table of Contents">
@@ -35,5 +38,4 @@
     <item name="Links" ref="ref/links.apt"/>
     <item name="FAQ" ref="faq.fml"/>
   </toc>
-
 </document>

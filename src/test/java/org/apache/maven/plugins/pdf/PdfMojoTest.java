@@ -22,6 +22,8 @@ package org.apache.maven.plugins.pdf;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import java.io.File;
 import java.io.Reader;
@@ -78,7 +80,7 @@ public class PdfMojoTest
         PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
         assertNotNull( "pdf mojo not found!", mojo );
 
-        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/index.pdf" );
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/maven-pdf-plugin-doc.pdf" );
         if ( pdfFile.exists() )
         {
             pdfFile.delete();
@@ -127,7 +129,44 @@ public class PdfMojoTest
         {
             IOUtil.close( reader );
         }
-        assertTrue( foContent.indexOf( ">Test filtering<" ) > 0 );
+        // ${pom.name}
+        assertTrue( foContent.indexOf( "Test filtering" ) > 0 );
+        assertTrue( foContent.indexOf( "1.0-SNAPSHOT" ) > 0 );
+        // env ${M2_HOME}
+        String m2Home = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
+        if ( StringUtils.isNotEmpty( m2Home ) )
+        {
+            assertTrue( foContent.indexOf( m2Home ) > 0 );
+        }
+        // ${project.developers[0].email}
+        assertTrue( foContent.indexOf( "vsiveton@apache.org ltheussl@apache.org" ) > 0 );
+        // ${date}
+        // TODO: this might fail on NewYear's eve! :)
+        assertTrue( foContent.indexOf( new DateBean().getDate() ) > 0 );
     }
 
+    /**
+     * Tests the basic functioning of the pdf generation using the FO implementation.
+     *
+     * @throws Exception if any.
+     */
+    public void testPdfMojoNoDocDesriptor() throws Exception
+    {
+        File testPom = new File( getBasedir(), "/target/test-classes/unit/pdf/no_docdescriptor_pom.xml" );
+        assertTrue( "testPom does not exist!", testPom.exists() );
+
+        PdfMojo mojo = (PdfMojo) lookupMojo( "pdf", testPom );
+        assertNotNull( "pdf mojo not found!", mojo );
+
+        File pdfFile = new File( getBasedir(), "/target/test-output/pdf/unnamed.pdf" );
+        if ( pdfFile.exists() )
+        {
+            pdfFile.delete();
+        }
+
+        mojo.execute();
+
+        assertTrue( "FO: Pdf file not created!", pdfFile.exists() );
+        assertTrue( "FO: Pdf file has no content!", pdfFile.length() > 0 );
+    }
 }

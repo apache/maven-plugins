@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 12 September 2007
+ 2009-06-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,11 +26,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Using the PDF plugin
+Using The PDF Plugin
 
   The Maven PDF Plugin allows you generate a PDF document of your documentation.
 
-* Using the PDF plugin from the command-line
+* From The Command-line
 
   The PDF plugin can be called to execute from the command-line without any
   additional configurations.  Like the other plugins, to run the PDF plugin,
@@ -43,7 +43,16 @@ Using the PDF plugin
   where the first <<<pdf>>> refers to the plugin's alias, and the second
   <<<pdf>>> refers to a plugin goal.
 
-* Running the PDF plugin automatically during a build
+  By default, the pdf will be generated in <<<target/pdf/>>> directory.
+
+  <<Note 1>>: By default, the PDF plugin generates a PDF document which aggregates all your site documents.
+  If you want to generate each site document individually, you need to add <<<-Daggregate=false>>> in the comand line.
+
+  <<Note 2>>: By default, the PDF plugin uses the {{{http://xmlgraphics.apache.org/fop/}FOP}} implementation.
+  The plugin also supports the {{{http://www.lowagie.com/iText/}iText}} implementation, you just need to add
+  <<<-Dimplementation=itext>>> in the comand line.
+
+* As Part Of Your Build Process
 
   The PDF plugin can be put into a project's pom.xml so that it gets executed
   everytime the project is built.  Below is a sample configuration
@@ -53,7 +62,10 @@ Using the PDF plugin
 
 %{snippet|id=configuration|file=pom.xml}
 
-* Document descriptor
+  <<Note>>: In this case, the pdf plugin is coupled with the Maven Site plugin to generate both site documentation
+  and pdfs into the default output site directory, i.e. <<<target/site>>>. You just need to call <<<mvn site>>>.
+
+* Document Descriptor
 
   By default, the pdf plugin processes all source files as specified
   in the site-plugins's <<<site.xml>>>. You can customize
@@ -68,27 +80,68 @@ Using the PDF plugin
   For a complete description of the file format, see the
   {{{http://maven.apache.org/doxia/doxia/doxia-core/document.html}Document Model Reference}}.
 
-* Configuration properties
+  <<Note 1>>: Only a few of document metadatas are used by the Fo/iText sinks like author, confidential, date and title.
 
-  All the layout properties that are used for the pdf conversion are read
+  <<Note 2>>: The document descriptor supports filtering as described in the
+  {{{./examples/filtering.html}filtering example}}.
+
+* Internationalization
+
+  The PDF plugin is able to generate internationalized pdfs, similar to the
+  {{{http://maven.apache.org/guides/mini/guide-site.html}site creation}}.
+
+  To enable multiple locales, add a configuration similar to the following to your POM:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <configuration>
+          <locales>en,fr</locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----
+
+  This will generate two pdfs, one English and one French. Like the site plugin, if <<<en>>> is your
+  current locale, then it will be generated at the root of the site, with a copy of the French translation of the
+  site in the <<<fr/>>> subdirectory.
+
+  The following is a complete internationalized directory layout for site and pdf plugins:
+
++-----
++- src/
+   +- site/
+      +- apt/
+      |  +- index.apt     (Default version)
+      |
+      +- fr/
+      |  +- apt/
+      |     +- index.apt  (French version)
+      |
+      +- site.xml         (Default site descriptor)
+      +- site_fr.xml      (French site descriptor)
+      +- pdf.xml          (Default pdf descriptor)
+      +- pdf_fr.xml       (French pdf descriptor)
++-----
+
+* Specific FOP Configuration Properties
+
+  All the layout properties that are used for the pdf conversion using the FOP implementation are read
   from a default configuration file. The properties in this file may be
   overridden by  using a custom configuration file <<<pdf-config.xml>>>
-  located in <<<src/sire/resources/>>>.
+  located in <<<src/site/resources/>>>.
 
   The format of this file has to be exactly the same as the original
   {{{http://svn.apache.org/repos/asf/maven/doxia/doxia/trunk/doxia-modules/doxia-module-fo/src/main/resources/fo-styles.xslt}default configuration file}}.
   However, you only need to specify the properties that you want to override,
   <e.g.> to change the font size of pre-formatted text, you could use:
 
-+-----
-<?xml version="1.0" encoding="UTF-8"?>
-
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-            xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
-
-    <xsl:attribute-set name="body.pre" use-attribute-sets="base.pre.style">
-        <xsl:attribute name="font-size">8pt</xsl:attribute>
-    </xsl:attribute-set>
-
-</xsl:stylesheet>
-+-----
+%{snippet|id=foConfig|file=src/site/resources/pdf-config.xml}

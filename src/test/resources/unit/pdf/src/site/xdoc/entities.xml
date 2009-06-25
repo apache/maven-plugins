@@ -1,0 +1,2598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<!DOCTYPE document [
+<!-- These are the entity sets for ISO Latin 1 characters for the XHTML -->
+<!ENTITY % HTMLlat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
+%HTMLlat1;
+<!ENTITY % HTMLspecial PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
+%HTMLspecial;
+<!ENTITY % HTMLsymbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
+%HTMLsymbol;
+]>
+
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+  <properties>
+    <title>List of XML and HTML character entity references</title>
+  </properties>
+
+  <body>
+
+    <section name="List of XML and HTML character entity references">
+
+      <p>
+        The following table is taken from
+        <a href="http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references">Wikipedia</a>.
+      </p>
+
+      <table>
+
+        <tr>
+        <th>Name</th>
+        <th>Character</th>
+        <th>Unicode code point</th>
+        <th>Standard</th>
+        <th>DTD</th>
+        <th>Old ISO subset</th>
+        <th>Description</th>
+        </tr>
+
+        <tr>
+        <td>quot</td>
+        <td>&quot;</td>
+        <td>U+0022 (34)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>quotation mark <i>(= APL quote)</i></td>
+        </tr>
+
+        <tr>
+        <td>amp</td>
+        <td>&amp;</td>
+        <td>U+0026 (38)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>ampersand</td>
+        </tr>
+
+        <tr>
+        <td>apos</td>
+        <td>&apos;</td>
+        <td>U+0027 (39)</td>
+        <td>XHTML 1.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>apostrophe <i>(= apostrophe-quote)</i></td>
+        </tr>
+
+        <tr>
+        <td>lt</td>
+        <td>&lt;</td>
+        <td>U+003C (60)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>less-than sign</td>
+        </tr>
+
+        <tr>
+        <td>gt</td>
+        <td>&gt;</td>
+        <td>U+003E (62)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>greater-than sign</td>
+        </tr>
+
+        <tr>
+        <td>nbsp</td>
+        <td>&nbsp;</td>
+        <td>U+00A0 (160)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>no-break space <i>(= non-breaking space)</i></td>
+        </tr>
+
+        <tr>
+        <td>iexcl</td>
+        <td>&iexcl;</td>
+        <td>U+00A1 (161)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>inverted exclamation mark</td>
+        </tr>
+
+        <tr>
+        <td>cent</td>
+        <td>&cent;</td>
+        <td>U+00A2 (162)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>cent sign</td>
+        </tr>
+
+        <tr>
+        <td>pound</td>
+        <td>&pound;</td>
+        <td>U+00A3 (163)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>pound sign</td>
+        </tr>
+
+        <tr>
+        <td>curren</td>
+        <td>&curren;</td>
+        <td>U+00A4 (164)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>currency sign</td>
+        </tr>
+
+        <tr>
+        <td>yen</td>
+        <td>&yen;</td>
+        <td>U+00A5 (165)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>yen sign <i>(= yuan sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>brvbar</td>
+        <td>&brvbar;</td>
+        <td>U+00A6 (166)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>broken bar <i>(= broken vertical bar)</i></td>
+        </tr>
+
+        <tr>
+        <td>sect</td>
+        <td>&sect;</td>
+        <td>U+00A7 (167)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>section sign</td>
+        </tr>
+
+        <tr>
+        <td>uml</td>
+        <td>&uml;</td>
+        <td>U+00A8 (168)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOdia</td>
+        <td>diaeresis <i>(= spacing diaeresis)</i></td>
+        </tr>
+
+        <tr>
+        <td>copy</td>
+        <td>&copy;</td>
+        <td>U+00A9 (169)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>copyright sign</td>
+        </tr>
+
+        <tr>
+        <td>ordf</td>
+        <td>&ordf;</td>
+        <td>U+00AA (170)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>feminine ordinal indicator</td>
+        </tr>
+
+        <tr>
+        <td>laquo</td>
+        <td>&laquo;</td>
+        <td>U+00AB (171)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>left-pointing double angle quotation mark <i>(= left pointing guillemet)</i></td>
+        </tr>
+
+        <tr>
+        <td>not</td>
+        <td>&not;</td>
+        <td>U+00AC (172)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>not sign</td>
+        </tr>
+
+        <tr>
+        <td>shy</td>
+        <td>&shy;</td>
+        <td>U+00AD (173)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>soft hyphen <i>(= discretionary hyphen)</i></td>
+        </tr>
+
+        <tr>
+        <td>reg</td>
+        <td>&reg;</td>
+        <td>U+00AE (174)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>registered sign <i>( = registered trade mark sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>macr</td>
+        <td>&macr;</td>
+        <td>U+00AF (175)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOdia</td>
+        <td>macron <i>(= spacing macron = overline = APL overbar)</i></td>
+        </tr>
+
+        <tr>
+        <td>deg</td>
+        <td>&deg;</td>
+        <td>U+00B0 (176)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>degree sign</td>
+        </tr>
+
+        <tr>
+        <td>plusmn</td>
+        <td>&plusmn;</td>
+        <td>U+00B1 (177)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>plus-minus sign <i>(= plus-or-minus sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>sup2</td>
+        <td>&sup2;</td>
+        <td>U+00B2 (178)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>superscript two <i>(= superscript digit two = squared)</i></td>
+        </tr>
+
+        <tr>
+        <td>sup3</td>
+        <td>&sup3;</td>
+        <td>U+00B3 (179)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>superscript three <i>(= superscript digit three = cubed)</i></td>
+        </tr>
+
+        <tr>
+        <td>acute</td>
+        <td>&acute;</td>
+        <td>U+00B4 (180)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOdia</td>
+        <td>acute accent <i>(= spacing acute)</i></td>
+        </tr>
+
+        <tr>
+        <td>micro</td>
+        <td>&micro;</td>
+        <td>U+00B5 (181)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>micro sign</td>
+        </tr>
+
+        <tr>
+        <td>para</td>
+        <td>&para;</td>
+        <td>U+00B6 (182)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>pilcrow sign <i>( = paragraph sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>middot</td>
+        <td>&middot;</td>
+        <td>U+00B7 (183)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>middle dot <i>(= Georgian comma = Greek middle dot)</i></td>
+        </tr>
+
+        <tr>
+        <td>cedil</td>
+        <td>&cedil;</td>
+        <td>U+00B8 (184)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOdia</td>
+        <td>cedilla <i>(= spacing cedilla)</i></td>
+        </tr>
+
+        <tr>
+        <td>sup1</td>
+        <td>&sup1;</td>
+        <td>U+00B9 (185)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>superscript one <i>(= superscript digit one)</i></td>
+        </tr>
+
+        <tr>
+        <td>ordm</td>
+        <td>&ordm;</td>
+        <td>U+00BA (186)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>masculine ordinal indicator</td>
+        </tr>
+
+        <tr>
+        <td>raquo</td>
+        <td>&raquo;</td>
+        <td>U+00BB (187)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>right-pointing double angle quotation mark <i>(= right pointing guillemet)</i></td>
+        </tr>
+
+        <tr>
+        <td>frac14</td>
+        <td>&frac14;</td>
+        <td>U+00BC (188)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>vulgar fraction one quarter <i>(= fraction one quarter)</i></td>
+        </tr>
+
+        <tr>
+        <td>frac12</td>
+        <td>&frac12;</td>
+        <td>U+00BD (189)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>vulgar fraction one half <i>(= fraction one half)</i></td>
+        </tr>
+
+        <tr>
+        <td>frac34</td>
+        <td>&frac34;</td>
+        <td>U+00BE (190)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>vulgar fraction three quarters <i>(= fraction three quarters)</i></td>
+        </tr>
+
+        <tr>
+        <td>iquest</td>
+        <td>&iquest;</td>
+        <td>U+00BF (191)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>inverted question mark <i>(= turned question mark)</i></td>
+        </tr>
+
+        <tr>
+        <td>Agrave</td>
+        <td>&Agrave;</td>
+        <td>U+00C0 (192)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with grave <i>(= Latin capital letter A grave)</i></td>
+        </tr>
+
+        <tr>
+        <td>Aacute</td>
+        <td>&Aacute;</td>
+        <td>U+00C1 (193)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with acute</td>
+        </tr>
+
+        <tr>
+        <td>Acirc</td>
+        <td>&Acirc;</td>
+        <td>U+00C2 (194)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>Atilde</td>
+        <td>&Atilde;</td>
+        <td>U+00C3 (195)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with tilde</td>
+        </tr>
+
+        <tr>
+        <td>Auml</td>
+        <td>&Auml;</td>
+        <td>U+00C4 (196)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>Aring</td>
+        <td>&Aring;</td>
+        <td>U+00C5 (197)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter A with ring above <i>(= Latin capital letter A ring)</i></td>
+        </tr>
+
+        <tr>
+        <td>AElig</td>
+        <td>&AElig;</td>
+        <td>U+00C6 (198)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter AE <i>(= Latin capital ligature AE)</i></td>
+        </tr>
+
+        <tr>
+        <td>Ccedil</td>
+        <td>&Ccedil;</td>
+        <td>U+00C7 (199)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter C with cedilla</td>
+        </tr>
+
+        <tr>
+        <td>Egrave</td>
+        <td>&Egrave;</td>
+        <td>U+00C8 (200)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter E with grave</td>
+        </tr>
+
+        <tr>
+        <td>Eacute</td>
+        <td>&Eacute;</td>
+        <td>U+00C9 (201)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter E with acute</td>
+        </tr>
+
+        <tr>
+        <td>Ecirc</td>
+        <td>&Ecirc;</td>
+        <td>U+00CA (202)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter E with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>Euml</td>
+        <td>&Euml;</td>
+        <td>U+00CB (203)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter E with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>Igrave</td>
+        <td>&Igrave;</td>
+        <td>U+00CC (204)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter I with grave</td>
+        </tr>
+
+        <tr>
+        <td>Iacute</td>
+        <td>&Iacute;</td>
+        <td>U+00CD (205)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter I with acute</td>
+        </tr>
+
+        <tr>
+        <td>Icirc</td>
+        <td>&Icirc;</td>
+        <td>U+00CE (206)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter I with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>Iuml</td>
+        <td>&Iuml;</td>
+        <td>U+00CF (207)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter I with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>ETH</td>
+        <td>&ETH;</td>
+        <td>U+00D0 (208)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter ETH</td>
+        </tr>
+
+        <tr>
+        <td>Ntilde</td>
+        <td>&Ntilde;</td>
+        <td>U+00D1 (209)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter N with tilde</td>
+        </tr>
+
+        <tr>
+        <td>Ograve</td>
+        <td>&Ograve;</td>
+        <td>U+00D2 (210)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with grave</td>
+        </tr>
+
+        <tr>
+        <td>Oacute</td>
+        <td>&Oacute;</td>
+        <td>U+00D3 (211)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with acute</td>
+        </tr>
+
+        <tr>
+        <td>Ocirc</td>
+        <td>&Ocirc;</td>
+        <td>U+00D4 (212)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>Otilde</td>
+        <td>&Otilde;</td>
+        <td>U+00D5 (213)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with tilde</td>
+        </tr>
+
+        <tr>
+        <td>Ouml</td>
+        <td>&Ouml;</td>
+        <td>U+00D6 (214)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>times</td>
+        <td>&times;</td>
+        <td>U+00D7 (215)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>multiplication sign</td>
+        </tr>
+
+        <tr>
+        <td>Oslash</td>
+        <td>&Oslash;</td>
+        <td>U+00D8 (216)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter O with stroke <i>(= Latin capital letter O slash)</i></td>
+        </tr>
+
+        <tr>
+        <td>Ugrave</td>
+        <td>&Ugrave;</td>
+        <td>U+00D9 (217)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter U with grave</td>
+        </tr>
+
+        <tr>
+        <td>Uacute</td>
+        <td>&Uacute;</td>
+        <td>U+00DA (218)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter U with acute</td>
+        </tr>
+
+        <tr>
+        <td>Ucirc</td>
+        <td>&Ucirc;</td>
+        <td>U+00DB (219)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter U with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>Uuml</td>
+        <td>&Uuml;</td>
+        <td>U+00DC (220)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter U with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>Yacute</td>
+        <td>&Yacute;</td>
+        <td>U+00DD (221)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter Y with acute</td>
+        </tr>
+
+        <tr>
+        <td>THORN</td>
+        <td>&THORN;</td>
+        <td>U+00DE (222)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin capital letter THORN</td>
+        </tr>
+
+        <tr>
+        <td>szlig</td>
+        <td>&szlig;</td>
+        <td>U+00DF (223)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter sharp s <i>(= ess-zed)</i></td>
+        </tr>
+
+        <tr>
+        <td>agrave</td>
+        <td>&agrave;</td>
+        <td>U+00E0 (224)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with grave</td>
+        </tr>
+
+        <tr>
+        <td>aacute</td>
+        <td>&aacute;</td>
+        <td>U+00E1 (225)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with acute</td>
+        </tr>
+
+        <tr>
+        <td>acirc</td>
+        <td>&acirc;</td>
+        <td>U+00E2 (226)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>atilde</td>
+        <td>&atilde;</td>
+        <td>U+00E3 (227)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with tilde</td>
+        </tr>
+
+        <tr>
+        <td>auml</td>
+        <td>&auml;</td>
+        <td>U+00E4 (228)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>aring</td>
+        <td>&aring;</td>
+        <td>U+00E5 (229)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter a with ring above</td>
+        </tr>
+
+        <tr>
+        <td>aelig</td>
+        <td>&aelig;</td>
+        <td>U+00E6 (230)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter ae <i>(= Latin small ligature ae)</i></td>
+        </tr>
+
+        <tr>
+        <td>ccedil</td>
+        <td>&ccedil;</td>
+        <td>U+00E7 (231)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter c with cedilla</td>
+        </tr>
+
+        <tr>
+        <td>egrave</td>
+        <td>&egrave;</td>
+        <td>U+00E8 (232)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter e with grave</td>
+        </tr>
+
+        <tr>
+        <td>eacute</td>
+        <td>&eacute;</td>
+        <td>U+00E9 (233)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter e with acute</td>
+        </tr>
+
+        <tr>
+        <td>ecirc</td>
+        <td>&ecirc;</td>
+        <td>U+00EA (234)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter e with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>euml</td>
+        <td>&euml;</td>
+        <td>U+00EB (235)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter e with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>igrave</td>
+        <td>&igrave;</td>
+        <td>U+00EC (236)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter i with grave</td>
+        </tr>
+
+        <tr>
+        <td>iacute</td>
+        <td>&iacute;</td>
+        <td>U+00ED (237)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter i with acute</td>
+        </tr>
+
+        <tr>
+        <td>icirc</td>
+        <td>&icirc;</td>
+        <td>U+00EE (238)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter i with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>iuml</td>
+        <td>&iuml;</td>
+        <td>U+00EF (239)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter i with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>eth</td>
+        <td>&eth;</td>
+        <td>U+00F0 (240)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter eth</td>
+        </tr>
+
+        <tr>
+        <td>ntilde</td>
+        <td>&ntilde;</td>
+        <td>U+00F1 (241)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter n with tilde</td>
+        </tr>
+
+        <tr>
+        <td>ograve</td>
+        <td>&ograve;</td>
+        <td>U+00F2 (242)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with grave</td>
+        </tr>
+
+        <tr>
+        <td>oacute</td>
+        <td>&oacute;</td>
+        <td>U+00F3 (243)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with acute</td>
+        </tr>
+
+        <tr>
+        <td>ocirc</td>
+        <td>&ocirc;</td>
+        <td>U+00F4 (244)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>otilde</td>
+        <td>&otilde;</td>
+        <td>U+00F5 (245)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with tilde</td>
+        </tr>
+
+        <tr>
+        <td>ouml</td>
+        <td>&ouml;</td>
+        <td>U+00F6 (246)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>divide</td>
+        <td>&divide;</td>
+        <td>U+00F7 (247)</td>
+        <td>HTML 3.2</td>
+        <td>HTMLlat1</td>
+        <td>ISOnum</td>
+        <td>division sign</td>
+        </tr>
+
+        <tr>
+        <td>oslash</td>
+        <td>&oslash;</td>
+        <td>U+00F8 (248)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter o with stroke <i>(= Latin small letter o slash)</i></td>
+        </tr>
+
+        <tr>
+        <td>ugrave</td>
+        <td>&ugrave;</td>
+        <td>U+00F9 (249)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter u with grave</td>
+        </tr>
+
+        <tr>
+        <td>uacute</td>
+        <td>&uacute;</td>
+        <td>U+00FA (250)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter u with acute</td>
+        </tr>
+
+        <tr>
+        <td>ucirc</td>
+        <td>&ucirc;</td>
+        <td>U+00FB (251)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter u with circumflex</td>
+        </tr>
+
+        <tr>
+        <td>uuml</td>
+        <td>&uuml;</td>
+        <td>U+00FC (252)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter u with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>yacute</td>
+        <td>&yacute;</td>
+        <td>U+00FD (253)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter y with acute</td>
+        </tr>
+
+        <tr>
+        <td>thorn</td>
+        <td>&thorn;</td>
+        <td>U+00FE (254)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter thorn</td>
+        </tr>
+
+        <tr>
+        <td>yuml</td>
+        <td>&yuml;</td>
+        <td>U+00FF (255)</td>
+        <td>HTML 2.0</td>
+        <td>HTMLlat1</td>
+        <td>ISOlat1</td>
+        <td>Latin small letter y with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>OElig</td>
+        <td>&OElig;</td>
+        <td>U+0152 (338)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOlat2</td>
+        <td>Latin capital ligature oe</td>
+        </tr>
+
+        <tr>
+        <td>oelig</td>
+        <td>&oelig;</td>
+        <td>U+0153 (339)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOlat2</td>
+        <td>Latin small ligature oe</td>
+        </tr>
+
+        <tr>
+        <td>Scaron</td>
+        <td>&Scaron;</td>
+        <td>U+0160 (352)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOlat2</td>
+        <td>Latin capital letter s with caron</td>
+        </tr>
+
+        <tr>
+        <td>scaron</td>
+        <td>&scaron;</td>
+        <td>U+0161 (353)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOlat2</td>
+        <td>Latin small letter s with caron</td>
+        </tr>
+
+        <tr>
+        <td>Yuml</td>
+        <td>&Yuml;</td>
+        <td>U+0178 (376)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOlat2</td>
+        <td>Latin capital letter y with diaeresis</td>
+        </tr>
+
+        <tr>
+        <td>fnof</td>
+        <td>&fnof;</td>
+        <td>U+0192 (402)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>Latin small letter f with hook <i>(= function = florin)</i></td>
+        </tr>
+
+        <tr>
+        <td>circ</td>
+        <td>&circ;</td>
+        <td>U+02C6 (710)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>modifier letter circumflex accent</td>
+        </tr>
+
+        <tr>
+        <td>tilde</td>
+        <td>&tilde;</td>
+        <td>U+02DC (732)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOdia</td>
+        <td>small tilde</td>
+        </tr>
+
+        <tr>
+        <td>Alpha</td>
+        <td>&Alpha;</td>
+        <td>U+0391 (913)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Alpha</td>
+        </tr>
+
+        <tr>
+        <td>Beta</td>
+        <td>&Beta;</td>
+        <td>U+0392 (914)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Beta</td>
+        </tr>
+
+        <tr>
+        <td>Gamma</td>
+        <td>&Gamma;</td>
+        <td>U+0393 (915)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Gamma</td>
+        </tr>
+
+        <tr>
+        <td>Delta</td>
+        <td>&Delta;</td>
+        <td>U+0394 (916)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Delta</td>
+        </tr>
+
+        <tr>
+        <td>Epsilon</td>
+        <td>&Epsilon;</td>
+        <td>U+0395 (917)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Epsilon</td>
+        </tr>
+
+        <tr>
+        <td>Zeta</td>
+        <td>&Zeta;</td>
+        <td>U+0396 (918)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Zeta</td>
+        </tr>
+
+        <tr>
+        <td>Eta</td>
+        <td>&Eta;</td>
+        <td>U+0397 (919)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Eta</td>
+        </tr>
+
+        <tr>
+        <td>Theta</td>
+        <td>&Theta;</td>
+        <td>U+0398 (920)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Theta</td>
+        </tr>
+
+        <tr>
+        <td>Iota</td>
+        <td>&Iota;</td>
+        <td>U+0399 (921)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Iota</td>
+        </tr>
+
+        <tr>
+        <td>Kappa</td>
+        <td>&Kappa;</td>
+        <td>U+039A (922)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Kappa</td>
+        </tr>
+
+        <tr>
+        <td>Lambda</td>
+        <td>&Lambda;</td>
+        <td>U+039B (923)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Lambda</td>
+        </tr>
+
+        <tr>
+        <td>Mu</td>
+        <td>&Mu;</td>
+        <td>U+039C (924)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Mu</td>
+        </tr>
+
+        <tr>
+        <td>Nu</td>
+        <td>&Nu;</td>
+        <td>U+039D (925)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Nu</td>
+        </tr>
+
+        <tr>
+        <td>Xi</td>
+        <td>&Xi;</td>
+        <td>U+039E (926)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Xi</td>
+        </tr>
+
+        <tr>
+        <td>Omicron</td>
+        <td>&Omicron;</td>
+        <td>U+039F (927)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Omicron</td>
+        </tr>
+
+        <tr>
+        <td>Pi</td>
+        <td>&Pi;</td>
+        <td>U+03A0 (928)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Pi</td>
+        </tr>
+
+        <tr>
+        <td>Rho</td>
+        <td>&Rho;</td>
+        <td>U+03A1 (929)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Rho</td>
+        </tr>
+
+        <tr>
+        <td>Sigma</td>
+        <td>&Sigma;</td>
+        <td>U+03A3 (931)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Sigma</td>
+        </tr>
+
+        <tr>
+        <td>Tau</td>
+        <td>&Tau;</td>
+        <td>U+03A4 (932)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Tau</td>
+        </tr>
+
+        <tr>
+        <td>Upsilon</td>
+        <td>&Upsilon;</td>
+        <td>U+03A5 (933)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Upsilon</td>
+        </tr>
+
+        <tr>
+        <td>Phi</td>
+        <td>&Phi;</td>
+        <td>U+03A6 (934)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Phi</td>
+        </tr>
+
+        <tr>
+        <td>Chi</td>
+        <td>&Chi;</td>
+        <td>U+03A7 (935)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td></td>
+        <td>Greek capital letter Chi</td>
+        </tr>
+
+        <tr>
+        <td>Psi</td>
+        <td>&Psi;</td>
+        <td>U+03A8 (936)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Psi</td>
+        </tr>
+
+        <tr>
+        <td>Omega</td>
+        <td>&Omega;</td>
+        <td>U+03A9 (937)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek capital letter Omega</td>
+        </tr>
+
+        <tr>
+        <td>alpha</td>
+        <td>&alpha;</td>
+        <td>U+03B1 (945)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter alpha</td>
+        </tr>
+
+        <tr>
+        <td>beta</td>
+        <td>&beta;</td>
+        <td>U+03B2 (946)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter beta</td>
+        </tr>
+
+        <tr>
+        <td>gamma</td>
+        <td>&gamma;</td>
+        <td>U+03B3 (947)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter gamma</td>
+        </tr>
+
+        <tr>
+        <td>delta</td>
+        <td>&delta;</td>
+        <td>U+03B4 (948)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter delta</td>
+        </tr>
+
+        <tr>
+        <td>epsilon</td>
+        <td>&epsilon;</td>
+        <td>U+03B5 (949)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter epsilon</td>
+        </tr>
+
+        <tr>
+        <td>zeta</td>
+        <td>&zeta;</td>
+        <td>U+03B6 (950)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter zeta</td>
+        </tr>
+
+        <tr>
+        <td>eta</td>
+        <td>&eta;</td>
+        <td>U+03B7 (951)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter eta</td>
+        </tr>
+
+        <tr>
+        <td>theta</td>
+        <td>&theta;</td>
+        <td>U+03B8 (952)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter theta</td>
+        </tr>
+
+        <tr>
+        <td>iota</td>
+        <td>&iota;</td>
+        <td>U+03B9 (953)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter iota</td>
+        </tr>
+
+        <tr>
+        <td>kappa</td>
+        <td>&kappa;</td>
+        <td>U+03BA (954)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter kappa</td>
+        </tr>
+
+        <tr>
+        <td>lambda</td>
+        <td>&lambda;</td>
+        <td>U+03BB (955)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter lambda</td>
+        </tr>
+
+        <tr>
+        <td>mu</td>
+        <td>&mu;</td>
+        <td>U+03BC (956)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter mu</td>
+        </tr>
+
+        <tr>
+        <td>nu</td>
+        <td>&nu;</td>
+        <td>U+03BD (957)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter nu</td>
+        </tr>
+
+        <tr>
+        <td>xi</td>
+        <td>&xi;</td>
+        <td>U+03BE (958)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter xi</td>
+        </tr>
+
+        <tr>
+        <td>omicron</td>
+        <td>&omicron;</td>
+        <td>U+03BF (959)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>Greek small letter omicron</td>
+        </tr>
+
+        <tr>
+        <td>pi</td>
+        <td>&pi;</td>
+        <td>U+03C0 (960)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter pi</td>
+        </tr>
+
+        <tr>
+        <td>rho</td>
+        <td>&rho;</td>
+        <td>U+03C1 (961)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter rho</td>
+        </tr>
+
+        <tr>
+        <td>sigmaf</td>
+        <td>&sigmaf;</td>
+        <td>U+03C2 (962)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter final sigma</td>
+        </tr>
+
+        <tr>
+        <td>sigma</td>
+        <td>&sigma;</td>
+        <td>U+03C3 (963)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter sigma</td>
+        </tr>
+
+        <tr>
+        <td>tau</td>
+        <td>&tau;</td>
+        <td>U+03C4 (964)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter tau</td>
+        </tr>
+
+        <tr>
+        <td>upsilon</td>
+        <td>&upsilon;</td>
+        <td>U+03C5 (965)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter upsilon</td>
+        </tr>
+
+        <tr>
+        <td>phi</td>
+        <td>&phi;</td>
+        <td>U+03C6 (966)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter phi</td>
+        </tr>
+
+        <tr>
+        <td>chi</td>
+        <td>&chi;</td>
+        <td>U+03C7 (967)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter chi</td>
+        </tr>
+
+        <tr>
+        <td>psi</td>
+        <td>&psi;</td>
+        <td>U+03C8 (968)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter psi</td>
+        </tr>
+
+        <tr>
+        <td>omega</td>
+        <td>&omega;</td>
+        <td>U+03C9 (969)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek small letter omega</td>
+        </tr>
+
+        <tr>
+        <td>thetasym</td>
+        <td>&thetasym;</td>
+        <td>U+03D1 (977)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>Greek theta symbol</td>
+        </tr>
+
+        <tr>
+        <td>upsih</td>
+        <td>&upsih;</td>
+        <td>U+03D2 (978)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>Greek Upsilon with hook symbol</td>
+        </tr>
+
+        <tr>
+        <td>piv</td>
+        <td>&piv;</td>
+        <td>U+03D6 (982)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOgrk3</td>
+        <td>Greek pi symbol</td>
+        </tr>
+
+        <tr>
+        <td>ensp</td>
+        <td>&ensp;</td>
+        <td>U+2002 (8194)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>en space</td>
+        </tr>
+
+        <tr>
+        <td>emsp</td>
+        <td>&emsp;</td>
+        <td>U+2003 (8195)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>em space</td>
+        </tr>
+
+        <tr>
+        <td>thinsp</td>
+        <td>&thinsp;</td>
+        <td>U+2009 (8201)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>thin space</td>
+        </tr>
+
+        <tr>
+        <td>zwnj</td>
+        <td>&zwnj;</td>
+        <td>U+200C (8204)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW RFC 2070</i></td>
+        <td>zero-width non-joiner</td>
+        </tr>
+
+        <tr>
+        <td>zwj</td>
+        <td>&zwj;</td>
+        <td>U+200D (8205)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW RFC 2070</i></td>
+        <td>zero-width joiner</td>
+        </tr>
+
+        <tr>
+        <td>lrm</td>
+        <td>&lrm;</td>
+        <td>U+200E (8206)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW RFC 2070</i></td>
+        <td>left-to-right mark</td>
+        </tr>
+
+        <tr>
+        <td>rlm</td>
+        <td>&rlm;</td>
+        <td>U+200F (8207)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW RFC 2070</i></td>
+        <td>right-to-left mark</td>
+        </tr>
+
+        <tr>
+        <td>ndash</td>
+        <td>&ndash;</td>
+        <td>U+2013 (8211)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>en dash</td>
+        </tr>
+
+        <tr>
+        <td>mdash</td>
+        <td>&mdash;</td>
+        <td>U+2014 (8212)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>em dash</td>
+        </tr>
+
+        <tr>
+        <td>lsquo</td>
+        <td>&lsquo;</td>
+        <td>U+2018 (8216)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>left single quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>rsquo</td>
+        <td>&rsquo;</td>
+        <td>U+2019 (8217)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>right single quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>sbquo</td>
+        <td>&sbquo;</td>
+        <td>U+201A (8218)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW</i></td>
+        <td>single low-9 quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>ldquo</td>
+        <td>&ldquo;</td>
+        <td>U+201C (8220)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>left double quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>rdquo</td>
+        <td>&rdquo;</td>
+        <td>U+201D (8221)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOnum</td>
+        <td>right double quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>bdquo</td>
+        <td>&bdquo;</td>
+        <td>U+201E (8222)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW</i></td>
+        <td>double low-9 quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>dagger</td>
+        <td>&dagger;</td>
+        <td>U+2020 (8224)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>dagger</td>
+        </tr>
+
+        <tr>
+        <td>Dagger</td>
+        <td>&Dagger;</td>
+        <td>U+2021 (8225)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>double dagger</td>
+        </tr>
+
+        <tr>
+        <td>bull</td>
+        <td>&bull;</td>
+        <td>U+2022 (8226)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOpub</td>
+        <td>bullet <i>(= black small circle)</i></td>
+        </tr>
+
+        <tr>
+        <td>hellip</td>
+        <td>&hellip;</td>
+        <td>U+2026 (8230)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>horizontal ellipsis <i>(= three dot leader)</i></td>
+        </tr>
+
+        <tr>
+        <td>permil</td>
+        <td>&permil;</td>
+        <td>U+2030 (8240)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td>ISOtech</td>
+        <td>per mille sign</td>
+        </tr>
+
+        <tr>
+        <td>prime</td>
+        <td>&prime;</td>
+        <td>U+2032 (8242)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>prime <i>(= minutes = feet)</i></td>
+        </tr>
+
+        <tr>
+        <td>Prime</td>
+        <td>&Prime;</td>
+        <td>U+2033 (8243)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>double prime <i>(= seconds = inches)</i></td>
+        </tr>
+
+        <tr>
+        <td>lsaquo</td>
+        <td>&lsaquo;</td>
+        <td>U+2039 (8249)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>ISO proposed</i></td>
+        <td>single left-pointing angle quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>rsaquo</td>
+        <td>&rsaquo;</td>
+        <td>U+203A (8250)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>ISO proposed</i></td>
+        <td>single right-pointing angle quotation mark</td>
+        </tr>
+
+        <tr>
+        <td>oline</td>
+        <td>&oline;</td>
+        <td>U+203E (8254)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>overline <i>(= spacing overscore)</i></td>
+        </tr>
+
+        <tr>
+        <td>frasl</td>
+        <td>&frasl;</td>
+        <td>U+2044 (8260)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>fraction slash <i>(= solidus)</i></td>
+        </tr>
+
+        <tr>
+        <td>euro</td>
+        <td>&euro;</td>
+        <td>U+20AC (8364)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLspecial</td>
+        <td><i>NEW</i></td>
+        <td>euro sign</td>
+        </tr>
+
+        <tr>
+        <td>image</td>
+        <td>&image;</td>
+        <td>U+2111 (8465)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamso</td>
+        <td>black-letter capital I <i>(= imaginary part)</i></td>
+        </tr>
+
+        <tr>
+        <td>weierp</td>
+        <td>&weierp;</td>
+        <td>U+2118 (8472)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamso</td>
+        <td>script capital P <i>(= power set = Weierstrass p)</i></td>
+        </tr>
+
+        <tr>
+        <td>real</td>
+        <td>&real;</td>
+        <td>U+211C (8476)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamso</td>
+        <td>black-letter capital R <i>(= real part symbol)</i></td>
+        </tr>
+
+        <tr>
+        <td>trade</td>
+        <td>&trade;</td>
+        <td>U+2122 (8482)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>trademark sign</td>
+        </tr>
+
+        <tr>
+        <td>alefsym</td>
+        <td>&alefsym;</td>
+        <td>U+2135 (8501)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>alef symbol <i>(= first transfinite cardinal)</i></td>
+        </tr>
+
+        <tr>
+        <td>larr</td>
+        <td>&larr;</td>
+        <td>U+2190 (8592)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>leftwards arrow</td>
+        </tr>
+
+        <tr>
+        <td>uarr</td>
+        <td>&uarr;</td>
+        <td>U+2191 (8593)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>upwards arrow</td>
+        </tr>
+
+        <tr>
+        <td>rarr</td>
+        <td>&rarr;</td>
+        <td>U+2192 (8594)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>rightwards arrow</td>
+        </tr>
+
+        <tr>
+        <td>darr</td>
+        <td>&darr;</td>
+        <td>U+2193 (8595)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>downwards arrow</td>
+        </tr>
+
+        <tr>
+        <td>harr</td>
+        <td>&harr;</td>
+        <td>U+2194 (8596)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsa</td>
+        <td>left right arrow</td>
+        </tr>
+
+        <tr>
+        <td>crarr</td>
+        <td>&crarr;</td>
+        <td>U+21B5 (8629)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td><i>NEW</i></td>
+        <td>downwards arrow with corner leftwards <i>(= carriage return)</i></td>
+        </tr>
+
+        <tr>
+        <td>lArr</td>
+        <td>&lArr;</td>
+        <td>U+21D0 (8656)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>leftwards double arrow</td>
+        </tr>
+
+        <tr>
+        <td>uArr</td>
+        <td>&uArr;</td>
+        <td>U+21D1 (8657)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsa</td>
+        <td>upwards double arrow</td>
+        </tr>
+
+        <tr>
+        <td>rArr</td>
+        <td>&rArr;</td>
+        <td>U+21D2 (8658)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOnum</td>
+        <td>rightwards double arrow</td>
+        </tr>
+
+        <tr>
+        <td>dArr</td>
+        <td>&dArr;</td>
+        <td>U+21D3 (8659)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsa</td>
+        <td>downwards double arrow</td>
+        </tr>
+
+        <tr>
+        <td>hArr</td>
+        <td>&hArr;</td>
+        <td>U+21D4 (8660)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsa</td>
+        <td>left right double arrow</td>
+        </tr>
+
+        <tr>
+        <td>forall</td>
+        <td>&forall;</td>
+        <td>U+2200 (8704)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>for all</td>
+        </tr>
+
+        <tr>
+        <td>part</td>
+        <td>&part;</td>
+        <td>U+2202 (8706)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>partial differential</td>
+        </tr>
+
+        <tr>
+        <td>exist</td>
+        <td>&exist;</td>
+        <td>U+2203 (8707)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>there exists</td>
+        </tr>
+
+        <tr>
+        <td>empty</td>
+        <td>&empty;</td>
+        <td>U+2205 (8709)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamso</td>
+        <td>empty set <i>(= null set = diameter)</i></td>
+        </tr>
+
+        <tr>
+        <td>nabla</td>
+        <td>&nabla;</td>
+        <td>U+2207 (8711)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>nabla <i>(= backward difference)</i></td>
+        </tr>
+
+        <tr>
+        <td>isin</td>
+        <td>&isin;</td>
+        <td>U+2208 (8712)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>element of</td>
+        </tr>
+
+        <tr>
+        <td>notin</td>
+        <td>&notin;</td>
+        <td>U+2209 (8713)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>not an element of</td>
+        </tr>
+
+        <tr>
+        <td>ni</td>
+        <td>&ni;</td>
+        <td>U+220B (8715)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>contains as member</td>
+        </tr>
+
+        <tr>
+        <td>prod</td>
+        <td>&prod;</td>
+        <td>U+220F (8719)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsb</td>
+        <td>n-ary product <i>(= product sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>sum</td>
+        <td>&sum;</td>
+        <td>U+2211 (8721)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOasmb</td>
+        <td>n-ary summation</td>
+        </tr>
+
+        <tr>
+        <td>minus</td>
+        <td>&minus;</td>
+        <td>U+2212 (8722)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>minus sign</td>
+        </tr>
+
+        <tr>
+        <td>lowast</td>
+        <td>&lowast;</td>
+        <td>U+2217 (8727)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>asterisk operator</td>
+        </tr>
+
+        <tr>
+        <td>radic</td>
+        <td>&radic;</td>
+        <td>U+221A (8730)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>square root <i>(= radical sign)</i></td>
+        </tr>
+
+        <tr>
+        <td>prop</td>
+        <td>&prop;</td>
+        <td>U+221D (8733)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>proportional to</td>
+        </tr>
+
+        <tr>
+        <td>infin</td>
+        <td>&infin;</td>
+        <td>U+221E (8734)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>infinity</td>
+        </tr>
+
+        <tr>
+        <td>ang</td>
+        <td>&ang;</td>
+        <td>U+2220 (8736)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamso</td>
+        <td>angle</td>
+        </tr>
+
+        <tr>
+        <td>and</td>
+        <td>&and;</td>
+        <td>U+2227 (8743)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>logical and <i>(= wedge)</i></td>
+        </tr>
+
+        <tr>
+        <td>or</td>
+        <td>&or;</td>
+        <td>U+2228 (8744)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>logical or <i>(= vee)</i></td>
+        </tr>
+
+        <tr>
+        <td>cap</td>
+        <td>&cap;</td>
+        <td>U+2229 (8745)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>intersection <i>(= cap)</i></td>
+        </tr>
+
+        <tr>
+        <td>cup</td>
+        <td>&cup;</td>
+        <td>U+222A (8746)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>union (<i>= cup)</i></td>
+        </tr>
+
+        <tr>
+        <td>int</td>
+        <td>&int;</td>
+        <td>U+222B (8747)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>integral</td>
+        </tr>
+
+        <tr>
+        <td>there4</td>
+        <td>&there4;</td>
+        <td>U+2234 (8756)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>therefore</td>
+        </tr>
+
+        <tr>
+        <td>sim</td>
+        <td>&sim;</td>
+        <td>U+223C (8764)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>tilde operator <i>(= varies with = similar to)</i></td>
+        </tr>
+
+        <tr>
+        <td>cong</td>
+        <td>&cong;</td>
+        <td>U+2245 (8773)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>congruent to</td>
+        </tr>
+
+        <tr>
+        <td>asymp</td>
+        <td>&asymp;</td>
+        <td>U+2248 (8776)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsr</td>
+        <td>almost equal to <i>(= asymptotic to)</i></td>
+        </tr>
+
+        <tr>
+        <td>ne</td>
+        <td>&ne;</td>
+        <td>U+2260 (8800)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>not equal to</td>
+        </tr>
+
+        <tr>
+        <td>equiv</td>
+        <td>&equiv;</td>
+        <td>U+2261 (8801)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>identical to; sometimes used for 'equivalent to'</td>
+        </tr>
+
+        <tr>
+        <td>le</td>
+        <td>&le;</td>
+        <td>U+2264 (8804)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>less-than or equal to</td>
+        </tr>
+
+        <tr>
+        <td>ge</td>
+        <td>&ge;</td>
+        <td>U+2265 (8805)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>greater-than or equal to</td>
+        </tr>
+
+        <tr>
+        <td>sub</td>
+        <td>&sub;</td>
+        <td>U+2282 (8834)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>subset of</td>
+        </tr>
+
+        <tr>
+        <td>sup</td>
+        <td>&sup;</td>
+        <td>U+2283 (8835)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>superset of</td>
+        </tr>
+
+        <tr>
+        <td>nsub</td>
+        <td>&nsub;</td>
+        <td>U+2284 (8836)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsn</td>
+        <td>not a subset of</td>
+        </tr>
+
+        <tr>
+        <td>sube</td>
+        <td>&sube;</td>
+        <td>U+2286 (8838)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>subset of or equal to</td>
+        </tr>
+
+        <tr>
+        <td>supe</td>
+        <td>&supe;</td>
+        <td>U+2287 (8839)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>superset of or equal to</td>
+        </tr>
+
+        <tr>
+        <td>oplus</td>
+        <td>&oplus;</td>
+        <td>U+2295 (8853)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsb</td>
+        <td>circled plus <i>(= direct sum)</i></td>
+        </tr>
+
+        <tr>
+        <td>otimes</td>
+        <td>&otimes;</td>
+        <td>U+2297 (8855)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsb</td>
+        <td>circled times <i>(= vector product)</i></td>
+        </tr>
+
+        <tr>
+        <td>perp</td>
+        <td>&perp;</td>
+        <td>U+22A5 (8869)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>up tack <i>(= orthogonal to = perpendicular)</i></td>
+        </tr>
+
+        <tr>
+        <td>sdot</td>
+        <td>&sdot;</td>
+        <td>U+22C5 (8901)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsb</td>
+        <td>dot operator</td>
+        </tr>
+
+        <tr>
+        <td>lceil</td>
+        <td>&lceil;</td>
+        <td>U+2308 (8968)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsc</td>
+        <td>left ceiling <i>(= APL upstile)</i></td>
+        </tr>
+
+        <tr>
+        <td>rceil</td>
+        <td>&rceil;</td>
+        <td>U+2309 (8969)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsc</td>
+        <td>right ceiling</td>
+        </tr>
+
+        <tr>
+        <td>lfloor</td>
+        <td>&lfloor;</td>
+        <td>U+230A (8970)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsc</td>
+        <td>left floor <i>(= APL downstile)</i></td>
+        </tr>
+
+        <tr>
+        <td>rfloor</td>
+        <td>&rfloor;</td>
+        <td>U+230B (8971)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOamsc</td>
+        <td>right floor</td>
+        </tr>
+
+        <tr>
+        <td>lang</td>
+        <td>&lang;</td>
+        <td>U+2329 (9001)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>left-pointing angle bracket <i>(= bra)</i></td>
+        </tr>
+
+        <tr>
+        <td>rang</td>
+        <td>&rang;</td>
+        <td>U+232A (9002)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOtech</td>
+        <td>right-pointing angle bracket <i>(= ket)</i></td>
+        </tr>
+
+        <tr>
+        <td>loz</td>
+        <td>&loz;</td>
+        <td>U+25CA (9674)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>lozenge</td>
+        </tr>
+
+        <tr>
+        <td>spades</td>
+        <td>&spades;</td>
+        <td>U+2660 (9824)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>black spade suit</td>
+        </tr>
+
+        <tr>
+        <td>clubs</td>
+        <td>&clubs;</td>
+        <td>U+2663 (9827)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>black club suit <i>(= shamrock)</i></td>
+        </tr>
+
+        <tr>
+        <td>hearts</td>
+        <td>&hearts;</td>
+        <td>U+2665 (9829)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>black heart suit <i>(= valentine)</i></td>
+        </tr>
+
+        <tr>
+        <td>diams</td>
+        <td>&diams;</td>
+        <td>U+2666 (9830)</td>
+        <td>HTML 4.0</td>
+        <td>HTMLsymbol</td>
+        <td>ISOpub</td>
+        <td>black diamond suit</td>
+        </tr>
+
+      </table>
+
+
+    </section>
+
+  </body>
+
+
+</document>
