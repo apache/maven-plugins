@@ -198,7 +198,7 @@ public class ComponentsXmlArchiverFileFilter
                 return true;
             }
 
-            String entry = fileInfo.getName();
+            String entry = fileInfo.getName().replace( '\\', '/' );
 
             if ( entry.startsWith( "/" ) )
             {
