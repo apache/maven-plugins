@@ -119,7 +119,7 @@ public class PdfMojo
     /**
      * The Maven Project Object.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -167,8 +167,9 @@ public class PdfMojo
     /**
      * The local repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
+     * @readonly
      */
     private ArtifactRepository localRepository;
 
@@ -196,7 +197,10 @@ public class PdfMojo
     private DecorationModel defaultDecorationModel;
 
     /**
-     * @parameter expression="${plugin.version}"
+     * The current version of this plugin.
+     *
+     * @parameter default-value="${plugin.version}"
+     * @readonly
      */
     private String pluginVersion;
 
