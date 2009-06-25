@@ -348,7 +348,8 @@ under the License.
       </reporting>
     </profile>
     <profile>
-      <id>apache-release</id>
+      <!-- this should become 'apache-release' when maven-parent-12 is used -->
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
