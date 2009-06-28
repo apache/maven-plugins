@@ -1,0 +1,10 @@
+import java.io.*;
+
+File doapFile = new File( basedir, "target/site/doap_maven-it-plugin.rdf" );
+System.out.println( "Checking for existence of " + doapFile );
+if ( !doapFile.isFile() )
+{
+    throw new FileNotFoundException( doapFile + " missing" );
+}
+
+return true;
