@@ -341,27 +341,6 @@ under the License.
                 </configuration>
               </execution>
             </executions>
-            <dependencies>
-              <!--
-              HACK: The following dependencies are only specified here to work around MNG-1323 which would otherwise
-              screw up the Eclipse Plugin's ITs during CI.
-              -->
-              <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-nodeps</artifactId>
-                <version>1.7.1</version>
-              </dependency>
-              <dependency>
-                  <groupId>org.apache.ant</groupId>
-                  <artifactId>ant-apache-bsf</artifactId>
-                  <version>1.7.1</version>
-              </dependency>
-              <dependency>
-                <groupId>org.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>2.0b4</version>
-              </dependency>
-            </dependencies>
           </plugin>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>

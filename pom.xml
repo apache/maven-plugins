@@ -113,6 +113,10 @@ under the License.
   <modules>
     <module>maven-ant-plugin</module>
     <module>maven-antrun-plugin</module>
+
+    <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
+    <module>maven-eclipse-plugin</module>
+
     <module>maven-assembly-plugin</module>
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
@@ -124,7 +128,6 @@ under the License.
     <module>maven-doap-plugin</module>
     <module>maven-docck-plugin</module>
     <module>maven-ear-plugin</module>
-    <module>maven-eclipse-plugin</module>
     <module>maven-ejb-plugin</module>
     <module>maven-gpg-plugin</module>
     <module>maven-help-plugin</module>
@@ -138,10 +141,9 @@ under the License.
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
     <module>maven-pmd-plugin</module>
-     <!--Excluded as a workaround for MNG-3814
+    <!--Excluded as a workaround for MNG-3814
     <module>maven-project-info-reports-plugin</module>-->
-
-   <module>maven-rar-plugin</module>
+    <module>maven-rar-plugin</module>
     <module>maven-reactor-plugin</module>
     <module>maven-remote-resources-plugin</module>
     <module>maven-repository-plugin</module>
