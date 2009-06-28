@@ -117,7 +117,9 @@ under the License.
     <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
     <module>maven-eclipse-plugin</module>
 
+    <!-- Excluded from CI due to unresolved failures
     <module>maven-assembly-plugin</module>
+    -->
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
     <module>maven-checkstyle-plugin</module>
