@@ -144,7 +144,8 @@ public class DoapMojo
     /**
      * The POM from which information will be extracted to create a DOAP file.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
+     * @readonly
      * @required
      */
     private MavenProject project;
@@ -161,7 +162,7 @@ public class DoapMojo
     /**
      * The local repository where the artifacts are located.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      * @since 1.0
@@ -171,7 +172,7 @@ public class DoapMojo
     /**
      * The remote repositories where the artifacts are located.
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter default-value="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
      * @since 1.0
