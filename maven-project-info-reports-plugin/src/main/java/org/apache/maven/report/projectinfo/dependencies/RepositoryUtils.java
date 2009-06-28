@@ -155,7 +155,7 @@ public class RepositoryUtils
         repos.addAll( pluginRepositories );
         repos.addAll( remoteRepositories );
 
-        resolver.resolveAlways( artifact, repos, localRepository );
+        resolver.resolve( artifact, repos, localRepository );
     }
 
     /**
