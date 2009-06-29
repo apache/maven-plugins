@@ -144,9 +144,10 @@ Referencing the Maven Classpaths
 ------
 
 
- You can also use the path to each dependency artifact
+ You can also use the path to each dependency artifact.  A property is set for each dependency with the
+ format "maven.dependency.groupId.artifactId[.classifier].type.path".  For example to show the path
+ to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
 
 ------
-<property name="mvn.dependency.jar" refid="maven.dependency.my.group.id:my.artifact.id:classifier:jar.path"/>
-<echo message="My Dependency JAR-Path: ${mvn.dependency.jar}"/> 
+<echo message="My Dependency JAR Path: ${mvn.dependency.org.apache.common-util.jar.path}"/> 
 ------
