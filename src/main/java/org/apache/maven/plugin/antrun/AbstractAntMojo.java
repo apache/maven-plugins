@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -109,6 +111,9 @@ public abstract class AbstractAntMojo
 
             /* set maven.plugin.classpath with plugin dependencies */
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
+            
+            // The ant project needs actual properties vs. using expression evaluator when calling an external build file.
+            copyProperties( mavenProject, antProject );
 
             if ( getLog().isInfoEnabled() )
             {
@@ -168,4 +173,43 @@ public abstract class AbstractAntMojo
         return p;
     }
 
+    /**
+     * Copy properties from the maven project to the ant project.
+     * @param mavenProject
+     * @param antProject
+     */
+    public void copyProperties( MavenProject mavenProject, Project antProject )
+    {
+        Properties mavenProps = mavenProject.getProperties();
+        Iterator iter = mavenProps.keySet().iterator();
+        while ( iter.hasNext() )
+        {
+            String key = (String)iter.next();
+            antProject.setProperty( key, mavenProps.getProperty( key ) );
+        }
+        
+        // Add some of the common maven properties
+        antProject.setProperty( "maven.project.groupId", mavenProject.getGroupId() );
+        antProject.setProperty( "maven.project.artifactId", mavenProject.getArtifactId() );
+        antProject.setProperty( "maven.project.name", mavenProject.getName() );
+        antProject.setProperty( "maven.project.description", mavenProject.getDescription() );
+        antProject.setProperty( "maven.project.version", mavenProject.getVersion() );
+        antProject.setProperty( "maven.project.packaging", mavenProject.getPackaging() );
+        antProject.setProperty( "maven.project.build.directory", mavenProject.getBuild().getDirectory() );
+        antProject.setProperty( "maven.project.build.outputDirectory", mavenProject.getBuild().getOutputDirectory() );
+        antProject.setProperty( "maven.project.build.outputDirectory", mavenProject.getBuild().getTestOutputDirectory() );
+        antProject.setProperty( "maven.project.build.sourceDirectory", mavenProject.getBuild().getSourceDirectory() );
+        antProject.setProperty( "maven.project.build.testSourceDirectory", mavenProject.getBuild().getTestSourceDirectory() );
+        
+        // Add paths to depenedency artifacts
+        Set artifacts = mavenProject.getDependencyArtifacts();
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            String key = AntPropertyHelper.getDependencyArtifactPropertyName( artifact );
+
+            antProject.setProperty( key, artifact.getFile().getPath() );
+        }
+    }
 }

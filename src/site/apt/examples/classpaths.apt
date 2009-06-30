@@ -28,7 +28,15 @@
 
 Referencing the Maven Classpaths
 
- You can use these classpath references:
+ A property is set for each dependency with the format 
+ "maven.dependency.groupId.artifactId[.classifier].type.path".  For example, to show the path
+ to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
+
+------
+<echo message="My Dependency JAR Path: ${mvn.dependency.org.apache.common-util.jar.path}"/> 
+------
+ 
+ You can also use these classpath references:
   
   * <<<maven.compile.classpath>>>
 
@@ -143,11 +151,3 @@ Referencing the Maven Classpaths
 </project>
 ------
 
-
- You can also use the path to each dependency artifact.  A property is set for each dependency with the
- format "maven.dependency.groupId.artifactId[.classifier].type.path".  For example to show the path
- to a dependency with groupId "org.apache" and artifactId "common-util", the following could be used.
-
-------
-<echo message="My Dependency JAR Path: ${mvn.dependency.org.apache.common-util.jar.path}"/> 
-------
