@@ -150,6 +150,30 @@ Usage
   <<<\<testSourceRoot/\>>>> adds a single folder to the list of folders that get
   compiled with the test source code (<<<test-compile>>>).
 
+* Using maven properties
+
+  All of the properties available to maven are also available in the tasks
+  configuration.  However, you may want to call an external Ant build script
+  using the <ant> task.  To avoid name conflicts, only a subset of the properties
+  are passed to the external Ant build.  These include all properties defined in
+  the <properties> section of the POM.  It also includes prefixed versions of
+  some of the commonly used Maven properties.
+  
+------
+  maven.project.groupId
+  maven.project.artifactId
+  maven.project.name
+  etc.
+------
+  
+  If the maven property you want to use is not available in an external file, you
+  will have to redefine the property before calling <ant>.
+  
+------
+  <property name="maven.project.url" value="${project.url}"/>
+  <ant antfile="build.xml"/>
+------
+
 * Ant Expressions to Maven Expressions Mapping
 
   Some Ant expressions have their respective counterparts in Maven. Thus, one

@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 public class AntPropertyHelper
     extends PropertyHelper
 {
-    private static final String DEPENDENCY_PREFIX = "maven.dependency.";
+    public static final String DEPENDENCY_PREFIX = "maven.dependency.";
     private Log log;
     private ExpressionEvaluator exprEvaluator;
     private MavenProject mavenProject;
@@ -84,14 +84,27 @@ public class AntPropertyHelper
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
-                + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
-                + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
+            String key = getDependencyArtifactPropertyName( artifact );
 
             log.debug( "Storing: " + key + "=" + artifact.getFile().getPath() );
 
             artifactMap.put( key, artifact.getFile().getPath() );
         }
+    }
+    
+    /**
+     * Returns a property name for a dependency artifact.  The name is in the format
+     * maven.dependency.groupId.artifactId[.classifier].type.path
+     * 
+     * @param artifact
+     * @return
+     */
+    public static String getDependencyArtifactPropertyName( Artifact artifact )
+    {
+        String key = DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
+            + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
+            + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
+        return key;
     }
 
     /**
