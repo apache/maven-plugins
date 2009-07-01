@@ -188,6 +188,9 @@ public abstract class AbstractAntMojo
             antProject.setProperty( key, mavenProps.getProperty( key ) );
         }
         
+        // Set the POM file as the ant.file for the tasks run directly in Maven.
+        antProject.setProperty( "ant.file", mavenProject.getFile().getAbsolutePath() );
+        
         // Add some of the common maven properties
         antProject.setProperty( "maven.project.groupId", mavenProject.getGroupId() );
         antProject.setProperty( "maven.project.artifactId", mavenProject.getArtifactId() );

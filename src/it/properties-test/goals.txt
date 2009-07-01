@@ -1,0 +1,1 @@
+clean generate-resources
