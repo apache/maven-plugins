@@ -103,7 +103,7 @@ public class SimpleRelocator
 
     public boolean canRelocateClass( String clazz )
     {
-        return canRelocatePath( clazz.replace( '.', '/' ) );
+        return !clazz.contains("/") && canRelocatePath( clazz.replace( '.', '/' ) );
     }
 
     public String relocatePath( String path )
