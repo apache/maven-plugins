@@ -291,17 +291,17 @@ public class DefaultShader
                 {
                     Relocator r = (Relocator) i.next();
 
-                    if ( r.canRelocatePath( name ) )
+                    if ( r.canRelocateClass( name ) )
+                    {
+                        value = r.relocateClass( name );
+                        break;
+                    } 
+                    else if ( r.canRelocatePath( name ) )
                     {
                         value = r.relocatePath( name );
                         break;
                     }
 
-                    if ( r.canRelocateClass( name ) )
-                    {
-                        value = r.relocateClass( name );
-                        break;
-                    }
                     if ( name.length() > 0 && name.charAt( 0 ) == '[' ) 
                     {
                         int count = 0;
@@ -342,14 +342,9 @@ public class DefaultShader
                         }
                     }
                 }
-
                 return value;
             } 
-            else 
-            {
-                object = super.mapValue( object );
-            }
-            return object;
+            return super.mapValue( object );
         }
 
         public String map( String name )
@@ -365,7 +360,6 @@ public class DefaultShader
                     break;
                 }
             }
-
             return value;
         }
     }
