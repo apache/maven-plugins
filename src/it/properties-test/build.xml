@@ -3,9 +3,10 @@
 
     <target name="test">
 
-        <fail unless="maven.project.artifactId" message="Property not set ${project.artifactId}"/>
+        <fail unless="maven.project.artifactId" message="Property not set ${maven.project.artifactId}"/>
         <fail unless="testProp1" message="Property not set ${testProp1}"/>
         <fail unless="maven.dependency.junit.junit.jar.path" message="Property not set ${maven.dependency.junit.junit.jar.path}"/>
+        <fail unless="line.separator" message="Property not set ${line.separator}"/>
       
     </target>
 
