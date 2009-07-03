@@ -55,6 +55,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -341,6 +342,13 @@ public abstract class AbstractFixJavadocMojo
     private String level;
 
     /**
+     * Output directory where Java classes will be rewrited.
+     *
+     * @parameter expression="${outputDirectory}" default-value="${project.build.sourceDirectory}"
+     */
+    private File outputDirectory;
+
+    /**
      * The Maven Project Object.
      *
      * @parameter expression="${project}"
@@ -416,11 +424,14 @@ public abstract class AbstractFixJavadocMojo
         {
             JavaClass[] javaClasses = getQdoxClasses();
 
-            for ( int i = 0; i < javaClasses.length; i++ )
+            if ( javaClasses != null )
             {
-                JavaClass javaClass = javaClasses[i];
+                for ( int i = 0; i < javaClasses.length; i++ )
+                {
+                    JavaClass javaClass = javaClasses[i];
 
-                processFix( javaClass );
+                    processFix( javaClass );
+                }
             }
         }
         catch ( IOException e )
@@ -452,15 +463,6 @@ public abstract class AbstractFixJavadocMojo
      */
     protected List getProjectSourceRoots( MavenProject p )
     {
-        if ( "pom".equals( p.getPackaging().toLowerCase() ) )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "This project has 'pom' packaging, no Java sources will be available." );
-            }
-            return Collections.EMPTY_LIST;
-        }
-
         return p.getCompileSourceRoots();
     }
 
@@ -522,6 +524,14 @@ public abstract class AbstractFixJavadocMojo
         sb.append( "#" ).append( javaMethod.getCallSignature() );
 
         return sb.toString();
+    }
+
+    /**
+     * @return the source dir for the given project
+     */
+    protected File getProjectSourceDirectory()
+    {
+        return new File( project.getBuild().getSourceDirectory() );
     }
 
     // ----------------------------------------------------------------------
@@ -605,6 +615,11 @@ public abstract class AbstractFixJavadocMojo
         throws MojoExecutionException
     {
         if ( force )
+        {
+            return true;
+        }
+
+        if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
         {
             return true;
         }
@@ -698,7 +713,27 @@ public abstract class AbstractFixJavadocMojo
 
             wrapper.execute();
         }
-        catch ( Exception e )
+        catch ( MojoExecutionException e )
+        {
+            if ( e.getCause().getClass().isAssignableFrom( ArtifactNotFoundException.class ) )
+            {
+                getLog().warn( "Clirr is ignored because no previous artifact has been deployed." );
+            }
+            else
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( "Error when executing Clirr: " + e.getMessage(), e );
+                }
+                else
+                {
+                    getLog().error( "Error when executing Clirr: " + e.getMessage() );
+                }
+                getLog().error( "Clirr is ignored due to the error above." );
+            }
+            return;
+        }
+        catch ( MojoFailureException e )
         {
             if ( getLog().isDebugEnabled() )
             {
@@ -709,6 +744,11 @@ public abstract class AbstractFixJavadocMojo
                 getLog().error( "Error when executing Clirr: " + e.getMessage() );
             }
             getLog().error( "Clirr is ignored due to the error above." );
+            return;
+        }
+        catch ( Exception e )
+        {
+            getLog().error( "Error when executing Clirr: " + e.getMessage() );
             return;
         }
 
@@ -829,6 +869,15 @@ public abstract class AbstractFixJavadocMojo
     private JavaClass[] getQdoxClasses()
         throws FileNotFoundException, IOException, MojoExecutionException
     {
+        if ( "pom".equals( project.getPackaging().toLowerCase() ) )
+        {
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn( "This project has 'pom' packaging, no Java sources will be available." );
+            }
+            return null;
+        }
+
         List javaFiles = new LinkedList();
         for ( Iterator i = getProjectSourceRoots( project ).iterator(); i.hasNext(); )
         {
@@ -897,7 +946,7 @@ public abstract class AbstractFixJavadocMojo
             getLog().debug( "Reading '" + javaClass.getFullyQualifiedName() + "' class." );
         }
 
-        final File javaFile = javaClass.getSource().getFile();
+        File javaFile = new File( javaClass.getSource().getURL().getFile() );
         // the original java content in memory
         final String originalContent = readFile( javaFile, encoding );
 
@@ -982,6 +1031,15 @@ public abstract class AbstractFixJavadocMojo
         if ( getLog().isDebugEnabled() )
         {
             getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
+        }
+
+        if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
+        {
+            String path =
+                StringUtils.replace( javaFile.getAbsolutePath().replaceAll( "\\\\", "/" ),
+                                     project.getBuild().getSourceDirectory().replaceAll( "\\\\", "/" ), "" );
+            javaFile = new File( outputDirectory, path );
+            javaFile.getParentFile().mkdirs();
         }
         writeFile( javaFile, encoding, stringWriter.toString() );
     }
@@ -1239,14 +1297,12 @@ public abstract class AbstractFixJavadocMojo
                 || qualifiedName.equals( Character.TYPE.toString() ) )
             {
                 sb.append( "=" );
-                // QDOX-155 for char
                 sb.append( field.getInitializationExpression().trim() );
             }
 
             if ( qualifiedName.equals( String.class.getName() ) )
             {
                 StringBuffer value = new StringBuffer();
-                // QDOX-156 and QDOX-157
                 String[] lines = getLines( field.getInitializationExpression() );
                 for ( int i = 0; i < lines.length; i++ )
                 {
