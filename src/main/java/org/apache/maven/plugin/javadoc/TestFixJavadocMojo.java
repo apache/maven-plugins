@@ -59,15 +59,6 @@ public class TestFixJavadocMojo
     /** {@inheritDoc} */
     protected List getProjectSourceRoots( MavenProject p )
     {
-        if ( "pom".equals( p.getPackaging().toLowerCase() ) )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "This project has 'pom' packaging, no test Java sources will be available." );
-            }
-            return Collections.EMPTY_LIST;
-        }
-
         return p.getTestCompileSourceRoots();
     }
 
