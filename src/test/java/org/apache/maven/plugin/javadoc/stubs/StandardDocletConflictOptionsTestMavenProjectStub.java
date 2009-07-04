@@ -71,25 +71,19 @@ public class StandardDocletConflictOptionsTestMavenProjectStub extends MavenProj
         setCompileSourceRoots( compileSourceRoots );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#setBuild(org.apache.maven.model.Build)
-     */
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/validate-options-test" );

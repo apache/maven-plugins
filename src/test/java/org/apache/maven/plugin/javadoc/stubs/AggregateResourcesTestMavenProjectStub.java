@@ -37,6 +37,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  */
 public class AggregateResourcesTestMavenProjectStub
     extends MavenProjectStub
@@ -78,43 +79,32 @@ public class AggregateResourcesTestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
-     */
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-resources-test" );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory,
-     *      java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
-     */
+    /** {@inheritDoc} */
     public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
         throws InvalidDependencyVersionException
     {
         return Collections.EMPTY_SET;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getExecutionProject()
-     */
+    /** {@inheritDoc} */
     public MavenProject getExecutionProject()
     {
         return this;

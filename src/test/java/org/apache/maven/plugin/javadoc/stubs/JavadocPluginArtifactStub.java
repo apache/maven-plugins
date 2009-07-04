@@ -25,11 +25,11 @@ import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class JavadocPluginArtifactStub
     extends ArtifactStub
 {
-
     private String groupId;
 
     private String artifactId;
@@ -53,71 +53,89 @@ public class JavadocPluginArtifactStub
         versionRange = VersionRange.createFromVersion( version );
     }
 
+    /** {@inheritDoc} */
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
+    /** {@inheritDoc} */
     public String getGroupId()
     {
         return groupId;
     }
 
+    /** {@inheritDoc} */
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
+    /** {@inheritDoc} */
     public String getArtifactId()
     {
         return artifactId;
     }
 
+    /** {@inheritDoc} */
     public void setVersion( String version )
     {
         this.version = version;
     }
 
+    /** {@inheritDoc} */
     public String getVersion()
     {
         return version;
     }
 
+    /**
+     * @param packaging
+     */
     public void setPackaging( String packaging )
     {
         this.packaging = packaging;
     }
 
+    /**
+     * @return
+     */
     public String getPackaging()
     {
         return packaging;
     }
 
+    /** {@inheritDoc} */
     public VersionRange getVersionRange()
     {
         return versionRange;
     }
 
+    /** {@inheritDoc} */
     public void setVersionRange( VersionRange versionRange )
     {
         this.versionRange = versionRange;
     }
 
+    /** {@inheritDoc} */
     public ArtifactHandler getArtifactHandler()
     {
         return handler;
     }
 
+    /** {@inheritDoc} */
     public void setArtifactHandler( ArtifactHandler handler )
     {
         this.handler = handler;
     }
 
+    /** {@inheritDoc} */
     public String getBaseVersion()
     {
         return baseVersion;
     }
 
+    /** {@inheritDoc} */
     public void setBaseVersion( String string )
     {
         this.baseVersion = string;
