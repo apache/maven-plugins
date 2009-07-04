@@ -32,6 +32,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class AggregateTestMavenProjectStub
     extends MavenProjectStub
@@ -70,33 +71,25 @@ public class AggregateTestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
-     */
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-test" );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getExecutionProject()
-     */
+    /** {@inheritDoc} */
     public MavenProject getExecutionProject()
     {
         return this;

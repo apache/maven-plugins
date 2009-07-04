@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class JavadocJarDefaultMavenProjectStub
     extends MavenProjectStub
@@ -42,7 +43,6 @@ public class JavadocJarDefaultMavenProjectStub
 
     public JavadocJarDefaultMavenProjectStub()
     {
-
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
@@ -54,7 +54,7 @@ public class JavadocJarDefaultMavenProjectStub
         }
         catch ( Exception e )
         {
-
+            throw new RuntimeException( e );
         }
 
         setGroupId( model.getGroupId() );
@@ -86,24 +86,27 @@ public class JavadocJarDefaultMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
+    /** {@inheritDoc} */
     public Scm getScm()
     {
         return scm;
     }
 
+    /** {@inheritDoc} */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
-
 }

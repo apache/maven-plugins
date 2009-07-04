@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class DocletTestMavenProjectStub
     extends MavenProjectStub
@@ -53,7 +54,7 @@ public class DocletTestMavenProjectStub
         }
         catch ( Exception e )
         {
-
+            throw new RuntimeException( e );
         }
 
         setGroupId( model.getGroupId() );
@@ -79,21 +80,25 @@ public class DocletTestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
+    /** {@inheritDoc} */
     public Scm getScm()
     {
         return scm;
     }
 
+    /** {@inheritDoc} */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
