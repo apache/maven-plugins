@@ -32,9 +32,7 @@ import org.apache.maven.settings.Settings;
 public class SettingsStub
     extends Settings
 {
-    /**
-     * @see org.apache.maven.settings.Settings#getActiveProxy()
-     */
+    /** {@inheritDoc} */
     public synchronized Proxy getActiveProxy()
     {
         Proxy proxy = new Proxy();
@@ -48,9 +46,7 @@ public class SettingsStub
         return proxy;
     }
 
-    /**
-     * @see org.apache.maven.settings.Settings#getProxies()
-     */
+    /** {@inheritDoc} */
     public List getProxies()
     {
         return Collections.singletonList( getActiveProxy() );

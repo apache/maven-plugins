@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class CustomConfigurationMavenProjectStub
     extends MavenProjectStub
@@ -43,7 +44,7 @@ public class CustomConfigurationMavenProjectStub
 
     public CustomConfigurationMavenProjectStub()
     {
-        setGroupId( "custom.configuraion" );
+        setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "custom-configuration" );
         setVersion( "1.0-SNAPSHOT" );
         setName( "Maven Javadoc Plugin Custom configuration Test" );
@@ -82,25 +83,29 @@ public class CustomConfigurationMavenProjectStub
         }
         catch ( Exception e )
         {
-
+            throw new RuntimeException( e );
         }
     }
 
+    /** {@inheritDoc} */
     public Scm getScm()
     {
         return scm;
     }
 
+    /** {@inheritDoc} */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;

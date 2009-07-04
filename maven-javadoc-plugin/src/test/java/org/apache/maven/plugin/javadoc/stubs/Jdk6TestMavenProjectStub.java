@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  */
 public class Jdk6TestMavenProjectStub
     extends MavenProjectStub
@@ -78,33 +79,25 @@ public class Jdk6TestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getScm()
-     */
+    /** {@inheritDoc} */
     public Scm getScm()
     {
         return scm;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#setScm(org.apache.maven.model.Scm)
-     */
+    /** {@inheritDoc} */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#setBuild(org.apache.maven.model.Build)
-     */
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;

@@ -101,9 +101,7 @@ public class TagletArtifactsMavenProjectStub
         return Collections.singletonList( repository );
     }
 
-    /**
-     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/tagletArtifacts-test" );
