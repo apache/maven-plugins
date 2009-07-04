@@ -132,126 +132,126 @@ public class FixJavadocMojoTest
         File clazzFile = new File( packageDir, "ClassWithJavadoc.java" );
         assertTrue( clazzFile.exists() );
         String content = readFile( clazzFile );
-        assertTrue( content.indexOf( "" +EOL+
-                "/**" +EOL+
-                " * Some Javadoc." +EOL+
-                " *" +EOL+
-                " * @author Administrator" +EOL+
-                " * @version $Id$" +EOL+
-                " * @since 1.0" +EOL+
-                " */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "/**" + EOL +
+                " * Some Javadoc." + EOL +
+                " *" + EOL +
+                " * @author " + System.getProperty( "user.name" ) + EOL+
+                " * @version \u0024Id: \u0024" + EOL +
+                " * @since 1.0" + EOL +
+                " */" + EOL +
                 "public class ClassWithJavadoc" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" + EOL +
                 "    public static final String MY_STRING_CONSTANT = \"value\";" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** Constant <code>MY_INT_CONSTANT=1</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** Constant <code>MY_INT_CONSTANT=1</code> */" + EOL +
                 "    public static final int MY_INT_CONSTANT = 1;" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** Constant <code>EOL=\"System.getProperty( line.separator )\"</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** Constant <code>EOL=\"System.getProperty( line.separator )\"</code> */" + EOL +
                 "    public static final String EOL = System.getProperty( \"line.separator\" );" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
                 "    private static final String MY_PRIVATE_CONSTANT = \"\";" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * <p>main</p>" +EOL+
-                "     *" +EOL+
-                "     * @param args an array of {@link java.lang.String} objects." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>main</p>" + EOL +
+                "     *" + EOL +
+                "     * @param args an array of {@link java.lang.String} objects." + EOL +
+                "     */" + EOL +
                 "    public static void main( String[] args )" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * <p>methodWithMissingParameters</p>" +EOL+
-                "     *" +EOL+
-                "     * @param str a {@link java.lang.String} object." +EOL+
-                "     * @param b a boolean." +EOL+
-                "     * @param i a int." +EOL+
-                "     * @return a {@link java.lang.String} object." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>methodWithMissingParameters</p>" + EOL +
+                "     *" + EOL +
+                "     * @param str a {@link java.lang.String} object." + EOL +
+                "     * @param b a boolean." + EOL +
+                "     * @param i a int." + EOL +
+                "     * @return a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
                 "    public String methodWithMissingParameters( String str, boolean b, int i )" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * <p>methodWithWrongJavadocParameters</p>" +EOL+
-                "     *" +EOL+
-                "     * @param aString a {@link java.lang.String} object." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>methodWithWrongJavadocParameters</p>" + EOL +
+                "     *" + EOL +
+                "     * @param aString a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
                 "    public void methodWithWrongJavadocParameters( String aString )" ) != -1 );
 
         clazzFile = new File( packageDir, "ClassWithNoJavadoc.java" );
         assertTrue( clazzFile.exists() );
         content = readFile( clazzFile );
         // QDOX-155
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** Constant <code>SEPARATOR=','</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** Constant <code>SEPARATOR=','</code> */" + EOL +
                 "    public static final char SEPARATOR = ',';" ) != -1 );
         // QDOX-156
-        assertTrue( content.indexOf( "" +EOL+
-                "    // TODO: blabla" +EOL+
-                "    /** Constant <code>TEST1=\"test1\"</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    // TODO: blabla" + EOL +
+                "    /** Constant <code>TEST1=\"test1\"</code> */" + EOL +
                 "    public static final String TEST1 = \"test1\";" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "/**" +EOL+
-                " * <p>ClassWithNoJavadoc class.</p>" +EOL+
-                " *" +EOL+
-                " * @author Administrator" +EOL+
-                " * @version $Id$" +EOL+
-                " * @since 1.0" +EOL+
-                " */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "/**" + EOL +
+                " * <p>ClassWithNoJavadoc class.</p>" + EOL +
+                " *" + EOL +
+                " * @author " + System.getProperty( "user.name" ) + EOL+
+                " * @version \u0024Id: \u0024" + EOL +
+                " * @since 1.0" + EOL +
+                " */" + EOL +
                 "public class ClassWithNoJavadoc" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * <p>main</p>" +EOL+
-                "     *" +EOL+
-                "     * @param args an array of {@link java.lang.String} objects." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>main</p>" + EOL +
+                "     *" + EOL +
+                "     * @param args an array of {@link java.lang.String} objects." + EOL +
+                "     */" + EOL +
                 "    public static void main( String[] args )" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
                 "    private void sampleMethod( String str )" ) != -1 );
 
         clazzFile = new File( packageDir, "InterfaceWithJavadoc.java" );
         assertTrue( clazzFile.exists() );
         content = readFile( clazzFile );
-        assertTrue( content.indexOf( "" +EOL+
-                "/**" +EOL+
-                " * Some Javadoc." +EOL+
-                " *" +EOL+
-                " * @author Administrator" +EOL+
-                " * @version $Id$" +EOL+
-                " * @since 1.0" +EOL+
-                " */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "/**" + EOL +
+                " * Some Javadoc." + EOL +
+                " *" + EOL +
+                " * @author " + System.getProperty( "user.name" ) + EOL+
+                " * @version \u0024Id: \u0024" + EOL +
+                " * @since 1.0" + EOL +
+                " */" + EOL +
                 "public interface InterfaceWithJavadoc" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** comment */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** comment */" + EOL +
                 "    String MY_STRING_CONSTANT = \"value\";" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * My method" +EOL+
-                "     *" +EOL+
-                "     * @param aString a {@link java.lang.String} object." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * My method" + EOL +
+                "     *" + EOL +
+                "     * @param aString a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
                 "    public void method( String aString );" ) != -1 );
 
         clazzFile = new File( packageDir, "InterfaceWithNoJavadoc.java" );
         assertTrue( clazzFile.exists() );
         content = readFile( clazzFile );
-        assertTrue( content.indexOf( "" +EOL+
-                "/**" +EOL+
-                " * <p>InterfaceWithNoJavadoc interface.</p>" +EOL+
-                " *" +EOL+
-                " * @author Administrator" +EOL+
-                " * @version $Id$" +EOL+
-                " * @since 1.0" +EOL+
-                " */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "/**" + EOL +
+                " * <p>InterfaceWithNoJavadoc interface.</p>" + EOL +
+                " *" + EOL +
+                " * @author " + System.getProperty( "user.name" ) + EOL+
+                " * @version \u0024Id: \u0024" + EOL +
+                " * @since 1.0" + EOL +
+                " */" + EOL +
                 "public interface InterfaceWithNoJavadoc" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /** Constant <code>MY_STRING_CONSTANT=\"value\"</code> */" + EOL +
                 "    String MY_STRING_CONSTANT = \"value\";" ) != -1 );
-        assertTrue( content.indexOf( "" +EOL+
-                "    /**" +EOL+
-                "     * <p>method</p>" +EOL+
-                "     *" +EOL+
-                "     * @param aString a {@link java.lang.String} object." +EOL+
-                "     */" +EOL+
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>method</p>" + EOL +
+                "     *" + EOL +
+                "     * @param aString a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
                 "    public void method( String aString );" ) != -1 );
     }
 
