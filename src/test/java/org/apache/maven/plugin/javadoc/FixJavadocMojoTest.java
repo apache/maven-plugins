@@ -39,7 +39,6 @@ import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
@@ -80,23 +79,12 @@ public class FixJavadocMojoTest
         M2_HOME = new File( mavenHome );
     }
 
-    private File testPomBasedir;
-
     /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
         super.setUp();
-
-        testPomBasedir = new File( getBasedir(), "target/test/unit/fix-test/" );
-
-        // Using unit test dir
-        if ( !testPomBasedir.exists() )
-        {
-            FileUtils.copyDirectoryStructure( new File( getBasedir(), "src/test/resources/unit/fix-test/" ),
-                                              testPomBasedir );
-        }
     }
 
     /** {@inheritDoc} */
@@ -112,6 +100,10 @@ public class FixJavadocMojoTest
     public void testFix()
         throws Exception
     {
+        File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-test" );
+
+        prepareTestProjects( testPomBasedir.getName() );
+
         File testPom = new File( testPomBasedir, "pom.xml" );
         assertTrue( testPom.getAbsolutePath() + " should exist", testPom.exists() );
 
@@ -269,8 +261,8 @@ public class FixJavadocMojoTest
         request.setBaseDirectory( testPom.getParentFile() );
         request.setPomFile( testPom );
 
-        ByteArrayOutputStream outLog = new ByteArrayOutputStream();
-        InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( outLog ), false );
+        ByteArrayOutputStream invokerLog = new ByteArrayOutputStream();
+        InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( invokerLog ), false );
         request.setOutputHandler( outputHandler );
         request.setDebug( true );
 
@@ -283,24 +275,47 @@ public class FixJavadocMojoTest
         try
         {
             InvocationResult result = invoker.execute( request );
-            assertEquals( 0, result.getExitCode() );
+            if ( result.getExitCode() != 0 )
+            {
+                if ( getContainer().getLogger().isDebugEnabled() )
+                {
+                    StringBuffer msg = new StringBuffer();
+                    msg.append( "Ouput from invoker:" ).append( "\n\n" );
+                    msg.append( invokerLog ).append( "\n\n" );
+
+                    getContainer().getLogger().debug( msg.toString() );
+                }
+
+                fail( "Error when invoking Maven, see invoker log above" );
+            }
         }
         catch ( MavenInvocationException e )
         {
-            getContainer().getLogger().error( "Error when invoking Maven: " + e.getMessage(), e );
             if ( getContainer().getLogger().isDebugEnabled() )
             {
                 StringBuffer msg = new StringBuffer();
-                msg.append( "Ouput from invoker:" ).append( "\n" );
-                msg.append( StringUtils.repeat( "-", 78 ) ).append( "\n" );
-                msg.append( outLog ).append( "\n" );
-                msg.append( StringUtils.repeat( "-", 78 ) ).append( "\n" );
+                msg.append( "Ouput from invoker:" ).append( "\n\n" );
+                msg.append( invokerLog ).append( "\n\n" );
 
                 getContainer().getLogger().debug( msg.toString() );
             }
 
-            fail( "Error when invoking Maven: " + e.getMessage() );
+            fail( "Error when invoking Maven, see invoker log above" );
         }
+    }
+
+    /**
+     * @param testDir not null
+     * @throws IOException if any
+     */
+    private static void prepareTestProjects( String testDir )
+        throws IOException
+    {
+        File testPomBasedir = new File( getBasedir(), "target/test/unit/" + testDir );
+
+        // Using unit test dir
+        FileUtils.copyDirectoryStructure( new File( getBasedir(), "src/test/resources/unit/" + testDir ),
+                                          testPomBasedir );
     }
 
     /**

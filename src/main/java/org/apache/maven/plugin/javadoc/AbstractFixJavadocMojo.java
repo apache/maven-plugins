@@ -23,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -35,44 +37,40 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.clirr.core.ApiDifference;
-import net.sf.clirr.core.MessageTranslator;
-
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.settings.Settings;
-import org.codehaus.mojo.clirr.AbstractClirrMojo;
-import org.codehaus.mojo.clirr.ArtifactSpecification;
-import org.codehaus.mojo.clirr.ClirrDiffListener;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
@@ -158,30 +156,21 @@ public abstract class AbstractFixJavadocMojo
     /** <code>private</code> parameter used by {@link #level} **/
     private static final String LEVEL_PRIVATE = "private";
 
+    /** The Clirr Maven plugin groupId <code>org.codehaus.mojo</code> **/
+    private static final String CLIRR_MAVEN_PLUGIN_GROUPID = "org.codehaus.mojo";
+
+    /** The Clirr Maven plugin artifactId <code>clirr-maven-plugin</code> **/
+    private static final String CLIRR_MAVEN_PLUGIN_ARTIFACTID = "clirr-maven-plugin";
+
+    /** The latest Clirr Maven plugin version <code>2.2.2</code> **/
+    private static final String CLIRR_MAVEN_PLUGIN_VERSION = "2.2.2";
+
+    /** The Clirr Maven plugin goal <code>check</code> **/
+    private static final String CLIRR_MAVEN_PLUGIN_GOAL = "check";
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
-
-    /**
-     * Used by {@link ClirrMojoWrapper} class.
-     *
-     * @component
-     */
-    private ArtifactFactory artifactFactory;
-
-    /**
-     * Used by {@link ClirrMojoWrapper} class.
-     *
-     * @component
-     */
-    private ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * Used by {@link ClirrMojoWrapper} class.
-     *
-     * @component
-     */
-    private ArtifactResolver artifactResolver;
 
     /**
      * Input handler, needed for command line handling.
@@ -190,29 +179,13 @@ public abstract class AbstractFixJavadocMojo
      */
     private InputHandler inputHandler;
 
-    /**
-     * Used by {@link ClirrMojoWrapper} class.
-     *
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * Used by {@link ClirrMojoWrapper} class.
-     *
-     * @component
-     */
-    private MavenProjectBuilder mavenProjectBuilder;
-
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
 
     /**
-     * Version to compare the current code against.
-     * Used by {@link ClirrMojoWrapper} class.
+     * Version to compare the current code against using the
+     * <a href="http://mojo.codehaus.org/clirr-maven-plugin/">Clirr Maven Plugin</a>.
      * <br/>
      * See <a href="#defaultSince">defaultSince</a>.
      *
@@ -391,10 +364,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( !fixClassComment && !fixFieldComment && !fixMethodComment )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Specified to NOT fix classes, fields and methods. Nothing to do." );
-            }
+            getLog().info( "Specified to NOT fix classes, fields and methods. Nothing to do." );
             return;
         }
 
@@ -403,10 +373,7 @@ public abstract class AbstractFixJavadocMojo
 
         if ( fixTagsSplitted.length == 0 )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "No fix tag specified. Nothing to do." );
-            }
+            getLog().info( "No fix tag specified. Nothing to do." );
             return;
         }
 
@@ -443,11 +410,6 @@ public abstract class AbstractFixJavadocMojo
     // ----------------------------------------------------------------------
     // protected methods
     // ----------------------------------------------------------------------
-
-    /**
-     * @return the current classes directory.
-     */
-    protected abstract File getClassesDirectory();
 
     /**
      * @return the artifact type.
@@ -573,10 +535,7 @@ public abstract class AbstractFixJavadocMojo
                 }
                 else
                 {
-                    if ( getLog().isWarnEnabled() )
-                    {
-                        getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
-                    }
+                    getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
                 }
             }
             fixTags = StringUtils.join( filtered.iterator(), "," );
@@ -586,12 +545,9 @@ public abstract class AbstractFixJavadocMojo
         // encoding
         if ( StringUtils.isEmpty( encoding ) )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn(
-                               "File encoding has not been set, using platform encoding "
-                                   + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
-            }
+            getLog().warn(
+                           "File encoding has not been set, using platform encoding "
+                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
             encoding = ReaderFactory.FILE_ENCODING;
         }
 
@@ -599,11 +555,8 @@ public abstract class AbstractFixJavadocMojo
         if ( !( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) || LEVEL_PROTECTED.equalsIgnoreCase( level.trim() )
             || LEVEL_PACKAGE.equalsIgnoreCase( level.trim() ) || LEVEL_PRIVATE.equalsIgnoreCase( level.trim() ) ) )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Unrecognized '" + level + "' for level parameter, using 'protected' level." );
-                level = "protected";
-            }
+            getLog().warn( "Unrecognized '" + level + "' for level parameter, using 'protected' level." );
+            level = "protected";
         }
     }
 
@@ -619,41 +572,33 @@ public abstract class AbstractFixJavadocMojo
             return true;
         }
 
-        if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
+        if ( outputDirectory != null
+            && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
         {
             return true;
         }
 
         if ( !settings.isInteractiveMode() )
         {
-            if ( getLog().isErrorEnabled() )
-            {
-                getLog().error(
-                                "Maven is not attempt to interact with the user for input. "
-                                    + "Verify the <interactiveMode/> configuration in your settings." );
-            }
+            getLog().error(
+                            "Maven is not attempt to interact with the user for input. "
+                                + "Verify the <interactiveMode/> configuration in your settings." );
             return false;
         }
 
-        if ( getLog().isWarnEnabled() )
-        {
-            getLog().warn( "" );
-            getLog().warn( "    WARRANTY DISCLAIMER" );
-            getLog().warn( "" );
-            getLog().warn( "All warranties with regard to this Maven goal are disclaimed!" );
-            getLog().warn( "The changes will be done directly in the source code." );
-            getLog().warn(
-                           "The Maven Team strongly recommends the use of a SCM software BEFORE executing this "
-                               + "goal." );
-            getLog().warn( "" );
-        }
+        getLog().warn( "" );
+        getLog().warn( "    WARRANTY DISCLAIMER" );
+        getLog().warn( "" );
+        getLog().warn( "All warranties with regard to this Maven goal are disclaimed!" );
+        getLog().warn( "The changes will be done directly in the source code." );
+        getLog().warn(
+                       "The Maven Team strongly recommends the use of a SCM software BEFORE executing this "
+                           + "goal." );
+        getLog().warn( "" );
 
         while ( true )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Are you sure to proceed? [Y]es [N]o" );
-            }
+            getLog().info( "Are you sure to proceed? [Y]es [N]o" );
 
             try
             {
@@ -661,19 +606,13 @@ public abstract class AbstractFixJavadocMojo
                 if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "Y" )
                     || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "Yes" ) )
                 {
-                    if ( getLog().isInfoEnabled() )
-                    {
-                        getLog().info( "OK, let's proceed..." );
-                    }
+                    getLog().info( "OK, let's proceed..." );
                     break;
                 }
                 if ( userExpression == null || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "N" )
                     || userExpression.toLowerCase( Locale.ENGLISH ).equalsIgnoreCase( "No" ) )
                 {
-                    if ( getLog().isInfoEnabled() )
-                    {
-                        getLog().info( "No changes in your sources occur." );
-                    }
+                    getLog().info( "No changes in your sources occur." );
                     return false;
                 }
             }
@@ -687,152 +626,258 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Calling Clirr to find API differences via clirr-maven-plugin.
-     *
-     * @throws MojoExecutionException if any
+     * Invoke Maven to run clirr-maven-plugin to find API differences.
      */
     private void executeClirr()
-        throws MojoExecutionException
     {
         if ( ignoreClirr )
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Clirr is ignored." );
-            }
+            getLog().info( "Clirr is ignored." );
             return;
         }
 
-        ClirrMojoWrapper wrapper = null;
+        String mavenHome = getMavenHome();
+        if ( StringUtils.isEmpty( getMavenHome() ) )
+        {
+            getLog().info( "Cannot invoke Maven because no Maven home is defined, Clirr is ignored." );
+            return;
+        }
+
+        Invoker invoker = new DefaultInvoker();
+        invoker.setMavenHome( new File( mavenHome ) );
+
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setBaseDirectory( project.getBasedir() );
+        request.setPomFile( project.getFile() );
+
+        File invokerLogFile = new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
+        PrintStream ps;
         try
         {
-            wrapper =
-                new ClirrMojoWrapper( getClassesDirectory(), comparisonVersion, getArtifactType( project ),
-                                      artifactFactory, localRepository, mavenProjectBuilder,
-                                      artifactMetadataSource, project, artifactResolver, includes, excludes );
-
-            wrapper.execute();
+            ps = new PrintStream( invokerLogFile );
         }
-        catch ( MojoExecutionException e )
+        catch ( FileNotFoundException e )
         {
-            if ( e.getCause().getClass().isAssignableFrom( ArtifactNotFoundException.class ) )
-            {
-                getLog().warn( "Clirr is ignored because no previous artifact has been deployed." );
-            }
-            else
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( "Error when executing Clirr: " + e.getMessage(), e );
-                }
-                else
-                {
-                    getLog().error( "Error when executing Clirr: " + e.getMessage() );
-                }
-                getLog().error( "Clirr is ignored due to the error above." );
-            }
-            return;
+            getLog().error( "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
+            ps = System.out;
         }
-        catch ( MojoFailureException e )
+
+        InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
+        request.setOutputHandler( outputHandler );
+        request.setDebug( true );
+        String clirrGoal = getFullClirrGoal();
+        request.setGoals( Collections.singletonList( clirrGoal ) );
+
+        // http://mojo.codehaus.org/clirr-maven-plugin/check-mojo.html
+        File clirrTextOutputFile = new File( project.getBuild().getDirectory(), "clirr.txt" );
+        Properties prop = new Properties();
+        prop.put( "textOutputFile", clirrTextOutputFile.getAbsolutePath() );
+        prop.put( "comparisonVersion", comparisonVersion );
+        prop.put( "failOnError", "false" );
+        request.setProperties( prop );
+
+        InvocationResult result;
+        try
+        {
+            getLog().debug( "Invoking Maven for the goal: " + clirrGoal );
+            result = invoker.execute( request );
+        }
+        catch ( MavenInvocationException e )
         {
             if ( getLog().isDebugEnabled() )
             {
-                getLog().error( "Error when executing Clirr: " + e.getMessage(), e );
+                getLog().error( "MavenInvocationException: " + e.getMessage(), e );
             }
             else
             {
-                getLog().error( "Error when executing Clirr: " + e.getMessage() );
+                getLog().error( "MavenInvocationException: " + e.getMessage() );
             }
-            getLog().error( "Clirr is ignored due to the error above." );
-            return;
-        }
-        catch ( Exception e )
-        {
-            getLog().error( "Error when executing Clirr: " + e.getMessage() );
+            getLog().error( "Error when invoking Maven, consult the invoker log. Clirr is ignored." );
             return;
         }
 
-        clirrNewClasses = wrapper.getNewClasses();
-        clirrNewMethods = wrapper.getNewMethods();
-
-        if ( getLog().isInfoEnabled() )
+        if ( result.getExitCode() != 0 )
         {
-            if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
+            getLog().error( "Error when invoking Maven, consult the invoker log. Clirr is ignored." );
+            return;
+        }
+
+        try
+        {
+            if ( invokerLogFile.exists() )
             {
-                getLog().info( "Clirr NOT found API differences." );
-            }
-            else
-            {
-                getLog().info( "Clirr found API differences, i.e. new classes/interfaces or methods." );
-                try
+                String invokerLogContent = readFile( invokerLogFile, "UTF-8" );
+                // see org.codehaus.mojo.clirr.AbstractClirrMojo#getComparisonArtifact()
+                final String artifactNotFoundMsg =
+                    "Unable to find a previous version of the project in the repository";
+                if ( invokerLogContent.indexOf( artifactNotFoundMsg ) != -1 )
                 {
-                    writeClirr();
-                }
-                catch ( IOException e )
-                {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().error( "IOException: " + e.getMessage(), e );
-                    }
-                    else
-                    {
-                        getLog().error( "IOException: " + e.getMessage() );
-                    }
+                    getLog().warn( "No previous artifact has been deployed, Clirr is ignored." );
+                    return;
                 }
             }
+        }
+        catch ( IOException e )
+        {
+            getLog().debug( "IOException: " + e.getMessage() );
+        }
+
+        try
+        {
+            parseClirrTextOutputFile( clirrTextOutputFile );
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "IOException: " + e.getMessage(), e );
+            }
+            getLog().info(
+                           "IOException when parsing Clirr output '" + clirrTextOutputFile.getAbsolutePath()
+                               + "', Clirr is ignored." );
         }
     }
 
     /**
-     * In debug mode, write {@link #clirrNewClasses} and {@link #clirrNewMethods} in the file
-     * <code>project.getBuild().getDirectory()/clirr.diff</code>.
-     * @throws IOException
+     * @return the full clirr goal, i.e. <code>groupId:artifactId:version:goal</code>. The clirr-plugin version
+     * could be load from the pom.properties in the clirr-maven-plugin dependency.
      */
-    private void writeClirr()
+    private String getFullClirrGoal()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( CLIRR_MAVEN_PLUGIN_GROUPID ).append( ":" );
+        sb.append( CLIRR_MAVEN_PLUGIN_ARTIFACTID ).append( ":" );
+        String clirrVersion = CLIRR_MAVEN_PLUGIN_VERSION;
+        InputStream resourceAsStream = null;
+        try
+        {
+            String resource =
+                "META-INF/maven/" + CLIRR_MAVEN_PLUGIN_GROUPID + "/" + CLIRR_MAVEN_PLUGIN_ARTIFACTID
+                    + "/pom.properties";
+            resourceAsStream = AbstractFixJavadocMojo.class.getClassLoader().getResourceAsStream( resource );
+
+            if ( resourceAsStream != null )
+            {
+                Properties properties = new Properties();
+                properties.load( resourceAsStream );
+
+                if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
+                {
+                    clirrVersion = properties.getProperty( "version" );
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            // nop
+        }
+        finally
+        {
+            IOUtil.close( resourceAsStream );
+        }
+        sb.append( clirrVersion ).append( ":" );
+        sb.append( CLIRR_MAVEN_PLUGIN_GOAL );
+
+        return sb.toString();
+    }
+
+    /**
+     * @param clirrTextOutputFile not null
+     * @throws IOException if any
+     */
+    private void parseClirrTextOutputFile( File clirrTextOutputFile )
         throws IOException
     {
-        if ( !getLog().isDebugEnabled() )
+        if ( !clirrTextOutputFile.exists() )
         {
+            getLog().info(
+                           "No Clirr output file '" + clirrTextOutputFile.getAbsolutePath()
+                               + "' exists, Clirr is ignored." );
             return;
         }
 
-        StringBuffer sb = new StringBuffer();
+        getLog().info( "Clirr output file was created: " + clirrTextOutputFile.getAbsolutePath() );
 
-        for ( Iterator it = clirrNewClasses.iterator(); it.hasNext(); )
+        clirrNewClasses = new LinkedList();
+        clirrNewMethods = new LinkedHashMap();
+
+        BufferedReader input = new BufferedReader( ReaderFactory.newReader( clirrTextOutputFile, "UTF-8" ) );
+        String line = null;
+        while ( ( line = input.readLine() ) != null )
         {
-            String newClass = (String) it.next();
-
-            sb.append( "Added Class " );
-            sb.append( "'" ).append( newClass ).append( "'" );
-            sb.append( EOL );
-        }
-
-        for ( Iterator it = clirrNewMethods.entrySet().iterator(); it.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry) it.next();
-
-            sb.append( "In the Class " );
-            sb.append( "'" ).append( entry.getKey() ).append( "'" );
-            sb.append( EOL );
-
-            for ( Iterator it2 = ( (List) entry.getValue() ).iterator(); it2.hasNext(); )
+            String[] split = StringUtils.split( line, ":" );
+            if ( split.length != 4 )
             {
-                String newMethod = (String) it2.next();
-
-                sb.append( "\tAdded Method " );
-                sb.append( "'" ).append( newMethod ).append( "'" );
-                if ( it2.hasNext() )
-                {
-                    sb.append( EOL );
-                }
+                getLog().debug( "Unable to parse the clirr line: " + line );
+                continue;
             }
-            sb.append( EOL );
+
+            int code;
+            try
+            {
+                code = Integer.parseInt( split[1].trim() );
+            }
+            catch ( NumberFormatException e )
+            {
+                getLog().debug( "Unable to parse the clirr line: " + line );
+                continue;
+            }
+
+            // http://clirr.sourceforge.net/clirr-core/exegesis.html
+            // 7011 - Method Added
+            // 7012 - Method Added to Interface
+            // 8000 - Class Added
+            List list;
+            String[] splits2;
+            switch ( code )
+            {
+                case 7011:
+                    list = (List) clirrNewMethods.get( split[2] );
+                    if ( list == null )
+                    {
+                        list = new ArrayList();
+                    }
+                    splits2 = StringUtils.split( split[3], "'" );
+                    if ( splits2.length != 3 )
+                    {
+                        continue;
+                    }
+                    list.add( splits2[1] );
+                    clirrNewMethods.put( split[2], list );
+                    break;
+
+                case 7012:
+                    list = (List) clirrNewMethods.get( split[2] );
+                    if ( list == null )
+                    {
+                        list = new ArrayList();
+                    }
+                    splits2 = StringUtils.split( split[3], "'" );
+                    if ( splits2.length != 3 )
+                    {
+                        continue;
+                    }
+                    list.add( splits2[1] );
+                    clirrNewMethods.put( split[2], list );
+                    break;
+
+                case 8000:
+                    clirrNewClasses.add( split[2] );
+                    break;
+                default:
+                    break;
+            }
         }
 
-        File f = new File( project.getBuild().getDirectory(), "clirr.diff" );
-        writeFile( f, WriterFactory.UTF_8, sb.toString() );
-
-        getLog().debug( "Writing Clirr difference to: " + f.getAbsolutePath() );
+        if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
+        {
+            getLog().info( "Clirr NOT found API differences." );
+        }
+        else
+        {
+            getLog().info( "Clirr found API differences, i.e. new classes/interfaces or methods." );
+        }
     }
 
     /**
@@ -871,10 +916,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( "pom".equals( project.getPackaging().toLowerCase() ) )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "This project has 'pom' packaging, no Java sources will be available." );
-            }
+            getLog().warn( "This project has 'pom' packaging, no Java sources will be available." );
             return null;
         }
 
@@ -888,10 +930,7 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( f + " doesn't exist. Ignored it." );
-                }
+                getLog().warn( f + " doesn't exist. Ignored it." );
             }
         }
 
@@ -915,10 +954,7 @@ public abstract class AbstractFixJavadocMojo
             catch ( ParseException e )
             {
                 // QDOX-118
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( "QDOX ParseException: " + e.getMessage() );
-                }
+                getLog().warn( "QDOX ParseException: " + e.getMessage() );
             }
         }
 
@@ -941,19 +977,11 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "Reading '" + javaClass.getFullyQualifiedName() + "' class." );
-        }
-
         File javaFile = new File( javaClass.getSource().getURL().getFile() );
         // the original java content in memory
         final String originalContent = readFile( javaFile, encoding );
 
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
-        }
+        getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
 
         final StringWriter stringWriter = new StringWriter();
         BufferedReader reader = null;
@@ -1028,12 +1056,10 @@ public abstract class AbstractFixJavadocMojo
             IOUtil.close( reader );
         }
 
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
-        }
+        getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
 
-        if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
+        if ( outputDirectory != null
+            && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
         {
             String path =
                 StringUtils.replace( javaFile.getAbsolutePath().replaceAll( "\\\\", "/" ),
@@ -2830,6 +2856,28 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
+     * @return the maven home defined in the "maven.home" system property or defined in M2_HOME system env variables
+     * or null if never setted.
+     */
+    private static String getMavenHome()
+    {
+        String mavenHome = System.getProperty( "maven.home" );
+        if ( mavenHome == null )
+        {
+            try
+            {
+                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
+            }
+            catch ( IOException e )
+            {
+                // nop
+            }
+        }
+
+        return mavenHome;
+    }
+
+    /**
      * @param javaFile not null
      * @param encoding not null
      * @param content not null
@@ -3202,14 +3250,7 @@ public abstract class AbstractFixJavadocMojo
             line = reader.readLine();
         }
 
-        try
-        {
-            return (String[]) lines.toArray( new String[0] );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
+        return (String[]) lines.toArray( new String[0] );
     }
 
     /**
@@ -3254,129 +3295,6 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return text;
-    }
-
-    /**
-     * Wrapper implementation of the {@link AbstractClirrMojo}.
-     */
-    private static class ClirrMojoWrapper
-        extends AbstractClirrMojo
-    {
-        private List clirrNewClasses;
-
-        private Map clirrNewMethods;
-
-        public ClirrMojoWrapper( File classesDirectory, String comparisonVersion, String artifactType,
-                                 ArtifactFactory factory, ArtifactRepository localRepository,
-                                 MavenProjectBuilder mavenProjectBuilder, ArtifactMetadataSource metadataSource,
-                                 MavenProject project, ArtifactResolver resolver, String includes, String excludes )
-            throws MojoFailureException
-        {
-            super();
-
-            try
-            {
-                super.classesDirectory = classesDirectory;
-                ArtifactSpecification artifactSpec = new ArtifactSpecification();
-                artifactSpec.setGroupId( project.getGroupId() );
-                artifactSpec.setArtifactId( project.getArtifactId() );
-                artifactSpec.setVersion( comparisonVersion );
-                artifactSpec.setType( artifactType );
-                artifactSpec.setClassifier( null );
-                super.comparisonArtifacts = new ArtifactSpecification[] { artifactSpec };
-                super.factory = factory;
-                super.localRepository = localRepository;
-                ReflectionUtils.setVariableValueInObject( this, "mavenProjectBuilder", mavenProjectBuilder );
-                ReflectionUtils.setVariableValueInObject( this, "metadataSource", metadataSource );
-                super.project = project;
-                super.resolver = resolver;
-                // TODO align includes/excludes with org.codehaus.mojo.clirr.ClirrClassFilter
-                if ( includes != null )
-                {
-                    super.includes = StringUtils.split( "**", "," );
-                }
-                if ( excludes != null )
-                {
-                    super.excludes = null;
-                }
-            }
-            catch ( IllegalArgumentException e )
-            {
-                throw new MojoFailureException( "IllegalArgumentException: " + e.getMessage() );
-            }
-            catch ( SecurityException e )
-            {
-                throw new MojoFailureException( "SecurityException: " + e.getMessage() );
-            }
-            catch ( IllegalAccessException e )
-            {
-                throw new MojoFailureException( "IllegalAccessException: " + e.getMessage() );
-            }
-        }
-
-        /** {@inheritDoc} */
-        public void execute()
-            throws MojoExecutionException, MojoFailureException
-        {
-            ClirrDiffListener clirrDiffListener = executeClirr();
-
-            clirrNewClasses = new ArrayList();
-            clirrNewMethods = new HashMap();
-
-            MessageTranslator translator = new MessageTranslator();
-            translator.setLocale( Locale.ENGLISH );
-
-            for ( Iterator it = clirrDiffListener.getApiDifferences().iterator(); it.hasNext(); )
-            {
-                ApiDifference diff = (ApiDifference) it.next();
-                String msg = diff.getReport( translator );
-
-                // Align to Clirr messages
-                if ( msg.startsWith( "Class" ) && msg.endsWith( "added" ) )
-                {
-                    clirrNewClasses.add( diff.getAffectedClass() );
-                }
-
-                if ( msg.startsWith( "Method" ) && msg.endsWith( "added" ) )
-                {
-                    List list = (List) clirrNewMethods.get( diff.getAffectedClass() );
-                    if ( list == null )
-                    {
-                        list = new ArrayList();
-                    }
-                    list.add( diff.getAffectedMethod() );
-                    clirrNewMethods.put( diff.getAffectedClass(), list );
-                }
-
-                if ( msg.startsWith( "Method" ) && msg.endsWith( "added to an interface" ) )
-                {
-                    List list = (List) clirrNewMethods.get( diff.getAffectedClass() );
-                    if ( list == null )
-                    {
-                        list = new ArrayList();
-                    }
-                    list.add( diff.getAffectedMethod() );
-                    clirrNewMethods.put( diff.getAffectedClass(), list );
-                }
-            }
-        }
-
-        /**
-         * @return a list of added classes.
-         */
-        public List getNewClasses()
-        {
-            return clirrNewClasses;
-        }
-
-        /**
-         * @return a map with the String of affected class (as key) and a list of the String of added methods
-         * (as value).
-         */
-        public Map getNewMethods()
-        {
-            return clirrNewMethods;
-        }
     }
 
     /**

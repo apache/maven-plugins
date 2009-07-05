@@ -42,7 +42,6 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugin.javadoc.stubs.FixMavenProjectStub"/>
-          <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/fix-test/target/generated</outputDirectory>
           <defaultSince>1.0-SNAPSHOT</defaultSince>
           <encoding>UTF-8</encoding>

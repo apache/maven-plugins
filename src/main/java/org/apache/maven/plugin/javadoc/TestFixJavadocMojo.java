@@ -19,8 +19,6 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -42,20 +40,6 @@ import org.apache.maven.project.MavenProject;
 public class TestFixJavadocMojo
     extends AbstractFixJavadocMojo
 {
-    /**
-     * The classes of this project to compare the last release against.
-     * Used by {@link AbstractFixJavadocMojo.ClirrMojoWrapper} class.
-     *
-     * @parameter default-value="${project.build.testOutputDirectory}
-     */
-    private File classesDirectory;
-
-    /** {@inheritDoc} */
-    protected File getClassesDirectory()
-    {
-        return classesDirectory;
-    }
-
     /** {@inheritDoc} */
     protected List getProjectSourceRoots( MavenProject p )
     {

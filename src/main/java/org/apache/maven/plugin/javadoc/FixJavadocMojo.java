@@ -19,8 +19,6 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.File;
-
 /**
  * Fix Javadoc documentation and tags for the <code>Java code</code> for the project.
  * See <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
@@ -35,17 +33,5 @@ import java.io.File;
 public class FixJavadocMojo
     extends AbstractFixJavadocMojo
 {
-    /**
-     * The classes of this project to compare the last release against.
-     * Used by {@link AbstractFixJavadocMojo.ClirrMojoWrapper} class.
-     *
-     * @parameter default-value="${project.build.outputDirectory}
-     */
-    private File classesDirectory;
-
-    /** {@inheritDoc} */
-    protected File getClassesDirectory()
-    {
-        return classesDirectory;
-    }
+    // nop
 }
