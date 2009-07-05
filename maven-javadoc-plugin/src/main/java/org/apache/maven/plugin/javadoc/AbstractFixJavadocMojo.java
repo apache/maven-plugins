@@ -319,7 +319,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * @parameter expression="${outputDirectory}" default-value="${project.build.sourceDirectory}"
      */
-    private File outputDirectory;
+    private String outputDirectory;
 
     /**
      * The Maven Project Object.
@@ -572,8 +572,8 @@ public abstract class AbstractFixJavadocMojo
             return true;
         }
 
-        if ( outputDirectory != null
-            && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
+        File outputDir = new File( outputDirectory ).getAbsoluteFile();
+        if ( !outputDir.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
         {
             return true;
         }
@@ -1058,8 +1058,8 @@ public abstract class AbstractFixJavadocMojo
 
         getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
 
-        if ( outputDirectory != null
-            && !outputDirectory.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
+        File outputDir = new File( outputDirectory ).getAbsoluteFile();
+        if ( !outputDir.getAbsolutePath().equals( getProjectSourceDirectory().getAbsolutePath() ) )
         {
             String path =
                 StringUtils.replace( javaFile.getAbsolutePath().replaceAll( "\\\\", "/" ),
