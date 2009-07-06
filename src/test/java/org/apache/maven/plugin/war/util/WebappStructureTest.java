@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- *
  * @author Stephane Nicoll
  */
 public class WebappStructureTest
@@ -203,6 +201,40 @@ public class WebappStructureTest
             }
         } );
 
+    }
+
+    public void testUnknownFileNotAvailable()
+    {
+        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        assertFalse( structure.isRegistered( "/foo/bar.txt" ) );
+    }
+
+    public void testRegisterSamePathTwice()
+    {
+        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        structure.registerFile( "overlay1", "WEB-INF/web.xml" );
+        assertFalse( structure.registerFile( "currentBuild", "WEB-INF/web.xml" ) );
+
+    }
+
+    public void testRegisterForced()
+    {
+        final String path = "WEB-INF/web.xml";
+        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        assertFalse("New file should return false",
+                    structure.registerFileForced( "overlay1", path ));
+        assertEquals( "overlay1", structure.getOwner( path ) );         
+    }
+
+    public void testRegisterSamePathTwiceForced()
+    {
+        final String path = "WEB-INF/web.xml";
+        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        structure.registerFile( "overlay1", path );
+        assertEquals( "overlay1", structure.getOwner( path ) );
+        assertTrue("owner replacement should have returned true",
+                   structure.registerFileForced( "currentBuild", path ));
+        assertEquals("currentBuild", structure.getOwner( path ));
     }
 
 
