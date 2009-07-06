@@ -71,7 +71,7 @@ public class WebappStructure
      * Creates a new instance with the specified cache.
      *
      * @param dependencies the dependencies of the project
-     * @param cache the cache
+     * @param cache        the cache
      */
     public WebappStructure( List dependencies, WebappStructure cache )
     {
@@ -151,6 +151,37 @@ public class WebappStructure
         {
             return false;
         }
+    }
+
+    /**
+     * Forces the registration of the specified path for the specified owner. If
+     * the file is not registered yet, a simple registration is performed. If the
+     * file already exists, the owner changes to the specified one.
+     * <p/>
+     * Beware that the semantic of the return boolean is different thant the one
+     * from {@link #registerFile(String, String)}; returns <tt>true</tt> if an
+     * owner replacement was made and <tt>false</tt> if the file was simply registered
+     * for the first time.
+     *
+     * @param id   the owner of the path
+     * @param path the relative path from the webapp root directory
+     * @return false if the file did not exist, true if the owner was replaced
+     */
+    public boolean registerFileForced( String id, String path )
+    {
+        if ( !isRegistered( path ) )
+        {
+            doRegister( id, path );
+            return false;
+        }
+        else
+        {
+            // Force the switch to the new owner
+            getStructure( getOwner( path ) ).remove( path );
+            getStructure( id ).add( path );
+            return true;
+        }
+
     }
 
     /**
@@ -350,7 +381,7 @@ public class WebappStructure
     /**
      * Registers the target file name for the specified artifact.
      *
-     * @param artifact the artifact
+     * @param artifact       the artifact
      * @param targetFileName the target file name
      */
     public void registerTargetFileName( Artifact artifact, String targetFileName )
@@ -387,10 +418,10 @@ public class WebappStructure
         {
             DependencyInfo dependencyInfo = (DependencyInfo) it.next();
             final Dependency dependency2 = dependencyInfo.getDependency();
-            if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() )
-                && StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() )
-                && StringUtils.equals( dependency.getType(), dependency2.getType() )
-                && StringUtils.equals( dependency.getClassifier(), dependency2.getClassifier() ) )
+            if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() ) &&
+                StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() ) &&
+                StringUtils.equals( dependency.getType(), dependency2.getType() ) &&
+                StringUtils.equals( dependency.getClassifier(), dependency2.getClassifier() ) )
             {
 
                 return dependencyInfo.getTargetFileName();
@@ -411,7 +442,7 @@ public class WebappStructure
     /**
      * Find a dependency that is similar from the specified dependency.
      *
-     * @param dependency the dependency to find
+     * @param dependency   the dependency to find
      * @param dependencies a list of dependencies
      * @return a similar dependency or <tt>null</tt> if no similar dependency is found
      */
@@ -421,11 +452,12 @@ public class WebappStructure
         while ( it.hasNext() )
         {
             Dependency dep = (Dependency) it.next();
-            if ( dependency.getGroupId().equals( dep.getGroupId() )
-                && dependency.getArtifactId().equals( dep.getArtifactId() )
-                && dependency.getType().equals( dep.getType() ) && (
-                ( dependency.getClassifier() == null && dep.getClassifier() == null ) || (
-                    dependency.getClassifier() != null && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
+            if ( dependency.getGroupId().equals( dep.getGroupId() ) &&
+                dependency.getArtifactId().equals( dep.getArtifactId() ) &&
+                dependency.getType().equals( dep.getType() ) &&
+                ( ( dependency.getClassifier() == null && dep.getClassifier() == null ) ||
+                    ( dependency.getClassifier() != null &&
+                        dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
             {
                 return dep;
             }
@@ -596,7 +628,7 @@ public class WebappStructure
         /**
          * Called if the version of the dependency has changed since the last build.
          *
-         * @param dependency the dependency
+         * @param dependency      the dependency
          * @param previousVersion the previous version of the dependency
          */
         void updatedVersion( Dependency dependency, String previousVersion );
@@ -604,7 +636,7 @@ public class WebappStructure
         /**
          * Called if the scope of the dependency has changed since the last build.
          *
-         * @param dependency the dependency
+         * @param dependency    the dependency
          * @param previousScope the previous scope
          */
         void updatedScope( Dependency dependency, String previousScope );
@@ -613,7 +645,7 @@ public class WebappStructure
          * Called if the optional flag of the dependency has changed since the
          * last build.
          *
-         * @param dependency the dependency
+         * @param dependency       the dependency
          * @param previousOptional the previous optional flag
          */
         void updatedOptionalFlag( Dependency dependency, boolean previousOptional );
@@ -621,7 +653,7 @@ public class WebappStructure
         /**
          * Called if the dependency has been updated for unknown reason.
          *
-         * @param dependency the dependency
+         * @param dependency  the dependency
          * @param previousDep the previous dependency
          */
         void updatedUnknown( Dependency dependency, Dependency previousDep );
