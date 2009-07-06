@@ -3107,37 +3107,36 @@ public abstract class AbstractFixJavadocMojo
         String[] docletTagLines = getLines( docletTag.getValue() );
 
         StringBuffer sb = new StringBuffer();
-        for ( int i = 0; i < docletTagLines.length; i++ )
+        int start = 0;
+        int end = originalJavadocLines.length;
+        for ( int i = 0; i < originalJavadocLines.length; i++ )
         {
-            boolean found = false;
-            for ( int j = 0; j < originalJavadocLines.length; j++ )
-            {
-                String line = originalJavadocLines[j];
+            String originalJavadocLine = originalJavadocLines[i];
 
-                if ( line.indexOf( "@" + docletTag.getName() ) != -1 )
+            if ( JAVADOC_TAG_LINE_PATTERN.matcher( originalJavadocLine ).find() )
+            {
+                if ( start != 0 )
                 {
-                    found = true;
+                    end = i;
+                    break;
                 }
-                if ( found
-                    && StringUtils.removeDuplicateWhitespace( line ).trim()
-                                  .endsWith( StringUtils.removeDuplicateWhitespace( docletTagLines[i] ).trim() ) )
+
+                if ( originalJavadocLine.indexOf( docletTagLines[0] ) != -1 )
                 {
-                    sb.append( line );
-                    sb.append( EOL );
-                    if ( docletTag.getParameters().length == 1 )
-                    {
-                        break;
-                    }
+                    start = i;
                 }
             }
         }
 
-        if ( sb.toString().lastIndexOf( EOL ) != -1 )
+        for ( int i = start; i < end; i++ )
         {
-            return sb.toString().substring( 0, sb.toString().lastIndexOf( EOL ) );
+            String originalJavadocLine = originalJavadocLines[i];
+
+            sb.append( originalJavadocLine );
+            sb.append( EOL );
         }
 
-        return sb.toString();
+        return trimRight( sb.toString() );
     }
 
     /**
