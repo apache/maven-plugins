@@ -20,6 +20,7 @@ package org.apache.maven.plugin.war.util;
  */
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -46,7 +47,7 @@ public class WebappStructureSerializer
      */
     public WebappStructureSerializer()
     {
-        this.xStream = new XStream();
+        this.xStream = new XStream(new DomDriver());
 
         // Register aliases
         xStream.alias( "webapp-structure", WebappStructure.class );
