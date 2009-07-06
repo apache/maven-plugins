@@ -3107,6 +3107,10 @@ public abstract class AbstractFixJavadocMojo
 
         // Note: docletTag.getValue() removes duplicate whitespace
         String[] docletTagLines = getLines( docletTag.getValue() );
+        if ( docletTagLines.length == 0 )
+        {
+            docletTagLines = new String[] { "" };
+        }
 
         StringBuffer sb = new StringBuffer();
         int start = 0;

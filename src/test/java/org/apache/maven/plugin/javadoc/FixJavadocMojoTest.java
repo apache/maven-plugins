@@ -184,6 +184,13 @@ public class FixJavadocMojoTest
                 "     *      if any" + EOL +
                 "     */" + EOL +
                 "    public String methodWithMultiLinesJavadoc( String aString, String anotherString )" ) != -1 );
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * methodWithMultiLinesJavadoc2" + EOL +
+                "     *" + EOL +
+                "     * @return a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
+                "    protected String methodWithMultiLinesJavadoc2()" ) != -1 );
 
         clazzFile = new File( packageDir, "ClassWithNoJavadoc.java" );
         assertTrue( clazzFile.exists() );
