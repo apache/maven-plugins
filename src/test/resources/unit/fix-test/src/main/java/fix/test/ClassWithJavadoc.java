@@ -85,4 +85,13 @@ public class ClassWithJavadoc
     {
         return null;
     }
+
+    /**
+     * methodWithMultiLinesJavadoc2
+     * @return
+     */
+    protected String methodWithMultiLinesJavadoc2()
+    {
+      return null;
+    }
 }
