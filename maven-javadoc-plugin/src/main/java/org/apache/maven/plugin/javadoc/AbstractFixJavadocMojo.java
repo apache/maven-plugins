@@ -665,6 +665,8 @@ public abstract class AbstractFixJavadocMojo
         InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
         request.setOutputHandler( outputHandler );
         request.setDebug( true );
+        request.setMavenOpts( "-Xms256m -Xmx256m" );
+
         String clirrGoal = getFullClirrGoal();
         request.setGoals( Collections.singletonList( clirrGoal ) );
 

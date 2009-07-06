@@ -281,6 +281,7 @@ public class FixJavadocMojoTest
         InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( invokerLog ), false );
         request.setOutputHandler( outputHandler );
         request.setDebug( true );
+        request.setMavenOpts( "-Xms256m -Xmx256m" );
 
         List goals = new ArrayList();
         goals.add( "clean" );
