@@ -197,6 +197,19 @@ public class PathSet
     }
 
     /**
+     * Removes the specified path if it exists.
+     *
+     * @param path the path to remove
+     * @return true if the path was removed, false if it did not existed
+     */
+    boolean remove( String path )
+    {
+        final String normalizedPath = normalizeFilePath( path );
+        return pathsSet.remove( normalizedPath );
+
+    }
+
+    /**
      * Returns iterator of normalized paths (strings)
      *
      * @return iterator of normalized paths (strings)
