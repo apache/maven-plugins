@@ -32,6 +32,11 @@ public class ClassWithJavadoc
 
     private static final String MY_PRIVATE_CONSTANT = "";
 
+    public ClassWithJavadoc()
+    {
+        // nop
+    }
+
     public static void main( String[] args )
     {
         System.out.println( "Sample Application." );
@@ -47,8 +52,37 @@ public class ClassWithJavadoc
 
     /**
      * @param str
+     * @throws UnsupportedOperationException if any
+     */
+    public String methodWithMissingParameters2( String str, boolean b, int i )
+        throws UnsupportedOperationException
+    {
+        return null;
+    }
+
+    /**
+     * @param str
      */
     public void methodWithWrongJavadocParameters( String aString )
     {
+    }
+
+    /**
+     * @param aString
+     *      a string
+     * @param anotherString
+     *      with
+     *      multi
+     *      line
+     *      comments
+     * @return a
+     *      String
+     * @throws UnsupportedOperationException
+     *      if any
+     */
+    public String methodWithMultiLinesJavadoc( String aString, String anotherString )
+        throws UnsupportedOperationException
+    {
+        return null;
     }
 }

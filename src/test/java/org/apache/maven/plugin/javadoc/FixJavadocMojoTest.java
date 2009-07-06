@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -79,21 +80,6 @@ public class FixJavadocMojoTest
         M2_HOME = new File( mavenHome );
     }
 
-    /** {@inheritDoc} */
-    protected void setUp()
-        throws Exception
-    {
-        // required for mojo lookups to work
-        super.setUp();
-    }
-
-    /** {@inheritDoc} */
-    protected void tearDown()
-        throws Exception
-    {
-        super.tearDown();
-    }
-
     /**
      * @throws Exception if any
      */
@@ -108,11 +94,8 @@ public class FixJavadocMojoTest
         assertTrue( testPom.getAbsolutePath() + " should exist", testPom.exists() );
 
         // compile the test project
-        if ( !new File( testPom.getParentFile(), "target" ).exists() )
-        {
-            invokeCompileGoal( testPom );
-            assertTrue( new File( testPomBasedir, "target/classes" ).exists() );
-        }
+        invokeCompileGoal( testPom );
+        assertTrue( new File( testPomBasedir, "target/classes" ).exists() );
 
         FixJavadocMojo mojo = (FixJavadocMojo) lookupMojo( "fix", testPom );
         assertNotNull( mojo );
@@ -146,6 +129,11 @@ public class FixJavadocMojoTest
                 "    private static final String MY_PRIVATE_CONSTANT = \"\";" ) != -1 );
         assertTrue( content.indexOf( "" + EOL +
                 "    /**" + EOL +
+                "     * <p>Constructor for ClassWithJavadoc.</p>" + EOL +
+                "     */" + EOL +
+                "    public ClassWithJavadoc()" ) != -1 );
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
                 "     * <p>main</p>" + EOL +
                 "     *" + EOL +
                 "     * @param args an array of {@link java.lang.String} objects." + EOL +
@@ -163,11 +151,39 @@ public class FixJavadocMojoTest
                 "    public String methodWithMissingParameters( String str, boolean b, int i )" ) != -1 );
         assertTrue( content.indexOf( "" + EOL +
                 "    /**" + EOL +
+                "     * <p>methodWithMissingParameters2</p>" + EOL +
+                "     *" + EOL +
+                "     * @param str a {@link java.lang.String} object." + EOL +
+                "     * @throws java.lang.UnsupportedOperationException if any" + EOL +
+                "     * @param b a boolean." + EOL +
+                "     * @param i a int." + EOL +
+                "     * @return a {@link java.lang.String} object." + EOL +
+                "     */" + EOL +
+                "    public String methodWithMissingParameters2( String str, boolean b, int i )" ) != -1 );
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
                 "     * <p>methodWithWrongJavadocParameters</p>" + EOL +
                 "     *" + EOL +
                 "     * @param aString a {@link java.lang.String} object." + EOL +
                 "     */" + EOL +
                 "    public void methodWithWrongJavadocParameters( String aString )" ) != -1 );
+        assertTrue( content.indexOf( "" + EOL +
+                "    /**" + EOL +
+                "     * <p>methodWithMultiLinesJavadoc</p>" + EOL +
+                "     *" + EOL +
+                "     * @param aString" + EOL +
+                "     *      a string" + EOL +
+                "     * @param anotherString" + EOL +
+                "     *      with" + EOL +
+                "     *      multi" + EOL +
+                "     *      line" + EOL +
+                "     *      comments" + EOL +
+                "     * @param aString" + EOL +
+                "     *      a string" + EOL +
+                "     * @throws java.lang.UnsupportedOperationException" + EOL +
+                "     *      if any" + EOL +
+                "     */" + EOL +
+                "    public String methodWithMultiLinesJavadoc( String aString, String anotherString )" ) != -1 );
 
         clazzFile = new File( packageDir, "ClassWithNoJavadoc.java" );
         assertTrue( clazzFile.exists() );
@@ -277,28 +293,22 @@ public class FixJavadocMojoTest
             InvocationResult result = invoker.execute( request );
             if ( result.getExitCode() != 0 )
             {
-                if ( getContainer().getLogger().isDebugEnabled() )
-                {
-                    StringBuffer msg = new StringBuffer();
-                    msg.append( "Ouput from invoker:" ).append( "\n\n" );
-                    msg.append( invokerLog ).append( "\n\n" );
+                StringBuffer msg = new StringBuffer();
+                msg.append( "Ouput from invoker:" ).append( "\n\n" );
+                msg.append( invokerLog ).append( "\n\n" );
 
-                    getContainer().getLogger().debug( msg.toString() );
-                }
+                getContainer().getLogger().error( msg.toString() );
 
                 fail( "Error when invoking Maven, see invoker log above" );
             }
         }
         catch ( MavenInvocationException e )
         {
-            if ( getContainer().getLogger().isDebugEnabled() )
-            {
-                StringBuffer msg = new StringBuffer();
-                msg.append( "Ouput from invoker:" ).append( "\n\n" );
-                msg.append( invokerLog ).append( "\n\n" );
+            StringBuffer msg = new StringBuffer();
+            msg.append( "Ouput from invoker:" ).append( "\n\n" );
+            msg.append( invokerLog ).append( "\n\n" );
 
-                getContainer().getLogger().debug( msg.toString() );
-            }
+            getContainer().getLogger().error( msg.toString() );
 
             fail( "Error when invoking Maven, see invoker log above" );
         }
@@ -316,6 +326,16 @@ public class FixJavadocMojoTest
         // Using unit test dir
         FileUtils.copyDirectoryStructure( new File( getBasedir(), "src/test/resources/unit/" + testDir ),
                                           testPomBasedir );
+        List scmFiles = FileUtils.getDirectoryNames( testPomBasedir, "**/.svn", null, true );
+        for ( Iterator it = scmFiles.iterator(); it.hasNext(); )
+        {
+            File dir = new File( it.next().toString() );
+
+            if ( dir.isDirectory() )
+            {
+                FileUtils.deleteDirectory( dir );
+            }
+        }
     }
 
     /**
