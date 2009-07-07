@@ -3127,7 +3127,8 @@ public abstract class AbstractFixJavadocMojo
                     break;
                 }
 
-                if ( originalJavadocLine.indexOf( docletTagLines[0] ) != -1 )
+                if ( StringUtils.removeDuplicateWhitespace( originalJavadocLine )
+                                .endsWith( StringUtils.removeDuplicateWhitespace( docletTagLines[0] ) ) )
                 {
                     start = i;
                 }
