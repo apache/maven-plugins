@@ -134,9 +134,9 @@ public class FixJavadocMojoTest
                 "    public ClassWithJavadoc()" ) != -1 );
         assertTrue( content.indexOf( "" + EOL +
                 "    /**" + EOL +
-                "     * <p>main</p>" + EOL +
+                "     * The main method" + EOL +
                 "     *" + EOL +
-                "     * @param args an array of {@link java.lang.String} objects." + EOL +
+                "     * @param args      an array of strings that contains the arguments" + EOL +
                 "     */" + EOL +
                 "    public static void main( String[] args )" ) != -1 );
         assertTrue( content.indexOf( "" + EOL +
@@ -178,8 +178,8 @@ public class FixJavadocMojoTest
                 "     *      multi" + EOL +
                 "     *      line" + EOL +
                 "     *      comments" + EOL +
-                "     * @param aString" + EOL +
-                "     *      a string" + EOL +
+                "     * @return a" + EOL +
+                "     *      String" + EOL +
                 "     * @throws java.lang.UnsupportedOperationException" + EOL +
                 "     *      if any" + EOL +
                 "     */" + EOL +
