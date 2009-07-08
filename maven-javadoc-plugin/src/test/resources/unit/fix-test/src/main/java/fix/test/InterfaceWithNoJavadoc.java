@@ -23,5 +23,8 @@ public interface InterfaceWithNoJavadoc
 {
     String MY_STRING_CONSTANT = "value";
 
-    public void method( String aString );
+    public void missingJavadoc( String aString );
+
+    // take care of identifier
+    void missingJavadoc2( String aString );
 }
