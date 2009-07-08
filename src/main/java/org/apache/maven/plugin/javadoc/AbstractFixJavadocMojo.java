@@ -45,7 +45,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ClassUtils;
@@ -100,13 +99,29 @@ public abstract class AbstractFixJavadocMojo
     private static final String EOL = System.getProperty( "line.separator" );
 
     /**
-     * Pattern to find if a Javadoc line contains Javadoc tag for instance
+     * Pattern <code>^\\s*\\*\\s*@\\w{1}.*$</code> to find if a Javadoc line contains Javadoc tag
+     * for instance:
      * <pre>
      * &#32;&#42; &#64;param X
      * </pre>
      */
-    private static final Pattern JAVADOC_TAG_LINE_PATTERN =
-        Pattern.compile( "\\s+\\*\\s+@\\w\\s*.*\\z", Pattern.DOTALL );
+    private static final String JAVADOC_TAG_LINE_PATTERN = "^\\s*\\*\\s*@\\w{1}.*$";
+
+    /**
+     * Pattern <code>^\\s*(\\/\\*\\*)?(\\s*(\\*)?)*(\\{)@inheritDoc\\s*(\\})(\\s*(\\*)?)*(\\*\\/)?$</code> to
+     * find if a Javadoc comment contains inherited tag for instance:
+     * <pre>
+     * &#47;&#42;&#42; {&#64;inheritDoc} &#42;&#47;
+     * </pre>
+     * or
+     * <pre>
+     * &#47;&#42;&#42;
+     * &#32;&#42; {&#64;inheritDoc}
+     * &#32;&#42;&#47;
+     * </pre>
+     */
+    private static final String INHERITED_TAG_PATTERN =
+        "^\\s*(\\/\\*\\*)?(\\s*(\\*)?)*(\\{)@inheritDoc\\s*(\\})(\\s*(\\*)?)*(\\*\\/)?$";
 
     /** Tag name for &#64;author **/
     private static final String AUTHOR_TAG = "author";
@@ -138,7 +153,7 @@ public abstract class AbstractFixJavadocMojo
     /** Javadoc Separator i.e. <code> &#42; </code> **/
     private static final String SEPARATOR_JAVADOC = " * ";
 
-    /** Inherited Javadoc i.e. <code>&#47;&#42;&#42;{&#64;inheritDoc}&#42;&#47;</code> **/
+    /** Inherited Javadoc i.e. <code>&#47;&#42;&#42; {&#64;inheritDoc} &#42;&#47;</code> **/
     private static final String INHERITED_JAVADOC = START_JAVADOC + " " + INHERITED_TAG + " " + END_JAVADOC;
 
     /** <code>all</code> parameter used by {@link #fixTags} **/
@@ -1554,7 +1569,10 @@ public abstract class AbstractFixJavadocMojo
                 }
 
                 String javadoc = getJavadocComment( originalContent, javaMethod );
-                if ( StringUtils.removeDuplicateWhitespace( javadoc.trim() ).equals( INHERITED_JAVADOC ) )
+
+                // case: /** {@inheritDoc} */ or no tags
+                if ( Pattern.matches( INHERITED_TAG_PATTERN, StringUtils.removeDuplicateWhitespace( javadoc ) )
+                    && ( javaMethod.getTags() == null || javaMethod.getTags().length == 0 ) )
                 {
                     sb.append( indent ).append( INHERITED_JAVADOC );
                     sb.append( EOL );
@@ -1562,7 +1580,6 @@ public abstract class AbstractFixJavadocMojo
                     return;
                 }
 
-                javadoc = removeLastEmptyJavadocLines( javadoc );
                 if ( javadoc.indexOf( START_JAVADOC ) != -1 )
                 {
                     javadoc = javadoc.substring( javadoc.indexOf( START_JAVADOC ) + START_JAVADOC.length() );
@@ -1571,53 +1588,50 @@ public abstract class AbstractFixJavadocMojo
                 {
                     javadoc = javadoc.substring( 0, javadoc.indexOf( END_JAVADOC ) );
                 }
-                if ( StringUtils.removeDuplicateWhitespace( javadoc.trim() ).equals( "* " + INHERITED_TAG )
-                    && ( javaMethod.getTags() == null || javaMethod.getTags().length == 0 ) )
+
+                sb.append( indent ).append( START_JAVADOC );
+                sb.append( EOL );
+                if ( javadoc.indexOf( INHERITED_TAG ) == -1 )
                 {
-                    sb.append( indent ).append( START_JAVADOC ).append( INHERITED_TAG ).append( END_JAVADOC );
+                    sb.append( indent ).append( SEPARATOR_JAVADOC ).append( INHERITED_TAG );
                     sb.append( EOL );
+                    appendSeparator( sb, indent );
                 }
-                else
+                javadoc = removeLastEmptyJavadocLines( javadoc );
+                javadoc = alignIndentationJavadocLines( javadoc, indent );
+                sb.append( javadoc );
+                sb.append( EOL );
+                if ( javaMethod.getTags() != null )
                 {
-                    sb.append( indent ).append( START_JAVADOC );
-                    sb.append( EOL );
-                    if ( javadoc.indexOf( INHERITED_TAG ) == -1 )
+                    for ( int i = 0; i < javaMethod.getTags().length; i++ )
                     {
-                        sb.append( indent ).append( SEPARATOR_JAVADOC ).append( INHERITED_TAG );
-                        sb.append( EOL );
-                        appendSeparator( sb, indent );
-                    }
-                    String leftTrimmed = trimLeft( javadoc );
-                    if ( leftTrimmed.startsWith( "* " ) )
-                    {
-                        sb.append( indent ).append( " " ).append( leftTrimmed );
-                    }
-                    else
-                    {
-                        sb.append( indent ).append( SEPARATOR_JAVADOC ).append( leftTrimmed );
-                    }
-                    sb.append( EOL );
-                    if ( javaMethod.getTags() != null )
-                    {
-                        for ( int i = 0; i < javaMethod.getTags().length; i++ )
+                        DocletTag docletTag = javaMethod.getTags()[i];
+
+                        // Voluntary ignore these tags
+                        if ( docletTag.getName().equals( PARAM_TAG )
+                            || docletTag.getName().equals( RETURN_TAG )
+                            || docletTag.getName().equals( THROWS_TAG ) )
                         {
-                            DocletTag docletTag = javaMethod.getTags()[i];
-
-                            // Voluntary ignore these tags
-                            if ( docletTag.getName().equals( PARAM_TAG )
-                                || docletTag.getName().equals( RETURN_TAG )
-                                || docletTag.getName().equals( THROWS_TAG ) )
-                            {
-                                continue;
-                            }
-
-                            String s = getJavadocComment( originalContent, entity, docletTag );
-                            sb.append( trimRight( s ) );
-                            sb.append( EOL );
+                            continue;
                         }
+
+                        String s = getJavadocComment( originalContent, entity, docletTag );
+                        s = removeLastEmptyJavadocLines( s );
+                        s = alignIndentationJavadocLines( s, indent );
+                        sb.append( s );
+                        sb.append( EOL );
                     }
-                    sb.append( indent ).append( " " ).append( END_JAVADOC );
+                }
+                sb.append( indent ).append( " " ).append( END_JAVADOC );
+                sb.append( EOL );
+
+                if ( Pattern.matches( INHERITED_TAG_PATTERN, StringUtils.removeDuplicateWhitespace( sb.toString().trim() ) ) )
+                {
+                    sb = new StringBuffer();
+                    sb.append( indent ).append( INHERITED_JAVADOC );
                     sb.append( EOL );
+                    stringWriter.write( sb.toString() );
+                    return;
                 }
 
                 stringWriter.write( sb.toString() );
@@ -1667,6 +1681,7 @@ public abstract class AbstractFixJavadocMojo
     {
         String comment = getJavadocComment( originalContent, entity );
         comment = removeLastEmptyJavadocLines( comment );
+        comment = alignIndentationJavadocLines( comment, indent );
 
         if ( comment.indexOf( START_JAVADOC ) != -1 )
         {
@@ -1724,7 +1739,7 @@ public abstract class AbstractFixJavadocMojo
         appendSeparator( sb, indent );
 
         // parse tags
-        JavaEntityTags javaEntityTags = parseJavadocTags( originalContent, entity, isJavaMethod );
+        JavaEntityTags javaEntityTags = parseJavadocTags( originalContent, entity, indent, isJavaMethod );
 
         // update and write tags
         updateJavadocTags( sb, entity, isJavaMethod, javaEntityTags );
@@ -1738,12 +1753,14 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param originalContent not null
      * @param entity not null
+     * @param indent not null
      * @param isJavaMethod
      * @return an instance of {@link JavaEntityTags}
      * @throws IOException if any
      */
     private JavaEntityTags parseJavadocTags( final String originalContent,
-                                             final AbstractInheritableJavaEntity entity, final boolean isJavaMethod )
+                                             final AbstractInheritableJavaEntity entity, final String indent,
+                                             final boolean isJavaMethod )
         throws IOException
     {
         JavaEntityTags javaEntityTags = new JavaEntityTags( entity, isJavaMethod );
@@ -1753,6 +1770,7 @@ public abstract class AbstractFixJavadocMojo
 
             String originalJavadocTag = getJavadocComment( originalContent, entity, docletTag );
             originalJavadocTag = removeLastEmptyJavadocLines( originalJavadocTag );
+            originalJavadocTag = alignIndentationJavadocLines( originalJavadocTag, indent );
 
             javaEntityTags.getNamesTags().add( docletTag.getName() );
 
@@ -2858,6 +2876,27 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
+     * @param javaFile not null
+     * @param encoding not null
+     * @param content not null
+     * @throws IOException if any
+     */
+    private static void writeFile( File javaFile, String encoding, String content )
+        throws IOException
+    {
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newWriter( javaFile, encoding );
+            writer.write( content );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+    }
+
+    /**
      * @return the maven home defined in the "maven.home" system property or defined in M2_HOME system env variables
      * or null if never setted.
      */
@@ -2877,27 +2916,6 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return mavenHome;
-    }
-
-    /**
-     * @param javaFile not null
-     * @param encoding not null
-     * @param content not null
-     * @throws IOException if any
-     */
-    private static void writeFile( File javaFile, String encoding, String content )
-        throws IOException
-    {
-        Writer writer = null;
-        try
-        {
-            writer = WriterFactory.newWriter( javaFile, encoding );
-            writer.write( content );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
     }
 
     /**
@@ -3000,6 +3018,15 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String originalJavadoc = extractOriginalJavadoc( javaClassContent, entity );
+        if ( originalJavadoc.indexOf( START_JAVADOC ) != -1 )
+        {
+            originalJavadoc =
+                trimLeft( originalJavadoc.substring( originalJavadoc.indexOf( START_JAVADOC ) + START_JAVADOC.length() ) );
+        }
+        if ( originalJavadoc.indexOf( END_JAVADOC ) != -1 )
+        {
+            originalJavadoc = trimRight( originalJavadoc.substring( 0, originalJavadoc.indexOf( END_JAVADOC ) ) );
+        }
         String[] originalJavadocLines = getLines( originalJavadoc );
 
         if ( originalJavadocLines.length == 1 )
@@ -3009,22 +3036,6 @@ public abstract class AbstractFixJavadocMojo
 
         List originalJavadocLinesAsList = new LinkedList();
         originalJavadocLinesAsList.addAll( Arrays.asList( originalJavadocLines ) );
-
-        Collections.reverse( originalJavadocLinesAsList );
-
-        for ( Iterator it = originalJavadocLinesAsList.iterator(); it.hasNext(); )
-        {
-            String line = (String) it.next();
-
-            if ( line.endsWith( END_JAVADOC ) )
-            {
-                break;
-            }
-
-            it.remove();
-        }
-
-        Collections.reverse( originalJavadocLinesAsList );
 
         boolean toremove = false;
         for ( Iterator it = originalJavadocLinesAsList.iterator(); it.hasNext(); )
@@ -3037,28 +3048,7 @@ public abstract class AbstractFixJavadocMojo
                 continue;
             }
 
-            if ( line.trim().equals( START_JAVADOC ) )
-            {
-                it.remove();
-                continue;
-            }
-            if ( line.trim().equals( END_JAVADOC ) )
-            {
-                it.remove();
-                break;
-            }
-
-            if ( line.indexOf( START_JAVADOC ) != -1 )
-            {
-                line = line.substring( line.indexOf( START_JAVADOC ) + START_JAVADOC.length() );
-            }
-            if ( line.indexOf( END_JAVADOC ) != -1 )
-            {
-                line = line.substring( 0, line.indexOf( END_JAVADOC ) );
-            }
-
-            Matcher matcher = JAVADOC_TAG_LINE_PATTERN.matcher( line );
-            if ( matcher.find() )
+            if ( Pattern.matches( JAVADOC_TAG_LINE_PATTERN, line ) )
             {
                 it.remove();
                 toremove = true;
@@ -3119,7 +3109,7 @@ public abstract class AbstractFixJavadocMojo
         {
             String originalJavadocLine = originalJavadocLines[i];
 
-            if ( JAVADOC_TAG_LINE_PATTERN.matcher( originalJavadocLine ).find() )
+            if ( Pattern.matches( JAVADOC_TAG_LINE_PATTERN, originalJavadocLine ) )
             {
                 if ( start != 0 )
                 {
@@ -3137,13 +3127,16 @@ public abstract class AbstractFixJavadocMojo
 
         for ( int i = start; i < end; i++ )
         {
-            String originalJavadocLine = originalJavadocLines[i];
+            String originalJavadocLine = trimRight( originalJavadocLines[i] );
 
             sb.append( originalJavadocLine );
-            sb.append( EOL );
+            if ( i < end - 1 )
+            {
+                sb.append( EOL );
+            }
         }
 
-        return trimRight( sb.toString() );
+        return sb.toString();
     }
 
     /**
@@ -3184,6 +3177,7 @@ public abstract class AbstractFixJavadocMojo
      * @param content not null
      * @return the content without javadoc separator (ie <code> * </code>)
      * @throws IOException if any
+     * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
      */
     private static String removeLastEmptyJavadocLines( String content )
         throws IOException
@@ -3221,6 +3215,30 @@ public abstract class AbstractFixJavadocMojo
         Collections.reverse( linesList );
 
         return StringUtils.join( linesList.iterator(), EOL );
+    }
+
+    /**
+     * @param content not null
+     * @return the javadoc comment with the given indentation
+     * @throws IOException if any
+     * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
+     */
+    private static String alignIndentationJavadocLines( String content, String indent )
+        throws IOException
+    {
+        String[] lines = getLines( content );
+
+        StringBuffer sb = new StringBuffer();
+        for ( int i = 0; i < lines.length; i++ )
+        {
+            sb.append( indent ).append( " " ).append( lines[i].trim() );
+            if ( i < lines.length - 1 )
+            {
+                sb.append( EOL );
+            }
+        }
+
+        return sb.toString();
     }
 
     /**

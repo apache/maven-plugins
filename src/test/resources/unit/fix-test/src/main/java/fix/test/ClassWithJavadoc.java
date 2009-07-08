@@ -20,21 +20,16 @@ package fix.test;
  */
 
 /**
- * Some Javadoc.
+ * To add default class tags.
  */
 public class ClassWithJavadoc
+    implements InterfaceWithJavadoc
 {
-    public static final String MY_STRING_CONSTANT = "value";
-
-    public static final int MY_INT_CONSTANT = 1;
-
-    public static final String EOL = System.getProperty( "line.separator" );
-
-    private static final String MY_PRIVATE_CONSTANT = "";
-
+    /**
+     * Constructor comment.
+     */
     public ClassWithJavadoc()
     {
-        // nop
     }
 
     /**
@@ -42,15 +37,14 @@ public class ClassWithJavadoc
      *
      * @param args      an array of strings that contains the arguments
      */
-    public static void main( String[] args )
+    public void spacesInJavadocTags( String[] args )
     {
-        System.out.println( "Sample Application." );
     }
 
     /**
      * @param str
      */
-    public String methodWithMissingParameters( String str, boolean b, int i )
+    public String missingJavadocTags( String str, boolean b, int i )
     {
         return null;
     }
@@ -59,7 +53,7 @@ public class ClassWithJavadoc
      * @param str
      * @throws UnsupportedOperationException if any
      */
-    public String methodWithMissingParameters2( String str, boolean b, int i )
+    public String missingJavadocTags2( String str, boolean b, int i )
         throws UnsupportedOperationException
     {
         return null;
@@ -68,7 +62,7 @@ public class ClassWithJavadoc
     /**
      * @param str
      */
-    public void methodWithWrongJavadocParameters( String aString )
+    public void wrongJavadocTag( String aString )
     {
     }
 
@@ -85,18 +79,103 @@ public class ClassWithJavadoc
      * @throws UnsupportedOperationException
      *      if any
      */
-    public String methodWithMultiLinesJavadoc( String aString, String anotherString )
+    public String multiLinesJavadocTags( String aString, String anotherString )
         throws UnsupportedOperationException
     {
         return null;
     }
 
-    /**
-     * methodWithMultiLinesJavadoc2
-     * @return
-     */
-    protected String methodWithMultiLinesJavadoc2()
+        /**
+         * To take care of the Javadoc indentation.
+         *
+         * @param aString a
+         *      String
+         *
+         * @return dummy
+         *      value
+         */
+    public String wrongJavadocIndentation( String aString )
     {
-      return null;
+        return null;
+    }
+
+    // one single comment
+    /**
+     * To take care of single comments.
+     */
+    // other single comment
+    public String singleComments( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Inheritance
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
+    public void method1( String aString )
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * specific comment
+     */
+    public void method2( String aString )
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param aString not
+     *      used
+     */
+    public String method3( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * @param aString not
+     *      used
+     */
+    public String method4( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * Specific comment
+     *
+     * @param aString not
+     *      used
+     */
+    public String method5( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Inner classes
+    // ----------------------------------------------------------------------
+
+    /**
+     * No javadoc for inner class.
+     */
+    public class InnerClass
+    {
+        /**
+         * constructor
+         */
+        public InnerClass()
+        {
+        }
+
+        public void nothing()
+        {
+        }
     }
 }

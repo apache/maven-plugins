@@ -20,15 +20,40 @@ package fix.test;
  */
 
 /**
- * Some Javadoc.
+ * To add default interface tags.
  */
 public interface InterfaceWithJavadoc
 {
-    /** comment */
+    /** default comment */
     String MY_STRING_CONSTANT = "value";
 
     /**
-     * My method
+     * To add default method tags.
      */
-    public void method( String aString );
+    public void method1( String aString );
+
+    /**
+     * To take care of identifier.
+     */
+    void method2( String aString );
+
+    // one single comment
+    /**
+     * To take care of single comments.
+     *
+     * @param aString a string
+     * @return null
+     */
+    // other single comment
+    public String method3( String aString );
+
+    /**
+     * Nothing.
+     */
+    public String method4( String aString );
+
+    /**
+     * Nothing.
+     */
+    public String method5( String aString );
 }
