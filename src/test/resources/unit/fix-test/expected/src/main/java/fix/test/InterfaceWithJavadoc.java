@@ -22,7 +22,7 @@ package fix.test;
 /**
  * To add default interface tags.
  *
- * @author Administrator
+ * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
  * @since 1.0
  */

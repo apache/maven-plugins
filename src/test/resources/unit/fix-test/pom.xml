@@ -53,6 +53,7 @@
           <ignoreClirr>true</ignoreClirr>
           <includes>**/*.java</includes>
           <level>protected</level>
+          <defaultAuthor><![CDATA[<a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>]]></defaultAuthor>
         </configuration>
       </plugin>
     </plugins>
