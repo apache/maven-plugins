@@ -19,22 +19,55 @@ package fix.test;
  * under the License.
  */
 
+import java.util.Map;
+
 public class ClassWithNoJavadoc
 {
+    public static final String MY_STRING_CONSTANT = "value";
+
+    public static final String MY_STRING_CONSTANT2 = "default" + " value";
+
+    public static final int MY_INT_CONSTANT = 1;
+
+    public static final String EOL = System.getProperty( "line.separator" );
+
+    // take care of identifier
+    private static final String MY_PRIVATE_STRING_CONSTANT = "";
+
     // QDOX-155
     public static final char SEPARATOR = ',';
 
     // QDOX-156
-    // TODO: blabla
     public static final String TEST1 = "test1";
 
-    public static void main( String[] args )
+    public ClassWithNoJavadoc()
     {
-        System.out.println( "Sample Application." );
     }
 
-    private void sampleMethod( String str )
+    // take care of primitive
+    public void missingJavadocTagsForPrimitives( int i, byte b, float f, char c, short s, long l, double d, boolean bb )
     {
-        System.out.println( str );
+    }
+
+    // take care of object
+    public void missingJavadocTagsForObjects( String s, Map m )
+    {
+    }
+
+    // no Javadoc needed
+    private void privateMethod( String str )
+    {
+    }
+
+    //No javadoc for inner class.
+    public class InnerClass
+    {
+        public InnerClass()
+        {
+        }
+
+        public void nothing()
+        {
+        }
     }
 }
