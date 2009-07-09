@@ -29,12 +29,12 @@
 
 Usage
 
- The following examples describe the basic usage of the Checkstyle plugin.
+ The following examples describe the basic usage of the Checkstyle Plugin.
 
 * Generate Checkstyle Report As Part of the Project Reports
 
   To generate the Checkstyle report as part of the Project Reports, add the
-  Checkstyle plugin in the <<<\<reporting\>>>> section
+  Checkstyle Plugin in the <<<\<reporting\>>>> section
   of your <<<pom.xml>>>.
 
 +-----+
@@ -45,6 +45,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
@@ -52,7 +53,7 @@ Usage
 </project>
 +-----+
 
-  Then, execute the site plugin to generate the report.
+  Then, execute the site phase to generate the report.
 
 +-----+
 mvn site
@@ -61,14 +62,14 @@ mvn site
 * Generate Checkstyle Report As Standalone
 
   You can also generate the Checkstyle report by explicitly executing the <<<checkstyle:checkstyle>>> goal from the
-  command line. It is not required to specify the Checkstyle plugin in your
+  command line. It is not required to specify the Checkstyle Plugin in your
   <<<pom.xml>>> unless you want to use a specific configuration.
 
 +-----+
 mvn checkstyle:checkstyle
 +-----+
 
- To specifically configure the Checkstyle plugin, you need to the add it in the
+ To specifically configure the Checkstyle Plugin, you need to the add it in the
  <<<\<build\>>>> section of your <<<pom.xml>>> as
  shown in the sample below.
 
@@ -80,6 +81,7 @@ mvn checkstyle:checkstyle
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <enableRulesSummary>false</enableRulesSummary>
            ...

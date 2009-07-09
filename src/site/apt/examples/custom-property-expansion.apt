@@ -54,7 +54,7 @@ Using Custom Checkstyle Property Expansion Definitions
 </module>
 +-----+
 
-  Example: <<<pom.xml>>> - Specifies the <<projectname>> property expansion that Checkstyle will use when
+  Example: <<<pom.xml>>> - Specifies the <<<projectname>>> property expansion that Checkstyle will use when
   encountering such a variable in the above Checker configuration.
 
 +-----+
@@ -65,6 +65,7 @@ Using Custom Checkstyle Property Expansion Definitions
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <propertyExpansion>projectname=whizbang</propertyExpansion>
@@ -87,6 +88,7 @@ Using Custom Checkstyle Property Expansion Definitions
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <propertesLocation>${basedir}/checkstyle.properties</propertiesLocation>
