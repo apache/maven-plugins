@@ -29,6 +29,7 @@ import java.util.Map;
  * @since 1.0
  */
 public class ClassWithNoJavadoc
+    implements InterfaceWithNoJavadoc
 {
     /** Constant <code>MY_STRING_CONSTANT="value"</code> */
     public static final String MY_STRING_CONSTANT = "value";
@@ -57,6 +58,15 @@ public class ClassWithNoJavadoc
      * <p>Constructor for ClassWithNoJavadoc.</p>
      */
     public ClassWithNoJavadoc()
+    {
+    }
+
+    /**
+     * <p>Constructor for ClassWithNoJavadoc.</p>
+     *
+     * @param aString a {@link java.lang.String} object.
+     */
+    public ClassWithNoJavadoc( String aString )
     {
     }
 
@@ -92,6 +102,25 @@ public class ClassWithNoJavadoc
     private void privateMethod( String str )
     {
     }
+
+    // ----------------------------------------------------------------------
+    // Inheritance
+    // ----------------------------------------------------------------------
+
+    /** {@inheritDoc} */
+    public void missingJavadoc( String aString )
+    {
+    }
+
+    // take care of identifier
+    /** {@inheritDoc} */
+    public void missingJavadoc2( String aString )
+    {
+    }
+
+    // ----------------------------------------------------------------------
+    // Inner classes
+    // ----------------------------------------------------------------------
 
     //No javadoc for inner class.
     public class InnerClass
