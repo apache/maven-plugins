@@ -22,6 +22,7 @@ package fix.test;
 import java.util.Map;
 
 public class ClassWithNoJavadoc
+    implements InterfaceWithNoJavadoc
 {
     public static final String MY_STRING_CONSTANT = "value";
 
@@ -44,6 +45,10 @@ public class ClassWithNoJavadoc
     {
     }
 
+    public ClassWithNoJavadoc( String aString )
+    {
+    }
+
     // take care of primitive
     public void missingJavadocTagsForPrimitives( int i, byte b, float f, char c, short s, long l, double d, boolean bb )
     {
@@ -58,6 +63,23 @@ public class ClassWithNoJavadoc
     private void privateMethod( String str )
     {
     }
+
+    // ----------------------------------------------------------------------
+    // Inheritance
+    // ----------------------------------------------------------------------
+
+    public void missingJavadoc( String aString )
+    {
+    }
+
+    // take care of identifier
+    public void missingJavadoc2( String aString )
+    {
+    }
+
+    // ----------------------------------------------------------------------
+    // Inner classes
+    // ----------------------------------------------------------------------
 
     //No javadoc for inner class.
     public class InnerClass
