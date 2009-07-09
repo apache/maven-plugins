@@ -25,8 +25,8 @@ under the License.
       <question>How are the Checkstyle properties set?</question>
       <answer>
         <p>
-          You can set the Checkstyle properties to be used in the plugin configuration of your pom through the
-          <strong>propertiesLocation</strong> parameter. The properties file will be resolved by the plugin based
+          You can set the Checkstyle properties to be used in the plugin configuration of your POM through the
+          <code>propertiesLocation</code> parameter. The properties file will be resolved by the plugin based
           on its value.
         </p>
       </answer>
@@ -35,7 +35,7 @@ under the License.
       <question>How do I set a custom ruleset?</question>
       <answer>
         <p>
-          You can set a custom ruleset through the <strong>configLocation</strong> plugin parameter. If no value is
+          You can set a custom ruleset through the <code>configLocation</code> plugin parameter. If no value is
           specified, the plugin will use a default ruleset, which is the <code>sun_checks.xml</code>, that is bundled with the
           plugin.
         </p>
@@ -46,7 +46,7 @@ under the License.
       <answer>
         <p>
           You can include the test directory in the Checkstyle report by setting the
-          <strong>includeTestSourceDirectory</strong> plugin parameter to <strong>true</strong>.
+          <code>includeTestSourceDirectory</code> plugin parameter to <code>true</code>.
         </p>
       </answer>
     </faq>
