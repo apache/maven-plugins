@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -612,8 +611,7 @@ public class JavadocReportTest
         {
             getContainer().getLogger().warn(
                                              "JDK 5.0 or more is required to run javadoc for '"
-                                                 + ClassUtils.getPackageName( getClass() ) + "#" + getName()
-                                                 + "()'." );
+                                                 + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
@@ -847,8 +845,7 @@ public class JavadocReportTest
         {
             getContainer().getLogger().warn(
                                              "JDK 6.0 or more is required to run javadoc for '"
-                                                 + ClassUtils.getPackageName( getClass() ) + "#" + getName()
-                                                 + "()'." );
+                                                 + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
