@@ -90,13 +90,12 @@ public class CheckstyleViolationCheckMojo
     private boolean skip;
 
     /**
-     * Ouput detected violations in the console
+     * Output the detected violations to the console.
      *
      * @parameter expression="${checkstyle.console}" default-value="false"
      * @since 2.3
      */
     private boolean logViolationsToConsole;
-
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
