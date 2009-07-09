@@ -29,7 +29,7 @@ Using Custom Developed Checkstyle Checks
 
  We will guide you through creating a Maven project that produces a jar file of
  your custom checks. Then we'll include it in one of your projects by adding it
- as a dependency to the Checkstyle plugin.
+ as a dependency to the Checkstyle Plugin.
 
  The plugin also provides the ability to define the
  {{{http://checkstyle.sourceforge.net/config.html#Packages}package names XML document}}
@@ -75,7 +75,7 @@ mycompany-checkstyle-checks
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>4.3</version>
+      <version>4.4</version>
     </dependency>
   </dependencies>
 </project>
@@ -154,7 +154,7 @@ public class MethodLimitCheck extends Check
 +-----+
 
 
-* Building a jar for your custom checks project
+* Building a JAR for your custom checks project
 
  To be able to use your custom checks in other projects, you need to package
  and install them. To do that, just run this on the command line:
@@ -163,10 +163,10 @@ public class MethodLimitCheck extends Check
 mvn install
 +-----+
 
- This produces a jar file with the following contents and installs it into your
+ This produces a JAR file with the following contents and installs it into your
  local repository.
 
-** <<<mycompany-checkstyle-checks-1.0.jar>>>.
+** <<<mycompany-checkstyle-checks-1.0.jar>>>
 
 +-----+
 mycompany-checkstyle-checks-1.0.jar
@@ -213,14 +213,14 @@ mycompany-checkstyle-checks-1.0.jar
 </module>
 +-----+
 
-** Configure the Checkstyle plugin to use your custom checks
+** Configure the Checkstyle Plugin to use your custom checks
 
  Finally we need to tell the other project that you want it to use your custom
  Checkstyle checks. In the <<<pom.xml>>> of that project, add the following
  configuration.
 
  <<Note:>> You have to specify a plugin dependency on
- <mycompany-checkstyle-checks> in the <<<\<build\>>>> element of your
+ <<<mycompany-checkstyle-checks>>> in the <<<\<build\>>>> element of your
  <<<pom.xml>>>. It will not work inside the <<<\<reporting\>>>> element,
  because <<<\<reporting\>>>> does not support plugin dependencies. The rest of
  the configuration is done in the normal way in the <<<\<reporting\>>>>
@@ -234,6 +234,7 @@ mycompany-checkstyle-checks-1.0.jar
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <dependencies>
           <dependency>
             <groupId>com.mycompany</groupId>
@@ -249,6 +250,7 @@ mycompany-checkstyle-checks-1.0.jar
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <packageNamesLocation>com/mycompany/checks/packagenames.xml</packageNamesLocation>

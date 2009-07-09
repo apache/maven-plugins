@@ -30,7 +30,7 @@ Using a Custom Checkstyle Checker Configuration
   A custom {{{http://checkstyle.sourceforge.net/config.html#Checker}Checker configuration xml file}} can
   be defined and then referenced via a URL, File, or build classpath resource reference.
 
-  To reference a custom Checkstyle Checker configuration, use the <<configLocation>> parameter.
+  To reference a custom Checkstyle Checker configuration, use the <<<configLocation>>> parameter.
 
 +-----+
 <project>
@@ -40,6 +40,7 @@ Using a Custom Checkstyle Checker Configuration
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
         </configuration>
@@ -50,11 +51,11 @@ Using a Custom Checkstyle Checker Configuration
 </project>
 +-----+
 
-  This example causes the Checkstyle plugin to check for a File named <<<checkstyle.xml>>> or a
+  This example causes the Checkstyle Plugin to check for a File named <<<checkstyle.xml>>> or a
   resource named <<<checkstyle.xml>>> within the compile scope of the dependencies or build extensions
   classpath.
 
-  There are 4 predefined Checkstyle configuration definitions that ship with the Checkstyle plugin,
+  There are 4 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
   the Sun Microsystems Definition is selected by default.
 
   * <<config/sun_checks.xml>> - Sun Microsystems Definition (default).
