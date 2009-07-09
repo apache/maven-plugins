@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -53,29 +54,14 @@ public class FixJavadocMojoTest
     /** The M2_HOME env variable */
     private static final File M2_HOME;
 
+    /** The M2_HOME env variable */
+    private static final File JAVA_HOME;
+
     static
     {
-        String mavenHome = System.getProperty( "maven.home" );
+        M2_HOME = getM2Home();
 
-        if ( mavenHome == null )
-        {
-            try
-            {
-                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
-            }
-            catch ( IOException e )
-            {
-                // nop
-            }
-        }
-
-        if ( mavenHome == null )
-        {
-            fail( "Cannot find Maven application "
-                + "directory. Either specify \'maven.home\' system property, or M2_HOME environment variable." );
-        }
-
-        M2_HOME = new File( mavenHome );
+        JAVA_HOME = getJavaHome();
     }
 
     /**
@@ -86,6 +72,59 @@ public class FixJavadocMojoTest
     {
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-test" );
 
+        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
+            "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java" } );
+    }
+
+    /**
+     * @throws Exception if any
+     */
+    public void testFixJdk5()
+        throws Exception
+    {
+        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
+        {
+            getContainer().getLogger().warn(
+                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
+                                                 + "#" + getName() + "()'." );
+            return;
+        }
+
+        File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk5-test" );
+        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
+            "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java", "SubClassWithJavadoc.java" } );
+    }
+
+    /**
+     * @throws Exception if any
+     */
+    public void testFixJdk6()
+        throws Exception
+    {
+        if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
+        {
+            getContainer().getLogger().warn(
+                                             "JDK 6.0 or more is required to run fix for '" + getClass().getName()
+                                                 + "#" + getName() + "()'." );
+            return;
+        }
+
+        File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk6-test" );
+        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "InterfaceWithJavadoc.java" } );
+    }
+
+    // ----------------------------------------------------------------------
+    // private methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @param testPomBasedir the basedir for the test project
+     * @param clazzToCompare an array of the classes name to compare
+     * @throws Exception if any
+     */
+    private void executeMojoAndTest( File testPomBasedir, String[] clazzToCompare )
+        throws Exception
+    {
         prepareTestProjects( testPomBasedir.getName() );
 
         File testPom = new File( testPomBasedir, "pom.xml" );
@@ -99,41 +138,17 @@ public class FixJavadocMojoTest
         assertNotNull( mojo );
         mojo.execute();
 
-        File expectedDir =  new File( testPomBasedir, "expected/src/main/java/fix/test" );
+        File expectedDir = new File( testPomBasedir, "expected/src/main/java/fix/test" );
         assertTrue( expectedDir.exists() );
 
         File generatedDir = new File( testPomBasedir, "target/generated/fix/test" );
         assertTrue( generatedDir.exists() );
 
-        String className = "ClassWithJavadoc.java";
-        assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
-
-        className = "ClassWithNoJavadoc.java";
-        assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
-
-        className = "InterfaceWithJavadoc.java";
-        assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
-
-        className = "InterfaceWithNoJavadoc.java";
-        assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
-    }
-
-    /**
-     * Asserts that files are equal. If they are not an AssertionFailedError is thrown.
-     *
-     * @throws IOException if any
-     */
-    private static void assertEquals( File expected, File actual )
-        throws IOException
-    {
-        assertTrue( expected.exists() );
-        String expectedContent = StringUtils.unifyLineSeparators( readFile( expected ) );
-
-        assertTrue( actual.exists() );
-        String actualContent = StringUtils.unifyLineSeparators( readFile( actual ) );
-
-        assertEquals( "Expected file: " + expected.getAbsolutePath() + ", actual file: "
-            + actual.getAbsolutePath(), expectedContent, actualContent );
+        for ( int i = 0; i < clazzToCompare.length; i++ )
+        {
+            String className = clazzToCompare[i];
+            assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
+        }
     }
 
     /**
@@ -146,14 +161,19 @@ public class FixJavadocMojoTest
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome( M2_HOME );
 
+        ByteArrayOutputStream invokerLog = new ByteArrayOutputStream();
+        InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( invokerLog ), false );
+
+        outputHandler.consumeLine( "Invoke Maven" );
+        outputHandler.consumeLine( "M2_HOME=" + M2_HOME );
+        outputHandler.consumeLine( "JAVA_HOME=" + JAVA_HOME );
+
         InvocationRequest request = new DefaultInvocationRequest();
         request.setBaseDirectory( testPom.getParentFile() );
         request.setPomFile( testPom );
-
-        ByteArrayOutputStream invokerLog = new ByteArrayOutputStream();
-        InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( invokerLog ), false );
         request.setOutputHandler( outputHandler );
         request.setDebug( true );
+        request.setJavaHome( JAVA_HOME );
         request.setMavenOpts( "-Xms256m -Xmx256m" );
 
         List goals = new ArrayList();
@@ -188,17 +208,117 @@ public class FixJavadocMojoTest
         }
     }
 
+    // ----------------------------------------------------------------------
+    // static methods
+    // ----------------------------------------------------------------------
+
     /**
-     * @param testDir not null
+     * Try to find the M2_HOME from System.getProperty( "maven.home" ) or M2_HOME env variable.
+     *
+     * @return the M2Home file
+     */
+    private static File getM2Home()
+    {
+        String mavenHome = System.getProperty( "maven.home" );
+
+        if ( mavenHome == null )
+        {
+            try
+            {
+                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
+            }
+            catch ( IOException e )
+            {
+                // nop
+            }
+        }
+
+        if ( mavenHome == null )
+        {
+            fail( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
+                + "M2_HOME environment variable." );
+        }
+
+        File m2Home = new File( mavenHome );
+        if ( !m2Home.exists() )
+        {
+            fail( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
+                + "M2_HOME environment variable." );
+        }
+
+        return m2Home;
+    }
+
+    /**
+     * Try to find the JAVA_HOME from System.getProperty( "java.home" )
+     * By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME should be in the JDK_HOME
+     *
+     * @return the JavaHome file
+     */
+    private static File getJavaHome()
+    {
+        File javaHome;
+        if ( SystemUtils.IS_OS_MAC_OSX )
+        {
+            javaHome = SystemUtils.getJavaHome();
+        }
+        else
+        {
+            javaHome = new File( SystemUtils.getJavaHome(), ".." );
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            try
+            {
+                javaHome = new File( CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_HOME" ) );
+            }
+            catch ( IOException e )
+            {
+                // nop
+            }
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            fail( "Cannot find Java application directory. Either specify \'java.home\' system property, or "
+                + "JAVA_HOME environment variable." );
+        }
+
+        return javaHome;
+    }
+
+    /**
+     * Asserts that files are equal. If they are not an AssertionFailedError is thrown.
+     *
      * @throws IOException if any
      */
-    private static void prepareTestProjects( String testDir )
+    private static void assertEquals( File expected, File actual )
         throws IOException
     {
-        File testPomBasedir = new File( getBasedir(), "target/test/unit/" + testDir );
+        assertTrue( expected.exists() );
+        String expectedContent = StringUtils.unifyLineSeparators( readFile( expected ) );
+
+        assertTrue( actual.exists() );
+        String actualContent = StringUtils.unifyLineSeparators( readFile( actual ) );
+
+        assertEquals( "Expected file: " + expected.getAbsolutePath() + ", actual file: "
+            + actual.getAbsolutePath(), expectedContent, actualContent );
+    }
+
+    /**
+     * @param testProjectDirName not null
+     * @throws IOException if any
+     */
+    private static void prepareTestProjects( String testProjectDirName )
+        throws IOException
+    {
+        File testPomBasedir = new File( getBasedir(), "target/test/unit/" + testProjectDirName );
 
         // Using unit test dir
-        FileUtils.copyDirectoryStructure( new File( getBasedir(), "src/test/resources/unit/" + testDir ),
+        FileUtils
+                 .copyDirectoryStructure(
+                                          new File( getBasedir(), "src/test/resources/unit/" + testProjectDirName ),
                                           testPomBasedir );
         List scmFiles = FileUtils.getDirectoryNames( testPomBasedir, "**/.svn", null, true );
         for ( Iterator it = scmFiles.iterator(); it.hasNext(); )

@@ -205,8 +205,8 @@ public abstract class AbstractJavadocMojo
     private MavenProjectBuilder mavenProjectBuilder;
 
     /** @component */
-    private ToolchainManager toolchainManager; 
-    
+    private ToolchainManager toolchainManager;
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
@@ -332,7 +332,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
-     * 
+     *
      * @parameter expression="${aggregate}" default-value="false"
      * @deprecated As of version 2.5, use the goals <code>javadoc:aggregate</code> and
      *             <code>javadoc:test-aggregate</code> instead.
