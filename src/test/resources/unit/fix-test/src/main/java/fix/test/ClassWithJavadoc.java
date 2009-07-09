@@ -33,7 +33,14 @@ public class ClassWithJavadoc
     }
 
     /**
-     * The main method
+     * @param aString
+     */
+    public ClassWithJavadoc( String aString )
+    {
+    }
+
+    /**
+     * Spaces in tags.
      *
      * @param args      an array of strings that contains the arguments
      */

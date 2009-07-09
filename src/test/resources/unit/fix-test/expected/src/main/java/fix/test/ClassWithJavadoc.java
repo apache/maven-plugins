@@ -37,7 +37,16 @@ public class ClassWithJavadoc
     }
 
     /**
-     * The main method
+     * <p>Constructor for ClassWithJavadoc.</p>
+     *
+     * @param aString a {@link java.lang.String} object.
+     */
+    public ClassWithJavadoc( String aString )
+    {
+    }
+
+    /**
+     * Spaces in tags.
      *
      * @param args      an array of strings that contains the arguments
      */
