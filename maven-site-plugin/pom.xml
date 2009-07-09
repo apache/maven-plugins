@@ -418,7 +418,7 @@ under the License.
                 <phase>package</phase>
                 <configuration>
                   <descriptors>
-                   <descriptor>src/assembly/source-release.xml</descriptor>
+                   <descriptor>src/main/assembly/source-release.xml</descriptor>
                   </descriptors>
                   <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
