@@ -2537,6 +2537,7 @@ public abstract class AbstractFixJavadocMojo
      * @param methods not null
      * @param javaMethod not null
      * @return <code>true</code> if the javaMethod exists in methods.
+     * @see #isInherited(JavaMethod)
      */
     private boolean isInherited( Method[] methods, JavaMethod javaMethod )
     {
@@ -2550,6 +2551,7 @@ public abstract class AbstractFixJavadocMojo
                 continue;
             }
 
+            // TODO review generic for changes in QDOX 1.9.1
             if ( javaMethod.getParameters() != null )
             {
                 boolean isMaybeGeneric = false;
