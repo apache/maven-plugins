@@ -27,7 +27,7 @@
 
 Multimodule Configuration
 
-  Configuring the Checkstyle plugin for use within large multimodule projects
+  Configuring the Checkstyle Plugin for use within large multimodule projects
   can be done, but it requires a little setup.
 
   This example will use a mysterious project called <whizbang>. This is what
@@ -50,8 +50,8 @@ whizbang
   We'll start by adding another sub project that will house our common
   configuration. Let's call it <build-tools>. In it we put the resources that
   we want to include. In this example, we will add configuration files for the
-  Checkstyle plugin. Configuration files for other plugins, like the PMD
-  plugin, can be included in the same subproject if you like. 
+  Checkstyle Plugin. Configuration files for other plugins, like the PMD
+  plugin, can be included in the same subproject if you like.
 
 +-----+
 whizbang
@@ -78,7 +78,7 @@ whizbang
   Now we can include the Checkstyle configuration in the top level
   <<<pom.xml>>>.
 
-  <<Note:>> You have to specify a plugin dependency on <build-tools> in the
+  <<Note:>> You have to specify a plugin dependency on <<<build-tools>>> in the
   <<<\<build\>>>> element of your <<<pom.xml>>>. It will not work inside the
   <<<\<reporting\>>>> element, because <<<\<reporting\>>>> does not support
   plugin dependencies. The rest of the configuration is done in the normal way
@@ -97,6 +97,7 @@ whizbang
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <dependencies>
           <dependency>
             <groupId>com.example.whizbang</groupId>
@@ -112,6 +113,7 @@ whizbang
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <configLocation>whizbang/checkstyle.xml</configLocation>
           <headerLocation>whizbang/LICENSE.txt</headerLocation>
@@ -129,12 +131,12 @@ whizbang
 +-----+
 
   Once you are done with that, ensure that you do not include
-  maven-checkstyle-plugin in your sub modules, as their definition and
+  the Maven Checkstyle Plugin in your sub modules, as their definition and
   configuration, will override the top level parent pom's definition.
 
-  Based on the Checkstyle plugin configuration above, the values of
+  Based on the Checkstyle Plugin configuration above, the values of
   <<<configLocation>>> and <<<headerLocation>>> will be resolved from the
-  classpath. The <build-tools> jar was included in the classpath when it was
+  classpath. The <build-tools> JAR was included in the classpath when it was
   declared as a dependency to the plugin.
 
   Lastly, kick off a build of the site.
