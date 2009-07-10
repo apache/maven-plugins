@@ -19,22 +19,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd" id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="What is the difference between mvn site and mvn site:site">
       <question>What is the difference between <i>mvn site</i> and <i>mvn site:site</i>?</question>
       <answer>
-        <p>
-          <dl>
-            <dt>mvn site</dt>
-            <dd>
-              Calls the <i>site</i> lifecycle with the associate phases (i.e. pre-site, site, post-site, site-deploy).
-              See <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
-            <dt>mvn site:site</dt>
-            <dd>Calls the <i>site</i> goal from the site plugin.
-              See <a href="site-mojo.html">site:site</a>.</dd>
-          </dl>
-        </p>
+        <dl>
+          <dt>mvn site</dt>
+          <dd>
+            Calls the <i>site</i> lifecycle with the associate phases (i.e. pre-site, site, post-site, site-deploy).
+            See <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
+          <dt>mvn site:site</dt>
+          <dd>Calls the <i>site</i> goal from the site plugin.
+            See <a href="site-mojo.html">site:site</a>.</dd>
+        </dl>
       </answer>
     </faq>
     <faq id="How do I Integrate static (X)HTML pages into my Maven site">
