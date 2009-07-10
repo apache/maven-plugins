@@ -73,13 +73,13 @@ public class CheckstyleViolationCheckMojo
     private boolean failOnViolation;
 
     /**
-     * The number of allowed violations. The execution fails only if the number
-     * of violations is above this limit.
+     * The maximum number of allowed violations. The execution fails only if the
+     * number of violations is above this limit.
      *
-     * @parameter expression="${checkstyle.allowedViolations}" default-value="0"
+     * @parameter expression="${checkstyle.maxAllowedViolations}" default-value="0"
      * @since 2.3
      */
-    private int allowedViolations = 0;
+    private int maxAllowedViolations = 0;
 
     /**
      * The lowest severity level that is considered a violation.
@@ -136,15 +136,15 @@ public class CheckstyleViolationCheckMojo
                 xpp.setInput( breader );
 
                 int violations = countViolations( xpp );
-                if ( violations > allowedViolations )
+                if ( violations > maxAllowedViolations )
                 {
                     if ( failOnViolation )
                     {
                         String msg = "You have " + violations + " Checkstyle violation"
                             + ( ( violations > 1 ) ? "s" : "" ) + ".";
-                        if ( allowedViolations > 0 )
+                        if ( maxAllowedViolations > 0 )
                         {
-                            msg += " The number of allowed violations is " + allowedViolations + ".";
+                            msg += " The maximum number of allowed violations is " + maxAllowedViolations + ".";
                         }
                         throw new MojoFailureException( msg );
                     }
