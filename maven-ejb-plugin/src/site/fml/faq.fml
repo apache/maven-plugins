@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd" id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="How can I specify a Class-Path: entry in the manifest of an EJB jar?">
       <question>How can I specify a Class-Path: entry in the manifest of an EJB JAR?</question>
