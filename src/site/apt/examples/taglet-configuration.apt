@@ -46,6 +46,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           ...
           <taglet>package.to.YourTagletClass</taglet>
@@ -77,6 +78,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           ...
           <taglets>
@@ -122,6 +124,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           ...
           <taglets>
@@ -161,6 +164,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           ...
           <tagletArtifacts>
