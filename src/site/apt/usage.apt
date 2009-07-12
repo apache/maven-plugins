@@ -39,6 +39,7 @@ Usage
       <plugins>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
+        <version>2.2</version>
         <executions>
           <execution>
             <id>test</id>

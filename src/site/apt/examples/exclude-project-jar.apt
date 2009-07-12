@@ -40,6 +40,7 @@ Exclude the project jar in the RAR
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
            <includeJar>false</includeJar>
         </configuration>
