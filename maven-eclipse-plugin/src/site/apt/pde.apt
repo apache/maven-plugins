@@ -31,6 +31,7 @@ Eclipse Plugin Development Environment support
 +-----------------------------------------------------+
       <plugin>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.7</version>
         <configuration>
           <pde>true</pde>
         </configuration>
@@ -88,6 +89,7 @@ Eclipse Plugin Development Environment support
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -107,6 +109,7 @@ Eclipse Plugin Development Environment support
  
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <filesets>
             <fileset>

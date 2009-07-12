@@ -44,6 +44,7 @@ Generating an EJB client
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ejb-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <!-- this is false by default -->
           <generateClient>true</generateClient>
@@ -81,6 +82,7 @@ Generating an EJB client
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ejb-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <clientIncludes>
              <!-- this will include all files and directories under com/foo/bar -->

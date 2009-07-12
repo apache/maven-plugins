@@ -41,6 +41,7 @@ Custom location of the Resource Adapter Descriptor
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
            <raXmlFile>src/resources/ra.xml</raXmlFile>
         </configuration>

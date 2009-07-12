@@ -44,6 +44,7 @@ Using the Linkcheck plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-linkcheck-plugin</artifactId>
+        <version>1.0</version>
       </plugin>
     </plugins>
   </reporting>
@@ -76,6 +77,7 @@ Using the Linkcheck plugin
 ~~     <plugins>
 ~~       <plugin>
 ~~         <artifactId>maven-inkcheck-plugin</artifactId>
+~~         <version>1.0</version>
 ~~         <executions>
 ~~           <execution>
 ~~             <id>site-linkcheck</id>

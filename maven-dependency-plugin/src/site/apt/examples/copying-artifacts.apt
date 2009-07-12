@@ -38,6 +38,7 @@ Copying specific artifacts
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>copy</id>
@@ -86,6 +87,7 @@ Copying specific artifacts
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>copy-installed</id>
@@ -131,6 +133,7 @@ mvn dependency:copy
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <artifactItems>
             <artifactItem>

@@ -50,6 +50,7 @@ Using a Custom Announcement Template
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <template>my-announcement.vm</template>
           <templateDirectory>our-announcements</templateDirectory>

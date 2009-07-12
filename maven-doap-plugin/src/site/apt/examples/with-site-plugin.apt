@@ -46,6 +46,7 @@ Integrated DOAP Plugin With The Site Plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-doap-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
             <id>site</id>

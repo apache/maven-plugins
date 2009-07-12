@@ -45,6 +45,7 @@ mvn idea:idea -DlinkModules=false
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <linkModules>false</linkModules>
         </configuration>

@@ -43,6 +43,7 @@ Binaries filtering
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           ...
           <nonFilteredFileExtensions>
