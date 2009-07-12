@@ -76,7 +76,7 @@ Using the Linkcheck plugin
 ~~   <build>
 ~~     <plugins>
 ~~       <plugin>
-~~         <artifactId>maven-inkcheck-plugin</artifactId>
+~~         <artifactId>maven-linkcheck-plugin</artifactId>
 ~~         <version>1.0</version>
 ~~         <executions>
 ~~           <execution>
