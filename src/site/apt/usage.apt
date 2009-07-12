@@ -22,6 +22,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-verifier-plugin</artifactId>
+        <version>1.0-beta-1</version>
         <configuration>
           <verificationFile>src/test/verifier/verifications-test.xml</verificationFile>
         </configuration>
