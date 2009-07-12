@@ -66,6 +66,7 @@ mvn one:convert
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
+        <version>1.2</version>
         <extensions>true</extensions>
       </plugin>
       ...
@@ -88,6 +89,7 @@ mvn one:convert
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <goals>
@@ -123,6 +125,7 @@ mvn one:convert
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
             <configuration>
