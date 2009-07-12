@@ -22,12 +22,14 @@ package org.apache.maven.plugin.javadoc;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -97,31 +99,6 @@ public abstract class AbstractFixJavadocMojo
 {
     /** The vm line separator */
     private static final String EOL = System.getProperty( "line.separator" );
-
-    /**
-     * Pattern <code>^\\s*\\*\\s*@\\w{1}.*$</code> to find if a Javadoc line contains Javadoc tag
-     * for instance:
-     * <pre>
-     * &#32;&#42; &#64;param X
-     * </pre>
-     */
-    private static final String JAVADOC_TAG_LINE_PATTERN = "^\\s*\\*\\s*@\\w{1}.*$";
-
-    /**
-     * Pattern <code>^\\s*(\\/\\*\\*)?(\\s*(\\*)?)*(\\{)@inheritDoc\\s*(\\})(\\s*(\\*)?)*(\\*\\/)?$</code> to
-     * find if a Javadoc comment contains inherited tag for instance:
-     * <pre>
-     * &#47;&#42;&#42; {&#64;inheritDoc} &#42;&#47;
-     * </pre>
-     * or
-     * <pre>
-     * &#47;&#42;&#42;
-     * &#32;&#42; {&#64;inheritDoc}
-     * &#32;&#42;&#47;
-     * </pre>
-     */
-    private static final String INHERITED_TAG_PATTERN =
-        "^\\s*(\\/\\*\\*)?(\\s*(\\*)?)*(\\{)@inheritDoc\\s*(\\})(\\s*(\\*)?)*(\\*\\/)?$";
 
     /** Tag name for &#64;author **/
     private static final String AUTHOR_TAG = "author";
@@ -669,11 +646,16 @@ public abstract class AbstractFixJavadocMojo
         PrintStream ps;
         try
         {
-            ps = new PrintStream( invokerLogFile );
+            ps = new PrintStream( new FileOutputStream( invokerLogFile ), true, "UTF-8" );
         }
         catch ( FileNotFoundException e )
         {
             getLog().error( "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
+            ps = System.out;
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            getLog().error( "UnsupportedEncodingException: " + e.getMessage() + ". Using System.out to log the invoker." );
             ps = System.out;
         }
 
@@ -1570,7 +1552,7 @@ public abstract class AbstractFixJavadocMojo
                 String javadoc = getJavadocComment( originalContent, javaMethod );
 
                 // case: /** {@inheritDoc} */ or no tags
-                if ( Pattern.matches( INHERITED_TAG_PATTERN, StringUtils.removeDuplicateWhitespace( javadoc ) )
+                if ( hasInheritedTag( javadoc )
                     && ( javaMethod.getTags() == null || javaMethod.getTags().length == 0 ) )
                 {
                     sb.append( indent ).append( INHERITED_JAVADOC );
@@ -1624,7 +1606,7 @@ public abstract class AbstractFixJavadocMojo
                 sb.append( indent ).append( " " ).append( END_JAVADOC );
                 sb.append( EOL );
 
-                if ( Pattern.matches( INHERITED_TAG_PATTERN, StringUtils.removeDuplicateWhitespace( sb.toString().trim() ) ) )
+                if ( hasInheritedTag( sb.toString().trim() ) )
                 {
                     sb = new StringBuffer();
                     sb.append( indent ).append( INHERITED_JAVADOC );
@@ -2858,10 +2840,10 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param javaFile not null
      * @param encoding not null
-     * @return the content of javaFile using the wanted encoding.
+     * @return the content with unified line separator of the given javaFile using the given encoding.
      * @throws IOException if any
      */
-    private static String readFile( File javaFile, String encoding )
+    private static String readFile( final File javaFile, final String encoding )
         throws IOException
     {
         Reader fileReader = null;
@@ -2877,19 +2859,22 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
+     * Write content into the given javaFile and using the given encoding.
+     * All line separators will be unified.
+     *
      * @param javaFile not null
      * @param encoding not null
      * @param content not null
      * @throws IOException if any
      */
-    private static void writeFile( File javaFile, String encoding, String content )
+    private static void writeFile( final File javaFile, final String encoding, final String content )
         throws IOException
     {
         Writer writer = null;
         try
         {
             writer = WriterFactory.newWriter( javaFile, encoding );
-            writer.write( content );
+            writer.write( StringUtils.unifyLineSeparators( content ) );
         }
         finally
         {
@@ -2925,7 +2910,7 @@ public abstract class AbstractFixJavadocMojo
      * @param javaClass not null
      * @return a default comment for class.
      */
-    private static String getDefaultClassJavadocComment( JavaClass javaClass )
+    private static String getDefaultClassJavadocComment( final JavaClass javaClass )
     {
         StringBuffer sb = new StringBuffer();
 
@@ -2957,7 +2942,7 @@ public abstract class AbstractFixJavadocMojo
      * @param javaMethod not null
      * @return a default comment for method.
      */
-    private static String getDefaultMethodJavadocComment( JavaMethod javaMethod )
+    private static String getDefaultMethodJavadocComment( final JavaMethod javaMethod )
     {
         StringBuffer sb = new StringBuffer();
 
@@ -3002,15 +2987,57 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Work around for QDOX-146 about whitespace.
+     * Try to find if a Javadoc comment has an {@link #INHERITED_TAG} for instance:
+     * <pre>
+     * &#47;&#42;&#42; {&#64;inheritDoc} &#42;&#47;
+     * </pre>
+     * or
+     * <pre>
+     * &#47;&#42;&#42;
+     * &#32;&#42; {&#64;inheritDoc}
+     * &#32;&#42;&#47;
+     * </pre>
+     *
+     * @param content not null
+     * @return <code>true</code> if the content has an inherited tag, <code>false</code> otherwise.
+     */
+    private static boolean hasInheritedTag( final String content )
+    {
+        final String inheritedTagPattern =
+            "^\\s*(\\/\\*\\*)?(\\s*(\\*)?)*(\\{)@inheritDoc\\s*(\\})(\\s*(\\*)?)*(\\*\\/)?$";
+        return Pattern.matches( inheritedTagPattern, StringUtils.removeDuplicateWhitespace( content ) );
+    }
+
+    /**
+     * Workaround for QDOX-146 about whitespace.
      * Ideally we want to use <code>entity.getComment()</code>
+     * <br/>
+     * For instance, with the following snippet:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * </code>
+     *
+     * <br/>
+     * The return will be:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * </code>
      *
      * @param javaClassContent original class content not null
      * @param entity not null
      * @return the javadoc comment for the entity without any tags.
      * @throws IOException if any
      */
-    private static String getJavadocComment( String javaClassContent, AbstractJavaEntity entity )
+    private static String getJavadocComment( final String javaClassContent, final AbstractJavaEntity entity )
         throws IOException
     {
         if ( entity.getComment() == null )
@@ -3018,51 +3045,46 @@ public abstract class AbstractFixJavadocMojo
             return "";
         }
 
-        String originalJavadoc = extractOriginalJavadoc( javaClassContent, entity );
-        if ( originalJavadoc.indexOf( START_JAVADOC ) != -1 )
-        {
-            originalJavadoc =
-                trimLeft( originalJavadoc.substring( originalJavadoc.indexOf( START_JAVADOC ) + START_JAVADOC.length() ) );
-        }
-        if ( originalJavadoc.indexOf( END_JAVADOC ) != -1 )
-        {
-            originalJavadoc = trimRight( originalJavadoc.substring( 0, originalJavadoc.indexOf( END_JAVADOC ) ) );
-        }
-        String[] originalJavadocLines = getLines( originalJavadoc );
+        String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
 
-        if ( originalJavadocLines.length == 1 )
+        StringBuffer sb = new StringBuffer();
+        BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
+        String line;
+        while ( ( line = lr.readLine() ) != null )
         {
-            return originalJavadocLines[0];
-        }
-
-        List originalJavadocLinesAsList = new LinkedList();
-        originalJavadocLinesAsList.addAll( Arrays.asList( originalJavadocLines ) );
-
-        boolean toremove = false;
-        for ( Iterator it = originalJavadocLinesAsList.iterator(); it.hasNext(); )
-        {
-            String line = (String) it.next();
-
-            if ( toremove )
+            if ( StringUtils.removeDuplicateWhitespace( line ).startsWith( " * @" ) )
             {
-                it.remove();
-                continue;
+                break;
             }
-
-            if ( Pattern.matches( JAVADOC_TAG_LINE_PATTERN, line ) )
-            {
-                it.remove();
-                toremove = true;
-                continue;
-            }
+            sb.append( line ).append( EOL );
         }
 
-        return StringUtils.join( originalJavadocLinesAsList.iterator(), EOL );
+        return trimRight( sb.toString() );
     }
 
     /**
      * Work around for QDOX-146 about whitespace.
      * Ideally we want to use <code>docletTag.getValue()</code>
+     * <br/>
+     * For instance, with the following snippet:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * </code>
+     *
+     * <br/>
+     * The return will be:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * </code>
      *
      * @param javaClassContent original class content not null
      * @param entity not null
@@ -3070,11 +3092,142 @@ public abstract class AbstractFixJavadocMojo
      * @return the javadoc comment for the entity without Javadoc tags.
      * @throws IOException if any
      */
-    private static String getJavadocComment( String javaClassContent, AbstractInheritableJavaEntity entity,
-                                             DocletTag docletTag )
+    private static String getJavadocComment( final String javaClassContent, final AbstractInheritableJavaEntity entity,
+                                             final DocletTag docletTag )
         throws IOException
     {
         if ( docletTag.getValue() == null )
+        {
+            return "";
+        }
+        if ( docletTag.getParameters().length == 0 )
+        {
+            return "";
+        }
+
+        String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
+
+        StringBuffer sb = new StringBuffer();
+        BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
+        String line;
+        boolean found = false;
+        while ( ( line = lr.readLine() ) != null )
+        {
+            if ( StringUtils.removeDuplicateWhitespace( line ).startsWith(
+                                                                           " * @" + docletTag.getName() + " "
+                                                                               + docletTag.getParameters()[0] ) )
+            {
+                sb.append( line ).append( EOL );
+                found = true;
+            }
+            else
+            {
+                if ( StringUtils.removeDuplicateWhitespace( line ).startsWith( " * @" ) )
+                {
+                    found = false;
+                }
+                if ( found )
+                {
+                    sb.append( line ).append( EOL );
+                }
+            }
+        }
+
+        return trimRight( sb.toString() );
+    }
+
+    /**
+     * Extract the original Javadoc and others comments up to {@link #START_JAVADOC} form the entity. This method
+     * takes care of the Javadoc indentation. All javadoc lines will be trimmed on right.
+     * <br/>
+     * For instance, with the following snippet:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * </code>
+     *
+     * <br/>
+     * The return will be:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * </code>
+     *
+     * @param javaClassContent not null
+     * @param entity not null
+     * @return return the original javadoc as String for the current entity
+     * @throws IOException if any
+     */
+    private static String extractOriginalJavadoc( final String javaClassContent, final AbstractJavaEntity entity )
+        throws IOException
+    {
+        if ( entity.getComment() == null )
+        {
+            return "";
+        }
+
+        String[] javaClassContentLines = getLines( javaClassContent );
+        List list = new LinkedList();
+        for ( int i = entity.getLineNumber() - 2; i >= 0; i-- )
+        {
+            String line = javaClassContentLines[i];
+
+            list.add( trimRight( line ) );
+            if ( line.trim().startsWith( START_JAVADOC ) )
+            {
+                break;
+            }
+        }
+
+        Collections.reverse( list );
+
+        return StringUtils.join( list.iterator(), EOL );
+    }
+
+    /**
+     * Extract the Javadoc comment between {@link #START_JAVADOC} and {@link #END_JAVADOC} form the entity. This method
+     * takes care of the Javadoc indentation. All javadoc lines will be trimmed on right.
+     * <br/>
+     * For instance, with the following snippet:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * </code>
+     *
+     * <br/>
+     * The return will be:
+     * <br/>
+     *
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * </code>
+     *
+     * @param javaClassContent not null
+     * @param entity not null
+     * @return return the original javadoc as String for the current entity
+     * @throws IOException if any
+     */
+    private static String extractOriginalJavadocContent( final String javaClassContent, final AbstractJavaEntity entity )
+        throws IOException
+    {
+        if ( entity.getComment() == null )
         {
             return "";
         }
@@ -3089,98 +3242,25 @@ public abstract class AbstractFixJavadocMojo
         {
             originalJavadoc = originalJavadoc.substring( 0, originalJavadoc.indexOf( END_JAVADOC ) );
         }
-        String[] originalJavadocLines = getLines( originalJavadoc );
-
-        if ( originalJavadocLines.length == 1 )
+        if ( originalJavadoc.startsWith( "\r\n" ) )
         {
-            return originalJavadocLines[0];
+            originalJavadoc = originalJavadoc.substring( 2 );
+        }
+        else if ( originalJavadoc.startsWith( "\n" ) || originalJavadoc.startsWith( "\r" ) )
+        {
+            originalJavadoc = originalJavadoc.substring( 1 );
         }
 
-        // Note: docletTag.getValue() removes duplicate whitespace
-        String[] docletTagLines = getLines( docletTag.getValue() );
-        if ( docletTagLines.length == 0 )
-        {
-            docletTagLines = new String[] { "" };
-        }
-
-        StringBuffer sb = new StringBuffer();
-        int start = 0;
-        int end = originalJavadocLines.length;
-        for ( int i = 0; i < originalJavadocLines.length; i++ )
-        {
-            String originalJavadocLine = originalJavadocLines[i];
-
-            if ( Pattern.matches( JAVADOC_TAG_LINE_PATTERN, originalJavadocLine ) )
-            {
-                if ( start != 0 )
-                {
-                    end = i;
-                    break;
-                }
-
-                if ( StringUtils.removeDuplicateWhitespace( originalJavadocLine )
-                                .endsWith( StringUtils.removeDuplicateWhitespace( docletTagLines[0] ) ) )
-                {
-                    start = i;
-                }
-            }
-        }
-
-        for ( int i = start; i < end; i++ )
-        {
-            String originalJavadocLine = trimRight( originalJavadocLines[i] );
-
-            sb.append( originalJavadocLine );
-            if ( i < end - 1 )
-            {
-                sb.append( EOL );
-            }
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Extract the original Javadoc and others comments up to {@link #START_JAVADOC} form the entity.
-     *
-     * @param javaClassContent not null
-     * @param entity not null
-     * @return return the original javadoc as String for the current entity
-     * @throws IOException if any
-     */
-    private static String extractOriginalJavadoc( String javaClassContent, AbstractJavaEntity entity )
-        throws IOException
-    {
-        if ( entity.getComment() == null )
-        {
-            return "";
-        }
-
-        List list = new LinkedList();
-        String[] javaClassContentLines = getLines( javaClassContent );
-        for ( int i = entity.getLineNumber() - 2; i >= 0; i-- )
-        {
-            String line = javaClassContentLines[i];
-
-            list.add( line );
-            if ( line.trim().startsWith( START_JAVADOC ) )
-            {
-                break;
-            }
-        }
-
-        Collections.reverse( list );
-
-        return trimLeft( StringUtils.join( list.iterator(), EOL ) );
+        return trimRight( originalJavadoc );
     }
 
     /**
      * @param content not null
-     * @return the content without javadoc separator (ie <code> * </code>)
+     * @return the content without last lines containing javadoc separator (ie <code> * </code>)
      * @throws IOException if any
      * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
      */
-    private static String removeLastEmptyJavadocLines( String content )
+    private static String removeLastEmptyJavadocLines( final String content )
         throws IOException
     {
         if ( content.indexOf( EOL ) == -1 )
@@ -3224,7 +3304,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException if any
      * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
      */
-    private static String alignIndentationJavadocLines( String content, String indent )
+    private static String alignIndentationJavadocLines( final String content, final String indent )
         throws IOException
     {
         String[] lines = getLines( content );
@@ -3232,7 +3312,12 @@ public abstract class AbstractFixJavadocMojo
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < lines.length; i++ )
         {
-            sb.append( indent ).append( " " ).append( lines[i].trim() );
+            String line = lines[i];
+            if ( !line.trim().startsWith( "*" ) )
+            {
+                line = "*" + line;
+            }
+            sb.append( indent ).append( " " ).append( trimLeft( line ) );
             if ( i < lines.length - 1 )
             {
                 sb.append( EOL );
@@ -3243,18 +3328,25 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
+     * Autodetect the indentation of a given line:
+     * <pre>
+     * autodetectIndentation( null ) = "";
+     * autodetectIndentation( "a" ) = "";
+     * autodetectIndentation( "    a" ) = "    ";
+     * autodetectIndentation( "\ta" ) = "\t";
+     * </pre>
+     *
      * @param line not null
      * @return the indentation for the given line.
      */
-    private static String autodetectIndentation( String line )
+    private static String autodetectIndentation( final String line )
     {
-        int i = line.indexOf( line.trim() );
-        if ( i == -1 )
+        if ( StringUtils.isEmpty( line ) )
         {
             return "";
         }
 
-        return line.substring( 0, i );
+        return line.substring( 0, line.indexOf( trimLeft( line ) ) );
     }
 
     /**
@@ -3262,7 +3354,7 @@ public abstract class AbstractFixJavadocMojo
      * @return an array of all content lines
      * @throws IOException if any
      */
-    private static String[] getLines( String content )
+    private static String[] getLines( final String content )
         throws IOException
     {
         List lines = new LinkedList();
@@ -3279,47 +3371,52 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
+     * Trim a given line on the left:
+     * <pre>
+     * trimLeft( null ) = "";
+     * trimLeft( "  " ) = "";
+     * trimLeft( "a" ) = "a";
+     * trimLeft( "    a" ) = "a";
+     * trimLeft( "\ta" ) = "a";
+     * trimLeft( "    a    " ) = "a    ";
+     * </pre>
+     *
      * @param text
      * @return the text trimmed on left side or empty if text is null.
      */
-    private static String trimLeft( String text )
+    private static String trimLeft( final String text )
     {
         if ( StringUtils.isEmpty( text ) || StringUtils.isEmpty( text.trim() ) )
         {
             return "";
         }
 
-        for ( int i = 0; i < text.length(); i++ )
-        {
-            if ( !Character.isWhitespace( text.charAt( i ) ) )
-            {
-                return text.substring( i );
-            }
-        }
-
-        return text;
+        String textTrimmed = text.trim();
+        return text.substring( text.indexOf( textTrimmed ), text.length() );
     }
 
     /**
+     * Trim a given line on the right:
+     * <pre>
+     * trimRight( null ) = "";
+     * trimRight( "  " ) = "";
+     * trimRight( "a" ) = "a";
+     * trimRight( "a\t" ) = "a";
+     * trimRight( "    a    " ) = "    a";
+     * </pre>
+     *
      * @param text
      * @return the text trimmed on tight side or empty if text is null.
      */
-    private static String trimRight( String text )
+    private static String trimRight( final String text )
     {
         if ( StringUtils.isEmpty( text ) || StringUtils.isEmpty( text.trim() ) )
         {
             return "";
         }
 
-        for ( int i = text.length() - 1; i > 0; i-- )
-        {
-            if ( !Character.isWhitespace( text.charAt( i ) ) )
-            {
-                return text.substring( 0, i + 1 );
-            }
-        }
-
-        return text;
+        String textTrimmed = text.trim();
+        return text.substring( 0, text.indexOf( textTrimmed ) + textTrimmed.length() );
     }
 
     /**

@@ -138,6 +138,39 @@ public class ClassWithJavadoc
         return null;
     }
 
+    /**
+     * To take care of same comments.
+     *
+     * @param aString a string
+     * @return a string
+     */
+    public String sameString( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * Empty Javadoc tag.
+     *
+     * @return a string
+     * @param aString a {@link java.lang.String} object.
+     */
+    public String emptyJavadocTag( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * Comment on first line.
+     *
+     * @param aString a string
+     * @return a string
+     */
+    public String javadocCommentOnFirstLine( String aString )
+    {
+        return null;
+    }
+
     // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------

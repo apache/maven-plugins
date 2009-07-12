@@ -24,9 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import junitx.util.PrivateAccessor;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -44,6 +47,13 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
+import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
+import com.thoughtworks.qdox.model.AbstractJavaEntity;
+import com.thoughtworks.qdox.model.DocletTag;
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaMethod;
+
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -51,6 +61,9 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 public class FixJavadocMojoTest
     extends AbstractMojoTestCase
 {
+    /** The vm line separator */
+    private static final String EOL = System.getProperty( "line.separator" );
+
     /** The M2_HOME env variable */
     private static final File M2_HOME;
 
@@ -111,6 +124,320 @@ public class FixJavadocMojoTest
 
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk6-test" );
         executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "InterfaceWithJavadoc.java" } );
+    }
+
+    // ----------------------------------------------------------------------
+    // Test private static methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @throws Throwable if any
+     */
+    public void testAutodetectIndentation()
+        throws Throwable
+    {
+        String s = null;
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                  new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "no indentation";
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                  new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "no indentation with right spaces  ";
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                  new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "    indentation";
+        assertEquals( "    ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                      new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "    indentation with right spaces  ";
+        assertEquals( "    ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                      new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "\ttab indentation";
+        assertEquals( "\t", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                    new Class[] { String.class }, new Object[] { s } ) );
+
+        s = "  \n  indentation with right spaces  ";
+        assertEquals( "  \n  ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
+                                                        new Class[] { String.class }, new Object[] { s } ) );
+    }
+
+    /**
+     * @throws Throwable if any
+     */
+    public void testTrimLeft()
+        throws Throwable
+    {
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                  new Class[] { String.class }, new Object[] { null } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                  new Class[] { String.class }, new Object[] { "  " } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                  new Class[] { String.class }, new Object[] { "  \t  " } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                   new Class[] { String.class }, new Object[] { "a" } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                   new Class[] { String.class }, new Object[] { "  a" } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                   new Class[] { String.class }, new Object[] { "\ta" } ) );
+        assertEquals( "a  ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                     new Class[] { String.class }, new Object[] { "  a  " } ) );
+        assertEquals( "a\t", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
+                                                     new Class[] { String.class }, new Object[] { "\ta\t" } ) );
+    }
+
+    /**
+     * @throws Throwable if any
+     */
+    public void testTrimRight()
+        throws Throwable
+    {
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                  new Class[] { String.class }, new Object[] { null } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                  new Class[] { String.class }, new Object[] { "  " } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                  new Class[] { String.class }, new Object[] { "  \t  " } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                   new Class[] { String.class }, new Object[] { "a" } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                   new Class[] { String.class }, new Object[] { "a  " } ) );
+        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                   new Class[] { String.class }, new Object[] { "a\t" } ) );
+        assertEquals( "  a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                     new Class[] { String.class }, new Object[] { "  a  " } ) );
+        assertEquals( "\ta", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
+                                                     new Class[] { String.class }, new Object[] { "\ta\t" } ) );
+    }
+
+    /**
+     * @throws Throwable if any
+     */
+    public void testHasInheritedTag()
+        throws Throwable
+    {
+        String content = "/** {@inheritDoc} */";
+        Boolean has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.TRUE, has );
+
+        content = "/**{@inheritDoc}*/";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.TRUE, has );
+
+        content = "/**{@inheritDoc  }  */";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.TRUE, has );
+
+        content = "/**  {@inheritDoc  }  */";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.TRUE, has );
+
+        content = "/** */";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.FALSE, has );
+
+        content = "/**{  @inheritDoc  }*/";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.FALSE, has );
+
+        content = "/**{@ inheritDoc}*/";
+        has =
+            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                              new Class[] { String.class }, new Object[] { content } );
+        assertEquals( Boolean.FALSE, has );
+    }
+
+    /**
+     * @throws Throwable if any
+     */
+    public void testJavadocComment()
+        throws Throwable
+    {
+        String content = "/**" + EOL +
+                " * Dummy Class." + EOL +
+                " */" + EOL +
+                "public class DummyClass" + EOL +
+                "{" + EOL +
+                "    /**" + EOL +
+                "     *" + EOL +
+                "     * Dummy" + EOL +
+                "     *" + EOL +
+                "     *      Method." + EOL +
+                "     *" + EOL +
+                "     * @param args not" + EOL +
+                "     *" + EOL +
+                "     * null" + EOL +
+                "     * @param i non negative" + EOL +
+                "     * @param object could" + EOL +
+                "     * be" + EOL +
+                "     *      null" + EOL +
+                "     * @return a" + EOL +
+                "     * String" + EOL +
+                "     *" + EOL +
+                "     * @throws Exception if" + EOL +
+                "     * any" + EOL +
+                "     *" + EOL +
+                "     */" + EOL +
+                "    public static String dummyMethod( String[] args, int i, Object object )" + EOL +
+                "        throws Exception" + EOL +
+                "    {" + EOL +
+                "        return null;" + EOL +
+                "    }" + EOL +
+                "}";
+
+        JavaDocBuilder builder = new JavaDocBuilder();
+        builder.setEncoding( "UTF-8" );
+        builder.addSource( new StringReader( content ) );
+
+        JavaClass[] classes = builder.getClasses();
+        JavaClass clazz = classes[0];
+
+        JavaMethod javaMethod = clazz.getMethods()[0];
+
+        String javadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "extractOriginalJavadoc", new Class[] {
+                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        assertEquals( "    /**" + EOL +
+                "     *" + EOL +
+                "     * Dummy" + EOL +
+                "     *" + EOL +
+                "     *      Method." + EOL +
+                "     *" + EOL +
+                "     * @param args not" + EOL +
+                "     *" + EOL +
+                "     * null" + EOL +
+                "     * @param i non negative" + EOL +
+                "     * @param object could" + EOL +
+                "     * be" + EOL +
+                "     *      null" + EOL +
+                "     * @return a" + EOL +
+                "     * String" + EOL +
+                "     *" + EOL +
+                "     * @throws Exception if" + EOL +
+                "     * any" + EOL +
+                "     *" + EOL +
+                "     */", javadoc );
+
+        String javadocContent =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "extractOriginalJavadocContent",
+                                             new Class[] { String.class, AbstractJavaEntity.class }, new Object[] {
+                                                 content, javaMethod } );
+        assertEquals( "     *" + EOL +
+                      "     * Dummy" + EOL +
+                      "     *" + EOL +
+                      "     *      Method." + EOL +
+                      "     *" + EOL +
+                      "     * @param args not" + EOL +
+                      "     *" + EOL +
+                      "     * null" + EOL +
+                      "     * @param i non negative" + EOL +
+                      "     * @param object could" + EOL +
+                      "     * be" + EOL +
+                      "     *      null" + EOL +
+                      "     * @return a" + EOL +
+                      "     * String" + EOL +
+                      "     *" + EOL +
+                      "     * @throws Exception if" + EOL +
+                      "     * any" + EOL +
+                      "     *", javadocContent );
+
+        String withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { javadocContent } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "any" ) );
+
+        String methodJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        assertEquals( "     *" + EOL +
+                "     * Dummy" + EOL +
+                "     *" + EOL +
+                "     *      Method." + EOL +
+                "     *", methodJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { methodJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "Method." ) );
+
+        assertEquals( 5, javaMethod.getTags().length );
+
+        DocletTag tag = javaMethod.getTags()[0];
+        String tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param args not" + EOL +
+                "     *" + EOL +
+                "     * null", tagJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "null" ) );
+
+        tag = javaMethod.getTags()[1];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param i non negative", tagJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "negative" ) );
+
+        tag = javaMethod.getTags()[2];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param object could" + EOL +
+                "     * be" + EOL +
+                "     *      null", tagJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "null" ) );
+
+        tag = javaMethod.getTags()[3];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @return a" + EOL +
+                "     * String" + EOL +
+                "     *", tagJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "String" ) );
+
+        tag = javaMethod.getTags()[4];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @throws Exception if" + EOL +
+                "     * any" + EOL +
+                "     *", tagJavadoc );
+        withoutEmptyJavadocLines =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
+                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+        assertTrue( withoutEmptyJavadocLines.endsWith( "any" ) );
     }
 
     // ----------------------------------------------------------------------
