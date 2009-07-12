@@ -102,6 +102,7 @@ Including Module Sources
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <descriptors>
             <descriptor>src/assemble/src.xml</descriptor>

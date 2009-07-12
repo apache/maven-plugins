@@ -61,6 +61,7 @@ Configuration and Usage
              org.apache.maven.plugins ...which is assumed by default.
          -->
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -87,6 +88,7 @@ Configuration and Usage
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/src.xml</descriptor>
@@ -220,6 +222,7 @@ target
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -272,6 +275,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -359,6 +363,7 @@ target
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           [...]
           <archive>
