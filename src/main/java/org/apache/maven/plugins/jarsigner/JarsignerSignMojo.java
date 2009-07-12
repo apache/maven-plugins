@@ -20,6 +20,7 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import java.io.File;
+
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -31,7 +32,8 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @goal sign
  * @phase package
  */
-public class JarsignerSignMojo extends AbstractJarsignerMojo
+public class JarsignerSignMojo
+    extends AbstractJarsignerMojo
 {
 
     /**

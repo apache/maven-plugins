@@ -43,7 +43,8 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * @author <a href="cs@schulte.it">Christian Schulte</a>
  * @version $Id$
  */
-public abstract class AbstractJarsignerMojo extends AbstractMojo
+public abstract class AbstractJarsignerMojo
+    extends AbstractMojo
 {
 
     /**
@@ -92,7 +93,8 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
      */
     private MavenProject project;
 
-    public final void execute() throws MojoExecutionException
+    public final void execute()
+        throws MojoExecutionException
     {
         if ( !this.skip )
         {
@@ -171,9 +173,8 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
      */
     private boolean isJavaLanguageCapable( final Artifact artifact )
     {
-        return artifact != null && artifact.getFile() != null && artifact.getArtifactHandler() != null &&
-               "java".equals( artifact.getArtifactHandler().getLanguage() );
-
+        return artifact != null && artifact.getFile() != null && artifact.getArtifactHandler() != null
+            && "java".equals( artifact.getArtifactHandler().getLanguage() );
     }
 
     /**
@@ -184,7 +185,8 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
      * @throws NullPointerException if {@code artifact} is {@code null}.
      * @throws MojoExecutionException if processing {@code artifact} fails.
      */
-    private void processArtifact( final Artifact artifact ) throws MojoExecutionException
+    private void processArtifact( final Artifact artifact )
+        throws MojoExecutionException
     {
         if ( artifact == null )
         {
@@ -230,7 +232,6 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
                     } ) );
 
             }
-
         }
     }
 
@@ -242,7 +243,8 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
      * @throws NullPointerException if {@code archive} is {@code null}.
      * @throws MojoExecutionException if processing {@code archive} fails.
      */
-    private void processArchive( final File archive ) throws MojoExecutionException
+    private void processArchive( final File archive )
+        throws MojoExecutionException
     {
         if ( archive == null )
         {

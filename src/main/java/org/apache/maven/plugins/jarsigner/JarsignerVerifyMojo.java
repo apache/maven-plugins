@@ -20,6 +20,7 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import java.io.File;
+
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
@@ -30,7 +31,8 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @goal verify
  * @phase verify
  */
-public class JarsignerVerifyMojo extends AbstractJarsignerMojo
+public class JarsignerVerifyMojo
+    extends AbstractJarsignerMojo
 {
 
     /**
@@ -59,6 +61,7 @@ public class JarsignerVerifyMojo extends AbstractJarsignerMojo
         }
 
         commandLine.createArg().setFile( archive );
+
         return commandLine;
     }
 
