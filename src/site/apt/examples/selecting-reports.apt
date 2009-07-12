@@ -49,6 +49,7 @@ Selecting Reports
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.1</version>
         <reportSets>
           <reportSet>
             <id>dual-report</id>

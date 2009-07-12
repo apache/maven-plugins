@@ -48,6 +48,7 @@ Modifying SCM Links
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <displayFileDetailUrl>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</displayFileDetailUrl>
         </configuration>
