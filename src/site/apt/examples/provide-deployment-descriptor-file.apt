@@ -58,6 +58,7 @@ mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <deploymentDescriptorFile>src/webapp/WEB-INF/web.xml</deploymentDescriptorFile>
         </configuration>
