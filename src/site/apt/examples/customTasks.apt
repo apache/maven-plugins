@@ -43,6 +43,7 @@ Using tasks not included in Ant's default jar
        <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-antrun-plugin</artifactId>
+         <version>1.3</version>
          <executions>
            <execution>
              <id>ftp</id>
