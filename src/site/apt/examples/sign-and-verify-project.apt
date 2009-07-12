@@ -41,6 +41,7 @@ Sign and verify a project
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
             <id>sign</id>
@@ -64,5 +65,5 @@ Sign and verify a project
 +-----------------+
 
   Note: The sign goal requires at least the alias to use for signing. This alias
-  can be passed using the command line like -Djarsigner.alias="Alias Name"
-  or set as a property in the settings.xml file when not configured in the POM.
+  can be passed using the command line like <<<-Djarsigner.alias="Alias Name">>>
+  or set as a property in the <<<settings.xml>>> file when not configured in the POM.

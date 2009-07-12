@@ -29,7 +29,6 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @version $Id$
  * @goal verify
  * @phase verify
- * @requiresProject
  */
 public class JarsignerVerifyMojo extends AbstractJarsignerMojo
 {

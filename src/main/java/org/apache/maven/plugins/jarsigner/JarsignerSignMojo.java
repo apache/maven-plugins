@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @version $Id$
  * @goal sign
  * @phase package
- * @requiresProject
  */
 public class JarsignerSignMojo extends AbstractJarsignerMojo
 {
