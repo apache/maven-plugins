@@ -41,6 +41,7 @@ Using Range Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <type>range</type>
           <range>30</range>
