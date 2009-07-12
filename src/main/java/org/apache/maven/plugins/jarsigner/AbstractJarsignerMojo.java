@@ -25,11 +25,13 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.apache.commons.lang.SystemUtils;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+
+import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -84,7 +86,7 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
     /**
      * The Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -248,7 +250,7 @@ public abstract class AbstractJarsignerMojo extends AbstractMojo
         }
 
         Commandline commandLine = new Commandline();
-        commandLine.setExecutable( "jarsigner" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
+        commandLine.setExecutable( "jarsigner" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" ) );
         commandLine.setWorkingDirectory( this.project.getBasedir() );
 
         if ( this.verbose )
