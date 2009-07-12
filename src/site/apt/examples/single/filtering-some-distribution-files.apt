@@ -160,6 +160,7 @@ variable2=value2
       [...]
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-4</version>
         <configuration>
           <filters>
             <filter>src/assemble/filter.properties</filter>
