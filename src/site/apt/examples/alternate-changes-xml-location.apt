@@ -49,6 +49,7 @@ Alternate Location for the <<<changes.xml>>> File
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <xmlPath>${basedir}/src/site/changes.xml</xmlPath>
         </configuration>

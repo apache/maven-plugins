@@ -41,6 +41,7 @@ SMTP Authentication
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <smtpHost>mail.yourhost.com</smtpHost>
           <smtpPort implementation="java.lang.Integer">25</smtpPort>
