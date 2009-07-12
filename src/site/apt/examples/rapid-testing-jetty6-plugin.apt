@@ -46,6 +46,7 @@ Rapid Testing Using the Jetty Plugin
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.10</version>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <connectors>
