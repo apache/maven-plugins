@@ -38,6 +38,7 @@ Copy Resources
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
         <executions>
           <execution>
             <id>copy-resources</id>
