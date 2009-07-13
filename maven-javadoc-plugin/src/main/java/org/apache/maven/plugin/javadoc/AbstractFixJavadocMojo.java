@@ -3105,7 +3105,8 @@ public abstract class AbstractFixJavadocMojo
         String line;
         while ( ( line = lr.readLine() ) != null )
         {
-            if ( StringUtils.removeDuplicateWhitespace( line ).startsWith( " * @" ) )
+            if ( StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith( "* @" )
+                || StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith( "*@" ) )
             {
                 break;
             }
@@ -3160,22 +3161,33 @@ public abstract class AbstractFixJavadocMojo
 
         String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
 
+        String paramValue = docletTag.getParameters()[0];
+        if ( docletTag.getParameters().length > 3 && docletTag.getParameters()[0].trim().equals( "<" )
+            && docletTag.getParameters()[2].trim().equals( ">" ) )
+        {
+            paramValue = "<" + docletTag.getParameters()[1] + ">";
+        }
+
         StringBuffer sb = new StringBuffer();
         BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
         String line;
         boolean found = false;
         while ( ( line = lr.readLine() ) != null )
         {
-            if ( StringUtils.removeDuplicateWhitespace( line ).startsWith(
-                                                                           " * @" + docletTag.getName() + " "
-                                                                               + docletTag.getParameters()[0] ) )
+            if ( StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith(
+                                                                                  "* @" + docletTag.getName()
+                                                                                      + " " + paramValue )
+                || StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith(
+                                                                                    "*@" + docletTag.getName()
+                                                                                        + " " + paramValue ) )
             {
                 sb.append( line ).append( EOL );
                 found = true;
             }
             else
             {
-                if ( StringUtils.removeDuplicateWhitespace( line ).startsWith( " * @" ) )
+                if ( StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith( "* @" )
+                    || StringUtils.removeDuplicateWhitespace( line.trim() ).startsWith( "*@" ) )
                 {
                     found = false;
                 }

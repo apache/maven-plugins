@@ -440,6 +440,85 @@ public class FixJavadocMojoTest
         assertTrue( withoutEmptyJavadocLines.endsWith( "any" ) );
     }
 
+    /**
+     * @throws Throwable if any
+     */
+    public void testJavadocCommentJdk5()
+        throws Throwable
+    {
+        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
+        {
+            getContainer().getLogger().warn(
+                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
+                                                 + "#" + getName() + "()'." );
+            return;
+        }
+
+        String content = "/**" + EOL +
+                " * Dummy Class." + EOL +
+                " */" + EOL +
+                "public class DummyClass" + EOL +
+                "{" + EOL +
+                "    /**" + EOL +
+                "     * Dummy method." + EOL +
+                "     *" + EOL +
+                "     * @param <K>  The Key type for the method" + EOL +
+                "     * @param <V>  The Value type for the method" + EOL +
+                "     * @param name The name." + EOL +
+                "     * @return A map configured." + EOL +
+                "     */" + EOL +
+                "    public <K, V> java.util.Map<K, V> dummyMethod( String name )" + EOL +
+                "    {" + EOL +
+                "        return null;" + EOL +
+                "    }" + EOL +
+                "}";
+
+        JavaDocBuilder builder = new JavaDocBuilder();
+        builder.setEncoding( "UTF-8" );
+        builder.addSource( new StringReader( content ) );
+
+        JavaClass[] classes = builder.getClasses();
+        JavaClass clazz = classes[0];
+
+        JavaMethod javaMethod = clazz.getMethods()[0];
+
+        String methodJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        assertEquals( "     * Dummy method." + EOL +
+                "     *", methodJavadoc );
+
+        assertEquals( 4, javaMethod.getTags().length );
+
+        DocletTag tag = javaMethod.getTags()[0];
+        String tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param <K>  The Key type for the method", tagJavadoc );
+
+        tag = javaMethod.getTags()[1];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param <V>  The Value type for the method", tagJavadoc );
+
+        tag = javaMethod.getTags()[2];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @param name The name.", tagJavadoc );
+
+        tag = javaMethod.getTags()[3];
+        tagJavadoc =
+            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
+                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
+                javaMethod, tag } );
+        assertEquals( "     * @return A map configured.", tagJavadoc );
+    }
+
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
