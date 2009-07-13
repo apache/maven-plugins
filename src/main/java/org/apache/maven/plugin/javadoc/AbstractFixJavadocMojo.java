@@ -335,6 +335,9 @@ public abstract class AbstractFixJavadocMojo
     // Internal fields
     // ----------------------------------------------------------------------
 
+    /** The current project class loader. */
+    private ClassLoader projectClassLoader;
+
     /**
      * Split {@link #fixTags} by comma.
      * @see {@link #init()}
@@ -432,41 +435,6 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * @param p not null
-     * @return the project classLoader
-     * @throws MojoExecutionException if any
-     */
-    protected ClassLoader getProjectClassLoader( MavenProject p )
-        throws MojoExecutionException
-    {
-        List classPath;
-        try
-        {
-            classPath = getCompileClasspathElements( p );
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
-        }
-
-        List urls = new ArrayList( classPath.size() );
-        Iterator iter = classPath.iterator();
-        while ( iter.hasNext() )
-        {
-            try
-            {
-                urls.add( new File( ( (String) iter.next() ) ).toURL() );
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
-            }
-        }
-
-        return new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
-    }
-
-    /**
      * @param javaMethod not null
      * @return the fully qualify name of javaMethod with signature
      */
@@ -478,14 +446,6 @@ public abstract class AbstractFixJavadocMojo
         sb.append( "#" ).append( javaMethod.getCallSignature() );
 
         return sb.toString();
-    }
-
-    /**
-     * @return the source dir for the given project
-     */
-    protected File getProjectSourceDirectory()
-    {
-        return new File( project.getBuild().getSourceDirectory() );
     }
 
     // ----------------------------------------------------------------------
@@ -615,6 +575,14 @@ public abstract class AbstractFixJavadocMojo
         }
 
         return true;
+    }
+
+    /**
+     * @return the source dir as File for the given project
+     */
+    private File getProjectSourceDirectory()
+    {
+        return new File( project.getBuild().getSourceDirectory() );
     }
 
     /**
@@ -914,7 +882,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( "pom".equals( project.getPackaging().toLowerCase() ) )
         {
-            getLog().warn( "This project has 'pom' packaging, no Java sources will be available." );
+            getLog().warn( "This project has 'pom' packaging, no Java sources is available." );
             return null;
         }
 
@@ -933,7 +901,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         JavaDocBuilder builder = new JavaDocBuilder();
-        builder.getClassLibrary().addClassLoader( getProjectClassLoader( project ) );
+        builder.getClassLibrary().addClassLoader( getProjectClassLoader() );
         builder.setEncoding( encoding );
         for ( Iterator i = javaFiles.iterator(); i.hasNext(); )
         {
@@ -951,12 +919,50 @@ public abstract class AbstractFixJavadocMojo
             }
             catch ( ParseException e )
             {
-                // QDOX-118
-                getLog().warn( "QDOX ParseException: " + e.getMessage() );
+                getLog().warn( "QDOX ParseException: " + e.getMessage() + ". Can't fix it." );
             }
         }
 
         return builder.getClasses();
+    }
+
+    /**
+     * @return the classLoader for the given project using lazy instantiation.
+     * @throws MojoExecutionException if any
+     */
+    private ClassLoader getProjectClassLoader()
+        throws MojoExecutionException
+    {
+        if ( projectClassLoader == null )
+        {
+            List classPath;
+            try
+            {
+                classPath = getCompileClasspathElements( project );
+            }
+            catch ( DependencyResolutionRequiredException e )
+            {
+                throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
+            }
+
+            List urls = new ArrayList( classPath.size() );
+            Iterator iter = classPath.iterator();
+            while ( iter.hasNext() )
+            {
+                try
+                {
+                    urls.add( new File( ( (String) iter.next() ) ).toURL() );
+                }
+                catch ( MalformedURLException e )
+                {
+                    throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
+                }
+            }
+
+            projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
+        }
+
+        return projectClassLoader;
     }
 
     /**
@@ -1070,16 +1076,17 @@ public abstract class AbstractFixJavadocMojo
 
     /**
      * Take care of block or single comments between Javadoc comment and entity declaration ie:
-     * <pre>
-     * &#47;&#42;&#42;
-     * &#32;&#42; {Javadoc Comment}
-     * &#32;&#42;&#47;
-     * &#47;&#42;
-     * &#32;&#42; {Block Comment}
-     * &#32;&#42;&#47;
-     * &#47;&#47; {Single comment}
-     * entity
-     * </pre>
+     * <br/>
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Javadoc&nbsp;Comment}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f7f5f">&#47;&#42;</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f7f5f">&#42;&nbsp;{Block&nbsp;Comment}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f7f5f">&#42;&#47;</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f7f5f">&#47;&#47;&nbsp;{Single&nbsp;comment}</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font>
+     * </code>
      *
      * @param stringWriter not null
      * @param originalContent not null
@@ -1192,15 +1199,17 @@ public abstract class AbstractFixJavadocMojo
 
     /**
      * Add a default Javadoc for the given class, i.e.:
-     * <pre>
-     * &#47;&#42;&#42;
-     * &#32;&#42; {<i>Comment based on the class name</i>}
-     * &#32;&#42;
-     * &#32;&#42; &#64;author X {<i>added if <code>addMissingAuthor</code></i>}
-     * &#32;&#42; &#64;version X {<i>added if <code>addMissingVersion</code></i>}
-     * &#32;&#42; &#64;since X {<i>added if <code>addMissingSince</code> and new classes from previous version</i>}
-     * &#32;&#42;&#47;
-     * </pre>
+     * <br/>
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;class&nbsp;name}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@author&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingAuthor}</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@version&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingVersion}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes&nbsp;from&nbsp;previous&nbsp;version}</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">DummyClass&nbsp;</font><font color="#000000">{}</font></code>
+     * </code>
      *
      * @param buffer not null
      * @param javaClass not null
@@ -1292,9 +1301,11 @@ public abstract class AbstractFixJavadocMojo
 
     /**
      * Add a default Javadoc for the given field, i.e.:
-     * <pre>
-     * &#47;&#42;&#42; Constant &lt;code&gt;Field name&lt;/code&gt; &#42;&#47;
-     * </pre>
+     * <br/>
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&nbsp;Constant&nbsp;</font><font color="#7f7f9f">&lt;code&gt;</font><font color="#3f5fbf">MY_STRING_CONSTANT=&#34;value&#34;</font><font color="#7f7f9f">&lt;/code&gt;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;MY_STRING_CONSTANT&nbsp;=&nbsp;</font><font color="#2a00ff">&#34;value&#34;</font><font color="#000000">;</font>
+     * </code>
      *
      * @param stringWriter not null
      * @param field not null
@@ -1405,16 +1416,18 @@ public abstract class AbstractFixJavadocMojo
 
     /**
      * Add in the buffer a default Javadoc for the given class:
-     * <pre>
-     * &#47;&#42;&#42;
-     * &#32;&#42; {<i>Comment based on the class name</i>}
-     * &#32;&#42;
-     * &#32;&#42; &#64;param X {<i>added if <code>addMissingParam</code></i>}
-     * &#32;&#42; &#64;return X {<i>added if <code>addMissingReturn</code></i>}
-     * &#32;&#42; &#64;throws X {<i>added if <code>addMissingThrows</code>}
-     * &#32;&#42; &#64;since X {<i>added if <code>addMissingSince</code> and new classes from previous version</i>}
-     * &#32;&#42;&#47;
-     * </pre>
+     * <br/>
+     * <code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;method&nbsp;name}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingParam}</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@return&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingReturn}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@throws&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingThrows}</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes&nbsp;from&nbsp;previous&nbsp;version}</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">9</font>&nbsp;<font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font>
+     * </code>
      *
      * @param buffer not null
      * @param javaMethod not null
@@ -1642,6 +1655,8 @@ public abstract class AbstractFixJavadocMojo
         {
             addDefaultJavadocTags( sb, entity, indent, isJavaMethod );
         }
+
+        sb = new StringBuffer( removeLastEmptyJavadocLines( sb.toString() ) ).append( EOL );
 
         sb.append( indent ).append( " " ).append( END_JAVADOC );
         sb.append( EOL );
@@ -1944,21 +1959,24 @@ public abstract class AbstractFixJavadocMojo
     private void writeReturnTag( final StringBuffer sb, final JavaMethod javaMethod,
                                  final JavaEntityTags javaEntityTags )
     {
-        if ( !fixTag( RETURN_TAG ) )
+        String originalJavadocTag = javaEntityTags.getJavadocReturnTag();
+        if ( originalJavadocTag == null )
         {
-            // write original tag if found
-            if ( StringUtils.isNotEmpty( javaEntityTags.getJavadocReturnTag() ) )
-            {
-                sb.append( javaEntityTags.getJavadocReturnTag() );
-            }
             return;
         }
 
-        if ( StringUtils.isNotEmpty( javaEntityTags.getJavadocReturnTag() ) && javaMethod.getReturns() != null
+        if ( !fixTag( RETURN_TAG ) )
+        {
+            // write original param tag if found
+            sb.append( originalJavadocTag );
+            return;
+        }
+
+        if ( StringUtils.isNotEmpty( originalJavadocTag ) && javaMethod.getReturns() != null
             && !javaMethod.getReturns().isVoid() )
         {
-            sb.append( javaEntityTags.getJavadocReturnTag() );
-            if ( javaEntityTags.getJavadocReturnTag().trim().endsWith( "@" + RETURN_TAG ) )
+            sb.append( originalJavadocTag );
+            if ( originalJavadocTag.trim().endsWith( "@" + RETURN_TAG ) )
             {
                 sb.append( " " );
                 sb.append( getDefaultJavadocForType( javaMethod.getReturns() ) );
@@ -1969,9 +1987,9 @@ public abstract class AbstractFixJavadocMojo
     private void writeThrowsTag( final StringBuffer sb, final JavaMethod javaMethod,
                                  final JavaEntityTags javaEntityTags, final String[] params )
     {
-        String paramName = params[0];
+        String exceptionClassName = params[0];
 
-        String originalJavadocTag = javaEntityTags.getJavadocThrowsTag( paramName );
+        String originalJavadocTag = javaEntityTags.getJavadocThrowsTag( exceptionClassName );
         if ( originalJavadocTag == null )
         {
             return;
@@ -1990,9 +2008,9 @@ public abstract class AbstractFixJavadocMojo
             {
                 Type exception = javaMethod.getExceptions()[j];
 
-                if ( exception.getValue().endsWith( paramName ) )
+                if ( exception.getValue().endsWith( exceptionClassName ) )
                 {
-                    originalJavadocTag = StringUtils.replace( originalJavadocTag, paramName, exception.getValue() );
+                    originalJavadocTag = StringUtils.replace( originalJavadocTag, exceptionClassName, exception.getValue() );
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                     .endsWith( "@" + THROWS_TAG + " " + exception.getValue() ) )
                     {
@@ -2003,8 +2021,38 @@ public abstract class AbstractFixJavadocMojo
 
                     // added qualified name
                     javaEntityTags.putJavadocThrowsTag( exception.getValue(), originalJavadocTag );
+
+                    return;
                 }
             }
+        }
+
+        // Maybe a RuntimeException
+        Class clazz = getRuntimeExceptionClass( javaMethod.getParentClass(), exceptionClassName );
+        if ( clazz != null )
+        {
+            sb.append( StringUtils.replace( originalJavadocTag, exceptionClassName, clazz.getName() ) );
+
+            // added qualified name
+            javaEntityTags.putJavadocThrowsTag( clazz.getName(), originalJavadocTag );
+
+            return;
+        }
+
+        if ( getLog().isWarnEnabled() )
+        {
+            StringBuffer warn = new StringBuffer();
+
+            warn.append( "Unknown throws exception '" ).append( exceptionClassName ).append( "' defined in " );
+            warn.append( getJavaMethodAsString( javaMethod ) );
+
+            getLog().warn( warn.toString() );
+        }
+
+        sb.append( originalJavadocTag );
+        if ( params.length == 1 )
+        {
+            sb.append( " if any." );
         }
     }
 
@@ -2482,7 +2530,7 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        Class clazz = getClass( javaMethod.getParentClass(), project );
+        Class clazz = getClass( javaMethod.getParentClass().getFullyQualifiedName() );
 
         List interfaces = ClassUtils.getAllInterfaces( clazz );
         for ( Iterator it = interfaces.iterator(); it.hasNext(); )
@@ -2546,7 +2594,7 @@ public abstract class AbstractFixJavadocMojo
                     // workaround for generics i.e. type.getValue() = E instead of real class
                     try
                     {
-                        getClass( type.getJavaClass(), project );
+                        getClass( type.getJavaClass().getFullyQualifiedName() );
                         if ( type.isArray() )
                         {
                             javaMethodParams.add( type.getValue() + "[]" );
@@ -2615,7 +2663,7 @@ public abstract class AbstractFixJavadocMojo
         StringBuffer javadocLink = new StringBuffer();
         try
         {
-            getClass( type.getJavaClass(), project );
+            getClass( type.getJavaClass().getFullyQualifiedName() );
 
             javadocLink.append( "{@link " );
             String s = type.getJavaClass().getFullyQualifiedName();
@@ -2717,7 +2765,7 @@ public abstract class AbstractFixJavadocMojo
                     // QDOX-150: type.getValue() = E instead of real class...
                     try
                     {
-                        getClass( type.getJavaClass(), project );
+                        getClass( type.getJavaClass().getFullyQualifiedName() );
                         if ( type.isArray() )
                         {
                             javaMethodParams.add( type.getValue() + "[]" );
@@ -2760,60 +2808,65 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Note: JavaClass doesn't handle generic class i.e. E
-     *
-     * @param javaClass not null
-     * @param project not null
-     * @return the class corresponding to the javaClass parameter.
-     * @throws MojoExecutionException if any
-     * @see {@link Class#forName(String, boolean, ClassLoader)}
+     * @param className not null
+     * @return the Class corresponding to the given class name using the project classloader.
+     * @throws MojoExecutionException if class not found
+     * @see {@link ClassUtils#getClass(ClassLoader, String, boolean)}
+     * @see {@link #getProjectClassLoader()}
      */
-    private Class getClass( JavaClass javaClass, MavenProject project )
+    private Class getClass( String className )
         throws MojoExecutionException
     {
-        // primitive
-        String qualifiedName = javaClass.getFullyQualifiedName();
-        if ( qualifiedName.equals( Byte.TYPE.toString() ) )
-        {
-            return Byte.TYPE;
-        }
-        else if ( qualifiedName.equals( Short.TYPE.toString() ) )
-        {
-            return Short.TYPE;
-        }
-        else if ( qualifiedName.equals( Integer.TYPE.toString() ) )
-        {
-            return Integer.TYPE;
-        }
-        else if ( qualifiedName.equals( Long.TYPE.toString() ) )
-        {
-            return Long.TYPE;
-        }
-        else if ( qualifiedName.equals( Float.TYPE.toString() ) )
-        {
-            return Float.TYPE;
-        }
-        else if ( qualifiedName.equals( Double.TYPE.toString() ) )
-        {
-            return Double.TYPE;
-        }
-        else if ( qualifiedName.equals( Boolean.TYPE.toString() ) )
-        {
-            return Boolean.TYPE;
-        }
-        else if ( qualifiedName.equals( Character.TYPE.toString() ) )
-        {
-            return Character.TYPE;
-        }
-
         try
         {
-            return Class.forName( javaClass.getFullyQualifiedName(), false, getProjectClassLoader( project ) );
+            return ClassUtils.getClass( getProjectClassLoader(), className, false );
         }
         catch ( ClassNotFoundException e )
         {
             throw new MojoExecutionException( "ClassNotFoundException: " + e.getMessage(), e );
         }
+    }
+
+    /**
+     * Returns the Class object assignable for {@link RuntimeException} class and associated with the given
+     * exception class name.
+     *
+     * @param currentClass not null
+     * @param exceptionClassName not null, an exception class name defined as:
+     * <ul>
+     * <li>exception class fully qualified</li>
+     * <li>exception class in the same package</li>
+     * <li>exception inner class</li>
+     * <li>exception class in java.lang package</li>
+     * </ul>
+     * @return a RuntimeException assignable class.
+     * @see #getClass(String)
+     */
+    private Class getRuntimeExceptionClass( JavaClass currentClass, String exceptionClassName )
+    {
+        String[] potentialClassNames =
+            new String[] { exceptionClassName, currentClass.getPackage().getName() + "." + exceptionClassName,
+                currentClass.getPackage().getName() + "." + currentClass.getName() + "$" + exceptionClassName,
+                "java.lang." + exceptionClassName };
+
+        Class clazz = null;
+        for ( int i = 0; i < potentialClassNames.length; i++)
+        {
+            try
+            {
+                clazz = getClass( potentialClassNames[i] );
+            }
+            catch ( MojoExecutionException e )
+            {
+                // nop
+            }
+            if ( clazz != null && ClassUtils.isAssignable( clazz, RuntimeException.class ) )
+            {
+                return clazz;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -3017,7 +3070,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
      * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
@@ -3071,7 +3124,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
      * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
@@ -3145,7 +3198,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
      * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
@@ -3157,7 +3210,7 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      *
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
      * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
@@ -3203,7 +3256,7 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&#32;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
      * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
