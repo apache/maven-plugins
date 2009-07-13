@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
@@ -55,7 +54,7 @@ public abstract class AbstractJarsignerMojo
     private boolean verbose;
 
     /**
-     * Archive to sign. If set, neither the project artifact nor any attachments are processed.
+     * Archive to process. If set, neither the project artifact nor any attachments are processed.
      *
      * @parameter expression="${jarsigner.archive}"
      * @optional
@@ -336,8 +335,8 @@ public abstract class AbstractJarsignerMojo
      * @return The message with key {@code key} from the resource bundle backing the implementation.
      *
      * @throws NullPointerException if {@code key} is {@code null}.
-     * @throws MissingResourceException if there is no message available matching {@code key} or accessing the resource
-     * bundle fails.
+     * @throws java.util.MissingResourceException if there is no message available matching {@code key} or accessing
+     * the resource bundle fails.
      */
     private String getMessage( final String key, final Object[] args )
     {
