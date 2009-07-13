@@ -171,6 +171,40 @@ public class ClassWithJavadoc
         return null;
     }
 
+    /**
+     * Take care of last empty javadoc with unused tags.
+     */
+    public void unusedTag()
+    {
+    }
+
+    /**
+     * Take care of RuntimeException.
+     *
+     * @throws java.lang.UnsupportedOperationException if any
+     */
+    public void throwsTagWithRuntimeException()
+    {
+    }
+
+    /**
+     * Take care of inner RuntimeException.
+     *
+     * @throws fix.test.ClassWithJavadoc$MyRuntimeException if any
+     */
+    public void throwsTagWithInnerRuntimeException()
+    {
+    }
+
+    /**
+     * Unknown throws RuntimeException.
+     *
+     * @throws UnknownRuntimeException if any
+     */
+    public void throwsTagWithUnknownRuntimeException()
+    {
+    }
+
     // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
@@ -230,5 +264,13 @@ public class ClassWithJavadoc
         public void nothing()
         {
         }
+    }
+
+    /**
+     * RuntimeException
+     */
+    public static class MyRuntimeException
+        extends RuntimeException
+    {
     }
 }
