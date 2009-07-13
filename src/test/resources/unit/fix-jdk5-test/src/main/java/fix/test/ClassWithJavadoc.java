@@ -51,6 +51,19 @@ public class ClassWithJavadoc
         return null;
     }
 
+    /**
+     * Dummy method.
+     *
+     * @param <K>  The Key type for the method
+     * @param <V>  The Value type for the method
+     * @param name The name.
+     * @return A map configured.
+     */
+    public <K, V> java.util.Map<K, V> dummyMethod( String name )
+    {
+        return null;
+    }
+
     // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
