@@ -22,14 +22,13 @@ package org.apache.maven.plugin.javadoc;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
@@ -46,6 +44,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -682,60 +684,40 @@ public class JavadocUtil
     {
         if ( url == null )
         {
-            throw new IOException( "The url is null" );
+            throw new IllegalArgumentException( "The url is null" );
         }
 
-        Properties oldSystemProperties = new Properties();
-        oldSystemProperties.putAll( System.getProperties() );
-
-        if ( settings != null )
+        HttpClient httpClient = null;
+        if ( !"file".equals( url.getProtocol() ) )
         {
-            String scheme = url.getProtocol();
+            httpClient = new HttpClient();
+            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 1000 );
 
-            if ( !"file".equals( scheme ) )
+            if ( settings != null )
             {
                 Proxy activeProxy = settings.getActiveProxy();
+
                 if ( activeProxy != null )
                 {
-                    if ( "http".equals( scheme ) || "https".equals( scheme ) || "ftp".equals( scheme ) )
+                    String proxyHost = settings.getActiveProxy().getHost();
+                    int proxyPort = settings.getActiveProxy().getPort();
+
+                    String proxyUser = settings.getActiveProxy().getUsername();
+                    String proxyPass = settings.getActiveProxy().getPassword();
+
+                    if ( StringUtils.isNotEmpty( proxyHost ) )
                     {
-                        scheme += ".";
+                        httpClient.getHostConfiguration().setProxy( proxyHost, proxyPort );
                     }
-                    else
+
+                    if ( StringUtils.isNotEmpty( proxyUser ) )
                     {
-                        scheme = "";
-                    }
-
-                    if ( StringUtils.isNotEmpty( activeProxy.getHost() ) )
-                    {
-                        Properties systemProperties = System.getProperties();
-                        systemProperties.setProperty( scheme + "proxySet", "true" );
-                        systemProperties.setProperty( scheme + "proxyHost", activeProxy.getHost() );
-
-                        if ( activeProxy.getPort() > 0 )
-                        {
-                            systemProperties
-                                .setProperty( scheme + "proxyPort", String.valueOf( activeProxy.getPort() ) );
-                        }
-
-                        if ( StringUtils.isNotEmpty( activeProxy.getNonProxyHosts() ) )
-                        {
-                            systemProperties.setProperty( scheme + "nonProxyHosts", activeProxy.getNonProxyHosts() );
-                        }
-
-                        final String userName = activeProxy.getUsername();
-                        if ( StringUtils.isNotEmpty( userName ) )
-                        {
-                            final String pwd = StringUtils.isEmpty( activeProxy.getPassword() ) ? "" : activeProxy
-                                .getPassword();
-                            Authenticator.setDefault( new Authenticator()
-                            {
-                                protected PasswordAuthentication getPasswordAuthentication()
-                                {
-                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
-                                }
-                            } );
-                        }
+                        AuthScope authScope =
+                            new AuthScope( AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM,
+                                           AuthScope.ANY_SCHEME );
+                        UsernamePasswordCredentials usernamePasswordCredentials =
+                            new UsernamePasswordCredentials( proxyUser, proxyPass );
+                        httpClient.getState().setProxyCredentials( authScope, usernamePasswordCredentials );
                     }
                 }
             }
@@ -744,20 +726,31 @@ public class JavadocUtil
         InputStream in = null;
         try
         {
-            in = url.openStream();
+            if ( httpClient != null )
+            {
+                GetMethod getMethod = new GetMethod( url.toString() );
+
+                try
+                {
+                    int status = httpClient.executeMethod( getMethod );
+                    if ( status != 200 )
+                    {
+                        throw new FileNotFoundException( url.toString() );
+                    }
+                }
+                finally
+                {
+                    getMethod.releaseConnection();
+                }
+            }
+            else
+            {
+                in = url.openStream();
+            }
         }
         finally
         {
             IOUtil.close( in );
-
-            // Reset system properties
-            if ( ( settings != null ) && ( !"file".equals( url.getProtocol() ) )
-                && ( settings.getActiveProxy() != null )
-                && ( StringUtils.isNotEmpty( settings.getActiveProxy().getHost() ) ) )
-            {
-                System.setProperties( oldSystemProperties );
-                Authenticator.setDefault( null );
-            }
         }
     }
 
