@@ -5,7 +5,7 @@
  <jruiz@exist.com>
  Pete Marvin King
  ------
- 2008-07-24
+ 2009-07-14
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@
 
 Usage
 
- Maven has been configured to run the project info reports by default. There's
+ Maven has been configured to create the project info reports by default. There's
  no need to configure anything in your <<<pom.xml>>> to generate the project
  information reports.
 
@@ -41,5 +41,5 @@ mvn site
 +------------+
 
  would generate the project information documentation. For more information on
- how to customize the project information plugin, check the examples on the
+ how to customize the Project Information Reports Plugin, check the examples on the
  {{{index.html}Introduction}} page.
