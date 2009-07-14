@@ -4,7 +4,7 @@
  Johnny R. Ruiz III
  <jruiz@exist.com>
  ------
- 2008-07-24
+ 2009-07-14
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,7 +33,7 @@ Maven Project Info Reports Plugin
 
 * Goals Overview
 
- The Project Info Reports Plugin has twelve goals:
+ The Project Info Reports Plugin has thirteen goals:
 
    * {{{cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
    System report.
@@ -59,6 +59,8 @@ Maven Project Info Reports Plugin
 
    * {{{plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
    Project PluginManagement report.
+
+   * {{{plugins-mojo.html}project-info-reports:plugins}} is used to generate the Project Plugins report.
 
    * {{{project-team-mojo.html}project-info-reports:project-team}} is used to generate the Project Team report.
 
@@ -92,11 +94,11 @@ Maven Project Info Reports Plugin
   To provide you with better understanding on some usages of the Maven Project Info Reports Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/selective-project-info-reports.html}Running selective project info reports}}
+  * {{{examples/selective-project-info-reports.html}Run Selective Reports}}
 
-  * {{{examples/individual-reports.html}Running Individual Reports}}
+  * {{{examples/individual-reports.html}Run Individual Reports}}
 
-  * {{{examples/scm-report.html}Customizing the SCM Report}}
+  * {{{examples/scm-report.html}Customize the SCM Report}}
 
   * {{{project-info.html}Overview of the reports generated for this plugin}}
 
