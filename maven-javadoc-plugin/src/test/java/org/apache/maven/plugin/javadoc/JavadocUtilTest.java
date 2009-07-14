@@ -350,8 +350,17 @@ public class JavadocUtilTest
             + "sample-included1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
             + "sample-included2.gif" );
-
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
+        expected = new ArrayList();
+        expected.add( "" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" );
+        assertTrue( EqualsBuilder.reflectionEquals( expected,
+                                                    FileUtils.getDirectoryNames( new File( output,
+                                                                                           "test/doc-files" ),
+                                                                                 null, null, false ) ) );
 
         input = new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles/" );
         assertTrue( input.exists() );
@@ -369,7 +378,14 @@ public class JavadocUtilTest
             + "sample-included1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
             + "sample-included2.gif" );
-
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
+        expected = new ArrayList();
+        expected.add( "" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" );
+        assertTrue( EqualsBuilder.reflectionEquals( expected,
+                                                    FileUtils.getDirectoryNames( new File( output,
+                                                                                           "test/doc-files" ),
+                                                                                 null, null, false ) ) );
     }
 }
