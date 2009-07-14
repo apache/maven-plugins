@@ -137,16 +137,9 @@ public class JavadocReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        boolean canGenerate;
-        if ( aggregate != isAggregator() )
-        {
-            canGenerate = false;
-        }
-        else if ( isAggregator() && !project.isExecutionRoot() )
-        {
-            canGenerate = false;
-        }
-        else
+        boolean canGenerate = false;
+
+        if ( !this.isAggregator() || ( this.isAggregator() && this.project.isExecutionRoot() ) )
         {
             List sourcePaths = getSourcePaths();
 
