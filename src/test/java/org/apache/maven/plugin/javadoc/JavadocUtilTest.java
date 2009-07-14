@@ -22,11 +22,15 @@ package org.apache.maven.plugin.javadoc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -316,5 +320,56 @@ public class JavadocUtilTest
         {
             assertTrue( true );
         }
+    }
+
+    /**
+     * Method to test copyJavadocResources()
+     *
+     * @throws Exception if any
+     */
+    public void testCopyJavadocResources()
+        throws Exception
+    {
+        File input = new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles/" );
+        assertTrue( input.exists() );
+
+        File output = new File( getBasedir(), "target/test/unit/docfiles-test/target/output" );
+        if ( output.exists() )
+        {
+            FileUtils.deleteDirectory( output );
+        }
+        assertTrue( output.mkdirs() );
+
+        JavadocUtil.copyJavadocResources( output, input, null );
+        List expected = new ArrayList();
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" + File.separator
+            + "sample-excluded1.gif" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir2" + File.separator
+            + "sample-excluded2.gif" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" + File.separator
+            + "sample-included1.gif" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
+            + "sample-included2.gif" );
+
+        assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
+
+        input = new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles/" );
+        assertTrue( input.exists() );
+
+        output = new File( getBasedir(), "target/test/unit/docfiles-test/target/output" );
+        if ( output.exists() )
+        {
+            FileUtils.deleteDirectory( output );
+        }
+        assertTrue( output.mkdirs() );
+
+        JavadocUtil.copyJavadocResources( output, input, "excluded-dir1:excluded-dir2" );
+        expected = new ArrayList();
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" + File.separator
+            + "sample-included1.gif" );
+        expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
+            + "sample-included2.gif" );
+
+        assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
     }
 }

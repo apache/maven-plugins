@@ -320,15 +320,31 @@ public class JavadocUtil
 
         if ( javadocDir.exists() && javadocDir.isDirectory() )
         {
-            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( excludes
-                .iterator(), "," ), false, true );
+            List docFiles =
+                FileUtils.getDirectoryNames( javadocDir, "**/doc-files", StringUtils.join( excludes.iterator(),
+                                                                                           "," ), false, true );
             for ( Iterator it = docFiles.iterator(); it.hasNext(); )
             {
                 String docFile = (String) it.next();
 
                 File docFileOutput = new File( outputDirectory, docFile );
                 FileUtils.mkdir( docFileOutput.getAbsolutePath() );
-                FileUtils.copyDirectory( new File( javadocDir, docFile ), docFileOutput );
+                FileUtils.copyDirectoryStructure( new File( javadocDir, docFile ), docFileOutput );
+                List files =
+                    FileUtils.getFiles( docFileOutput, StringUtils.join( excludes.iterator(), "," ), null, true );
+                for ( Iterator it2 = files.iterator(); it2.hasNext(); )
+                {
+                    File file = (File) it2.next();
+
+                    if ( file.isDirectory() )
+                    {
+                        FileUtils.deleteDirectory( file );
+                    }
+                    else
+                    {
+                        file.delete();
+                    }
+                }
             }
         }
     }
