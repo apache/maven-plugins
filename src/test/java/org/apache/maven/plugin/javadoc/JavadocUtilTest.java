@@ -388,4 +388,23 @@ public class JavadocUtilTest
                                                                                            "test/doc-files" ),
                                                                                  null, null, false ) ) );
     }
+
+    /**
+     * Method to test copyJavadocResources()
+     *
+     * @throws Exception if any
+     */
+    public void testPruneDirs()
+        throws Exception
+    {
+        List list = new ArrayList();
+        list.add( getBasedir() + "/target/classes" );
+        list.add( getBasedir() + "/target/classes" );
+        list.add( getBasedir() + "/target/classes" );
+
+        List expected = new ArrayList();
+        expected.add( getBasedir() + "/target/classes" );
+
+        assertTrue( EqualsBuilder.reflectionEquals( expected, JavadocUtil.pruneDirs( null, list ) ) );
+    }
 }

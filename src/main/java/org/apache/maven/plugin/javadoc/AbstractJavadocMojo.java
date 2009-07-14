@@ -2266,14 +2266,16 @@ public abstract class AbstractJavadocMojo
                     && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
                 {
                     tagletsPath.addAll( getArtifactsAbsolutePath( current.getTagletArtifact() ) );
+
+                    tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
                 }
                 else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
                 {
                     tagletsPath.add( current.getTagletpath() );
+
+                    tagletsPath = JavadocUtil.pruneDirs( project, tagletsPath );
                 }
             }
-
-            tagletsPath = JavadocUtil.pruneFiles( tagletsPath );
 
             path.append( StringUtils.join( tagletsPath.iterator(), File.pathSeparator ) );
         }
