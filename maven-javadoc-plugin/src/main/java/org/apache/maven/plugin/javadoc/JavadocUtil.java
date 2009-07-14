@@ -95,7 +95,7 @@ public class JavadocUtil
                 directory = new File( project.getBasedir(), directory.getPath() );
             }
 
-            if ( directory.isDirectory() && !pruned.contains( dir ) )
+            if ( directory.isDirectory() && !pruned.contains( directory.getAbsolutePath() ) )
             {
                 pruned.add( directory.getAbsolutePath() );
             }
