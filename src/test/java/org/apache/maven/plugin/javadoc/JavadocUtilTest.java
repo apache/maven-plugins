@@ -19,19 +19,21 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-
-import junit.framework.TestCase;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
 public class JavadocUtilTest
-    extends TestCase
+    extends PlexusTestCase
 {
     /**
      * Method to test the javadoc version parsing.
@@ -248,5 +250,71 @@ public class JavadocUtilTest
         + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
         assertFalse( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+    }
+
+    /**
+     * Method to test fetchURL()
+     *
+     * @throws Exception if any
+     */
+    public void testFetchURL()
+        throws Exception
+    {
+        Settings settings = null;
+        URL url = null;
+
+        try
+        {
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( false );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertTrue( true );
+        }
+
+        url = new File( getBasedir(), "/pom.xml" ).toURL();
+        JavadocUtil.fetchURL( settings, url );
+        assertTrue( true );
+
+        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
+        JavadocUtil.fetchURL( settings, url );
+        assertTrue( true );
+
+        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
+        try
+        {
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( false );
+        }
+        catch ( IOException e )
+        {
+            assertTrue( true );
+        }
+
+        settings = new Settings();
+        Proxy proxy = new Proxy();
+        proxy.setActive( true );
+        proxy.setHost( "140.211.11.10" ); // Apache's HTTP proxy
+        proxy.setPort( 80 );
+        proxy.setUsername( "toto" );
+        proxy.setPassword( "toto" );
+        proxy.setNonProxyHosts( "www.google.com" );
+        settings.addProxy( proxy );
+
+        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
+        JavadocUtil.fetchURL( settings, url );
+        assertTrue( true );
+
+        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
+        try
+        {
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( false );
+        }
+        catch ( IOException e )
+        {
+            assertTrue( true );
+        }
     }
 }
