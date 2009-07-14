@@ -314,7 +314,7 @@ public class JavadocUtil
             while ( st.hasMoreTokens() )
             {
                 current = st.nextToken();
-                excludes.add( "**/" + current + "/*" );
+                excludes.add( "**/" + current + "/**" );
             }
         }
 
@@ -331,10 +331,12 @@ public class JavadocUtil
                 FileUtils.mkdir( docFileOutput.getAbsolutePath() );
                 FileUtils.copyDirectoryStructure( new File( javadocDir, docFile ), docFileOutput );
                 List files =
-                    FileUtils.getFiles( docFileOutput, StringUtils.join( excludes.iterator(), "," ), null, true );
+                    FileUtils.getFileAndDirectoryNames( docFileOutput,
+                                                        StringUtils.join( excludes.iterator(), "," ), null, true,
+                                                        true, true, true );
                 for ( Iterator it2 = files.iterator(); it2.hasNext(); )
                 {
-                    File file = (File) it2.next();
+                    File file = new File( it2.next().toString() );
 
                     if ( file.isDirectory() )
                     {
