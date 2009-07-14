@@ -63,9 +63,9 @@ public class ScmReport
     protected ScmManager scmManager;
 
     /**
-     * The directory name to checkout right after the SCM url.
+     * The directory name to checkout right after the SCM URL.
      *
-     * @parameter expression="${project.artifactId}"
+     * @parameter default-value="${project.artifactId}"
      * @required
      */
     private String checkoutDirectoryName;
