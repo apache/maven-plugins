@@ -334,7 +334,7 @@ public class RepositoryUtils
         // Try to get the last artifact repo name depending the snapshot version
         if ( ( artifact.isSnapshot() && repo.getSnapshots().isEnabled() ) )
         {
-            if ( artifact.getBaseVersion().equals( artifact.getVersion() ))
+            if ( artifact.getBaseVersion().equals( artifact.getVersion() ) )
             {
                 // Try to resolve it if not already done
                 if ( artifact.getMetadataList() == null || artifact.getMetadataList().isEmpty() )
