@@ -243,6 +243,25 @@ under the License.
     </pluginManagement>
 
     <plugins>
+<!-- START SNIPPET: configuration -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+<!-- END SNIPPET: configuration -->
       <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -291,33 +310,6 @@ under the License.
   </reporting>
 
   <profiles>
-    <!-- TODO Should be by default when release will be done -->
-    <profile>
-      <id>pdf</id>
-      <build>
-        <plugins>
-<!-- START SNIPPET: configuration -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-pdf-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <id>pdf</id>
-                <phase>site</phase>
-                <goals>
-                  <goal>pdf</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-<!-- END SNIPPET: configuration -->
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>reporting</id>
       <reporting>
