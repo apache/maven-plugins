@@ -134,7 +134,70 @@ public class JavadocReport
         return true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * <br/>
+     * The logic is the following:
+     * <table>
+     *   <tbody>
+     *     <tr>
+     *       <th> isAggregator </th>
+     *       <th> hasSourceFiles </th>
+     *       <th> isRootProject </th>
+     *       <th> Generate Report </th>
+     *     </tr>
+     *     <tr>
+     *       <td>True</td>
+     *       <td>True</td>
+     *       <td>True</td>
+     *       <td>True</td>
+     *     </tr>
+     *     <tr>
+     *       <td>True</td>
+     *       <td>True</td>
+     *       <td>False</td>
+     *       <td>False</td>
+     *     </tr>
+     *     <tr>
+     *       <td>True</td>
+     *       <td>False</td>
+     *       <td>True</td>
+     *       <td>False</td>
+     *     </tr>
+     *     <tr>
+     *       <td>True</td>
+     *       <td>False</td>
+     *       <td>False</td>
+     *       <td>False</td>
+     *     </tr>
+     *     <tr>
+     *       <td>False</td>
+     *       <td>True</td>
+     *       <td>True</td>
+     *       <td>True</td>
+     *     </tr>
+     *     <tr>
+     *       <td>False</td>
+     *       <td>True</td>
+     *       <td>False</td>
+     *       <td>True</td>
+     *     </tr>
+     *     <tr>
+     *        <td>False</td>
+     *        <td>False</td>
+     *        <td>True</td>
+     *        <td>False</td>
+     *      </tr>
+     *      <tr>
+     *        <td>False</td>
+     *        <td>False</td>
+     *        <td>False</td>
+     *        <td>False</td>
+     *      </tr>
+     *    </tbody>
+     *  </table>
+     */
     public boolean canGenerateReport()
     {
         boolean canGenerate = false;
