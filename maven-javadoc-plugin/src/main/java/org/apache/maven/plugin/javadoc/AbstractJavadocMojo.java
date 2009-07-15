@@ -334,8 +334,7 @@ public abstract class AbstractJavadocMojo
      * Whether to build an aggregated report at the root, or build individual reports.
      *
      * @parameter expression="${aggregate}" default-value="false"
-     * @deprecated As of version 2.5, use the goals <code>javadoc:aggregate</code> and
-     *             <code>javadoc:test-aggregate</code> instead.
+     * @deprecated since 2.5. Use the goals <code>javadoc:aggregate</code> and <code>javadoc:test-aggregate</code> instead.
      */
     protected boolean aggregate;
 
