@@ -29,7 +29,7 @@
 Usage
 
  The Ant Plugin generates Ant build files from POMs. The following example describe the basic
- usage of the Plugin.
+ usage of the plugin.
 
 * Generate Ant build files
 
