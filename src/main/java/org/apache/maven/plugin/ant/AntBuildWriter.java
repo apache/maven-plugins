@@ -554,11 +554,12 @@ public class AntBuildWriter
      * the path with the system property "user.home" in it. If not then just
      * return the absolute path to the local repository.
      */
-    private String getLocalRepositoryPath() {
+    private String getLocalRepositoryPath()
+    {
         String userHome = System.getProperty( "user.home" );
         String defaultPath = ( userHome + "/.m2/repository" ).replace( '\\', '/' );
         String actualPath = localRepository.getAbsolutePath().replace( '\\', '/' );
-        if( actualPath.equals( defaultPath ) )
+        if ( actualPath.equals( defaultPath ) )
         {
             return "${user.home}/.m2/repository";
         }
@@ -703,8 +704,8 @@ public class AntBuildWriter
             writer.addAttribute( "depends", "get-deps" );
             writer.addAttribute( "description", "Compile the code" );
 
-            writeCompileTasks( writer, project.getBasedir(), "${maven.build.outputDir}", compileSourceRoots, project
-                .getBuild().getResources(), null, false );
+            writeCompileTasks( writer, "${maven.build.outputDir}", compileSourceRoots,
+                               project.getBuild().getResources(), null, false );
 
             writer.endElement(); // target
         }
@@ -747,7 +748,7 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Compile the test code", 2 );
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "maven.test.skip", 2 );
 
-            writeCompileTasks( writer, project.getBasedir(), "${maven.build.testOutputDir}", testCompileSourceRoots,
+            writeCompileTasks( writer, "${maven.build.testOutputDir}", testCompileSourceRoots,
                                project.getBuild().getTestResources(), "${maven.build.outputDir}", true );
 
             writer.endElement(); // target
@@ -1084,7 +1085,7 @@ public class AntBuildWriter
         }
     }
 
-    private void writeCompileTasks( XMLWriter writer, File basedir, String outputDirectory, List compileSourceRoots,
+    private void writeCompileTasks( XMLWriter writer, String outputDirectory, List compileSourceRoots,
                                    List resources, String additionalClassesDirectory, boolean isTest )
         throws IOException
     {
