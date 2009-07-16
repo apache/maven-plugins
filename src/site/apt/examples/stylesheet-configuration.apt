@@ -2,8 +2,9 @@
  Configuring Stylesheets
  ------
  Maria Odea Ching
+ Vincent Siveton
  ------
- 2008-07-31
+ 2009-07-16
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -43,7 +44,6 @@ Configuring Stylesheets
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.5</version>
         <configuration>
-          ...
           <stylesheet>maven</stylesheet>
           ...
         </configuration>
@@ -55,3 +55,95 @@ Configuring Stylesheets
 </project>
 +-----+
 
+Configuring Stylesheets File
+
+ If a custom \<stylesheetfile/\> parameter is specified, you will be able to use it:
+
+ * if \<stylesheetfile/\> is a given file, you could use an absolute or a  relative path, for instance:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <stylesheetfile>${basedir}/path/to/your/stylesheetfile.css</stylesheetfile>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project>
++-----+
+
+ * since 2.6, \<stylesheetfile/\> could be a resource in your project directory, i.e. <<<src/main/java>>>,
+ <<<src/main/resources>>> or <<<src/main/javadoc>>>, for instance:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <stylesheetfile>path/to/your/stylesheet.css</stylesheetfile>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+  <!-- Or the following
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <stylesheetfile>path/to/your/stylesheet.css</stylesheetfile>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  -->
+  ...
+</project>
++-----+
+
+ * since 2.6, \<stylesheetfile/\> could be a resource in the Javadoc plugin dependencies, for instance:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <stylesheetfile>path/to/your/stylesheet.css</stylesheetfile>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>groupId</groupId>
+            <artifactId>artifactId</artifactId>
+            <version>version</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
++-----+

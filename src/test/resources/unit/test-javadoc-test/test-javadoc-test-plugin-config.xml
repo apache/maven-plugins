@@ -49,6 +49,7 @@ under the License.
           <tags/>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/test-javadoc-test/src/test/javadoc</javadocDirectory>
+          <stylesheet>java</stylesheet>
           <debug>true</debug>
           <failOnError>true</failOnError>
         </configuration>

@@ -45,6 +45,7 @@ under the License.
           <quiet>true</quiet>
           <debug>true</debug>
           <docfilessubdirs>true</docfilessubdirs>
+          <stylesheet>java</stylesheet>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>

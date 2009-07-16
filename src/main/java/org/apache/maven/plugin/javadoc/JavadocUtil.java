@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -884,6 +885,52 @@ public class JavadocUtil
         }
 
         return tagletClasses;
+    }
+
+    /**
+     * Copy the given url to the given file.
+     *
+     * @param url not null url
+     * @param file not null file where the url will be created
+     * @throws IOException if any
+     * @since 2.6
+     */
+    protected static void copyResource( URL url, File file )
+        throws IOException
+    {
+        if ( file == null )
+        {
+            throw new IOException( "The file " + file + " can't be null." );
+        }
+        if ( url == null )
+        {
+            throw new IOException( "The url " + url + " could not be null." );
+        }
+
+        InputStream is = url.openStream();
+        if ( is == null )
+        {
+            throw new IOException( "The resource " + url + " doesn't exists." );
+        }
+
+        if ( !file.getParentFile().exists() )
+        {
+            file.getParentFile().mkdirs();
+        }
+
+        FileOutputStream os = null;
+        try
+        {
+            os = new FileOutputStream( file );
+
+            IOUtil.copy( is, os );
+        }
+        finally
+        {
+            IOUtil.close( is );
+
+            IOUtil.close( os );
+        }
     }
 
     // ----------------------------------------------------------------------

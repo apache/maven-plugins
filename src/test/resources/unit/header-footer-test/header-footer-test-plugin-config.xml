@@ -61,6 +61,7 @@ under the License.
 </table>
               ]]>
           </footer>
+          <stylesheet>java</stylesheet>
           <quiet>true</quiet>
           <debug>true</debug>
           <failOnError>true</failOnError>

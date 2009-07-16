@@ -50,6 +50,7 @@ under the License.
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-resources-test/src/main/javadoc</javadocDirectory>
           <debug>true</debug>
           <docfilessubdirs>true</docfilessubdirs>
+          <stylesheet>java</stylesheet>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>

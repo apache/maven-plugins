@@ -42,6 +42,7 @@ under the License.
           <source>1.5</source>
           <encoding>ISO-8859-1</encoding>
           <windowtitle>Maven Javadoc Plugin Taglet jdk5 1.0-SNAPSHOT API</windowtitle>
+          <stylesheet>java</stylesheet>
           <quiet>true</quiet>
           <debug>true</debug>
           <failOnError>true</failOnError>
