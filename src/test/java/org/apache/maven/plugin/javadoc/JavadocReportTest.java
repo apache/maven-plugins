@@ -23,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -67,81 +69,78 @@ public class JavadocReportTest
     private void createTestRepo()
         throws IOException
     {
+        File localRepo = new File( getBasedir(), "target/local-repo/" );
+        if ( localRepo.exists() )
+        {
+            return;
+        }
+
+        localRepo.mkdirs();
+
         // ----------------------------------------------------------------------
         // UMLGraph
         // ----------------------------------------------------------------------
 
-        File f = new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1" );
-        f.mkdirs();
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/maven-metadata-local.xml" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/maven-metadata-local.xml" ) );
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) );
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ) );
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/doclet-test/artifact-doclet" ),
+                                          localRepo );
 
         // ----------------------------------------------------------------------
         // UMLGraph-bis
         // ----------------------------------------------------------------------
 
-        f = new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1" );
-        f.mkdirs();
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ) );
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) );
-
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ),
-                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ) );
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/doclet-path-test/artifact-doclet" ),
+                                          localRepo );
 
         // ----------------------------------------------------------------------
         // commons-attributes-compiler
         // http://www.tullmann.org/pat/taglets/
         // ----------------------------------------------------------------------
 
-        f = new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0" );
-        f.mkdirs();
+        FileUtils
+                 .copyDirectoryStructure(
+                                          new File( getBasedir(),
+                                                    "src/test/resources/unit/taglet-test/artifact-taglet" ),
+                                          localRepo );
+
+        // ----------------------------------------------------------------------
+        // stylesheetfile-test
+        // ----------------------------------------------------------------------
 
         FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/maven-metadata-local.xml" ),
-                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/maven-metadata-local.xml" ) );
+                 .copyDirectoryStructure(
+                                          new File( getBasedir(),
+                                                    "src/test/resources/unit/stylesheetfile-test/artifact-stylesheetfile" ),
+                                          localRepo );
+
+        // ----------------------------------------------------------------------
+        // helpfile-test
+        // ----------------------------------------------------------------------
 
         FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.jar" ),
-                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.jar" ) );
+                 .copyDirectoryStructure(
+                                          new File( getBasedir(),
+                                                    "src/test/resources/unit/helpfile-test/artifact-helpfile" ),
+                                          localRepo );
 
-        FileUtils
-            .copyFile(
-                       new File( getBasedir(),
-                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.pom" ),
-                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.pom" ) );
+        // Remove SCM files
+        List files =
+            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
+                                                true, true, true );
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            File file = new File( it.next().toString() );
+
+            if ( file.isDirectory() )
+            {
+                FileUtils.deleteDirectory( file );
+            }
+            else
+            {
+                file.delete();
+            }
+        }
     }
 
     /**
@@ -973,5 +972,119 @@ public class JavadocReportTest
         assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusConfigurationTaglet" ) != -1 );
         assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusRequirementTaglet" ) != -1 );
         assertTrue( options.indexOf( "org.codehaus.plexus.javadoc.PlexusComponentTaglet" ) != -1 );
+    }
+
+    /**
+     * Method to test the <code>&lt;stylesheetfile/&gt;</code> parameter.
+     *
+     * @throws Exception if any
+     */
+    public void testStylesheetfile()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/stylesheetfile-test/pom.xml" );
+
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        assertNotNull( mojo );
+
+        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+
+        File stylesheetfile =
+            new File( getBasedir(), "target/test/unit/stylesheetfile-test/target/site/apidocs/stylesheet.css" );
+
+        // stylesheet == maven OR java
+        setVariableValueToObject( mojo, "stylesheet", "javamaven" );
+
+        try
+        {
+            mojo.execute();
+            assertTrue( false );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+        }
+
+        // stylesheet == java
+        setVariableValueToObject( mojo, "stylesheet", "java" );
+        mojo.execute();
+
+        String content = readFile( stylesheetfile );
+        assertTrue( content.indexOf( "/* Javadoc style sheet */" ) != -1 );
+
+        // stylesheet == maven
+        setVariableValueToObject( mojo, "stylesheet", "maven" );
+        mojo.execute();
+
+        content = readFile( stylesheetfile );
+        assertTrue( content.indexOf( "/* Javadoc style sheet */" ) != -1
+            && content.indexOf( "Licensed to the Apache Software Foundation (ASF) under one" ) != -1 );
+
+        // stylesheetfile defined as a project resource
+        setVariableValueToObject( mojo, "stylesheet", null );
+        setVariableValueToObject( mojo, "stylesheetfile", "com/mycompany/app/javadoc/css/stylesheet.css" );
+        mojo.execute();
+
+        content = readFile( stylesheetfile );
+        assertTrue( content.indexOf( "/* Custom Javadoc style sheet in project */" ) != -1 );
+
+        // stylesheetfile defined in a javadoc plugin dependency
+        setVariableValueToObject( mojo, "stylesheetfile", "com/mycompany/app/javadoc/css2/stylesheet.css" );
+        mojo.execute();
+
+        content = readFile( stylesheetfile );
+        assertTrue( content.indexOf( "/* Custom Javadoc style sheet in artefact */" ) != -1 );
+
+        // stylesheetfile defined as file
+        File css =
+            new File( getBasedir(),
+                      "src/test/resources/unit/stylesheetfile-test/src/main/resources/com/mycompany/app/javadoc/css3/stylesheet.css" );
+        setVariableValueToObject( mojo, "stylesheetfile", css.getAbsolutePath() );
+        mojo.execute();
+
+        content = readFile( stylesheetfile );
+        assertTrue( content.indexOf( "/* Custom Javadoc style sheet as file */" ) != -1 );
+    }
+
+    /**
+     * Method to test the <code>&lt;helpfile/&gt;</code> parameter.
+     *
+     * @throws Exception if any
+     */
+    public void testHelpfile()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/helpfile-test/pom.xml" );
+
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        assertNotNull( mojo );
+
+        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+
+        File helpfile =
+            new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs/help-doc.html" );
+
+        // helpfile by default
+        mojo.execute();
+
+        String content = readFile( helpfile );
+        assertTrue( content.indexOf( "<!-- Generated by javadoc" ) != -1 );
+
+        // helpfile defined in a javadoc plugin dependency
+        setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile/help-doc.html" );
+        mojo.execute();
+
+        content = readFile( helpfile );
+        assertTrue( content.indexOf( "<!--  Help file from artefact -->" ) != -1 );
+
+        // helpfile defined as file
+        File css =
+            new File( getBasedir(),
+                      "src/test/resources/unit/helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
+        setVariableValueToObject( mojo, "helpfile", css.getAbsolutePath() );
+        mojo.execute();
+
+        content = readFile( helpfile );
+        assertTrue( content.indexOf( "<!--  Help file from file -->" ) != -1 );
     }
 }

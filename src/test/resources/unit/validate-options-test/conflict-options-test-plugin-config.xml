@@ -44,6 +44,7 @@ under the License.
           <debug>true</debug>
           <nohelp>true</nohelp>
           <helpfile>${basedir}/help.xml</helpfile>
+          <stylesheet>java</stylesheet>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>
