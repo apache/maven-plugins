@@ -41,6 +41,7 @@ under the License.
       <item name="Using Javadoc Resources" href="/examples/javadoc-resources.html"/>
       <item name="Using Alternative Output Directory" href="/examples/output-configuration.html"/>
       <item name="Configuring Stylesheets" href="/examples/stylesheet-configuration.html"/>
+      <item name="Configuring Helpfile" href="/examples/help-configuration.html"/>
       <item name="Configuring Custom Tags" href="/examples/tag-configuration.html"/>
       <item name="Configuring Custom Taglets" href="/examples/taglet-configuration.html"/>
       <item name="Generating Test Javadocs" href="/examples/test-javadocs.html"/>

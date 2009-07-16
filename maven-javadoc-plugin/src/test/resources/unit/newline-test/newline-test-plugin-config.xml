@@ -78,6 +78,7 @@ Copyright 2005,
 <a href="http://www.mycompany.com">MyCompany, Inc.<a>
               ]]>
           </bottom>
+          <stylesheet>java</stylesheet>
           <quiet>true</quiet>
           <debug>true</debug>
           <failOnError>true</failOnError>

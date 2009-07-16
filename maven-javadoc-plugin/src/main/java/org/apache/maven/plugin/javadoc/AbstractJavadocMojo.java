@@ -20,11 +20,12 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -55,6 +56,9 @@ import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.DefaultPluginManager;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
@@ -81,7 +85,6 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -852,6 +855,40 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;nohelp/&gt;.
      * <br/>
+     * The <code>helpfile</code> could be an absolute File path.
+     * <br/>
+     * Since 2.6, it could be also be a path from a resource in the current project source directories
+     * (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
+     *  or from a resource in the Javadoc plugin dependencies, for instance:
+     * <pre>
+     * &lt;helpfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/helpfile&gt;
+     * </pre>
+     * Where <code>path/to/your/resource/yourhelp-doc.html</code> could be in <code>src/main/javadoc</code>.
+     * <pre>
+     * &lt;build&gt;
+     *   &lt;plugins&gt;
+     *     &lt;plugin&gt;
+     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     *       &lt;configuration&gt;
+     *         &lt;stylesheetfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/stylesheetfile&gt;
+     *         ...
+     *       &lt;/configuration&gt;
+     *       &lt;dependencies&gt;
+     *         &lt;dependency&gt;
+     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
+     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     *           &lt;version&gt;version&lt;/version&gt;
+     *         &lt;/dependency&gt;
+     *       &lt;/dependencies&gt;
+     *     &lt;/plugin&gt;
+     *     ...
+     *   &lt;plugins&gt;
+     * &lt;/build&gt;
+     * </pre>
+     * Where <code>path/to/your/resource/yourhelp-doc.html</code> is defined in the
+     * <code>groupId:artifactId:version</code> javadoc plugin dependency.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#helpfile">helpfile</a>.
      *
      * @parameter expression="${helpfile}"
@@ -1109,8 +1146,10 @@ public abstract class AbstractJavadocMojo
     private boolean splitindex;
 
     /**
-     * Specifies whether the stylesheet to be used is the maven javadoc stylesheet or java's default stylesheet
-     * when a <i>stylesheetfile</i> parameter is not specified. Possible values: "maven" or "java".
+     * Specifies whether the stylesheet to be used is the <code>maven</code>'s javadoc stylesheet or
+     * <code>java</code>'s default stylesheet when a <i>stylesheetfile</i> parameter is not specified.
+     * <br/>
+     * Possible values: <code>maven<code> or <code>java</code>.
      * <br/>
      *
      * @parameter expression="${stylesheet}" default-value="java"
@@ -1119,6 +1158,40 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the path of an alternate HTML stylesheet file.
+     * <br/>
+     * The <code>stylesheetfile</code> could be an absolute File path.
+     * <br/>
+     * Since 2.6, it could be also be a path from a resource in the current project source directories
+     * (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
+     *  or from a resource in the Javadoc plugin dependencies, for instance:
+     * <pre>
+     * &lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
+     * </pre>
+     * Where <code>path/to/your/resource/yourstylesheet.css</code> could be in <code>src/main/javadoc</code>.
+     * <pre>
+     * &lt;build&gt;
+     *   &lt;plugins&gt;
+     *     &lt;plugin&gt;
+     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     *       &lt;configuration&gt;
+     *         &lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
+     *         ...
+     *       &lt;/configuration&gt;
+     *       &lt;dependencies&gt;
+     *         &lt;dependency&gt;
+     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
+     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     *           &lt;version&gt;version&lt;/version&gt;
+     *         &lt;/dependency&gt;
+     *       &lt;/dependencies&gt;
+     *     &lt;/plugin&gt;
+     *     ...
+     *   &lt;plugins&gt;
+     * &lt;/build&gt;
+     * </pre>
+     * Where <code>path/to/your/resource/yourstylesheet.css</code> is defined in the
+     * <code>groupId:artifactId:version</code> javadoc plugin dependency.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#stylesheetfile">
      * stylesheetfile</a>.
@@ -2052,21 +2125,67 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the stylesheet path file to be used in the javadocs. If a custom stylesheet file is not specified,
-     * either the stylesheet included in the plugin or the stylesheet file used by the javadoc tool will be used.
+     * Method to get the stylesheet path file to be used by the Javadoc Tool.
+     * <br/>
+     * If the {@link #stylesheetfile} is empty, return the file as String definded by {@link #stylesheet} value.
+     * <br/>
+     * If the {@link #stylesheetfile} is defined, return the file as String.
+     * <br/>
+     * Note: since 2.6, the {@link #stylesheetfile} could be a path from a resource in the project source
+     * directories (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
+     * or from a resource in the Javadoc plugin dependencies.
      *
-     * @param javadocOutputDirectory the base directory of the plugin
-     * @return a String that contains the path to the stylesheet file
+     * @param javadocOutputDirectory the output directory
+     * @return the stylesheet file absolute path as String.
+     * @see #getResource(List, String)
      */
-    private String getStylesheetFile( File javadocOutputDirectory )
+    private String getStylesheetFile( final File javadocOutputDirectory )
     {
-        String stylesheetfilePath = this.stylesheetfile;
-        if ( StringUtils.isEmpty( stylesheetfilePath ) && "maven".equals( stylesheet ) )
+        if ( StringUtils.isEmpty( stylesheetfile ) )
         {
-            stylesheetfilePath = javadocOutputDirectory + File.separator + DEFAULT_CSS_NAME;
+            if ( "java".equalsIgnoreCase( stylesheet ) )
+            {
+                // use the default Javadoc tool stylesheet
+                return null;
+            }
+
+            // maven, see #copyDefaultStylesheet(File)
+            return new File( javadocOutputDirectory, DEFAULT_CSS_NAME ).getAbsolutePath();
         }
 
-        return stylesheetfilePath;
+        if ( new File( stylesheetfile ).exists() )
+        {
+            return new File( stylesheetfile ).getAbsolutePath();
+        }
+
+        return getResource( new File( javadocOutputDirectory, DEFAULT_CSS_NAME ), stylesheetfile );
+    }
+
+    /**
+     * Method to get the help file to be used by the Javadoc Tool.
+     * <br/>
+     * Since 2.6, the {@link #helpfile} could be a path from a resource in the project source
+     * directories (i.e. <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>)
+     * or from a resource in the Javadoc plugin dependencies.
+     *
+     * @param javadocOutputDirectory the output directory.
+     * @return the help file absolute path as String.
+     * @since 2.6
+     * @see #getResource(File, String)
+     */
+    private String getHelpFile( final File javadocOutputDirectory )
+    {
+        if ( StringUtils.isEmpty( helpfile ) )
+        {
+            return null;
+        }
+
+        if ( new File( helpfile ).exists() )
+        {
+            return new File( helpfile ).getAbsolutePath();
+        }
+
+        return getResource( new File( javadocOutputDirectory, "help-doc.html" ), helpfile );
     }
 
     /**
@@ -2993,19 +3112,6 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Returns an input stream for reading the specified resource from the
-     * current class loader.
-     *
-     * @param resource the resource
-     * @return InputStream An input stream for reading the resource, or <tt>null</tt>
-     * if the resource could not be found
-     */
-    private InputStream getStream( String resource )
-    {
-        return getClass().getClassLoader().getResourceAsStream( resource );
-    }
-
-    /**
      * Coppy all resources to the output directory
      *
      * @param javadocOutputDirectory not null
@@ -3058,42 +3164,31 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method that copy the <code>DEFAULT_STYLESHEET_NAME</code> file from the current class
-     * loader to the <code>outputDirectory</code>.
+     * Copies the {@link #DEFAULT_CSS_NAME} css file from the current class
+     * loader to the <code>outputDirectory</code> only if {@link #stylesheetfile} is empty and
+     * {@link #stylesheet} is equals to <code>maven</code>.
      *
      * @param anOutputDirectory the output directory
      * @throws java.io.IOException if any
      * @see #DEFAULT_CSS_NAME
+     * @see #copyResource(File, URL)
      */
     private void copyDefaultStylesheet( File anOutputDirectory )
         throws IOException
     {
-        if ( anOutputDirectory == null || !anOutputDirectory.exists() )
+        if ( StringUtils.isNotEmpty( stylesheetfile ) )
         {
-            throw new IOException( "The outputDirectory " + anOutputDirectory + " doesn't exists." );
+            return;
         }
 
-        InputStream is = getStream( RESOURCE_CSS_DIR + "/" + DEFAULT_CSS_NAME );
-
-        if ( is == null )
+        if ( !stylesheet.equalsIgnoreCase( "maven" ) )
         {
-            throw new IOException( "The resource " + DEFAULT_CSS_NAME + " doesn't exists." );
+            return;
         }
 
-        File outputFile = new File( anOutputDirectory, DEFAULT_CSS_NAME );
-
-        if ( !outputFile.getParentFile().exists() )
-        {
-            outputFile.getParentFile().mkdirs();
-        }
-
-        FileOutputStream w = new FileOutputStream( outputFile );
-
-        IOUtil.copy( is, w );
-
-        IOUtil.close( is );
-
-        IOUtil.close( w );
+        URL url = getClass().getClassLoader().getResource( RESOURCE_CSS_DIR + "/" + DEFAULT_CSS_NAME );
+        File outFile = new File( anOutputDirectory, DEFAULT_CSS_NAME );
+        JavadocUtil.copyResource( url, outFile );
     }
 
     /**
@@ -3447,10 +3542,6 @@ public abstract class AbstractJavadocMojo
         {
             throw new MavenReportException( "Option <nohelp/> conflicts with <helpfile/>" );
         }
-        if ( ( StringUtils.isNotEmpty( helpfile ) ) && ( !new File( helpfile ).exists() ) )
-        {
-            throw new MavenReportException( "File not found: " + helpfile );
-        }
 
         // overview
         if ( ( getOverview() != null ) && nooverview )
@@ -3462,6 +3553,13 @@ public abstract class AbstractJavadocMojo
         if ( splitindex && noindex )
         {
             throw new MavenReportException( "Option <noindex/> conflicts with <splitindex/>" );
+        }
+
+        // stylesheet
+        if ( StringUtils.isNotEmpty( stylesheet )
+            && !( stylesheet.equalsIgnoreCase( "maven" ) || stylesheet.equalsIgnoreCase( "java" ) ) )
+        {
+            throw new MavenReportException( "Option <stylesheet/> supports only \"maven\" or \"java\" value." );
         }
     }
 
@@ -3517,8 +3615,7 @@ public abstract class AbstractJavadocMojo
      * @param arguments not null
      * @param sourcePaths not null
      * @throws MavenReportException if any
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">
-     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions">http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#javadocoptions</a>
      */
     private void addJavadocOptions( List arguments, List sourcePaths )
         throws MavenReportException
@@ -3650,7 +3747,8 @@ public abstract class AbstractJavadocMojo
 
         addArgIfNotEmpty( arguments, "-header", JavadocUtil.quotedArgument( header ), false, false );
 
-        addArgIfNotEmpty( arguments, "-helpfile", JavadocUtil.quotedPathArgument( helpfile ) );
+        addArgIfNotEmpty( arguments, "-helpfile",
+                          JavadocUtil.quotedPathArgument( getHelpFile( javadocOutputDirectory ) ) );
 
         addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
@@ -4026,5 +4124,134 @@ public abstract class AbstractJavadocMojo
                 getLog().warn( current );
             }
         }
+    }
+
+    /**
+     * @param outputFile not nul
+     * @param inputResourceName a not null resource in <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>
+     * or in the Javadoc plugin dependencies.
+     * @return the resource file absolute path as String
+     * @since 2.6
+     */
+    private String getResource( File outputFile, String inputResourceName )
+    {
+        if ( inputResourceName.startsWith( "/" ) )
+        {
+            inputResourceName = inputResourceName.replaceFirst( "//*", "" );
+        }
+
+        List classPath = new ArrayList();
+        classPath.add( project.getBuild().getSourceDirectory() );
+
+        URL resourceURL = getResource( classPath, inputResourceName );
+        if ( resourceURL != null )
+        {
+            getLog().debug( inputResourceName + " found in the main src directory of the project." );
+            return resourceURL.getFile();
+        }
+
+        classPath.clear();
+        for ( Iterator it = project.getBuild().getResources().iterator(); it.hasNext(); )
+        {
+            Resource resource = (Resource) it.next();
+
+            classPath.add( resource.getDirectory() );
+        }
+        resourceURL = getResource( classPath, inputResourceName );
+        if ( resourceURL != null )
+        {
+            getLog().debug( inputResourceName + " found in the main resources directories of the project." );
+            return resourceURL.getFile();
+        }
+
+        if ( javadocDirectory.exists() )
+        {
+            classPath.clear();
+            classPath.add( javadocDirectory.getAbsolutePath() );
+            resourceURL = getResource( classPath, inputResourceName );
+            if ( resourceURL != null )
+            {
+                getLog().debug( inputResourceName + " found in the main javadoc directory of the project." );
+                return resourceURL.getFile();
+            }
+        }
+
+        classPath.clear();
+        Plugin javadocPlugin =
+            (Plugin) project.getBuild().getPluginsAsMap().get( "org.apache.maven.plugins:maven-javadoc-plugin" );
+        if ( javadocPlugin != null && javadocPlugin.getDependencies() != null )
+        {
+            for ( Iterator it = javadocPlugin.getDependencies().iterator(); it.hasNext(); )
+            {
+                Dependency dependency = (Dependency) it.next();
+
+                JavadocPathArtifact javadocPathArtifact = new JavadocPathArtifact();
+                javadocPathArtifact.setGroupId( dependency.getGroupId() );
+                javadocPathArtifact.setArtifactId( dependency.getArtifactId() );
+                javadocPathArtifact.setVersion( dependency.getVersion() );
+                Artifact artifact = null;
+                try
+                {
+                    artifact = createAndResolveArtifact( javadocPathArtifact );
+                }
+                catch ( Exception e )
+                {
+                    getLog().error( "Unable to retrieve the dependency: " + dependency + ". Ignored." );
+                }
+
+                if ( artifact != null && artifact.getFile().exists() )
+                {
+                    classPath.add( artifact.getFile().getAbsolutePath() );
+                }
+            }
+            resourceURL = getResource( classPath, inputResourceName );
+            if ( resourceURL != null )
+            {
+                getLog().debug( inputResourceName + " found in javadoc plugin dependencies." );
+                try
+                {
+                    JavadocUtil.copyResource( resourceURL, outputFile );
+
+                    return outputFile.getAbsolutePath();
+                }
+                catch ( IOException e )
+                {
+                    getLog().error( "IOException: " + e.getMessage() );
+                }
+            }
+        }
+
+        getLog()
+                .warn( "Unable to find the resource '" + inputResourceName + "'. Using default Javadoc resources." );
+
+        return null;
+    }
+
+    /**
+     * @param classPath a not null class path list where resource will be look up.
+     * @param resource a not null ressource to find in the class path.
+     * @return the resource from the given classpath or null if not found
+     * @see ClassLoader#getResource(String)
+     * @since 2.6
+     */
+    private URL getResource( final List classPath, final String resource )
+    {
+        List urls = new ArrayList( classPath.size() );
+        Iterator iter = classPath.iterator();
+        while ( iter.hasNext() )
+        {
+            try
+            {
+                urls.add( new File( ( (String) iter.next() ) ).toURL() );
+            }
+            catch ( MalformedURLException e )
+            {
+                getLog().error( "MalformedURLException: " + e.getMessage() );
+            }
+        }
+
+        ClassLoader javadocClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
+
+        return javadocClassLoader.getResource( resource );
     }
 }

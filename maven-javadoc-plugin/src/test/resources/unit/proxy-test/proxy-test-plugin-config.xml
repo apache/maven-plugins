@@ -41,6 +41,7 @@ under the License.
           <encoding>ISO-8859-1</encoding>
           <groups/>
           <tags/>
+          <stylesheet>java</stylesheet>
           <quiet>true</quiet>
           <debug>true</debug>
           <failOnError>true</failOnError>

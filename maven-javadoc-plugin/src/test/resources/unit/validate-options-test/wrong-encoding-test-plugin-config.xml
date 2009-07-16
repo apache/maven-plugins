@@ -44,6 +44,7 @@ under the License.
           <debug>true</debug>
           <encoding>wrong</encoding>
           <docencoding>wrong</docencoding>
+          <stylesheet>java</stylesheet>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>
