@@ -4147,7 +4147,7 @@ public abstract class AbstractJavadocMojo
         if ( resourceURL != null )
         {
             getLog().debug( inputResourceName + " found in the main src directory of the project." );
-            return resourceURL.getFile();
+            return FileUtils.toFile( resourceURL ).getAbsolutePath();
         }
 
         classPath.clear();
@@ -4161,7 +4161,7 @@ public abstract class AbstractJavadocMojo
         if ( resourceURL != null )
         {
             getLog().debug( inputResourceName + " found in the main resources directories of the project." );
-            return resourceURL.getFile();
+            return FileUtils.toFile( resourceURL ).getAbsolutePath();
         }
 
         if ( javadocDirectory.exists() )
@@ -4172,7 +4172,7 @@ public abstract class AbstractJavadocMojo
             if ( resourceURL != null )
             {
                 getLog().debug( inputResourceName + " found in the main javadoc directory of the project." );
-                return resourceURL.getFile();
+                return FileUtils.toFile( resourceURL ).getAbsolutePath();
             }
         }
 
