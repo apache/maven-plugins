@@ -19,7 +19,8 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -104,6 +105,8 @@ public class CategorySummaryDocumentRenderer
 
         sink.table();
 
+        sink.tableRows( new int[] {Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT}, false );
+
         String name = i18n.getString( "site-plugin", locale, "report.category.column.document" );
         String description = i18n.getString( "site-plugin", locale, "report.category.column.description" );
 
@@ -141,6 +144,8 @@ public class CategorySummaryDocumentRenderer
                 sink.tableRow_();
             }
         }
+
+        sink.tableRows_();
 
         sink.table_();
 
