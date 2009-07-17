@@ -19,9 +19,9 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -34,6 +34,7 @@ import org.apache.maven.reporting.MavenReportException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.io.File;
 import java.io.FileWriter;
@@ -65,7 +66,8 @@ public class ReportDocumentRenderer
         this.log = log;
     }
 
-    private static class MySink extends SiteRendererSink
+    private static class MySink
+        extends SiteRendererSink
     {
         private File outputDir;
 
@@ -90,7 +92,8 @@ public class ReportDocumentRenderer
 
     }
 
-    private static class MySinkFactory implements SinkFactory
+    private static class MySinkFactory
+        implements SinkFactory
     {
         private RenderingContext context;
 
@@ -108,12 +111,32 @@ public class ReportDocumentRenderer
             return sink;
         }
 
+        public Sink createSink( File arg0, String arg1, String arg2 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0, String arg1 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
         public List sinks()
         {
             return sinks;
         }
     }
-
 
     public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException
@@ -148,6 +171,10 @@ public class ReportDocumentRenderer
         {
             throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
         }
+        finally
+        {
+            sink.close();
+        }
 
         if ( !report.isExternalReport() )
         {
@@ -161,11 +188,18 @@ public class ReportDocumentRenderer
                 {
                     MySink mySink = (MySink) it.next();
 
-                    log.debug( "  Rendering " +  mySink.getOutputName() );
+                    log.debug( "  Rendering " + mySink.getOutputName() );
 
                     Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
 
-                    renderer.generateDocument( out, mySink, siteRenderingContext );
+                    try
+                    {
+                        renderer.generateDocument( out, mySink, siteRenderingContext );
+                    }
+                    finally
+                    {
+                        mySink.close();
+                    }
                 }
             }
             catch ( IOException e )
