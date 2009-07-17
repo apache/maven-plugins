@@ -81,48 +81,42 @@ public class JavadocReportTest
         // UMLGraph
         // ----------------------------------------------------------------------
 
-        FileUtils.copyDirectoryStructure( new File( getBasedir(),
-                                                    "src/test/resources/unit/doclet-test/artifact-doclet" ),
-                                          localRepo );
+        File sourceDir = new File( getBasedir(), "src/test/resources/unit/doclet-test/artifact-doclet" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // ----------------------------------------------------------------------
         // UMLGraph-bis
         // ----------------------------------------------------------------------
 
-        FileUtils.copyDirectoryStructure( new File( getBasedir(),
-                                                    "src/test/resources/unit/doclet-path-test/artifact-doclet" ),
-                                          localRepo );
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/doclet-path-test/artifact-doclet" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // ----------------------------------------------------------------------
         // commons-attributes-compiler
         // http://www.tullmann.org/pat/taglets/
         // ----------------------------------------------------------------------
 
-        FileUtils
-                 .copyDirectoryStructure(
-                                          new File( getBasedir(),
-                                                    "src/test/resources/unit/taglet-test/artifact-taglet" ),
-                                          localRepo );
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/taglet-test/artifact-taglet" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // ----------------------------------------------------------------------
         // stylesheetfile-test
         // ----------------------------------------------------------------------
 
-        FileUtils
-                 .copyDirectoryStructure(
-                                          new File( getBasedir(),
-                                                    "src/test/resources/unit/stylesheetfile-test/artifact-stylesheetfile" ),
-                                          localRepo );
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/stylesheetfile-test/artifact-stylesheetfile" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // ----------------------------------------------------------------------
         // helpfile-test
         // ----------------------------------------------------------------------
 
-        FileUtils
-                 .copyDirectoryStructure(
-                                          new File( getBasedir(),
-                                                    "src/test/resources/unit/helpfile-test/artifact-helpfile" ),
-                                          localRepo );
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/helpfile-test/artifact-helpfile" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
 
         // Remove SCM files
         List files =
@@ -992,6 +986,8 @@ public class JavadocReportTest
         File stylesheetfile =
             new File( getBasedir(), "target/test/unit/stylesheetfile-test/target/site/apidocs/stylesheet.css" );
 
+        File options = new File( getBasedir(), "target/test/unit/stylesheetfile-test/target/site/apidocs/options" );
+
         // stylesheet == maven OR java
         setVariableValueToObject( mojo, "stylesheet", "javamaven" );
 
@@ -1012,6 +1008,9 @@ public class JavadocReportTest
         String content = readFile( stylesheetfile );
         assertTrue( content.indexOf( "/* Javadoc style sheet */" ) != -1 );
 
+        String optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-stylesheetfile" ) == -1 );
+
         // stylesheet == maven
         setVariableValueToObject( mojo, "stylesheet", "maven" );
         mojo.execute();
@@ -1019,6 +1018,11 @@ public class JavadocReportTest
         content = readFile( stylesheetfile );
         assertTrue( content.indexOf( "/* Javadoc style sheet */" ) != -1
             && content.indexOf( "Licensed to the Apache Software Foundation (ASF) under one" ) != -1 );
+
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-stylesheetfile" ) != -1 );
+        assertTrue( optionsContent
+                                  .indexOf( "'" + stylesheetfile.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
 
         // stylesheetfile defined as a project resource
         setVariableValueToObject( mojo, "stylesheet", null );
@@ -1028,12 +1032,25 @@ public class JavadocReportTest
         content = readFile( stylesheetfile );
         assertTrue( content.indexOf( "/* Custom Javadoc style sheet in project */" ) != -1 );
 
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-stylesheetfile" ) != -1 );
+        File stylesheetResource =
+            new File( getBasedir(),
+                      "src/test/resources/unit/stylesheetfile-test/src/main/resources/com/mycompany/app/javadoc/css/stylesheet.css" );
+        assertTrue( optionsContent.indexOf( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" )
+            + "'" ) != -1 );
+
         // stylesheetfile defined in a javadoc plugin dependency
         setVariableValueToObject( mojo, "stylesheetfile", "com/mycompany/app/javadoc/css2/stylesheet.css" );
         mojo.execute();
 
         content = readFile( stylesheetfile );
         assertTrue( content.indexOf( "/* Custom Javadoc style sheet in artefact */" ) != -1 );
+
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-stylesheetfile" ) != -1 );
+        assertTrue( optionsContent
+                                  .indexOf( "'" + stylesheetfile.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
 
         // stylesheetfile defined as file
         File css =
@@ -1044,6 +1061,14 @@ public class JavadocReportTest
 
         content = readFile( stylesheetfile );
         assertTrue( content.indexOf( "/* Custom Javadoc style sheet as file */" ) != -1 );
+
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-stylesheetfile" ) != -1 );
+        stylesheetResource =
+            new File( getBasedir(),
+                      "src/test/resources/unit/stylesheetfile-test/src/main/resources/com/mycompany/app/javadoc/css3/stylesheet.css" );
+        assertTrue( optionsContent.indexOf( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" )
+            + "'" ) != -1 );
     }
 
     /**
@@ -1064,11 +1089,16 @@ public class JavadocReportTest
         File helpfile =
             new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs/help-doc.html" );
 
+        File options = new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs/options" );
+
         // helpfile by default
         mojo.execute();
 
         String content = readFile( helpfile );
         assertTrue( content.indexOf( "<!-- Generated by javadoc" ) != -1 );
+
+        String optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-helpfile" ) == -1 );
 
         // helpfile defined in a javadoc plugin dependency
         setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile/help-doc.html" );
@@ -1077,14 +1107,37 @@ public class JavadocReportTest
         content = readFile( helpfile );
         assertTrue( content.indexOf( "<!--  Help file from artefact -->" ) != -1 );
 
-        // helpfile defined as file
-        File css =
-            new File( getBasedir(),
-                      "src/test/resources/unit/helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
-        setVariableValueToObject( mojo, "helpfile", css.getAbsolutePath() );
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
+        File help = new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs/help-doc.html" );
+        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
+
+        // helpfile defined as a project resource
+        setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile2/help-doc.html" );
         mojo.execute();
 
         content = readFile( helpfile );
         assertTrue( content.indexOf( "<!--  Help file from file -->" ) != -1 );
+
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
+        help =
+            new File( getBasedir(),
+                      "src/test/resources/unit/helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
+        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
+
+        // helpfile defined as file
+        help =
+            new File( getBasedir(),
+                      "src/test/resources/unit/helpfile-test/src/main/resources/com/mycompany/app/javadoc/helpfile2/help-doc.html" );
+        setVariableValueToObject( mojo, "helpfile", help.getAbsolutePath() );
+        mojo.execute();
+
+        content = readFile( helpfile );
+        assertTrue( content.indexOf( "<!--  Help file from file -->" ) != -1 );
+
+        optionsContent = readFile( options );
+        assertTrue( optionsContent.indexOf( "-helpfile" ) != -1 );
+        assertTrue( optionsContent.indexOf( "'" + help.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) != -1 );
     }
 }
