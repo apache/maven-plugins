@@ -175,6 +175,9 @@ public class SiteRunMojo
                 Locale locale = (Locale) it.next();
 
                 SiteRenderingContext i18nContext = createSiteRenderingContext( locale );
+                i18nContext.setInputEncoding( getInputEncoding() );
+                i18nContext.setOutputEncoding( getOutputEncoding() );
+
                 Map i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
                 DoxiaBean doxiaBean;
                 if ( defaultLocale.equals( locale ) )
