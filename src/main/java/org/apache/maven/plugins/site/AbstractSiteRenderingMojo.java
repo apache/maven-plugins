@@ -363,15 +363,6 @@ public abstract class AbstractSiteRenderingMojo
     {
         Map documents = siteRenderer.locateDocumentFiles( context );
 
-        // TODO: temporary solution for MSITE-289. We need to upgrade doxia site tools
-        Map tmp = new HashMap();
-        for ( Iterator it = documents.keySet().iterator(); it.hasNext(); )
-        {
-            String key = (String) it.next();
-            tmp.put( StringUtils.replace( key, "\\", "/" ), documents.get( key ) );
-        }
-        documents = tmp;
-
         Map reportsByOutputName = locateReports( reports, documents, locale );
 
         // TODO: I want to get rid of categories eventually. There's no way to add your own in a fully i18n manner
