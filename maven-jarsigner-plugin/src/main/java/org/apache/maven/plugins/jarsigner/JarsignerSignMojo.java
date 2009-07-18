@@ -73,6 +73,27 @@ public class JarsignerSignMojo
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     * 
+     * @parameter expression="${jarsigner.providerName}"
+     */
+    private String providerName;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     * 
+     * @parameter expression="${jarsigner.providerClass}"
+     */
+    private String providerClass;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     * 
+     * @parameter expression="${jarsigner.providerArg}"
+     */
+    private String providerArg;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.alias}"
      * @required
@@ -109,6 +130,21 @@ public class JarsignerSignMojo
         {
             commandLine.createArg().setValue( "-storetype" );
             commandLine.createArg().setValue( this.storetype );
+        }
+        if ( !StringUtils.isEmpty( this.providerName ) )
+        {
+            commandLine.createArg().setValue( "-providerName" );
+            commandLine.createArg().setValue( this.providerName );
+        }
+        if ( !StringUtils.isEmpty( this.providerClass ) )
+        {
+            commandLine.createArg().setValue( "-providerClass" );
+            commandLine.createArg().setValue( this.providerClass );
+        }
+        if ( !StringUtils.isEmpty( this.providerArg ) )
+        {
+            commandLine.createArg().setValue( "-providerArg" );
+            commandLine.createArg().setValue( this.providerArg );
         }
         if ( !StringUtils.isEmpty( this.sigfile ) )
         {
