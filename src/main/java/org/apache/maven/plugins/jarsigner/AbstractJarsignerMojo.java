@@ -71,7 +71,7 @@ public abstract class AbstractJarsignerMojo
     private File archive;
 
     /**
-     * List of arguments to append to the jarsigner command line.
+     * List of additional arguments to append to the jarsigner command line.
      *
      * @parameter expression="${jarsigner.arguments}"
      * @optional
