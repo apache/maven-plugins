@@ -363,9 +363,7 @@ public abstract class AbstractJarsignerMojo
             throw new NullPointerException( "key" );
         }
 
-        return new MessageFormat( ResourceBundle.getBundle(
-            "org/apache/maven/plugins/jarsigner/AbstractJarsignerMojo" ).getString( key ) ).format( args );
-
+        return new MessageFormat( ResourceBundle.getBundle( "jarsigner" ).getString( key ) ).format( args );
     }
 
 }
