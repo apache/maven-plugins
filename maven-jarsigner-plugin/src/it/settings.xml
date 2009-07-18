@@ -27,6 +27,10 @@ under the License.
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
+        <!--
+        keystore generated via:
+        keytool -genkey -alias test-01 -keypass key-passwd -keystore keystore -storepass store-passwd -validity 4096 -dname "cn=www.example.com, ou=None, L=Seattle, ST=Washington, o=ExampleOrg, c=US"
+        -->
         <jarsigner.keystore>@project.basedir@/src/it/keystore</jarsigner.keystore>
         <jarsigner.storepass>store-passwd</jarsigner.storepass>
       </properties>
