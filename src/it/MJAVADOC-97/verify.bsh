@@ -1,0 +1,109 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+
+boolean result = true;
+
+try
+{
+    File apidocs1 = new File( basedir, "module1/target/site/apidocs" );
+    if ( !apidocs1.exists() || !apidocs1.isDirectory() )
+    {
+        System.err.println( apidocs1.getAbsolutePath() + " dir is missing or a directory." );
+        return false;
+    }
+    File apidocs2 = new File( basedir, "module2/target/site/apidocs" );
+    if ( !apidocs2.exists() || !apidocs2.isDirectory() )
+    {
+        System.err.println( apidocs2.getAbsolutePath() + " dir is missing or a directory." );
+        return false;
+    }
+
+    File options1 = new File( apidocs1, "options" );
+    if ( !options1.exists() || !options1.isFile() )
+    {
+        System.err.println( options1.getAbsolutePath() + " file is missing or not a file." );
+        return false;
+    }
+    File options2 = new File( apidocs1, "options" );
+    if ( !options2.exists() || !options2.isFile() )
+    {
+        System.err.println( options2.getAbsolutePath() + " file is missing or not a file." );
+        return false;
+    }
+
+    String strTmp = "";
+    String contentOptions1 = "";
+    BufferedReader in = new BufferedReader( new FileReader( options1 ) );
+    try
+    {
+        while ( ( strTmp = in.readLine() ) != null )
+        {
+            contentOptions1 = contentOptions1 + " " + strTmp;
+        }
+    }
+    finally
+    {
+        in.close();
+    }
+    String contentOptions2 = "";
+    BufferedReader in = new BufferedReader( new FileReader( options2 ) );
+    try
+    {
+        while ( ( strTmp = in.readLine() ) != null )
+        {
+            contentOptions2 = contentOptions2 + " " + strTmp;
+        }
+    }
+    finally
+    {
+        in.close();
+    }
+
+    if ( contentOptions1.indexOf( "-linkoffline" ) == -1 )
+    {
+        System.err.println( "-linkoffline not added." );
+        return false;
+    }
+    if ( contentOptions1.indexOf( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) ) == -1 )
+    {
+        System.err.println( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added." );
+        return false;
+    }
+
+    if ( contentOptions2.indexOf( "-linkoffline" ) == -1 )
+    {
+        System.err.println( "-linkoffline not added." );
+        return false;
+    }
+    if ( contentOptions2.indexOf( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) ) == -1 )
+    {
+        System.err.println( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added." );
+        return false;
+    }
+}
+catch( RuntimeException e )
+{
+    e.printStackTrace();
+    return false;
+}
+
+return result;

@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -37,6 +39,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
@@ -49,12 +52,23 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -933,6 +947,160 @@ public class JavadocUtil
         }
     }
 
+    /**
+     * Invoke Maven for the given project file with a list of goals and properties, the output will be in the
+     * invokerlog file.
+     * <br/>
+     * <b>Note</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
+     * <code>M2_HOME</code> system env variables.
+     *
+     * @param log a logger could be null.
+     * @param project a not null project file.
+     * @param goals a not null goals list.
+     * @param properties the properties for the goals, could be null.
+     * @param invokerLog the log file where the invoker will be written, if null using <code>System.out</code>.
+     * @since 2.6
+     */
+    protected static void invokeMaven( Log log, File projectFile, List goals, Properties properties,
+                                       File invokerLog )
+    {
+        if ( projectFile == null )
+        {
+            throw new IllegalArgumentException( "projectFile should be not null." );
+        }
+        if ( !projectFile.isFile() )
+        {
+            throw new IllegalArgumentException( projectFile.getAbsolutePath() + " is not a file." );
+        }
+        if ( goals == null || goals.size() == 0 )
+        {
+            throw new IllegalArgumentException( "goals should be not empty." );
+        }
+
+        String mavenHome = getMavenHome( log );
+        if ( StringUtils.isEmpty( mavenHome ) )
+        {
+            String msg =
+                "Could NOT invoke Maven because no Maven Home is defined. You need to have set the M2_HOME "
+                    + "system env variable or a maven.home Java system properties.";
+            if ( log != null )
+            {
+                log.error( msg );
+            }
+            else
+            {
+                System.err.println( msg );
+            }
+            return;
+        }
+
+        Invoker invoker = new DefaultInvoker();
+        invoker.setMavenHome( new File( mavenHome ) );
+
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setBaseDirectory( projectFile.getParentFile() );
+        request.setPomFile( projectFile );
+
+        if ( log != null )
+        {
+            request.setDebug( log.isDebugEnabled() );
+        }
+        else
+        {
+            request.setDebug( true );
+        }
+        request.setGoals( goals );
+        if ( properties != null )
+        {
+            request.setProperties( properties );
+        }
+
+        InvocationResult result;
+        try
+        {
+            if ( log != null )
+            {
+                log.debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+            }
+            result = invoke( log, invoker, request, invokerLog, goals, properties, null );
+        }
+        catch ( MavenInvocationException e )
+        {
+            if ( log != null )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.error( "MavenInvocationException: " + e.getMessage(), e );
+                }
+                else
+                {
+                    log.error( "MavenInvocationException: " + e.getMessage() );
+                }
+                log.error( "Error when invoking Maven, consult the invoker log." );
+            }
+            return;
+        }
+
+        String invokerLogContent = null;
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newReader( invokerLog, "UTF-8" );
+            invokerLogContent = IOUtil.toString( reader );
+        }
+        catch ( IOException e )
+        {
+            if ( log != null )
+            {
+                log.error( "IOException: " + e.getMessage() );
+            }
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        if ( invokerLogContent != null
+            && invokerLogContent.indexOf( "Error occurred during initialization of VM" ) != -1 )
+        {
+            if ( log != null )
+            {
+                log.info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
+
+                log.debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS" );
+            }
+            try
+            {
+                result = invoke( log, invoker, request, invokerLog, goals, properties, "" );
+            }
+            catch ( MavenInvocationException e )
+            {
+                if ( log != null )
+                {
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.error( "MavenInvocationException: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        log.error( "MavenInvocationException: " + e.getMessage() );
+                    }
+                    log.error( "Error when reinvoking Maven, consult the invoker log." );
+                }
+                return;
+            }
+        }
+
+        if ( result.getExitCode() != 0 )
+        {
+            if ( log != null )
+            {
+                log.error( "Error when invoking Maven, consult the invoker log file: "
+                    + invokerLog.getAbsolutePath() );
+            }
+        }
+    }
+
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
@@ -981,5 +1149,218 @@ public class JavadocUtil
         }
 
         return classes;
+    }
+
+    /**
+     * @param log could be null
+     * @param invoker not null
+     * @param request not null
+     * @param invokerLog not null
+     * @param goals not null
+     * @param properties could be null
+     * @param mavenOpts could be null
+     * @return the invocation result
+     * @throws MavenInvocationException if any
+     * @since 2.6
+     */
+    private static InvocationResult invoke( Log log, Invoker invoker, InvocationRequest request, File invokerLog,
+                                            List goals, Properties properties, String mavenOpts )
+        throws MavenInvocationException
+    {
+        PrintStream ps;
+        OutputStream os = null;
+        if ( invokerLog != null )
+        {
+            log.debug( "Using "+ invokerLog.getAbsolutePath() + " to log the invoker" );
+
+            try
+            {
+                if ( !invokerLog.exists() )
+                {
+                    invokerLog.getParentFile().mkdirs();
+                }
+                os = new FileOutputStream( invokerLog );
+                ps = new PrintStream( os, true, "UTF-8" );
+            }
+            catch ( FileNotFoundException e )
+            {
+                if ( log != null )
+                {
+                    log.error( "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
+                }
+                ps = System.out;
+            }
+            catch ( UnsupportedEncodingException e )
+            {
+                if ( log != null )
+                {
+                    log.error( "UnsupportedEncodingException: " + e.getMessage()
+                        + ". Using System.out to log the invoker." );
+                }
+                ps = System.out;
+            }
+        }
+        else
+        {
+            log.debug( "Using System.out to log the invoker." );
+
+            ps = System.out;
+        }
+
+        if ( mavenOpts != null )
+        {
+            request.setMavenOpts( mavenOpts );
+        }
+
+        InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
+        request.setOutputHandler( outputHandler );
+
+        outputHandler.consumeLine( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+        outputHandler.consumeLine( "" );
+        outputHandler.consumeLine( "M2_HOME=" + getMavenHome( log ) );
+        outputHandler.consumeLine( "MAVEN_OPTS=" + getMavenOpts( log ) );
+        outputHandler.consumeLine( "JAVA_HOME=" + getJavaHome( log ) );
+        outputHandler.consumeLine( "JAVA_OPTS=" + getJavaOpts( log ) );
+        outputHandler.consumeLine( "" );
+
+        try
+        {
+            return invoker.execute( request );
+        }
+        finally
+        {
+            IOUtil.close( os );
+            ps = null;
+        }
+    }
+
+    /**
+     * @param log a logger could be null
+     * @return the Maven home defined in the <code>maven.home</code> system property or defined
+     * in <code>M2_HOME</code> system env variables or null if never setted.
+     * @since 2.6
+     */
+    private static String getMavenHome( Log log )
+    {
+        String mavenHome = System.getProperty( "maven.home" );
+        if ( mavenHome == null )
+        {
+            try
+            {
+                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
+            }
+            catch ( IOException e )
+            {
+                if ( log != null )
+                {
+                    log.debug( "IOException: " + e.getMessage() );
+                }
+            }
+        }
+
+        File m2Home = new File( mavenHome );
+        if ( !m2Home.exists() )
+        {
+            if ( log != null )
+            {
+                log
+                   .error( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
+                       + "M2_HOME environment variable." );
+            }
+        }
+
+        return mavenHome;
+    }
+
+    /**
+     * @param log a logger could be null
+     * @return the <code>MAVEN_OPTS</code> env variable value
+     * @since 2.6
+     */
+    private static String getMavenOpts( Log log )
+    {
+        String mavenOpts = null;
+        try
+        {
+            mavenOpts = CommandLineUtils.getSystemEnvVars().getProperty( "MAVEN_OPTS" );
+        }
+        catch ( IOException e )
+        {
+            if ( log != null )
+            {
+                log.debug( "IOException: " + e.getMessage() );
+            }
+        }
+
+        return mavenOpts;
+    }
+
+    /**
+     * @param log a logger could be null
+     * @return the <code>JAVA_HOME</code> from System.getProperty( "java.home" )
+     * By default, <code>System.getProperty( "java.home" ) = JRE_HOME</code> and <code>JRE_HOME</code>
+     * should be in the <code>JDK_HOME</code>
+     * @since 2.6
+     */
+    private static File getJavaHome( Log log )
+    {
+        File javaHome;
+        if ( SystemUtils.IS_OS_MAC_OSX )
+        {
+            javaHome = SystemUtils.getJavaHome();
+        }
+        else
+        {
+            javaHome = new File( SystemUtils.getJavaHome(), ".." );
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            try
+            {
+                javaHome = new File( CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_HOME" ) );
+            }
+            catch ( IOException e )
+            {
+                if ( log != null )
+                {
+                    log.debug( "IOException: " + e.getMessage() );
+                }
+            }
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            if ( log != null )
+            {
+                log.error( "Cannot find Java application directory. Either specify \'java.home\' system property, or "
+                    + "JAVA_HOME environment variable." );
+            }
+        }
+
+        return javaHome;
+    }
+
+    /**
+     * @param log a logger could be null
+     * @return the <code>JAVA_OPTS</code> env variable value
+     * @since 2.6
+     */
+    private static String getJavaOpts( Log log )
+    {
+        String javaOpts= null;
+        try
+        {
+            javaOpts = CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_OPTS" );
+        }
+        catch ( IOException e )
+        {
+            if ( log != null )
+            {
+                log.debug( "IOException: " + e.getMessage() );
+            }
+        }
+
+        return javaOpts;
     }
 }
