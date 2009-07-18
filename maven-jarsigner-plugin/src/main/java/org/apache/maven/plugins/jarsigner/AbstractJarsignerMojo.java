@@ -295,6 +295,10 @@ public abstract class AbstractJarsignerMojo
                     {
                         getLog().info( line );
                     }
+                    else
+                    {
+                        getLog().debug( line );
+                    }
                 }
 
             }, new StreamConsumer()
