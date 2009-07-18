@@ -19,7 +19,11 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+
+<faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/FML/1.0"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="What are the Javadoc options supported by the Maven Javadoc Plugin">
       <question>What are the Javadoc options supported by the Maven Javadoc Plugin?</question>
@@ -251,11 +255,11 @@ mvn deploy:deploy-file \
         <p>
           You need to configure the <i>&lt;links/&gt;</i> parameter. Also, you need to correctly write references in
           your Javadoc, i.e.:
-          <ul>
-            <li><code>@see MyMojo</code> or <code>{@link MyMojo}</code> will <b>NOT work</b>.</li>
-            <li><code>@see com.mycompany.plugin.myplugin.MyMojo</code> or <code>{@link com.mycompany.myplugin.MyMojo}</code> will <b>work</b>.</li>
-          </ul>
         </p>
+        <ul>
+          <li><code>@see MyMojo</code> or <code>{@link MyMojo}</code> will <b>NOT work</b>.</li>
+          <li><code>@see com.mycompany.plugin.myplugin.MyMojo</code> or <code>{@link com.mycompany.myplugin.MyMojo}</code> will <b>work</b>.</li>
+        </ul>
       </answer>
     </faq>
     <faq id="On Windows with Sun JDK, why javadoc:javadoc goal blows up due to an IllegalArgumentException in sun.net.www.ParseUtil.decode()">
@@ -265,8 +269,9 @@ mvn deploy:deploy-file \
           You are on Windows XP with Sun JDK 5 or JDK 6 freshly installed, and when you run <i>mvn javadoc:javadoc</i>,
           you are stick by an <i>sun.net.www.ParseUtil.decode()</i> exception like this
           <a href="javascript:;" onclick="toggleException( '_6219854' );" style="cursor: pointer;vertical-align:text-bottom;">one</a>.
-          <div id="_6219854" style="display:none">
-            <source>
+        </p>
+        <div id="_6219854" style="display:none">
+          <source>
 ...
 [INFO] ------------------------------------------------------------------------
 [ERROR] BUILD ERROR
@@ -347,8 +352,7 @@ mvn deploy:deploy-file \
 
   Command line was:C:\Java\jdk1.6.0_03\jre\..\bin\javadoc.exe @options @packages
   ...</source>
-            </div>
-        </p>
+        </div>
         <p>
           Your <i>CLASSPATH</i> environement variable is probably corrupted, i.e. something like:
           <source>CLASSPATH=.;C:\Java\jdk1.6.0_03\jre\lib\ext\QTJava.zip;%JAVAHOME%</source>
@@ -387,15 +391,26 @@ mvn deploy:deploy-file \
       <answer>
         <p>
           By default, these parameters have the following values:
-          <dl>
-            <dt><code>encoding</code></dt>
-            <dd>Value of <code>${project.build.sourceEncoding}</code> property or the value of the
-              <code>file.encoding</code> system property if not specified.</dd>
-            <dt><code>docencoding</code></dt>
-            <dd>Value of <code>${project.reporting.outputEncoding}</code> property or <code>UTF-8</code> if not specified.</dd>
-            <dt><code>charset</code></dt>
-            <dd>Value of <code>docencoding</code> parameter if not specified.</dd>
-          </dl>
+        </p>
+        <dl>
+          <dt><code>encoding</code></dt>
+          <dd>Value of <code>${project.build.sourceEncoding}</code> property or the value of the
+            <code>file.encoding</code> system property if not specified.</dd>
+          <dt><code>docencoding</code></dt>
+          <dd>Value of <code>${project.reporting.outputEncoding}</code> property or <code>UTF-8</code> if not specified.</dd>
+          <dt><code>charset</code></dt>
+          <dd>Value of <code>docencoding</code> parameter if not specified.</dd>
+        </dl>
+      </answer>
+    </faq>
+    <faq id="How to link the multi-modules Javadoc directories">
+      <question>How to link the multi-modules Javadoc directories?</question>
+      <answer>
+        <p>
+          By default, the Javadoc Plugin uses
+          <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>
+          to link the generated multi-modules Javadoc directories together. For more information about the default
+          values, refer you to the Javadoc Plugin <a href="./javadoc-mojo.html#offlineLinks">offlineLinks</a>.
         </p>
       </answer>
     </faq>

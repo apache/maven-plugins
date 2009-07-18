@@ -19,10 +19,8 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -32,20 +30,12 @@ import java.util.List;
 import junitx.util.PrivateAccessor;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
@@ -63,19 +53,6 @@ public class FixJavadocMojoTest
 {
     /** The vm line separator */
     private static final String EOL = System.getProperty( "line.separator" );
-
-    /** The M2_HOME env variable */
-    private static final File M2_HOME;
-
-    /** The M2_HOME env variable */
-    private static final File JAVA_HOME;
-
-    static
-    {
-        M2_HOME = getM2Home();
-
-        JAVA_HOME = getJavaHome();
-    }
 
     /**
      * @throws Exception if any
@@ -536,12 +513,13 @@ public class FixJavadocMojoTest
         File testPom = new File( testPomBasedir, "pom.xml" );
         assertTrue( testPom.getAbsolutePath() + " should exist", testPom.exists() );
 
-        // compile the test project
-        invokeCompileGoal( testPom );
-        assertTrue( new File( testPomBasedir, "target/classes" ).exists() );
-
         FixJavadocMojo mojo = (FixJavadocMojo) lookupMojo( "fix", testPom );
         assertNotNull( mojo );
+
+        // compile the test project
+        invokeCompileGoal( testPom, mojo.getLog() );
+        assertTrue( new File( testPomBasedir, "target/classes" ).exists() );
+
         mojo.execute();
 
         File expectedDir = new File( testPomBasedir, "expected/src/main/java/fix/test" );
@@ -560,139 +538,22 @@ public class FixJavadocMojoTest
     /**
      * Invoke the compilation on the given pom file.
      *
-     * @param testPom
+     * @param testPom not null
+     * @param log not null
      */
-    private void invokeCompileGoal( File testPom )
+    private void invokeCompileGoal( File testPom, Log log )
     {
-        Invoker invoker = new DefaultInvoker();
-        invoker.setMavenHome( M2_HOME );
-
-        ByteArrayOutputStream invokerLog = new ByteArrayOutputStream();
-        InvocationOutputHandler outputHandler = new PrintStreamHandler( new PrintStream( invokerLog ), false );
-
-        outputHandler.consumeLine( "Invoke Maven" );
-        outputHandler.consumeLine( "M2_HOME=" + M2_HOME );
-        outputHandler.consumeLine( "JAVA_HOME=" + JAVA_HOME );
-
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setBaseDirectory( testPom.getParentFile() );
-        request.setPomFile( testPom );
-        request.setOutputHandler( outputHandler );
-        request.setDebug( true );
-        request.setJavaHome( JAVA_HOME );
-        request.setMavenOpts( "-Xms256m -Xmx256m" );
-
         List goals = new ArrayList();
         goals.add( "clean" );
         goals.add( "compile" );
 
-        request.setGoals( goals );
-
-        try
-        {
-            InvocationResult result = invoker.execute( request );
-            if ( result.getExitCode() != 0 )
-            {
-                StringBuffer msg = new StringBuffer();
-                msg.append( "Ouput from invoker:" ).append( "\n\n" );
-                msg.append( invokerLog ).append( "\n\n" );
-
-                getContainer().getLogger().error( msg.toString() );
-
-                fail( "Error when invoking Maven, see invoker log above" );
-            }
-        }
-        catch ( MavenInvocationException e )
-        {
-            StringBuffer msg = new StringBuffer();
-            msg.append( "Ouput from invoker:" ).append( "\n\n" );
-            msg.append( invokerLog ).append( "\n\n" );
-
-            getContainer().getLogger().error( msg.toString() );
-
-            fail( "Error when invoking Maven, see invoker log above" );
-        }
+        File invokerLogFile = new File( getBasedir(), "target/invoker-FixJavadocMojoTest.txt" );
+        JavadocUtil.invokeMaven( log, testPom, goals, null, invokerLogFile );
     }
 
     // ----------------------------------------------------------------------
     // static methods
     // ----------------------------------------------------------------------
-
-    /**
-     * Try to find the M2_HOME from System.getProperty( "maven.home" ) or M2_HOME env variable.
-     *
-     * @return the M2Home file
-     */
-    private static File getM2Home()
-    {
-        String mavenHome = System.getProperty( "maven.home" );
-
-        if ( mavenHome == null )
-        {
-            try
-            {
-                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
-            }
-            catch ( IOException e )
-            {
-                // nop
-            }
-        }
-
-        if ( mavenHome == null )
-        {
-            fail( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
-                + "M2_HOME environment variable." );
-        }
-
-        File m2Home = new File( mavenHome );
-        if ( !m2Home.exists() )
-        {
-            fail( "Cannot find Maven application directory. Either specify \'maven.home\' system property, or "
-                + "M2_HOME environment variable." );
-        }
-
-        return m2Home;
-    }
-
-    /**
-     * Try to find the JAVA_HOME from System.getProperty( "java.home" )
-     * By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME should be in the JDK_HOME
-     *
-     * @return the JavaHome file
-     */
-    private static File getJavaHome()
-    {
-        File javaHome;
-        if ( SystemUtils.IS_OS_MAC_OSX )
-        {
-            javaHome = SystemUtils.getJavaHome();
-        }
-        else
-        {
-            javaHome = new File( SystemUtils.getJavaHome(), ".." );
-        }
-
-        if ( javaHome == null || !javaHome.exists() )
-        {
-            try
-            {
-                javaHome = new File( CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_HOME" ) );
-            }
-            catch ( IOException e )
-            {
-                // nop
-            }
-        }
-
-        if ( javaHome == null || !javaHome.exists() )
-        {
-            fail( "Cannot find Java application directory. Either specify \'java.home\' system property, or "
-                + "JAVA_HOME environment variable." );
-        }
-
-        return javaHome;
-    }
 
     /**
      * Asserts that files are equal. If they are not an AssertionFailedError is thrown.
