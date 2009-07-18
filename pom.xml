@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-project-info-reports-plugin</artifactId>
-  <version>2.1.2-SNAPSHOT</version>
+  <version>2.1.2</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Project Info Reports Plugin</name>
@@ -58,9 +58,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-project-info-reports-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-project-info-reports-plugin-2.1.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-project-info-reports-plugin-2.1.2</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-project-info-reports-plugin-2.1.2</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -120,7 +120,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4.2-SNAPSHOT</version>
+      <version>2.0.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -303,6 +303,23 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2-beta-4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <profiles>
     <profile>
       <id>reporting</id>
@@ -389,6 +406,34 @@ under the License.
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Using this plugin configuration to produce a buildable project source distro,
+                 per the discussion on members@ASF regarding what constitutes a valid release.
+            -->
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-project-src-distro</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                   <descriptor>src/main/assembly/source-release.xml</descriptor>
+                  </descriptors>
+                  <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
               </execution>
             </executions>
           </plugin>
