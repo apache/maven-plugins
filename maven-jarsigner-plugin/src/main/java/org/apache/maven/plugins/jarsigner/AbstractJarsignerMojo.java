@@ -20,9 +20,11 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
@@ -101,11 +103,18 @@ public abstract class AbstractJarsignerMojo
      */
     private MavenProject project;
 
+    /**
+     * The path to the jarsigner we are going to use.
+     */
+    private String executable;
+
     public final void execute()
         throws MojoExecutionException
     {
         if ( !this.skip )
         {
+            this.executable = getExecutable();
+
             if ( this.archive != null )
             {
                 this.processArchive( this.archive );
@@ -260,7 +269,9 @@ public abstract class AbstractJarsignerMojo
         }
 
         Commandline commandLine = new Commandline();
-        commandLine.setExecutable( "jarsigner" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" ) );
+
+        commandLine.setExecutable( this.executable );
+
         commandLine.setWorkingDirectory( this.project.getBasedir() );
 
         if ( this.verbose )
@@ -342,6 +353,79 @@ public abstract class AbstractJarsignerMojo
                 } ), e );
 
         }
+    }
+
+    /**
+     * Locates the executable for the jarsigner tool.
+     * 
+     * @return The executable of the jarsigner tool, never <code>null<code>.
+     */
+    private String getExecutable()
+    {
+        String command = "jarsigner" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" );
+
+        String executable =
+            findExecutable( command, System.getProperty( "java.home" ), new String[] { "../bin", "bin", "../sh" } );
+
+        if ( executable == null )
+        {
+            try
+            {
+                Properties env = CommandLineUtils.getSystemEnvVars();
+
+                String[] variables = { "JDK_HOME", "JAVA_HOME" };
+
+                for ( int i = 0; i < variables.length && executable == null; i++ )
+                {
+                    executable =
+                        findExecutable( command, env.getProperty( variables[i] ), new String[] { "bin", "sh" } );
+                }
+            }
+            catch ( IOException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().warn( "Failed to retrieve environment variables, cannot search for " + command, e );
+                }
+                else
+                {
+                    getLog().warn( "Failed to retrieve environment variables, cannot search for " + command );
+                }
+            }
+        }
+
+        if ( executable == null )
+        {
+            executable = command;
+        }
+
+        return executable;
+    }
+
+    /**
+     * Finds the specified command in any of the given sub directories of the specified JDK/JRE home directory.
+     * 
+     * @param command The command to find, must not be <code>null</code>.
+     * @param homeDir The home directory to search in, may be <code>null</code>.
+     * @param subDirs The sub directories of the home directory to search in, must not be <code>null</code>.
+     * @return The (absolute) path to the command if found, <code>null</code> otherwise.
+     */
+    private String findExecutable( String command, String homeDir, String[] subDirs )
+    {
+        if ( StringUtils.isNotEmpty( homeDir ) )
+        {
+            for ( int i = 0; i < subDirs.length; i++ )
+            {
+                File file = new File( new File( homeDir, subDirs[i] ), command );
+
+                if ( file.isFile() )
+                {
+                    return file.getAbsolutePath();
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
