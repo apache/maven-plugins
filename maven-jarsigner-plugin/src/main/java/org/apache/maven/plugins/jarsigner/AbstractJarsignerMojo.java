@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -52,6 +53,14 @@ public abstract class AbstractJarsignerMojo
      * @parameter expression="${jarsigner.verbose}" default-value="false"
      */
     private boolean verbose;
+
+    /**
+     * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
+     * href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/java.html#Xms">-Xmx</a> for more details.
+     * 
+     * @parameter expression="${jarsigner.maxMemory}"
+     */
+    private String maxMemory;
 
     /**
      * Archive to process. If set, neither the project artifact nor any attachments are processed.
@@ -257,6 +266,11 @@ public abstract class AbstractJarsignerMojo
         if ( this.verbose )
         {
             commandLine.createArg().setValue( "-verbose" );
+        }
+
+        if ( StringUtils.isNotEmpty( maxMemory ) )
+        {
+            commandLine.createArg().setValue( "-J-Xmx" + maxMemory );
         }
 
         if ( this.arguments != null )
