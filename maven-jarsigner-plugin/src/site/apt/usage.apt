@@ -117,4 +117,4 @@ mvn ... -Djarsigner.attachments=false
 mvn ... -Djarsigner.skip=true
 +-----------------+
 
-  For full documentation, click {{{plugin-info.html}here}}.
+  For full documentation, please see the respective {{{./plugin-info.html}goal documentation}}.
