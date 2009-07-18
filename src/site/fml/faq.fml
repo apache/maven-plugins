@@ -25,7 +25,8 @@ under the License.
      <question>What is Jarsigner ?</question>
      <answer>
        <p>
-         You can read more about Jarsigner <a href="http://java.sun.com/javase/6/docs/technotes/tools/solaris/jarsigner.html">here</a>.
+         You can read more about this tool in the offical guide:
+         <a href="http://java.sun.com/javase/6/docs/technotes/tools/solaris/jarsigner.html">jarsigner - JAR Signing and Verification Tool</a>.
        </p>
      </answer>
    </faq>
@@ -34,9 +35,9 @@ under the License.
      <answer>
        <p>
          Signing or verifying a Java archive which is neither a project artifact
-         nor an attached artifact can be done by using the archive parameter
-         of the sign and verify goals. If this parameter is set, the goals will
-         process the specified archive and will not process any project
+         nor an attached artifact can be done by using the <code>archive</code> parameter
+         of the <a href="sign-mojo.html"><code>sign</code></a> and <a href="verify-mojo.html"><code>verify</code></a> goals. If
+         this parameter is set, the goals will process the specified archive and will not process any project
          artifacts.
        </p>
      </answer>
