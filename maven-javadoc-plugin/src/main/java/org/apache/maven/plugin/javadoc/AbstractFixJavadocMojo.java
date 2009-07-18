@@ -22,14 +22,11 @@ package org.apache.maven.plugin.javadoc;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -57,21 +54,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
@@ -596,77 +584,18 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        String mavenHome = getMavenHome();
-        if ( StringUtils.isEmpty( getMavenHome() ) )
-        {
-            getLog().info( "Cannot invoke Maven because no Maven home is defined, Clirr is ignored." );
-            return;
-        }
-
-        Invoker invoker = new DefaultInvoker();
-        invoker.setMavenHome( new File( mavenHome ) );
-
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setBaseDirectory( project.getBasedir() );
-        request.setPomFile( project.getFile() );
-
-        File invokerLogFile = new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
-        PrintStream ps;
-        try
-        {
-            ps = new PrintStream( new FileOutputStream( invokerLogFile ), true, "UTF-8" );
-        }
-        catch ( FileNotFoundException e )
-        {
-            getLog().error( "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
-            ps = System.out;
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            getLog().error( "UnsupportedEncodingException: " + e.getMessage() + ". Using System.out to log the invoker." );
-            ps = System.out;
-        }
-
-        InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
-        request.setOutputHandler( outputHandler );
-        request.setDebug( true );
-
         String clirrGoal = getFullClirrGoal();
-        request.setGoals( Collections.singletonList( clirrGoal ) );
 
         // http://mojo.codehaus.org/clirr-maven-plugin/check-mojo.html
         File clirrTextOutputFile = new File( project.getBuild().getDirectory(), "clirr.txt" );
-        Properties prop = new Properties();
-        prop.put( "textOutputFile", clirrTextOutputFile.getAbsolutePath() );
-        prop.put( "comparisonVersion", comparisonVersion );
-        prop.put( "failOnError", "false" );
-        request.setProperties( prop );
+        Properties properties = new Properties();
+        properties.put( "textOutputFile", clirrTextOutputFile.getAbsolutePath() );
+        properties.put( "comparisonVersion", comparisonVersion );
+        properties.put( "failOnError", "false" );
 
-        InvocationResult result;
-        try
-        {
-            getLog().debug( "Invoking Maven for the goal: " + clirrGoal );
-            result = invoker.execute( request );
-        }
-        catch ( MavenInvocationException e )
-        {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().error( "MavenInvocationException: " + e.getMessage(), e );
-            }
-            else
-            {
-                getLog().error( "MavenInvocationException: " + e.getMessage() );
-            }
-            getLog().error( "Error when invoking Maven, consult the invoker log. Clirr is ignored." );
-            return;
-        }
-
-        if ( result.getExitCode() != 0 )
-        {
-            getLog().error( "Error when invoking Maven, consult the invoker log. Clirr is ignored." );
-            return;
-        }
+        File invokerLogFile = new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
+        JavadocUtil.invokeMaven( getLog(), project.getFile(), Collections.singletonList( clirrGoal ), properties,
+                                 invokerLogFile );
 
         try
         {
@@ -742,6 +671,7 @@ public abstract class AbstractFixJavadocMojo
         {
             IOUtil.close( resourceAsStream );
         }
+
         sb.append( clirrVersion ).append( ":" );
         sb.append( CLIRR_MAVEN_PLUGIN_GOAL );
 
@@ -2933,28 +2863,6 @@ public abstract class AbstractFixJavadocMojo
         {
             IOUtil.close( writer );
         }
-    }
-
-    /**
-     * @return the maven home defined in the "maven.home" system property or defined in M2_HOME system env variables
-     * or null if never setted.
-     */
-    private static String getMavenHome()
-    {
-        String mavenHome = System.getProperty( "maven.home" );
-        if ( mavenHome == null )
-        {
-            try
-            {
-                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
-            }
-            catch ( IOException e )
-            {
-                // nop
-            }
-        }
-
-        return mavenHome;
     }
 
     /**

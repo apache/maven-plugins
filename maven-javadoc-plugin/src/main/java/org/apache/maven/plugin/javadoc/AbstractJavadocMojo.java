@@ -21,6 +21,7 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -85,12 +86,14 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Base class with majority of Javadoc functionalities.
@@ -1075,6 +1078,51 @@ public abstract class AbstractJavadocMojo
      * &nbsp;&nbsp;&lt;/offlineLink&gt;
      * &lt;/offlineLinks&gt;
      * </pre>
+     * <br/>
+     * <b>Note</b>: By default, if {@link #reactorProjects} is defined in a non-aggregator way, it generates default offline links
+     * between modules based on the defined project's urls. For instance, if a parent project has two projects
+     * <code>module1</code> and <code>module2</code>, the <code>-linkoffline</code> will be:
+     * <br/>
+     * <table>
+     * <tr>
+     *   <th>Module project</th>
+     *   <th>Option for '-linkoffline'</th>
+     * </tr>
+     * <tr>
+     *   <td>
+     *     <pre>
+     * &lt;project&gt;
+     *   &lt;artifactId&gt;<b>module1</b>&lt;/artifactId&gt;
+     *   &lt;url&gt;http://myhost/<b>module1</b>&lt;/url&gt;
+     *   ...
+     * &lt;/project&gt;
+     *     </pre>
+     *   </td>
+     *   <td>
+     *     <pre>
+     * -linkoffline
+     * 'http://myhost/<b>module2</b>/apidocs' '/absolute/path/to/<b>module2</b>/target/site/apidocs'
+     *     </pre>
+     *   </td>
+     * </tr>
+     * <tr>
+     *   <td>
+     *     <pre>
+     * &lt;project&gt;
+     *   &lt;artifactId&gt;<b>module2</b>&lt;/artifactId&gt;
+     *   &lt;url&gt;http://myhost/<b>module2</b>&lt;/url&gt;
+     *   ...
+     * &lt;/project&gt;
+     *     </pre>
+     *   </td>
+     *   <td>
+     *     <pre>
+     * -linkoffline
+     * 'http://myhost/<b>module1</b>/apidocs' '/absolute/path/to/<b>module1</b>/target/site/apidocs'
+     *     </pre>
+     *   </td>
+     * </tr>
+     * </table>
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/OfflineLink.html">Javadoc</a>.
      * <br/>
@@ -2994,9 +3042,11 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method to process offlineLink values as individual -linkoffline javadoc options
+     * Convenience method to process {@link #offlineLinks} values as individual <code>-linkoffline</code>
+     * javadoc options.
      *
      * @param arguments a list of arguments, not null
+     * @see #offlineLinks
      */
     private void addLinkofflineArguments( List arguments )
     {
@@ -3007,23 +3057,58 @@ public abstract class AbstractJavadocMojo
         {
             String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
 
+            int i = 0;
             for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
             {
                 MavenProject p = (MavenProject) it.next();
 
-                // don't add projects that have not built yet.
-                if ( p.getId().equals( project.getId() ) )
+                if ( p.getPackaging().equals( "pom" ) )
                 {
-                    break;
+                    continue;
                 }
 
+                if ( p.getId().equals( project.getId() ) )
+                {
+                    continue;
+                }
+
+                File location = new File( p.getBasedir(), javadocDirRelative );
                 if ( p.getUrl() != null )
                 {
-                    String url = p.getUrl() + "/apidocs";
-                    File location = new File( p.getBasedir(), javadocDirRelative );
+                    if ( !location.exists() )
+                    {
+                        String javadocGoal = getFullJavadocGoal();
+                        getLog().info(
+                                       "The goal '" + javadocGoal
+                                           + "' has not be previously called for the project: '" + p.getId()
+                                           + "'. Trying to invoke it..." );
+
+                        File invokerLogFile =
+                            new File( project.getBuild().getDirectory(), "invoker-maven-javadoc-plugin-" + i
+                                + ".txt" );
+                        JavadocUtil.invokeMaven( getLog(), p.getFile(), Collections.singletonList( javadocGoal ),
+                                                 null, invokerLogFile );
+                    }
 
                     if ( location.exists() )
                     {
+                        String destDir = "apidocs"; // see JavadocReport#destDir
+
+                        Plugin javadocPlugin =
+                            (Plugin) project.getBuild().getPluginsAsMap()
+                                            .get( "org.apache.maven.plugins:maven-javadoc-plugin" );
+                        if ( javadocPlugin != null )
+                        {
+                            Xpp3Dom xpp3Dom = (Xpp3Dom) javadocPlugin.getConfiguration();
+                            if ( xpp3Dom != null && xpp3Dom.getChild( "destDir" ) != null
+                                && StringUtils.isNotEmpty( xpp3Dom.getChild( "destDir" ).getValue() ) )
+                            {
+                                destDir = xpp3Dom.getChild( "destDir" ).getValue();
+                            }
+                        }
+
+                        String url = p.getUrl() + "/" + destDir;
+
                         OfflineLink ol = new OfflineLink();
                         ol.setUrl( url );
                         ol.setLocation( location.getAbsolutePath() );
@@ -3031,6 +3116,8 @@ public abstract class AbstractJavadocMojo
                         offlineLinksList.add( ol );
                     }
                 }
+
+                i++;
             }
         }
 
@@ -4253,5 +4340,61 @@ public abstract class AbstractJavadocMojo
         ClassLoader javadocClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
 
         return javadocClassLoader.getResource( resource );
+    }
+
+    /**
+     * Load the plugin pom.properties to get the current plugin version.
+     *
+     * @return <code>org.apache.maven.plugins:maven-javadoc-plugin:CURRENT_VERSION:javadoc</code>
+     */
+    private String getFullJavadocGoal()
+    {
+        String javadocVersion = null;
+        InputStream resourceAsStream = null;
+        try
+        {
+            String resource =
+                "META-INF/maven/org.apache.maven.plugins/maven-javadoc-plugin/pom.properties";
+            resourceAsStream = AbstractJavadocMojo.class.getClassLoader().getResourceAsStream( resource );
+
+            if ( resourceAsStream != null )
+            {
+                Properties properties = new Properties();
+                properties.load( resourceAsStream );
+
+                if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
+                {
+                    javadocVersion = properties.getProperty( "version" );
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            // nop
+        }
+        finally
+        {
+            IOUtil.close( resourceAsStream );
+        }
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( "org.apache.maven.plugins" ).append( ":" );
+        sb.append( "maven-javadoc-plugin" ).append( ":" );
+        if ( StringUtils.isNotEmpty( javadocVersion ) )
+        {
+            sb.append( javadocVersion ).append( ":" );
+        }
+
+        if ( TestJavadocReport.class.isAssignableFrom( getClass() ))
+        {
+            sb.append( "test-javadoc" );
+        }
+        else
+        {
+            sb.append( "javadoc" );
+        }
+
+        return sb.toString();
     }
 }
