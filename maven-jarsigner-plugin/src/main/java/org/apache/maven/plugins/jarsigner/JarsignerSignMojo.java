@@ -37,42 +37,42 @@ public class JarsignerSignMojo
 {
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.keystore}"
      */
     private String keystore;
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.storepass}"
      */
     private String storepass;
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.keypass}"
      */
     private String keypass;
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.sigfile}"
      */
     private String sigfile;
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.storetype}"
      */
     private String storetype;
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.alias}"
      * @required

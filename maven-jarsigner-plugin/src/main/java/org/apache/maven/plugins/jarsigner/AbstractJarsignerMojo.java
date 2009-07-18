@@ -48,7 +48,7 @@ public abstract class AbstractJarsignerMojo
 {
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.verbose}" default-value="false"
      */
@@ -56,7 +56,7 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
-     * href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/java.html#Xms">-Xmx</a> for more details.
+     * href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html#Xms">-Xmx</a> for more details.
      * 
      * @parameter expression="${jarsigner.maxMemory}"
      */

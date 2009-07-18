@@ -36,7 +36,7 @@ public class JarsignerVerifyMojo
 {
 
     /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${jarsigner.certs}" default-value="false"
      */
