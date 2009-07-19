@@ -1,0 +1,26 @@
+import java.io.*;
+import java.util.jar.*;
+
+File targetDir = new File( basedir, "target" );
+
+File mainJarFile = new File( targetDir, "test-1.0.jar" );
+System.out.println( "Checking for existence of " + mainJarFile );
+if ( !mainJarFile.isFile() )
+{
+    throw new Exception( "missing " + mainJarFile );
+}
+
+JarFile mainJar = new JarFile( mainJarFile );
+System.out.println( "Checking for existence of " + mainJarFile.getName() + "!/META-INF/TESTING.SF" );
+if ( mainJar.getEntry( "META-INF/TESTING.SF" ) == null )
+{
+    throw new Exception( "missing " + mainJarFile.getName() + "!/META-INF/TESTING.SF" );
+}
+System.out.println( "Checking for existence of " + mainJarFile.getName() + "!/META-INF/TESTING.DSA" );
+if ( mainJar.getEntry( "META-INF/TESTING.DSA" ) == null )
+{
+    throw new Exception( "missing " + mainJarFile.getName() + "!/META-INF/TESTING.DSA" );
+}
+mainJar.close();
+
+return true;
