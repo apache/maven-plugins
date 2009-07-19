@@ -20,12 +20,15 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -131,7 +134,7 @@ public abstract class AbstractJarsignerMojo
                     {
                         this.processArtifact( artifact );
                     }
-                    else if ( this.isJavaLanguageCapable( artifact ) )
+                    else if ( this.isJarFile( artifact ) )
                     {
                         this.getLog().info( this.getMessage( "ignoringAttachment", new Object[]
                             {
@@ -188,10 +191,46 @@ public abstract class AbstractJarsignerMojo
      *
      * @return {@code true} if {@code artifact} is Java language capable; {@code false} if not.
      */
-    private boolean isJavaLanguageCapable( final Artifact artifact )
+    private boolean isJarFile( final Artifact artifact )
     {
-        return artifact != null && artifact.getFile() != null && artifact.getArtifactHandler() != null
-            && "java".equals( artifact.getArtifactHandler().getLanguage() );
+        return artifact != null && artifact.getFile() != null && isJarFile( artifact.getFile() );
+    }
+
+    /**
+     * Checks whether the specified file is a JAR file. For our purposes, a JAR file is a (non-empty) ZIP stream with a
+     * META-INF directory or some class files.
+     * 
+     * @param file The file to check, must not be <code>null</code>.
+     * @return <code>true</code> if the file looks like a JAR file, <code>false</code> otherwise.
+     */
+    private boolean isJarFile( final File file )
+    {
+        try
+        {
+            // NOTE: ZipFile.getEntry() might be shorter but is several factors slower on large files
+
+            ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
+            try
+            {
+                for ( ZipEntry ze; ( ze = zis.getNextEntry() ) != null; )
+                {
+                    if ( ze.getName().startsWith( "META-INF/" ) || ze.getName().endsWith( ".class" ) )
+                    {
+                        return true;
+                    }
+                }
+            }
+            finally
+            {
+                zis.close();
+            }
+        }
+        catch ( Exception e )
+        {
+            // ignore, will fail below
+        }
+
+        return false;
     }
 
     /**
@@ -210,7 +249,7 @@ public abstract class AbstractJarsignerMojo
             throw new NullPointerException( "artifact" );
         }
 
-        if ( this.isJavaLanguageCapable( artifact ) )
+        if ( this.isJarFile( artifact ) )
         {
             if ( this.verbose )
             {

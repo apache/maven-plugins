@@ -1,0 +1,24 @@
+import java.io.*;
+import java.util.jar.*;
+
+File attachedJarFile = new File( basedir, "jar-with-unusual.ext" );
+System.out.println( "Checking for existence of " + attachedJarFile );
+if ( !attachedJarFile.isFile() )
+{
+    throw new Exception( "missing " + attachedJarFile );
+}
+
+JarFile attachedJar = new JarFile( attachedJarFile );
+System.out.println( "Checking for existence of " + attachedJarFile.getName() + "!/META-INF/TESTING.SF" );
+if ( attachedJar.getEntry( "META-INF/TESTING.SF" ) == null )
+{
+    throw new Exception( "missing " + attachedJarFile.getName() + "!/META-INF/TESTING.SF" );
+}
+System.out.println( "Checking for existence of " + attachedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+if ( attachedJar.getEntry( "META-INF/TESTING.DSA" ) == null )
+{
+    throw new Exception( "missing " + attachedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+}
+attachedJar.close();
+
+return true;
