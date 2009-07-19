@@ -212,7 +212,7 @@ public abstract class AbstractJarsignerMojo
             ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
             try
             {
-                for ( ZipEntry ze; ( ze = zis.getNextEntry() ) != null; )
+                for ( ZipEntry ze = zis.getNextEntry(); ze != null; ze = zis.getNextEntry() )
                 {
                     if ( ze.getName().startsWith( "META-INF/" ) || ze.getName().endsWith( ".class" ) )
                     {
