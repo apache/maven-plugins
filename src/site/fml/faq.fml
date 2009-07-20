@@ -403,14 +403,11 @@ mvn deploy:deploy-file \
         </dl>
       </answer>
     </faq>
-    <faq id="How to link the multi-modules Javadoc directories">
-      <question>How to link the multi-modules Javadoc directories?</question>
+    <faq id="How to add cross reference link to internal-external projects">
+      <question>How to add cross reference link to internal-external projects?</question>
       <answer>
         <p>
-          By default, the Javadoc Plugin uses
-          <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>
-          to link the generated multi-modules Javadoc directories together. For more information about the default
-          values, refer you to the Javadoc Plugin <a href="./javadoc-mojo.html#offlineLinks">offlineLinks</a>.
+          Please refer to <a href="./examples/links-configuration.html">Links configuration page</a>.
         </p>
       </answer>
     </faq>
