@@ -1,0 +1,104 @@
+ ------
+ Configuring links and offlineLinks Parameters
+ ------
+ Vincent Siveton
+ ------
+ 2009-07-20
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Configuring links Parameters
+
+  You could add cross reference links to external projects. For instance:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://commons.apache.org/dbcp/apidocs/</link>
+            <link>http://commons.apache.org/fileupload/apidocs/</link>
+          </links>
+            ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
+  <<Important Note>>: according the {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list}Javadoc specifications}},
+  all given links should have a fetchable <<</package-list>>> file.
+
+  Since 2.6, you could try to autodetect all Javadoc links for your dependencies. You need to use the
+  {{{./javadoc-mojo.html#detectLinks}detectLinks}} parameter. All detected links are based on the Maven conventions.
+  For instance, if your project has a dependency to {{{http://commons.apache.org/lang/}Apache Commons Lang}} i.e.:
+
++-----+
+<project>
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <versions>2.4</version>
+    </dependency>
+  </dependencies>
+  ...
+</project>
++-----+
+
+  The added Javadoc link will be {{http://commons.apache.org/lang/apidocs}}.
+
+  Refer to {{{./javadoc-mojo.html#links}links}} parameter for more information.
+
+Configuring offlineLinks Parameters
+
+  If your project has modules, you could add cross reference links to your modules when your goals are not aggregator goals.
+  For instance, if your project has two modules i.e.:
+
++-----+
+<project>
+  ...
+  <modules>
+    <module>module1</module>
+    <module>module2</module>
+  </modules>
+  ...
+</project>
++-----+
+
+  The offlineLinks for <<module1>> will be <<</absolute/path/to/>>><<module2>><<</target/site/apidocs>>> and
+  the offlineLinks for <<module2>> will be <<</absolute/path/to/>>><<module1>><<</target/site/apidocs>>>.
+
+  <<Important Note>>: all offlinelinks are based on the \${project.url}.
+
+  Since 2.6, you could not allowing the cross reference offlinelinks with
+  {{{./javadoc-mojo.html#detectOfflineLinks}detectOfflineLinks}} parameter.
+
+  Refer to {{{./javadoc-mojo.html#offlineLinks}offlineLinks}} parameter for more information.

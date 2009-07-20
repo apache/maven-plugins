@@ -24,6 +24,7 @@ boolean result = true;
 
 try
 {
+    // Generated files checks
     File apidocs1 = new File( basedir, "module1/target/site/apidocs" );
     if ( !apidocs1.exists() || !apidocs1.isDirectory() )
     {
@@ -50,6 +51,7 @@ try
         return false;
     }
 
+    // Read files
     String strTmp = "";
     String contentOptions1 = "";
     BufferedReader in = new BufferedReader( new FileReader( options1 ) );
@@ -78,6 +80,7 @@ try
         in.close();
     }
 
+    // Generated files content checks
     if ( contentOptions1.indexOf( "-linkoffline" ) == -1 )
     {
         System.err.println( "-linkoffline not added." );
@@ -86,6 +89,26 @@ try
     if ( contentOptions1.indexOf( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) ) == -1 )
     {
         System.err.println( apidocs2.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added." );
+        return false;
+    }
+    if ( contentOptions1.indexOf( "-link" ) == -1 )
+    {
+        System.err.println( "-link not added." );
+        return false;
+    }
+    if ( contentOptions1.indexOf( "http://commons.apache.org/lang/apidocs" ) == -1 )
+    {
+        System.err.println( "link for commons-lang not added." );
+        return false;
+    }
+    if ( contentOptions1.indexOf( "http://junit.org/apidocs" ) == -1 )
+    {
+        System.err.println( "link for junit not added." );
+        return false;
+    }
+    if ( contentOptions1.indexOf( "http://maven.apache.org/maven-core/apidocs" ) != -1 )
+    {
+        System.err.println( "link for maven-core added." );
         return false;
     }
 
@@ -97,6 +120,21 @@ try
     if ( contentOptions2.indexOf( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) ) == -1 )
     {
         System.err.println( apidocs1.getAbsolutePath().replaceAll( "\\\\", "/" ) + " not added." );
+        return false;
+    }
+    if ( contentOptions2.indexOf( "-link" ) == -1 )
+    {
+        System.err.println( "-link not added." );
+        return false;
+    }
+    if ( contentOptions2.indexOf( "http://junit.org/apidocs" ) == -1 )
+    {
+        System.err.println( "link for junit not added." );
+        return false;
+    }
+    if ( contentOptions2.indexOf( "http://maven.apache.org/maven-core/apidocs" ) != -1 )
+    {
+        System.err.println( "link for maven-core added." );
         return false;
     }
 }
