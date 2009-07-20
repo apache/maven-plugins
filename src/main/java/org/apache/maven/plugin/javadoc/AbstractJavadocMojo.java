@@ -103,6 +103,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @version $Id$
  * @since 2.0
  * @requiresDependencyResolution compile
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html">The Java API Documentation Generator, 1.4.2</a>
  */
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
@@ -412,6 +413,44 @@ public abstract class AbstractJavadocMojo
      */
     protected boolean useStandardDocletOptions;
 
+    /**
+     * Detect the Javadoc links for all dependencies defined in the project. The detection is based on the Maven
+     * conventions, i.e.: <code>${project.url}/apidocs</code>.
+     * <br/>
+     * For instance, if the project has a dependency to
+     * <a href="http://commons.apache.org/lang/">Apache Commons Lang</a> i.e.:
+     * <pre>
+     * &lt;dependency&gt;
+     *   &lt;groupId&gt;commons-lang&lt;/groupId&gt;
+     *   &lt;artifactId&gt;commons-lang&lt;/artifactId&gt;
+     * &lt;/dependency&gt;
+     * </pre>
+     * The added Javadoc link will be <code>http://commons.apache.org/lang/apidocs</code>.
+     *
+     * @parameter expression="${detectLinks}" default-value="false"
+     * @see #links
+     * @since 2.6
+     */
+    private boolean detectLinks;
+
+    /**
+     * Detect the links for all modules defined in the project.
+     * <br/>
+     * If {@link #reactorProjects} is defined in a non-aggregator way, it generates default offline links
+     * between modules based on the defined project's urls. For instance, if a parent project has two projects
+     * <code>module1</code> and <code>module2</code>, the <code>-linkoffline</code> will be:
+     * <br/>
+     * The offlineLinks for <b>module1</b> will be
+     * <code>/absolute/path/to/</code><b>module2</b><code>/target/site/apidocs</code>
+     * <br/>
+     * The offlineLinks for <b>module2</b> will be <code>/absolute/path/to/</code><b>module1</b><code>/target/site/apidocs</code>
+     *
+     * @parameter expression="${detectOfflineLinks}" default-value="true"
+     * @see #offlineLinks
+     * @since 2.6
+     */
+    private boolean detectOfflineLinks;
+
     // ----------------------------------------------------------------------
     // Javadoc Options - all alphabetical
     // ----------------------------------------------------------------------
@@ -473,7 +512,8 @@ public abstract class AbstractJavadocMojo
     private String doclet;
 
     /**
-     * Specifies the artifact containing the doclet starting class file (specified with the -doclet option).
+     * Specifies the artifact containing the doclet starting class file (specified with the <code>-doclet</code>
+     * option).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
@@ -495,7 +535,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies multiple artifacts containing the path for the doclet starting class file (specified with the
-     *  -doclet option).
+     * <code>-doclet</code> option).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
@@ -519,9 +559,9 @@ public abstract class AbstractJavadocMojo
     private DocletArtifact[] docletArtifacts;
 
     /**
-     * Specifies the path to the doclet starting class file (specified with the -doclet option) and any jar files
-     * it depends on. The docletPath can contain multiple paths by separating them with a colon (<code>:</code>)
-     * on Solaris and a semi-colon (<code>;</code>) on Windows.
+     * Specifies the path to the doclet starting class file (specified with the <code>-doclet</code> option) and
+     * any jar files it depends on. The docletPath can contain multiple paths by separating them with a colon
+     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      *
@@ -544,8 +584,8 @@ public abstract class AbstractJavadocMojo
     private String encoding;
 
     /**
-     * Unconditionally excludes the specified packages and their subpackages from the list formed by -subpackages.
-     * Multiple packages can be separated by colons (<code>:</code>).
+     * Unconditionally excludes the specified packages and their subpackages from the list formed by
+     * <code>-subpackages</code>. Multiple packages can be separated by colons (<code>:</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
@@ -918,6 +958,19 @@ public abstract class AbstractJavadocMojo
     /**
      * Creates links to existing javadoc-generated documentation of external referenced classes.
      * <br/>
+     * <b>Note 1</b>: only used is {@link #isOffline} is set to <code>false</code>.
+     * <br/>
+     * <b>Note 2</b>: all given links should have a fetchable <code>/package-list</code> file. For instance:
+     * <pre>
+     * &lt;links&gt;
+     *   &lt;link&gt;http://java.sun.com/j2se/1.4.2/docs/api&lt;/link&gt;
+     * &lt;links&gt;
+     * </pre>
+     * will be used because <code>http://java.sun.com/j2se/1.4.2/docs/api/package-list</code> exists.
+     * <br/>
+     * <b>Note</b>: if {@link #detectLinks} is defined, the links between the project dependencies are
+     * automatically added.
+     * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
      * @parameter expression="${links}"
@@ -1064,8 +1117,8 @@ public abstract class AbstractJavadocMojo
     private boolean notree;
 
     /**
-     * This option is a variation of -link; they both create links to javadoc-generated documentation for external
-     * referenced classes.
+     * This option is a variation of <code>-link</code>; they both create links to javadoc-generated documentation
+     * for external referenced classes.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>.
      * <br/>
@@ -1079,50 +1132,8 @@ public abstract class AbstractJavadocMojo
      * &lt;/offlineLinks&gt;
      * </pre>
      * <br/>
-     * <b>Note</b>: By default, if {@link #reactorProjects} is defined in a non-aggregator way, it generates default offline links
-     * between modules based on the defined project's urls. For instance, if a parent project has two projects
-     * <code>module1</code> and <code>module2</code>, the <code>-linkoffline</code> will be:
-     * <br/>
-     * <table>
-     * <tr>
-     *   <th>Module project</th>
-     *   <th>Option for '-linkoffline'</th>
-     * </tr>
-     * <tr>
-     *   <td>
-     *     <pre>
-     * &lt;project&gt;
-     *   &lt;artifactId&gt;<b>module1</b>&lt;/artifactId&gt;
-     *   &lt;url&gt;http://myhost/<b>module1</b>&lt;/url&gt;
-     *   ...
-     * &lt;/project&gt;
-     *     </pre>
-     *   </td>
-     *   <td>
-     *     <pre>
-     * -linkoffline
-     * 'http://myhost/<b>module2</b>/apidocs' '/absolute/path/to/<b>module2</b>/target/site/apidocs'
-     *     </pre>
-     *   </td>
-     * </tr>
-     * <tr>
-     *   <td>
-     *     <pre>
-     * &lt;project&gt;
-     *   &lt;artifactId&gt;<b>module2</b>&lt;/artifactId&gt;
-     *   &lt;url&gt;http://myhost/<b>module2</b>&lt;/url&gt;
-     *   ...
-     * &lt;/project&gt;
-     *     </pre>
-     *   </td>
-     *   <td>
-     *     <pre>
-     * -linkoffline
-     * 'http://myhost/<b>module1</b>/apidocs' '/absolute/path/to/<b>module1</b>/target/site/apidocs'
-     *     </pre>
-     *   </td>
-     * </tr>
-     * </table>
+     * <b>Note</b>: if {@link #detectOfflineLinks} is defined, the offline links between the project modules are
+     * automatically added if the goal is calling in a non-aggregator way.
      * <br/>
      * See <a href="./apidocs/org/apache/maven/plugin/javadoc/options/OfflineLink.html">Javadoc</a>.
      * <br/>
@@ -1942,7 +1953,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method that sets the classpath elements that will be specified in the javadoc -classpath parameter.
+     * Method that sets the classpath elements that will be specified in the javadoc <code>-classpath</code>
+     * parameter.
      *
      * @return a String that contains the concatenated classpath elements
      * @throws MavenReportException if any
@@ -2264,7 +2276,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the path of the bootclass artifacts used in the -bootclasspath option.
+     * Method to get the path of the bootclass artifacts used in the <code>-bootclasspath</code> option.
      *
      * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
      * on Solaris and a semi-colon (<code>;</code>) on Windows
@@ -2304,7 +2316,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the path of the doclet artifacts used in the -docletpath option.
+     * Method to get the path of the doclet artifacts used in the <code>-docletpath</code> option.
      *
      * Either docletArtifact or doclectArtifacts can be defined and used, not both, docletArtifact
      * takes precedence over doclectArtifacts. docletPath is always appended to any result path
@@ -2375,7 +2387,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the path of the taglet artifacts used in the -tagletpath option.
+     * Method to get the path of the taglet artifacts used in the <code>-tagletpath</code> option.
      *
      * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
      * on Solaris and a semi-colon (<code>;</code>) on Windows
@@ -3044,156 +3056,94 @@ public abstract class AbstractJavadocMojo
     /**
      * Convenience method to process {@link #offlineLinks} values as individual <code>-linkoffline</code>
      * javadoc options.
+     * <br/>
+     * If {@link #detectOfflineLinks}, try to add javadoc apidocs according Maven conventions for all modules given
+     * in the project.
      *
      * @param arguments a list of arguments, not null
      * @see #offlineLinks
+     * @see #getModulesLinks()
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkofflineArguments( List arguments )
     {
         List offlineLinksList =
             ( offlineLinks != null ? new ArrayList( Arrays.asList( offlineLinks ) ) : new ArrayList() );
 
-        if ( !isAggregator() && reactorProjects != null )
-        {
-            String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
-
-            int i = 0;
-            for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
-            {
-                MavenProject p = (MavenProject) it.next();
-
-                if ( p.getPackaging().equals( "pom" ) )
-                {
-                    continue;
-                }
-
-                if ( p.getId().equals( project.getId() ) )
-                {
-                    continue;
-                }
-
-                File location = new File( p.getBasedir(), javadocDirRelative );
-                if ( p.getUrl() != null )
-                {
-                    if ( !location.exists() )
-                    {
-                        String javadocGoal = getFullJavadocGoal();
-                        getLog().info(
-                                       "The goal '" + javadocGoal
-                                           + "' has not be previously called for the project: '" + p.getId()
-                                           + "'. Trying to invoke it..." );
-
-                        File invokerLogFile =
-                            new File( project.getBuild().getDirectory(), "invoker-maven-javadoc-plugin-" + i
-                                + ".txt" );
-                        JavadocUtil.invokeMaven( getLog(), p.getFile(), Collections.singletonList( javadocGoal ),
-                                                 null, invokerLogFile );
-                    }
-
-                    if ( location.exists() )
-                    {
-                        String destDir = "apidocs"; // see JavadocReport#destDir
-
-                        Plugin javadocPlugin =
-                            (Plugin) project.getBuild().getPluginsAsMap()
-                                            .get( "org.apache.maven.plugins:maven-javadoc-plugin" );
-                        if ( javadocPlugin != null )
-                        {
-                            Xpp3Dom xpp3Dom = (Xpp3Dom) javadocPlugin.getConfiguration();
-                            if ( xpp3Dom != null && xpp3Dom.getChild( "destDir" ) != null
-                                && StringUtils.isNotEmpty( xpp3Dom.getChild( "destDir" ).getValue() ) )
-                            {
-                                destDir = xpp3Dom.getChild( "destDir" ).getValue();
-                            }
-                        }
-
-                        String url = p.getUrl() + "/" + destDir;
-
-                        OfflineLink ol = new OfflineLink();
-                        ol.setUrl( url );
-                        ol.setLocation( location.getAbsolutePath() );
-
-                        offlineLinksList.add( ol );
-                    }
-                }
-
-                i++;
-            }
-        }
+        offlineLinksList.addAll( getModulesLinks() );
 
         if ( offlineLinksList != null )
         {
             for ( int i = 0; i < offlineLinksList.size(); i++ )
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinksList.get( i );
-                addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( offlineLink.getUrl() )
-                    + " " + JavadocUtil.quotedPathArgument( offlineLink.getLocation() ), true );
+
+                String url = offlineLink.getUrl();
+                if ( StringUtils.isEmpty( url ) )
+                {
+                    continue;
+                }
+                url = cleanUrl( url );
+
+                String location = offlineLink.getLocation();
+                if ( StringUtils.isEmpty( location ) )
+                {
+                    continue;
+                }
+                if ( isValidJavadocLink( location ) )
+                {
+                    addArgIfNotEmpty( arguments, "-linkoffline", JavadocUtil.quotedPathArgument( url )
+                                      + " " + JavadocUtil.quotedPathArgument( location ), true );
+                }
             }
         }
     }
 
     /**
-     * Convenience method to process link values as individual -link javadoc options.
-     * If a <code>package-list</code> in a configured link is not available, remove the link.
+     * Convenience method to process {@link #links} values as individual <code>-link</code> javadoc options.
+     * If {@link #detectLinks}, try to add javadoc apidocs according Maven conventions for all dependencies given
+     * in the project.
      * <br/>
-     * <b>Note</b>: if a link is not fetchable:
+     * According the Javadoc documentation, all defined link should have <code>${link}/package-list</code> fetchable.
+     * <br/>
+     * <b>Note</b>: when a link is not fetchable:
      * <ul>
      * <li>Javadoc 1.4 and less throw an exception</li>
      * <li>Javadoc 1.5 and more display a warning</li>
      * </ul>
      *
      * @param arguments a list of arguments, not null
+     * @see #detectLinks
+     * @see #getDependenciesLinks()
+     * @see JavadocUtil#fetchURL(Settings, URL)
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package-list">package-list spec</a>
      */
     private void addLinkArguments( List arguments )
     {
-        if ( links != null )
+        if ( links == null )
         {
-            for ( int i = 0; i < links.size(); i++ )
+            links = new ArrayList();
+        }
+
+        links.addAll( getDependenciesLinks() );
+
+        for ( int i = 0; i < links.size(); i++ )
+        {
+            String link = (String) links.get( i );
+
+            if ( StringUtils.isEmpty( link ) )
             {
-                String link = (String) links.get( i );
+                continue;
+            }
 
-                if ( StringUtils.isEmpty( link ) )
-                {
-                    continue;
-                }
+            while ( link.endsWith( "/" ) )
+            {
+                link = link.substring( 0, link.lastIndexOf( "/" ) );
+            }
 
-                if ( link.endsWith( "/" ) )
-                {
-                    link = link.substring( 0, link.length() - 1 );
-                }
-
-                try
-                {
-                    URI linkUri;
-                    if ( link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "http" )
-                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "https" )
-                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "ftp" )
-                        || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "file" ) )
-                    {
-                        linkUri = new URI( link + "/package-list" );
-                    }
-                    else
-                    {
-                        // links can be relative paths or files
-                        linkUri = new File( getOutputDirectory(), link + "/package-list" ).toURI();
-                    }
-                    JavadocUtil.fetchURL( settings, linkUri.toURL() );
-                    addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
-                }
-                catch ( URISyntaxException e )
-                {
-                    if ( getLog().isErrorEnabled() )
-                    {
-                        getLog().error( "Malformed link: " + link + "/package-list. Ignored it." );
-                    }
-                }
-                catch ( IOException e )
-                {
-                    if ( getLog().isErrorEnabled() )
-                    {
-                        getLog().error( "Error fetching link: " + link + "/package-list. Ignored it." );
-                    }
-                }
+            if ( isValidJavadocLink( link ) )
+            {
+                addArgIfNotEmpty( arguments, "-link", JavadocUtil.quotedPathArgument( link ), true );
             }
         }
     }
@@ -4315,7 +4265,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @param classPath a not null class path list where resource will be look up.
+     * @param classPath a not null String list of files where resource will be look up.
      * @param resource a not null ressource to find in the class path.
      * @return the resource from the given classpath or null if not found
      * @see ClassLoader#getResource(String)
@@ -4396,5 +4346,244 @@ public abstract class AbstractJavadocMojo
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Using Maven, a Javadoc link is given by <code>${project.url}/apidocs</code>.
+     *
+     * @return the detected Javadoc links using the Maven conventions for all modules defined in the current project
+     * or an empty list.
+     * @see #detectOfflineLinks
+     * @see #reactorProjects
+     * @since 2.6
+     */
+    private List getModulesLinks()
+    {
+        if ( !( detectOfflineLinks && !isAggregator() && reactorProjects != null ) )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
+        getLog().debug( "Try to add links for modules..." );
+
+        List modulesLinks = new ArrayList();
+        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
+        int i = 0;
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject p = (MavenProject) it.next();
+
+            if ( p.getPackaging().equals( "pom" ) )
+            {
+                continue;
+            }
+
+            if ( p.getId().equals( project.getId() ) )
+            {
+                continue;
+            }
+
+            File location = new File( p.getBasedir(), javadocDirRelative );
+            if ( p.getUrl() != null )
+            {
+                if ( !location.exists() )
+                {
+                    String javadocGoal = getFullJavadocGoal();
+                    getLog().info(
+                                   "The goal '" + javadocGoal
+                                       + "' has not be previously called for the project: '" + p.getId()
+                                       + "'. Trying to invoke it..." );
+
+                    File invokerLogFile =
+                        new File( project.getBuild().getDirectory(), "invoker-maven-javadoc-plugin-" + i + ".txt" );
+                    JavadocUtil.invokeMaven( getLog(), p.getFile(), Collections.singletonList( javadocGoal ),
+                                             null, invokerLogFile );
+                }
+
+                if ( location.exists() )
+                {
+                    String url = getJavadocLink( p );
+
+                    OfflineLink ol = new OfflineLink();
+                    ol.setUrl( url );
+                    ol.setLocation( location.getAbsolutePath() );
+
+                    getLog().debug( "Added Javadoc link: " + url + " for the project: " + p.getId() );
+
+                    modulesLinks.add( ol );
+                }
+            }
+
+            i++;
+        }
+
+        return modulesLinks;
+    }
+
+    /**
+     * Using Maven, a Javadoc link is given by <code>${project.url}/apidocs</code>.
+     *
+     * @return the detected Javadoc links using the Maven conventions for all dependencies defined in the current project
+     * or an empty list.
+     * @see #detectLinks
+     * @since 2.6
+     */
+    private List getDependenciesLinks()
+    {
+        if ( !detectLinks )
+        {
+            return Collections.EMPTY_LIST;
+        }
+
+        getLog().debug( "Try to add links for dependencies..." );
+
+        List dependenciesLinks = new ArrayList();
+        for ( Iterator it = project.getDependencyArtifacts().iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            if ( artifact != null && artifact.getFile().exists() )
+            {
+                try
+                {
+                    MavenProject artifactProject =
+                        mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+
+                    if ( StringUtils.isNotEmpty( artifactProject.getUrl() ) )
+                    {
+                        String url = getJavadocLink( artifactProject );
+
+                        getLog().debug(
+                                        "Added Javadoc link: " + url + " for the project: "
+                                            + artifactProject.getId() );
+                        dependenciesLinks.add( url );
+                    }
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    getLog().debug(
+                                    "Error when building the artifact: " + artifact.toString()
+                                        + ". Ignored to add Javadoc link." );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( "ProjectBuildingException: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        getLog().debug( "ProjectBuildingException: " + e.getMessage() );
+                    }
+                }
+            }
+        }
+
+        return dependenciesLinks;
+    }
+
+    /**
+     * @param link not null
+     * @return <code>true</code> if the link has a <code>/package-list</code>, <code>false</code> otherwise.
+     * @since 2.6
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#package-list">
+     * package-list spec</a>
+     */
+    private boolean isValidJavadocLink( String link )
+    {
+        try
+        {
+            URI linkUri;
+            if ( link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "http" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "https" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "ftp" )
+                || link.trim().toLowerCase( Locale.ENGLISH ).startsWith( "file" ) )
+            {
+                linkUri = new URI( link + "/package-list" );
+            }
+            else
+            {
+                // links can be relative paths or files
+                File dir = new File( link );
+                if ( !dir.isAbsolute() )
+                {
+                    dir = new File( getOutputDirectory(), link );
+                }
+                if ( !dir.isDirectory() )
+                {
+                    getLog().error( "The given File link: " + dir + " is not a dir." );
+                }
+                linkUri = new File( dir, "package-list" ).toURI();
+            }
+
+            JavadocUtil.fetchURL( settings, linkUri.toURL() );
+
+            return true;
+        }
+        catch ( URISyntaxException e )
+        {
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error( "Malformed link: " + link + "/package-list. Ignored it." );
+            }
+            return false;
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error( "Error fetching link: " + link + "/package-list. Ignored it." );
+            }
+            return false;
+        }
+    }
+
+    /**
+     * @param p not null
+     * @return the javadoc link based on the project url i.e. <code>${project.url}/${destDir}</code> where
+     * <code>destDir</code> is configued in the Javadoc plugin configuration (<code>apidocs</code> by default).
+     * @since 2.6
+     */
+    private static String getJavadocLink( MavenProject p )
+    {
+        if ( p.getUrl() == null )
+        {
+            return null;
+        }
+
+        String url = cleanUrl( p.getUrl() );
+        String destDir = "apidocs"; // see JavadocReport#destDir
+
+        Plugin javadocPlugin =
+            (Plugin) p.getBuild().getPluginsAsMap().get( "org.apache.maven.plugins:maven-javadoc-plugin" );
+        if ( javadocPlugin != null )
+        {
+            Xpp3Dom xpp3Dom = (Xpp3Dom) javadocPlugin.getConfiguration();
+            if ( xpp3Dom != null && xpp3Dom.getChild( "destDir" ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( "destDir" ).getValue() ) )
+            {
+                destDir = xpp3Dom.getChild( "destDir" ).getValue();
+            }
+        }
+
+        return url + "/" + destDir;
+    }
+
+    /**
+     * @param url could be null.
+     * @return the url cleaned or empty if url was null.
+     * @since 2.6
+     */
+    private static String cleanUrl( String url )
+    {
+        if ( url == null )
+        {
+            return "";
+        }
+
+        url = url.trim();
+        while ( url.endsWith( "/" ) )
+        {
+            url = url.substring( 0, url.lastIndexOf( "/" ) );
+        }
+
+        return url;
     }
 }
