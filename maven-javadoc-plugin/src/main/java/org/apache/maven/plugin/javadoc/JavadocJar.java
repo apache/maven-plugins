@@ -105,8 +105,8 @@ public class JavadocJar
     private String jarOutputDirectory;
 
     /**
-     * Specifies the filename that will be used for the generated jar file. Please note that "-javadoc"
-     * or "-test-javadoc" will be appended to the file name.
+     * Specifies the filename that will be used for the generated jar file. Please note that <code>-javadoc</code>
+     * or <code>-test-javadoc</code> will be appended to the file name.
      *
      * @parameter expression="${project.build.finalName}"
      */
