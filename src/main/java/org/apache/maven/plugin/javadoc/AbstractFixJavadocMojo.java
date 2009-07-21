@@ -634,51 +634,6 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * @return the full clirr goal, i.e. <code>groupId:artifactId:version:goal</code>. The clirr-plugin version
-     * could be load from the pom.properties in the clirr-maven-plugin dependency.
-     */
-    private String getFullClirrGoal()
-    {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append( CLIRR_MAVEN_PLUGIN_GROUPID ).append( ":" );
-        sb.append( CLIRR_MAVEN_PLUGIN_ARTIFACTID ).append( ":" );
-        String clirrVersion = CLIRR_MAVEN_PLUGIN_VERSION;
-        InputStream resourceAsStream = null;
-        try
-        {
-            String resource =
-                "META-INF/maven/" + CLIRR_MAVEN_PLUGIN_GROUPID + "/" + CLIRR_MAVEN_PLUGIN_ARTIFACTID
-                    + "/pom.properties";
-            resourceAsStream = AbstractFixJavadocMojo.class.getClassLoader().getResourceAsStream( resource );
-
-            if ( resourceAsStream != null )
-            {
-                Properties properties = new Properties();
-                properties.load( resourceAsStream );
-
-                if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
-                {
-                    clirrVersion = properties.getProperty( "version" );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            // nop
-        }
-        finally
-        {
-            IOUtil.close( resourceAsStream );
-        }
-
-        sb.append( clirrVersion ).append( ":" );
-        sb.append( CLIRR_MAVEN_PLUGIN_GOAL );
-
-        return sb.toString();
-    }
-
-    /**
      * @param clirrTextOutputFile not null
      * @throws IOException if any
      */
@@ -2863,6 +2818,51 @@ public abstract class AbstractFixJavadocMojo
         {
             IOUtil.close( writer );
         }
+    }
+
+    /**
+     * @return the full clirr goal, i.e. <code>groupId:artifactId:version:goal</code>. The clirr-plugin version
+     * could be load from the pom.properties in the clirr-maven-plugin dependency.
+     */
+    private static String getFullClirrGoal()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( CLIRR_MAVEN_PLUGIN_GROUPID ).append( ":" );
+        sb.append( CLIRR_MAVEN_PLUGIN_ARTIFACTID ).append( ":" );
+        String clirrVersion = CLIRR_MAVEN_PLUGIN_VERSION;
+        InputStream resourceAsStream = null;
+        try
+        {
+            String resource =
+                "META-INF/maven/" + CLIRR_MAVEN_PLUGIN_GROUPID + "/" + CLIRR_MAVEN_PLUGIN_ARTIFACTID
+                    + "/pom.properties";
+            resourceAsStream = AbstractFixJavadocMojo.class.getClassLoader().getResourceAsStream( resource );
+
+            if ( resourceAsStream != null )
+            {
+                Properties properties = new Properties();
+                properties.load( resourceAsStream );
+
+                if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
+                {
+                    clirrVersion = properties.getProperty( "version" );
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            // nop
+        }
+        finally
+        {
+            IOUtil.close( resourceAsStream );
+        }
+
+        sb.append( clirrVersion ).append( ":" );
+        sb.append( CLIRR_MAVEN_PLUGIN_GOAL );
+
+        return sb.toString();
     }
 
     /**
