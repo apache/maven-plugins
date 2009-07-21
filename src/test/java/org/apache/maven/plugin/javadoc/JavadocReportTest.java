@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,9 +31,13 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * Test {@link org.apache.maven.plugin.javadoc.JavadocReport} class.
+ *
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
@@ -402,6 +407,26 @@ public class JavadocReportTest
         generatedFile = new File( getBasedir(),
                                   "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude2/Exclude2App.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        File options =
+            new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs/options" );
+        assertTrue( options.isFile() );
+        String contentOptions = null;
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newPlatformReader( options );
+            contentOptions = IOUtil.toString( reader );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        assertTrue( contentOptions != null );
+        assertTrue( contentOptions.indexOf( "-link" ) != -1 );
+        assertTrue( contentOptions.indexOf( "http://java.sun.com/j2se/" ) != -1
+            || contentOptions.indexOf( "http://java.sun.com/javase/" ) != -1 );
     }
 
     /**

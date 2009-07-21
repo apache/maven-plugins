@@ -108,6 +108,34 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
 {
+    /**
+     * The default Javadoc API urls according the
+     * <a href="http://java.sun.com/reference/api/index.html">Sun API Specifications</a>:
+     * <pre>
+     * &lt;javaApiLinks&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;api_1.3&lt;/name&gt;
+     *     &lt;value&gt;http://java.sun.com/j2se/1.3/docs/api&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;api_1.4&lt;/name&gt;
+     *     &lt;value&gt;http://java.sun.com/j2se/1.4.2/docs/api/&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;api_1.5&lt;/name&gt;
+     *     &lt;value&gt;http://java.sun.com/j2se/1.5.0/docs/api/&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;api_1.6&lt;/name&gt;
+     *     &lt;value&gt;http://java.sun.com/javase/6/docs/api/&lt;/value&gt;
+     *   &lt;/property&gt;
+     * &lt;/javaApiLinks&gt;
+     * </pre>
+     *
+     * @since 2.6
+     */
+    public static final Properties DEFAULT_JAVA_API_LINKS  = new Properties();
+
     /** The Javadoc script file name when <code>debug</code> parameter is on, i.e. javadoc.bat or javadoc.sh */
     protected static final String DEBUG_JAVADOC_SCRIPT_NAME =
         "javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" );
@@ -414,8 +442,8 @@ public abstract class AbstractJavadocMojo
     protected boolean useStandardDocletOptions;
 
     /**
-     * Detect the Javadoc links for all dependencies defined in the project. The detection is based on the Maven
-     * conventions, i.e.: <code>${project.url}/apidocs</code>.
+     * Detect the Javadoc links for all dependencies defined in the project. The detection is based on the default
+     * Maven conventions, i.e.: <code>${project.url}/apidocs</code>.
      * <br/>
      * For instance, if the project has a dependency to
      * <a href="http://commons.apache.org/lang/">Apache Commons Lang</a> i.e.:
@@ -425,7 +453,7 @@ public abstract class AbstractJavadocMojo
      *   &lt;artifactId&gt;commons-lang&lt;/artifactId&gt;
      * &lt;/dependency&gt;
      * </pre>
-     * The added Javadoc link will be <code>http://commons.apache.org/lang/apidocs</code>.
+     * The added Javadoc <code>-link</code> parameter will be <code>http://commons.apache.org/lang/apidocs</code>.
      *
      * @parameter expression="${detectLinks}" default-value="false"
      * @see #links
@@ -440,16 +468,51 @@ public abstract class AbstractJavadocMojo
      * between modules based on the defined project's urls. For instance, if a parent project has two projects
      * <code>module1</code> and <code>module2</code>, the <code>-linkoffline</code> will be:
      * <br/>
-     * The offlineLinks for <b>module1</b> will be
+     * The added Javadoc <code>-linkoffline</code> parameter for <b>module1</b> will be
      * <code>/absolute/path/to/</code><b>module2</b><code>/target/site/apidocs</code>
      * <br/>
-     * The offlineLinks for <b>module2</b> will be <code>/absolute/path/to/</code><b>module1</b><code>/target/site/apidocs</code>
+     * The added Javadoc <code>-linkoffline</code> parameter for <b>module2</b> will be
+     * <code>/absolute/path/to/</code><b>module1</b><code>/target/site/apidocs</code>
      *
      * @parameter expression="${detectOfflineLinks}" default-value="true"
      * @see #offlineLinks
      * @since 2.6
      */
     private boolean detectOfflineLinks;
+
+    /**
+     * Detect the Java API link for the current build, i.e. <code>http://java.sun.com/j2se/1.4.2/docs/api</code>
+     * for Java source 1.4.
+     * <br/>
+     * By default, the goal detects the Javadoc API link depending the value of the <code>source</code>
+     * parameter in the <code>org.apache.maven.plugins:maven-compiler-plugin</code>
+     * (defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>),
+     * or try to compute it from the {@link #javadocExecutable} version.
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a> for the default values.
+     * <br/>
+     *
+     * @parameter expression="${detectJavaApiLink}" default-value="true"
+     * @see #links
+     * @see #javaApiLinks
+     * @see #DEFAULT_JAVA_API_LINKS
+     * @since 2.6
+     */
+    private boolean detectJavaApiLink;
+
+    /**
+     * Use this parameter <b>only</b> if the <a href="http://java.sun.com/reference/api/index.html">Sun Javadoc API</a>
+     * urls have been changed or to use custom urls for Javadoc API url.
+     * <br/>
+     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a>
+     * for the default values.
+     * <br/>
+     *
+     * @parameter expression="${javaApiLinks}"
+     * @see #DEFAULT_JAVA_API_LINKS
+     * @since 2.6
+     */
+    private Properties javaApiLinks;
 
     // ----------------------------------------------------------------------
     // Javadoc Options - all alphabetical
@@ -968,12 +1031,16 @@ public abstract class AbstractJavadocMojo
      * </pre>
      * will be used because <code>http://java.sun.com/j2se/1.4.2/docs/api/package-list</code> exists.
      * <br/>
-     * <b>Note</b>: if {@link #detectLinks} is defined, the links between the project dependencies are
+     * <b>Note 1</b>: if {@link #detectLinks} is defined, the links between the project dependencies are
      * automatically added.
+     * <b>Note 2</b>: if {@link #detectJavaApiLink} is defined, a Java API link, based on the Java verion of the
+     * project's sources, will be added automatically.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
      * @parameter expression="${links}"
+     * @see #detectLinks
+     * @see #detectJavaApiLink
      */
     protected ArrayList links;
 
@@ -1438,6 +1505,18 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${windowtitle}" default-value="${project.name} ${project.version} API"
      */
     private String windowtitle;
+
+    // ----------------------------------------------------------------------
+    // static
+    // ----------------------------------------------------------------------
+
+    static
+    {
+        DEFAULT_JAVA_API_LINKS.put( "api_1.3", "http://java.sun.com/j2se/1.3/docs/api" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.4", "http://java.sun.com/j2se/1.4.2/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.5", "http://java.sun.com/j2se/1.5.0/docs/api/" );
+        DEFAULT_JAVA_API_LINKS.put( "api_1.6", "http://java.sun.com/javase/6/docs/api/" );
+    }
 
     // ----------------------------------------------------------------------
     // protected methods
@@ -3125,6 +3204,12 @@ public abstract class AbstractJavadocMojo
             links = new ArrayList();
         }
 
+        String javaApiLink = getDefaultJavadocApiLink();
+        if ( javaApiLink != null )
+        {
+            links.add( javaApiLink );
+        }
+
         links.addAll( getDependenciesLinks() );
 
         for ( int i = 0; i < links.size(); i++ )
@@ -3597,6 +3682,12 @@ public abstract class AbstractJavadocMojo
             && !( stylesheet.equalsIgnoreCase( "maven" ) || stylesheet.equalsIgnoreCase( "java" ) ) )
         {
             throw new MavenReportException( "Option <stylesheet/> supports only \"maven\" or \"java\" value." );
+        }
+
+        // default java api links
+        if ( javaApiLinks == null || javaApiLinks.size() == 0 )
+        {
+            javaApiLinks = DEFAULT_JAVA_API_LINKS;
         }
     }
 
@@ -4214,8 +4305,8 @@ public abstract class AbstractJavadocMojo
         }
 
         classPath.clear();
-        Plugin javadocPlugin =
-            (Plugin) project.getBuild().getPluginsAsMap().get( "org.apache.maven.plugins:maven-javadoc-plugin" );
+        final String pluginId = "org.apache.maven.plugins:maven-javadoc-plugin";
+        Plugin javadocPlugin = getPlugin( project, pluginId );
         if ( javadocPlugin != null && javadocPlugin.getDependencies() != null )
         {
             for ( Iterator it = javadocPlugin.getDependencies().iterator(); it.hasNext(); )
@@ -4480,6 +4571,79 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * @return if {@link #detectJavaApiLink}, the Java API link based on the {@link #javaApiLinks} properties and the value of the
+     * <code>source</code> parameter in the <code>org.apache.maven.plugins:maven-compiler-plugin</code>
+     * defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
+     * or the {@link #fJavadocVersion}, or <code>null</code> if not defined.
+     * @since 2.6
+     * @see #detectJavaApiLink
+     * @see #javaApiLinks
+     * @see #DEFAULT_JAVA_API_LINKS
+     * @see <a href="http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#source">source parameter</a>
+     */
+    private String getDefaultJavadocApiLink()
+    {
+        if ( !detectJavaApiLink )
+        {
+            return null;
+        }
+
+        final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
+        float source = fJavadocVersion;
+        String sourceConfigured = getPluginParameter( project, pluginId, "source" );
+        if ( sourceConfigured != null )
+        {
+            try
+            {
+                source = Float.parseFloat( sourceConfigured );
+            }
+            catch ( NumberFormatException e )
+            {
+                getLog().debug(
+                                "NumberFormatException for the source parameter in the maven-compiler-plugin. "
+                                    + "Ignored it", e );
+            }
+        }
+        else
+        {
+            getLog().debug(
+                            "No maven-compiler-plugin defined in ${build.plugins} or in "
+                                + "${project.build.pluginManagement} for the " + project.getId()
+                                + ". Added Javadoc API link according the javadoc executable version i.e.: "
+                                + fJavadocVersion );
+        }
+
+        String javaApiLink = null;
+        if ( source >= 1.3f && source < 1.4f && javaApiLinks.getProperty( "api_1.3" ) != null )
+        {
+            javaApiLink = javaApiLinks.getProperty( "api_1.3" ).toString();
+        }
+        else if ( source >= 1.4f && source < 1.5f && javaApiLinks.getProperty( "api_1.4" ) != null )
+        {
+            javaApiLink = javaApiLinks.getProperty( "api_1.4" ).toString();
+        }
+        else if ( source >= 1.5f && source < 1.6f && javaApiLinks.getProperty( "api_1.5" ) != null )
+        {
+            javaApiLink = javaApiLinks.getProperty( "api_1.5" ).toString();
+        }
+        else if ( source >= 1.6f && javaApiLinks.getProperty( "api_1.6" ) != null )
+        {
+            javaApiLink = javaApiLinks.getProperty( "api_1.6" ).toString();
+        }
+
+        if ( StringUtils.isNotEmpty( javaApiLink ) )
+        {
+            getLog().debug( "Found Java API link: " + javaApiLink );
+        }
+        else
+        {
+            getLog().debug( "No Java API link found." );
+        }
+
+        return javaApiLink;
+    }
+
+    /**
      * @param link not null
      * @return <code>true</code> if the link has a <code>/package-list</code>, <code>false</code> otherwise.
      * @since 2.6
@@ -4551,16 +4715,11 @@ public abstract class AbstractJavadocMojo
         String url = cleanUrl( p.getUrl() );
         String destDir = "apidocs"; // see JavadocReport#destDir
 
-        Plugin javadocPlugin =
-            (Plugin) p.getBuild().getPluginsAsMap().get( "org.apache.maven.plugins:maven-javadoc-plugin" );
-        if ( javadocPlugin != null )
+        final String pluginId = "org.apache.maven.plugins:maven-javadoc-plugin";
+        String destDirConfigured = getPluginParameter( p, pluginId, "destDir" );
+        if ( destDirConfigured != null )
         {
-            Xpp3Dom xpp3Dom = (Xpp3Dom) javadocPlugin.getConfiguration();
-            if ( xpp3Dom != null && xpp3Dom.getChild( "destDir" ) != null
-                && StringUtils.isNotEmpty( xpp3Dom.getChild( "destDir" ).getValue() ) )
-            {
-                destDir = xpp3Dom.getChild( "destDir" ).getValue();
-            }
+            destDir = destDirConfigured;
         }
 
         return url + "/" + destDir;
@@ -4585,5 +4744,56 @@ public abstract class AbstractJavadocMojo
         }
 
         return url;
+    }
+
+    /**
+     * @param p not null
+     * @param pluginId not null key of the plugin defined in {@link org.apache.maven.model.Build#getPluginsAsMap()} or in
+     * {@link org.apache.maven.model.PluginManagement#getPluginsAsMap()}
+     * @return the Maven plugin defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
+     * or <code>null</code> if not defined.
+     * @since 2.6
+     */
+    private static Plugin getPlugin( MavenProject p, String pluginId )
+    {
+        Plugin plugin = null;
+        if ( p.getBuild() != null && p.getBuild().getPluginsAsMap() != null )
+        {
+            plugin = (Plugin) p.getBuild().getPluginsAsMap().get( pluginId );
+            if ( plugin == null )
+            {
+                if ( p.getBuild().getPluginManagement() != null
+                    && p.getBuild().getPluginManagement().getPluginsAsMap() != null )
+                {
+                    plugin = (Plugin) p.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
+                }
+            }
+        }
+
+        return plugin;
+    }
+
+    /**
+     * @param p not null
+     * @param pluginId not null
+     * @param param not null
+     * @return the simple parameter as String defined in the plugin configuration by <code>param</code> key
+     * or <code>null</code> if not found.
+     * @since 2.6
+     */
+    private static String getPluginParameter( MavenProject p, String pluginId, String param )
+    {
+        Plugin plugin = getPlugin( p, pluginId );
+        if ( plugin != null )
+        {
+            Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
+            {
+                return xpp3Dom.getChild( param ).getValue();
+            }
+        }
+
+        return null;
     }
 }
