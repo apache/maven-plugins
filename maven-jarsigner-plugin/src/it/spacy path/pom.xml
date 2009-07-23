@@ -60,7 +60,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>@project.version@</version>
         <configuration>
           <alias>test-01</alias>
           <keypass>key-passwd</keypass>
