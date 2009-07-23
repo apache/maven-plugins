@@ -28,7 +28,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,6 +48,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -71,6 +71,7 @@ import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
 import com.thoughtworks.qdox.model.Type;
+import com.thoughtworks.qdox.model.TypeVariable;
 import com.thoughtworks.qdox.parser.ParseException;
 
 /**
@@ -293,6 +294,13 @@ public abstract class AbstractFixJavadocMojo
      * @parameter expression="${level}" default-value="protected"
      */
     private String level;
+
+    /**
+     * The local repository where the artifacts are located, used by the tests.
+     *
+     * @parameter expression="${localRepository}"
+     */
+    private ArtifactRepository localRepository;
 
     /**
      * Output directory where Java classes will be rewrited.
@@ -594,8 +602,8 @@ public abstract class AbstractFixJavadocMojo
         properties.put( "failOnError", "false" );
 
         File invokerLogFile = new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
-        JavadocUtil.invokeMaven( getLog(), project.getFile(), Collections.singletonList( clirrGoal ), properties,
-                                 invokerLogFile );
+        JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), project.getFile(),
+                                 Collections.singletonList( clirrGoal ), properties, invokerLogFile );
 
         try
         {
@@ -1344,13 +1352,26 @@ public abstract class AbstractFixJavadocMojo
         sb.append( EOL );
 
         boolean separatorAdded = false;
-        if ( fixTag( PARAM_TAG ) && javaMethod.getParameters() != null )
+        if ( fixTag( PARAM_TAG ) )
         {
-            for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+            if ( javaMethod.getParameters() != null )
             {
-                JavaParameter javaParameter = javaMethod.getParameters()[i];
+                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                {
+                    JavaParameter javaParameter = javaMethod.getParameters()[i];
 
-                separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
+                    separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
+                }
+            }
+            // is generic?
+            if ( javaMethod.getTypeParameters() != null )
+            {
+                for ( int i = 0; i < javaMethod.getTypeParameters().length; i++ )
+                {
+                    TypeVariable typeParam = javaMethod.getTypeParameters()[i];
+
+                    separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, typeParam );
+                }
             }
         }
         if ( fixTag( RETURN_TAG ) && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
@@ -1663,13 +1684,10 @@ public abstract class AbstractFixJavadocMojo
                     continue;
                 }
 
+                params = fixQdox173( params );
                 String paramName = params[0];
                 if ( docletTag.getName().equals( PARAM_TAG ) )
                 {
-                    if ( paramName.equals( "<" ) )
-                    {
-                        paramName = params[1];
-                    }
                     javaEntityTags.putJavadocParamTag( paramName, originalJavadocTag );
                 }
                 else if ( docletTag.getName().equals( RETURN_TAG ) )
@@ -1776,14 +1794,9 @@ public abstract class AbstractFixJavadocMojo
     private void writeParamTag( final StringBuffer sb, final JavaMethod javaMethod,
                                 final JavaEntityTags javaEntityTags, String[] params )
     {
-        String paramName = params[0];
+        params = fixQdox173( params );
 
-        boolean genericParam = false;
-        if ( paramName.equals( "<" ) )
-        {
-            paramName = params[1];
-            genericParam = true;
-        }
+        String paramName = params[0];
 
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -1796,33 +1809,40 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
+        boolean found = false;
         JavaParameter javaParam = javaMethod.getParameterByName( paramName );
         if ( javaParam == null )
         {
-            if ( genericParam )
+            // is generic?
+            TypeVariable[] typeParams = javaMethod.getTypeParameters();
+            for ( int i = 0; i < typeParams.length; i++ )
             {
-                String originalJavadocTag = javaEntityTags.getJavadocParamTag( paramName );
-                if ( originalJavadocTag != null )
+                if ( typeParams[i].getGenericValue().equals( paramName ) )
                 {
-                    sb.append( originalJavadocTag );
+                    found = true;
                 }
             }
-            else
+        }
+        else
+        {
+            found = true;
+        }
+
+        if ( !found )
+        {
+            if ( getLog().isWarnEnabled() )
             {
-                if ( getLog().isWarnEnabled() )
-                {
-                    StringBuffer warn = new StringBuffer();
+                StringBuffer warn = new StringBuffer();
 
-                    warn.append( "Fixed unknown param '" ).append( paramName ).append( "' defined in " );
-                    warn.append( getJavaMethodAsString( javaMethod ) );
+                warn.append( "Fixed unknown param '" ).append( paramName ).append( "' defined in " );
+                warn.append( getJavaMethodAsString( javaMethod ) );
 
-                    getLog().warn( warn.toString() );
-                }
+                getLog().warn( warn.toString() );
+            }
 
-                if ( sb.toString().endsWith( EOL ) )
-                {
-                    sb.delete( sb.toString().lastIndexOf( EOL ), sb.toString().length() );
-                }
+            if ( sb.toString().endsWith( EOL ) )
+            {
+                sb.delete( sb.toString().lastIndexOf( EOL ), sb.toString().length() );
             }
         }
         else
@@ -1960,15 +1980,31 @@ public abstract class AbstractFixJavadocMojo
         {
             JavaMethod javaMethod = (JavaMethod) entity;
 
-            if ( fixTag( PARAM_TAG ) && javaMethod.getParameters() != null )
+            if ( fixTag( PARAM_TAG ) )
             {
-                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                if ( javaMethod.getParameters() != null )
                 {
-                    JavaParameter javaParameter = javaMethod.getParameters()[i];
-
-                    if ( javaEntityTags.getJavadocParamTag( javaParameter.getName(), true ) == null )
+                    for ( int i = 0; i < javaMethod.getParameters().length; i++ )
                     {
-                        appendDefaultParamTag( sb, indent, javaParameter );
+                        JavaParameter javaParameter = javaMethod.getParameters()[i];
+
+                        if ( javaEntityTags.getJavadocParamTag( javaParameter.getName(), true ) == null )
+                        {
+                            appendDefaultParamTag( sb, indent, javaParameter );
+                        }
+                    }
+                }
+                // is generic?
+                if ( javaMethod.getTypeParameters() != null )
+                {
+                    for ( int i = 0; i < javaMethod.getTypeParameters().length; i++ )
+                    {
+                        TypeVariable typeParam = javaMethod.getTypeParameters()[i];
+
+                        if ( javaEntityTags.getJavadocParamTag( "<" + typeParam.getName() + ">", true ) == null )
+                        {
+                            appendDefaultParamTag( sb, indent, typeParam );
+                        }
                     }
                 }
             }
@@ -2278,6 +2314,31 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb not null
      * @param indent not null
+     * @param separatorAdded
+     * @param typeParameter not null
+     * @return true if separator has been added.
+     */
+    private boolean appendDefaultParamTag( final StringBuffer sb, final String indent, boolean separatorAdded,
+                                           final TypeVariable typeParameter )
+    {
+        if ( !fixTag( PARAM_TAG ) )
+        {
+            return separatorAdded;
+        }
+
+        if ( !separatorAdded )
+        {
+            appendSeparator( sb, indent );
+            separatorAdded = true;
+        }
+
+        appendDefaultParamTag( sb, indent, typeParameter );
+        return separatorAdded;
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
      * @param javaParameter not null
      */
     private void appendDefaultParamTag( final StringBuffer sb, final String indent,
@@ -2292,6 +2353,26 @@ public abstract class AbstractFixJavadocMojo
         sb.append( javaParameter.getName() );
         sb.append( " " );
         sb.append( getDefaultJavadocForType( javaParameter.getType() ) );
+        sb.append( EOL );
+    }
+
+    /**
+     * @param sb not null
+     * @param indent not null
+     * @param typeParameter not null
+     */
+    private void appendDefaultParamTag( final StringBuffer sb, final String indent,
+                                        final TypeVariable typeParameter )
+    {
+        if ( !fixTag( PARAM_TAG ) )
+        {
+            return;
+        }
+
+        sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
+        sb.append( "<" + typeParameter.getName() + ">");
+        sb.append( " " );
+        sb.append( getDefaultJavadocForType( typeParameter ) );
         sb.append( EOL );
     }
 
@@ -2391,13 +2472,12 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * Verify if a method has <code>&#64;Override</code> annotation or if it is an inherited method from an interface
-     * or a super class. The goal is to handle <code>&#123;&#64;inheritDoc&#125;</code> tag.
+     * Verify if a method has <code>&#64;java.lang.Override()</code> annotation or if it is an inherited method
+     * from an interface or a super class. The goal is to handle <code>&#123;&#64;inheritDoc&#125;</code> tag.
      *
      * @param javaMethod not null
-     * @return <code>true</code> if the method is inherited.
+     * @return <code>true</code> if the method is inherited, <code>false</code> otherwise.
      * @throws MojoExecutionException if any
-     * @throws SecurityException if any
      */
     private boolean isInherited( JavaMethod javaMethod )
         throws MojoExecutionException, SecurityException
@@ -2422,12 +2502,9 @@ public abstract class AbstractFixJavadocMojo
         {
             Class intface = (Class) it.next();
 
-            if ( intface.getDeclaredMethods() != null )
+            if ( isInherited( intface, javaMethod ) )
             {
-                if ( isInherited( intface.getDeclaredMethods(), javaMethod ) )
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -2436,12 +2513,9 @@ public abstract class AbstractFixJavadocMojo
         {
             Class superClass = (Class) it.next();
 
-            if ( superClass.getDeclaredMethods() != null )
+            if ( isInherited( superClass, javaMethod ) )
             {
-                if ( isInherited( superClass.getDeclaredMethods(), javaMethod ) )
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -2449,74 +2523,43 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * @param methods not null
-     * @param javaMethod not null
-     * @return <code>true</code> if the javaMethod exists in methods.
+     * @param clazz the Java class object, not null
+     * @param javaMethod the QDox JavaMethod object not null
+     * @return <code>true</code> if <code>javaMethod</code> exists in the given <code>clazz</code>,
+     * <code>false</code> otherwise.
      * @see #isInherited(JavaMethod)
      */
-    private boolean isInherited( Method[] methods, JavaMethod javaMethod )
+    private boolean isInherited( Class clazz, JavaMethod javaMethod )
     {
-        AccessibleObject.setAccessible( methods, true );
+        Method[] methods = clazz.getDeclaredMethods();
         for ( int i = 0; i < methods.length; i++ )
         {
-            Method method = methods[i];
-
-            if ( !method.getName().equals( javaMethod.getName() ) )
+            if ( !methods[i].getName().equals( javaMethod.getName() ) )
             {
                 continue;
             }
 
-            // TODO review generic for changes in QDOX 1.9.1
-            if ( javaMethod.getParameters() != null )
+            if ( methods[i].getParameterTypes().length != javaMethod.getParameters().length )
             {
-                boolean isMaybeGeneric = false;
-                List javaMethodParams = new LinkedList();
+                continue;
+            }
 
-                for ( int j = 0; j < javaMethod.getParameters().length; j++ )
+            boolean found = false;
+            for ( int j = 0; j < methods[i].getParameterTypes().length; j++ )
+            {
+                String name1 = methods[i].getParameterTypes()[j].getName();
+                String name2 = javaMethod.getParameters()[j].getType().getFullQualifiedName();
+                if ( name1.equals( name2 ) )
                 {
-                    Type type = javaMethod.getParameters()[j].getType();
-
-                    // workaround for generics i.e. type.getValue() = E instead of real class
-                    try
-                    {
-                        getClass( type.getJavaClass().getFullyQualifiedName() );
-                        if ( type.isArray() )
-                        {
-                            javaMethodParams.add( type.getValue() + "[]" );
-                        }
-                        else
-                        {
-                            javaMethodParams.add( type.getValue() );
-                        }
-                    }
-                    catch ( MojoExecutionException e )
-                    {
-                        isMaybeGeneric = true;
-                        break;
-                    }
+                    found = true;
                 }
-                if ( !isMaybeGeneric )
+                else
                 {
-                    List methodParams = new LinkedList();
-                    for ( int j = 0; j < method.getParameterTypes().length; j++ )
-                    {
-                        if ( method.getParameterTypes()[j].isArray() )
-                        {
-                            methodParams.add( method.getParameterTypes()[j].getComponentType().getName() + "[]" );
-                        }
-                        else
-                        {
-                            methodParams.add( method.getParameterTypes()[j].getName() );
-                        }
-                    }
-                    if ( !methodParams.equals( javaMethodParams ) )
-                    {
-                        continue;
-                    }
+                    found = found && false;
                 }
             }
 
-            return true;
+            return found;
         }
 
         return false;
@@ -2530,7 +2573,7 @@ public abstract class AbstractFixJavadocMojo
     {
         StringBuffer sb = new StringBuffer();
 
-        if ( type.isPrimitive() )
+        if ( !TypeVariable.class.isAssignableFrom( type.getClass() ) && type.isPrimitive() )
         {
             if ( type.isArray() )
             {
@@ -2589,12 +2632,7 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        if ( clirrNewClasses.contains( javaClass.getFullyQualifiedName() ) )
-        {
-            return true;
-        }
-
-        return false;
+        return clirrNewClasses.contains( javaClass.getFullyQualifiedName() );
     }
 
     /**
@@ -2621,71 +2659,29 @@ public abstract class AbstractFixJavadocMojo
 
         for ( Iterator it = clirrMethods.iterator(); it.hasNext(); )
         {
-            String clirrMethod = (String) it.next(); // see java.lang.reflect.Method#toString()
+            // see net.sf.clirr.core.internal.checks.MethodSetCheck#getMethodId(JavaType clazz, Method method)
+            String clirrMethod = (String) it.next();
 
-            String javaMethodSignature = javaMethod.getDeclarationSignature( false );
-            if ( clirrMethod.indexOf( javaMethodSignature ) != -1 )
-            {
-                return true;
-            }
-
-            String smallSignature = javaMethod.getName();
+            String retrn = "";
             if ( javaMethod.getReturns() != null )
             {
-                smallSignature = javaMethod.getReturns().getValue() + " " + javaMethod.getName();
+                retrn = javaMethod.getReturns().getFullQualifiedName();
             }
-            if ( clirrMethod.indexOf( smallSignature ) == -1 )
+            StringBuffer params = new StringBuffer();
+            JavaParameter[] parameters = javaMethod.getParameters();
+            for ( int i = 0; i < parameters.length; i++ )
             {
-                continue;
+                params.append( parameters[i].getResolvedValue() );
+                if ( i < parameters.length - 1 )
+                {
+                    params.append( ", " );
+                }
             }
-            // Workaround to take care of generics
-            if ( javaMethod.getParameters() != null )
+            if ( ( clirrMethod.indexOf( retrn + " " ) != -1 )
+                && ( clirrMethod.indexOf( javaMethod.getName() + "(" ) != -1 )
+                && ( clirrMethod.indexOf( "(" + params.toString() + ")" ) != -1 ) )
             {
-                boolean isMaybeGeneric = false;
-                List javaMethodParams = new LinkedList();
-                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
-                {
-                    Type type = javaMethod.getParameters()[i].getType();
-
-                    // QDOX-150: type.getValue() = E instead of real class...
-                    try
-                    {
-                        getClass( type.getJavaClass().getFullyQualifiedName() );
-                        if ( type.isArray() )
-                        {
-                            javaMethodParams.add( type.getValue() + "[]" );
-                        }
-                        else
-                        {
-                            javaMethodParams.add( type.getValue() );
-                        }
-                    }
-                    catch ( MojoExecutionException e )
-                    {
-                        isMaybeGeneric = true;
-                        break;
-                    }
-                }
-                if ( !isMaybeGeneric )
-                {
-                    if ( clirrMethod.indexOf( "(" + StringUtils.join( javaMethodParams.iterator(), ", " ) + ")" ) != -1 )
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    if ( getLog().isWarnEnabled() )
-                    {
-                        StringBuffer warn = new StringBuffer();
-                        warn.append( "Not sure if " );
-                        warn.append( getJavaMethodAsString( javaMethod ) );
-                        warn.append( " is newer or not, it is maybe due to generics. " );
-                        warn.append( "You need to manually review it." );
-
-                        getLog().warn( warn.toString() );
-                    }
-                }
+                return true;
             }
         }
 
@@ -3069,12 +3065,8 @@ public abstract class AbstractFixJavadocMojo
 
         String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
 
-        String paramValue = docletTag.getParameters()[0];
-        if ( docletTag.getParameters().length > 3 && docletTag.getParameters()[0].trim().equals( "<" )
-            && docletTag.getParameters()[2].trim().equals( ">" ) )
-        {
-            paramValue = "<" + docletTag.getParameters()[1] + ">";
-        }
+        String[] params = fixQdox173( docletTag.getParameters() );
+        String paramValue = params[0];
 
         StringBuffer sb = new StringBuffer();
         BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
@@ -3390,6 +3382,37 @@ public abstract class AbstractFixJavadocMojo
 
         String textTrimmed = text.trim();
         return text.substring( 0, text.indexOf( textTrimmed ) + textTrimmed.length() );
+    }
+
+    /**
+     * Workaroung for QDOX-173 about generic.
+     *
+     * @param params not null
+     * @return the wanted params.
+     */
+    private static String[] fixQdox173( String[] params )
+    {
+        if ( params == null || params.length == 0 )
+        {
+            return params;
+        }
+        if ( params.length < 3 )
+        {
+            return params;
+        }
+
+        if ( params[0].trim().equals( "<" ) && params[2].trim().equals( ">" ) )
+        {
+            String param = params[1];
+            List l = new ArrayList( Arrays.asList( params ) );
+            l.set( 1, "<" + param + ">" );
+            l.remove( 0 );
+            l.remove( 1 );
+
+            return (String[]) l.toArray( new String[0] );
+        }
+
+        return params;
     }
 
     /**

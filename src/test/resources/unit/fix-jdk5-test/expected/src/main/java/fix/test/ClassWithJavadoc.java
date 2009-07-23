@@ -27,7 +27,6 @@ import java.util.Map;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public class ClassWithJavadoc
     implements InterfaceWithJavadoc
@@ -61,15 +60,47 @@ public class ClassWithJavadoc
         return null;
     }
 
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
     /**
-     * Dummy method.
+     * Correct generic doclets.
      *
      * @param <K>  The Key type for the method
      * @param <V>  The Value type for the method
      * @param name The name.
      * @return A map configured.
+     * @since 1.1
      */
-    public <K, V> java.util.Map<K, V> dummyMethod( String name )
+    public <K, V> Map<K, V> withGenericDoclet( String name )
+    {
+        return null;
+    }
+
+    /**
+     * Wrong generic doclets.
+     *
+     * @param name The name.
+     * @return A map configured.
+     * @param <K> a K object.
+     * @param <V> a V object.
+     * @since 1.1
+     */
+    public <K, V> Map<K, V> withGenericDoclet2( String name )
+    {
+        return null;
+    }
+
+    /**
+     * New class method to be found by Clirr.
+     *
+     * @param aList a {@link java.util.List} object.
+     * @param aMap a {@link java.util.Map} object.
+     * @return a {@link java.util.Map} object.
+     * @since 1.1
+     */
+    public <K, V> Map<K, V> newClassMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
     {
         return null;
     }
@@ -81,5 +112,11 @@ public class ClassWithJavadoc
     /** {@inheritDoc} */
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
     {
+    }
+
+    /** {@inheritDoc} */
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
+    {
+        return null;
     }
 }

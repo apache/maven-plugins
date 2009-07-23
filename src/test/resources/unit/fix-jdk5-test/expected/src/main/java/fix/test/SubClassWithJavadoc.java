@@ -27,7 +27,6 @@ import java.util.Map;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public class SubClassWithJavadoc
     extends ClassWithJavadoc

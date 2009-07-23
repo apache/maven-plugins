@@ -955,14 +955,15 @@ public class JavadocUtil
      * <code>M2_HOME</code> system env variables.
      *
      * @param log a logger could be null.
+     * @param localRepositoryDir the localRepository not null.
      * @param project a not null project file.
      * @param goals a not null goals list.
      * @param properties the properties for the goals, could be null.
      * @param invokerLog the log file where the invoker will be written, if null using <code>System.out</code>.
      * @since 2.6
      */
-    protected static void invokeMaven( Log log, File projectFile, List goals, Properties properties,
-                                       File invokerLog )
+    protected static void invokeMaven( Log log, File localRepositoryDir, File projectFile, List goals,
+                                       Properties properties, File invokerLog )
     {
         if ( projectFile == null )
         {
@@ -975,6 +976,11 @@ public class JavadocUtil
         if ( goals == null || goals.size() == 0 )
         {
             throw new IllegalArgumentException( "goals should be not empty." );
+        }
+        if ( localRepositoryDir == null || !localRepositoryDir.isDirectory() )
+        {
+            throw new IllegalArgumentException( "localRepositoryDir '" + localRepositoryDir
+                + "' should be a directory." );
         }
 
         String mavenHome = getMavenHome( log );
@@ -996,11 +1002,11 @@ public class JavadocUtil
 
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome( new File( mavenHome ) );
+        invoker.setLocalRepositoryDirectory( localRepositoryDir );
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setBaseDirectory( projectFile.getParentFile() );
         request.setPomFile( projectFile );
-
         if ( log != null )
         {
             request.setDebug( log.isDebugEnabled() );
@@ -1013,6 +1019,11 @@ public class JavadocUtil
         if ( properties != null )
         {
             request.setProperties( properties );
+        }
+        File javaHome = getJavaHome( log );
+        if ( javaHome != null )
+        {
+            request.setJavaHome( javaHome );
         }
 
         InvocationResult result;

@@ -35,4 +35,13 @@ public interface InterfaceWithJavadoc
      * To take care of identifier.
      */
     void withGenericParameters2( List<String> aList );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New interface method to be found by Clirr.
+     */
+    public String newInterfaceMethod( String aString );
 }

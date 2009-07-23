@@ -65,6 +65,15 @@ public class ClassWithNoJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    public String newClassMethod( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
@@ -75,6 +84,11 @@ public class ClassWithNoJavadoc
     // take care of identifier
     public void missingJavadoc2( String aString )
     {
+    }
+
+    public String newInterfaceMethod( String aString )
+    {
+        return null;
     }
 
     // ----------------------------------------------------------------------

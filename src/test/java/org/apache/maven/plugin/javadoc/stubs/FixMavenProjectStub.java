@@ -91,4 +91,10 @@ public class FixMavenProjectStub
         // Using unit test dir
         return new File( super.getBasedir() + "/target/test/unit/fix-test/" );
     }
+
+    /** {@inheritDoc} */
+    public File getFile()
+    {
+        return new File( getBasedir(), "pom.xml" );
+    }
 }

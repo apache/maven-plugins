@@ -186,6 +186,18 @@ public class ClassWithJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New class method to be found by Clirr.
+     */
+    public String newClassMethod( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
@@ -230,6 +242,14 @@ public class ClassWithJavadoc
      *      used
      */
     public String method5( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * New interface method to be found by Clirr.
+     */
+    public String newInterfaceMethod( String aString )
     {
         return null;
     }

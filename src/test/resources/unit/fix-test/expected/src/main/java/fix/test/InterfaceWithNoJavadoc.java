@@ -24,7 +24,6 @@ package fix.test;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public interface InterfaceWithNoJavadoc
 {
@@ -45,4 +44,17 @@ public interface InterfaceWithNoJavadoc
      * @param aString a {@link java.lang.String} object.
      */
     void missingJavadoc2( String aString );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * <p>newInterfaceMethod</p>
+     *
+     * @param aString a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @since 1.1
+     */
+    public String newInterfaceMethod( String aString );
 }
