@@ -35,6 +35,18 @@ public class ClassWithJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New class method to be found by Clirr.
+     */
+    public String newClassMethod( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
@@ -48,5 +60,11 @@ public class ClassWithJavadoc
      */
     public void withGenericParameters2( List<String> aList )
     {
+    }
+
+    @Override
+    public String newInterfaceMethod( String aString )
+    {
+        return null;
     }
 }

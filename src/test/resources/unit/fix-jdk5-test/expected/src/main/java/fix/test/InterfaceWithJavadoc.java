@@ -28,7 +28,6 @@ import java.util.Map;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public interface InterfaceWithJavadoc
 {
@@ -42,4 +41,18 @@ public interface InterfaceWithJavadoc
      * @param aMap a {@link java.util.Map} object.
      */
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New interface method to be found by Clirr.
+     *
+     * @param aList a {@link java.util.List} object.
+     * @param aMap a {@link java.util.Map} object.
+     * @return a {@link java.util.Map} object.
+     * @since 1.1
+     */
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
 }

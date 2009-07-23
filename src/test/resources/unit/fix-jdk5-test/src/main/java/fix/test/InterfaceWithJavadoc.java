@@ -35,4 +35,13 @@ public interface InterfaceWithJavadoc
      * To add default method tags.
      */
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New interface method to be found by Clirr.
+     */
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
 }

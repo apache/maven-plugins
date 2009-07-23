@@ -4487,8 +4487,8 @@ public abstract class AbstractJavadocMojo
 
                     File invokerLogFile =
                         new File( project.getBuild().getDirectory(), "invoker-maven-javadoc-plugin-" + i + ".txt" );
-                    JavadocUtil.invokeMaven( getLog(), p.getFile(), Collections.singletonList( javadocGoal ),
-                                             null, invokerLogFile );
+                    JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
+                                             Collections.singletonList( javadocGoal ), null, invokerLogFile );
                 }
 
                 if ( location.exists() )

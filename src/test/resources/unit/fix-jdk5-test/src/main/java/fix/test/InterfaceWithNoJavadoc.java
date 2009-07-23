@@ -30,4 +30,10 @@ public interface InterfaceWithNoJavadoc
     Map<String, String> MY_MAP_CONSTANT = Collections.singletonMap( "key", "value" );
 
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap );
 }

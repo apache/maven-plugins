@@ -26,7 +26,6 @@ import java.util.List;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public interface InterfaceWithJavadoc
 {
@@ -43,4 +42,17 @@ public interface InterfaceWithJavadoc
      * @param aList a {@link java.util.List} object.
      */
     void withGenericParameters2( List<String> aList );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New interface method to be found by Clirr.
+     *
+     * @param aString a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @since 1.1
+     */
+    public String newInterfaceMethod( String aString );
 }

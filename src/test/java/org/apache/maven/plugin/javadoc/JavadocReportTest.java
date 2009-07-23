@@ -46,24 +46,16 @@ public class JavadocReportTest
 {
     private static final String LINE_SEPARATOR = " ";
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
+    /** flag to copy repo only one time */
+    private static boolean TEST_REPO_CREATED = false;
+
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
-        // required for mojo lookups to work
         super.setUp();
-        createTestRepo();
-    }
 
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown()
-        throws Exception
-    {
-        super.tearDown();
+        createTestRepo();
     }
 
     /**
@@ -74,12 +66,12 @@ public class JavadocReportTest
     private void createTestRepo()
         throws IOException
     {
-        File localRepo = new File( getBasedir(), "target/local-repo/" );
-        if ( localRepo.exists() )
+        if ( TEST_REPO_CREATED )
         {
             return;
         }
 
+        File localRepo = new File( getBasedir(), "target/local-repo/" );
         localRepo.mkdirs();
 
         // ----------------------------------------------------------------------
@@ -140,6 +132,8 @@ public class JavadocReportTest
                 file.delete();
             }
         }
+
+        TEST_REPO_CREATED = true;
     }
 
     /**
