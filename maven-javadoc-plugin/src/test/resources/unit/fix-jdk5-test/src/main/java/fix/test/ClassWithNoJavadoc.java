@@ -41,11 +41,29 @@ public class ClassWithNoJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    public <K, V> Map<K, V> withGenericParameter2( String name )
+    {
+        return null;
+    }
+
+    public <K, V> Map<K, V> newClassMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
     {
+    }
+
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
+    {
+        return null;
     }
 }

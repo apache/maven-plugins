@@ -24,7 +24,6 @@ package fix.test;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public class ClassWithJavadoc
     implements InterfaceWithJavadoc
@@ -206,6 +205,22 @@ public class ClassWithJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New class method to be found by Clirr.
+     *
+     * @param aString a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @since 1.1
+     */
+    public String newClassMethod( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
@@ -241,6 +256,16 @@ public class ClassWithJavadoc
      * Specific comment
      */
     public String method5( String aString )
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * New interface method to be found by Clirr.
+     */
+    public String newInterfaceMethod( String aString )
     {
         return null;
     }

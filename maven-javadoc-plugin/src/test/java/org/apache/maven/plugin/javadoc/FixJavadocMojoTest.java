@@ -54,6 +54,79 @@ public class FixJavadocMojoTest
     /** The vm line separator */
     private static final String EOL = System.getProperty( "line.separator" );
 
+    /** flag to copy repo only one time */
+    private static boolean TEST_REPO_CREATED = false;
+
+    /** {@inheritDoc} */
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        createTestRepo();
+    }
+
+    /**
+     * Create test repository in target directory.
+     *
+     * @throws IOException if any
+     */
+    private void createTestRepo()
+        throws IOException
+    {
+        if ( TEST_REPO_CREATED )
+        {
+            return;
+        }
+
+        File localRepo = new File( getBasedir(), "target/local-repo/" );
+        localRepo.mkdirs();
+
+        // ----------------------------------------------------------------------
+        // fix-test-1.0.jar
+        // ----------------------------------------------------------------------
+
+        File sourceDir = new File( getBasedir(), "src/test/resources/unit/fix-test/repo/" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
+
+        // ----------------------------------------------------------------------
+        // fix-jdk5-test-1.0.jar
+        // ----------------------------------------------------------------------
+
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/fix-jdk5-test/repo/" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
+
+        // ----------------------------------------------------------------------
+        // fix-jdk6-test-1.0.jar
+        // ----------------------------------------------------------------------
+
+        sourceDir = new File( getBasedir(), "src/test/resources/unit/fix-jdk6-test/repo/" );
+        assertTrue( sourceDir.exists() );
+        FileUtils.copyDirectoryStructure( sourceDir, localRepo );
+
+        // Remove SCM files
+        List files =
+            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
+                                                true, true, true );
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            File file = new File( it.next().toString() );
+
+            if ( file.isDirectory() )
+            {
+                FileUtils.deleteDirectory( file );
+            }
+            else
+            {
+                file.delete();
+            }
+        }
+
+        TEST_REPO_CREATED = true;
+    }
+
     /**
      * @throws Exception if any
      */
@@ -548,7 +621,8 @@ public class FixJavadocMojoTest
         goals.add( "compile" );
 
         File invokerLogFile = new File( getBasedir(), "target/invoker-FixJavadocMojoTest.txt" );
-        JavadocUtil.invokeMaven( log, testPom, goals, null, invokerLogFile );
+        JavadocUtil.invokeMaven( log, new File( getBasedir(), "target/local-repo" ), testPom, goals, null,
+                                 invokerLogFile );
     }
 
     // ----------------------------------------------------------------------

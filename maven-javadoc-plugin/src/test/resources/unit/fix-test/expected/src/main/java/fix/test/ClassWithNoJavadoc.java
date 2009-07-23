@@ -26,7 +26,6 @@ import java.util.Map;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public class ClassWithNoJavadoc
     implements InterfaceWithNoJavadoc
@@ -104,6 +103,22 @@ public class ClassWithNoJavadoc
     }
 
     // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * <p>newClassMethod</p>
+     *
+     * @param aString a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @since 1.1
+     */
+    public String newClassMethod( String aString )
+    {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // Inheritance
     // ----------------------------------------------------------------------
 
@@ -116,6 +131,12 @@ public class ClassWithNoJavadoc
     /** {@inheritDoc} */
     public void missingJavadoc2( String aString )
     {
+    }
+
+    /** {@inheritDoc} */
+    public String newInterfaceMethod( String aString )
+    {
+        return null;
     }
 
     // ----------------------------------------------------------------------

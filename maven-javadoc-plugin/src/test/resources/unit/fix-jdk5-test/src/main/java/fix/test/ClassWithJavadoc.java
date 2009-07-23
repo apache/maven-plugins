@@ -51,15 +51,40 @@ public class ClassWithJavadoc
         return null;
     }
 
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
     /**
-     * Dummy method.
+     * Correct generic doclets.
      *
      * @param <K>  The Key type for the method
      * @param <V>  The Value type for the method
      * @param name The name.
      * @return A map configured.
      */
-    public <K, V> java.util.Map<K, V> dummyMethod( String name )
+    public <K, V> Map<K, V> withGenericDoclet( String name )
+    {
+        return null;
+    }
+
+    /**
+     * Wrong generic doclets.
+     *
+     * @param <T>  The Key type for the method
+     * @param <U>  The Value type for the method
+     * @param name The name.
+     * @return A map configured.
+     */
+    public <K, V> Map<K, V> withGenericDoclet2( String name )
+    {
+        return null;
+    }
+
+    /**
+     * New class method to be found by Clirr.
+     */
+    public <K, V> Map<K, V> newClassMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
     {
         return null;
     }
@@ -71,5 +96,11 @@ public class ClassWithJavadoc
     /** {@inheritDoc} */
     public void withGenericParameters( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
     {
+    }
+
+    /** {@inheritDoc} */
+    public <K, V> Map<K, V> newInterfaceMethod( List<String> aList, Map<Map<String, List<String>>, List<String>> aMap )
+    {
+        return null;
     }
 }

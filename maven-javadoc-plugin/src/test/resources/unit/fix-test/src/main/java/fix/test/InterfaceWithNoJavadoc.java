@@ -27,4 +27,10 @@ public interface InterfaceWithNoJavadoc
 
     // take care of identifier
     void missingJavadoc2( String aString );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    public String newInterfaceMethod( String aString );
 }

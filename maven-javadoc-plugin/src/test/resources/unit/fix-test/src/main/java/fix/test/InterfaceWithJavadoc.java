@@ -56,4 +56,13 @@ public interface InterfaceWithJavadoc
      * Nothing.
      */
     public String method5( String aString );
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New interface method to be found by Clirr.
+     */
+    public String newInterfaceMethod( String aString );
 }

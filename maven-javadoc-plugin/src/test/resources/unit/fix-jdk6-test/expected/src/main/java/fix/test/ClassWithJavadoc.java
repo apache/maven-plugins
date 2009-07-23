@@ -26,7 +26,6 @@ import java.util.List;
  *
  * @author <a href="mailto:vsiveton@apache.org">vsiveton@apache.org</a>
  * @version $Id: $
- * @since 1.0
  */
 public class ClassWithJavadoc
     implements InterfaceWithJavadoc
@@ -38,6 +37,22 @@ public class ClassWithJavadoc
      */
     public ClassWithJavadoc( List<String> list )
     {
+    }
+
+    // ----------------------------------------------------------------------
+    // New methods to be found by Clirr.
+    // ----------------------------------------------------------------------
+
+    /**
+     * New class method to be found by Clirr.
+     *
+     * @param aString a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @since 1.1
+     */
+    public String newClassMethod( String aString )
+    {
+        return null;
     }
 
     // ----------------------------------------------------------------------
@@ -53,5 +68,12 @@ public class ClassWithJavadoc
     /** {@inheritDoc} */
     public void withGenericParameters2( List<String> aList )
     {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String newInterfaceMethod( String aString )
+    {
+        return null;
     }
 }
