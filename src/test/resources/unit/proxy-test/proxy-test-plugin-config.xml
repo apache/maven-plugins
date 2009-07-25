@@ -42,6 +42,7 @@ under the License.
           <groups/>
           <tags/>
           <stylesheet>java</stylesheet>
+          <detectJavaApiLink>true</detectJavaApiLink>
           <quiet>true</quiet>
           <debug>true</debug>
           <failOnError>true</failOnError>

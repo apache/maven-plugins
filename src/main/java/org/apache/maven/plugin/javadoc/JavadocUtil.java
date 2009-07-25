@@ -83,6 +83,9 @@ import org.codehaus.plexus.util.cli.Commandline;
  */
 public class JavadocUtil
 {
+    /** The default timeout used when fetching url, i.e. 2000. */
+    public static int DEFAULT_TIMEOUT = 2000;
+
     /**
      * Method that removes the invalid directories in the specified directories.
      * <b>Note</b>: All elements in <code>dirs</code> could be an absolute or relative against the project's base
@@ -711,6 +714,7 @@ public class JavadocUtil
      * @param settings the user settings used to fetch the url with an active proxy, if defined.
      * @param url the url to fetch
      * @throws IOException if any
+     * @see #DEFAULT_TIMEOUT
      */
     protected static void fetchURL( Settings settings, URL url )
         throws IOException
@@ -724,7 +728,8 @@ public class JavadocUtil
         if ( !"file".equals( url.getProtocol() ) )
         {
             httpClient = new HttpClient();
-            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 1000 );
+            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( DEFAULT_TIMEOUT );
+            httpClient.getHttpConnectionManager().getParams().setSoTimeout( DEFAULT_TIMEOUT );
 
             if ( settings != null )
             {

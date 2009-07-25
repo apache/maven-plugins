@@ -208,6 +208,18 @@ under the License.
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.19</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-client</artifactId>
+      <version>6.1.19</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -217,6 +229,12 @@ under the License.
           <groupId>org.codehaus.modello</groupId>
           <artifactId>modello-maven-plugin</artifactId>
           <version>1.0.2</version>
+        </plugin>
+        <!-- only used for tests, extends Jetty classes need 1.5 -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.0-beta-1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -237,6 +255,27 @@ under the License.
             <model>src/main/mdo/javadocOptions.mdo</model>
           </models>
         </configuration>
+      </plugin>
+      <!-- only used for tests, extends Jetty classes need 1.5 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-jdk</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[1.5.0,]</version>
+                </requireJavaVersion>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

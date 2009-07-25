@@ -24,12 +24,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -893,8 +898,22 @@ public class JavadocReportTest
     public void testProxy()
         throws Exception
     {
+        Settings settings = new Settings();
+        Proxy proxy = new Proxy();
+
+        //dummy proxy
+        proxy.setActive( true );
+        proxy.setHost( "http://localhost" );
+        proxy.setPort( 80 );
+        proxy.setUsername( "toto" );
+        proxy.setPassword( "toto" );
+        proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
+        settings.addProxy( proxy );
+
         File testPom = new File( getBasedir(), "src/test/resources/unit/proxy-test/proxy-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        assertNotNull( mojo );
+        setVariableValueToObject( mojo, "settings", settings );
         mojo.execute();
 
         File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
@@ -906,6 +925,98 @@ public class JavadocReportTest
         assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"toto\\\"" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"toto\\\"" ) != -1 );
         assertTrue( readed.indexOf( "-J-Dhttp.nonProxyHosts=\\\"www.google.com|*.somewhere.com\\\"" ) != -1 );
+
+        File options = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/options" );
+        assertTrue( FileUtils.fileExists( options.getAbsolutePath() ) );
+        String optionsContent = readFile( options );
+        // NO -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
+        assertTrue( optionsContent.indexOf( "-link" ) == -1 );
+
+        // real proxy
+        ProxyServer proxyServer = null;
+        AuthAsyncProxyServlet proxyServlet = null;
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet();
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            settings.addProxy( proxy );
+
+            mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            setVariableValueToObject( mojo, "settings", settings );
+            mojo.execute();
+            readed = readFile( commandLine );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
+
+            optionsContent = readFile( options );
+            // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
+            assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            assertTrue( true );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( false );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
+
+        // auth proxy
+        Map authentications = new HashMap();
+        authentications.put( "foo", "bar" );
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet();
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            proxy.setUsername( "foo" );
+            proxy.setPassword( "bar" );
+            settings.addProxy( proxy );
+
+            mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            setVariableValueToObject( mojo, "settings", settings );
+            mojo.execute();
+            readed = readFile( commandLine );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxySet=true" ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyHost=" + proxyServer.getHostName() ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyPort=" + proxyServer.getPort() ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyUser=\\\"foo\\\"" ) != -1 );
+            assertTrue( readed.indexOf( "-J-Dhttp.proxyPassword=\\\"bar\\\"" ) != -1 );
+
+            optionsContent = readFile( options );
+            // -link http://java.sun.com/j2se/1.5.0/docs/api/package-list
+            assertTrue( optionsContent.indexOf( "-link" ) != -1 );
+            assertTrue( true );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( false );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
     }
 
     /**
