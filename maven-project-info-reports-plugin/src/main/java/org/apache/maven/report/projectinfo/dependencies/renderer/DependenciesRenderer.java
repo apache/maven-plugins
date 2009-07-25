@@ -46,7 +46,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
@@ -514,8 +513,8 @@ public class DependenciesRenderer
         String sealed = getReportString( "report.dependencies.file.details.column.sealed" );
 
         int[] justification =
-            new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_RIGHT,
-                Parser.JUSTIFY_RIGHT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER };
+            new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
+                Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
 
         startTable();
 
@@ -619,8 +618,8 @@ public class DependenciesRenderer
         tableHeader[0] = getReportString( "report.dependencies.file.details.total" );
         tableHeader( tableHeader );
 
-        justification[0] = Parser.JUSTIFY_RIGHT;
-        justification[6] = Parser.JUSTIFY_RIGHT;
+        justification[0] = Sink.JUSTIFY_RIGHT;
+        justification[6] = Sink.JUSTIFY_RIGHT;
 
         for ( int i = -1; i < TotalCell.SCOPES_COUNT; i++ )
         {
@@ -1097,14 +1096,14 @@ public class DependenciesRenderer
         {
             tableHeader = new String[] { repoid, url, release, snapshot };
             justificationRepo =
-                new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_LEFT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER };
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
         }
         else
         {
             tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
             justificationRepo =
-                new int[] { Parser.JUSTIFY_LEFT, Parser.JUSTIFY_LEFT, Parser.JUSTIFY_CENTER, Parser.JUSTIFY_CENTER,
-                    Parser.JUSTIFY_CENTER };
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
+                    Sink.JUSTIFY_CENTER };
         }
 
         sink.tableRows( justificationRepo, true );
@@ -1177,14 +1176,14 @@ public class DependenciesRenderer
         int[] justificationRepo = new int[repoIdList.size() + 1];
 
         tableHeader[0] = artifact;
-        justificationRepo[0] = Parser.JUSTIFY_LEFT;
+        justificationRepo[0] = Sink.JUSTIFY_LEFT;
 
         int idnum = 1;
         for ( Iterator it = repoIdList.iterator(); it.hasNext(); )
         {
             String id = (String) it.next();
             tableHeader[idnum] = id;
-            justificationRepo[idnum] = Parser.JUSTIFY_CENTER;
+            justificationRepo[idnum] = Sink.JUSTIFY_CENTER;
             idnum++;
         }
 
