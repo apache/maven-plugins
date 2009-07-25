@@ -20,13 +20,18 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusTestCase;
@@ -265,8 +270,10 @@ public class JavadocUtilTest
         throws Exception
     {
         Settings settings = null;
-        URL url = null;
+        Proxy proxy = null;
 
+        URL url = null;
+        URL wrongUrl = null;
         try
         {
             JavadocUtil.fetchURL( settings, url );
@@ -285,10 +292,10 @@ public class JavadocUtilTest
         JavadocUtil.fetchURL( settings, url );
         assertTrue( true );
 
-        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
+        wrongUrl = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
         try
         {
-            JavadocUtil.fetchURL( settings, url );
+            JavadocUtil.fetchURL( settings, wrongUrl );
             assertTrue( false );
         }
         catch ( IOException e )
@@ -296,29 +303,146 @@ public class JavadocUtilTest
             assertTrue( true );
         }
 
-        settings = new Settings();
-        Proxy proxy = new Proxy();
-        proxy.setActive( true );
-        proxy.setHost( "140.211.11.10" ); // Apache's HTTP proxy
-        proxy.setPort( 80 );
-        proxy.setUsername( "toto" );
-        proxy.setPassword( "toto" );
-        proxy.setNonProxyHosts( "www.google.com" );
-        settings.addProxy( proxy );
-
-        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list" );
-        JavadocUtil.fetchURL( settings, url );
-        assertTrue( true );
-
-        url = new URL( "http://maven.apache.org/plugins/maven-javadoc-plugin/apidocs/package-list2" );
+        // real proxy
+        ProxyServer proxyServer = null;
+        AuthAsyncProxyServlet proxyServlet = null;
         try
         {
+            proxyServlet = new AuthAsyncProxyServlet();
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( true );
+
+            try
+            {
+                JavadocUtil.fetchURL( settings, wrongUrl );
+                assertTrue( false );
+            }
+            catch ( IOException e )
+            {
+                assertTrue( true );
+            }
+        }
+        catch ( Exception e )
+        {
+            assertTrue( false );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
+
+        Map authentications = new HashMap();
+        authentications.put( "foo", "bar" );
+        // wrong auth
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet( authentications );
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            settings.addProxy( proxy );
+
             JavadocUtil.fetchURL( settings, url );
             assertTrue( false );
         }
-        catch ( IOException e )
+        catch ( FileNotFoundException e )
         {
             assertTrue( true );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( false );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
+
+        // auth proxy
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet( authentications );
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            proxy.setUsername( "foo" );
+            proxy.setPassword( "bar" );
+            settings.addProxy( proxy );
+
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( true );
+
+            try
+            {
+                JavadocUtil.fetchURL( settings, wrongUrl );
+                assertTrue( false );
+            }
+            catch ( IOException e )
+            {
+                assertTrue( true );
+            }
+        }
+        catch ( FileNotFoundException e )
+        {
+            assertTrue( false );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
+        }
+
+        // timeout
+        try
+        {
+            proxyServlet = new AuthAsyncProxyServlet( authentications, 3000 ); // more than 2000, see fetchURL
+            proxyServer = new ProxyServer( proxyServlet );
+            proxyServer.start();
+
+            settings = new Settings();
+            proxy = new Proxy();
+            proxy.setActive( true );
+            proxy.setHost( proxyServer.getHostName() );
+            proxy.setPort( proxyServer.getPort() );
+            proxy.setUsername( "foo" );
+            proxy.setPassword( "bar" );
+            settings.addProxy( proxy );
+            JavadocUtil.fetchURL( settings, url );
+            assertTrue( false );
+        }
+        catch ( SocketTimeoutException e )
+        {
+            assertTrue( true );
+        }
+        finally
+        {
+            if ( proxyServer != null )
+            {
+                proxyServer.stop();
+            }
         }
     }
 
