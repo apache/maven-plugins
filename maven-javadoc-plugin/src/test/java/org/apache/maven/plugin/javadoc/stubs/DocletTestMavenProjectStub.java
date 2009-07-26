@@ -20,13 +20,10 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,26 +40,14 @@ public class DocletTestMavenProjectStub
 
     public DocletTestMavenProjectStub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        readModel( new File( getBasedir(), "doclet-test-plugin-config.xml" ) );
 
-        try
-        {
-            model = pomReader.read( new FileReader(
-                new File( getBasedir() + "/src/test/resources/unit/doclet-test/doclet-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
+        setGroupId( getModel().getGroupId() );
+        setArtifactId( getModel().getArtifactId() );
+        setVersion( getModel().getVersion() );
+        setName( getModel().getName() );
+        setUrl( getModel().getUrl() );
+        setPackaging( getModel().getPackaging() );
         //setDescription( "Sample Maven Project" );
 
         Scm scm = new Scm();
@@ -70,13 +55,12 @@ public class DocletTestMavenProjectStub
         setScm( scm );
 
         Build build = new Build();
-        build.setFinalName( model.getArtifactId() );
-        build.setDirectory( getBasedir() + "/target/test/unit/doclet-test/target" );
+        build.setFinalName( getModel().getArtifactId() );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/doclet-test/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/doclet-test/doclet/test" );
+        compileSourceRoots.add( getBasedir() + "/doclet/test" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
@@ -102,5 +86,11 @@ public class DocletTestMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/doclet-test" );
     }
 }

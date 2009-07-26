@@ -20,13 +20,10 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +40,8 @@ public class DocfilesTestMavenProjectStub
 
     public DocfilesTestMavenProjectStub()
     {
+        readModel( new File( getBasedir(), "docfiles-test-plugin-config.xml" ) );
+
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "docfiles-test" );
         setVersion( "1.0-SNAPSHOT" );
@@ -57,26 +56,12 @@ public class DocfilesTestMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "docfiles-test" );
-        build.setDirectory( getBasedir() + "/target/test/unit/docfiles-test/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/docfiles-test/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/docfiles-test/docfiles/test" );
+        compileSourceRoots.add( getBasedir() + "/docfiles/test" );
         setCompileSourceRoots( compileSourceRoots );
-
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        try
-        {
-            Model model = pomReader.read( new FileReader(
-                new File( getBasedir() + "/src/test/resources/unit/docfiles-test/docfiles-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     /** {@inheritDoc} */
@@ -101,5 +86,11 @@ public class DocfilesTestMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/docfiles-test/" );
     }
 }

@@ -20,12 +20,9 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,29 +36,17 @@ public class ResourcesWithExcludesTestMavenProjectStub extends MavenProjectStub
 
     public ResourcesWithExcludesTestMavenProjectStub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        readModel( new File( getBasedir(), "resources-with-excludes-test-plugin-config.xml" ) );
 
-        try
-        {
-            model =
-                pomReader.read( new FileReader( new File( getBasedir(), "resources-with-excludes-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
+        setGroupId( getModel().getGroupId() );
+        setArtifactId( getModel().getArtifactId() );
+        setVersion( getModel().getVersion() );
+        setName( getModel().getName() );
+        setUrl( getModel().getUrl() );
+        setPackaging( getModel().getPackaging() );
 
         Build build = new Build();
-        build.setFinalName( model.getArtifactId() );
+        build.setFinalName( getModel().getArtifactId() );
         build.setSourceDirectory( getBasedir() + "/src/main/java" );
         build.setDirectory( super.getBasedir() + "/target/test/unit/resources-with-excludes-test/target" );
         setBuild( build );

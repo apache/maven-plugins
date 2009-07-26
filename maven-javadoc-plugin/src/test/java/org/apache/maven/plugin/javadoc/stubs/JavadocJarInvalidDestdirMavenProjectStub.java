@@ -21,13 +21,10 @@ package org.apache.maven.plugin.javadoc.stubs;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,26 +41,14 @@ public class JavadocJarInvalidDestdirMavenProjectStub
 
     public JavadocJarInvalidDestdirMavenProjectStub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        readModel( new File( getBasedir(), "javadocjar-invalid-destdir-plugin-config.xml" ) );
 
-        try
-        {
-            model = pomReader.read( new FileReader( new File( getBasedir() +
-                "/src/test/resources/unit/javadocjar-invalid-destdir/javadocjar-invalid-destdir-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
+        setGroupId( getModel().getGroupId() );
+        setArtifactId( getModel().getArtifactId() );
+        setVersion( getModel().getVersion() );
+        setName( getModel().getName() );
+        setUrl( getModel().getUrl() );
+        setPackaging( getModel().getPackaging() );
 
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
@@ -76,13 +61,12 @@ public class JavadocJarInvalidDestdirMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "javadocjar-invalid-destdir" );
-        build.setDirectory( getBasedir() + "/target/test/unit/javadocjar-invalid-destdir/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-invalid-destdir/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
         compileSourceRoots.add(
-            basedir + "/src/test/resources/unit/javadocjar-invalid-destdir/javadocjar/invalid/destdir" );
+            getBasedir() + "/javadocjar/invalid/destdir" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
@@ -108,5 +92,11 @@ public class JavadocJarInvalidDestdirMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/javadocjar-invalid-destdir/" );
     }
 }
