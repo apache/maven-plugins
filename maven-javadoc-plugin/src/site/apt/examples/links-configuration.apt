@@ -86,6 +86,7 @@ Configuring <<<links>>> Parameter
   <<Note>>: if you are using an unsupported JDK like 7.0, you could add its Javadoc API url using the
   {{{../javadoc-mojo.html#javaApiLinks}javaApiLinks}} parameter, i.e.:
 
++-----+
  <javaApiLinks>
    ...
    <property>
@@ -93,6 +94,7 @@ Configuring <<<links>>> Parameter
      <value>http://download.java.net/jdk7/docs/api/</value>
    </property>
  </javaApiLinks>
++-----+
 
   Refer to {{{../javadoc-mojo.html#links}links}} parameter for more information.
 
@@ -115,9 +117,9 @@ Configuring <<<offlineLinks>>> Parameter
   The offlineLinks for <<module1>> will be <<</absolute/path/to/>>><<module2>><<</target/site/apidocs>>> and
   the offlineLinks for <<module2>> will be <<</absolute/path/to/>>><<module1>><<</target/site/apidocs>>>.
 
-  <<Important Note>>: all offlinelinks are based on the $\{project.url\}.
+  <<Important Note>>: all offlinelinks are based on the $\{project.url\} if present.
 
-  Since 2.6, you could not disable the cross reference for <<<offlineLinks>>> using the
+  Since 2.6, you could disable the cross reference for <<<offlineLinks>>> using the
   {{{../javadoc-mojo.html#detectOfflineLinks}detectOfflineLinks}} parameter.
 
   Refer to {{{../javadoc-mojo.html#offlineLinks}offlineLinks}} parameter for more information.
