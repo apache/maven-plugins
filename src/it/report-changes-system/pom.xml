@@ -80,7 +80,7 @@
         <artifactId>maven-changes-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <issueLinkTemplate>myjira/browse/%ISSUE%</issueLinkTemplate>
+          <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
           <issueLinkTemplatePerSystem>
             <qc>http://localhost/%ISSUE%</qc>
           </issueLinkTemplatePerSystem>
