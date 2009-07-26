@@ -84,7 +84,10 @@ public class ChangesReportGenerator
         {
             this.issueLinksPerSystem = new HashMap();
         }
-        this.issueLinksPerSystem.put( DEFAULT_ISSUE_SYSTEM_KEY, issueLink );
+        if ( !this.issueLinksPerSystem.containsKey( DEFAULT_ISSUE_SYSTEM_KEY ) )
+        {
+            this.issueLinksPerSystem.put( DEFAULT_ISSUE_SYSTEM_KEY, issueLink );
+        }
     }
 
     /**
@@ -131,7 +134,7 @@ public class ChangesReportGenerator
 
     /**
      * Checks whether links to the issues can be generated.
-     *
+     * 
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
     public boolean canGenerateIssueLinks( String system )
@@ -141,8 +144,19 @@ public class ChangesReportGenerator
             return false;
         }
         String issueLink = (String) this.issueLinksPerSystem.get( system );
-        return !StringUtils.isBlank( issueLink )
-            && ( !StringUtils.isBlank( getUrl() ) || issueLink.indexOf( URL_TOKEN ) < 0 );
+
+        // If the issue entry is blank no links possible
+        if ( StringUtils.isBlank( issueLink ) )
+        {
+            return false;
+        }
+
+        // If we have %URL% then the URL must be set.
+        if ( issueLink.indexOf( URL_TOKEN ) >= 0 && StringUtils.isBlank( getUrl() ) )
+        {
+            return false;
+        }
+        return true;
     }
 
     public boolean canGenerateIssueLinks()
@@ -176,11 +190,11 @@ public class ChangesReportGenerator
 
     private void constructActions( Sink sink, List actionList, ResourceBundle bundle )
     {
-        if( actionList.isEmpty() )
+        if ( actionList.isEmpty() )
         {
             sink.paragraph();
 
-            sink.text( bundle.getString("report.changes.text.no.changes") );
+            sink.text( bundle.getString( "report.changes.text.no.changes" ) );
 
             sink.paragraph_();
         }
@@ -257,8 +271,8 @@ public class ChangesReportGenerator
     {
         sink.section2();
 
-        sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.releasehistory" ), bundle
-            .getString( "report.changes.label.releasehistory" ) );
+        sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.releasehistory" ),
+                                 bundle.getString( "report.changes.label.releasehistory" ) );
 
         List releaseList = report.getReleaseList();
 
@@ -292,13 +306,13 @@ public class ChangesReportGenerator
         sink.table_();
 
         // @todo Temporarily commented out until MCHANGES-46 is completely solved
-        //        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
-        //        sink.text( " " );
-        //        sink.link( "changes.rss" );
-        //        sinkFigure( "images/rss.png", sink );
-        //        sink.link_();
+        // sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
+        // sink.text( " " );
+        // sink.link( "changes.rss" );
+        // sinkFigure( "images/rss.png", sink );
+        // sink.link_();
         //
-        //        sink.lineBreak();
+        // sink.lineBreak();
 
         sink.section2_();
     }
@@ -327,10 +341,14 @@ public class ChangesReportGenerator
         String parseLink;
         String issueLink = (String) this.issueLinksPerSystem.get( system );
         parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
-
         if ( parseLink.indexOf( URL_TOKEN ) >= 0 )
         {
-            String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
+            String url = getUrl();
+            // remove the trailing slash if it exists.
+            if ( url.endsWith( "/" ) )
+            {
+                url = url.substring( 0, url.length() - 1 );
+            }
             parseLink = parseLink.replaceFirst( URL_TOKEN, url );
         }
 
@@ -561,7 +579,6 @@ public class ChangesReportGenerator
     }
 
     /**
-     *
      * @param sink
      * @param action
      * @param bundle
@@ -578,20 +595,20 @@ public class ChangesReportGenerator
             namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
         }
 
-        for (Iterator iterator = dueTos.iterator();iterator.hasNext();)
+        for ( Iterator iterator = dueTos.iterator(); iterator.hasNext(); )
         {
             DueTo dueTo = (DueTo) iterator.next();
             namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
         }
 
-        if (namesEmailMap.isEmpty())
+        if ( namesEmailMap.isEmpty() )
         {
             return;
         }
 
         sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
         int i = 0;
-        for (Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext();)
+        for ( Iterator iterator = namesEmailMap.keySet().iterator(); iterator.hasNext(); )
         {
             String currentDueTo = (String) iterator.next();
             String currentDueToEmail = (String) namesEmailMap.get( currentDueTo );
