@@ -43,7 +43,7 @@ try
       return false;
     }    
     
-    indexOf = reportContent.indexOf( "<a href=\"myjira/browse/MCHANGES-88\">MCHANGES-88</a>" );
+    indexOf = reportContent.indexOf( "<a href=\"http://myjira/browse/MCHANGES-88\"" );
     if ( indexOf < 0)
     {
       System.err.println( "changes-report.html doesn't contains jira issue link" );
