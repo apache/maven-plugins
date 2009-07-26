@@ -20,7 +20,6 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +32,6 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
@@ -50,25 +47,14 @@ public class TestJavadocMavenProjectStub
 
     public TestJavadocMavenProjectStub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        readModel( new File( getBasedir(), "test-javadoc-test-plugin-config.xml" ) );
 
-        try
-        {
-            model = pomReader.read( new FileReader( new File( getBasedir(), "test-javadoc-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
+        setGroupId( getModel().getGroupId() );
+        setArtifactId( getModel().getArtifactId() );
+        setVersion( getModel().getVersion() );
+        setName( getModel().getName() );
+        setUrl( getModel().getUrl() );
+        setPackaging( getModel().getPackaging() );
 
         Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
                                               Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
@@ -77,7 +63,7 @@ public class TestJavadocMavenProjectStub
         setTestArtifacts( Collections.singletonList( junit ) );
 
         Build build = new Build();
-        build.setFinalName( model.getArtifactId() );
+        build.setFinalName( getModel().getArtifactId() );
         build.setDirectory( super.getBasedir() + "/target/test/unit/test-javadoc-test/target" );
         build.setSourceDirectory( getBasedir() + "/src/main/java" );
         build.setOutputDirectory( super.getBasedir() + "/target/test/unit/test-javadoc-test/target/classes" );

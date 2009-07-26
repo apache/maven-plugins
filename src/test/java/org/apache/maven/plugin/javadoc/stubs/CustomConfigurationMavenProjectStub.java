@@ -20,13 +20,10 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +41,8 @@ public class CustomConfigurationMavenProjectStub
 
     public CustomConfigurationMavenProjectStub()
     {
+        readModel( new File( getBasedir(), "custom-configuration-plugin-config.xml" ) );
+
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "custom-configuration" );
         setVersion( "1.0-SNAPSHOT" );
@@ -59,32 +58,17 @@ public class CustomConfigurationMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "default-configuration" );
-        build.setDirectory( getBasedir() + "/target/test/unit/custom-configuration/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/custom-configuration/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        String temp =  basedir + "/src/test/resources/unit/custom-configuration";
+        String temp =  getBasedir().getAbsolutePath();
         if( !temp.startsWith( "/" ) )
         {
             temp = temp.replace( '/', '\\' );
         }
-
         compileSourceRoots.add( temp );
         setCompileSourceRoots( compileSourceRoots );
-
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        try
-        {
-            Model model = pomReader.read( new FileReader( new File( getBasedir() +
-                "/src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     /** {@inheritDoc} */
@@ -109,5 +93,11 @@ public class CustomConfigurationMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/custom-configuration/" );
     }
 }

@@ -22,12 +22,9 @@ package org.apache.maven.plugin.javadoc.stubs;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.io.FileReader;
 import java.io.File;
 
 /**
@@ -43,6 +40,9 @@ public class QuotedPathMavenProjectStub
 
     public QuotedPathMavenProjectStub()
     {
+        readModel( new File( getBasedir(), "quotedpath-test-plugin-config.xml" ) );
+
+
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "quotedpath-test" );
         setVersion( "1.0-SNAPSHOT" );
@@ -56,26 +56,12 @@ public class QuotedPathMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "quotedpath-test" );
-        build.setDirectory( getBasedir() + "/target/test/unit/quotedpath'test/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/quotedpath'test/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/quotedpath'test/quotedpath/test" );
+        compileSourceRoots.add( getBasedir() + "/quotedpath/test" );
         setCompileSourceRoots( compileSourceRoots );
-
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        try
-        {
-            Model model = pomReader.read( new FileReader( new File( getBasedir() +
-                "/src/test/resources/unit/quotedpath'test/quotedpath-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     /** {@inheritDoc} */
@@ -100,5 +86,11 @@ public class QuotedPathMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/quotedpath'test" );
     }
 }
