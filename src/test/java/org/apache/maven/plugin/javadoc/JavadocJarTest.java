@@ -36,28 +36,9 @@ public class JavadocJarTest
     extends AbstractMojoTestCase
 {
     /**
-     * @see org.apache.maven.plugin.testing.AbstractMojoTestCase#setUp()
-     */
-    protected void setUp()
-        throws Exception
-    {
-        // required for mojo lookups to work
-        super.setUp();
-    }
-
-    /**
-     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
-     */
-    protected void tearDown()
-        throws Exception
-    {
-        super.tearDown();
-    }
-
-    /**
      * Test when default configuration is provided
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testDefaultConfig()
         throws Exception
@@ -111,7 +92,7 @@ public class JavadocJarTest
     /**
      * Test when the specified destDir parameter has an invalid value
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testInvalidDestdir()
         throws Exception
