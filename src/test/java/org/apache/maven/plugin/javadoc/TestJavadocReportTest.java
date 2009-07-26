@@ -31,39 +31,21 @@ public class TestJavadocReportTest
     extends AbstractMojoTestCase
 {
     /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp()
-        throws Exception
-    {
-        // required for mojo lookups to work
-        super.setUp();
-    }
-
-    /**
-     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
-     */
-    protected void tearDown()
-        throws Exception
-    {
-        super.tearDown();
-    }
-
-    /**
      * Test the test-javadoc configuration for the plugin
      *
-     * @throws Exception
+     * @throws Exception if any
      */
     public void testTestJavadoc()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/test-javadoc-test/test-javadoc-test-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/test-javadoc-test/test-javadoc-test-plugin-config.xml" );
         TestJavadocReport mojo = (TestJavadocReport) lookupMojo( "test-javadoc", testPom );
         mojo.execute();
 
-        File generatedFile = new File( getBasedir(),
-                                       "target/test/unit/test-javadoc-test/target/site/apidocs/maven/AppTest.html" );
+        File generatedFile =
+            new File( getBasedir(), "target/test/unit/test-javadoc-test/target/site/apidocs/maven/AppTest.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 }
