@@ -84,7 +84,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JavadocUtil
 {
     /** The default timeout used when fetching url, i.e. 2000. */
-    public static int DEFAULT_TIMEOUT = 2000;
+    public static final int DEFAULT_TIMEOUT = 2000;
 
     /**
      * Method that removes the invalid directories in the specified directories.
@@ -961,7 +961,7 @@ public class JavadocUtil
      *
      * @param log a logger could be null.
      * @param localRepositoryDir the localRepository not null.
-     * @param project a not null project file.
+     * @param projectFile a not null project file.
      * @param goals a not null goals list.
      * @param properties the properties for the goals, could be null.
      * @param invokerLog the log file where the invoker will be written, if null using <code>System.out</code>.
@@ -1187,7 +1187,7 @@ public class JavadocUtil
         OutputStream os = null;
         if ( invokerLog != null )
         {
-            log.debug( "Using "+ invokerLog.getAbsolutePath() + " to log the invoker" );
+            log.debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
 
             try
             {
@@ -1364,7 +1364,7 @@ public class JavadocUtil
      */
     private static String getJavaOpts( Log log )
     {
-        String javaOpts= null;
+        String javaOpts = null;
         try
         {
             javaOpts = CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_OPTS" );
