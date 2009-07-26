@@ -60,12 +60,7 @@ Fixing Javadoc Comments
 ** Current limitations
 
  The <fix> and <test-fix> goals use intensively {{{http://qdox.codehaus.org/}Qdox}} to extract class/interface/method
- Javadoc from source files. Unfortunately, Qdox has {{{http://jira.codehaus.org/browse/QDOX}some known issues}}, some
- of them could be blocker for your source files:
-
- * {{{http://jira.codehaus.org/browse/QDOX-154}QDOX-154}}: JavaMethod#getComment() is parsed with an implicit order
-
- []
+ Javadoc from source files. Unfortunately, Qdox has {{{http://jira.codehaus.org/browse/QDOX}some known issues}}.
 
 * Example Call
 
@@ -95,12 +90,12 @@ y
 
 * Using Clirr Integration
 
-  <<Note>>: the artifact should be deploy firstly.
+  <<Note>>: a previous artifact should be deployed firstly.
 
 ** Comparing against a specific version
 
   By default, the goals compare the current code against the latest released version, which is lower than the current
-  version.
+  version. If you want to use another version, you need to specify it similar to the Maven Clirr Plugin:
 
 +-----+
 mvn javadoc:fix -DcomparisonVersion=1.0

@@ -21,7 +21,6 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -403,6 +402,7 @@ public abstract class AbstractFixJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
+     * @param p not null maven project.
      * @return the artifact type.
      */
     protected String getArtifactType( MavenProject p )
@@ -422,7 +422,7 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param p not null
      * @return the compile classpath elements
-     * @throws DependencyResolutionRequiredException
+     * @throws DependencyResolutionRequiredException if any
      */
     protected List getCompileClasspathElements( MavenProject p )
         throws DependencyResolutionRequiredException
@@ -767,11 +767,10 @@ public abstract class AbstractFixJavadocMojo
      *
      * @return an array of {@link JavaClass} found by QDox
      * @throws IOException if any
-     * @throws FileNotFoundException if any
      * @throws MojoExecutionException if any
      */
     private JavaClass[] getQdoxClasses()
-        throws FileNotFoundException, IOException, MojoExecutionException
+        throws IOException, MojoExecutionException
     {
         if ( "pom".equals( project.getPackaging().toLowerCase() ) )
         {
@@ -971,14 +970,24 @@ public abstract class AbstractFixJavadocMojo
      * Take care of block or single comments between Javadoc comment and entity declaration ie:
      * <br/>
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Javadoc&nbsp;Comment}</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f7f5f">&#47;&#42;</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f7f5f">&#42;&nbsp;{Block&nbsp;Comment}</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f7f5f">&#42;&#47;</font><br />
-     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f7f5f">&#47;&#47;&nbsp;{Single&nbsp;comment}</font><br />
-     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;{Javadoc&nbsp;Comment}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#3f7f5f">&#47;&#42;</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f7f5f">&#42;&nbsp;{Block&nbsp;Comment}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f7f5f">&#42;&#47;</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#3f7f5f">&#47;&#47;&nbsp;{Single&nbsp;comment}</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font>
+     * <font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font>
+     * <font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font>
      * </code>
      *
      * @param stringWriter not null
@@ -1094,14 +1103,26 @@ public abstract class AbstractFixJavadocMojo
      * Add a default Javadoc for the given class, i.e.:
      * <br/>
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;class&nbsp;name}</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@author&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingAuthor}</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@version&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingVersion}</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes&nbsp;from&nbsp;previous&nbsp;version}</font><br />
-     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">8</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">DummyClass&nbsp;</font><font color="#000000">{}</font></code>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;class&nbsp;name}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@author&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingAuthor}</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@version&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingVersion}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes
+     * from&nbsp;previous&nbsp;version}</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font>
+     * <font color="#000000">DummyClass&nbsp;</font><font color="#000000">{}</font></code>
      * </code>
      *
      * @param buffer not null
@@ -1196,8 +1217,14 @@ public abstract class AbstractFixJavadocMojo
      * Add a default Javadoc for the given field, i.e.:
      * <br/>
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;&nbsp;Constant&nbsp;</font><font color="#7f7f9f">&lt;code&gt;</font><font color="#3f5fbf">MY_STRING_CONSTANT=&#34;value&#34;</font><font color="#7f7f9f">&lt;/code&gt;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;MY_STRING_CONSTANT&nbsp;=&nbsp;</font><font color="#2a00ff">&#34;value&#34;</font><font color="#000000">;</font>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;&nbsp;Constant&nbsp;</font><font color="#7f7f9f">&lt;code&gt;</font>
+     * <font color="#3f5fbf">MY_STRING_CONSTANT=&#34;value&#34;</font>
+     * <font color="#7f7f9f">&lt;/code&gt;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;static&nbsp;final&nbsp;</b></font>
+     * <font color="#000000">String&nbsp;MY_STRING_CONSTANT&nbsp;=&nbsp;</font>
+     * <font color="#2a00ff">&#34;value&#34;</font><font color="#000000">;</font>
      * </code>
      *
      * @param stringWriter not null
@@ -1311,15 +1338,31 @@ public abstract class AbstractFixJavadocMojo
      * Add in the buffer a default Javadoc for the given class:
      * <br/>
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;method&nbsp;name}</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingParam}</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@return&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingReturn}</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@throws&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingThrows}</font><br />
-     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font><font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes&nbsp;from&nbsp;previous&nbsp;version}</font><br />
-     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">9</font>&nbsp;<font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font>
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;{Comment&nbsp;based&nbsp;on&nbsp;the&nbsp;method&nbsp;name}</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingParam}</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@return&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingReturn}</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@throws&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingThrows}</font><br />
+     * <font color="#808080">7</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@since&nbsp;</font>
+     * <font color="#3f5fbf">X&nbsp;{added&nbsp;if&nbsp;addMissingSince&nbsp;and&nbsp;new&nbsp;classes
+     * from&nbsp;previous&nbsp;version}</font><br />
+     * <font color="#808080">8</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">9</font>&nbsp;<font color="#7f0055"><b>public&nbsp;</b></font>
+     * <font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font>
+     * <font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font>
+     * <font color="#000000">){}</font>
      * </code>
      *
      * @param buffer not null
@@ -1915,7 +1958,8 @@ public abstract class AbstractFixJavadocMojo
 
                 if ( exception.getValue().endsWith( exceptionClassName ) )
                 {
-                    originalJavadocTag = StringUtils.replace( originalJavadocTag, exceptionClassName, exception.getValue() );
+                    originalJavadocTag =
+                        StringUtils.replace( originalJavadocTag, exceptionClassName, exception.getValue() );
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim()
                                     .endsWith( "@" + THROWS_TAG + " " + exception.getValue() ) )
                     {
@@ -2370,7 +2414,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-        sb.append( "<" + typeParameter.getName() + ">");
+        sb.append( "<" + typeParameter.getName() + ">" );
         sb.append( " " );
         sb.append( getDefaultJavadocForType( typeParameter ) );
         sb.append( EOL );
@@ -2731,7 +2775,7 @@ public abstract class AbstractFixJavadocMojo
                 "java.lang." + exceptionClassName };
 
         Class clazz = null;
-        for ( int i = 0; i < potentialClassNames.length; i++)
+        for ( int i = 0; i < potentialClassNames.length; i++ )
         {
             try
             {
@@ -2974,11 +3018,19 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font>
+     * <font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font>
+     * <font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
      * </code>
      *
      * <br/>
@@ -2986,7 +3038,8 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      *
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
      * </code>
      *
      * @param javaClassContent original class content not null
@@ -3029,11 +3082,19 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font>
+     * <font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font>
+     * <font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
      * </code>
      *
      * <br/>
@@ -3041,7 +3102,9 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      *
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * </code>
      *
      * @param javaClassContent original class content not null
@@ -3050,8 +3113,8 @@ public abstract class AbstractFixJavadocMojo
      * @return the javadoc comment for the entity without Javadoc tags.
      * @throws IOException if any
      */
-    private static String getJavadocComment( final String javaClassContent, final AbstractInheritableJavaEntity entity,
-                                             final DocletTag docletTag )
+    private static String getJavadocComment( final String javaClassContent,
+                                             final AbstractInheritableJavaEntity entity, final DocletTag docletTag )
         throws IOException
     {
         if ( docletTag.getValue() == null )
@@ -3110,11 +3173,19 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font>
+     * <font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font>
+     * <font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
      * </code>
      *
      * <br/>
@@ -3122,10 +3193,15 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      *
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
      * </code>
      *
      * @param javaClassContent not null
@@ -3168,11 +3244,19 @@ public abstract class AbstractFixJavadocMojo
      *
      * <code>
      * <font color="#808080">1</font>&nbsp;<font color="#ffffff"></font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#47;&#42;&#42;</font><br />
-     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
-     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&#47;</font><br />
-     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font><font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#47;&#42;&#42;</font><br />
+     * <font color="#808080">3</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">5</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&#47;</font><br />
+     * <font color="#808080">6</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font>
+     * <font color="#000000">dummyMethod</font><font color="#000000">(&nbsp;</font>
+     * <font color="#000000">String&nbsp;s&nbsp;</font><font color="#000000">){}</font><br />
      * </code>
      *
      * <br/>
@@ -3180,8 +3264,11 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      *
      * <code>
-     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
-     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
+     * <font color="#808080">1</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;Dummy&nbsp;Javadoc&nbsp;comment.</font><br />
+     * <font color="#808080">2</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+     * <font color="#3f5fbf">&#42;&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font>
+     * <font color="#3f5fbf">s&nbsp;a&nbsp;String</font><br />
      * </code>
      *
      * @param javaClassContent not null
@@ -3189,7 +3276,8 @@ public abstract class AbstractFixJavadocMojo
      * @return return the original javadoc as String for the current entity
      * @throws IOException if any
      */
-    private static String extractOriginalJavadocContent( final String javaClassContent, final AbstractJavaEntity entity )
+    private static String extractOriginalJavadocContent( final String javaClassContent,
+                                                         final AbstractJavaEntity entity )
         throws IOException
     {
         if ( entity.getComment() == null )
