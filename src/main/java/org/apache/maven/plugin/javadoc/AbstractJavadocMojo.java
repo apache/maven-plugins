@@ -61,7 +61,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.DefaultPluginManager;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
@@ -103,7 +102,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @version $Id$
  * @since 2.0
  * @requiresDependencyResolution compile
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html">The Java API Documentation Generator, 1.4.2</a>
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html">
+ * The Java API Documentation Generator, 1.4.2</a>
  */
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
@@ -4390,7 +4390,7 @@ public abstract class AbstractJavadocMojo
      */
     private String getFullJavadocGoal()
     {
-        String javadocVersion = null;
+        String javadocPluginVersion = null;
         InputStream resourceAsStream = null;
         try
         {
@@ -4405,7 +4405,7 @@ public abstract class AbstractJavadocMojo
 
                 if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
                 {
-                    javadocVersion = properties.getProperty( "version" );
+                    javadocPluginVersion = properties.getProperty( "version" );
                 }
             }
         }
@@ -4422,12 +4422,12 @@ public abstract class AbstractJavadocMojo
 
         sb.append( "org.apache.maven.plugins" ).append( ":" );
         sb.append( "maven-javadoc-plugin" ).append( ":" );
-        if ( StringUtils.isNotEmpty( javadocVersion ) )
+        if ( StringUtils.isNotEmpty( javadocPluginVersion ) )
         {
-            sb.append( javadocVersion ).append( ":" );
+            sb.append( javadocPluginVersion ).append( ":" );
         }
 
-        if ( TestJavadocReport.class.isAssignableFrom( getClass() ))
+        if ( TestJavadocReport.class.isAssignableFrom( getClass() ) )
         {
             sb.append( "test-javadoc" );
         }
@@ -4514,8 +4514,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Using Maven, a Javadoc link is given by <code>${project.url}/apidocs</code>.
      *
-     * @return the detected Javadoc links using the Maven conventions for all dependencies defined in the current project
-     * or an empty list.
+     * @return the detected Javadoc links using the Maven conventions for all dependencies defined in the current
+     * project or an empty list.
      * @see #detectLinks
      * @since 2.6
      */
@@ -4571,8 +4571,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @return if {@link #detectJavaApiLink}, the Java API link based on the {@link #javaApiLinks} properties and the value of the
-     * <code>source</code> parameter in the <code>org.apache.maven.plugins:maven-compiler-plugin</code>
+     * @return if {@link #detectJavaApiLink}, the Java API link based on the {@link #javaApiLinks} properties and the
+     * value of the <code>source</code> parameter in the <code>org.apache.maven.plugins:maven-compiler-plugin</code>
      * defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
      * or the {@link #fJavadocVersion}, or <code>null</code> if not defined.
      * @since 2.6
@@ -4589,13 +4589,13 @@ public abstract class AbstractJavadocMojo
         }
 
         final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
-        float source = fJavadocVersion;
+        float sourceVersion = fJavadocVersion;
         String sourceConfigured = getPluginParameter( project, pluginId, "source" );
         if ( sourceConfigured != null )
         {
             try
             {
-                source = Float.parseFloat( sourceConfigured );
+                sourceVersion = Float.parseFloat( sourceConfigured );
             }
             catch ( NumberFormatException e )
             {
@@ -4614,19 +4614,19 @@ public abstract class AbstractJavadocMojo
         }
 
         String javaApiLink = null;
-        if ( source >= 1.3f && source < 1.4f && javaApiLinks.getProperty( "api_1.3" ) != null )
+        if ( sourceVersion >= 1.3f && sourceVersion < 1.4f && javaApiLinks.getProperty( "api_1.3" ) != null )
         {
             javaApiLink = javaApiLinks.getProperty( "api_1.3" ).toString();
         }
-        else if ( source >= 1.4f && source < 1.5f && javaApiLinks.getProperty( "api_1.4" ) != null )
+        else if ( sourceVersion >= 1.4f && sourceVersion < 1.5f && javaApiLinks.getProperty( "api_1.4" ) != null )
         {
             javaApiLink = javaApiLinks.getProperty( "api_1.4" ).toString();
         }
-        else if ( source >= 1.5f && source < 1.6f && javaApiLinks.getProperty( "api_1.5" ) != null )
+        else if ( sourceVersion >= 1.5f && sourceVersion < 1.6f && javaApiLinks.getProperty( "api_1.5" ) != null )
         {
             javaApiLink = javaApiLinks.getProperty( "api_1.5" ).toString();
         }
-        else if ( source >= 1.6f && javaApiLinks.getProperty( "api_1.6" ) != null )
+        else if ( sourceVersion >= 1.6f && javaApiLinks.getProperty( "api_1.6" ) != null )
         {
             javaApiLink = javaApiLinks.getProperty( "api_1.6" ).toString();
         }
@@ -4748,10 +4748,10 @@ public abstract class AbstractJavadocMojo
 
     /**
      * @param p not null
-     * @param pluginId not null key of the plugin defined in {@link org.apache.maven.model.Build#getPluginsAsMap()} or in
-     * {@link org.apache.maven.model.PluginManagement#getPluginsAsMap()}
-     * @return the Maven plugin defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
-     * or <code>null</code> if not defined.
+     * @param pluginId not null key of the plugin defined in {@link org.apache.maven.model.Build#getPluginsAsMap()}
+     * or in {@link org.apache.maven.model.PluginManagement#getPluginsAsMap()}
+     * @return the Maven plugin defined in <code>${project.build.plugins}</code> or in
+     * <code>${project.build.pluginManagement}</code>, or <code>null</code> if not defined.
      * @since 2.6
      */
     private static Plugin getPlugin( MavenProject p, String pluginId )

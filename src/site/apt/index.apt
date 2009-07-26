@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2009-02-28
+ 2009-07-26
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -119,14 +119,22 @@ Maven Javadoc Plugin
 
    * {{{examples/javadoc-resources.html}Using Javadoc Resources}}
 
+   * {{{examples/output-configuration.html}Using Alternative Output Directory}}
+
    * {{{examples/stylesheet-configuration.html}Configuring Stylesheets}}
+
+   * {{{examples/help-configuration.html}Configuring Helpfile}}
 
    * {{{examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
 
    * {{{examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}
 
+   * {{{examples/links-configuration.html}Configuring Links}}
+
    * {{{examples/test-javadocs.html}Generating test Javadocs}}
 
    * {{{examples/selective-javadocs-report.html}Selective Javadocs Reports}}
+
+   * {{{examples/fix-javadocs.html}Fixing Javadoc Comments}}
 
    []
