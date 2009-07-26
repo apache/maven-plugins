@@ -24,11 +24,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-changes-plugin-test</artifactId>
-  <version>1.1</version>
+  <version>99.0</version>
   <name>Maven</name>
   <packaging>jar</packaging>
-  <description>Test Announcement Custom template</description>
-  <url>http://maven.apache.org/plugins/maven-changes-plugin/</url>
+  <description>Test report.</description>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -39,7 +38,7 @@
   </dependencies>
   <issueManagement>
     <system>jira</system>
-    <url>http://localhost</url>
+    <url>http://localhost/bla</url>
   </issueManagement>
   <properties>
     <changesPluginVersion>@pom.version@</changesPluginVersion>
@@ -50,22 +49,19 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
-          <version>${changesPluginVersion}</version>
-          <configuration>
-            <failOnError>true</failOnError>
-          </configuration>          
+          <version>${changesPluginVersion}</version>          
         </plugin>
       </plugins>
-    </pluginManagement>
+    </pluginManagement>    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>${changesPluginVersion}</version>
+        <version>${changesPluginVersion}</version>   
         <executions>
           <execution>
             <id>validate-changes</id>
-            <phase>validate</phase>
+            <phase>pre-site</phase>
             <goals>
               <goal>changes-validate</goal>
             </goals>
@@ -73,21 +69,28 @@
               <failOnError>true</failOnError>
             </configuration>
           </execution>
-        </executions>
+        </executions>     
       </plugin>
     </plugins>
-  </build>
+  </build>  
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>${changesPluginVersion}</version>
+        <version>@pom.version@</version>
         <configuration>
-          <template>test-announce.vm</template>
-          <templateDirectory>template-directory</templateDirectory>
+          <filteringChanges>true</filteringChanges>
+          <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

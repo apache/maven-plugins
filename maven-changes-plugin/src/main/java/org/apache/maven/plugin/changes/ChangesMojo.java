@@ -22,12 +22,19 @@ package org.apache.maven.plugin.changes;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -94,6 +101,73 @@ public class ChangesMojo
      */        
     private boolean addActionDate;    
     
+    /**
+     * 
+     * @component
+     * 
+     * @since 2.2
+     */
+    private MavenFileFilter mavenFileFilter;
+    
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * 
+     * @since 2.2
+     * 
+     */
+    protected MavenSession session;
+    
+    /**
+     * applying filtering filtering "a la" resources plugin
+     * 
+     * @parameter default-value="false"
+     * 
+     * @since 2.2
+     */
+    private boolean filteringChanges;
+    
+    /**
+     * The directory for interpolated changes.xml.
+     *
+     * @parameter expression="${project.build.directory}/changes"
+     * @required
+     * @readonly
+     * 
+     * @since 2.2
+     * 
+     */
+    private File outputDirectory;    
+    
+    /**
+     *
+     * Format to use for publishDate 
+     * The value will be available with the following expression ${publishDate}
+     * 
+     * @see SimpleDateFormat
+     * 
+     * @parameter default-value="yyyy-MM-dd"
+     * 
+     * @since 2.2
+     * 
+     */
+    private String publishDateFormat;
+    
+    /**
+    *
+    * Locale to use for publishDate when formatting 
+    * 
+    * @see Locale
+    * 
+    * @parameter default-value="en"
+    * 
+    * @since 2.2
+    * 
+    */    
+    private String publishDateLocale;
+    
+    
     public boolean canGenerateReport()
     {
         return xmlPath.isFile();
@@ -134,7 +208,34 @@ public class ChangesMojo
             getLog().warn( "changes.xml file " + xmlPath.getAbsolutePath() + " does not exist." );
             return;
         }
-        
+        if ( filteringChanges )
+        {
+            if ( !outputDirectory.exists() )
+            {
+                outputDirectory.mkdirs();
+            }
+            try
+            {
+                // so we get encoding from the file itself
+                String encoding = ReaderFactory.newXmlReader( xmlPath ).getEncoding();
+                File resultFile = new File( outputDirectory, "changes.xml" );
+                Date now = new Date();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
+                project.getProperties().put( "publishDate", simpleDateFormat.format( now ) );
+                mavenFileFilter.copyFile( xmlPath, resultFile, true, project, new ArrayList(), false, encoding, session );
+                xmlPath = resultFile;
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
+            }
+            catch ( MavenFilteringException e )
+            {
+                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
+            }
+
+        }
+
         ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
         
         report.setIssueLinksPerSystem( issueLinkTemplatePerSystem ); 
