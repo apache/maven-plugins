@@ -20,13 +20,10 @@ package org.apache.maven.plugin.javadoc.stubs;
  */
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +40,8 @@ public class DefaultConfigurationMavenProjectStub
 
     public DefaultConfigurationMavenProjectStub()
     {
+        readModel( new File( getBasedir(), "default-configuration-plugin-config.xml" ) );
+
         setGroupId( "org.apache.maven.plugins.maven-javadoc-plugin.unit" );
         setArtifactId( "default-configuration" );
         setVersion( "1.0-SNAPSHOT" );
@@ -56,26 +55,12 @@ public class DefaultConfigurationMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "default-configuration" );
-        build.setDirectory( getBasedir() + "/target/test/unit/default-configuration/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/default-configuration/target" );
         setBuild( build );
 
-        String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/default-configuration/def/configuration" );
+        compileSourceRoots.add( getBasedir() + "/def/configuration" );
         setCompileSourceRoots( compileSourceRoots );
-
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        try
-        {
-            Model model = pomReader.read( new FileReader( new File( getBasedir() +
-                "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     /** {@inheritDoc} */
@@ -100,5 +85,11 @@ public class DefaultConfigurationMavenProjectStub
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/default-configuration/" );
     }
 }
