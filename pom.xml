@@ -243,7 +243,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3-SNAPSHOT</version>
     </dependency>
 
     <!-- schema validation dependencies : jaxp 1.3 is not included with jdk 1.4 (start with 1.5) -->
