@@ -19,6 +19,7 @@
  */
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import java.util.jar.*;
 import org.codehaus.plexus.util.*;
@@ -79,6 +80,16 @@ try
       return false;
     }    
     
+    Date now = new Date();
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy-MM-dd", new Locale( "en" ) );
+    String formattedDate = simpleDateFormat.format( now );
+    
+    indexOf = reportContent.indexOf( formattedDate );
+    if ( indexOf < 0)
+    {
+      System.err.println( "changes-report.html doesn't publishDate" );
+      return false;
+    }                           
 
 }
 catch( Throwable e )
