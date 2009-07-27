@@ -89,4 +89,16 @@ public class TestEclipseWriterConfig
         return dirs;
     }
 
+    public List getLinkedResources()
+    {
+        List result = super.getLinkedResources();
+
+        if ( result == null )
+        {
+            result = new ArrayList();
+        }
+
+        return result;
+    }
+
 }
