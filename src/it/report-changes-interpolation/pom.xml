@@ -83,6 +83,8 @@
         <configuration>
           <filteringChanges>true</filteringChanges>
           <issueLinkTemplate>http://myjira/browse/%ISSUE%</issueLinkTemplate>
+          <publishDateLocale>en</publishDateLocale>
+          <publishDateFormat>yyyy-MM-dd</publishDateFormat>
         </configuration>
         <reportSets>
           <reportSet>
