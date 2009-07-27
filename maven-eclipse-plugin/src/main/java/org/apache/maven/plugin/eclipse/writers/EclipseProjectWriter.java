@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.BuildCommand;
+import org.apache.maven.plugin.eclipse.LinkedResource;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -61,7 +62,11 @@ public class EclipseProjectWriter
 
     private static final String ELT_BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 
+    private static final String ELT_LINK = "link"; //$NON-NLS-1$
+
     private static final String ELT_BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
+
+    private static final String ELT_LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
 
     private static final String ELT_NATURE = "nature"; //$NON-NLS-1$
 
@@ -80,6 +85,11 @@ public class EclipseProjectWriter
     private static final int LINK_TYPE_DIRECTORY = 2;
 
     /**
+     * To Store the link names
+     */
+    ArrayList linkNames = new ArrayList();
+
+    /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
      */
     public void write()
@@ -88,6 +98,7 @@ public class EclipseProjectWriter
 
         Set projectnatures = new LinkedHashSet();
         Set buildCommands = new LinkedHashSet();
+        Set linkedResources = new LinkedHashSet();
 
         File dotProject = new File( config.getEclipseProjectDirectory(), FILE_DOT_PROJECT );
 
@@ -127,6 +138,23 @@ public class EclipseProjectWriter
                         }
                     }
                 }
+                // Added the below code to preserve the Symbolic links
+                Xpp3Dom linkedResourcesElement = dom.getChild( ELT_LINKED_RESOURCES );
+                if ( linkedResourcesElement != null )
+                {
+                    Xpp3Dom[] existingLinks = linkedResourcesElement.getChildren( ELT_LINK );
+                    for ( int j = 0; j < existingLinks.length; j++ )
+                    {
+                        Xpp3Dom linkName = existingLinks[j].getChild( ELT_NAME );
+                        if ( linkName != null )
+                        {
+                            // add all the existing symbolic links
+                            linkNames.add( existingLinks[j].getChild( ELT_NAME ).getValue() );
+                            linkedResources.add( new LinkedResource( existingLinks[j] ) );
+                        }
+                    }
+                }
+
             }
             catch ( XmlPullParserException e )
             {
@@ -151,6 +179,11 @@ public class EclipseProjectWriter
         for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
         {
             buildCommands.add( (BuildCommand) iter.next() );
+        }
+
+        for ( Iterator iter = config.getLinkedResources().iterator(); iter.hasNext(); )
+        {
+            linkedResources.add( (LinkedResource) iter.next() );
         }
 
         Writer w;
@@ -229,9 +262,17 @@ public class EclipseProjectWriter
 
         boolean addLinks = !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() );
 
-        if ( addLinks || ( config.isPde() && config.getDepsOrdered().length > 0 ) )
+        if ( addLinks || ( config.isPde() && config.getDepsOrdered().length > 0 ) || linkedResources.size() > 0 )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
+            // preserve the symbolic links
+            if ( linkedResources.size() > 0 )
+            {
+                for ( Iterator it = linkedResources.iterator(); it.hasNext(); )
+                {
+                    ( (LinkedResource) it.next() ).print( writer );
+                }
+            }
 
             if ( addLinks )
             {
@@ -334,22 +375,27 @@ public class EclipseProjectWriter
      */
     private void addLink( XMLWriter writer, String name, String location, int type )
     {
-        writer.startElement( "link" ); //$NON-NLS-1$
+        // Avoid duplicates entries of the link..
+        if ( !linkNames.contains( name ) )
+        {
 
-        writer.startElement( ELT_NAME );
-        writer.writeText( name );
-        writer.endElement(); // name
+            writer.startElement( "link" ); //$NON-NLS-1$
 
-        writer.startElement( "type" ); //$NON-NLS-1$
-        writer.writeText( Integer.toString( type ) );
-        writer.endElement(); // type
+            writer.startElement( ELT_NAME );
+            writer.writeText( name );
+            writer.endElement(); // name
 
-        writer.startElement( "location" ); //$NON-NLS-1$
+            writer.startElement( "type" ); //$NON-NLS-1$
+            writer.writeText( Integer.toString( type ) );
+            writer.endElement(); // type
 
-        writer.writeText( location );
+            writer.startElement( "location" ); //$NON-NLS-1$
 
-        writer.endElement(); // location
+            writer.writeText( location );
 
-        writer.endElement(); // link
+            writer.endElement(); // location
+
+            writer.endElement(); // link
+        }
     }
 }

@@ -535,6 +535,39 @@ extends AbstractIdeSupportMojo
      * @parameter
      */
     private List sourceIncludes;
+    
+    /**
+     * A list of links to local files in the system.
+     * A configuration like this one in the pom :
+     * 
+     * &lt;plugin&gt;
+     *  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *  &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     *  &lt;configuration&gt;
+     *   &lt;linkedResources&gt;
+     *    &lt;linkedResource&gt;
+     *     &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
+     *     &lt;type&gt;1&lt;/type&gt;
+     *     &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
+     *    &lt;/linkedResource&gt;
+     *   &lt;/linkedResources&gt;
+     *  &lt;/configuration&gt;
+     * &lt;/plugin&gt;
+     * 
+     * will produce in the .project :
+     * 
+     * &lt;linkedResources&gt;
+     *  &lt;link&gt;
+     *      &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
+     *      &lt;type&gt;1&lt;/type&gt;
+     *      &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
+     *  &lt;/link&gt;
+     * &lt;/linkedResources&gt;
+     *
+     * @since 2.8
+     * @parameter
+     */
+    private List linkedResources;
 
     protected final boolean isJavaProject()
     {
@@ -777,6 +810,22 @@ extends AbstractIdeSupportMojo
     {
         this.projectNameTemplate = projectNameTemplate;
     }
+    
+    /**
+     * @return the linkedResources
+     */
+    public List getLinkedResources()
+    {
+        return linkedResources;
+    }
+
+    /**
+     * @param linkedResources the linkedResources to set
+     */
+    public void setLinkedResources( List linkedResources )
+    {
+        this.linkedResources = linkedResources;
+    }
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -853,6 +902,11 @@ extends AbstractIdeSupportMojo
         {
             verifyClasspathContainerListIsComplete();
         }
+        
+        if ( linkedResources == null ) {
+            linkedResources = new ArrayList();
+        }
+        
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
@@ -1246,6 +1300,7 @@ extends AbstractIdeSupportMojo
         config.setSourceDirs( sourceDirs );
         config.setAddVersionToProjectName( isAddVersionToProjectName() );
         config.setPackaging( packaging );
+        config.setLinkedResources( linkedResources );
 
         collectWarContextRootsFromReactorEarConfiguration( config );
 
