@@ -636,12 +636,34 @@ public class EclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testProject53MECLIPS551()
+    public void testProject53MECLIPSE551()
         throws Exception
     {
         testProject( "project-53-MECLIPSE-551" );
     }
 
+    /**
+     * [MECLIPSE-178] symbolic links need to able to be specified in the pom
+     * 
+     * @throws Exception
+     */
+    public void testProject54MECLIPSE178()
+        throws Exception
+    {
+        testProject( "project-54-MECLIPSE-178" );
+    }
+    
+    /**
+     * [MECLIPSE-178] symbolic links need to able to be specified in the pom
+     * Test the case where a link is already existing in the .project 
+     * @throws Exception
+     */
+    public void testProject55MECLIPSE178()
+        throws Exception
+    {
+        testProject( "project-55-MECLIPSE-178" );
+    }
+    
     public void testJeeSimple()
         throws Exception
     {

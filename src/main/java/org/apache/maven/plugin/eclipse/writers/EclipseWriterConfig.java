@@ -149,6 +149,8 @@ public class EclipseWriterConfig
 
     private WorkspaceConfiguration workspaceConfiguration;
 
+    private List linkedResources;
+
     public WorkspaceConfiguration getWorkspaceConfiguration()
     {
         return workspaceConfiguration;
@@ -603,6 +605,22 @@ public class EclipseWriterConfig
     public void setAjdtVersion( float ajdtVersion )
     {
         this.ajdtVersion = ajdtVersion;
+    }
+
+    /**
+     * @return the linkedResources
+     */
+    public List getLinkedResources()
+    {
+        return linkedResources;
+    }
+
+    /**
+     * @param linkedResources the linkedResources to set
+     */
+    public void setLinkedResources( List linkedResources )
+    {
+        this.linkedResources = linkedResources;
     }
 
 }
