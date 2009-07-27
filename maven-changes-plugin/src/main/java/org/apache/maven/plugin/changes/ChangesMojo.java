@@ -24,17 +24,25 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -142,8 +150,7 @@ public class ChangesMojo
     
     /**
      *
-     * Format to use for publishDate 
-     * The value will be available with the following expression ${publishDate}
+     * Format to use for publishDate. The value will be available with the following expression ${publishDate}
      * 
      * @see SimpleDateFormat
      * 
@@ -214,15 +221,22 @@ public class ChangesMojo
             {
                 outputDirectory.mkdirs();
             }
+            XmlStreamReader xmlStreamReader = null;
             try
             {
                 // so we get encoding from the file itself
-                String encoding = ReaderFactory.newXmlReader( xmlPath ).getEncoding();
+                xmlStreamReader = ReaderFactory.newXmlReader( xmlPath );
+                String encoding = xmlStreamReader.getEncoding();
                 File resultFile = new File( outputDirectory, "changes.xml" );
                 Date now = new Date();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
-                project.getProperties().put( "publishDate", simpleDateFormat.format( now ) );
-                mavenFileFilter.copyFile( xmlPath, resultFile, true, project, new ArrayList(), false, encoding, session );
+                SimpleDateFormat simpleDateFormat =
+                    new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
+                Properties additionnalProperties = new Properties();
+                additionnalProperties.put( "publishDate", simpleDateFormat.format( now ) );
+                MavenFileFilterRequest mavenFileFilterRequest =
+                    new MavenFileFilterRequest( xmlPath, resultFile, true, project, Collections.EMPTY_LIST, false,
+                                                encoding, session, additionnalProperties );
+                mavenFileFilter.copyFile( mavenFileFilterRequest );
                 xmlPath = resultFile;
             }
             catch ( IOException e )
@@ -232,6 +246,13 @@ public class ChangesMojo
             catch ( MavenFilteringException e )
             {
                 throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
+            }
+            finally
+            {
+                if ( xmlStreamReader != null )
+                {
+                    IOUtil.close( xmlStreamReader );
+                }
             }
 
         }
