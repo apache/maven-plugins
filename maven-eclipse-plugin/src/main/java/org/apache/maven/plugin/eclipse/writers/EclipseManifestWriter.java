@@ -179,5 +179,5 @@ public class EclipseManifestWriter
         // classpath that will be
         // written by the superclass
         manifestWriter.write();
-    }    
+    }
 }

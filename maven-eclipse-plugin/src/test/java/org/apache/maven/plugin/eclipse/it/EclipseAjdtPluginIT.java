@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugin.eclipse.it;
 
-
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -93,7 +92,7 @@ public class EclipseAjdtPluginIT
         testProject( "project-ajdt-10-MECLIPSE-538" );
     }
 
-  public void testProjectAjdt11()
+    public void testProjectAjdt11()
         throws Exception
     {
         testProject( "project-ajdt-11-MECLIPSE-104" );

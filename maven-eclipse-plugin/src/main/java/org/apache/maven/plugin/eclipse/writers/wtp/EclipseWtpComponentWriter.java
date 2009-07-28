@@ -154,18 +154,19 @@ public class EclipseWtpComponentWriter
                                  IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
                                                                      warSourceDirectory, false ) );
             writer.endElement();
-            
+
             // add web resources over the top of the war source directory
-            Xpp3Dom[] webResources = IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                    new String[] { "webResources", "resource" } );
+            Xpp3Dom[] webResources =
+                IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                    new String[] { "webResources", "resource" } );
             for ( int index = 0; index < webResources.length; index++ )
             {
                 File webResourceDirectory = new File( webResources[index].getChild( "directory" ).getValue() );
-            	writer.startElement( ELT_WB_RESOURCE );
+                writer.startElement( ELT_WB_RESOURCE );
                 writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
                 writer.addAttribute( ATTR_SOURCE_PATH,
                                      IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                                    		 webResourceDirectory, false ) );
+                                                                         webResourceDirectory, false ) );
                 writer.endElement();
             }
 

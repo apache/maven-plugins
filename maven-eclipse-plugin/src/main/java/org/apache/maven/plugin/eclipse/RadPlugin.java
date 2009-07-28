@@ -40,7 +40,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Generates the rad-6 configuration files.
- *
+ * 
  * @author Richard van Nieuwenhoven (patch submission)
  * @author jdcasey
  * @goal rad
@@ -95,7 +95,7 @@ public class RadPlugin
     /**
      * The context root of the webapplication. This parameter is only used when the current project is a war project,
      * else it will be ignored.
-     *
+     * 
      * @parameter
      */
     private String warContextRoot;
@@ -103,7 +103,7 @@ public class RadPlugin
     /**
      * Use this to specify a different generated resources folder than target/generated-resources/rad6. Set to "none" to
      * skip this folder generation.
-     *
+     * 
      * @parameter expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
      */
     private String generatedResourceDirName;
@@ -125,8 +125,9 @@ public class RadPlugin
     }
 
     /**
-     * write all rad6 configuration files. <br/> <b> NOTE: This could change the config! </b>
-     *
+     * write all rad6 configuration files. <br/>
+     * <b> NOTE: This could change the config! </b>
+     * 
      * @see EclipsePlugin#writeConfiguration()
      * @param deps resolved dependencies to handle
      * @throws MojoExecutionException if the config files could not be written.
@@ -152,7 +153,7 @@ public class RadPlugin
     /**
      * make room for a Manifest file. use a generated resource for JARS and for WARS use the manifest in the
      * webapp/meta-inf directory.
-     *
+     * 
      * @throws MojoExecutionException
      */
     private void addManifestResource( EclipseWriterConfig config )
@@ -196,7 +197,7 @@ public class RadPlugin
     /**
      * Returns absolute path to the web content directory based on configuration of the war plugin or default one
      * otherwise.
-     *
+     * 
      * @param project
      * @return absolute directory path as String
      * @throws MojoExecutionException
@@ -220,7 +221,7 @@ public class RadPlugin
 
     /**
      * overwite the default builders with the builders required by RAD6.
-     *
+     * 
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultBuilders( String packaging )
@@ -264,7 +265,7 @@ public class RadPlugin
 
     /**
      * overwite the default natures with the natures required by RAD6.
-     *
+     * 
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultNatures( String packaging )
@@ -297,7 +298,7 @@ public class RadPlugin
 
     /**
      * Utility method that locates a project producing the given artifact.
-     *
+     * 
      * @param artifact the artifact a project should produce.
      * @return <code>true</code> if the artifact is produced by a reactor projectart.
      */
@@ -351,7 +352,8 @@ public class RadPlugin
     /**
      * {@inheritDoc}
      */
-    public String getProjectNameForArifact( Artifact artifact ) {
+    public String getProjectNameForArifact( Artifact artifact )
+    {
         return artifact.getArtifactId();
     }
 }

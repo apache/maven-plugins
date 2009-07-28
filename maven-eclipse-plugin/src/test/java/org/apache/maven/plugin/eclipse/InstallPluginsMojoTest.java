@@ -104,7 +104,7 @@ public class InstallPluginsMojoTest
 
         mm.verifyAll();
     }
-    
+
     /**
      * Has Bundle-Name but no Bundle-SymbolicName and should be installed.
      * 
@@ -122,8 +122,8 @@ public class InstallPluginsMojoTest
         assertInstalledDirDoesNotExist( artifact );
 
         mm.verifyAll();
-    }    
-    
+    }
+
     /**
      * Has neither Bundle-Name or Bundle-SymbolicName and should NOT be installed.
      * 
@@ -141,7 +141,7 @@ public class InstallPluginsMojoTest
         assertInstalledDirDoesNotExist( artifact );
 
         mm.verifyAll();
-    }      
+    }
 
     /**
      * if a jar has no manifest, do not install plugin.

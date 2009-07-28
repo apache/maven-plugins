@@ -361,7 +361,7 @@ public class ReadWorkspaceLocations
         }
     }
 
-    /* package */ HashMap readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    /* package */HashMap readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
         HashMap detectedRuntimes = new HashMap();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
@@ -376,7 +376,8 @@ public class ReadWorkspaceLocations
                 {
                     Properties properties = new Properties();
                     properties.load( new FileInputStream( prefs ) );
-                    String runtimes = properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
+                    String runtimes =
+                        properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
                     if ( runtimes != null )
                     {
                         runtimesElement = Xpp3DomBuilder.build( new StringReader( runtimes ) );
@@ -466,7 +467,8 @@ public class ReadWorkspaceLocations
                                               new Object[] { typeId, name } );
                     String jrePath = new File( path ).getCanonicalPath();
                     File rtJarFile = new File( new File( jrePath ), "jre/lib/rt.jar" );
-                    if ( !rtJarFile.exists() ) {
+                    if ( !rtJarFile.exists() )
+                    {
                         logger.warn( Messages.getString( "EclipsePlugin.invalidvminworkspace", jrePath ) );
                         continue;
                     }

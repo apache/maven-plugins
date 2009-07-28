@@ -186,7 +186,8 @@ public class EclipseOSGiManifestWriter
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile", manifestFile.getAbsolutePath() ) );
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile",
+                                                                  manifestFile.getAbsolutePath() ) );
         }
         manifestSb.append( addBundleClasspathEntries() );
 

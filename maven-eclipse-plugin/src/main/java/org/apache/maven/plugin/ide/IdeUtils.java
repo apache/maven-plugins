@@ -87,14 +87,15 @@ public class IdeUtils
      * The suffix used to mark a file as not available.
      */
     public static final String NOT_AVAILABLE_MARKER_FILE_SUFFIX = "-not-available";
-    
+
     /**
      * Delete a file, handling log messages and exceptions
      * 
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
-    public static void delete( File f, Log log ) throws MojoExecutionException
+    public static void delete( File f, Log log )
+        throws MojoExecutionException
     {
         if ( f.isDirectory() )
         {
@@ -126,7 +127,7 @@ public class IdeUtils
             log.debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) ); //$NON-NLS-1$
         }
     }
-    
+
     public static String getCanonicalPath( File file )
         throws MojoExecutionException
     {
@@ -326,7 +327,7 @@ public class IdeUtils
      * @return the project name template.
      */
     public static String calculateProjectNameTemplate( String projectNameTemplate, boolean addVersionToProjectName,
-                                                 boolean addGroupIdToProjectName, Log log )
+                                                       boolean addGroupIdToProjectName, Log log )
     {
         if ( projectNameTemplate != null )
         {
@@ -350,7 +351,8 @@ public class IdeUtils
             return IdeUtils.PROJECT_NAME_WITH_GROUP_TEMPLATE;
         }
         return IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE;
-    }    
+    }
+
     /**
      * Use {@link IdeDependency#getEclipseProjectName()} instead.
      */
@@ -389,13 +391,15 @@ public class IdeUtils
     }
 
     /**
-     * @param artifact the artifact 
+     * @param artifact the artifact
      * @return the not-available marker file for the specified artifact
      */
-    public static File getNotAvailableMarkerFile( ArtifactRepository localRepository, Artifact artifact ) {
-        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) + NOT_AVAILABLE_MARKER_FILE_SUFFIX);        
+    public static File getNotAvailableMarkerFile( ArtifactRepository localRepository, Artifact artifact )
+    {
+        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact )
+            + NOT_AVAILABLE_MARKER_FILE_SUFFIX );
     }
-    
+
     /**
      * Wrapper around {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
      * 
@@ -431,21 +435,21 @@ public class IdeUtils
     }
 
     /**
-     * Wrap {@link ArtifactFactory#createArtifactWithClassifier} so that the type and classifier 
-     * are set correctly for "sources" and "javadoc".
+     * Wrap {@link ArtifactFactory#createArtifactWithClassifier} so that the type and classifier are set correctly for
+     * "sources" and "javadoc".
      * 
      * @param groupId see {@link ArtifactFactory#createArtifactWithClassifier}
      * @param artifactId see {@link ArtifactFactory#createArtifactWithClassifier}
      * @param version see {@link ArtifactFactory#createArtifactWithClassifier}
      * @param depClassifier see {@link ArtifactFactory#createArtifactWithClassifier}
-     * @param inClassifier either "sources" of "javadoc" 
+     * @param inClassifier either "sources" of "javadoc"
      * @param artifactFactory see {@link ArtifactFactory#createArtifactWithClassifier}
      * @return see {@link ArtifactFactory#createArtifactWithClassifier}
      * @see ArtifactFactory#createArtifactWithClassifier
      */
     public static Artifact createArtifactWithClassifier( String groupId, String artifactId, String version,
-                                                          String depClassifier, String inClassifier,
-                                                          ArtifactFactory artifactFactory )
+                                                         String depClassifier, String inClassifier,
+                                                         ArtifactFactory artifactFactory )
     {
         String type = null;
 
@@ -559,7 +563,7 @@ public class IdeUtils
     {
         return StringUtils.replace( filename, '\\', '/' );
     }
-    
+
     /**
      * NOTE: This is to account for the unfortunate fact that "file:" URIs differ between Windows and Unix. On a Windows
      * box, the path "C:\dir" is mapped to "file:/C:/dir". On a Unix box, the path "/home/dir" is mapped to
@@ -573,7 +577,7 @@ public class IdeUtils
     public static String fixWindowsDriveURI( String input )
     {
         return input.replaceAll( "file:([a-zA-Z]):", "file:/$1:" );
-    }    
+    }
 
     /**
      * Returns a compiler plugin settings from a list of plugins .
