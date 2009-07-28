@@ -454,19 +454,4 @@ under the License.
     </profile>    
   </profiles>
 
-  <!--  TODO remove when maven-filtering release is here -->
-  <repositories>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>  
-  </repositories>
-
 </project>
