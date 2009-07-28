@@ -79,7 +79,8 @@ public class RadPluginIT
         throws Exception
     {
         testProject( "project-rad-7", new Properties(), "rad-clean", "rad" );
-        assertFalse( "Default path should not exist because it is overridden!",
+        assertFalse(
+                     "Default path should not exist because it is overridden!",
                      new File( getTestFile( "target/test-classes/projects/project-rad-7" ), "/src/main/webapp" ).exists() );
 
     }

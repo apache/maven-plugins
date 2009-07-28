@@ -113,7 +113,7 @@ public class EclipseSourceDir
      * Getter for <code>include</code>.
      * 
      * @return Returns the include. Never null.
-     */     
+     */
     public List getInclude()
     {
         return this.include;
@@ -134,7 +134,7 @@ public class EclipseSourceDir
     }
 
     /**
-     * @return Returns the exclude as a string pattern suitable for eclipse 
+     * @return Returns the exclude as a string pattern suitable for eclipse
      */
     public String getExcludeAsString()
     {
@@ -142,7 +142,7 @@ public class EclipseSourceDir
     }
 
     /**
-     * @return Returns the include as a string pattern suitable for eclipse 
+     * @return Returns the include as a string pattern suitable for eclipse
      */
     public String getIncludeAsString()
     {
@@ -182,8 +182,7 @@ public class EclipseSourceDir
     }
 
     /**
-     * Setter for <code>path</code>.
-     * Converts \\ to / in path.
+     * Setter for <code>path</code>. Converts \\ to / in path.
      * 
      * @param path The path to set.
      */
@@ -259,8 +258,8 @@ public class EclipseSourceDir
      * {@inheritDoc}
      */
     public String toString()
-    {       
-        StringBuffer buffer = new StringBuffer(); 
+    {
+        StringBuffer buffer = new StringBuffer();
         buffer.append( ( isResource ? "re" : "" ) + "source " );
         buffer.append( path );
         buffer.append( ": " );
@@ -269,7 +268,7 @@ public class EclipseSourceDir
         buffer.append( "exclude=[" ).append( getExcludeAsString() ).append( "], " );
         buffer.append( "test=" ).append( test ).append( ", " );
         buffer.append( "filtering=" ).append( filtering );
-        return buffer.toString();        
+        return buffer.toString();
     }
 
     /**
@@ -287,7 +286,8 @@ public class EclipseSourceDir
      * No support for cases where the test, or filtering values are not identical.
      * 
      * @param mergeWith the directory to merge with
-     * @throws MojoExecutionException test or filtering values are not identical, or isResource true and output are not identical
+     * @throws MojoExecutionException test or filtering values are not identical, or isResource true and output are not
+     *             identical
      */
     public void merge( EclipseSourceDir mergeWith )
         throws MojoExecutionException

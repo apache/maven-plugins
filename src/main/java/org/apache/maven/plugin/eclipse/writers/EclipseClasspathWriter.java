@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Writes eclipse .classpath file.
- *
+ * 
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>

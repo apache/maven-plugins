@@ -80,7 +80,7 @@ public class IdeUtilsTest
             // Likely it is because D refers to a CD drive that is not ready.
             return;
         }
-        
+
         String actual = IdeUtils.toRelativeAndFixSeparator( basedir, fileToAdd, false );
         String expected = "D:/ide/workspace/maven/maven-eclipse-plugin/target/main-output";
 

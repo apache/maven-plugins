@@ -44,58 +44,61 @@ import org.jdom.xpath.XPath;
  * 
  * @author Steffen Grunwald
  */
-public class EclipseWtpComponent15WriterTest extends TestCase {
+public class EclipseWtpComponent15WriterTest
+    extends TestCase
+{
 
-    private TestFileManager fileManager = new TestFileManager(
-            "EclipseWtpComponent15Writer.unitTest.", "");
+    private TestFileManager fileManager = new TestFileManager( "EclipseWtpComponent15Writer.unitTest.", "" );
 
-    protected void tearDown() throws IOException {
+    protected void tearDown()
+        throws IOException
+    {
         fileManager.cleanUp();
     }
 
     /**
      * Tests the creation of the ejb module references in the org.eclipse.wst.common.component file for:
      * <ul>
-     *  <li>component file of EAR
-     *  <li>WTP 1.5
-     *  <li>dep is referenced project
+     * <li>component file of EAR
+     * <li>WTP 1.5
+     * <li>dep is referenced project
      * </ul>
-     * 
      * The archivename is expected to be jar - independent from the packaging (ejb).
      * 
      * @throws MojoExecutionException Exception
      * @throws IOException Exception
-     * @throws JDOMException Exception 
+     * @throws JDOMException Exception
      */
     public void testWriteEjbComponentMECLIPSE455()
-            throws MojoExecutionException, IOException, JDOMException {
+        throws MojoExecutionException, IOException, JDOMException
+    {
 
         TestEclipseWriterConfig config = new TestEclipseWriterConfig();
 
-        config.setWtpVersion(1.5f);
-        config.setEclipseProjectName("test-project");
+        config.setWtpVersion( 1.5f );
+        config.setEclipseProjectName( "test-project" );
 
         File basedir = fileManager.createTempDir();
-        File pom = new File(basedir, "pom.xml");
+        File pom = new File( basedir, "pom.xml" );
         pom.createNewFile();
-        
+
         MavenProject project = new MavenProject();
-        project.setFile(pom);
-        
-        config.setProject(project);
-        config.setProjectBaseDir(basedir);
-        
-        config.setEclipseProjectDirectory(basedir);
-        config.setPackaging("ear");
-        
+        project.setFile( pom );
+
+        config.setProject( project );
+        config.setProjectBaseDir( basedir );
+
+        config.setEclipseProjectDirectory( basedir );
+        config.setPackaging( "ear" );
+
         // add an ejb3 and ejb packaged dependency
-        config.setDeps(new IdeDependency[]{createDep("ejb"), createDep("jar")});
-        
+        config.setDeps( new IdeDependency[] { createDep( "ejb" ), createDep( "jar" ) } );
+
         EclipseWtpComponentWriter lWriter = new EclipseWtpComponent15Writer();
 
         Log log = new TestLog();
 
-        lWriter.init(log, config);
+        lWriter.init( log, config );
 
         lWriter.write();
 
@@ -105,34 +108,38 @@ public class EclipseWtpComponent15WriterTest extends TestCase {
         Document doc = builder.build( new File( basedir, ".settings/org.eclipse.wst.common.component" ) );
 
         XPath archiveNames = XPath.newInstance( "//dependent-module/@archiveName" );
-        
-        assertEquals("Must be 2 modules", 2, archiveNames.selectNodes( doc ).size());
+
+        assertEquals( "Must be 2 modules", 2, archiveNames.selectNodes( doc ).size() );
         for ( Iterator it = archiveNames.selectNodes( doc ).iterator(); it.hasNext(); )
         {
             Attribute attribute = (Attribute) it.next();
-            
+
             String archiveName = attribute.getValue();
-            String extension = archiveName.substring(archiveName.lastIndexOf(".") + 1).toLowerCase();
-            
-            assertEquals("Must be of type jar", "jar", extension);
+            String extension = archiveName.substring( archiveName.lastIndexOf( "." ) + 1 ).toLowerCase();
+
+            assertEquals( "Must be of type jar", "jar", extension );
         }
-        
+
     }
 
-    private IdeDependency createDep(String packagingType) {
+    private IdeDependency createDep( String packagingType )
+    {
         IdeDependency dependency = new IdeDependency();
-        dependency.setGroupId("g");
-        dependency.setArtifactId(packagingType + "Artifact");
-        dependency.setVersion("v");
-        dependency.setReferencedProject(true);
-        dependency.setAddedToClasspath(true);
-        dependency.setEclipseProjectName(packagingType + "Project");
-        dependency.setType(packagingType);
+        dependency.setGroupId( "g" );
+        dependency.setArtifactId( packagingType + "Artifact" );
+        dependency.setVersion( "v" );
+        dependency.setReferencedProject( true );
+        dependency.setAddedToClasspath( true );
+        dependency.setEclipseProjectName( packagingType + "Project" );
+        dependency.setType( packagingType );
         return dependency;
     }
 
-    private static final class TestLog extends SystemStreamLog {
-        public boolean isDebugEnabled() {
+    private static final class TestLog
+        extends SystemStreamLog
+    {
+        public boolean isDebugEnabled()
+        {
             return true;
         }
     }

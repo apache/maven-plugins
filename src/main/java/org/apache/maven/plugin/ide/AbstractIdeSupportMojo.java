@@ -186,9 +186,9 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives, a
-     * status cache is mantained. With versions 2.6+ of the plugin to reset this cache run 
-     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions.
-     * With older versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
+     * status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
+     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
+     * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
      * 
      * @parameter expression="${downloadSources}"
      */
@@ -197,14 +197,14 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the downloading of javadoc attachments. Defaults to false. When this flag is <code>true</code>
      * remote repositories are checked for javadocs: in order to avoid repeated check for unavailable javadoc archives,
-     * a status cache is mantained. With versions 2.6+ of the plugin to reset this cache run 
-     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions.
-     * With older versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
+     * a status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
+     * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
+     * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
      * 
      * @parameter expression="${downloadJavadocs}"
      */
     protected boolean downloadJavadocs;
-    
+
     /**
      * Enables/disables the rechecking of the remote repository for downloading source/javadoc attachments. Defaults to
      * false. When this flag is <code>true</code> and the source or javadoc attachment has a status cache to indicate
@@ -597,7 +597,8 @@ public abstract class AbstractIdeSupportMojo
                             {
                                 getLog().debug( e.getMessage(), e );
                                 getLog().warn(
-                                               Messages.getString( "AbstractIdeSupportMojo.artifactdownload", new Object[] { //$NON-NLS-1$
+                                               Messages.getString(
+                                                                   "AbstractIdeSupportMojo.artifactdownload", new Object[] { //$NON-NLS-1$
                                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                        e.getMessage() } ) );
                             }
@@ -605,7 +606,8 @@ public abstract class AbstractIdeSupportMojo
                             {
                                 getLog().debug( e.getMessage(), e );
                                 getLog().warn(
-                                               Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
+                                               Messages.getString(
+                                                                   "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
                                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                        e.getMessage() } ) );
                             }
@@ -806,14 +808,15 @@ public abstract class AbstractIdeSupportMojo
     {
         return getReactorProject( artifact ) != null;
     }
-    
+
     /**
      * Checks the list of reactor projects to see if the artifact is included.
      * 
      * @param artifact the artifact to check if it is in the reactor
      * @return the reactor project or null if it is not in the reactor
      */
-    protected MavenProject getReactorProject( Artifact artifact ) {
+    protected MavenProject getReactorProject( Artifact artifact )
+    {
         if ( reactorProjects != null )
         {
             for ( Iterator iter = reactorProjects.iterator(); iter.hasNext(); )
@@ -837,7 +840,7 @@ public abstract class AbstractIdeSupportMojo
                     }
                 }
             }
-        } 
+        }
         return null;
     }
 
@@ -872,7 +875,9 @@ public abstract class AbstractIdeSupportMojo
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion", new Object[] { //$NON-NLS-1$
+                    throw new MojoExecutionException(
+                                                      Messages.getString(
+                                                                          "AbstractIdeSupportMojo.unabletoparseversion", new Object[] { //$NON-NLS-1$
                                                                           projectId, d.getVersion(),
                                                                               d.getManagementKey(), e.getMessage() } ),
                                                       e );
@@ -896,14 +901,12 @@ public abstract class AbstractIdeSupportMojo
      */
     private void resolveSourceAndJavadocArtifacts( IdeDependency[] deps )
     {
-        final List missingSources =
-            resolveDependenciesWithClassifier( deps, "sources", getDownloadSources() );
+        final List missingSources = resolveDependenciesWithClassifier( deps, "sources", getDownloadSources() );
         missingSourceDependencies.addAll( missingSources );
 
-        final List missingJavadocs =
-            resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs() );
-        missingJavadocDependencies.addAll( missingJavadocs ); 
-    }   
+        final List missingJavadocs = resolveDependenciesWithClassifier( deps, "javadoc", getDownloadJavadocs() );
+        missingJavadocDependencies.addAll( missingJavadocs );
+    }
 
     /**
      * Resolve the required artifacts for each of the dependency. <code>sources</code> or <code>javadoc</code> artifacts
@@ -943,28 +946,33 @@ public abstract class AbstractIdeSupportMojo
             Artifact baseArtifact =
                 artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
                                                               dependency.getVersion(), dependency.getType(),
-                                                              dependency.getClassifier() );      
+                                                              dependency.getClassifier() );
             baseArtifact =
                 IdeUtils.resolveArtifact( artifactResolver, baseArtifact, remoteRepos, localRepository, getLog() );
-            if (!baseArtifact.isResolved()) {
+            if ( !baseArtifact.isResolved() )
+            {
                 // base artifact does not exist - no point checking for javadoc/sources
                 continue;
             }
-            
+
             Artifact artifact =
                 IdeUtils.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
                                                        dependency.getVersion(), dependency.getClassifier(),
                                                        inClassifier, artifactFactory );
             File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
 
-            if (forceRecheck && notAvailableMarkerFile.exists()) {
-                if (!notAvailableMarkerFile.delete()) {
-                    getLog().warn( Messages.getString( "AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile", notAvailableMarkerFile ) );
+            if ( forceRecheck && notAvailableMarkerFile.exists() )
+            {
+                if ( !notAvailableMarkerFile.delete() )
+                {
+                    getLog().warn(
+                                   Messages.getString( "AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile",
+                                                       notAvailableMarkerFile ) );
                 }
             }
-            
+
             if ( !notAvailableMarkerFile.exists() )
-            {                
+            {
                 artifact =
                     IdeUtils.resolveArtifact( artifactResolver, artifact, remoteRepos, localRepository, getLog() );
                 if ( artifact.isResolved() )
@@ -985,11 +993,15 @@ public abstract class AbstractIdeSupportMojo
                         try
                         {
                             notAvailableMarkerFile.createNewFile();
-                            getLog().debug( Messages.getString( "AbstractIdeSupportMojo.creatednotavailablemarkerfile", notAvailableMarkerFile ) );
+                            getLog().debug(
+                                            Messages.getString( "AbstractIdeSupportMojo.creatednotavailablemarkerfile",
+                                                                notAvailableMarkerFile ) );
                         }
                         catch ( IOException e )
                         {
-                            getLog().warn( Messages.getString( "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
+                            getLog().warn(
+                                           Messages.getString(
+                                                               "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
                                                                notAvailableMarkerFile ) );
                         }
                     }

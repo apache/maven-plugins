@@ -53,7 +53,8 @@ public class EclipsePluginIT
     public void testDynamicWorkspaceLookup()
         throws Exception
     {
-        File basedir = new File(TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation, "project-Z");
+        File basedir =
+            new File( TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation, "project-Z" );
         testProject( basedir );
     }
 
@@ -441,11 +442,12 @@ public class EclipsePluginIT
         checkJRESettingsWithEclipseWorkspace( "project-39-a", TempEclipseWorkspace.getFixtureEclipseWithDefault13(),
                                               null );
     }
-    
+
     public void testProject39_b()
         throws Exception
     {
-        checkJRESettingsWithEclipseWorkspace( "project-39-b", TempEclipseWorkspace.getFixtureEclipseWithDefault15(), null );
+        checkJRESettingsWithEclipseWorkspace( "project-39-b", TempEclipseWorkspace.getFixtureEclipseWithDefault15(),
+                                              null );
     }
 
     public void testProject39_c()
@@ -462,7 +464,7 @@ public class EclipsePluginIT
         checkJRESettingsWithEclipseWorkspace( "project-40-a", TempEclipseWorkspace.getFixtureEclipseWithDefault13(),
                                               jre131 );
     }
-    
+
     public void testProject40_b()
         throws Exception
     {
@@ -535,10 +537,10 @@ public class EclipsePluginIT
     {
         testProject( "project-45" );
     }
-    
+
     /**
-     * Test not available marker file is created for sources/javadocs.
-     * biz.aQute:bndlib:0.0.145 does not have sources or javadocs.
+     * Test not available marker file is created for sources/javadocs. biz.aQute:bndlib:0.0.145 does not have sources or
+     * javadocs.
      * 
      * @throws Exception
      */
@@ -549,10 +551,10 @@ public class EclipsePluginIT
         assertNotAvailableMarkerFileExists( "biz.aQute", "bndlib", "0.0.145", null, "sources" );
         assertNotAvailableMarkerFileExists( "biz.aQute", "bndlib", "0.0.145", null, "javadoc" );
     }
-    
+
     /**
-     * Test not available marker file is created for sources/javadocs.
-     * commons-lang:commons-lang:1.0 does not have sources but does have javadocs.
+     * Test not available marker file is created for sources/javadocs. commons-lang:commons-lang:1.0 does not have
+     * sources but does have javadocs.
      * 
      * @throws Exception
      */
@@ -563,10 +565,10 @@ public class EclipsePluginIT
         assertNotAvailableMarkerFileExists( "commons-lang", "commons-lang", "1.0", null, "sources" );
         assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "1.0", null, "javadoc" );
     }
-    
+
     /**
-     * Test not available marker file is created for sources/javadocs.
-     * does-not-exist:does-not-exist:666 doesn't exist so no markers should be created.
+     * Test not available marker file is created for sources/javadocs. does-not-exist:does-not-exist:666 doesn't exist
+     * so no markers should be created.
      * 
      * @throws Exception
      */
@@ -576,7 +578,7 @@ public class EclipsePluginIT
         testProject( "project-48" );
         assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "sources" );
         assertNotAvailableMarkerFileDoesNotExist( "does-not-exist", "does-not-exist", "666", null, "javadoc" );
-    }    
+    }
 
     /**
      * Test forceRecheck
@@ -595,8 +597,7 @@ public class EclipsePluginIT
         testProject( "project-49" );
         assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "sources" );
         assertNotAvailableMarkerFileDoesNotExist( "commons-lang", "commons-lang", "2.4", null, "javadoc" );
-    }   
-
+    }
 
     /**
      * [MECLIPSE-415] settings are stored in wrong directory if project is not in the workspace.
@@ -607,7 +608,7 @@ public class EclipsePluginIT
         throws Exception
     {
         testProject( "project-50-MECLIPSE-415" );
-    }    
+    }
 
     /**
      * [MECLIPSE-415] settings are stored in wrong directory if project is not in the workspace.
@@ -618,8 +619,8 @@ public class EclipsePluginIT
         throws Exception
     {
         testProject( "project-51-MECLIPSE-415" );
-    }    
-    
+    }
+
     /**
      * [MECLIPSE-104] Add the ability to specify source exclusions
      * 
@@ -630,7 +631,7 @@ public class EclipsePluginIT
     {
         testProject( "project-52-MECLIPSE-104" );
     }
-    
+
     /**
      * [MECLIPSE-551] Source directory and resource directory are the same
      * 
@@ -652,10 +653,11 @@ public class EclipsePluginIT
     {
         testProject( "project-54-MECLIPSE-178" );
     }
-    
+
     /**
-     * [MECLIPSE-178] symbolic links need to able to be specified in the pom
-     * Test the case where a link is already existing in the .project 
+     * [MECLIPSE-178] symbolic links need to able to be specified in the pom Test the case where a link is already
+     * existing in the .project
+     * 
      * @throws Exception
      */
     public void testProject55MECLIPSE178()
@@ -663,7 +665,7 @@ public class EclipsePluginIT
     {
         testProject( "project-55-MECLIPSE-178" );
     }
-    
+
     public void testJeeSimple()
         throws Exception
     {
@@ -677,8 +679,7 @@ public class EclipsePluginIT
         testProject( "j2ee-simple" );
     }
 
-    private void checkJRESettingsWithEclipseWorkspace( String project, TempEclipseWorkspace workspace,
-                                                       String jreExec )
+    private void checkJRESettingsWithEclipseWorkspace( String project, TempEclipseWorkspace workspace, String jreExec )
         throws Exception
     {
         Properties properties = new Properties();
