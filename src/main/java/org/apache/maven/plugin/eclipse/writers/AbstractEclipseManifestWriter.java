@@ -40,7 +40,7 @@ import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Common behaviours for creating or adapting the manifest files for eclipse environments.
- *
+ * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
 public abstract class AbstractEclipseManifestWriter
@@ -58,7 +58,7 @@ public abstract class AbstractEclipseManifestWriter
 
     /**
      * Aphabeticaly sort the classpath. Do this by splitting it up, sort the entries and gleue them together again.
-     *
+     * 
      * @param newValue classpath to sort
      * @return the sorted classpath
      */
@@ -81,7 +81,7 @@ public abstract class AbstractEclipseManifestWriter
 
     /**
      * Read and parse the existing manifest file.
-     *
+     * 
      * @param manifestFile file
      * @return the read manifest
      * @throws IOException if the file could not be read
@@ -111,7 +111,7 @@ public abstract class AbstractEclipseManifestWriter
      * Add one dependency to the blank separated classpath stringbuffer. When the project is available in the reactor
      * (current build) then the project is used else the jar representing the artifact. System dependencies will only be
      * included if they are in this project.
-     *
+     * 
      * @param classpath existing classpath to append
      * @param dependency dependency to append as jar or as project
      */
@@ -143,7 +143,7 @@ public abstract class AbstractEclipseManifestWriter
      * Check if the two manifests are equal. Manifest.equal can not be used because of the special case the Classpath
      * entr, witch must be comaired sorted so that a different oder in the classpath does not result in "not equal".
      * This not not realy correct but in this case it is more important to reduce the number of version-controll files.
-     *
+     * 
      * @param manifest the new manifest
      * @param existingManifest to compaire the new one with
      * @return are the manifests equal
@@ -177,8 +177,8 @@ public abstract class AbstractEclipseManifestWriter
             if ( ( newValue == null || !newValue.equals( existingValue ) )
                 && ( existingValue == null || !existingValue.equals( newValue ) ) )
             {
-                log.info( "@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = " + existingValue + " and new value = "
-                    + newValue + " are different" );
+                log.info( "@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = "
+                    + existingValue + " and new value = " + newValue + " are different" );
                 return false;
             }
         }
@@ -188,7 +188,7 @@ public abstract class AbstractEclipseManifestWriter
 
     /**
      * Convert all dependencies in a blank seperated list of jars and projects representing the classpath.
-     *
+     * 
      * @return the blank separeted classpath string
      */
     protected String constructManifestClasspath()
@@ -206,7 +206,7 @@ public abstract class AbstractEclipseManifestWriter
 
     /**
      * Create a manifest contaigning the required classpath.
-     *
+     * 
      * @return the newly created manifest
      */
     protected Manifest createNewManifest()
@@ -220,7 +220,7 @@ public abstract class AbstractEclipseManifestWriter
     /**
      * Verify is the manifest sould be overwritten this sould take in account that the manifest should only be written
      * if the contents of the classpath was changed not the order. The classpath sorting oder should be ignored.
-     *
+     * 
      * @param manifest the newly created classpath
      * @param manifestFile the file where the manifest
      * @return if the new manifest file must be written
@@ -248,7 +248,7 @@ public abstract class AbstractEclipseManifestWriter
 
     /**
      * Search the project for the existing META-INF directory where the manifest should be located.
-     *
+     * 
      * @return the absolute path to the META-INF directory
      * @throws MojoExecutionException
      */
@@ -256,12 +256,12 @@ public abstract class AbstractEclipseManifestWriter
         throws MojoExecutionException;
 
     /**
-     * If the existing manifest file located in <code>getMetaInfBaseDirectory()</code>
-     * already has a correct MANIFEST_VERSION and CLASS_PATH value then do nothing.
+     * If the existing manifest file located in <code>getMetaInfBaseDirectory()</code> already has a correct
+     * MANIFEST_VERSION and CLASS_PATH value then do nothing.
      * <p>
-     * Otherwise generate a <b>NEW</b> (i.e the old one is overwritten) which only contains
-     * values for MANIFEST_VERSION and CLASS_PATH, all other previous entries are not kept.
-     *
+     * Otherwise generate a <b>NEW</b> (i.e the old one is overwritten) which only contains values for MANIFEST_VERSION
+     * and CLASS_PATH, all other previous entries are not kept.
+     * 
      * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs all eclipse source directorys
      * @param localRepository the local reposetory

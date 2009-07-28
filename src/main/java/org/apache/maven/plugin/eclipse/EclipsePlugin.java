@@ -83,7 +83,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @execute phase="generate-resources"
  */
 public class EclipsePlugin
-extends AbstractIdeSupportMojo
+    extends AbstractIdeSupportMojo
 {
     private static final String WEAVE_DEPENDENCY = "weaveDependency";
 
@@ -143,10 +143,10 @@ extends AbstractIdeSupportMojo
 
     // warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
-    
+
     public static final String ASPECTJ_FILE_PATTERN = "**/*.aj";
-    
-    public static final String JAVA_FILE_PATTERN = "**/*.java"; 
+
+    public static final String JAVA_FILE_PATTERN = "**/*.java";
 
     /**
      * Constant for 'artifactId' element in POM.xml.
@@ -486,9 +486,8 @@ extends AbstractIdeSupportMojo
      * This eclipse workspace is read and all artifacts detected there will be connected as eclipse projects and will
      * not be linked to the jars in the local repository. Requirement is that it was created with the similar wtp
      * settings as the reactor projects, but the project name template my differ. The pom's in the workspace projects
-     * may not contain variables in the artefactId, groupId and version tags.
-     * 
-     * If workspace is not defined, then an attempt to locate it by checking up the directory hierarchy will be made.
+     * may not contain variables in the artefactId, groupId and version tags. If workspace is not defined, then an
+     * attempt to locate it by checking up the directory hierarchy will be made.
      * 
      * @since 2.5
      * @parameter expression="${eclipse.workspace}"
@@ -510,20 +509,19 @@ extends AbstractIdeSupportMojo
      * @parameter expression="${eclipse.ajdtVersion}" default-value="1.5"
      */
     private String ajdtVersion;
-    
+
     /**
-     * List of exclusions to add to the source directories on the classpath.
-     * Adds excluding="" to the classpathentry of the eclipse .classpath file.
-     * [MECLIPSE-104]
+     * List of exclusions to add to the source directories on the classpath. Adds excluding="" to the classpathentry of
+     * the eclipse .classpath file. [MECLIPSE-104]
      * 
      * @since 2.6.1
-     * @parameter 
+     * @parameter
      */
     private List sourceExcludes;
-    
+
     /**
-     * List of inclusions to add to the source directories on the classpath.
-     * Adds including="" to the classpathentry of the eclipse .classpath file.
+     * List of inclusions to add to the source directories on the classpath. Adds including="" to the classpathentry of
+     * the eclipse .classpath file.
      * <p>
      * Java projects will always include "**&#47;*.java"
      * <p>
@@ -535,35 +533,18 @@ extends AbstractIdeSupportMojo
      * @parameter
      */
     private List sourceIncludes;
-    
+
     /**
-     * A list of links to local files in the system.
-     * A configuration like this one in the pom :
+     * A list of links to local files in the system. A configuration like this one in the pom : &lt;plugin&gt;
+     * &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
+     * &lt;configuration&gt; &lt;linkedResources&gt; &lt;linkedResource&gt;
+     * &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt; &lt;type&gt;1&lt;/type&gt;
+     * &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt; &lt;/linkedResource&gt;
+     * &lt;/linkedResources&gt; &lt;/configuration&gt; &lt;/plugin&gt; will produce in the .project :
+     * &lt;linkedResources&gt; &lt;link&gt; &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
+     * &lt;type&gt;1&lt;/type&gt; &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
+     * &lt;/link&gt; &lt;/linkedResources&gt;
      * 
-     * &lt;plugin&gt;
-     *  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-     *  &lt;artifactId&gt;maven-eclipse-plugin&lt;/artifactId&gt;
-     *  &lt;configuration&gt;
-     *   &lt;linkedResources&gt;
-     *    &lt;linkedResource&gt;
-     *     &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
-     *     &lt;type&gt;1&lt;/type&gt;
-     *     &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
-     *    &lt;/linkedResource&gt;
-     *   &lt;/linkedResources&gt;
-     *  &lt;/configuration&gt;
-     * &lt;/plugin&gt;
-     * 
-     * will produce in the .project :
-     * 
-     * &lt;linkedResources&gt;
-     *  &lt;link&gt;
-     *      &lt;name&gt;src/test/resources/oracle-ds.xml&lt;/name&gt;
-     *      &lt;type&gt;1&lt;/type&gt;
-     *      &lt;location&gt;C://jboss/server/default/deploy/oracle-ds.xml&lt;/location&gt;
-     *  &lt;/link&gt;
-     * &lt;/linkedResources&gt;
-     *
      * @since 2.8
      * @parameter
      */
@@ -810,7 +791,7 @@ extends AbstractIdeSupportMojo
     {
         this.projectNameTemplate = projectNameTemplate;
     }
-    
+
     /**
      * @return the linkedResources
      */
@@ -836,8 +817,9 @@ extends AbstractIdeSupportMojo
         boolean ready = true;
 
         checkDeprecations();
-        setProjectNameTemplate( IdeUtils.calculateProjectNameTemplate( getProjectNameTemplate(), isAddVersionToProjectName(),
-                                                              isAddGroupIdToProjectName(), getLog() ) );
+        setProjectNameTemplate( IdeUtils.calculateProjectNameTemplate( getProjectNameTemplate(),
+                                                                       isAddVersionToProjectName(),
+                                                                       isAddGroupIdToProjectName(), getLog() ) );
         ajdt = enableAjdt( executedProject ) && !ajdtVersion.equals( "none" );
         ready = validate();
 
@@ -850,20 +832,24 @@ extends AbstractIdeSupportMojo
             pde
                 || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
-        if ( sourceIncludes == null ) {
+        if ( sourceIncludes == null )
+        {
             sourceIncludes = new ArrayList();
         }
-        if ( isJavaProject ) {
+        if ( isJavaProject )
+        {
             sourceIncludes.add( JAVA_FILE_PATTERN );
         }
-        if ( ajdt ) {
+        if ( ajdt )
+        {
             sourceIncludes.add( ASPECTJ_FILE_PATTERN );
         }
 
-        if ( sourceExcludes == null ) {
+        if ( sourceExcludes == null )
+        {
             sourceExcludes = new ArrayList();
         }
-        
+
         setupExtras();
 
         parseConfigurationOptions();
@@ -902,11 +888,12 @@ extends AbstractIdeSupportMojo
         {
             verifyClasspathContainerListIsComplete();
         }
-        
-        if ( linkedResources == null ) {
+
+        if ( linkedResources == null )
+        {
             linkedResources = new ArrayList();
         }
-        
+
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
@@ -915,8 +902,8 @@ extends AbstractIdeSupportMojo
     }
 
     /**
-     * Convert any Strings in the <code>commands</code> List to <code>BuildCommand</code>s. The conversion happens
-     * in situ.
+     * Convert any Strings in the <code>commands</code> List to <code>BuildCommand</code>s. The conversion happens in
+     * situ.
      * 
      * @param commands a list of commands to convert into <code>BuildCommand</code>
      */
@@ -1062,7 +1049,8 @@ extends AbstractIdeSupportMojo
      * 
      * @throws MojoExecutionException mojo failures.
      */
-    protected void validateExtras() throws MojoExecutionException
+    protected void validateExtras()
+        throws MojoExecutionException
     {
         // provided for extension.
     }
@@ -1098,7 +1086,7 @@ extends AbstractIdeSupportMojo
 
         if ( wtpmanifest && isJavaProject() )
         {
-            // NOTE: This could change the config!            
+            // NOTE: This could change the config!
             EclipseManifestWriter.addManifestResource( getLog(), config );
         }
         // NOTE: This could change the config!
@@ -1370,7 +1358,8 @@ extends AbstractIdeSupportMojo
 
     /**
      * Write any extra configuration information for the Eclipse project. This is an extension point, called before the
-     * main configurations are written. <br/> <b> NOTE: This could change the config! </b>
+     * main configurations are written. <br/>
+     * <b> NOTE: This could change the config! </b>
      * 
      * @param config
      * @throws MojoExecutionException
@@ -1389,7 +1378,7 @@ extends AbstractIdeSupportMojo
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Fill getProjectnatures() with values.
      * <p>
@@ -1397,7 +1386,7 @@ extends AbstractIdeSupportMojo
      * <code>getProjectnatures().addAll()</code>.
      * 
      * @param packaging the pom's packaging
-     */    
+     */
     protected void fillDefaultNatures( String packaging )
     {
         projectnatures = new ArrayList();
@@ -1590,13 +1579,14 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, sourceIncludes, sourceExcludes, false ) ); 
+                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, sourceIncludes, sourceExcludes,
+                                                       false ) );
             }
         }
     }
 
     final void extractResourceDirs( Set directories, List resources, File basedir, File workspaceProjectBaseDir,
-                              boolean test, final String output )
+                                    boolean test, final String output )
         throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
@@ -1649,11 +1639,13 @@ extends AbstractIdeSupportMojo
                 thisOutput = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
-            EclipseSourceDir resourceDir = new EclipseSourceDir( resourcePath, thisOutput, true, test, resource.getIncludes(), excludes,
-                                  resource.isFiltering() );
+            EclipseSourceDir resourceDir =
+                new EclipseSourceDir( resourcePath, thisOutput, true, test, resource.getIncludes(), excludes,
+                                      resource.isFiltering() );
 
-            if (!directories.add( resourceDir )) {
-                EclipseSourceDir originalDir = (EclipseSourceDir) get(directories, resourceDir);
+            if ( !directories.add( resourceDir ) )
+            {
+                EclipseSourceDir originalDir = (EclipseSourceDir) get( directories, resourceDir );
                 getLog().info(
                                "Resource directory's path matches an existing source directory. Resources will be merged with the source directory "
                                    + originalDir.getPath() );
@@ -1661,21 +1653,23 @@ extends AbstractIdeSupportMojo
             }
         }
     }
-    
+
     /**
-     * java.util.Set doesn't have a get() method that returns the matching object.
-     * Since we use objects that are different by conceptually "equal" based
-     * on the path we need to locate the original object out of the Set. 
-     *
+     * java.util.Set doesn't have a get() method that returns the matching object. Since we use objects that are
+     * different by conceptually "equal" based on the path we need to locate the original object out of the Set.
+     * 
      * @param set the set to iterate over looking for the specified object
      * @param o the object to locate in the set
      * @return the object from the set, or null if not found in the set
      */
-    private Object get(Set set, Object o) {
+    private Object get( Set set, Object o )
+    {
         Iterator iter = set.iterator();
-        while ( iter.hasNext() ) {
+        while ( iter.hasNext() )
+        {
             Object item = iter.next();
-            if (o.equals( item )) {
+            if ( o.equals( item ) )
+            {
                 return item;
             }
         }
@@ -1703,7 +1697,8 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, aspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, sourceIncludes, sourceExcludes, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, null, false, false, sourceIncludes, sourceExcludes,
+                                                       false ) );
             }
 
             String testAspectDirectory = DEFAULT_TEST_ASPECT_DIRECTORY;
@@ -1720,7 +1715,8 @@ extends AbstractIdeSupportMojo
                     IdeUtils.toRelativeAndFixSeparator( projectBaseDir, testAspectDirectoryFile,
                                                         !projectBaseDir.equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, sourceIncludes, sourceExcludes, false ) );
+                directories.add( new EclipseSourceDir( sourceRoot, testOutput, false, true, sourceIncludes,
+                                                       sourceExcludes, false ) );
             }
         }
     }
@@ -1818,7 +1814,7 @@ extends AbstractIdeSupportMojo
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1839,15 +1835,16 @@ extends AbstractIdeSupportMojo
             }
         }
         MavenProject reactorProject = getReactorProject( artifact );
-        if ( reactorProject != null ) {
+        if ( reactorProject != null )
+        {
             return IdeUtils.getProjectName( getProjectNameTemplateForMavenProject( reactorProject ), artifact );
         }
         return IdeUtils.getProjectName( getProjectNameTemplate(), artifact );
     }
-    
+
     /**
      * @param mavenProject the project to get the projectNameTemplate configuration from
-     * @return the projectNameTemplate configuration from the specified MavenProject 
+     * @return the projectNameTemplate configuration from the specified MavenProject
      */
     private String getProjectNameTemplateForMavenProject( MavenProject mavenProject )
     {
@@ -1876,7 +1873,8 @@ extends AbstractIdeSupportMojo
                 }
             }
         }
-        return IdeUtils.calculateProjectNameTemplate(projectNameTemplate, addVersionToProjectName, addGroupIdToProjectName, getLog());
+        return IdeUtils.calculateProjectNameTemplate( projectNameTemplate, addVersionToProjectName,
+                                                      addGroupIdToProjectName, getLog() );
     }
 
     /**

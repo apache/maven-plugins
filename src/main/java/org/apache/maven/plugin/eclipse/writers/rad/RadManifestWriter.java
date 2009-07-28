@@ -110,8 +110,6 @@ public class RadManifestWriter
         verifyManifestBasedirInSourceDirs( getMetaInfBaseDirectory( config.getProject() ) );
     }
 
-
-
     // NOTE: This could change the config!
     private void verifyManifestBasedirInSourceDirs( String metaInfBaseDirectory )
     {

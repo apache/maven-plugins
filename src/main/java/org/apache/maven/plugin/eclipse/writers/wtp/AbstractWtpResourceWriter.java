@@ -171,7 +171,7 @@ public abstract class AbstractWtpResourceWriter
             // </dependent-module>
 
             handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName(); //$NON-NLS-1$ //$NON-NLS-2$
-             
+
             String archiveExtension = dep.getType();
             if ( Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
             {

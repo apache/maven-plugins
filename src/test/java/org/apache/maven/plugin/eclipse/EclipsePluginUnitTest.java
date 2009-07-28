@@ -89,17 +89,17 @@ public class EclipsePluginUnitTest
         project.setFile( pom );
 
         EclipsePlugin mojo = newMojo();
-        
-        ArrayList sourceIncludes = new ArrayList();        
+
+        ArrayList sourceIncludes = new ArrayList();
         Field field = EclipsePlugin.class.getDeclaredField( "sourceIncludes" );
         field.setAccessible( true );
         field.set( mojo, sourceIncludes );
-        
+
         ArrayList sourceExcludes = new ArrayList();
         field = EclipsePlugin.class.getDeclaredField( "sourceExcludes" );
         field.setAccessible( true );
         field.set( mojo, sourceExcludes );
-        
+
         EclipseSourceDir[] result = mojo.buildDirectoryList( project, basedir, new File( "target/classes" ) );
 
         assertEquals( "should have added 1 resource.", 1, result.length );

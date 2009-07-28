@@ -133,7 +133,8 @@ public class EclipsePluginMasterProjectIT
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( new File( basedir, "module-1/expected/.wtpmodules" ), new File( basedir, "module-1/.wtpmodules" ) );
+        assertFileEquals( new File( basedir, "module-1/expected/.wtpmodules" ), new File( basedir,
+                                                                                          "module-1/.wtpmodules" ) );
     }
 
     public void testModule2Project()

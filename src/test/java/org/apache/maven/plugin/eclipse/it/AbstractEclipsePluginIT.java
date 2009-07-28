@@ -228,7 +228,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -240,7 +240,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     *
+     * 
      * @param basedir basedir of mvn execution
      * @throws Exception any exception generated during test
      */
@@ -252,7 +252,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -264,10 +264,10 @@ public abstract class AbstractEclipsePluginIT
     {
         testProject( projectName, properties, cleanGoal, genGoal, false );
     }
-    
+
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -275,7 +275,8 @@ public abstract class AbstractEclipsePluginIT
      * @param withInstall true to include the install goal, false to exclude it.
      * @throws Exception any exception generated during test
      */
-    protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal, boolean withInstall )
+    protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal,
+                                boolean withInstall )
         throws Exception
     {
         File basedir = getTestFile( "target/test-classes/projects/" + projectName );
@@ -289,13 +290,15 @@ public abstract class AbstractEclipsePluginIT
      * @param genGoal TODO
      * @throws Exception any exception generated during test
      */
-    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal ) throws Exception {
+    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal )
+        throws Exception
+    {
         testProject( basedir, properties, cleanGoal, genGoal, false );
     }
-    
+
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
-     *
+     * 
      * @param basedir basedir of mvn execution
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -303,7 +306,8 @@ public abstract class AbstractEclipsePluginIT
      * @param withInstall true to include the install goal, false to exclude it.
      * @throws Exception any exception generated during test
      */
-    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal, boolean withInstall )
+    protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal,
+                                boolean withInstall )
         throws Exception
     {
         File pom = new File( basedir, "pom.xml" );
@@ -314,7 +318,8 @@ public abstract class AbstractEclipsePluginIT
 
         goals.add( pluginSpec + cleanGoal );
         goals.add( pluginSpec + genGoal );
-        if ( withInstall ) {
+        if ( withInstall )
+        {
             goals.add( "install" );
         }
 
@@ -338,7 +343,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -350,7 +355,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @throws Exception any exception generated during test
      */
@@ -362,7 +367,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
-     *
+     * 
      * @param projectName project directory
      * @param properties additional properties
      * @param cleanGoal TODO
@@ -571,7 +576,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that two XML files are equal.
-     *
+     * 
      * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
      * @param actualFile the actual file - only used for path information
@@ -600,7 +605,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that two text files are equals. Lines that start with # are comments and ignored.
-     *
+     * 
      * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
      * @param actualFile the actual file - only used for path information
@@ -635,10 +640,9 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Preprocess the file so that equals comparison can be done. Preprocessing may vary based on filename.
-     *
+     * 
      * @param file the file being processed
      * @param variables if not null, then replace all keys with the corresponding values in the expected string.
-     *
      * @return processed input
      */
     private String preprocess( File file, Map variables )
@@ -660,7 +664,6 @@ public abstract class AbstractEclipsePluginIT
          * NOTE: This is another hack to compensate for some metadata files that contain a complete XML file as the
          * value for a key like "org.eclipse.jdt.ui.formatterprofiles" from "org.eclipse.jdt.ui.prefs". Line terminators
          * in this value are platform-dependent.
-         *
          */
         if ( file.getName().endsWith( ".prefs" ) )
         {
@@ -669,9 +672,7 @@ public abstract class AbstractEclipsePluginIT
 
         /*
          * NOTE: This is a hack to compensate for files that contain generated values like dependent-object in
-         * org.eclipse.wst.common.component.
-         *
-         * Regex would be a better solution.
+         * org.eclipse.wst.common.component. Regex would be a better solution.
          */
         if ( file.getName().equals( "org.eclipse.wst.common.component" ) || file.getName().equals( ".modulemaps" )
             || file.getName().equals( "application.xml" ) )
@@ -683,7 +684,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Normalize line terminators into \n. \r\n, \r, \n all get changed into \n.
-     *
+     * 
      * @param input the string to normalize
      * @return string with line terminators normalized
      */
@@ -857,7 +858,7 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Locate the actual file needed for comparison. The expectedFile has the baseDir prefix removed and the resulting
      * relative path used to locate the file within the projectOutputDir.
-     *
+     * 
      * @param projectOutputDir the directory where the eclipse plugin writes files to
      * @param basedir the base dir of the project being tested
      * @param expectedFile the expected file used to compare to the actual file
@@ -876,13 +877,15 @@ public abstract class AbstractEclipsePluginIT
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
+            throw new MojoExecutionException(
+                                              Messages.getString(
+                                                                  "EclipsePlugin.cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
         }
     }
 
     /**
      * Test if the file contains xml content.
-     *
+     * 
      * @param f the file to test
      * @return true if the file contains xml content, false otherwise.
      */
@@ -908,7 +911,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Return the not available marker file for the specified artifact details.
-     *
+     * 
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
@@ -918,8 +921,8 @@ public abstract class AbstractEclipsePluginIT
      * @throws Exception failures.
      * @see IdeUtils#createArtifactWithClassifier(String, String, String, String, String, ArtifactFactory)
      */
-    protected File getNotAvailableMarkerFile( String groupId, String artifactId, String version,
-                                                     String classifier, String inClassifier )
+    protected File getNotAvailableMarkerFile( String groupId, String artifactId, String version, String classifier,
+                                              String inClassifier )
         throws Exception
     {
         // HACK: START
@@ -931,29 +934,29 @@ public abstract class AbstractEclipsePluginIT
         ArtifactFactory artifactFactory = new DefaultArtifactFactory();
 
         DefaultArtifactHandler javaSourceArtifactHandler = new DefaultArtifactHandler( "java-source" );
-        setVariableValueToObject( javaSourceArtifactHandler, "extension", "jar");
+        setVariableValueToObject( javaSourceArtifactHandler, "extension", "jar" );
 
         DefaultArtifactHandler javadocArtifactHandler = new DefaultArtifactHandler( "javadoc" );
-        setVariableValueToObject( javadocArtifactHandler, "extension", "jar");
+        setVariableValueToObject( javadocArtifactHandler, "extension", "jar" );
 
         Map artifactHandlers = new HashMap();
         artifactHandlers.put( "java-source", javaSourceArtifactHandler );
         artifactHandlers.put( "javadoc", javadocArtifactHandler );
 
         ArtifactHandlerManager artifactHandlerManager = new DefaultArtifactHandlerManager();
-        setVariableValueToObject( artifactHandlerManager, "artifactHandlers", artifactHandlers);
-        setVariableValueToObject( artifactFactory, "artifactHandlerManager", artifactHandlerManager);
+        setVariableValueToObject( artifactHandlerManager, "artifactHandlers", artifactHandlers );
+        setVariableValueToObject( artifactFactory, "artifactHandlerManager", artifactHandlerManager );
         // HACK: END
 
         Artifact artifact =
             IdeUtils.createArtifactWithClassifier( groupId, artifactId, version, classifier, inClassifier,
-                                                   artifactFactory);
+                                                   artifactFactory );
         return IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
     }
 
     /**
      * Assert that the not available marker file exists for the specified artifact details.
-     *
+     * 
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
@@ -962,7 +965,8 @@ public abstract class AbstractEclipsePluginIT
      * @throws Exception failures
      */
     protected void assertNotAvailableMarkerFileExists( String groupId, String artifactId, String version,
-                                                       String classifier, String inClassifier ) throws Exception
+                                                       String classifier, String inClassifier )
+        throws Exception
     {
         File markerFile = getNotAvailableMarkerFile( groupId, artifactId, version, classifier, inClassifier );
         assertTrue( "The \"Not Available\" marker file does not exist: " + markerFile, markerFile.exists() );
@@ -970,7 +974,7 @@ public abstract class AbstractEclipsePluginIT
 
     /**
      * Assert that the not available marker file does not exist for the specified artifact details.
-     *
+     * 
      * @param groupId group id of artifact
      * @param artifactId artifact id of artifact
      * @param version version of artifact
@@ -979,7 +983,8 @@ public abstract class AbstractEclipsePluginIT
      * @throws Exception failures
      */
     protected void assertNotAvailableMarkerFileDoesNotExist( String groupId, String artifactId, String version,
-                                                       String classifier, String inClassifier ) throws Exception
+                                                             String classifier, String inClassifier )
+        throws Exception
     {
         File markerFile = getNotAvailableMarkerFile( groupId, artifactId, version, classifier, inClassifier );
         assertTrue( "The \"Not Available\" marker file incorrectly exists: " + markerFile, !markerFile.exists() );
