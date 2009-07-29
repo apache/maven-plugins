@@ -32,7 +32,6 @@ import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -380,7 +379,7 @@ public abstract class AbstractSiteRenderingMojo
             String desc1 = i18n.getString( "site-plugin", locale, "report.information.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.information.description2" );
             DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+                                                                             i18n, categoryReports, getLog() );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
@@ -400,7 +399,7 @@ public abstract class AbstractSiteRenderingMojo
             String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.project.description2" );
             DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+                                                                             i18n, categoryReports, getLog() );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
