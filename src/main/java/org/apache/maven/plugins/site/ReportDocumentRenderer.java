@@ -27,6 +27,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenMultiPageReport;
@@ -148,6 +149,7 @@ public class ReportDocumentRenderer
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
+        sink.enableLogging( new MojoLogWrapper( log ) );
 
         try
         {
@@ -187,6 +189,7 @@ public class ReportDocumentRenderer
                 for ( Iterator it = sinks.iterator(); it.hasNext(); )
                 {
                     MySink mySink = (MySink) it.next();
+                    mySink.enableLogging( new MojoLogWrapper( log ) );
 
                     log.debug( "  Rendering " + mySink.getOutputName() );
 
