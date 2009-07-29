@@ -36,6 +36,9 @@
         <exclude>**/*.iml</exclude>
         <exclude>*.log</exclude>
         <exclude>target/**</exclude>
+        <exclude>**/.settings/**</exclude>
+        <exclude>**/*.classpath</exclude>
+        <exclude>**/*.project</exclude>         
       </excludes>
     </fileSet>
     <fileSet>
