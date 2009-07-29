@@ -98,3 +98,43 @@ Resource Transformers
   ...
 </project>
 +-----
+
+* Merging Content of Specific Files
+
+  Some jars contain additional resources (such as properties files) that have the same file name. To avoid overwriting, you can
+  opt to merge them by appending their content into one file. One good example for this is when aggregating both the spring-context 
+  and plexus-spring jars. Both of them have the <<<META-INF/spring.handlers>>> file which is used by Spring to handle XML schema 
+  namespaces. You can merge the contents of all the files with that specific name using the <<<AppendingTransformer>>> as shown below:
+  
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----- 
+
+  For XML files, you can use the <<<XmlAppendingTransformer>>> instead.   
