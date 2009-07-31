@@ -55,6 +55,14 @@ mvn site
   '<<<mvn site:stage>>>' instead. You can read more about that goal further down on
   this page in the section called '<Staging a Site>'.
 
+  <<Note:>> For peformance reasons, Maven compares the timestamps of generated
+  files and corresponding source documents, and only regenerates documents
+  that have changed since the last build.
+  However, this only applies to documentation source documents (apt, xdoc,...).
+  If you change anything in your <<<site.xml>>>, any relevant sections in your
+  pom, or any relevant properties or resource files, you should generate the
+  site from scratch to make sure all references and links are correct.
+
 * Deploying a Site
 
   To be able to deploy the site, you must first specify where the site will be
