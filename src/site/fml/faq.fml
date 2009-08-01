@@ -19,20 +19,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
-  <body>
-    <links>
-      <item name="Linkcheck Tool" href="http://maven.apache.org/doxia/doxia-tools/doxia-linkcheck/"/>
-    </links>
 
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="linkcheck-mojo.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-
-  </body>
-</project>
+<faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/FML/1.0"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="Why the plugin invokes the site goal">
+      <question>Why the plugin invokes the site goal?</question>
+      <answer>
+        <p>
+          By safety, the plugin generates the site goal in a separate space to be sure that the number of
+          documents analyzed are the same than the generated documents.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
