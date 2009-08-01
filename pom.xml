@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>13</version>
+    <version>14-SNAPSHOT</version>
   </parent>
 
   <artifactId>maven-linkcheck-plugin</artifactId>
@@ -46,8 +46,8 @@ under the License.
   </scm>
 
   <properties>
-    <doxia.version>1.0-alpha-10</doxia.version>
-    <doxia-sitetools.version>1.0-alpha-10</doxia-sitetools.version>
+    <doxia.version>1.0</doxia.version>
+    <doxia-sitetools.version>1.0</doxia-sitetools.version>
   </properties>
 
   <dependencies>
@@ -80,13 +80,18 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4.1</version>
+      <version>2.0.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>2.0.9</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
 
     <!-- doxia -->
@@ -127,7 +132,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-linkcheck</artifactId>
-      <version>1.0</version>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
 
     <!-- plexus -->

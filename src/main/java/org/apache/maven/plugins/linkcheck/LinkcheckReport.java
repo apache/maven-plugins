@@ -20,19 +20,23 @@ package org.apache.maven.plugins.linkcheck;
  */
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Properties;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.maven.artifact.Artifact;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
@@ -40,25 +44,32 @@ import org.apache.maven.doxia.linkcheck.LinkCheckException;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.apache.maven.doxia.site.decoration.Body;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.doxia.siterenderer.RendererException;
-import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
-import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
-import org.apache.maven.doxia.tools.SiteTool;
-import org.apache.maven.doxia.tools.SiteToolException;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.PrintStreamHandler;
 import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generates a <code>Linkcheck</code> report.
@@ -80,28 +91,21 @@ public class LinkcheckReport
      *
      * @component
      */
-    protected I18N i18n;
+    private I18N i18n;
 
     /**
      * Doxia Site Renderer.
      *
      * @component
      */
-    protected Renderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * SiteTool component.
      *
      * @component
      */
-    protected SiteTool siteTool;
-
-    /**
-     * SiteTool component.
-     *
-     * @component
-     */
-    protected LinkCheck linkCheck;
+    private LinkCheck linkCheck;
 
     // ----------------------------------------------------------------------
     // Report Parameters
@@ -114,16 +118,7 @@ public class LinkcheckReport
      * @required
      * @readonly
      */
-    protected MavenProject project;
-
-    /**
-     * The reactor projects.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    protected List reactorProjects;
+    private MavenProject project;
 
     /**
      * Local Repository.
@@ -132,15 +127,7 @@ public class LinkcheckReport
      * @required
      * @readonly
      */
-    protected ArtifactRepository localRepository;
-
-    /**
-     * Remote repositories used for the project.
-     *
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     */
-    protected List repositories;
+    private ArtifactRepository localRepository;
 
     /**
      * Report output directory.
@@ -148,7 +135,7 @@ public class LinkcheckReport
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     /**
      * The Maven Settings.
@@ -157,15 +144,7 @@ public class LinkcheckReport
      * @required
      * @readonly
      */
-    protected Settings settings;
-
-    /**
-     * Directory containing the <code>site.xml</code> file.
-     *
-     * @parameter expression="src/site"
-     * @required
-     */
-    protected String siteDirectory;
+    private Settings settings;
 
     // ----------------------------------------------------------------------
     // Linkcheck parameters
@@ -184,25 +163,25 @@ public class LinkcheckReport
      * If online, the HTTP method should automatically follow HTTP redirects,
      * <tt>false</tt> otherwise.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      */
-    protected boolean httpFollowRedirect;
+    private boolean httpFollowRedirect;
 
     /**
-     * The location of the linkcheck cache.
+     * The location of the Linkcheck cache file.
      *
-     * @parameter expression="${project.build.directory}/linkcheck/linkcheck.cache"
+     * @parameter default-value="${project.build.directory}/linkcheck/linkcheck.cache"
      * @required
      */
-    protected String linkcheckCache;
+    protected File linkcheckCache;
 
     /**
-     * The location of the linkcheck report.
+     * The location of the Linkcheck report file.
      *
-     * @parameter expression="${project.build.directory}/linkcheck/linkcheck.xml"
+     * @parameter default-value="${project.build.directory}/linkcheck/linkcheck.xml"
      * @required
      */
-    protected String linkcheckOutput;
+    protected File linkcheckOutput;
 
     /**
      * The HTTP method to use. Currently supported are "GET" and "HEAD".
@@ -224,46 +203,100 @@ public class LinkcheckReport
      * </dl>
      *
      * @parameter default-value="head"
+     * @required
      */
-    protected String httpMethod;
+    private String httpMethod;
 
     /**
-     * The list of HTTP errors to ignored.
+     * The list of HTTP errors to ignored, like <code>404</code>.
      *
      * @parameter
-     * @see {@link HttpStatus} for all defined values.
+     * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
-    protected int[] excludedHttpStatusErrors;
+    private int[] excludedHttpStatusErrors;
 
     /**
-     * The list of HTTP warnings to ignored.
+     * The list of HTTP warnings to ignored, like <code>301</code>.
      *
      * @parameter
-     * @see {@link HttpStatus} for all defined values.
+     * @see {@link org.apache.commons.httpclient.HttpStatus} for all defined values.
      */
-    protected int[] excludedHttpStatusWarnings;
+    private int[] excludedHttpStatusWarnings;
 
     /**
-     * The list of pages to exclude.
+     * The list of site pages to exclude. By default, this report, i.e. <code>linkcheck.html</code>, will be excluded.
+     * <br/>
+     * <b>Note</b>: No pattern is allowed for excludedPage, only specific file names.
      *
      * @parameter
      */
-    protected String[] excludedPages;
+    private String[] excludedPages;
 
     /**
      * The list of links to exclude.
+     * <br/>
+     * <b>Note</b>: Patterns like <code>&#42;&#42;/dummy/&#42;</code> are allowed for excludedLink.
      *
      * @parameter
      */
-    protected String[] excludedLinks;
+    private String[] excludedLinks;
 
     /**
-     * Specifies the encoding to be used by Linkcheck. If <code>${project.reporting.outputEncoding}</code> is not
-     * specified, using UTF-8.
+     * The file encoding to use when Linkcheck reads the source files. If the property
+     * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
      *
-     * @parameter expression="${encoding}" default-value="${project.reporting.outputEncoding}"
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
     private String encoding;
+
+    /**
+     * The extra HttpClient parameters to be used when fetching links. For instance:
+     * <pre>
+     * &lt;httpClientParameters&gt;
+     * &nbsp;&lt;property&gt;
+     * &nbsp;&nbsp;&lt;name&gt;http.protocol.max-redirects&lt;/name&gt;
+     * &nbsp;&nbsp;&lt;value&gt;10&lt;/value&gt;
+     * &nbsp;&lt;/property&gt;
+     * &lt;/httpClientParameters&gt;
+     * </pre>
+     * See <a href="http://hc.apache.org/httpclient-3.x/preference-api.html">HttpClient preference page</a>
+     *
+     * @parameter expression="${httpClientParameters}"
+     */
+    private Properties httpClientParameters;
+
+    /**
+     * Set the timeout to be used when fetching links. A value of zero means the timeout is not used.
+     *
+     * @parameter expression="${timeout}" default-value="2000"
+     */
+    private int timeout;
+
+    /**
+     * <code>true</code> to skip the report execution, <code>false</code> otherwise.
+     * The purpose is to prevent infinite call when {@link #forceSite} is enable.
+     *
+     * @parameter expression="${linkcheck.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
+     * <code>true</code> to force the site generation, <code>false</code> otherwise.
+     * Using this parameter ensures that all documents have been correctly generated.
+     *
+     * @parameter expression="${linkcheck.forceSite}" default-value="true"
+     */
+    private boolean forceSite;
+
+    // ----------------------------------------------------------------------
+    // Instance fields
+    // ----------------------------------------------------------------------
+
+    /** A temp reporting output directory */
+    private File tmpReportingOutputDirectory;
+
+    /** Result of the linkcheck in {@link #execute()} */
+    private LinkcheckModel result;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -290,17 +323,12 @@ public class LinkcheckReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        boolean can = outputDirectory.exists();
-
-        if ( !can )
+        if ( skip )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "Linkcheck report skipped. You need to call 'mvn site' before." );
-            }
+            return false;
         }
 
-        return can;
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -312,51 +340,78 @@ public class LinkcheckReport
             return;
         }
 
+        // encoding
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn(
+                           "File encoding has not been set, using platform encoding "
+                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            encoding = ReaderFactory.FILE_ENCODING;
+        }
+
+        tmpReportingOutputDirectory = new File( linkcheckOutput.getParentFile(), "tmpsite" );
+        tmpReportingOutputDirectory.mkdirs();
+
+        File basedir;
+        if ( forceSite )
+        {
+            basedir = tmpReportingOutputDirectory;
+
+            List documents = null;
+            try
+            {
+                documents = FileUtils.getFiles( basedir, "**/*.html", null );
+            }
+            catch ( IOException e )
+            {
+                getLog().debug( "IOException: " + e.getMessage(), e );
+            }
+
+            if ( documents == null || ( documents != null && documents.size() == 0 ) )
+            {
+                getLog().info( "Try to invoke the maven-site-plugin to be sure that all files are generated..." );
+
+                try
+                {
+                    invokeSite( tmpReportingOutputDirectory );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
+                }
+            }
+        }
+        else
+        {
+            getLog().warn(
+                           "WARRANTY: The number of documents analyzed by Linkcheck could differ "
+                               + "with the real number of documents!" );
+
+            basedir = outputDirectory;
+            basedir.mkdirs();
+        }
+
         try
         {
-            DecorationModel model = new DecorationModel();
-            model.setBody( new Body() );
-            Map attributes = new HashMap();
-            attributes.put( "outputEncoding", "UTF-8" );
-            attributes.put( "project", project );
-            Locale locale = Locale.getDefault();
-            Artifact skinArtifact = siteTool.getDefaultSkinArtifact( localRepository, repositories );
-            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( skinArtifact.getFile(), attributes,
-                                                                                  model, getName( locale ), locale );
-
-            RenderingContext context = new RenderingContext( outputDirectory, getOutputName() + ".html" );
-
-            SiteRendererSink sink = new SiteRendererSink( context );
-            generate( sink, locale );
-
-            outputDirectory.mkdirs();
-
-            Writer writer = new FileWriter( new File( outputDirectory, getOutputName() + ".html" ) );
-
-            siteRenderer.generateDocument( writer, sink, siteContext );
-
-            siteRenderer.copyResources( siteContext, new File( project.getBasedir(), "src/site/resources" ),
-                                        outputDirectory );
+            result = executeLinkCheck( basedir );
         }
-        catch ( IOException e )
+        catch ( LinkCheckException e )
         {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
+            throw new MojoExecutionException( "LinkCheckException: " + e.getMessage(), e );
         }
-        catch ( SiteToolException e )
+        finally
         {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
-        }
-        catch ( RendererException e )
-        {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
-        }
-        catch ( MavenReportException e )
-        {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
+            if ( forceSite )
+            {
+                try
+                {
+                    FileUtils.deleteDirectory( tmpReportingOutputDirectory );
+                }
+                catch ( IOException e )
+                {
+                    getLog().debug( "IOException: " + e.getMessage(), e );
+                }
+            }
         }
     }
 
@@ -386,23 +441,23 @@ public class LinkcheckReport
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
-        try
+        if ( result == null )
         {
-            LinkcheckModel result = executeLinkCheck( locale );
+            getLog().debug( "Calling execute()" );
 
+            try
+            {
+                this.execute();
+            }
+            catch ( MojoExecutionException e )
+            {
+                throw new MavenReportException( "MojoExecutionException: " + e.getMessage(), e );
+            }
+        }
+
+        if ( result != null )
+        {
             generateReport( locale, result );
-        }
-        catch ( SiteToolException e )
-        {
-            throw new MavenReportException( "SiteToolException: " + e.getMessage(), e );
-        }
-        catch ( LinkCheckException e )
-        {
-            throw new MavenReportException( "LinkCheckException: " + e.getMessage(), e );
-        }
-        catch ( Exception e )
-        {
-            throw new MavenReportException( "Exception: " + e.getMessage(), e );
         }
     }
 
@@ -413,18 +468,18 @@ public class LinkcheckReport
     /**
      * Execute the <code>Linkcheck</code> tool.
      *
-     * @throws SiteToolException if any
+     * @param basedir not null
      * @throws LinkCheckException if any
      */
-    private LinkcheckModel executeLinkCheck( Locale locale )
-        throws SiteToolException, LinkCheckException
+    private LinkcheckModel executeLinkCheck( File basedir )
+        throws LinkCheckException
     {
         // Wrap linkcheck
         linkCheck.setOnline( !offline );
-        linkCheck.setBasedir( outputDirectory );
-        linkCheck.setReportOutput( new File( linkcheckOutput ) );
-        linkCheck.setLinkCheckCache( new File( linkcheckCache ) );
-        linkCheck.setExcludedLinks( getExcludedLinks( locale ) );
+        linkCheck.setBasedir( basedir );
+        linkCheck.setReportOutput( linkcheckOutput );
+        linkCheck.setLinkCheckCache( linkcheckCache );
+        linkCheck.setExcludedLinks( excludedLinks );
         linkCheck.setExcludedPages( getExcludedPages() );
         linkCheck.setExcludedHttpStatusErrors( excludedHttpStatusErrors );
         linkCheck.setExcludedHttpStatusWarnings( excludedHttpStatusWarnings );
@@ -433,6 +488,11 @@ public class LinkcheckReport
         HttpBean bean = new HttpBean();
         bean.setMethod( httpMethod );
         bean.setFollowRedirects( httpFollowRedirect );
+        bean.setTimeout( timeout );
+        if ( httpClientParameters != null )
+        {
+            bean.setHttpClientParameters( httpClientParameters );
+        }
 
         Proxy proxy = settings.getActiveProxy();
         if ( proxy != null )
@@ -447,40 +507,9 @@ public class LinkcheckReport
         return linkCheck.execute();
     }
 
-    private String[] getExcludedLinks( Locale locale )
-        throws SiteToolException
-    {
-        List linksToExclude = ( excludedLinks != null ? new ArrayList( Arrays.asList( excludedLinks ) ) : new ArrayList() );
-
-        if ( project.getUrl() != null )
-        {
-            // Using interpolated references in the decoration model
-            DecorationModel site = siteTool.getDecorationModel( project, reactorProjects, localRepository,
-                                                                repositories, siteDirectory, locale, "ISO-8859-1",
-                                                                "ISO-8859-1" );
-
-            String baseUrl = project.getUrl();
-            if ( site.getBannerLeft() != null && StringUtils.isNotEmpty( site.getBannerLeft().getHref() ) )
-            {
-                linksToExclude.add( siteTool.getRelativePath( site.getBannerLeft().getHref(), baseUrl ) );
-            }
-            if ( site.getBannerRight() != null && StringUtils.isNotEmpty( site.getBannerRight().getHref() ) )
-            {
-                linksToExclude.add( siteTool.getRelativePath( site.getBannerRight().getHref(), baseUrl ) );
-            }
-            if ( site.getBody() != null && site.getBody().getLinks() != null )
-            {
-                for ( Iterator it = site.getBody().getLinks().iterator(); it.hasNext(); )
-                {
-                    LinkItem link = (LinkItem) it.next();
-                    linksToExclude.add( siteTool.getRelativePath( link.getHref(), baseUrl ) );
-                }
-            }
-        }
-
-        return (String[]) linksToExclude.toArray( new String[0] );
-    }
-
+    /**
+     * @return the excludedPages defined by the user and also this report.
+     */
     private String[] getExcludedPages()
     {
         List linksToExclude;
@@ -501,11 +530,336 @@ public class LinkcheckReport
     }
 
     /**
-     * Generate the Linkcheck report.
+     * Invoke Maven for the given project file with a list of goals and properties, the output will be in the
+     * invokerlog file.
+     * <br/>
+     * <b>Note</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
+     * <code>M2_HOME</code> system env variables.
      *
-     * @param locale the wanted locale
-     * @param linkcheckModel the result of the analysis
+     * @param tmpReportingOutputDirectory not null
+     * @throws IOException if any
      */
+    private void invokeSite( File tmpReportingOutputDirectory )
+        throws IOException
+    {
+        String mavenHome = getMavenHome();
+        if ( StringUtils.isEmpty( mavenHome ) )
+        {
+            String msg =
+                "Could NOT invoke Maven because no Maven Home is defined. You need to have set the M2_HOME "
+                    + "system env variable or a maven.home Java system properties.";
+            getLog().error( msg );
+            return;
+        }
+
+        // invoker parameters
+        List goals = Collections.singletonList( "site" );
+        Properties properties = new Properties();
+        properties.put( "linkcheck.skip", "true" ); // to stop recursion
+        File invokerLog = new File( project.getBuild().getDirectory(), "invoker-site-plugin.txt" );
+
+        // copy and update the project file
+        File tmpProjectFile = createTempPomFile( tmpReportingOutputDirectory );
+
+        // invoke it
+        Invoker invoker = new DefaultInvoker();
+        invoker.setMavenHome( new File( mavenHome ) );
+        invoker.setLocalRepositoryDirectory( new File( localRepository.getBasedir() ) );
+
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setBaseDirectory( tmpProjectFile.getParentFile() );
+        request.setPomFile( tmpProjectFile );
+        request.setDebug( getLog().isDebugEnabled() );
+        request.setGoals( goals );
+        request.setProperties( properties );
+        File javaHome = getJavaHome();
+        if ( javaHome != null )
+        {
+            request.setJavaHome( javaHome );
+        }
+
+        InvocationResult result;
+        try
+        {
+            getLog().debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+            result = invoke( invoker, request, invokerLog, goals, properties, null );
+        }
+        catch ( MavenInvocationException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "MavenInvocationException: " + e.getMessage(), e );
+            }
+            getLog().error( "Error when invoking Maven, consult the invoker log." );
+            return;
+        }
+
+        String invokerLogContent = null;
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newReader( invokerLog, "UTF-8" );
+            invokerLogContent = IOUtil.toString( reader );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        if ( invokerLogContent != null
+            && invokerLogContent.indexOf( "Error occurred during initialization of VM" ) != -1 )
+        {
+            getLog().info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
+
+            getLog().debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS" );
+            try
+            {
+                result = invoke( invoker, request, invokerLog, goals, properties, "" );
+            }
+            catch ( MavenInvocationException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "MavenInvocationException: " + e.getMessage(), e );
+                }
+                getLog().error( "Error when reinvoking Maven, consult the invoker log." );
+                return;
+            }
+        }
+
+        if ( result.getExitCode() != 0 )
+        {
+            getLog().error(
+                            "Error when invoking Maven, consult the invoker log file: "
+                                + invokerLog.getAbsolutePath() );
+        }
+    }
+
+    private InvocationResult invoke( Invoker invoker, InvocationRequest request, File invokerLog, List goals,
+                                     Properties properties, String mavenOpts )
+        throws MavenInvocationException
+    {
+        PrintStream ps;
+        OutputStream os = null;
+        if ( invokerLog != null )
+        {
+            getLog().debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
+
+            try
+            {
+                if ( !invokerLog.exists() )
+                {
+                    invokerLog.getParentFile().mkdirs();
+                }
+                os = new FileOutputStream( invokerLog );
+                ps = new PrintStream( os, true, "UTF-8" );
+            }
+            catch ( FileNotFoundException e )
+            {
+                getLog().error(
+                                "FileNotFoundException: " + e.getMessage()
+                                    + ". Using System.out to log the invoker." );
+                ps = System.out;
+            }
+            catch ( UnsupportedEncodingException e )
+            {
+                getLog().error(
+                                "UnsupportedEncodingException: " + e.getMessage()
+                                    + ". Using System.out to log the invoker." );
+                ps = System.out;
+            }
+        }
+        else
+        {
+            getLog().debug( "Using System.out to log the invoker." );
+
+            ps = System.out;
+        }
+
+        if ( mavenOpts != null )
+        {
+            request.setMavenOpts( mavenOpts );
+        }
+
+        InvocationOutputHandler outputHandler = new PrintStreamHandler( ps, false );
+        request.setOutputHandler( outputHandler );
+
+        outputHandler.consumeLine( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+        outputHandler.consumeLine( "" );
+        outputHandler.consumeLine( "M2_HOME=" + getMavenHome() );
+        outputHandler.consumeLine( "MAVEN_OPTS=" + getMavenOpts() );
+        outputHandler.consumeLine( "JAVA_HOME=" + getJavaHome() );
+        outputHandler.consumeLine( "JAVA_OPTS=" + getJavaOpts() );
+        outputHandler.consumeLine( "" );
+
+        try
+        {
+            return invoker.execute( request );
+        }
+        finally
+        {
+            IOUtil.close( os );
+            ps = null;
+        }
+    }
+
+    /**
+     * Copy the current project POM file to a temp POM file using tmpReportingOutputDirectory dir for
+     * ${project.reporting.outputDirectory}.
+     *
+     * @param tmpReportingOutputDirectory not null
+     * @return a copy of project POM file
+     * @throws IOException if any
+     */
+    private File createTempPomFile( File tmpReportingOutputDirectory )
+        throws IOException
+    {
+        File projectFile = project.getFile();
+        File tmpProjectFile = new File( projectFile.getParentFile(), "tmppom.xml" );
+        tmpProjectFile.deleteOnExit();
+
+        Reader reader = null;
+        Model model = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( projectFile );
+            MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
+            model = xpp3Reader.read( reader );
+            model.getReporting().setOutputDirectory( tmpReportingOutputDirectory.getAbsolutePath() );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new IOException( "XmlPullParserException: " + e.getMessage() );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newXmlWriter( tmpProjectFile );
+            MavenXpp3Writer xpp3Writer = new MavenXpp3Writer();
+            xpp3Writer.write( writer, model );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+
+        return tmpProjectFile;
+    }
+
+    /**
+     * @return the Maven home defined in the <code>maven.home</code> system property or defined
+     * in <code>M2_HOME</code> system env variables or null if never setted.
+     */
+    private String getMavenHome()
+    {
+        String mavenHome = System.getProperty( "maven.home" );
+        if ( mavenHome == null )
+        {
+            try
+            {
+                mavenHome = CommandLineUtils.getSystemEnvVars().getProperty( "M2_HOME" );
+            }
+            catch ( IOException e )
+            {
+                getLog().debug( "IOException: " + e.getMessage() );
+            }
+        }
+
+        File m2Home = new File( mavenHome );
+        if ( !m2Home.exists() )
+        {
+            getLog().error(
+                            "Cannot find Maven application directory. Either specify \'maven.home\' "
+                                + "system property, or M2_HOME environment variable." );
+        }
+
+        return mavenHome;
+    }
+
+    /**
+     * @return the <code>MAVEN_OPTS</code> env variable value
+     */
+    private String getMavenOpts()
+    {
+        String mavenOpts = null;
+        try
+        {
+            mavenOpts = CommandLineUtils.getSystemEnvVars().getProperty( "MAVEN_OPTS" );
+        }
+        catch ( IOException e )
+        {
+            getLog().debug( "IOException: " + e.getMessage() );
+        }
+
+        return mavenOpts;
+    }
+
+    /**
+     * @return the <code>JAVA_HOME</code> from System.getProperty( "java.home" )
+     * By default, <code>System.getProperty( "java.home" ) = JRE_HOME</code> and <code>JRE_HOME</code>
+     * should be in the <code>JDK_HOME</code>
+     */
+    private File getJavaHome()
+    {
+        File javaHome;
+        if ( SystemUtils.IS_OS_MAC_OSX )
+        {
+            javaHome = SystemUtils.getJavaHome();
+        }
+        else
+        {
+            javaHome = new File( SystemUtils.getJavaHome(), ".." );
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            try
+            {
+                javaHome = new File( CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_HOME" ) );
+            }
+            catch ( IOException e )
+            {
+                getLog().debug( "IOException: " + e.getMessage() );
+            }
+        }
+
+        if ( javaHome == null || !javaHome.exists() )
+        {
+            getLog().error(
+                            "Cannot find Java application directory. Either specify \'java.home\' "
+                                + "system property, or JAVA_HOME environment variable." );
+        }
+
+        return javaHome;
+    }
+
+    /**
+     * @return the <code>JAVA_OPTS</code> env variable value
+     */
+    private String getJavaOpts()
+    {
+        String javaOpts = null;
+        try
+        {
+            javaOpts = CommandLineUtils.getSystemEnvVars().getProperty( "JAVA_OPTS" );
+        }
+        catch ( IOException e )
+        {
+            getLog().debug( "IOException: " + e.getMessage() );
+        }
+
+        return javaOpts;
+    }
+
+    // ----------------------------------------------------------------------
+    // Linkcheck report
+    // ----------------------------------------------------------------------
+
     private void generateReport( Locale locale, LinkcheckModel linkcheckModel )
     {
         getSink().head();
@@ -546,15 +900,20 @@ public class LinkcheckReport
 
         getSink().section1_();
 
-        //Statistics
+        // Statistics
         generateSummarySection( locale, linkcheckModel );
 
-        //Details
-        generateDetailsSection( locale, linkcheckModel );
+        if ( linkcheckModel.getFiles().size() > 0 )
+        {
+            // Details
+            generateDetailsSection( locale, linkcheckModel );
+        }
 
         getSink().body_();
         getSink().flush();
         getSink().close();
+
+        closeReport();
     }
 
     private void generateSummarySection( Locale locale, LinkcheckModel linkcheckModel )
@@ -601,7 +960,9 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpFollowRedirect" ) );
+        getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale,
+                                           "report.linkcheck.table.summary.httpFollowRedirect" ) );
         getSink().tableCell_();
         getSink().tableCell();
         getSink().text( String.valueOf( httpFollowRedirect ) );
@@ -610,7 +971,10 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpMethod" ) );
+        getSink()
+                 .rawText(
+                           i18n
+                               .getString( "linkcheck-report", locale, "report.linkcheck.table.summary.httpMethod" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( StringUtils.isEmpty( httpMethod ) )
@@ -626,23 +990,27 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedPages" ) );
+        getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale,
+                                           "report.linkcheck.table.summary.excludedPages" ) );
         getSink().tableCell_();
         getSink().tableCell();
-        if ( excludedPages == null || excludedPages.length == 0 )
+        if ( getExcludedPages() == null || getExcludedPages().length == 0 )
         {
             getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.none" ) );
         }
         else
         {
-            getSink().text( StringUtils.join( excludedPages, "," ) );
+            getSink().text( StringUtils.join( getExcludedPages(), "," ) );
         }
         getSink().tableCell_();
         getSink().tableRow_();
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedLinks" ) );
+        getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale,
+                                           "report.linkcheck.table.summary.excludedLinks" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedLinks == null || excludedLinks.length == 0 )
@@ -658,7 +1026,9 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedHttpStatusErrors" ) );
+        getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale,
+                                           "report.linkcheck.table.summary.excludedHttpStatusErrors" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedHttpStatusErrors == null || excludedHttpStatusErrors.length == 0 )
@@ -674,7 +1044,9 @@ public class LinkcheckReport
 
         getSink().tableRow();
         getSink().tableCell();
-        getSink().rawText( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.excludedHttpStatusWarnings" ) );
+        getSink().rawText(
+                           i18n.getString( "linkcheck-report", locale,
+                                           "report.linkcheck.table.summary.excludedHttpStatusWarnings" ) );
         getSink().tableCell_();
         getSink().tableCell();
         if ( excludedHttpStatusWarnings == null || excludedHttpStatusWarnings.length == 0 )
@@ -697,10 +1069,10 @@ public class LinkcheckReport
 
         getSink().table();
 
-        //Header
+        // Header
         generateTableHeader( locale, false );
 
-        //Content
+        // Content
         getSink().tableRow();
 
         getSink().tableCell();
@@ -749,7 +1121,7 @@ public class LinkcheckReport
 
         getSink().table();
 
-        //Header
+        // Header
         generateTableHeader( locale, true );
 
         // Content
@@ -771,8 +1143,8 @@ public class LinkcheckReport
             }
             getSink().tableCell_();
 
-            //            tableCell( createLinkPatternedText( linkcheckFile.getRelativePath(), "./"
-            //                + linkcheckFile.getRelativePath() ) );
+            // tableCell( createLinkPatternedText( linkcheckFile.getRelativePath(), "./"
+            // + linkcheckFile.getRelativePath() ) );
             getSink().tableCell();
             getSink().link( linkcheckFile.getRelativePath() );
             getSink().text( linkcheckFile.getRelativePath() );
@@ -875,7 +1247,11 @@ public class LinkcheckReport
             getSink().tableHeaderCell_();
         }
         getSink().rawText( "<th rowspan=\"2\">" );
-        getSink().text( detail ? i18n.getString( "linkcheck-report", locale, "report.linkcheck.detail.table.documents" ) : i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.summary.documents" ) );
+        getSink().text(
+                        detail ? i18n.getString( "linkcheck-report", locale,
+                                                 "report.linkcheck.detail.table.documents" )
+                                        : i18n.getString( "linkcheck-report", locale,
+                                                          "report.linkcheck.table.summary.documents" ) );
         getSink().tableHeaderCell_();
         // TODO it is due to DOXIA-78
         getSink().rawText( "<th colspan=\"4\" center>" );
@@ -906,6 +1282,7 @@ public class LinkcheckReport
         getSink().figureCaption();
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.error" ) );
         getSink().figureCaption_();
+        // should be defined in skins
         getSink().figureGraphics( "images/icon_error_sml.gif" );
         getSink().figure_();
     }
@@ -916,6 +1293,7 @@ public class LinkcheckReport
         getSink().figureCaption();
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.valid" ) );
         getSink().figureCaption_();
+        // should be defined in skins
         getSink().figureGraphics( "images/icon_success_sml.gif" );
         getSink().figure_();
     }
@@ -926,11 +1304,22 @@ public class LinkcheckReport
         getSink().figureCaption();
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.icon.warning" ) );
         getSink().figureCaption_();
+        // should be defined in skins
         getSink().figureGraphics( "images/icon_warning_sml.gif" );
         getSink().figure_();
     }
 
-    private String toString( int[] a )
+    // ----------------------------------------------------------------------
+    // static methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Similar to {@link Arrays#toString(int[])} in 1.5.
+     *
+     * @param a not null
+     * @return the array comma separated.
+     */
+    private static String toString( int[] a )
     {
         if ( a == null || a.length == 0 )
         {
