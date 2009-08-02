@@ -36,7 +36,7 @@ under the License.
   <description>This plugin allows you to generate a linkcheck report of your project's documentation.</description>
 
   <prerequisites>
-    <maven>2.0.6</maven>
+    <maven>2.0.9</maven>
   </prerequisites>
 
   <scm>
