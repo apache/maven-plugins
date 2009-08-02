@@ -363,7 +363,7 @@ public class LinkcheckReport
                 String msg = "IOException: " + e.getMessage();
                 if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug( msg, e );
+                    getLog().error( msg, e );
                 }
                 else
                 {
@@ -420,7 +420,7 @@ public class LinkcheckReport
                     String msg = "IOException: " + e.getMessage();
                     if ( getLog().isDebugEnabled() )
                     {
-                        getLog().debug( msg, e );
+                        getLog().error( msg, e );
                     }
                     else
                     {
@@ -651,7 +651,7 @@ public class LinkcheckReport
         {
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( "MavenInvocationException: " + e.getMessage(), e );
+                getLog().error( "MavenInvocationException: " + e.getMessage(), e );
             }
             getLog().error( "Error when invoking Maven, consult the invoker log." );
             return;
@@ -669,7 +669,7 @@ public class LinkcheckReport
             String msg = "IOException: " + e.getMessage();
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( msg, e );
+                getLog().error( msg, e );
             }
             else
             {
@@ -699,7 +699,7 @@ public class LinkcheckReport
             {
                 if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug( "MavenInvocationException: " + e.getMessage(), e );
+                    getLog().error( "MavenInvocationException: " + e.getMessage(), e );
                 }
                 getLog().error( "Error when reinvoking Maven, consult the invoker log." );
                 return;
@@ -823,7 +823,7 @@ public class LinkcheckReport
                 String msg = "IOException: " + e.getMessage();
                 if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug( msg, e );
+                    getLog().error( msg, e );
                 }
                 else
                 {
@@ -862,7 +862,7 @@ public class LinkcheckReport
             String msg = "IOException: " + e.getMessage();
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( msg, e );
+                getLog().error( msg, e );
             }
             else
             {
@@ -902,7 +902,7 @@ public class LinkcheckReport
                 String msg = "IOException: " + e.getMessage();
                 if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug( msg, e );
+                    getLog().error( msg, e );
                 }
                 else
                 {
@@ -940,7 +940,7 @@ public class LinkcheckReport
             String msg = "IOException: " + e.getMessage();
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( msg, e );
+                getLog().error( msg, e );
             }
             else
             {
