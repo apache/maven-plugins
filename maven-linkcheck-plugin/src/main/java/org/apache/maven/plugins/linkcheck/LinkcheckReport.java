@@ -958,7 +958,9 @@ public class LinkcheckReport
     private void generateReport( Locale locale, LinkcheckModel linkcheckModel )
     {
         getSink().head();
-        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.name" ) );
+        getSink().title();
+        getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.title" ) );
+        getSink().title_();
         getSink().head_();
 
         getSink().body();
