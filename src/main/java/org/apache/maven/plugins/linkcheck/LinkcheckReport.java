@@ -45,9 +45,6 @@ import org.apache.maven.doxia.linkcheck.model.LinkcheckFile;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckFileResult;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -69,7 +66,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Generates a <code>Linkcheck</code> report.
@@ -292,9 +288,6 @@ public class LinkcheckReport
     // Instance fields
     // ----------------------------------------------------------------------
 
-    /** A temp reporting output directory */
-    private File tmpReportingOutputDirectory;
-
     /** Result of the linkcheck in {@link #execute()} */
     private LinkcheckModel result;
 
@@ -343,13 +336,16 @@ public class LinkcheckReport
         // encoding
         if ( StringUtils.isEmpty( encoding ) )
         {
-            getLog().warn(
-                           "File encoding has not been set, using platform encoding "
-                               + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn(
+                               "File encoding has not been set, using platform encoding "
+                                   + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+            }
             encoding = ReaderFactory.FILE_ENCODING;
         }
 
-        tmpReportingOutputDirectory = new File( linkcheckOutput.getParentFile(), "tmpsite" );
+        File tmpReportingOutputDirectory = new File( linkcheckOutput.getParentFile(), "tmpsite" );
         tmpReportingOutputDirectory.mkdirs();
 
         File basedir;
@@ -364,9 +360,18 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                getLog().debug( "IOException: " + e.getMessage(), e );
+                String msg = "IOException: " + e.getMessage();
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( msg, e );
+                }
+                else
+                {
+                    getLog().error( msg );
+                }
             }
 
+            // if the site was not already generated, invoke it
             if ( documents == null || ( documents != null && documents.size() == 0 ) )
             {
                 getLog().info( "Try to invoke the maven-site-plugin to be sure that all files are generated..." );
@@ -383,9 +388,12 @@ public class LinkcheckReport
         }
         else
         {
-            getLog().warn(
-                           "WARRANTY: The number of documents analyzed by Linkcheck could differ "
-                               + "with the real number of documents!" );
+            if ( getLog().isWarnEnabled() )
+            {
+                getLog().warn(
+                               "WARRANTY: The number of documents analyzed by Linkcheck could differ with the real "
+                                   + "number of documents!" );
+            }
 
             basedir = outputDirectory;
             basedir.mkdirs();
@@ -401,7 +409,7 @@ public class LinkcheckReport
         }
         finally
         {
-            if ( forceSite )
+            if ( forceSite && !getLog().isDebugEnabled() )
             {
                 try
                 {
@@ -409,7 +417,15 @@ public class LinkcheckReport
                 }
                 catch ( IOException e )
                 {
-                    getLog().debug( "IOException: " + e.getMessage(), e );
+                    String msg = "IOException: " + e.getMessage();
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( msg, e );
+                    }
+                    else
+                    {
+                        getLog().error( msg );
+                    }
                 }
             }
         }
@@ -512,26 +528,18 @@ public class LinkcheckReport
      */
     private String[] getExcludedPages()
     {
-        List linksToExclude;
-
-        if ( excludedPages != null )
-        {
-            linksToExclude = Arrays.asList( excludedPages );
-        }
-        else
-        {
-            linksToExclude = new ArrayList();
-        }
+        List pagesToExclude =
+            ( excludedPages != null ? new ArrayList( Arrays.asList( excludedPages ) ) : new ArrayList() );
 
         // Exclude this report
-        linksToExclude.add( getOutputName() + ".html" );
+        pagesToExclude.add( getOutputName() + ".html" );
 
-        return (String[]) linksToExclude.toArray( new String[0] );
+        return (String[]) pagesToExclude.toArray( new String[0] );
     }
 
     /**
-     * Invoke Maven for the given project file with a list of goals and properties, the output will be in the
-     * invokerlog file.
+     * Invoke Maven for the <code>site</code> phase for a temporary Maven project using <code>tmpReportingOutputDirectory</code>
+     * as ${project.reporting.outputDirectory}. This is a workaround to be sure that all site files have been correctly generated.
      * <br/>
      * <b>Note</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
      * <code>M2_HOME</code> system env variables.
@@ -545,30 +553,82 @@ public class LinkcheckReport
         String mavenHome = getMavenHome();
         if ( StringUtils.isEmpty( mavenHome ) )
         {
-            String msg =
-                "Could NOT invoke Maven because no Maven Home is defined. You need to have set the M2_HOME "
-                    + "system env variable or a maven.home Java system properties.";
-            getLog().error( msg );
+            if ( getLog().isErrorEnabled() )
+            {
+                String msg =
+                    "Could NOT invoke Maven because no Maven Home is defined. You need to have set the M2_HOME "
+                        + "system env variable or a 'maven.home' Java system properties.";
+                getLog().error( msg );
+            }
             return;
         }
 
-        // invoker parameters
+        // invoker site parameters
         List goals = Collections.singletonList( "site" );
         Properties properties = new Properties();
         properties.put( "linkcheck.skip", "true" ); // to stop recursion
-        File invokerLog = new File( project.getBuild().getDirectory(), "invoker-site-plugin.txt" );
 
-        // copy and update the project file
-        File tmpProjectFile = createTempPomFile( tmpReportingOutputDirectory );
+        File invokerLog =
+            FileUtils
+                     .createTempFile( "invoker-site-plugin", ".txt", new File( project.getBuild().getDirectory() ) );
+
+        // clone project and set a new reporting output dir
+        MavenProject clone;
+        try
+        {
+            clone = (MavenProject) project.clone();
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            IOException ioe = new IOException( "CloneNotSupportedException: " + e.getMessage() );
+            ioe.setStackTrace( e.getStackTrace() );
+            throw ioe;
+        }
+        clone.getOriginalModel().getReporting().setOutputDirectory( tmpReportingOutputDirectory.getAbsolutePath() );
+
+        // create the original model as tmp pom file for the invoker
+        File tmpProjectFile = FileUtils.createTempFile( "pom", ".xml", project.getBasedir() );
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newXmlWriter( tmpProjectFile );
+            clone.writeOriginalModel( writer );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
 
         // invoke it
+        try
+        {
+            invoke( tmpProjectFile, invokerLog, mavenHome, goals, properties );
+        }
+        finally
+        {
+            if ( !getLog().isDebugEnabled() )
+            {
+                tmpProjectFile.delete();
+            }
+        }
+    }
+
+    /**
+     * @param projectFile not null, should be in the ${project.basedir}
+     * @param invokerLog not null
+     * @param mavenHome not null
+     * @param goals the list of goals
+     * @param properties the properties for the invoker
+     */
+    private void invoke( File projectFile, File invokerLog, String mavenHome, List goals, Properties properties )
+    {
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome( new File( mavenHome ) );
         invoker.setLocalRepositoryDirectory( new File( localRepository.getBasedir() ) );
 
         InvocationRequest request = new DefaultInvocationRequest();
-        request.setBaseDirectory( tmpProjectFile.getParentFile() );
-        request.setPomFile( tmpProjectFile );
+        request.setBaseDirectory( projectFile.getParentFile() );
+        request.setPomFile( projectFile );
         request.setDebug( getLog().isDebugEnabled() );
         request.setGoals( goals );
         request.setProperties( properties );
@@ -581,7 +641,10 @@ public class LinkcheckReport
         InvocationResult result;
         try
         {
-            getLog().debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Invoking Maven for the goals: " + goals + " with properties=" + properties );
+            }
             result = invoke( invoker, request, invokerLog, goals, properties, null );
         }
         catch ( MavenInvocationException e )
@@ -601,6 +664,18 @@ public class LinkcheckReport
             reader = ReaderFactory.newReader( invokerLog, "UTF-8" );
             invokerLogContent = IOUtil.toString( reader );
         }
+        catch ( IOException e )
+        {
+            String msg = "IOException: " + e.getMessage();
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( msg, e );
+            }
+            else
+            {
+                getLog().error( msg );
+            }
+        }
         finally
         {
             IOUtil.close( reader );
@@ -611,7 +686,11 @@ public class LinkcheckReport
         {
             getLog().info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
 
-            getLog().debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS" );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Reinvoking Maven for the goals: " + goals + " with an empty MAVEN_OPTS" );
+            }
+
             try
             {
                 result = invoke( invoker, request, invokerLog, goals, properties, "" );
@@ -629,12 +708,25 @@ public class LinkcheckReport
 
         if ( result.getExitCode() != 0 )
         {
-            getLog().error(
-                            "Error when invoking Maven, consult the invoker log file: "
-                                + invokerLog.getAbsolutePath() );
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error(
+                                "Error when invoking Maven, consult the invoker log file: "
+                                    + invokerLog.getAbsolutePath() );
+            }
         }
     }
 
+    /**
+     * @param invoker not null
+     * @param request not null
+     * @param invokerLog not null
+     * @param goals the list of goals
+     * @param properties the properties for the invoker
+     * @param mavenOpts could be null
+     * @return the invocation result
+     * @throws MavenInvocationException if any
+     */
     private InvocationResult invoke( Invoker invoker, InvocationRequest request, File invokerLog, List goals,
                                      Properties properties, String mavenOpts )
         throws MavenInvocationException
@@ -643,7 +735,10 @@ public class LinkcheckReport
         OutputStream os = null;
         if ( invokerLog != null )
         {
-            getLog().debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Using " + invokerLog.getAbsolutePath() + " to log the invoker" );
+            }
 
             try
             {
@@ -656,16 +751,22 @@ public class LinkcheckReport
             }
             catch ( FileNotFoundException e )
             {
-                getLog().error(
-                                "FileNotFoundException: " + e.getMessage()
-                                    + ". Using System.out to log the invoker." );
+                if ( getLog().isErrorEnabled() )
+                {
+                    getLog().error(
+                                    "FileNotFoundException: " + e.getMessage()
+                                        + ". Using System.out to log the invoker." );
+                }
                 ps = System.out;
             }
             catch ( UnsupportedEncodingException e )
             {
-                getLog().error(
-                                "UnsupportedEncodingException: " + e.getMessage()
-                                    + ". Using System.out to log the invoker." );
+                if ( getLog().isErrorEnabled() )
+                {
+                    getLog().error(
+                                    "UnsupportedEncodingException: " + e.getMessage()
+                                        + ". Using System.out to log the invoker." );
+                }
                 ps = System.out;
             }
         }
@@ -704,56 +805,9 @@ public class LinkcheckReport
     }
 
     /**
-     * Copy the current project POM file to a temp POM file using tmpReportingOutputDirectory dir for
-     * ${project.reporting.outputDirectory}.
-     *
-     * @param tmpReportingOutputDirectory not null
-     * @return a copy of project POM file
-     * @throws IOException if any
-     */
-    private File createTempPomFile( File tmpReportingOutputDirectory )
-        throws IOException
-    {
-        File projectFile = project.getFile();
-        File tmpProjectFile = new File( projectFile.getParentFile(), "tmppom.xml" );
-        tmpProjectFile.deleteOnExit();
-
-        Reader reader = null;
-        Model model = null;
-        try
-        {
-            reader = ReaderFactory.newXmlReader( projectFile );
-            MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
-            model = xpp3Reader.read( reader );
-            model.getReporting().setOutputDirectory( tmpReportingOutputDirectory.getAbsolutePath() );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new IOException( "XmlPullParserException: " + e.getMessage() );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
-
-        Writer writer = null;
-        try
-        {
-            writer = WriterFactory.newXmlWriter( tmpProjectFile );
-            MavenXpp3Writer xpp3Writer = new MavenXpp3Writer();
-            xpp3Writer.write( writer, model );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
-
-        return tmpProjectFile;
-    }
-
-    /**
      * @return the Maven home defined in the <code>maven.home</code> system property or defined
      * in <code>M2_HOME</code> system env variables or null if never setted.
+     * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private String getMavenHome()
     {
@@ -766,23 +820,35 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                getLog().debug( "IOException: " + e.getMessage() );
+                String msg = "IOException: " + e.getMessage();
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( msg, e );
+                }
+                else
+                {
+                    getLog().error( msg );
+                }
             }
         }
 
         File m2Home = new File( mavenHome );
         if ( !m2Home.exists() )
         {
-            getLog().error(
-                            "Cannot find Maven application directory. Either specify \'maven.home\' "
-                                + "system property, or M2_HOME environment variable." );
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error(
+                                "Cannot find Maven application directory. Either specify \'maven.home\' "
+                                    + "system property, or M2_HOME environment variable." );
+            }
         }
 
         return mavenHome;
     }
 
     /**
-     * @return the <code>MAVEN_OPTS</code> env variable value
+     * @return the <code>MAVEN_OPTS</code> env variable value or null if not setted.
+     * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private String getMavenOpts()
     {
@@ -793,7 +859,15 @@ public class LinkcheckReport
         }
         catch ( IOException e )
         {
-            getLog().debug( "IOException: " + e.getMessage() );
+            String msg = "IOException: " + e.getMessage();
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( msg, e );
+            }
+            else
+            {
+                getLog().error( msg );
+            }
         }
 
         return mavenOpts;
@@ -802,7 +876,8 @@ public class LinkcheckReport
     /**
      * @return the <code>JAVA_HOME</code> from System.getProperty( "java.home" )
      * By default, <code>System.getProperty( "java.home" ) = JRE_HOME</code> and <code>JRE_HOME</code>
-     * should be in the <code>JDK_HOME</code>
+     * should be in the <code>JDK_HOME</code> or null if not setted.
+     * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private File getJavaHome()
     {
@@ -824,22 +899,34 @@ public class LinkcheckReport
             }
             catch ( IOException e )
             {
-                getLog().debug( "IOException: " + e.getMessage() );
+                String msg = "IOException: " + e.getMessage();
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( msg, e );
+                }
+                else
+                {
+                    getLog().error( msg );
+                }
             }
         }
 
         if ( javaHome == null || !javaHome.exists() )
         {
-            getLog().error(
-                            "Cannot find Java application directory. Either specify \'java.home\' "
-                                + "system property, or JAVA_HOME environment variable." );
+            if ( getLog().isErrorEnabled() )
+            {
+                getLog().error(
+                                "Cannot find Java application directory. Either specify \'java.home\' "
+                                    + "system property, or JAVA_HOME environment variable." );
+            }
         }
 
         return javaHome;
     }
 
     /**
-     * @return the <code>JAVA_OPTS</code> env variable value
+     * @return the <code>JAVA_OPTS</code> env variable value or null if not setted.
+     * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private String getJavaOpts()
     {
@@ -850,7 +937,15 @@ public class LinkcheckReport
         }
         catch ( IOException e )
         {
-            getLog().debug( "IOException: " + e.getMessage() );
+            String msg = "IOException: " + e.getMessage();
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( msg, e );
+            }
+            else
+            {
+                getLog().error( msg );
+            }
         }
 
         return javaOpts;
