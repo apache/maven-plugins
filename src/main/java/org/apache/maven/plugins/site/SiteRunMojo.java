@@ -36,6 +36,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.site.webapp.DoxiaBean;
 import org.apache.maven.plugins.site.webapp.DoxiaFilter;
 import org.apache.maven.reporting.MavenReport;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.util.IOUtil;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -151,13 +152,12 @@ public class SiteRunMojo
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
-        for ( Iterator i = getReports().iterator(); i.hasNext(); )
+        for ( MavenReport report : getReports().keySet() )
         {
-            MavenReport report = (MavenReport) i.next();
             report.setReportOutputDirectory( tempWebappDirectory );
         }
 
-        List filteredReports = filterReports( getReports() );
+        Map<MavenReport, ClassRealm> filteredReports = filterReports( getReports() );
 
         List localesList = siteTool.getAvailableLocales( locales );
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );

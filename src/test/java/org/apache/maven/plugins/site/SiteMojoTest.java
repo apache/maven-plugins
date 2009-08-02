@@ -46,8 +46,9 @@ public class SiteMojoTest
         assertTrue( pluginXmlFile.exists() );
 
         SiteMojo siteMojo = (SiteMojo) lookupMojo( "site", pluginXmlFile );
+        
         assertNotNull( siteMojo );
-
+        
         File descriptorFile = getTestFile( "src/test/resources/unit/interpolated-site/src/site/site.xml" );
         assertNotNull( descriptorFile );
         assertTrue( descriptorFile.exists() );

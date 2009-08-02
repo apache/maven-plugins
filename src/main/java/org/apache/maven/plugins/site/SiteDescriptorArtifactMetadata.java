@@ -121,4 +121,10 @@ public class SiteDescriptorArtifactMetadata
             throw new IllegalStateException( "Cannot add two different pieces of metadata for: " + getKey() );
         }
     }
+
+    public void merge( org.apache.maven.repository.legacy.metadata.ArtifactMetadata metadata )
+    {
+        // FIXME what todo here ?
+        
+    }
 }

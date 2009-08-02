@@ -19,8 +19,8 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.maven.artifact.manager.WagonConfigurationException;
+import java.io.File;
+
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
@@ -28,6 +28,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.legacy.WagonConfigurationException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.CommandExecutionException;
@@ -37,7 +38,6 @@ import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
@@ -54,8 +54,6 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.File;
 
 /**
  * Deploys the generated site using <code>scp</code> or <code>file</code>
@@ -159,6 +157,7 @@ public class SiteDeployMojo
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
+        
 
         if ( !wagon.supportsDirectoryCopy() )
         {
