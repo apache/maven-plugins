@@ -539,10 +539,13 @@ public class LinkcheckReport
 
     /**
      * Invoke Maven for the <code>site</code> phase for a temporary Maven project using <code>tmpReportingOutputDirectory</code>
-     * as ${project.reporting.outputDirectory}. This is a workaround to be sure that all site files have been correctly generated.
+     * as <code>${project.reporting.outputDirectory}</code>. This is a workaround to be sure that all site files have been
+     * correctly generated.
      * <br/>
-     * <b>Note</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
+     * <b>Note 1</b>: the Maven Home should be defined in the <code>maven.home</code> Java system property or defined in
      * <code>M2_HOME</code> system env variables.
+     * <b>Note 2</be>: we can't use <code>siteOutputDirectory</code> param from site plugin because some plugins
+     * <code>${project.reporting.outputDirectory}</code> in there conf.
      *
      * @param tmpReportingOutputDirectory not null
      * @throws IOException if any
