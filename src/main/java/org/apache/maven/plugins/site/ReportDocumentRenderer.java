@@ -31,6 +31,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,14 +56,18 @@ public class ReportDocumentRenderer
     private RenderingContext renderingContext;
 
     private Log log;
+    
+    private ClassRealm classRealm;
 
-    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log )
+    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log, ClassRealm classRealm )
     {
         this.report = report;
 
         this.renderingContext = renderingContext;
 
         this.log = log;
+        
+        this.classRealm = classRealm;
     }
 
     private static class MySink extends SiteRendererSink
@@ -125,7 +130,8 @@ public class ReportDocumentRenderer
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
-
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( this.classRealm );
         try
         {
             if ( report instanceof MavenMultiPageReport )
@@ -147,6 +153,10 @@ public class ReportDocumentRenderer
         catch ( MavenReportException e )
         {
             throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
+        }
+        finally 
+        {
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
 
         if ( !report.isExternalReport() )

@@ -358,13 +358,13 @@ public abstract class AbstractSiteRenderingMojo
         throws PluginManagerException
     {
         ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
-        List<String> excluded = new ArrayList<String>();
+        List<String> imported = new ArrayList<String>();
         // exclude minimum !
-        excluded.add( "org.apache.maven.reporting.MavenReport" );
-        excluded.add( "org.codehaus.doxia.sink.Sink" );
-        excluded.add( "org.apache.maven.doxia.sink.Sink" );
-        excluded.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-        return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, excluded );
+        imported.add( "org.apache.maven.reporting.MavenReport" );
+        imported.add( "org.codehaus.doxia.sink.Sink" );
+        imported.add( "org.apache.maven.doxia.sink.Sink" );
+        imported.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, imported );
     }
 
     protected Map<MavenReport, ClassRealm> filterReports( Map<MavenReport, ClassRealm> reports )
@@ -528,7 +528,7 @@ public abstract class AbstractSiteRenderingMojo
             else
             {
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
-                ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog() );
+                ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog(), reports.get( report ) );
                 documents.put( outputName, renderer );
             }
         }
