@@ -422,10 +422,10 @@ under the License.
         </property>
       </activation>
       <properties>
-        <m2buildDirectory>build</m2buildDirectory>
+        <m2BuildDirectory>target</m2BuildDirectory>
       </properties>
       <build>
-        <directory>${m2buildDirectory}</directory>
+        <directory>${m2BuildDirectory}</directory>
         <plugins>
           <plugin>
             <groupId>org.maven.ide.eclipse</groupId>

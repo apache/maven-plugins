@@ -19,11 +19,20 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExclusionSetFilter;
 import org.apache.maven.classrealm.ClassRealmManager;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -39,34 +48,21 @@ import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.ReportSet;
-import org.apache.maven.plugin.CycleDetectedInPluginGraphException;
-import org.apache.maven.plugin.DefaultPluginManager;
-import org.apache.maven.plugin.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.MojoNotFoundException;
-import org.apache.maven.plugin.PluginDescriptorParsingException;
+import org.apache.maven.plugin.PluginConfigurationException;
 import org.apache.maven.plugin.PluginManager;
-import org.apache.maven.plugin.PluginNotFoundException;
-import org.apache.maven.plugin.PluginResolutionException;
+import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.MutablePlexusContainer;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.component.repository.ComponentDependency;
-import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
@@ -74,19 +70,6 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Base class for site rendering mojos.
@@ -235,7 +218,7 @@ public abstract class AbstractSiteRenderingMojo
     
     ClassRealmManager classRealmManager;
     
-    DefaultLifecycleExecutor lifecycleExecutor;
+    LifecycleExecutor lifecycleExecutor;
     
     public void contextualize( Context context )
         throws ContextException
@@ -246,6 +229,7 @@ public abstract class AbstractSiteRenderingMojo
         {
             classRealmManager = plexusContainer.lookup( ClassRealmManager.class );
             lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
+            pluginManager = (PluginManager) plexusContainer.lookup( PluginManager.class );
         }
         catch ( ComponentLookupException e )
         {
@@ -297,19 +281,10 @@ public abstract class AbstractSiteRenderingMojo
     private Map<MavenReport, ClassRealm> buildMavenReports()
         throws MojoExecutionException
     {
-        ClassLoader original = Thread.currentThread().getContextClassLoader();
         try
         {
 
             Map<MavenReport, ClassRealm> reports = new HashMap<MavenReport, ClassRealm>();
-
-            Set<String> excludes = new HashSet<String>();
-            excludes.add( "maven-reporting-api" );
-            // maven-reporting-impl
-            ArtifactFilter artifactFilter = new ExclusionSetFilter( excludes );
-
-            List<ArtifactFilter> artifactFilters = new ArrayList<ArtifactFilter>( 1 );
-            artifactFilters.add( artifactFilter );
 
             for ( ReportPlugin reportPlugin : this.project.getReporting().getPlugins() )
             {
@@ -323,65 +298,75 @@ public abstract class AbstractSiteRenderingMojo
                 {
                     goals.addAll( reportSet.getReports() );
                 }
-                plugin.setGoals( goals );
+                // no report set we will execute all from the report plugin
+                boolean emptyReports = goals.isEmpty();
 
-                DefaultPluginManager pm = (DefaultPluginManager) plexusContainer.lookup( PluginManager.class );
-               
-                PluginDescriptor pluginDescriptor = pm.loadPlugin( plugin, localRepository, repositories );
+                PluginDescriptor pluginDescriptor = pluginManager.loadPlugin( plugin, localRepository, repositories );
                 
+                if (emptyReports)
+                {
+                    List<MojoDescriptor> mojoDescriptors = pluginDescriptor.getMojos();
+                    for (MojoDescriptor mojoDescriptor : mojoDescriptors)
+                    {
+                        goals.add( mojoDescriptor.getGoal() );
+                    }
+                }
                 
-                
-                MojoDescriptor mojoDescriptor =
-                    pm.getMojoDescriptor( plugin, "project-team", localRepository,
-                                          mavenSession.getRequest().getRemoteRepositories() );
-                
-                mojoDescriptor.getConfiguration();
-                // currently only one hardcoded report for testing
-                MojoExecution mojoExecution = new MojoExecution( plugin, "mailing-list", "fake" );
-                mojoExecution.setConfiguration( convert(mojoDescriptor) );
-                mojoExecution.setMojoDescriptor( mojoDescriptor );
+                for ( String goal : goals )
+                {
+                    MojoDescriptor mojoDescriptor =
+                        pluginManager.getMojoDescriptor( plugin, goal, localRepository,
+                                                         mavenSession.getRequest().getRemoteRepositories() );
 
-                // lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );
+                    MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report" + goal );
+                    mojoExecution.setConfiguration( convert( mojoDescriptor ) );
+                    mojoExecution.setMojoDescriptor( mojoDescriptor );
 
-                ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
-                List<String> excluded = new ArrayList<String>();
-                excluded.add( "org.apache.maven.reporting" );
-                excluded.add( "org.codehaus.doxia.sink" );
-                excluded.add( "org.apache.maven.doxia") ;
-                ClassRealm pluginRealm =
-                    pm.getPluginRealm( mavenSession, mojoDescriptor.getPluginDescriptor(), sitePluginRealm, excluded );//, artifactFilters );
-                
-                /*
-                pluginRealm.importFrom( sitePluginRealm.getId(), "org.apache.maven.reporting" );
-                pluginRealm.importFrom( sitePluginRealm.getId(), "org.codehaus.doxia.sink" );
-                pluginRealm.importFrom( sitePluginRealm.getId(), "org.apache.maven.doxia") ;
-                pluginRealm.setParentRealm( sitePluginRealm );
-                */
-                pluginDescriptor.setClassRealm( pluginRealm );
-                Mojo mojo = (Mojo )pm.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
-                
-                
-                lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );                                
-                
-                MavenReport mavenReport = (MavenReport) mojo; 
-                
-                reports.put( mavenReport, pluginRealm );
+                    ClassRealm pluginRealm = getMojoReportRealm( mojoDescriptor.getPluginDescriptor() );
+                    pluginDescriptor.setClassRealm( pluginRealm );
 
+                    MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginRealm );
+                    if (mavenReport != null)
+                    {
+                        reports.put( mavenReport, pluginRealm );
+                    }
+                }
             }
             return reports;
         }
         catch ( Exception e )
         {
-            // FIXME more detailled exception
-
             throw new MojoExecutionException( "failed to get Reports ", e );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( original );
         }
     }
     
+    private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
+        throws PluginConfigurationException, PluginManagerException
+    {
+        Mojo mojo =
+            (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
+        lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );
+        if ( mojo instanceof MavenReport )
+        {
+            return (MavenReport) mojo;
+        }
+        getLog().error( "mojo " + mojo.getClass() + " cannot be a MavenReport it will skipped" );
+        return null;
+    }
+
+    private ClassRealm getMojoReportRealm( PluginDescriptor pluginDescriptor )
+        throws PluginManagerException
+    {
+        ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
+        List<String> excluded = new ArrayList<String>();
+        // exclude minimum !
+        excluded.add( "org.apache.maven.reporting.MavenReport" );
+        excluded.add( "org.codehaus.doxia.sink.Sink" );
+        excluded.add( "org.apache.maven.doxia.sink.Sink" );
+        excluded.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, excluded );
+    }
+
     protected Map<MavenReport, ClassRealm> filterReports( Map<MavenReport, ClassRealm> reports )
     {
     	Map<MavenReport, ClassRealm> filteredReports = new HashMap<MavenReport, ClassRealm>();
