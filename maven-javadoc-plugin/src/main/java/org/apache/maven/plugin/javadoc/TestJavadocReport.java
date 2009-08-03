@@ -195,7 +195,19 @@ public class TestJavadocReport
      */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
-        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( destDir ) ) )
+        updateReportOutputDirectory( reportOutputDirectory, destDir );
+    }
+
+    public void setDestDir( String destDir )
+    {
+        this.destDir = destDir;
+        updateReportOutputDirectory( reportOutputDirectory, destDir );
+    }
+
+    private void updateReportOutputDirectory( File reportOutputDirectory, String destDir )
+    {
+        if ( reportOutputDirectory != null && destDir != null
+             && !reportOutputDirectory.getAbsolutePath().endsWith( destDir ) )
         {
             this.reportOutputDirectory = new File( reportOutputDirectory, destDir );
         }
