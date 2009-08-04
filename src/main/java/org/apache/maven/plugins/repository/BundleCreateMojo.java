@@ -24,9 +24,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Goal which creates an upload bundle for a project built with Maven.
@@ -66,6 +69,11 @@ public class BundleCreateMojo
      */
     private ArtifactHandlerManager artifactHandlerManager;
 
+    /**
+     * @component
+     */
+    protected InputHandler inputHandler;
+    
     public void execute()
         throws MojoExecutionException
     {
@@ -113,17 +121,13 @@ public class BundleCreateMojo
 
         File pom = new File( basedir, POM );
 
-        String finalName = project.getBuild().getFinalName();
+        final String finalName = project.getBuild().getFinalName();
 
         String outputDirectory = project.getBuild().getDirectory();
+        
+        List files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog() );
 
         String extension = artifactHandlerManager.getArtifactHandler( project.getPackaging() ).getExtension();
-
-        File artifact = new File( outputDirectory, finalName + "." + extension );
-
-        File sourceArtifact = new File( outputDirectory, finalName + "-sources." + extension );
-
-        File javadocArtifact = new File( outputDirectory, finalName + "-javadoc." + extension );
 
         File bundle = new File( outputDirectory, finalName + "-bundle.jar" );
 
@@ -131,23 +135,31 @@ public class BundleCreateMojo
         {
             jarArchiver.addFile( pom, POM );
 
-            jarArchiver.addFile( artifact, artifact.getName() );
-
-            if ( sourceArtifact.exists() )
+            boolean sourcesFound = false;
+            boolean javadocsFound = false;
+            
+            for ( Iterator it = files.iterator(); it.hasNext(); )
             {
-                jarArchiver.addFile( sourceArtifact, sourceArtifact.getName() );
+                File f = (File) it.next();
+                if ( f.getName().endsWith( finalName + "-sources." + extension ) )
+                {
+                    sourcesFound = true;
+                }
+                else if ( f.getName().equals( finalName + "-javadoc." + extension ) )
+                {
+                    javadocsFound = true;
+                }
+                
+                jarArchiver.addFile( f, f.getName() );
             }
-            else
+            
+            if ( !sourcesFound )
             {
                 getLog().warn( "Sources not included in upload bundle. In order to add sources please run"
                     + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
-            if ( javadocArtifact.exists() )
-            {
-                jarArchiver.addFile( javadocArtifact, javadocArtifact.getName() );
-            }
-            else
+            if ( !javadocsFound )
             {
                 getLog().warn( "Javadoc not included in upload bundle. In order to add javadocs please run"
                     + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );

@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -201,7 +202,6 @@ public class BundlePackMojo
 
         try
         {
-
             if ( rewrite )
             {
                 new MavenXpp3Writer().write( WriterFactory.newXmlWriter( pom ), model );
@@ -217,30 +217,37 @@ public class BundlePackMojo
             {
                 finalName = model.getArtifactId() + "-" + model.getVersion();
             }
+            
+            List files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog() );
 
-            File mainArtifact = new File( dir, finalName + "." + model.getPackaging() );
-            File sourceArtifact = new File( dir, finalName + "-sources.jar" );
-            File javadocArtifact = new File( dir, finalName + "-javadoc.jar" );
             File bundle = new File( basedir, finalName + "-bundle.jar" );
 
             jarArchiver.addFile( pom, POM );
 
-            jarArchiver.addFile( mainArtifact, mainArtifact.getName() );
-
-            if ( sourceArtifact.exists() )
+            boolean sourcesFound = false;
+            boolean javadocsFound = false;
+            
+            for ( Iterator it = files.iterator(); it.hasNext(); )
             {
-                jarArchiver.addFile( sourceArtifact, sourceArtifact.getName() );
+                File f = (File) it.next();
+                if ( f.getName().endsWith( finalName + "-sources.jar" ) )
+                {
+                    sourcesFound = true;
+                }
+                else if ( f.getName().equals( finalName + "-javadoc.jar" ) )
+                {
+                    javadocsFound = true;
+                }
+                
+                jarArchiver.addFile( f, f.getName() );
             }
-            else
+            
+            if ( !sourcesFound )
             {
                 getLog().warn( "Sources not included in upload bundle." );
             }
 
-            if ( javadocArtifact.exists() )
-            {
-                jarArchiver.addFile( javadocArtifact, javadocArtifact.getName() );
-            }
-            else
+            if ( !javadocsFound )
             {
                 getLog().warn( "Javadoc not included in upload bundle." );
             }
