@@ -220,7 +220,7 @@ public class DependenciesReport
         }
 
         RepositoryUtils repoUtils =
-            new RepositoryUtils( getLog(), container.getLoggerManager(), wagonManager, settings,
+            new RepositoryUtils( getLog(), wagonManager, settings,
                                  mavenProjectBuilder, factory, resolver, project.getRemoteArtifactRepositories(),
                                  project.getPluginArtifactRepositories(), localRepository,
                                  repositoryMetadataManager );
