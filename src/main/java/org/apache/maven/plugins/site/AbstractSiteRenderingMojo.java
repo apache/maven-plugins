@@ -407,6 +407,10 @@ public abstract class AbstractSiteRenderingMojo
         imported.add( "org.codehaus.doxia.sink.Sink" );
         imported.add( "org.apache.maven.doxia.sink.Sink" );
         imported.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        imported.add( "org.codehaus.plexus.util.xml.Xpp3Dom" );
+        imported.add( "org.codehaus.plexus.util.xml.pull.XmlPullParser" );
+        imported.add( "org.codehaus.plexus.util.xml.pull.XmlPullParserException" );
+        imported.add( "org.codehaus.plexus.util.xml.pull.XmlSerializer" );        
         
         return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, imported );
     }
