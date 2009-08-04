@@ -19,6 +19,10 @@ package org.apache.maven.report.projectinfo.dependencies;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -28,7 +32,6 @@ import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataManager;
-import org.apache.maven.artifact.repository.metadata.RepositoryMetadataResolutionException;
 import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -49,13 +52,7 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Utilities methods to play with repository
@@ -66,8 +63,6 @@ import java.util.List;
 public class RepositoryUtils
 {
     private final Log log;
-
-    private final LoggerManager loggerManager;
 
     private final WagonManager wagonManager;
 
@@ -85,11 +80,8 @@ public class RepositoryUtils
 
     private final ArtifactRepository localRepository;
 
-    private final RepositoryMetadataManager repositoryMetadataManager;
-
     /**
      * @param log
-     * @param loggerManager
      * @param wagonManager
      * @param settings
      * @param mavenProjectBuilder
@@ -100,13 +92,12 @@ public class RepositoryUtils
      * @param localRepository
      * @param repositoryMetadataManager
      */
-    public RepositoryUtils( Log log, LoggerManager loggerManager, WagonManager wagonManager, Settings settings,
+    public RepositoryUtils( Log log, WagonManager wagonManager, Settings settings,
                             MavenProjectBuilder mavenProjectBuilder, ArtifactFactory factory,
                             ArtifactResolver resolver, List remoteRepositories, List pluginRepositories,
                             ArtifactRepository localRepository, RepositoryMetadataManager repositoryMetadataManager )
     {
         this.log = log;
-        this.loggerManager = loggerManager;
         this.wagonManager = wagonManager;
         this.settings = settings;
         this.mavenProjectBuilder = mavenProjectBuilder;
@@ -115,7 +106,6 @@ public class RepositoryUtils
         this.remoteRepositories = remoteRepositories;
         this.pluginRepositories = pluginRepositories;
         this.localRepository = localRepository;
-        this.repositoryMetadataManager = repositoryMetadataManager;
     }
 
     /**
@@ -360,31 +350,6 @@ public class RepositoryUtils
                     if ( m instanceof SnapshotArtifactRepositoryMetadata )
                     {
                         SnapshotArtifactRepositoryMetadata snapshotMetadata = (SnapshotArtifactRepositoryMetadata) m;
-
-                        // Removed not found log
-                        int oldThreshold = loggerManager.getThreshold();
-                        loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), Logger.LEVEL_DISABLED );
-                        try
-                        {
-                            repositoryMetadataManager.resolveAlways( snapshotMetadata, localRepository, repo );
-                        }
-                        catch ( RepositoryMetadataResolutionException e )
-                        {
-                            loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
-                            if ( log.isDebugEnabled() )
-                            {
-                                log.error( "Unable to connect to: " + repo.getUrl(), e );
-                            }
-                            else
-                            {
-                                log.error( "Unable to connect to: " + repo.getUrl() );
-                            }
-                            return repo.getUrl() + "/" + repo.pathOf( copyArtifact );
-                        }
-                        finally
-                        {
-                            loggerManager.setThreshold( RepositoryMetadataManager.class.getName(), oldThreshold );
-                        }
 
                         Metadata metadata = snapshotMetadata.getMetadata();
                         if ( metadata.getVersioning() == null || metadata.getVersioning().getSnapshot() == null
