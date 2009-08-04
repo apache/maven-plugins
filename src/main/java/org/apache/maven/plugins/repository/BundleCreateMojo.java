@@ -23,6 +23,7 @@ import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.StringUtils;
@@ -74,18 +75,14 @@ public class BundleCreateMojo
      */
     protected InputHandler inputHandler;
     
+    /**
+     * @parameter default-value="${settings}"
+     */
+    protected Settings settings;
+
     public void execute()
         throws MojoExecutionException
     {
-        // ----------------------------------------------------------------------
-        // Make sure we have a packaging != pom
-        // ----------------------------------------------------------------------
-
-        if ( project.getPackaging().equals( "pom" ) )
-        {
-            throw new MojoExecutionException( "Packaging cannot be 'pom' when creating an upload bundle." );
-        }
-
         // ----------------------------------------------------------------------
         // Check the mandatory elements of the POM
         //
@@ -125,7 +122,8 @@ public class BundleCreateMojo
 
         String outputDirectory = project.getBuild().getDirectory();
         
-        List files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog() );
+        boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
+        List files = BundleUtils.selectProjectFiles( new File( outputDirectory ), inputHandler, finalName, pom, getLog(), batchMode );
 
         String extension = artifactHandlerManager.getArtifactHandler( project.getPackaging() ).getExtension();
 
@@ -135,17 +133,18 @@ public class BundleCreateMojo
         {
             jarArchiver.addFile( pom, POM );
 
+            boolean artifactChecks = !"pom".equals( project.getPackaging() );
             boolean sourcesFound = false;
             boolean javadocsFound = false;
             
             for ( Iterator it = files.iterator(); it.hasNext(); )
             {
                 File f = (File) it.next();
-                if ( f.getName().endsWith( finalName + "-sources." + extension ) )
+                if ( artifactChecks && f.getName().endsWith( finalName + "-sources." + extension ) )
                 {
                     sourcesFound = true;
                 }
-                else if ( f.getName().equals( finalName + "-javadoc." + extension ) )
+                else if ( artifactChecks && f.getName().equals( finalName + "-javadoc." + extension ) )
                 {
                     javadocsFound = true;
                 }
@@ -153,13 +152,13 @@ public class BundleCreateMojo
                 jarArchiver.addFile( f, f.getName() );
             }
             
-            if ( !sourcesFound )
+            if ( artifactChecks && !sourcesFound )
             {
                 getLog().warn( "Sources not included in upload bundle. In order to add sources please run"
                     + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
-            if ( !javadocsFound )
+            if ( artifactChecks && !javadocsFound )
             {
                 getLog().warn( "Javadoc not included in upload bundle. In order to add javadocs please run"
                     + " \"mvn source:jar javadoc:jar repository:bundle-create\"" );

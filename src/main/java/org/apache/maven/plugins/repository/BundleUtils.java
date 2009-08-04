@@ -41,7 +41,7 @@ final class BundleUtils
     }
     
     public static List selectProjectFiles( final File dir, final InputHandler inputHandler, final String finalName,
-                                           final File pom, final Log log )
+                                           final File pom, final Log log, final boolean batchMode )
         throws MojoExecutionException
     {
         File[] projectFiles = dir.listFiles( new FilenameFilter()
@@ -54,12 +54,20 @@ final class BundleUtils
         
         List result = new ArrayList();
         
+        if ( projectFiles == null )
+        {
+            return result;
+        }
+        
         for ( int i = 0; i < projectFiles.length; i++ )
         {
             if ( projectFiles[i].getName().endsWith( ".pom" ) )
             {
-                log.info( "Detected POM file will be excluded:\n" + projectFiles[i]
-                    + "\n\nInstead, the bundle will include the POM from:\n" + pom );
+                if ( !projectFiles[i].equals( pom ) )
+                {
+                    log.info( "Detected POM file will be excluded:\n" + projectFiles[i]
+                                                                                     + "\n\nInstead, the bundle will include the POM from:\n" + pom );
+                }
             }
             else if ( projectFiles[i].getName().endsWith( "-bundle.jar" ) )
             {
@@ -69,6 +77,11 @@ final class BundleUtils
             {
                 result.add( projectFiles[i] );
             }
+        }
+        
+        if ( result.isEmpty() )
+        {
+            return result;
         }
         
         Collections.sort( result, new Comparator()
@@ -87,15 +100,20 @@ final class BundleUtils
             }
         } );
         
-        result = reviseFileList( result, inputHandler, log );
+        result = reviseFileList( result, inputHandler, log, batchMode );
         
         return result;
     }
 
-    public static List reviseFileList( List input, InputHandler inputHandler, Log log )
+    public static List reviseFileList( List input, InputHandler inputHandler, Log log, boolean batchMode )
         throws MojoExecutionException
     {
         List result = new ArrayList( input );
+        
+        if ( batchMode )
+        {
+            return result;
+        }
         
         while( true )
         {
