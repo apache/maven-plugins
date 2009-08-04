@@ -341,7 +341,7 @@ public abstract class AbstractSiteRenderingMojo
     }
     
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
-        throws PluginConfigurationException, PluginManagerException
+        throws PluginConfigurationException, PluginManagerException, MojoExecutionException, MojoFailureException
     {
         Mojo mojo =
             (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
@@ -350,20 +350,26 @@ public abstract class AbstractSiteRenderingMojo
         {
             return (MavenReport) mojo;
         }
-        getLog().error( "mojo " + mojo.getClass() + " cannot be a MavenReport it will skipped" );
+        getLog().info( "mojo " + mojo.getClass() + " cannot be a MavenReport so nothing will be executed " );
         return null;
     }
 
+    /**
+     * @param pluginDescriptor
+     * @return
+     * @throws PluginManagerException
+     */
     private ClassRealm getMojoReportRealm( PluginDescriptor pluginDescriptor )
         throws PluginManagerException
     {
         ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
         List<String> imported = new ArrayList<String>();
-        // exclude minimum !
+
         imported.add( "org.apache.maven.reporting.MavenReport" );
         imported.add( "org.codehaus.doxia.sink.Sink" );
         imported.add( "org.apache.maven.doxia.sink.Sink" );
         imported.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        
         return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, imported );
     }
 

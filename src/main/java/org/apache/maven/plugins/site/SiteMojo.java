@@ -65,7 +65,6 @@ public class SiteMojo
      */
     private boolean generateReports;
 
-    protected PluginManager pluginManager;
 
     /**
      * Generate the project site
@@ -78,7 +77,7 @@ public class SiteMojo
         throws MojoExecutionException, MojoFailureException
     {
 
-    	Map<MavenReport, ClassRealm> filteredReports;
+        Map<MavenReport, ClassRealm> filteredReports;
         if ( generateReports )
         {
             filteredReports = filterReports( getReports() );
