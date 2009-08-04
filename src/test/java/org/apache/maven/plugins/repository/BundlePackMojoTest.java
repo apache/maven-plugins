@@ -41,11 +41,32 @@ import java.util.Stack;
 public class BundlePackMojoTest
     extends AbstractMojoTestCase
 {
+    public void testPack_PomPackaging()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/bundle-pack-parent/pom.xml" );
+
+        BundlePackMojo mojo = (BundlePackMojo) lookupMojo( "bundle-pack", testPom );
+        URL repoURL = new File( getBasedir(), "src/test/resources/repo" ).toURL();
+        mojo.localRepository =
+            new DefaultArtifactRepository( "test", repoURL.toString(), new DefaultRepositoryLayout() );
+
+        File generatedFilesDir = new File( getBasedir(), "target/bundle-pack-parent-tests" );
+        mojo.basedir = generatedFilesDir.getAbsolutePath();
+        mojo.execute();
+
+        File bundleSource = new File( generatedFilesDir, "testparent-1.0-bundle.jar" );
+        Set entryNames = new HashSet();
+        entryNames.add( "pom.xml" );
+        entryNames.add( "META-INF/MANIFEST.MF" );
+        entryNames.add( "META-INF/" );
+
+        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+    }
 
     public void testPack()
         throws Exception
     {
-
         File testPom = new File( getBasedir(), "src/test/resources/unit/bundle-pack/pom.xml" );
 
         BundlePackMojo mojo = (BundlePackMojo) lookupMojo( "bundle-pack", testPom );

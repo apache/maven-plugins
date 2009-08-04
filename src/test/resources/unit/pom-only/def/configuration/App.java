@@ -1,4 +1,4 @@
-package invalid.packaging;
+package def.configuration;
 
 public class App
 {
