@@ -1,0 +1,10 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.codehaus.plexus.components.interactivity.InputHandler</role>
+      <role-hint>default</role-hint>
+      <implementation>org.apache.maven.plugins.repository.testutil.TestInputHandler</implementation>
+      <instantiation-strategy>singleton</instantiation-strategy>
+    </component>
+  </components>
+</component-set>
