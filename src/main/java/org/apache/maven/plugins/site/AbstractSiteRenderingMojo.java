@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.Maven;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -334,26 +335,63 @@ public abstract class AbstractSiteRenderingMojo
             }
             return reports;
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
             throw new MojoExecutionException( "failed to get Reports ", e );
         }
     }
     
     private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
-        throws PluginConfigurationException, PluginManagerException, MojoExecutionException, MojoFailureException
+        throws Throwable
     {
-        Mojo mojo =
-            (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
-        lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );
-        if ( mojo instanceof MavenReport )
+        if ( !isMavenReport( mojoExecution, pluginRealm ) )
         {
-            return (MavenReport) mojo;
+            return null;
         }
-        getLog().info( "mojo " + mojo.getClass() + " cannot be a MavenReport so nothing will be executed " );
-        return null;
+        try
+        {
+            lifecycleExecutor.extractMojoConfiguration( mojoExecution );
+
+            Mojo mojo =
+                (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
+
+            lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );
+
+            if ( mojo instanceof MavenReport )
+            {
+                return (MavenReport) mojo;
+            }
+            getLog().info( "mojo " + mojo.getClass() + " cannot be a MavenReport so nothing will be executed " );
+            return null;
+        }
+        catch ( Throwable e )
+        {
+            getLog().error( "error configuring mojo " + mojoExecution.toString() );
+            throw e;
+        }
     }
 
+    private boolean isMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
+    {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader( pluginRealm );
+            Class clazz = mojoExecution.getMojoDescriptor().getImplementationClass();
+            boolean isMavenReport = MavenReport.class.isAssignableFrom( clazz );
+            if (!isMavenReport)
+            {
+                getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
+            }
+            return isMavenReport;
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
+        }
+
+    }
+    
     /**
      * @param pluginDescriptor
      * @return
