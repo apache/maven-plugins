@@ -143,4 +143,19 @@ under the License.
       </build>
     </profile>
   </profiles>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+      	<plugin>
+      	  <artifactId>maven-surefire-plugin</artifactId>
+      	  <configuration>
+      	    <excludes>
+      	      <exclude>**/testutil/**</exclude>
+      	    </excludes>
+      	  </configuration>
+      	</plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
