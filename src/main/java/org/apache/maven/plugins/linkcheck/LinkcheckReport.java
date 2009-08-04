@@ -407,28 +407,6 @@ public class LinkcheckReport
         {
             throw new MojoExecutionException( "LinkCheckException: " + e.getMessage(), e );
         }
-        finally
-        {
-            if ( forceSite && !getLog().isDebugEnabled() )
-            {
-                try
-                {
-                    FileUtils.deleteDirectory( tmpReportingOutputDirectory );
-                }
-                catch ( IOException e )
-                {
-                    String msg = "IOException: " + e.getMessage();
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().error( msg, e );
-                    }
-                    else
-                    {
-                        getLog().error( msg );
-                    }
-                }
-            }
-        }
     }
 
     // ----------------------------------------------------------------------
