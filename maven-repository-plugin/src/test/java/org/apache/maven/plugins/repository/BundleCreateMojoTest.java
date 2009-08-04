@@ -47,6 +47,38 @@ public class BundleCreateMojoTest
     }
 
     /**
+     * Test for repository plugin with project.packaging == pom
+     * 
+     * @throws Exception
+     */
+    public void testDefaults_PomPackaging()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/pom-only/pom.xml" );
+
+        try
+        {
+            BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
+            mojo.execute();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+
+        File bundleSource =
+            new File( getBasedir(), "target/test/unit/pom-only/target/pom-only-bundle.jar" );
+        assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
+
+        Set entryNames = new HashSet();
+        entryNames.add( "pom.xml" );
+        entryNames.add( "META-INF/MANIFEST.MF" );
+        entryNames.add( "META-INF/" );
+
+        assertZipContents( entryNames, Collections.EMPTY_SET, bundleSource );
+    }
+
+    /**
      * Test for repository plugin default configuration
      * 
      * @throws Exception
@@ -488,40 +520,6 @@ public class BundleCreateMojoTest
         bannedNames.add( "no-javadoc-sources-javadoc.jar" );
 
         assertZipContents( entryNames, bannedNames, bundleSource );
-    }
-
-    /**
-     * Test repository plugin when the packaging specified in the pom is invalid
-     * 
-     * @throws Exception
-     */
-    public void testInvalidPackaging()
-        throws Exception
-    {
-
-        try
-        {
-            createTestJars( "invalid-packaging", false, false, getBasedir()
-                + "/target/test/unit/invalid-packaging/target" );
-        }
-        catch ( IOException ie )
-        {
-            ie.printStackTrace();
-        }
-
-        File testPom = new File( getBasedir(), "src/test/resources/unit/invalid-packaging/pom.xml" );
-
-        try
-        {
-            BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
-            mojo.execute();
-            fail( "Must throw an exception on an invalid packaging" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( true );
-        }
-
     }
 
     /**

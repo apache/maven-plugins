@@ -31,6 +31,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
@@ -123,6 +124,11 @@ public class BundlePackMojo
      * @parameter expression="${version}"
      */
     protected String version;
+    
+    /**
+     * @parameter default-value="${settings}"
+     */
+    protected Settings settings;
 
     public void execute()
         throws MojoExecutionException
@@ -218,23 +224,25 @@ public class BundlePackMojo
                 finalName = model.getArtifactId() + "-" + model.getVersion();
             }
             
-            List files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog() );
+            boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
+            List files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog(), batchMode );
 
             File bundle = new File( basedir, finalName + "-bundle.jar" );
 
             jarArchiver.addFile( pom, POM );
 
+            boolean artifactChecks = !"pom".equals( model.getPackaging() );
             boolean sourcesFound = false;
             boolean javadocsFound = false;
             
             for ( Iterator it = files.iterator(); it.hasNext(); )
             {
                 File f = (File) it.next();
-                if ( f.getName().endsWith( finalName + "-sources.jar" ) )
+                if ( artifactChecks && f.getName().endsWith( finalName + "-sources.jar" ) )
                 {
                     sourcesFound = true;
                 }
-                else if ( f.getName().equals( finalName + "-javadoc.jar" ) )
+                else if ( artifactChecks && f.getName().equals( finalName + "-javadoc.jar" ) )
                 {
                     javadocsFound = true;
                 }
@@ -242,12 +250,12 @@ public class BundlePackMojo
                 jarArchiver.addFile( f, f.getName() );
             }
             
-            if ( !sourcesFound )
+            if ( artifactChecks && !sourcesFound )
             {
                 getLog().warn( "Sources not included in upload bundle." );
             }
 
-            if ( !javadocsFound )
+            if ( artifactChecks && !javadocsFound )
             {
                 getLog().warn( "Javadoc not included in upload bundle." );
             }

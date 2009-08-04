@@ -25,7 +25,7 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
  */
-public class InvalidPackagingMavenProjectStub
+public class PomOnlyMavenProjectStub
     extends MavenProjectStub
 {
 
@@ -33,23 +33,23 @@ public class InvalidPackagingMavenProjectStub
 
     private Build build;
 
-    public InvalidPackagingMavenProjectStub()
+    public PomOnlyMavenProjectStub()
     {
-        setGroupId( "invalid.packaging" );
-        setArtifactId( "invalid-packaging" );
+        setGroupId( "def.configuration" );
+        setArtifactId( "pom-only" );
         setVersion( "1.0-SNAPSHOT" );
-        setName( "Invalid Packaging Maven Project" );
+        setName( "POM Project" );
         setUrl( "http://maven.apache.org" );
         setPackaging( "pom" );
-        setDescription( "Sample Maven Project that has invalid packaging." );
+        setDescription( "Sample Maven Project that has default repository plugin configuration." );
 
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
         setScm( scm );
 
         Build build = new Build();
-        build.setFinalName( "invalid-packaging" );
-        build.setDirectory( getBasedir() + "/target/test/unit/invalid-packaging/target" );
+        build.setFinalName( "pom-only" );
+        build.setDirectory( getBasedir() + "/target/test/unit/pom-only/target" );
         setBuild( build );
 
     }
@@ -73,4 +73,5 @@ public class InvalidPackagingMavenProjectStub
     {
         this.build = build;
     }
+
 }
