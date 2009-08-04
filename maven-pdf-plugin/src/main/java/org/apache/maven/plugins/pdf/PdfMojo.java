@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
+import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -45,10 +47,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -124,6 +128,16 @@ public class PdfMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * The Maven Settings.
+     *
+     * @parameter default-value="${settings}"
+     * @required
+     * @readonly
+     * @since 1.1
+     */
+    private Settings settings;
 
     /**
      * Directory containing source for apt, fml and xdoc docs.
@@ -253,15 +267,24 @@ public class PdfMojo
                 // Copy extra-resources
                 copyResources( locale );
 
+                DocumentRendererContext context = new DocumentRendererContext();
+                context.put( "project", project );
+                context.put( "settings", settings );
+                context.put( "PathTool", new PathTool() );
+                context.put( "FileUtils", new FileUtils() );
+                context.put( "StringUtils", new StringUtils() );
+                context.put( "i18n", i18n );
+
                 try
                 {
+                    // TODO use interface see DOXIASITETOOLS-30
                     if ( aggregate )
                     {
-                        docRenderer.render( siteDirectoryFile, workingDir, getDocumentModel( locale ) );
+                        ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, getDocumentModel( locale ), context );
                     }
                     else
                     {
-                        docRenderer.render( siteDirectoryFile, workingDir, null );
+                        ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, null, context );
                     }
                 }
                 catch ( DocumentRendererException e )
