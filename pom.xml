@@ -29,7 +29,7 @@ under the License.
   </parent>
 
   <artifactId>maven-repository-plugin</artifactId>
-  <version>2.2-SNAPSHOT</version>
+  <version>2.2</version>
   <packaging>maven-plugin</packaging>
 
   <name>Maven Repository Plugin</name>
@@ -40,9 +40,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-repository-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-repository-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-repository-plugin-2.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-repository-plugin-2.2</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-repository-plugin-2.2</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -133,9 +133,9 @@ under the License.
                 <phase>integration-test</phase>
                 <configuration>
                   <tasks>
-                    <echo/><echo/><echo/><echo/><echo/>
+                    <echo /><echo /><echo /><echo /><echo />
                     <echo level="warning">NO INTEGRATION TESTS DEFINED</echo>
-                    <echo/><echo/><echo/><echo/><echo/>
+                    <echo /><echo /><echo /><echo /><echo />
                   </tasks>
                 </configuration>
                 <goals>
