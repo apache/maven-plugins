@@ -34,93 +34,93 @@ Maven Dependency Plugin
 
   The Dependency plugin has several goals:
 
-  *{{{analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used
+  *{{{./analyze-mojo.html}dependency:analyze}} analyzes the dependencies of this project and determines which are: used
   and declared; used and undeclared; unused and declared.
 
-  *{{{analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches
+  *{{{./analyze-dep-mgt-mojo.html}dependency:analyze-dep-mgt}} analyzes your projects dependencies and lists mismatches
   between resolved dependencies and those listed in your dependencyManagement section.
 
-  *{{{analyze-only-mojo.html}dependency:analyze-only}} is the same as analyze, but is meant to be bound in a pom. It
+  *{{{./analyze-only-mojo.html}dependency:analyze-only}} is the same as analyze, but is meant to be bound in a pom. It
   does not fork the build and execute test-compile.
 
-  *{{{analyze-report-mojo.html}dependency:analyze-report}} analyzes the dependencies of this project and produces a report
+  *{{{./analyze-report-mojo.html}dependency:analyze-report}} analyzes the dependencies of this project and produces a report
   that summarises which are: used and declared; used and undeclared; unused and declared.
 
-  *{{{analyze-duplicate-mojo.html}dependency:analyze-duplicate}} analyzes the <dependencies/> and <dependencyManagement/>
+  *{{{./analyze-duplicate-mojo.html}dependency:analyze-duplicate}} analyzes the <dependencies/> and <dependencyManagement/>
   tags in the pom.xml and determines the duplicate declared dependencies.
 
-  *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
+  *{{{./build-classpath-mojo.html}dependency:build-classpath}} tells
   Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp.
   The classpath file may also be attached and installed/deployed along with the main artifact.
 
-  *{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in the plugin configuration section and
+  *{{{./copy-mojo.html}dependency:copy}} takes a list of artifacts defined in the plugin configuration section and
   copies them to a specified location, renaming them or stripping the version if desired. This goal can resolve
   the artifacts from remote repositories if they don't exist in local.
 
-  *{{{copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the list of project direct dependencies and
+  *{{{./copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the list of project direct dependencies and
   optionally transitive dependencies and copies them to a specified location, stripping the version if desired.
   This goal can also be run from the command line.
 
-  *{{{get-mojo.html}dependency:get}} downloads a single artifact transitively from a specified remote repository.
+  *{{{./get-mojo.html}dependency:get}} downloads a single artifact transitively from a specified remote repository.
 
-  *{{{go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
+  *{{{./go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
   (dependencies, plugins, reports) in preparation for going offline.
 
-  *{{{list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
+  *{{{./list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
 
-  *{{{purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear all dependency-artifact
+  *{{{./purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear all dependency-artifact
   files out of the local repository, and optionally re-resolve them.
 
-  *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
+  *{{{./resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
 
-  *{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to resolve plugins and their dependencies.
+  *{{{./resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to resolve plugins and their dependencies.
 
-  *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments,
+  *{{{./sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments,
   and displays the version.
 
-  *{{{tree-mojo.html}dependency:tree}} displays the dependency tree for this project.
+  *{{{./tree-mojo.html}dependency:tree}} displays the dependency tree for this project.
 
-  *{{{unpack-mojo.html}dependency:unpack}} removes the project dependencies from the local repository, and optionally
+  *{{{./unpack-mojo.html}dependency:unpack}} removes the project dependencies from the local repository, and optionally
   re-resolve them.
 
-  *{{{unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
+  *{{{./unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
   copy-dependencies but unpacks.
 
   []
 
 * Usage
 
-  General instructions on how to use the Dependency Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Dependency Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Dependency+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
   The following examples show how to use the dependency plugin in more advanced use-cases:
 
-  * {{{examples/preparing-dependencies.html}Instructions on how to prepare your dependencies for upgrade to Maven 2.0.6 / 2.1}}.
+  * {{{./examples/preparing-dependencies.html}Instructions on how to prepare your dependencies for upgrade to Maven 2.0.6 / 2.1}}.
 
-  * {{{examples/copying-artifacts.html}Copying Specific Artifacts}}
+  * {{{./examples/copying-artifacts.html}Copying Specific Artifacts}}
 
-  * {{{examples/copying-project-dependencies.html}Copying Project Dependencies}}
+  * {{{./examples/copying-project-dependencies.html}Copying Project Dependencies}}
 
-  * {{{examples/unpacking-artifacts.html}Unpacking Specific Artifacts}}
+  * {{{./examples/unpacking-artifacts.html}Unpacking Specific Artifacts}}
 
-  * {{{examples/copying-project-dependencies.html}Unpacking the Project Dependencies}}
+  * {{{./examples/copying-project-dependencies.html}Unpacking the Project Dependencies}}
 
   []
 
@@ -132,6 +132,3 @@ Maven Dependency Plugin
   * {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}Dependency Mechanism}}
 
   []
-
-
-
