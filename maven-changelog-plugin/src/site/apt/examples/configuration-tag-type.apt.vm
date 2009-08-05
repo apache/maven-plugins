@@ -43,7 +43,7 @@ Using Tag Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <type>tag</type>
           <tags>

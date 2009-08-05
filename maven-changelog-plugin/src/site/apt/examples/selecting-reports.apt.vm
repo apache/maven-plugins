@@ -1,9 +1,9 @@
  ------
- Modifying SCM Links
+ Selecting Reports
  ------
  Dennis Lundberg
  ------
- November 2006
+ October 2006
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,18 +27,19 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Modifying SCM Links
+Selecting Reports
 
-  The plugin normally works out of the box with the most popular web frontends
-  for SCM systems. If for some reason the links to the web frontend for your
-  SCM system are not correct, you can tweak the links by configuring the plugin
-  properly. This is done with the <<<\<displayFileDetailUrl\>>>> element.
+  The plugin normally generates 3 reports: <<<changelog>>>, <<<dev-activity>>>
+  and <<<file-activity>>>. By default all three reports are generated. It is
+  possible to configure the plugin so that only a few of these reports are
+  generated. This is done using <<<\<reportSets\>>>>.
 
-  To your aid you have a special token <<<%FILE%>>> that corresponds to the
-  relative path to the file in your repository. The path starts at the
-  project's root in your SCM system.
+  The following configuration will generate only the <<<changelog>>> and
+  <<<file-activity>>> reports.
 
-  The following configuration will use alternate URLs to your SCM system:
+  <<Note:>> The <<<reportSets>>> element is not part of the <<<configuration>>>
+  element. Instead, the <<<configuration>>> is found inside the
+  <<<reportSet>>> element.
 
 +-----+
 <project>
@@ -48,10 +49,20 @@ Modifying SCM Links
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <displayFileDetailUrl>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</displayFileDetailUrl>
-        </configuration>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>dual-report</id>
+            <configuration>
+              <type>range</type>
+              <range>30</range>
+            </configuration>
+            <reports>
+              <report>changelog</report>
+              <report>file-activity</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
