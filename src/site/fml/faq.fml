@@ -19,8 +19,11 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
- <part id="General">
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
    <faq id="Why use antrun and not the Ant program itself?">
      <question>Why use antrun and not the Ant program itself?</question>
      <answer>
@@ -37,7 +40,7 @@ under the License.
      <answer>
        <p>There is a problem in some versions of Maven (earlier than 3.0-alpha-1) that prevent Maven from correctly resolving
           plugin dependencies in a multi-module build (MNG-1323).  This means that if you have multiple
-          modules in your project and the antrun plugin declares a different set of dependencies, only the first 
+          modules in your project and the antrun plugin declares a different set of dependencies, only the first
           declaration found will be used.</p>
        <p>The workaround for this is to specify the same set of plugin dependencies for all declarations of the
           antrun plugin.  Another option is to move the plugin dependencies to the project level and set the
