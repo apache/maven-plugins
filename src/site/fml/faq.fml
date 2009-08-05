@@ -85,8 +85,8 @@ under the License.
         </p>
         <p>
           If you want to test this, prior to deployment, you can run the
-          <a href="stage-mojo.html"><code>site:stage</code></a> goal as
-          described in the <a href="usage.html">usage documentation</a>
+          <a href="./stage-mojo.html"><code>site:stage</code></a> goal as
+          described in the <a href="./usage.html">usage documentation</a>
           instead.
         </p>
       </answer>
