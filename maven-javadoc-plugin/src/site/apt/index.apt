@@ -51,90 +51,90 @@ Maven Javadoc Plugin
 
    The Javadoc Plugin has ten goals:
 
-   * {{{javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
+   * {{{./javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
-   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes
+   * {{{./test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes
      the standard Javadoc tool and supports the parameters used by the tool.
 
-   * {{{aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes
+   * {{{./aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes
      the standard Javadoc tool and supports the parameters used by the tool.
 
-   * {{{test-aggregate-mojo.html}javadoc:test-aggregate}} generates the test Javadoc files for an aggregator project.
+   * {{{./test-aggregate-mojo.html}javadoc:test-aggregate}} generates the test Javadoc files for an aggregator project.
      It executes the standard Javadoc tool and supports the parameters used by the tool.
 
-   * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated Javadocs. It is used during
+   * {{{./jar-mojo.html}javadoc:jar}} creates an archive file of the generated Javadocs. It is used during
      the release process to create the Javadoc artifact for the project's release.  This artifact is uploaded
      to the remote repository along with the project's compiled binary and source archive.
 
-   * {{{test-jar-mojo.html}javadoc:test-jar}} creates an archive file of the generated Test Javadocs.
+   * {{{./test-jar-mojo.html}javadoc:test-jar}} creates an archive file of the generated Test Javadocs.
 
-   * {{{aggregate-jar-mojo.html}javadoc:aggregate-jar}} creates an archive file of the generated Javadocs for an
+   * {{{./aggregate-jar-mojo.html}javadoc:aggregate-jar}} creates an archive file of the generated Javadocs for an
      aggregator project.
 
-   * {{{test-aggregate-jar-mojo.html}javadoc:test-aggregate-jar}} creates an archive file of the generated Test
+   * {{{./test-aggregate-jar-mojo.html}javadoc:test-aggregate-jar}} creates an archive file of the generated Test
      Javadocs for an aggregator project.
 
-   * {{{fix-mojo.html}javadoc:fix}} is an interactive goal which fixes the Javadoc documentation and tags for the
+   * {{{./fix-mojo.html}javadoc:fix}} is an interactive goal which fixes the Javadoc documentation and tags for the
      Java files.
 
-   * {{{test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags
+   * {{{./test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags
      for the test Java files.
 
    []
 
 * Usage
 
-  General instructions on how to use the Javadoc Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Javadoc Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Javadoc+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
    The following examples show how to use the Javadoc Plugin in more advanced usecases:
 
-   * {{{examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
+   * {{{./examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
 
-   * {{{examples/exclude-package-names.html}Excluding Packages}}
+   * {{{./examples/exclude-package-names.html}Excluding Packages}}
 
-   * {{{examples/group-configuration.html}Grouping Packages}}
+   * {{{./examples/group-configuration.html}Grouping Packages}}
 
-   * {{{examples/alternate-doclet.html}Using Alternate Doclet}}
+   * {{{./examples/alternate-doclet.html}Using Alternate Doclet}}
 
-   * {{{examples/alternate-javadoc-tool.html}Using Alternate Javadoc Tool}}
+   * {{{./examples/alternate-javadoc-tool.html}Using Alternate Javadoc Tool}}
 
-   * {{{examples/javadoc-resources.html}Using Javadoc Resources}}
+   * {{{./examples/javadoc-resources.html}Using Javadoc Resources}}
 
-   * {{{examples/output-configuration.html}Using Alternative Output Directory}}
+   * {{{./examples/output-configuration.html}Using Alternative Output Directory}}
 
-   * {{{examples/stylesheet-configuration.html}Configuring Stylesheets}}
+   * {{{./examples/stylesheet-configuration.html}Configuring Stylesheets}}
 
-   * {{{examples/help-configuration.html}Configuring Helpfile}}
+   * {{{./examples/help-configuration.html}Configuring Helpfile}}
 
-   * {{{examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
+   * {{{./examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
 
-   * {{{examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}
+   * {{{./examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}
 
-   * {{{examples/links-configuration.html}Configuring Links}}
+   * {{{./examples/links-configuration.html}Configuring Links}}
 
-   * {{{examples/test-javadocs.html}Generating test Javadocs}}
+   * {{{./examples/test-javadocs.html}Generating test Javadocs}}
 
-   * {{{examples/selective-javadocs-report.html}Selective Javadocs Reports}}
+   * {{{./examples/selective-javadocs-report.html}Selective Javadocs Reports}}
 
-   * {{{examples/fix-javadocs.html}Fixing Javadoc Comments}}
+   * {{{./examples/fix-javadocs.html}Fixing Javadoc Comments}}
 
    []
