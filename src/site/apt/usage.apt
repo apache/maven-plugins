@@ -42,4 +42,4 @@ mvn site
 
  would generate the project information documentation. For more information on
  how to customize the Project Information Reports Plugin, check the examples on the
- {{{index.html}Introduction}} page.
+ {{{./index.html}Introduction}} page.
