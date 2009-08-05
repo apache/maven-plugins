@@ -48,7 +48,7 @@ Using Custom Checkstyle Property Expansion Definitions
   <module name="TreeWalker">
     <module name="PackageName">
       <property name="format"
-         value="com\.example\.${projectname}(\.[a-z][a-zA-Z0-9]+)*$"/>
+         value="com\.example\.$\{projectname\}(\.[a-z][a-zA-Z0-9]+)*$"/>
     </module>
   </module>
 </module>
@@ -65,7 +65,7 @@ Using Custom Checkstyle Property Expansion Definitions
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <propertyExpansion>projectname=whizbang</propertyExpansion>
@@ -88,7 +88,7 @@ Using Custom Checkstyle Property Expansion Definitions
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <propertesLocation>${basedir}/checkstyle.properties</propertiesLocation>
