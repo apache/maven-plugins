@@ -45,7 +45,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
       </plugin>
     </plugins>
   </reporting>
@@ -81,7 +81,7 @@ mvn checkstyle:checkstyle
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <enableRulesSummary>false</enableRulesSummary>
            ...
