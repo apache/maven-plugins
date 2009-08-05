@@ -6,6 +6,26 @@
   January 29 2006
   ------
 
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
 Maven Deploy Plugin
 
   The deploy plugin is primarily used during the deploy phase, to add your
@@ -43,34 +63,36 @@ Maven Deploy Plugin
 
   The deploy plugin has 2 goals:
 
-  * {{{deploy-mojo.html}deploy:deploy}} is used to automatically install the
+  * {{{./deploy-mojo.html}deploy:deploy}} is used to automatically install the
     artifact, its pom and the attached artifacts produced by a particular
     project. Most if not all of the information related to the deployment is stored
     in the project's pom.
 
-  * {{{deploy-file-mojo.html}deploy:deploy-file}} is used to install a single artifact
+  * {{{./deploy-file-mojo.html}deploy:deploy-file}} is used to install a single artifact
     along with its pom. In that case the artifact information can be taken from
     an optionally specified pomFile, but can be completed/overriden using the
     command line.
 
+   []
+
 * Usage
 
-  General instructions on how to use the Deploy Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Deploy Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Deploy+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -80,20 +102,22 @@ Maven Deploy Plugin
 
   <Project Deployment:>
 
-  * {{{examples/deploy-ftp.html}Deployment with FTP}}
+  * {{{./examples/deploy-ftp.html}Deployment with FTP}}
 
-  * {{{examples/deploy-ssh-external.html}Deployment with external SSH}}
+  * {{{./examples/deploy-ssh-external.html}Deployment with external SSH}}
 
   []
 
   <File Deployment:>
 
-  * {{{examples/disabling-generic-pom.html}Disable the generation of pom}}
+  * {{{./examples/disabling-generic-pom.html}Disable the generation of pom}}
 
-  * {{{examples/deploying-with-customed-pom.html}Deploy an artifact with a customed pom}}
+  * {{{./examples/deploying-with-customed-pom.html}Deploy an artifact with a customed pom}}
 
-  * {{{examples/deploying-with-classifiers.html}Deploy an artifact with classifier}}
+  * {{{./examples/deploying-with-classifiers.html}Deploy an artifact with classifier}}
 
-  * {{{examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
+  * {{{./examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
 
-  * {{{examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
+  * {{{./examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
+
+   []
