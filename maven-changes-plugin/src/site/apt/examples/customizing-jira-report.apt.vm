@@ -58,7 +58,7 @@ Customizing the JIRA Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <fixVersionIds>13722,12515</fixVersionIds>
         </configuration>
@@ -93,7 +93,7 @@ Customizing the JIRA Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <onlyCurrentVersion>true</onlyCurrentVersion>
         </configuration>
@@ -125,7 +125,7 @@ Customizing the JIRA Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
           <sortColumnNames>Type,Key DESC</sortColumnNames>
@@ -160,7 +160,7 @@ Customizing the JIRA Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <resolutionIds>Closed</resolutionIds>
           <statusIds>Resolved, Closed</statusIds>
@@ -195,7 +195,7 @@ Customizing the JIRA Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <filter>resolution=1&amp;sorter/field=issuetype&amp;sorter/order=ASC</filter>
         </configuration>

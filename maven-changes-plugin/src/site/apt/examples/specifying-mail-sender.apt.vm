@@ -55,7 +55,7 @@ Specifying the Mail Sender
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <fromDeveloperId>jsmith</fromDeveloperId>
         </configuration>
@@ -89,7 +89,7 @@ mvn -Dchanges.fromDeveloperId=jsmith announcement-mail
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
           <mailSender>
             <name>Release Notification</name>
