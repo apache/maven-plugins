@@ -45,7 +45,7 @@ Usage
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.3</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <phase> <!-- a lifecycle phase --> </phase>
@@ -109,7 +109,7 @@ Usage
       [...]
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.3</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -124,10 +124,10 @@ Usage
 
               </tasks>
               <sourceRoot>
-                ${project.build.directory}/generated-sources/main/java
+                \${project.build.directory}/generated-sources/main/java
               </sourceRoot>
               <testSourceRoot>
-                ${project.build.directory}/generated-sources/test/java
+                \${project.build.directory}/generated-sources/test/java
               </testSourceRoot>
             </configuration>
             <goals>
@@ -172,7 +172,7 @@ Usage
   will have to redefine the property before calling <ant>.
   
 ------
-  <property name="maven.project.url" value="${project.url}"/>
+  <property name="maven.project.url" value="\${project.url}"/>
   <ant antfile="build.xml"/>
 ------
 
@@ -208,7 +208,7 @@ Usage
 | <<<Ear>>>                         | {{{../maven-ear-plugin/}<<<maven-ear-plugin>>>}}                  |
 *-----------------------------------+-----------------------------------+
 | <<<Filter>>>                      | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
-|                                   | <Note: Filter uses the @...@ token while maven-resources-plugin uses the $\{...\} token> |
+|                                   | <Note: Filter uses the @...@ token while maven-resources-plugin uses the \${...} token> |
 *-----------------------------------+-----------------------------------+
 | <<<FixCRLF>>>                     | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
 *-----------------------------------+-----------------------------------+
@@ -231,7 +231,7 @@ Usage
 | <<<Property>>>                    | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
 *-----------------------------------+-----------------------------------+
 | <<<Replace>>>                     | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
-|                                   | <Note: Replace can specify its token while maven-resources-plugin uses the $\{...\} token> |
+|                                   | <Note: Replace can specify its token while maven-resources-plugin uses the \${...} token> |
 *-----------------------------------+-----------------------------------+
 | <<<Tar>>>                         | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
 *-----------------------------------+-----------------------------------+
@@ -273,6 +273,6 @@ Optional Tasks                                                          |
 | <<<Setproxy>>>                    | {{{../maven-deploy-plugin/}<<<maven-deploy-plugin>>>}}               |
 *-----------------------------------+-----------------------------------+
 | <<<Translate>>>                   | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
-|                                   | <Note: Translate can specify its own tokens and can have a different encoding scheme for reading and writing files. maven-resources-plugin however uses the $\{...\} annotation only and has only one encoding scheme for reading and writing> |
+|                                   | <Note: Translate can specify its own tokens and can have a different encoding scheme for reading and writing files. maven-resources-plugin however uses the \${...} annotation only and has only one encoding scheme for reading and writing> |
 *-----------------------------------+-----------------------------------+
 
