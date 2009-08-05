@@ -364,7 +364,8 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>${pom.version}</version>
+        <!-- latest release -->
+        <version>2.1</version>
         <configuration>
           <!-- For Announcement -->
           <generateJiraAnnouncement>true</generateJiraAnnouncement>
