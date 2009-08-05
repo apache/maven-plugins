@@ -1,33 +1,36 @@
  ------
- Predefined Assembly Descriptors 
+ Predefined Assembly Descriptors
  ------
  Johnny R. Ruiz III <jruiz@exist.com>
  Edwin Punzalan
  John Casey
  ------
  2 November 2006
+ ------
 
-~~ Copyright 2006 The Apache Software Foundation.
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
 ~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
+~~   http://www.apache.org/licenses/LICENSE-2.0
 ~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
 
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-
 Pre-defined Descriptor Files
 
-  As of version 2.2, there are now four predefined descriptor formats available 
+  As of version 2.2, there are now four predefined descriptor formats available
   for reuse, packaged within the Assembly Plugin, instead of the original three.
   Their descriptorIds are:
 
@@ -39,18 +42,18 @@ Pre-defined Descriptor Files
 
   * {{{#src}src}} - can be used for general assembly of a source archive which can
   be used to build your project.
-  
+
   * {{{#project}project}} - <<new in version 2.2>>, this is used to create an
   assembly of the entire source project, including the Maven POM and other files
-  outside of your source directory structure, but excluding all SCM files and 
+  outside of your source directory structure, but excluding all SCM files and
   the target directory. <<GOTCHA:>> If you use an output directory other than
   /target, this descriptorRef may include the output from your build process.
 
 * {bin}
 
-  Use <<<bin>>> as the <<<descriptorRef>>> of your assembly-plugin configuration 
-  in order to create a binary distribution archive of your project. 
-  This built-in descriptor produces an assembly with the classifier <<<bin>>> 
+  Use <<<bin>>> as the <<<descriptorRef>>> of your assembly-plugin configuration
+  in order to create a binary distribution archive of your project.
+  This built-in descriptor produces an assembly with the classifier <<<bin>>>
   in three archive formats: tar.gz, tar.bz2, and zip.
 
   The assembled archive contains the binary jar produced by running
@@ -60,7 +63,7 @@ Pre-defined Descriptor Files
   Below is the <<<bin>>> descriptor format:
 
 -----
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>bin</id>
@@ -90,15 +93,15 @@ Pre-defined Descriptor Files
 * {jar-with-dependencies}
 
   Use <<<jar-with-dependencies>>> as the <<<descriptorRef>>> of your
-  assembly-plugin configuration in order to create a jar archive which contains 
-  the binary output of your project, along its the unpacked dependencies. 
+  assembly-plugin configuration in order to create a jar archive which contains
+  the binary output of your project, along its the unpacked dependencies.
   This built-in descriptor produces an assembly with the classifier
   <<<jar-with-dependencies>>> using the jar archive format.
 
   Below is the <<<jar-with-dependencies>>> descriptor format:
 
 -----
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>jar-with-dependencies</id>
@@ -125,13 +128,13 @@ Pre-defined Descriptor Files
   Use <<<src>>> as the <<<descriptorRef>>> in your assembly-plugin configuration
   to create source archives for your project.  The archive will contain the
   contents of your project's <<</src>>> directory structure, for referency by
-  your users. The <<<src>>> descriptorId produces an assembly archive with the 
+  your users. The <<<src>>> descriptorId produces an assembly archive with the
   classifier <<<src>>> in three formats: tar.gz, tar.bz2, and zip.
 
   Below is the <<<src>>> descriptor format:
 
 -----
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>src</id>
@@ -165,13 +168,13 @@ Pre-defined Descriptor Files
   any build output that lands in the <<</target>>> directory. The resulting
   assembly should allow your users to build your project using Maven, Ant, or
   whatever build system you have configured in your project's normal SCM working
-  directory. It produces assemblies with the classifier <<<project>>> in 
+  directory. It produces assemblies with the classifier <<<project>>> in
   three archive formats: tar.gz, tar.bz2, and zip.
-  
+
   The following is the assembly descriptor for the <<<project>>> descriptorRef:
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   <id>project</id>

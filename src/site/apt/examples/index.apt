@@ -33,26 +33,26 @@ Examples
   Below, you will see a series of examples showing how to use the Assembly
   Plugin in various contexts.
 
-  * {{{single/index.html}Working with Single Projects}}
+  * {{{./single/index.html}Working with Single Projects}}
 
-    * {{{single/filtering-some-distribution-files.html}Filtering Some Distribution Files}}
+    * {{{./single/filtering-some-distribution-files.html}Filtering Some Distribution Files}}
 
-    * {{{single/including-and-excluding-artifacts.html}Including/Excluding Artifacts}}
+    * {{{./single/including-and-excluding-artifacts.html}Including/Excluding Artifacts}}
 
-    * {{{single/using-components.html}Using Component Descriptors}}
+    * {{{./single/using-components.html}Using Component Descriptors}}
 
-    * {{{single/using-repositories.html}Using Repositories}}
-
-    []
-
-  * {{{multimodule/index.html}Working with Multi-Module Projects}}
-
-    * {{{multimodule/module-source-inclusion-simple.html}Adding Module Sources to the Assembly}}
-
-    * {{{multimodule/module-binary-inclusion-simple.html}Adding Module Binaries to the Assembly}}
+    * {{{./single/using-repositories.html}Using Repositories}}
 
     []
 
-  * {{{sharing-descriptors.html}Sharing Assembly Descriptors}}
+  * {{{./multimodule/index.html}Working with Multi-Module Projects}}
+
+    * {{{./multimodule/module-source-inclusion-simple.html}Adding Module Sources to the Assembly}}
+
+    * {{{./multimodule/module-binary-inclusion-simple.html}Adding Module Binaries to the Assembly}}
+
+    []
+
+  * {{{./sharing-descriptors.html}Sharing Assembly Descriptors}}
 
   []
