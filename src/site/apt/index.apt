@@ -35,58 +35,58 @@ Maven Project Info Reports Plugin
 
  The Project Info Reports Plugin has thirteen goals:
 
-   * {{{cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
+   * {{{./cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
    System report.
 
-   * {{{dependencies-mojo.html}project-info-reports:dependencies}} is used to generate the Project Dependencies
+   * {{{./dependencies-mojo.html}project-info-reports:dependencies}} is used to generate the Project Dependencies
    report.
 
-   * {{{dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
+   * {{{./dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
    Project Dependency Convergence report for reactor builds.
 
-   * {{{dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
+   * {{{./dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
    Project DependencyManagement report.
 
-   * {{{index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
+   * {{{./index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
 
-   * {{{issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
+   * {{{./issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
    Tracking report.
 
-   * {{{license-mojo.html}project-info-reports:license}} is used to generate the Project License report.
+   * {{{./license-mojo.html}project-info-reports:license}} is used to generate the Project License report.
 
-   * {{{mailing-list-mojo.html}project-info-reports:mailing-list}} is used to generate the Project Mailing
+   * {{{./mailing-list-mojo.html}project-info-reports:mailing-list}} is used to generate the Project Mailing
    List report.
 
-   * {{{plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
+   * {{{./plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
    Project PluginManagement report.
 
-   * {{{plugins-mojo.html}project-info-reports:plugins}} is used to generate the Project Plugins report.
+   * {{{./plugins-mojo.html}project-info-reports:plugins}} is used to generate the Project Plugins report.
 
-   * {{{project-team-mojo.html}project-info-reports:project-team}} is used to generate the Project Team report.
+   * {{{./project-team-mojo.html}project-info-reports:project-team}} is used to generate the Project Team report.
 
-   * {{{scm-mojo.html}project-info-reports:scm}} is used to generate the Project Source Code Management report.
+   * {{{./scm-mojo.html}project-info-reports:scm}} is used to generate the Project Source Code Management report.
 
-   * {{{summary-mojo.html}project-info-reports:summary}} is used to generate the Project information reports
+   * {{{./summary-mojo.html}project-info-reports:summary}} is used to generate the Project information reports
    summary.
 
 * Usage
 
-  General instructions on how to use the Project Info Reports Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Project Info Reports Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Project+Info+Reports+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -94,13 +94,13 @@ Maven Project Info Reports Plugin
   To provide you with better understanding on some usages of the Maven Project Info Reports Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/selective-project-info-reports.html}Run Selective Reports}}
+  * {{{./examples/selective-project-info-reports.html}Run Selective Reports}}
 
-  * {{{examples/individual-reports.html}Run Individual Reports}}
+  * {{{./examples/individual-reports.html}Run Individual Reports}}
 
-  * {{{examples/scm-report.html}Customize the SCM Report}}
+  * {{{./examples/scm-report.html}Customize the SCM Report}}
 
-  * {{{project-info.html}Overview of the reports generated for this plugin}}
+  * {{{./project-info.html}Overview of the reports generated for this plugin}}
 
   []
 
