@@ -100,7 +100,7 @@ Using The PDF Plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pdf-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <configuration>
           <locales>en,fr</locales>
         </configuration>
