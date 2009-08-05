@@ -1,5 +1,5 @@
  ------
- Using a Suppressions Filter
+ Using a Custom Checkstyle Checker Configuration
  ------
  July 2006
  ------
@@ -25,32 +25,12 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Using a Suppressions Filter
+Using a Custom Checkstyle Checker Configuration
 
-   Checkstyle allows the definition of a list of files and their line ranges that should be suppressed
-   from reporting any violations (known as a
-   {{{http://checkstyle.sourceforge.net/config.html#Filters}suppressions filter}} ).
+  A custom {{{http://checkstyle.sourceforge.net/config.html#Checker}Checker configuration xml file}} can
+  be defined and then referenced via a URL, File, or build classpath resource reference.
 
-   Example: <<<checkstyle-suppressions.xml>>>
-
-+-----+
-<?xml version="1.0"?>
-
-<!DOCTYPE suppressions PUBLIC
-     "-//Puppy Crawl//DTD Suppressions 1.0//EN"
-     "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
-
-<suppressions>
-  <suppress checks="JavadocStyleCheck"
-             files="GeneratedObject.java"
-             lines="50-9999"/>
-  <suppress checks="MagicNumberCheck"
-             files="LegacyDatasetConvertor.java"
-             lines="221,250-295"/>
-</suppressions>
-+-----+
-
-   Example: <<<pom.xml>>> - Specifies the suppressions filter that Checkstyle should use.
+  To reference a custom Checkstyle Checker configuration, use the <<<configLocation>>> parameter.
 
 +-----+
 <project>
@@ -60,11 +40,9 @@ Using a Suppressions Filter
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
-          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
         </configuration>
       </plugin>
     </plugins>
@@ -72,3 +50,18 @@ Using a Suppressions Filter
   ...
 </project>
 +-----+
+
+  This example causes the Checkstyle Plugin to check for a File named <<<checkstyle.xml>>> or a
+  resource named <<<checkstyle.xml>>> within the compile scope of the dependencies or build extensions
+  classpath.
+
+  There are 4 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
+  the Sun Microsystems Definition is selected by default.
+
+  * <<config/sun_checks.xml>> - Sun Microsystems Definition (default).
+
+  * <<config/maven_checks.xml>> - Maven Development Definitions.
+
+  * <<config/turbine_checks.xml>> - Turbine Development Definitions.
+
+  * <<config/avalon_checks.xml>> - Avalon Development Definitions.
