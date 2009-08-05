@@ -1,7 +1,9 @@
  ------
- Using Date Type
+ Modifying SCM Links
  ------
- July 2006
+ Dennis Lundberg
+ ------
+ November 2006
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -25,19 +27,19 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Using Date Type
+Modifying SCM Links
 
-  To generate the changelog reports showing what has changed between two dates,
-  you should use the "date" <<<type>>>.
+  The plugin normally works out of the box with the most popular web frontends
+  for SCM systems. If for some reason the links to the web frontend for your
+  SCM system are not correct, you can tweak the links by configuring the plugin
+  properly. This is done with the <<<\<displayFileDetailUrl\>>>> element.
 
-  With the following configuration, the generated reports will cover SCM
-  activities between Aug 1, 2005 to Sept 1, 2005. Please note that the date
-  range is inclusive.
+  To your aid you have a special token <<<%FILE%>>> that corresponds to the
+  relative path to the file in your repository. The path starts at the
+  project's root in your SCM system.
 
-  <<Note:>> The <<<\<dateFormat\>>>> configuration is used <<only>> when
-  parsing the dates that come from your SCM. It is <<not>> used to format the
-  dates in the report.
-  
+  The following configuration will use alternate URLs to your SCM system:
+
 +-----+
 <project>
   ...
@@ -46,14 +48,9 @@ Using Date Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
-          <type>date</type>
-          <dates>
-            <date implementation="java.lang.String">2005-08-01</date>
-            <date implementation="java.lang.String">2005-09-01</date>
-          </dates>
-          <dateFormat>yyyy-MM-dd</dateFormat>
+          <displayFileDetailUrl>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</displayFileDetailUrl>
         </configuration>
       </plugin>
     </plugins>

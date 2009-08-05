@@ -1,9 +1,9 @@
  ------
- Using Perforce
+ Changing the Heading Date Format
  ------
  Dennis Lundberg
  ------
- 2007-07-19
+ July 2007
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,18 +23,20 @@
  ~~ specific language governing permissions and limitations
  ~~ under the License.
 
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Using Perforce
 
-  The maven-changelog-plugin uses {{{http://maven.apache.org/scm/}Maven SCM}}
-  as an underlying layer, when accessing your SCM system. When Maven SCM is
-  working with Perforce it needs a clientspec. This is provided by setting
-  system properties that are then read by Maven SCM.
+Changing the Heading Date Format
 
-  Configuring this is done in the same way as for the maven-scm-plugin. So if
-  you have a working configuration for maven-scm-plugin, you can just copy
-  those lines over to your maven-changelog-plugin configuration. The following
-  configuration shows an example of what this can look like.
+  If you are using one of the types <<<date>>> or <<<range>>>, the headings of
+  the reports will have dates in them. Starting with version 2.1 of the plugin,
+  it is possible to configure the format of these dates.
+
+  This is done with the <<<\<headingDateFormat\>>>> configuration element. It
+  takes a string of characters, the same that is used in the
+  {{{http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html}SimpleDateFormat}}
+  class, and uses them to format the dates in the headings to your liking.
 
 +-----+
 <project>
@@ -44,14 +46,11 @@ Using Perforce
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>maven.scm.perforce.clientspec.name</name>
-              <value>your.perforce.clientspec.name</value>
-            </property>
-          </systemProperties>
+          <type>range</type>
+          <range>30</range>
+          <headingDateFormat>dd MMM, yyyy</headingDateFormat>
         </configuration>
       </plugin>
     </plugins>
