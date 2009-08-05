@@ -43,7 +43,7 @@ Using tasks not included in Ant's default jar
        <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-antrun-plugin</artifactId>
-         <version>1.3</version>
+         <version>${project.version}</version>
          <executions>
            <execution>
              <id>ftp</id>
@@ -52,7 +52,7 @@ Using tasks not included in Ant's default jar
                <tasks>
 
                  <ftp action="send" server="myhost" remotedir="/home/test" userid="x" password="y" depends="yes" verbose="yes">
-                   <fileset dir="${project.build.directory}">
+                   <fileset dir="\${project.build.directory}">
                      <include name="*.jar" />
                    </fileset>
                  </ftp>
