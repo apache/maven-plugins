@@ -73,7 +73,7 @@ Usage
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>auto-clean</id>
