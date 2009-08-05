@@ -1,9 +1,9 @@
  ------
- SMTP Authentication
+ Alternate Location for the changes.xml File
  ------
- Allan Ramirez
+ Dennis Lundberg
  ------
- 21 October 2005
+ 15 July 2006
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,31 +27,42 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-SMTP Authentication
+Alternate Location for the <<<changes.xml>>> File
 
-  If the SMTP host needs authentication, you can provide your
-  <<<\<username\>>>> and <<<\<password\>>>> in the <<<\<configuration\>>>>
-  section:
+ <<Note:>> This feature was introduced in version <2.0-beta-2> of the Changes
+ plugin.
 
--------------------
+ <<Note:>> Unless you have a specific reason to have your <<<changes.xml>>>
+ file in a different location, we advice you to put it in the default location
+ <<<$\{basedir\}/src/changes/changes.xml>>>. If nothing else, it saves you from
+ having to configure it.
+
+ If you <really> want to have your <<<changes.xml>>> in another location than
+ the default location, you can do this by configuring your <<<pom.xml>>>. In
+ this example we want to use the file <<<$\{basedir\}/src/site/changes.xml>>>:
+
++-----------------+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
-          <smtpHost>mail.yourhost.com</smtpHost>
-          <smtpPort implementation="java.lang.Integer">25</smtpPort>
-          <username>some@email.com</username>
-          <password>somepassword</password>
-          ...
+          <xmlPath>${basedir}/src/site/changes.xml</xmlPath>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
-  </build>
+  </reporting>
   ...
 </project>
--------------------
++-----------------+
