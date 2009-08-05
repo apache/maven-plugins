@@ -37,7 +37,7 @@ Delete Additional Files Not Exposed to Maven
   [...]
   <plugin>
     <artifactId>maven-clean-plugin</artifactId>
-    <version>2.2</version>
+    <version>${project.version}</version>
     <configuration>
       <filesets>
         <fileset>
