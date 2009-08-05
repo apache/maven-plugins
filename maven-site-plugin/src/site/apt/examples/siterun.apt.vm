@@ -29,7 +29,7 @@
 
 Configuring Site Run
 
-  For the <<<{{{run-mojo.html}site:run}}>>> goal, you can configure which port to use to start up the site as well as the directory where
+  For the <<<{{{./run-mojo.html}site:run}}>>> goal, you can configure which port to use to start up the site as well as the directory where
   the pages for the site will be rendered.
 
   For example, you can have the following configuration in your POM:
