@@ -1,7 +1,9 @@
  ------
- Using Range Type
+ Using Perforce
  ------
- July 2006
+ Dennis Lundberg
+ ------
+ 2007-07-19
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -21,17 +23,18 @@
  ~~ specific language governing permissions and limitations
  ~~ under the License.
 
- ~~ NOTE: For help with the syntax of this file, see:
- ~~ http://maven.apache.org/doxia/references/apt-format.html
 
+Using Perforce
 
-Using Range Type
+  The maven-changelog-plugin uses {{{http://maven.apache.org/scm/}Maven SCM}}
+  as an underlying layer, when accessing your SCM system. When Maven SCM is
+  working with Perforce it needs a clientspec. This is provided by setting
+  system properties that are then read by Maven SCM.
 
-  To generate the changelog reports showing what has changed in the last NN
-  days, you should use the "range" <<<type>>>.
-
-  The following configuration will generate reports that covers SCM activities
-  from the last 30 days. Please note that the range is inclusive.
+  Configuring this is done in the same way as for the maven-scm-plugin. So if
+  you have a working configuration for maven-scm-plugin, you can just copy
+  those lines over to your maven-changelog-plugin configuration. The following
+  configuration shows an example of what this can look like.
 
 +-----+
 <project>
@@ -41,10 +44,14 @@ Using Range Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <configuration>
-          <type>range</type>
-          <range>30</range>
+          <systemProperties>
+            <property>
+              <name>maven.scm.perforce.clientspec.name</name>
+              <value>your.perforce.clientspec.name</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -52,4 +59,3 @@ Using Range Type
   ...
 </project>
 +-----+
-

@@ -1,9 +1,7 @@
  ------
- Selecting Reports
+ Using Range Type
  ------
- Dennis Lundberg
- ------
- October 2006
+ July 2006
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,19 +25,13 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Selecting Reports
+Using Range Type
 
-  The plugin normally generates 3 reports: <<<changelog>>>, <<<dev-activity>>>
-  and <<<file-activity>>>. By default all three reports are generated. It is
-  possible to configure the plugin so that only a few of these reports are
-  generated. This is done using <<<\<reportSets\>>>>.
+  To generate the changelog reports showing what has changed in the last NN
+  days, you should use the "range" <<<type>>>.
 
-  The following configuration will generate only the <<<changelog>>> and
-  <<<file-activity>>> reports.
-
-  <<Note:>> The <<<reportSets>>> element is not part of the <<<configuration>>>
-  element. Instead, the <<<configuration>>> is found inside the
-  <<<reportSet>>> element.
+  The following configuration will generate reports that covers SCM activities
+  from the last 30 days. Please note that the range is inclusive.
 
 +-----+
 <project>
@@ -49,23 +41,15 @@ Selecting Reports
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
-        <reportSets>
-          <reportSet>
-            <id>dual-report</id>
-            <configuration>
-              <type>range</type>
-              <range>30</range>
-            </configuration>
-            <reports>
-              <report>changelog</report>
-              <report>file-activity</report>
-            </reports>
-          </reportSet>
-        </reportSets>
+        <version>${project.version}</version>
+        <configuration>
+          <type>range</type>
+          <range>30</range>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
   ...
 </project>
 +-----+
+
