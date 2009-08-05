@@ -50,7 +50,7 @@ Changing the Template File
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0</version>
+        <version>${project.version}</version>
         <configuration>
           <templateFile>${basedir}/maven-site.vm</templateFile>
         </configuration>
@@ -72,7 +72,7 @@ Changing the Template File
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-4</version>
+        <version>${project.version}</version>
         <configuration>
           <templateDirectory>${basedir}</templateDirectory>
           <template>maven-site.vm</template>
