@@ -140,19 +140,20 @@ public class ReportDocumentRenderer
             }
             else
             {
-                try
-                {
-                    report.generate( sink, locale );
-                }
-                catch ( NoSuchMethodError e )
-                {
-                    throw new RendererException( "No method on " + report.getClass(), e );
-                }
+                report.generate( sink, locale );
+
             }
         }
         catch ( MavenReportException e )
         {
             throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
+        }
+        catch ( LinkageError e )
+        {
+            StringBuilder stringBuilder =
+                new StringBuilder( " an issue has occured with report " + report.getClass().getName() );
+            stringBuilder.append( ", skip LinkageError " + e.getMessage() + ", please report an issue to maven dev team" );
+            log.warn( stringBuilder.toString() );
         }
         finally 
         {
