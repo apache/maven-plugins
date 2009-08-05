@@ -239,7 +239,7 @@ under the License.
       <artifactId>velocity</artifactId>
       <version>1.5</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
@@ -359,36 +359,6 @@ under the License.
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <!-- latest release -->
-        <version>2.1</version>
-        <configuration>
-          <!-- For Announcement -->
-          <generateJiraAnnouncement>true</generateJiraAnnouncement>
-          <!-- For Changes-report -->
-          <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
-          <!-- For JIRA-report -->
-          <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
-          <onlyCurrentVersion>true</onlyCurrentVersion>
-          <resolutionIds>Closed</resolutionIds>
-          <sortColumnNames>Type,Key</sortColumnNames>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-              <report>jira-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <profiles>
     <profile>
       <id>run-its</id>
@@ -452,7 +422,41 @@ under the License.
           </plugin>
         </plugins>
       </build>
-    </profile>    
+    </profile>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+            <!--
+              Use the current version to generate sample with the last features/fixes of the plugin.
+              It implies that the current version is already deployed to generate the site.
+            -->
+            <version>${pom.version}</version>
+            <configuration>
+              <!-- For Announcement -->
+              <generateJiraAnnouncement>true</generateJiraAnnouncement>
+              <!-- For Changes-report -->
+              <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
+              <!-- For JIRA-report -->
+              <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
+              <onlyCurrentVersion>true</onlyCurrentVersion>
+              <resolutionIds>Closed</resolutionIds>
+              <sortColumnNames>Type,Key</sortColumnNames>
+            </configuration>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>changes-report</report>
+                  <report>jira-report</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
   </profiles>
-
 </project>
