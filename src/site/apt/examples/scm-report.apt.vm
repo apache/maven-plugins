@@ -53,7 +53,7 @@ Customize the SCM Report
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
+        <version>${project.version}</version>
         <configuration>
           <webAccessUrl>http://svn.example.org/viewvc/project/trunk</webAccessUrl>
           <anonymousConnection>scm:svn:http://svn.example.org/repo/project/trunk</anonymousConnection>
