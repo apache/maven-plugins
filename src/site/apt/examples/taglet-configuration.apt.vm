@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-07-26
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -46,7 +46,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <taglet>package.to.YourTagletClass</taglet>
@@ -78,7 +78,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <taglets>
@@ -124,7 +124,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <taglets>
@@ -164,7 +164,7 @@ Configuring Custom Taglets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <tagletArtifacts>

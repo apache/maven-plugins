@@ -1,10 +1,9 @@
  ------
- Grouping Packages
+ Selective Javadocs Reports
  ------
  Vincent Siveton
- Maria Odea Ching
  ------
- 2008-07-31
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,11 +26,13 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Grouping Packages
+Selective Javadocs Reports
 
- To set a grouping for different packages, use the \<groups/\> configuration in your pom:
+ To run the Javadocs reports selectively, you need to include only the Javadocs reports that you prefer.
+ Use "mvn site" to generate the selected reports.
 
 +-----+
+
 <project>
   ...
   <reporting>
@@ -39,24 +40,20 @@ Grouping Packages
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
-          <groups>
-            <group>
-              <title>Core Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test1</packages>
-            </group>
-            <group>
-              <title>Extension Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test2</packages>
-            </group>
-          </groups>
-          ...
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>javadoc</report>
+              <!-- <report>test-javadoc</report> -->
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
-    ...
   </reporting>
   ...
 </project>
