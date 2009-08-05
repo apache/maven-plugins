@@ -1,10 +1,9 @@
  ------
- Usage
+ Excluding Packages
  ------
- Vincent Siveton
  Maria Odea Ching
  ------
- 2009-08-03
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,15 +26,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
+Excluding Packages
 
-Usage
-
- The Javadoc Plugin generates javadocs using the Javadoc tool. The following examples describe the basic usage of the
- Plugin.
-
-* Generate Javadocs As Part Of Project Reports
-
- To generate javadocs as part of the site generation, you must configure the following in the \<reporting\> section of your pom:
+ To exclude specific packages from the javadoc, use \<excludePackageNames\> as shown below. The parameter
+ accepts wildcard (*) characters in its value but the wildcards should either be at the start or the end of the package
+ name. If more than one package is to be excluded, each package name must be separated either with a ':', ',' or ';'.
 
 +-----+
 <project>
@@ -45,6 +40,12 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <excludePackageNames>*.internal:org.acme.exclude1.*:org.acme.exclude2</excludePackageNames>
+          ...
+        </configuration>
       </plugin>
     </plugins>
     ...
@@ -52,30 +53,3 @@ Usage
   ...
 </project>
 +-----+
-
- When you execute <<<mvn site>>>, the javadocs will be generated and included in the generated site. A link to the javadocs
- will be added in the Project Reports menu.
-
-* Generate Standalone Javadocs
-
- To generate standalone javadocs for the project, you can execute any of the following commands:
-
-+-----+
-mvn javadoc:javadoc
-+-----+
-
- or
-
-+-----+
-mvn javadoc:jar
-+-----+
-
- For <<<mvn javadoc:jar>>>, the javadocs are first generated and then packaged into a jar file.
-
-* Javadoc Configuration
-
- The Javadoc Plugin supports a large number of configuration parameters. Each configuration parameter turns into
- a tag name.
-
- Please see the {{{./apidocs/org/apache/maven/plugin/javadoc/package-summary.html}Javadoc Package Summary}}
- for a listing of these parameters. Most of these parameters are passed directly to the Javadoc tool itself.

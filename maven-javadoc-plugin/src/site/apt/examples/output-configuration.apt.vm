@@ -1,9 +1,9 @@
  ------
- Selective Javadocs Reports
+ Using Alternative Output Directory
  ------
  Vincent Siveton
  ------
- 2007-05-01
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,13 +26,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Selective Javadocs Reports
+Using Alternative Output Directory
 
- To run the Javadocs reports selectively, you need to include only the Javadocs reports that you prefer.
- Use "mvn site" to generate the selected reports.
+ To run the Javadocs reports in an other output directory, you need to configure Javadoc Plugin as follow:
 
 +-----+
-
 <project>
   ...
   <reporting>
@@ -40,21 +38,23 @@ Selective Javadocs Reports
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
+          <reportOutputDirectory>\${project.reporting.outputDirectory}/myoutput</reportOutputDirectory>
+          <destDir>myapidocs</destDir>
           ...
         </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>javadoc</report>
-              <!-- <report>test-javadoc</report> -->
-            </reports>
-          </reportSet>
-        </reportSets>
       </plugin>
+      ...
     </plugins>
   </reporting>
   ...
 </project>
 +-----+
+
+  Running <<<mvn javadoc:javadoc>>> will output the Javadoc in the
+  <$\{project.reporting.outputDirectory\}/myoutput/myapidocs> instead of the default directory, i.e.
+  <$\{project.reporting.outputDirectory\}/apidocs>.
+
+ <<Note>>: Running <mvn site> will automatically use the <$\{project.reporting.outputDirectory\}> directory and
+ in this case, <reportOutputDirectory> has no effect. Only, <testDestDir> and <destDir> could be used.
