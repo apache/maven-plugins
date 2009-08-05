@@ -4,24 +4,27 @@
   John Casey
   ---
   1 December 2006
+  ---
 
-~~ Copyright 2006 The Apache Software Foundation.
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
 ~~
-~~ Licensed under the Apache License, Version 2.0 (the "License");
-~~ you may not use this file except in compliance with the License.
-~~ You may obtain a copy of the License at
+~~   http://www.apache.org/licenses/LICENSE-2.0
 ~~
-~~      http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing, software
-~~ distributed under the License is distributed on an "AS IS" BASIS,
-~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~~ See the License for the specific language governing permissions and
-~~ limitations under the License.
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
 
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
-
 
 Advanced Assembly-Descriptor Topics
 
@@ -103,59 +106,59 @@ Advanced Assembly-Descriptor Topics
 </files>
 ---
 
-  
+
 * Advanced Artifact-Matching in <<<includes>>> and <<<excludes>>>
 
   When using <<<dependencySet>>> or <<<moduleSet>>>, the <<<\<includes/\>>>> and
   <<<\<excludes/\>>>> sections actually apply to artifacts, not filenames.
   This can be a good thing, since you don't have to know the artifact's
-  filename in the local repository. However, explicitly specifying the full 
-  artifact ID (consisting of groupId, artifactId, version, type, and classifier) 
+  filename in the local repository. However, explicitly specifying the full
+  artifact ID (consisting of groupId, artifactId, version, type, and classifier)
   for each artifact to be included or excluded can lead to very a verbose
-  descriptor. Starting with version 2.2, the assembly plugin addresses the 
-  clumsiness of explicit artifact identification through the use of wildcard 
-  patterns. 
-  
+  descriptor. Starting with version 2.2, the assembly plugin addresses the
+  clumsiness of explicit artifact identification through the use of wildcard
+  patterns.
+
   The following easy rules should be applied when specifying artifact-matching
   patterns:
-  
+
   [[1]] Artifacts are matched by a set of identifier strings. In the following
-        strings, <<<type>>> is <<<'jar'>>> by default, and <<<classifier>>> is 
+        strings, <<<type>>> is <<<'jar'>>> by default, and <<<classifier>>> is
         omitted if null.
-  
+
         * <<<groupId:artifactId:type:classifier>>>
           ( <<<artifact.getDependencyConflictId()>>> )
-        
-        * <<<groupId:artifactId>>> 
+
+        * <<<groupId:artifactId>>>
           ( <<<ArtifactUtils.versionlessKey( artifact )>>> )
-        
+
         * <<<groupId:artifactId:version:type:classifier>>>
           ( <<<artifact.getId()>>> )
-          
+
         []
-        
+
   [[2]] Any <<<'*'>>> character in an include/exclude pattern will result in the
         pattern being split, and the sub-patterns being matched within the three
         artifact identifiers mentioned above, using <<<String.indexOf(..)>>>.
-        
+
   [[3]] When no <<<'*'>>> is present in an include/exclude pattern, the pattern
         will only match if the <<entire>> pattern equals one of the three
         artifact identifiers above, using the <<<String.equals(..)>>> method.
-        
+
   [[4]] In case you missed it above, artifact-identification fields are
         separated by colons (<<<':'>>>) in the matching strings. So, a wildcard
         pattern that matches any artifact of type <<<'war'>>> might be specified
         as <<<*:war>>>.
-        
+
   []
-  
+
 ** Example: Include all dependencies of type <<<'war'>>>
 
   In this example, we'll configure a <<<dependencySet>>> so it only includes
   those <<<war>>> dependencies.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -174,10 +177,10 @@ Advanced Assembly-Descriptor Topics
 
   In the above example, any <<<war>>> artifacts that happen to have a classifier
   (not sure why this particular case would happen, but it <is> possible) will be
-  <<skipped>>. If you <really> want to be careful about catching all of the 
+  <<skipped>>. If you <really> want to be careful about catching all of the
   <<<war>>> artifacts in your project, you might want to use the following
   pattern:
-  
+
 ---
 *:war:*
 ---
@@ -188,9 +191,9 @@ Advanced Assembly-Descriptor Topics
   often distributed using jar files, in addition to normal binaries. We want to
   filter out any source-jar files (they'll be marked with a <<<sources>>>
   classifier) from the binary jars.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -215,27 +218,27 @@ Advanced Assembly-Descriptor Topics
   metadata can increase the size of the resulting assembly vastly. By default,
   the assembly plugin will exclude metadata files for most common source-control
   systems from the <<<fileSet>>>s specified in the descriptor.
-  
+
   On the other hand, what if you <wanted> to include Subversion metadata
-  directories? Starting with version 2.2, the assembly plugin offers the 
-  <<<useDefaultExcludes>>> option on all <<<fileSet>>> elements, in order to 
+  directories? Starting with version 2.2, the assembly plugin offers the
+  <<<useDefaultExcludes>>> option on all <<<fileSet>>> elements, in order to
   accommodate this use case.
-  
+
 ** Example: Bundle project sources for a developer-quickstart pack
 
   In this example, let's examine what happens if you have a large project in
   source control. This project contains a large number of sizable files that
-  haven't changed since the day they were added, in the early stages of the 
+  haven't changed since the day they were added, in the early stages of the
   project's lifetime. You want to enable potential developers to get started
   quickly, without checking out hundreds of 10-megabyte files first.
-  
+
   The compression incorporated with many archiving formats can offer an
   advantage here. If we create a project assembly, including Subversion metadata
   directories, developers should be able to download the assembly artifact and
   expand it, then simply type <<<svn up>>>.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -252,33 +255,33 @@ Advanced Assembly-Descriptor Topics
 ---
 
   <NOTE: You'll notice that we're excluding all target directories; these are a
-  form of "calculated" and otherwise transient data, and generally shouldn't be 
+  form of "calculated" and otherwise transient data, and generally shouldn't be
   included in archives, unless your goal is to create project binaries or
   similar.>
-  
+
 * Using Regular Expressions to Exclude Files
 
   <<Since: 2.2-beta-4>>
 
-  Sometimes, you may find you need to specify an extremely fine-grained inclusion or 
+  Sometimes, you may find you need to specify an extremely fine-grained inclusion or
   exclusion pattern for a <<<fileSet>>>. In these cases, you have the option of specifying
   your pattern in the form of a regular expression by using the <<<%regex[...]>>> syntax.
-  
+
   <Note:> For completeness, the default pattern type - Ant-style patterns - can also be
   specified using the new <<<%ant[...]>>> syntax. This will allow room for future expansion
   of <<<fileSet>>> patterns, including the option to change the default pattern syntax
   someday.
-  
+
 ** Example: Including directories named <<<target>>> in the <<<src>>> directory
 
-  In this example, we want to produce a buildable source distribution of a 
+  In this example, we want to produce a buildable source distribution of a
   Maven project hierarchy. Obviously, each project's <<<target>>> directory is
   a temporary workspace for the build process, so we want to exclude these
   directories. However, if one or more of the projects also includes a subdirectory
   named <<<target>>> in the <<<src>>> directory structure - perhaps as part of
   a Java package name - we want to make sure the files in this directory are
   included in the assembly.
-  
+
 ---
 <assembly>
   [...]
@@ -296,36 +299,36 @@ Advanced Assembly-Descriptor Topics
 </assembly>
 ---
 
-  The above <<<fileSet>>> uses a somewhat obscure feature of regular 
+  The above <<<fileSet>>> uses a somewhat obscure feature of regular
   expressions called <negative lookahead>, which means our exclude pattern
-  will only match paths that contain the word <<<target>>> but <<don't>> 
+  will only match paths that contain the word <<<target>>> but <<don't>>
   contain <<<src>>>. Effectively, any <<<target>>> directory within the
   <<<src>>> directory structure will be preserved in the assembly.
-  
+
 * Using Strict-Filtering to Catch Obsolete Patterns or Incorrect Builds
 
   At times, you want to build in a set of sanity checks when creating your
   assembly, to ensure that what goes into the assembly artifact is what you
   intended. One way you can do this is by enabling <<<useStrictFiltering>>> on
   your <<<dependencySets>>>, <<<moduleSets>>>, and <<<fileSets>>>.
-  
+
   <<<useStrictFiltering>>> is a flag that tells the assembly plugin to track
   each include/exclude pattern to make sure it's used during creation of the
-  assembly. This way, if the assembly-descriptor author intended for a particular 
-  file or artifact to be present, he can add an include/exclude pattern to the 
-  descriptor to ensure that file/artifact is present, and then set the 
-  <<<useStrictFiltering>>> flag. If the pattern isn't used to match at least one 
-  file during assembly creation, the build will fail and the user will receive a 
+  assembly. This way, if the assembly-descriptor author intended for a particular
+  file or artifact to be present, he can add an include/exclude pattern to the
+  descriptor to ensure that file/artifact is present, and then set the
+  <<<useStrictFiltering>>> flag. If the pattern isn't used to match at least one
+  file during assembly creation, the build will fail and the user will receive a
   message notifying him of the unused patterns.
-  
+
 ** Example: Ensuring the LICENSE.txt file is included in a jar
 
   In this example, we want to make sure that our project jar contains the
   project's open source license language, in order to be compliant with our
   software foundation's policies.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -345,7 +348,7 @@ Advanced Assembly-Descriptor Topics
 
   If a developer inadvertently removes the LICENSE.txt from the project
   directory, the assembly plugin should refuse to build this assembly.
-  
+
 * Using an Alternative Assembly Base Directory
 
   In many cases, assemblies should have all files arranged under one assembly
@@ -353,15 +356,15 @@ Advanced Assembly-Descriptor Topics
   contents collected in a nice, neat directory structure, rather than spread
   throughout the current working directory. This is achieved using the
   <<<includeBaseDirectory>>> flag, and this flag is set to <<<true>>> by
-  default, which will result in the project's <<<artifactId-version>>> being 
+  default, which will result in the project's <<<artifactId-version>>> being
   used as the assembly base directory.
-  
+
   However, in some special cases you may want to use a different directory name
   for the root of your assembly. Starting in the 2.2 version of the assembly
   plugin, this use case is addressed using the <<<baseDirectory>>> element of
-  the assembly descriptor. With this element, you can use POM expressions and 
+  the assembly descriptor. With this element, you can use POM expressions and
   static strings to specify the name of the assembly root directory.
-  
+
 ** Example: Eclipse-style invariable directory name for the Maven assembly
 
   In this example, let's explore what would happen if we wanted Maven to use the
@@ -371,9 +374,9 @@ Advanced Assembly-Descriptor Topics
   consider that the distribution assembly is currently built from the
   <<<maven-core>>> project, which means we shouldn't use the <<<artifactId>>> as
   part of the assembly root directory.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -385,9 +388,9 @@ Advanced Assembly-Descriptor Topics
   Now, imagine that the distribution assembly were created in the top-level
   <<<maven>>> project. Now, we <can> use the <<<artifactId>>>, and probably
   should, just to minimize the maintenance of these files.
-  
+
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" 
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
   [...]
@@ -401,7 +404,7 @@ Advanced Assembly-Descriptor Topics
   One of the most complex sections of the assembly descriptor is the
   <<<moduleSets>>> section. In fact, so many improvements have been made to this
   section that we feel it warrants its own <"Advanced Topics"> page.
-  
-  * Go to {{{advanced-module-set-topics.html}Advanced Module-Set Topics}}.
-  
+
+  * Go to {{{./advanced-module-set-topics.html}Advanced Module-Set Topics}}.
+
   []
