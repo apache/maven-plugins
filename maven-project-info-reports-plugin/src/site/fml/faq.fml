@@ -45,7 +45,7 @@ under the License.
         <p>
           You could use services such as <a href="http://mailhide.recaptcha.net/">reCAPTCHA Mailhide</a>.
           In this case, just replace email by the given URL, for instance:
-          <source>
+          <source><![CDATA[
 <project>
   ...
   <developers>
@@ -57,7 +57,7 @@ under the License.
     ...
   </developers>
   ...
-</project></source>
+</project>]]></source>
         </p>
       </answer>
     </faq>
