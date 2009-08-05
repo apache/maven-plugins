@@ -18,21 +18,19 @@
   ------
   Unpacking project dependencies
   ------
-  Carlos Sanchez
+  Allan Ramirez
+  Brian Fox
   ------
-  Oct 2007
+  Nov 2006
   ------
 
-Using project dependencies' sources
+Unpacking project dependencies
 
-  This is pretty similar to the {{{copying-project-dependencies.html}Copying project dependencies}}
-  or {{{unpacking-project-dependencies.html}Unpacking project dependencies}} 
-  examples.
-
-  Instead of using the project dependencies it uses their sources. Use the goal 
-  <<<copy-dependencies>>> to just copy the sources jars to a directory or
-  <<<unpack-dependencies>>> to extract them.
-  See the sample below:
+  This is pretty similar to the {{{copying-project-dependencies.html}Copying direct dependencies}}
+  example. The difference is that the direct dependencies are unpacked,
+  including the transitive dependencies. To unpack the artifacts, use the
+  <<<dependency:unpack-dependencies>>> mojo and configure the dependency plugin
+  to something like the sample below:
 
 +---+
 <project>
@@ -42,19 +40,20 @@ Using project dependencies' sources
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>src-dependencies</id>
+            <id>unpack-dependencies</id>
             <phase>package</phase>
             <goals>
-              <!-- use copy-dependencies instead if you don't want to explode the sources -->
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <classifier>sources</classifier>
-              <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-              <outputDirectory>${project.build.directory}/sources</outputDirectory>
+              <includes>**/*.class</includes>
+              <excludes>**/*.properties</excludes>
+              <outputDirectory>\${project.build.directory}/alternateLocation</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
         </executions>
