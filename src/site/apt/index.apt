@@ -40,47 +40,44 @@ Maven Checkstyle Plugin
 
    The Checkstyle Plugin has two goals:
 
-   * {{{checkstyle-mojo.html}checkstyle:checkstyle}} performs Checkstyle analysis and generates a report on violations.
+   * {{{./checkstyle-mojo.html}checkstyle:checkstyle}} performs Checkstyle analysis and generates a report on violations.
 
-   * {{{check-mojo.html}checkstyle:check}} performs a violation check against the last Checkstyle run to see if there are
+   * {{{./check-mojo.html}checkstyle:check}} performs a violation check against the last Checkstyle run to see if there are
      any violations. It reads the Checkstyle output file, counts the number of violations found and displays it on the
      console.
 
 * Usage
 
-  General instructions on how to use the Checkstyle Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Checkstyle Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Checkstyle+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
    The following examples show how to use the Checkstyle Plugin in more advanced usecases:
 
-   * {{{examples/custom-checker-config.html}Using a Custom Checkstyle Checker Configuration}}
+   * {{{./examples/custom-checker-config.html}Using a Custom Checkstyle Checker Configuration}}
 
-   * {{{examples/custom-property-expansion.html}Using Custom Checkstyle Property Expansion Definitions}}
+   * {{{./examples/custom-property-expansion.html}Using Custom Checkstyle Property Expansion Definitions}}
 
-   * {{{examples/suppressions-filter.html}Using a Suppressions Filter}}
+   * {{{./examples/suppressions-filter.html}Using a Suppressions Filter}}
 
-   * {{{examples/custom-developed-checkstyle.html}Using Custom Developed Checkstyle Check Modules}}
+   * {{{./examples/custom-developed-checkstyle.html}Using Custom Developed Checkstyle Check Modules}}
 
-   * {{{examples/multi-module-config.html}Multimodule Configuration}}
+   * {{{./examples/multi-module-config.html}Multimodule Configuration}}
 
-
-
-
-
+  []
