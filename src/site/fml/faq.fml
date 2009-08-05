@@ -19,7 +19,11 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="deploy">
       <question>If the Assembly Plugin is run during the package phase, do my assemblies get deployed during the deploy phase?</question>
@@ -46,7 +50,7 @@ under the License.
       <question>What goal should I use to create an assembly as part of my normal build process?</question>
       <answer>
         <p>Use the <a href="single-mojo.html">single</a> or <a href="directory-single-mojo.html">directory-single</a> goal.</p>
-        <p>Since the <a href="assembly-mojo.html">assembly</a>, <a href="attached-mojo.html">attached</a>, <a href="directory-mojo.html">directory</a>, and <a href="directory-inline-mojo.html">directory-inline</a> goals are all aggregators, they will execute at most once 
+        <p>Since the <a href="assembly-mojo.html">assembly</a>, <a href="attached-mojo.html">attached</a>, <a href="directory-mojo.html">directory</a>, and <a href="directory-inline-mojo.html">directory-inline</a> goals are all aggregators, they will execute at most once
            per execution of Maven. See <a href="http://docs.codehaus.org/display/MAVEN/Atypical+Plugin+Use+Cases">Atypical+Plugin+Use+Cases</a> (wiki) for more
            information on the problems associated with aggregator mojos.
         </p>
@@ -60,17 +64,17 @@ under the License.
            a multimodule project layout.
         </p>
         <p>In a multimodule hierarchy, when a child module declares the parent POM in its &lt;parent/&gt; section, Maven interprets this to mean that the parent
-           project's build must be completed before the child build can start. This ensures that the parent project is in its final form by the time the child 
+           project's build must be completed before the child build can start. This ensures that the parent project is in its final form by the time the child
            needs access to its POM information. In cases where the Assembly Plugin is included as part of that parent project's build process, it will execute
            along with everything else as part of the parent build - <b>before the child build can start</b>. If the assembly descriptor used in that parent build
-           references module binaries, it effectively expects the child build to be completed <b>before the assembly is processed</b>. This leads to a recursive 
+           references module binaries, it effectively expects the child build to be completed <b>before the assembly is processed</b>. This leads to a recursive
            dependency situation, where the child build depends on the parent build to complete before it can start, while the parent build depends on the presence
-           of child-module artifacts to complete successfully. Since these artifacts are missing, the Assembly Plugin will complain about missing artifacts, and 
+           of child-module artifacts to complete successfully. Since these artifacts are missing, the Assembly Plugin will complain about missing artifacts, and
            the build will fail.
         </p>
         <p>In many cases, you can avoid this problem by adding a new child module whose sole purpose is to produce your assembly. In the POM for this new project,
            add dependency definitions for any of the module binaries you had previously referenced. Then, move your assembly descriptor into this new child module,
-           and change all module-binary references to dependencySet references. Obviously, any fileSet or file references you may have in this descriptor may need 
+           and change all module-binary references to dependencySet references. Obviously, any fileSet or file references you may have in this descriptor may need
            to be adjusted or have the files they reference moved into the new child module alongside the descriptor itself.
         </p>
         <p>In cases where you absolutely must use module-binaries references, you should avoid binding your assembly into the main build lifecycle. Modify your POM
@@ -88,7 +92,7 @@ under the License.
   <part id="Artifact and Directory Formatting">
     <faq id="dashClassifier">
       <question>
-        I have a dependencySet that includes some artifacts with classifiers, and others without classifiers. 
+        I have a dependencySet that includes some artifacts with classifiers, and others without classifiers.
         How can I setup the file mappings to handle both cases appropriately?
       </question>
       <answer>
@@ -99,7 +103,7 @@ under the License.
           does, it will substitute the artifact's classifier - prepended by a dash - in place of the expression.
         </p>
         <p>
-          For example, suppose you want to include two artifacts, commons-logging-1.0.4.jar, and 
+          For example, suppose you want to include two artifacts, commons-logging-1.0.4.jar, and
           yourserver-1.0-client.jar (where 'client' is the classifier of the second artifact). To do this,
           simply add the following to your dependencySet:
         </p>
