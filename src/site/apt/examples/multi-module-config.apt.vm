@@ -97,7 +97,7 @@ whizbang
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <dependencies>
           <dependency>
             <groupId>com.example.whizbang</groupId>
@@ -113,7 +113,7 @@ whizbang
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <configLocation>whizbang/checkstyle.xml</configLocation>
           <headerLocation>whizbang/LICENSE.txt</headerLocation>
