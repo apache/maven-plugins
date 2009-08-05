@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2007-05-01
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -43,7 +43,7 @@ Using Alternate Javadoc Tool
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.5</version>
+            <version>${project.version}</version>
             <configuration>
               <javadocExecutable>C:\jdk1.6.0\bin\javadoc.exe</javadocExecutable>
               ...
@@ -71,7 +71,7 @@ Using Alternate Javadoc Tool
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.5</version>
+            <version>${project.version}</version>
             <configuration>
               <javadocVersion>1.5</javadocVersion>
               ...

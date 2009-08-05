@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-07-28
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -83,13 +83,13 @@ yourproject
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
-          <doctitle>My API for ${project.name} ${project.version}</doctitle> <!-- Used by javadoc:javadoc goal -->
-          <windowtitle>My API for ${project.name} ${project.version}</windowtitle> <!-- Used by javadoc:javadoc goal -->
+          <doctitle>My API for \${project.name} \${project.version}</doctitle> <!-- Used by javadoc:javadoc goal -->
+          <windowtitle>My API for \${project.name} \${project.version}</windowtitle> <!-- Used by javadoc:javadoc goal -->
 
-          <testDoctitle>My Test API for ${project.name} ${project.version}</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
-          <testWindowtitle>My Test API for ${project.name} ${project.version}</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
+          <testDoctitle>My Test API for \${project.name} \${project.version}</testDoctitle> <!-- Used by javadoc:test-javadoc goal -->
+          <testWindowtitle>My Test API for \${project.name} \${project.version}</testWindowtitle> <!-- Used by javadoc:test-javadoc goal -->
           ...
         </configuration>
       </plugin>
@@ -106,7 +106,7 @@ yourproject
  configuration (i.e. \<doctitle/\> or \<windowtitle/\> parameters) that Javadoc report (backward compatible reasons).
 
  <<Note>>: To run the reports selectively, you need to include only the reports that you prefer.
-  Read the {{{selective-javadocs-report.html}Selective Javadocs Reports}} part for more information.
+  Read the {{{./selective-javadocs-report.html}Selective Javadocs Reports}} part for more information.
 
 * Using the \<reportSets/\> configuration parameter
 
@@ -123,13 +123,13 @@ yourproject
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <reportSets>
           <reportSet>
             <id>html</id>
             <configuration>
-              <doctitle>My API for ${project.name} ${project.version}</doctitle>
-              <windowtitle>My API for ${project.name} ${project.version}</windowtitle>
+              <doctitle>My API for \${project.name} \${project.version}</doctitle>
+              <windowtitle>My API for \${project.name} \${project.version}</windowtitle>
               ...
             </configuration>
             <reports>
@@ -139,8 +139,8 @@ yourproject
           <reportSet>
             <id>test-html</id>
             <configuration>
-              <testDoctitle>My Test API for ${project.name} ${project.version}</testDoctitle>
-              <testWindowtitle>My Test API for ${project.name} ${project.version}</testWindowtitle>
+              <testDoctitle>My Test API for \${project.name} \${project.version}</testDoctitle>
+              <testWindowtitle>My Test API for \${project.name} \${project.version}</testWindowtitle>
               ...
             </configuration>
             <reports>

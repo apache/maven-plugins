@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-07-21
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -38,6 +38,7 @@ Configuring <<<links>>> Parameter
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <links>
             <link>http://commons.apache.org/dbcp/apidocs/</link>
@@ -96,7 +97,8 @@ Configuring <<<links>>> Parameter
  </javaApiLinks>
 +-----+
 
-  Refer to {{{../javadoc-mojo.html#links}links}} parameter for more information.
+~~ Using anchor links produces a Velocity error.
+  Refer to {{{../javadoc-mojo.html}links}} parameter for more information.
 
 Configuring <<<offlineLinks>>> Parameter
 

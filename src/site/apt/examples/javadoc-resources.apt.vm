@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2008-08-11
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -87,7 +87,7 @@ yourproject
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>${project.version}</version>
         <configuration>
           ...
           <overview>${basedir}/overview.html</overview>

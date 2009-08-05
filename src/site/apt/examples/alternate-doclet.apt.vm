@@ -4,7 +4,7 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 2009-02-28
+ 2009-08-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -43,7 +43,7 @@ Using Alternate Doclet
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.5</version>
+            <version>${project.version}</version>
             <configuration>
               <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
 
@@ -100,7 +100,7 @@ Using Alternate Doclet In Addition To The Javadoc Doclet
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.5</version>
+            <version>${project.version}</version>
             <reportSets>
               <reportSet>
                 <id>html</id>
@@ -120,7 +120,7 @@ Using Alternate Doclet In Addition To The Javadoc Doclet
                     <version>1.2b2</version>
                   </docletArtifact>
                   <additionalparam>
-                    -d ${project.build.directory}/site/doccheck
+                    -d \${project.build.directory}/site/doccheck
                   </additionalparam>
 
                   <!-- Other dir than apidocs -->
