@@ -46,7 +46,7 @@ Integrated DOAP Plugin With The Site Plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-doap-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>site</id>
@@ -72,7 +72,7 @@ Integrated DOAP Plugin With The Site Plugin
 <project>
   <body>
     <head>
-      <link rel="meta" title="DOAP" href="${project.url}/doap_maven-doap-plugin.rdf" type="application/rdf+xml"/>
+      <link rel="meta" title="DOAP" href="\${project.url}/doap_maven-doap-plugin.rdf" type="application/rdf+xml"/>
     </head>
     ...
   </body>
