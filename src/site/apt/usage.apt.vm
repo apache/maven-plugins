@@ -41,7 +41,7 @@ Usage
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-doap-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <configuration>
          <doapOptions>
            <programmingLanguage>java</programmingLanguage>
@@ -76,7 +76,7 @@ mvn doap:generate
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-doap-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <configuration>
          <doapOptions>
            <programmingLanguage>java</programmingLanguage>
