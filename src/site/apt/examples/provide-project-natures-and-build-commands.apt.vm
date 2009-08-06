@@ -27,7 +27,7 @@ Provide Project Natures And Build Commands for Eclipse
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.7</version>
+        <version>${project.version}</version>
         <configuration>
           <additionalProjectnatures>
             <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
@@ -58,6 +58,7 @@ Provide Project Natures And Build Commands for Eclipse
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin<artifactId>
+        <version>${project.version}</version>
         <configuration>
           <projectnatures>
             <projectnature>my.own.project.nature</projectnature>

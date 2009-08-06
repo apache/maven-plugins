@@ -33,7 +33,7 @@ mvn eclipse:eclipse -Declipse.projectDir=.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.7</version>
+        <version>${project.version}</version>
         <configuration>
           <workspace>${basedir}</workspace>
           <workspaceCodeStylesURL>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/src/optional/eclipse-config/maven-styles.xml</workspaceCodeStylesURL>
