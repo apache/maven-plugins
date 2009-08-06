@@ -1,10 +1,10 @@
   ------
-  Customizing The Context Root
+  Customizing The File Name Mapping
   ------
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  September 23, 2005
+  November 19, 2006
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -24,10 +24,10 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Customizing The Context Root
+Customizing The File Name Mapping
 
-  The sample below shows how to customize the context root of an artifact to be
-  placed in the EAR file:
+  It might happen that your project has the same artifactId for different groups. To avoid file name
+  clashing, specify the <<<full>>> file name mapping.
 
 +--------
   <build>
@@ -35,18 +35,14 @@ Customizing The Context Root
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            [...]
-           <modules>
-             <webModule>
-               <groupId>artifactGroupId</groupId>
-               <artifactId>artifactId</artifactId>
-               <contextRoot>/custom-context-root</contextRoot>
-             </webModule>
-          </modules>
+           <fileNameMapping>full</fileNameMapping>
         </configuration>
       </plugin>
     </plugins>
   </build>
 +---------
+
+  As a result, each artifact file name will be prefixed by the groupId to avoid clashes.
