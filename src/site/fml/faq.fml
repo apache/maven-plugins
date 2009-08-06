@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+<faqs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/FML/1.0"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="What is DOAP">
       <question>What is DOAP?</question>
