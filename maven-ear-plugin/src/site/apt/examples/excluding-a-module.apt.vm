@@ -1,5 +1,5 @@
   ------
-  Customizing A Module URI
+  Excluding A Module
   ------
   Stephane Nicoll
   <snicoll@apache.org>
@@ -24,11 +24,10 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Customizing A Module URI
+Excluding A Module
 
-  This is actually a combination of customizing the module's location and file
-  name. The sample below shows how to specify the URI of a module being placed
-  in the EAR file:
+  If for some reason a dependency which is declared in the pom of the project needs to be
+  excluded, the excluded flag could be used as follows:
 
 +--------
   <build>
@@ -36,15 +35,15 @@ Customizing A Module URI
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            [...]
            <modules>
-             <jarModule>
+             <webModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
-               <uri>APP-INF/lib/anotherName-1.2.3.jar</uri>
-             </jarModule>
+               <excluded>true</excluded>
+             </webModule>
           </modules>
         </configuration>
       </plugin>

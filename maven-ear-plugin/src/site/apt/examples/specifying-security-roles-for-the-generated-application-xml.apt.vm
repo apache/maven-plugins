@@ -1,10 +1,10 @@
   ------
-  Filtering the sources
+  Specifying Security Roles For The Generated application.xml
   ------
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  January 3, 2009
+  September 23, 2005
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -24,31 +24,9 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Filtering the sources
+Specifying Security Roles For The Generated application.xml
 
-  Filtering the content of the <<<src/main/application>>> directory or the
-  one defined by the <<<earSourcesDirectory>>> parameter is as easy as:
-
-+--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-           <filtering>true</filtering>
-           [...]
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-+---------
-
-  Note that the standard properties are available for filtering. It is also
-  possible to specify a set of property files to add extra values if
-  necessary. The configuration below uses also the properties defined in
-  <<<src/main/filters/config.properties>>>
+  Security roles might be specified as follows
 
 +--------
   <build>
@@ -56,13 +34,18 @@ Filtering the sources
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
-           <filtering>true</filtering>
-           <filters>
-             <filter>src/main/filters/config.properties</filter>
-           </filters>
            [...]
+           <security>
+            <security-role id="SecurityRole_1234">
+              <role-name>manager</role-name>
+            </security-role>
+            <security-role id="SecurityRole_5678">
+              <description>My cool description</description>
+              <role-name id="RoleName_12">teller</role-name>
+            </security-role>
+          </security>
         </configuration>
       </plugin>
     </plugins>

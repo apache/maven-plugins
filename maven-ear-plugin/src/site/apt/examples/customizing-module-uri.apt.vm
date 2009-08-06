@@ -1,5 +1,5 @@
   ------
-  Customizing A Module Location
+  Customizing A Module URI
   ------
   Stephane Nicoll
   <snicoll@apache.org>
@@ -24,36 +24,11 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Customizing A Module Location
+Customizing A Module URI
 
-  The example below shows how to place a library in the APP-INF/lib directory of
-  the EAR file:
-
-+--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-           [...]
-           <modules>
-             <jarModule>
-               <groupId>artifactGroupId</groupId>
-               <artifactId>artifactId</artifactId>
-               <bundleDir>APP-INF/lib</bundleDir>
-             </jarModule>
-          </modules>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-+---------
-
-  Note that it is possible to specify a default bundle directory for all libraries.
-  If a Jar module has not the bundleDir property above, the default one is used.
-  Below is an example of such configuration:
+  This is actually a combination of customizing the module's location and file
+  name. The sample below shows how to specify the URI of a module being placed
+  in the EAR file:
 
 +--------
   <build>
@@ -61,15 +36,14 @@ Customizing A Module Location
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            [...]
-           <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
            <modules>
              <jarModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
-               <bundleDir>/</bundleDir>
+               <uri>APP-INF/lib/anotherName-1.2.3.jar</uri>
              </jarModule>
           </modules>
         </configuration>
@@ -77,6 +51,3 @@ Customizing A Module Location
     </plugins>
   </build>
 +---------
-
-  In the above case, jar modules (i.e. libraries) will be placed in the APP-INF/lib directory
-  except the specified artifact which will be placed at the root of the EAR structure.

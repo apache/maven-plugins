@@ -1,10 +1,10 @@
   ------
-  Customizing The File Name Mapping
+  Including A Third Party Library In application.xml
   ------
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  November 19, 2006
+  September 23, 2005
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -24,10 +24,11 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Customizing The File Name Mapping
+Including A Third Party Library In application.xml
 
-  It might happen that your project has the same artifactId for different groups. To avoid file name
-  clashing, specify the <<<full>>> file name mapping.
+  If third party libraries need to be included in the generated application.xml, the
+  'includeInApplicationXml' flag could be used. This flag works only for jar modules
+  since they define third party libraries packaged within the EAR.
 
 +--------
   <build>
@@ -35,14 +36,18 @@ Customizing The File Name Mapping
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            [...]
-           <fileNameMapping>full</fileNameMapping>
+           <modules>
+             <jarModule>
+               <groupId>artifactGroupId</groupId>
+               <artifactId>artifactId</artifactId>
+               <includeInApplicationXml>true</includeInApplicationXml>
+             </jarModule>
+          </modules>
         </configuration>
       </plugin>
     </plugins>
   </build>
 +---------
-
-  As a result, each artifact file name will be prefixed by the groupId to avoid clashes.

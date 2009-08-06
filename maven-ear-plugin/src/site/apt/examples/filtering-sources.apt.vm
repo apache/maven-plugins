@@ -1,10 +1,10 @@
   ------
-  Including A Third Party Library In application.xml
+  Filtering the sources
   ------
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  September 23, 2005
+  January 3, 2009
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -24,11 +24,10 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Including A Third Party Library In application.xml
+Filtering the sources
 
-  If third party libraries need to be included in the generated application.xml, the
-  'includeInApplicationXml' flag could be used. This flag works only for jar modules
-  since they define third party libraries packaged within the EAR.
+  Filtering the content of the <<<src/main/application>>> directory or the
+  one defined by the <<<earSourcesDirectory>>> parameter is as easy as:
 
 +--------
   <build>
@@ -36,16 +35,34 @@ Including A Third Party Library In application.xml
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
+           <filtering>true</filtering>
            [...]
-           <modules>
-             <jarModule>
-               <groupId>artifactGroupId</groupId>
-               <artifactId>artifactId</artifactId>
-               <includeInApplicationXml>true</includeInApplicationXml>
-             </jarModule>
-          </modules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------
+
+  Note that the standard properties are available for filtering. It is also
+  possible to specify a set of property files to add extra values if
+  necessary. The configuration below uses also the properties defined in
+  <<<src/main/filters/config.properties>>>
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+           <filtering>true</filtering>
+           <filters>
+             <filter>src/main/filters/config.properties</filter>
+           </filters>
+           [...]
         </configuration>
       </plugin>
     </plugins>

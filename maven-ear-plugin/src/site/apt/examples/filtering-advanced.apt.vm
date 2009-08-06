@@ -49,7 +49,7 @@ Filtering: Advanced techniques
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            <filtering>true</filtering>
            <escapeString>\</escapeString>
@@ -65,7 +65,7 @@ Filtering: Advanced techniques
 +--------
 jdbc.url=${db.url}
 jdbc.user=${db.username}
-jdbc.password=\${db.password}
+jdbc.password=${db.password}
 +--------
 
   Filtering the content of such a file with this config will produce this content.
@@ -90,7 +90,7 @@ jdbc.password=${db.password}
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            <filtering>true</filtering>
            <nonFilteredFileExtensions>
