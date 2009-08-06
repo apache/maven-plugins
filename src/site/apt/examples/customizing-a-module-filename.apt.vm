@@ -1,5 +1,5 @@
   ------
-  Excluding A Module
+  Customizing A Module Filename
   ------
   Stephane Nicoll
   <snicoll@apache.org>
@@ -24,10 +24,9 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Excluding A Module
+Customizing A Module Filename
 
-  If for some reason a dependency which is declared in the pom of the project needs to be
-  excluded, the excluded flag could be used as follows:
+  The example below shows how to rename a module being placed in the EAR file:
 
 +--------
   <build>
@@ -35,15 +34,15 @@ Excluding A Module
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${project.version}</version>
         <configuration>
            [...]
            <modules>
-             <webModule>
+             <ejbModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
-               <excluded>true</excluded>
-             </webModule>
+               <bundleFileName>anotherName-1.2.3.jar</bundleFileName>
+             </ejbModule>
           </modules>
         </configuration>
       </plugin>
