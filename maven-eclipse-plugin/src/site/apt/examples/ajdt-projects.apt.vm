@@ -23,7 +23,7 @@ Including AJDT Projects into Workspace
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.7</version>
+        <version>${project.version}</version>
         <configuration>
           <ajdtVersion>1.5</ajdtVersion>
         </configuration>
