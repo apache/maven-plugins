@@ -55,7 +55,7 @@ Maven EAR Plugin
   []
 
   For available configuration options for these artifacts, please see the
-  {{{modules.html}modules configuration}}.
+  {{{./modules.html}modules configuration}}.
 
   For more information about the J2EE technology, please visit
   {{http://java.sun.com/developer/technicalArticles/J2EE/Intro}}.
@@ -64,29 +64,29 @@ Maven EAR Plugin
 
   EAR Plugin has two goals:
 
-  * {{{ear-mojo.html}ear:ear}} generates J2EE Enterprise Archive (EAR) files.
+  * {{{./ear-mojo.html}ear:ear}} generates J2EE Enterprise Archive (EAR) files.
 
-  * {{{generate-application-xml-mojo.html}ear:generate-application-xml}}
+  * {{{./generate-application-xml-mojo.html}ear:generate-application-xml}}
   generates the deployment descriptor file(s).
 
 * Usage
 
-  General instructions on how to use the EAR Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the EAR Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Further real-life examples are given in the plugin's
-  {{{tests.html}test suite}}. Last but not least, users occasionally contribute additional examples, tips or errata to
+  {{{./tests.html}test suite}}. Last but not least, users occasionally contribute additional examples, tips or errata to
   the {{{http://docs.codehaus.org/display/MAVENUSER/EAR+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -94,27 +94,29 @@ Maven EAR Plugin
   To provide you with better understanding on some usages of the EAR Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/filtering-sources.html}Filtering EAR Resources}}
+  * {{{./examples/filtering-sources.html}Filtering EAR Resources}}
 
-  * {{{examples/filtering-advanced.html}Advanced Filtering Techniques}}
+  * {{{./examples/filtering-advanced.html}Advanced Filtering Techniques}}
 
-  * {{{examples/customizing-a-module-filename.html}Customizing A Module
+  * {{{./examples/customizing-a-module-filename.html}Customizing A Module
   Filename}}
 
-  * {{{examples/customizing-context-root.html}Customizing The Context Root}}
+  * {{{./examples/customizing-context-root.html}Customizing The Context Root}}
 
-  * {{{examples/customizing-module-location.html}Customizing A Module Location}}
+  * {{{./examples/customizing-module-location.html}Customizing A Module Location}}
 
-  * {{{examples/customizing-module-uri.html}Customizing A Module URI}}
+  * {{{./examples/customizing-module-uri.html}Customizing A Module URI}}
 
-  * {{{examples/excluding-a-module.html}Excluding A Module}}
+  * {{{./examples/excluding-a-module.html}Excluding A Module}}
 
-  * {{{examples/unpacking-a-module.html}Unpacking A Module}}
+  * {{{./examples/unpacking-a-module.html}Unpacking A Module}}
 
-  * {{{examples/including-a-third-party-library-in-application-xml.html}
+  * {{{./examples/including-a-third-party-library-in-application-xml.html}
   Including A Third Party Library In application.xml}}
 
-  * {{{examples/specifying-security-roles-for-the-generated-application-xml.html}
+  * {{{./examples/specifying-security-roles-for-the-generated-application-xml.html}
   Specifying Security Roles For The Generated application.xml}}
 
-  * {{{examples/generating-jboss-app.html} Generating the jboss-app.xml file}}
+  * {{{./examples/generating-jboss-app.html} Generating the jboss-app.xml file}}
+
+   []
