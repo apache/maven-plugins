@@ -38,46 +38,46 @@ Maven Help Plugin
 
   The Help plugin has 8 goals:
 
-  * {{{active-profiles-mojo.html}help:active-profiles}} lists the profiles which are currently active for the build.
+  * {{{./active-profiles-mojo.html}help:active-profiles}} lists the profiles which are currently active for the build.
 
-  * {{{all-profiles-mojo.html}help:all-profiles}} lists the available profiles under the current project.
+  * {{{./all-profiles-mojo.html}help:all-profiles}} lists the available profiles under the current project.
 
-  * {{{describe-mojo.html}help:describe}} describes the attributes of a Plugin and/or a Mojo (Maven plain Old Java
+  * {{{./describe-mojo.html}help:describe}} describes the attributes of a Plugin and/or a Mojo (Maven plain Old Java
   Object).
 
-  * {{{effective-pom-mojo.html}help:effective-pom}} displays the effective POM as an XML for the current build, with
+  * {{{./effective-pom-mojo.html}help:effective-pom}} displays the effective POM as an XML for the current build, with
   the active profiles factored in.
 
-  * {{{effective-settings-mojo.html}help:effective-settings}} displays the calculated settings as an XML for the
+  * {{{./effective-settings-mojo.html}help:effective-settings}} displays the calculated settings as an XML for the
   project, given any profile enhancement and the inheritance of the global settings into the user-level settings.
 
-  * {{{evaluate-mojo.html}help:evaluate}} evaluates Maven expressions given by the user in an interactive mode.
+  * {{{./evaluate-mojo.html}help:evaluate}} evaluates Maven expressions given by the user in an interactive mode.
 
-  * {{{expressions-mojo.html}help:expressions}} displays the supported Plugin expressions used by Maven.
+  * {{{./expressions-mojo.html}help:expressions}} displays the supported Plugin expressions used by Maven.
 
-  * {{{system-mojo.html}help:system}} displays a list of the platform details like system properties and environment
+  * {{{./system-mojo.html}help:system}} displays a list of the platform details like system properties and environment
   variables.
 
   []
 
 * Usage
 
-  General instructions on how to use the Help Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Help Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Help+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -85,6 +85,6 @@ Maven Help Plugin
    To provide you with better understanding on some usages of the Help plugin, you can take a look into the
    following example(s):
 
-   * {{{examples/describe-configuration.html}Configuring Describe Goal}}
+   * {{{./examples/describe-configuration.html}Configuring Describe Goal}}
 
    []
