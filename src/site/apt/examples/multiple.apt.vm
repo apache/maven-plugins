@@ -45,7 +45,7 @@ Patch Multiple Files from Multiple Directories
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-patch-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <configuration>
           <targetDirectory>${moduleDirectory}</targetDirectory>
           <skipApplication>false</skipApplication>
@@ -55,7 +55,7 @@ Patch Multiple Files from Multiple Directories
             <id>bugfix-patches</id>
             <configuration>
               <patchDirectory>src/main/patches/bugfix</patchDirectory>
-              <patchTrackingFile>${project.build.directory}/optimization-files/bugfix/patches-applied.txt</patchTrackingFile>
+              <patchTrackingFile>\${project.build.directory}/optimization-files/bugfix/patches-applied.txt</patchTrackingFile>
               <naturalOrderProcessing>true</naturalOrderProcessing>
             </configuration>
             <phase>process-sources</phase>
@@ -67,7 +67,7 @@ Patch Multiple Files from Multiple Directories
             <id>enhancement-patches</id>
             <configuration>
               <patchDirectory>src/main/patches/enhancement</patchDirectory>
-              <patchTrackingFile>${project.build.directory}/optimization-files/enhancement/patches-applied.txt</patchTrackingFile>
+              <patchTrackingFile>\${project.build.directory}/optimization-files/enhancement/patches-applied.txt</patchTrackingFile>
               <naturalOrderProcessing>true</naturalOrderProcessing>
             </configuration>
             <phase>process-sources</phase>
