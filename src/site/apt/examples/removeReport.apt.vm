@@ -1,9 +1,9 @@
  ------
- Target JDK
+ Remove Report
  ------
  Dennis Lundberg
  ------
- 2008-01-02
+ 2007-12-28
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,48 +26,33 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Target JDK
+Remove Report
 
- There is a configuration element in the PMD plugin that let you set which
- target JDK to use. Often you want this to be in sync with the configuration
- for maven-compiler-plugin. The best practice for this is to set up a property
- and use that in the configuration section for each of the plugins. Here is
- an example on how to set that up:
+ You may want to generate only one of the reports, but not the other.  To do
+ this you can use the <<<\<reportSets\>>>> feature within your POM.  Below is
+ the default configuration for the plugin.  To disable one of the reports,
+ just copy the <<<\<reportSets\>>>> element below to your POM and remove the
+ <<<\<report\>>>> you don't want to generate.
 
 +--------------------+
 <project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>${compileSource}</source>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   ...
   <reporting>
     <plugins>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <targetJdk>${compileSource}</targetJdk>
-        </configuration>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
   ...
-  <properties>
-    <compileSource>1.5</compileSource>
-  </properties>
-  ...
 </project>
 +--------------------+
-
-
-
-
