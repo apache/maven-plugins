@@ -38,54 +38,54 @@ Maven Invoker Plugin
 
   The Invoker Plugin has two goals:
 
-  * {{{install-mojo.html}invoker:install}} copies the project artifacts of the main build into the local repository to
+  * {{{./install-mojo.html}invoker:install}} copies the project artifacts of the main build into the local repository to
     prepare the execution of the selected sub projects.
 
-  * {{{run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result.
+  * {{{./run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result.
 
   []
 
 * Usage
 
-  General instructions on how to use the Invoker Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Invoker Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Invoker+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
   The following example configurations are available to illustrate selected use cases in more detail:
 
-  * {{{examples/clone-projects.html}Clone projects}} to a temporary directory before running.
+  * {{{./examples/clone-projects.html}Clone projects}} to a temporary directory before running.
 
-  * {{{examples/filtering.html}Filter files}} to introduce some updates before starting the build.
+  * {{{./examples/filtering.html}Filter files}} to introduce some updates before starting the build.
 
-  * {{{examples/install-artifacts.html}Install}} projects artifacts to a local repository before running.
+  * {{{./examples/install-artifacts.html}Install}} projects artifacts to a local repository before running.
 
-  * {{{examples/post-build-script.html}Run a BeanShell or Groovy script}} to verify project output.
+  * {{{./examples/post-build-script.html}Run a BeanShell or Groovy script}} to verify project output.
 
-  * {{{examples/fast-use.html}Fast Invoker Plugin configuration}} to accelerate project execution.
+  * {{{./examples/fast-use.html}Fast Invoker Plugin configuration}} to accelerate project execution.
 
-  * {{{examples/access-test-classes.html}Access test classes}} to share code between hook scripts.
+  * {{{./examples/access-test-classes.html}Access test classes}} to share code between hook scripts.
 
-  * {{{examples/invoker-properties.html}Use Invoker Properties}} to configure goals, profiles etc. for individual projects.
+  * {{{./examples/invoker-properties.html}Use Invoker Properties}} to configure goals, profiles etc. for individual projects.
 
-  * {{{examples/prepare-build-env.html}Prepare the Build Environment}} by building some setup projects before other projects.
+  * {{{./examples/prepare-build-env.html}Prepare the Build Environment}} by building some setup projects before other projects.
 
   []
 
   You can also study some real-life usages of the Invoker Plugin by browsing its own integration tests which are located
-  in the directory <<<src/it>>> of the {{{source-repository.html}project source tree}}.
+  in the directory <<<src/it>>> of the {{{./source-repository.html}project source tree}}.

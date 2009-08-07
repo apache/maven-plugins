@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+  name="Maven Invoker plugin">
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
@@ -27,7 +30,7 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    
+
     <menu name="Examples">
       <item name="Accessing Test Classes" href="examples/access-test-classes.html"/>
       <item name="Cloning Projects" href="examples/clone-projects.html"/>
@@ -39,6 +42,6 @@ under the License.
       <item name="Preparing the Build Environment" href="examples/prepare-build-env.html"/>
       <item name="Skipping Invocations" href="examples/skipping.html"/>
     </menu>
-    
+
   </body>
 </project>
