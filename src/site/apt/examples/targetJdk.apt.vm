@@ -1,7 +1,9 @@
  ------
- Violation Checking
+ Target JDK
  ------
- 23 June 2006
+ Dennis Lundberg
+ ------
+ 2008-01-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -24,36 +26,48 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Violation Checking
+Target JDK
 
-  The <<<pmd:check>>> and <<<pmd:cpd-check>>> goals allow you to configure your build to fail if any errors are found
-  in the PMD or CPD reports respectively. In doing so you can enforce your own custom code quality rules.
-  
-  The rule violations may optionally be displayed on the build output using the <<<verbose>>> setting.
+ There is a configuration element in the PMD plugin that let you set which
+ target JDK to use. Often you want this to be in sync with the configuration
+ for maven-compiler-plugin. The best practice for this is to set up a property
+ and use that in the configuration section for each of the plugins. Here is
+ an example on how to set that up:
 
-  The following code fragment enables both the standard PMD check and the CPD check in a build, during the <<<verify>>>
-  phase.
-
-+-----+
++--------------------+
 <project>
   ...
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-              <goal>cpd-check</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>${compileSource}</source>
+        </configuration>
       </plugin>
     </plugins>
   </build>
   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <targetJdk>${compileSource}</targetJdk>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+  <properties>
+    <compileSource>1.5</compileSource>
+  </properties>
+  ...
 </project>
-+-----+
++--------------------+
+
+
+
+
