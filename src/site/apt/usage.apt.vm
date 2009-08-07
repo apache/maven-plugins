@@ -43,6 +43,7 @@ Using The Linkcheck Plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-linkcheck-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           ...
         </configuration>
@@ -69,6 +70,7 @@ Using The Linkcheck Plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-linkcheck-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           ...
         </configuration>
