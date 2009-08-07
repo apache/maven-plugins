@@ -54,8 +54,7 @@ Manifest customization
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2</version>
-        ...
+        <version>${project.version}</version>
         <configuration>
           <archive>
             <index>true</index>
