@@ -41,7 +41,7 @@ Customize Your Libraries
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
           <libraries>
             <library>
@@ -76,7 +76,7 @@ Customize Your Libraries
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
           <libraries>
             <library>
@@ -109,7 +109,7 @@ Customize Your Libraries
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
           <libraries>
             <library>
