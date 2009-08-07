@@ -43,7 +43,7 @@ A POM for a Maven 1.x plugin
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
-        <version>1.2</version>
+        <version>${project.version}</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
