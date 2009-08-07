@@ -34,36 +34,36 @@ Maven PMD Plugin
 
   This plugin has 4 goals:
 
-  * {{{pmd-mojo.html}pmd:pmd}} creates a PMD site report based on the rulesets and configuration set in the plugin.
+  * {{{./pmd-mojo.html}pmd:pmd}} creates a PMD site report based on the rulesets and configuration set in the plugin.
     It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
 
-  * {{{cpd-mojo.html}pmd:cpd}} generates a report for PMD's Copy/Paste Detector (CPD) tool.  It can also
+  * {{{./cpd-mojo.html}pmd:cpd}} generates a report for PMD's Copy/Paste Detector (CPD) tool.  It can also
     generate a cpd results file in any of these formats: xml, csv or txt.
 
-  * {{{check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not. This goal is executed by
+  * {{{./check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not. This goal is executed by
     default when <<<pmd:pmd>>> is executed.
 
-  * {{{cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not. This goal is
+  * {{{./cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not. This goal is
     executed by default when <<<pmd:cpd>>> is executed.
 
 * Usage
 
-  General instructions on how to use the PMD Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the PMD Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/PMD+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -71,10 +71,12 @@ Maven PMD Plugin
   To provide you with better understanding of some usages of the Maven PMD Plugin, you can take a look into the
   following examples:
 
-  * {{{examples/removeReport.html}Remove Report}}
+  * {{{./examples/removeReport.html}Remove Report}}
 
-  * {{{examples/targetJdk.html}Target JDK}}
+  * {{{./examples/targetJdk.html}Target JDK}}
 
-  * {{{examples/usingRuleSets.html}Using Rule Sets}}
+  * {{{./examples/usingRuleSets.html}Using Rule Sets}}
 
-  * {{{examples/violationChecking.html}Violation Checking}}
+  * {{{./examples/violationChecking.html}Violation Checking}}
+
+  []
