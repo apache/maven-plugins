@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs id="FAQ" title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="question1">
      <question>Why do I need to use this plugin?</question>
@@ -40,7 +43,7 @@ under the License.
          Sometimes you might want to test that error conditions are properly dealt with, i.e. fail a build. To assert
          a failure for a particular IT project, put the following setting into the properties file denoted by the
          plugin's <a href="run-mojo.html#invokerPropertiesFile"><code>invokerPropertiesFile</code></a> parameter:
-         <pre>invoker.buildResult=failure</pre>
+         <i>invoker.buildResult=failure</i>
          Now, the failure of the IT build will be interpreted as a test success. Likewise, a successful IT build will
          be considered a test failure.
        </p>
