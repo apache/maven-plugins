@@ -44,7 +44,7 @@ Using Rule Sets
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.3</version>
+        <version>${project.version}</version>
         <configuration>
           <rulesets>
             <!-- Two rule sets that come bundled with PMD -->
