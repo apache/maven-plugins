@@ -1,9 +1,9 @@
  ------
- Provide Deployment Descriptor File
+ Prevent Using Module Library References And Use Local Repository Artifacts
  ------
  Edwin Punzalan
  ------
- 11 July 2006
+ 10 July 2006
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -24,29 +24,16 @@
 ~~ under the License.
 
 
-Provide Deployment Descriptor File
+Prevent Using Module Library References And Use Local Repository Artifacts
 
-  The default deployment descriptor files are:
-
-  * <<<src/main/webapp/WEB-INF/web.xml>>> for war projects.
-
-  * <<<target/application.xml>>> for ear projects.
-
-  * <<<src/main/resources/META-INF/ejb-jar.xml>>> for ejb projects.
-
-  []
-
-  In cases where you want to provide your own descriptor files or if the
-  descriptor files are located somewhere else, you can use the following on the
-  command-line:
+  If for some reason, you do not want to use module (*.iml) references for your IDEA
+  project, you can choose to do so using:
 
 +-----
-mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
+mvn idea:idea -DlinkModules=false
 +-----
 
-  For a multiproject setup, where you'll want to have different values for this
-  parameter for projects that use it, you should put the configuration values
-  in their respective poms like so:
+  or in your pom.xml:
 
 +-----
 <project>
@@ -58,9 +45,9 @@ mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
-          <deploymentDescriptorFile>src/webapp/WEB-INF/web.xml</deploymentDescriptorFile>
+          <linkModules>false</linkModules>
         </configuration>
       </plugin>
       [...]

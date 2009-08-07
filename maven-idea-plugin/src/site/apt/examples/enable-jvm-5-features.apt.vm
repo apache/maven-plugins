@@ -1,5 +1,5 @@
  ------
- Attach Sources and/or Javadocs to Library Dependencies
+ Enable Assertions and other JVM 5.0 features supported by IDEA
  ------
  Edwin Punzalan
  ------
@@ -24,17 +24,17 @@
 ~~ under the License.
 
 
-Attach Sources and/or Javadocs to Library Dependencies
+Enable Assertions and other JVM 5.0 features supported by IDEA
 
-  Artifacts with sources and javadocs deployed can be attached to IDEA libraries
-  using <<<downloadSources>>> and <<<downloadJavadocs>>> respectively. The
-  following example shows how to do this in the command-line:
+  IntelliJ IDEA supports JVM 5.0 and its new features. These are not enabled by
+  default if the JVM running is less than 1.5. To enable them, you can use the
+  following command:
 
 +-----
-mvn idea:idea -DdownloadSources=true -DdownloadJavadocs=true
+mvn idea:idea -DjdkLevel=1.5
 +-----
 
-  or if you prefer putting the configuration in your pom.xml:
+  or in your pom.xml:
 
 +-----
 <project>
@@ -46,10 +46,9 @@ mvn idea:idea -DdownloadSources=true -DdownloadJavadocs=true
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
-          <downloadSources>true</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
+          <jdkLevel>1.5</jdkLevel>
         </configuration>
       </plugin>
       [...]
