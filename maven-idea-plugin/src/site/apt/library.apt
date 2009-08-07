@@ -53,4 +53,4 @@ Defining Libraries Using the <<<libraries>>> Parameter
   []
 
   Examples on using the <<<libraries>>> parameter can be found
-  {{{examples/customize-libraries.html}here}}.
+  {{{./examples/customize-libraries.html}here}}.
