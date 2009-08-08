@@ -1,6 +1,7 @@
   ------
-  Usage
+  Custom location of the Resource Adapter Descriptor
   ------
+  Stephane Nicoll
   Allan Ramirez
   ------
   July 2006
@@ -26,48 +27,33 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Usage
+Custom location of the Resource Adapter Descriptor
 
-  The RAR plugin is bound to the <<<package>>> phase of the build lifecycle.
-  To be able to generate the RAR as part of the lifecycle, the plugin should
-  be declared at the \<build\> section of the pom.
+   It is also possible to specify a custom location for the ra.xml file. For
+   instance to use the file located in <<<src/resources/ra.xml>>>, configure your
+   project as follows:
 
 +---+
 <project>
   [...]
-    <build>
-      <plugins>
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
-        <version>2.2</version>
-        <executions>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>rar</goal>
-            </goals>
-            <configuration>
-              <!-- your configuration here -->
-            </configuration>
-        </execution>
-      </plugins>
-    </build>
+        <version>${project.version}</version>
+        <configuration>
+           <raXmlFile>src/resources/ra.xml</raXmlFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   [...]
 </project>
-+---+
++----+
 
-  then invoke the <<<package>>> phase.
+   Then execute the plugin by invoking the <<<rar:rar>>> goal.
 
-+---+
-mvn package
-+---+
-
-  Another way to execute the plugin is to call the <<<rar:rar>>> goal.
-
-+---+
++----+
 mvn rar:rar
-+---+
-
-  By default, the generated archive(RAR) can be located at the project's target 
-  directory.
-
++----+

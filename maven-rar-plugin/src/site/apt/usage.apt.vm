@@ -1,5 +1,5 @@
   ------
-  Adding Manifest File
+  Usage
   ------
   Allan Ramirez
   ------
@@ -26,28 +26,48 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Adding Manifest File
+Usage
 
-  By default, The RAR plugin retrieves the manifest file to use in this
-  location <<<${basedir}/src/main/rar/META-INF/MANIFEST.MF>>>. To be able to
-  change the location, configure the <<manifestFile>> property and set the
-  value to the new location.
+  The RAR plugin is bound to the <<<package>>> phase of the build lifecycle.
+  To be able to generate the RAR as part of the lifecycle, the plugin should
+  be declared at the \<build\> section of the pom.
 
 +---+
 <project>
   [...]
-  <build>
-    <plugins>
-      <plugin>
+    <build>
+      <plugins>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-           <manifestFile>src/resources/META-INF/MANIFEST.MF</manifestFile>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>rar</goal>
+            </goals>
+            <configuration>
+              <!-- your configuration here -->
+            </configuration>
+        </execution>
+      </plugins>
+    </build>
   [...]
 </project>
-+----+
++---+
+
+  then invoke the <<<package>>> phase.
+
++---+
+mvn package
++---+
+
+  Another way to execute the plugin is to call the <<<rar:rar>>> goal.
+
++---+
+mvn rar:rar
++---+
+
+  By default, the generated archive(RAR) can be located at the project's target 
+  directory.
+
