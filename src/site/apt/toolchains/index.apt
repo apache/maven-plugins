@@ -13,8 +13,8 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Standard Toolchains
   ------
@@ -25,11 +25,10 @@
 
 Standard Toolchains
 
-	The following standard toolchains are included by default with Maven.
-	
-	
-	* {{{jdk.html}JDK}} - Defines the Java Development Kit location and identification
+  The following standard toolchains are included by default with Maven.
 
-	
-	[]
+  * {{{./jdk.html}JDK}} - Defines the Java Development Kit location and identification
+
+  []
+
     You may also create and use your own custom toolchains by following the {{{http://maven.apache.org/}TBD}} instructions.
