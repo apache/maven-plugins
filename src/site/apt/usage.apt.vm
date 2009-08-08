@@ -37,7 +37,7 @@ Usage
       <!-- Turn this into a lifecycle -->
       <plugin>      
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <goals>
@@ -67,7 +67,7 @@ Usage
       <!-- Turn this into a lifecycle -->
       <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <goals>
