@@ -34,12 +34,12 @@ Maven Remote Resources Plugin
 
 * Goals Overview
 
-  * {{{bundle-mojo.html}remote-resources:bundle}} creates the resource bundle manifest required
+  * {{{./bundle-mojo.html}remote-resources:bundle}} creates the resource bundle manifest required
     by the remote resource bundle processing. The manifest file,
     <<<${basedir}/target/classes/META-INF/maven/remote-resources.xml>>>, is created from the contents of the
     <<<src/main/resources>>> directory.
 
-  * {{{process-mojo.html}remote-resources:process}} retrieves the specified
+  * {{{./process-mojo.html}remote-resources:process}} retrieves the specified
     remote resource bundles, processes them and makes them available to the
     process-resources phase.
 
@@ -47,22 +47,22 @@ Maven Remote Resources Plugin
 
 * Usage
 
-  General instructions on how to use the Remote Resources Plugin can be found on the {{{usage.html}usage page}}.
+  General instructions on how to use the Remote Resources Plugin can be found on the {{{./usage.html}usage page}}.
   Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Remote+Resources+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 ~~* Examples
@@ -70,4 +70,4 @@ Maven Remote Resources Plugin
 ~~  To provide you with better understanding of some usages of the Remote Resources Plugin,
 ~~  you can take a look at the following examples:
 ~~
-~~  * {{{examples/example.html}Sample Example}}
+~~  * {{{./examples/example.html}Sample Example}}
