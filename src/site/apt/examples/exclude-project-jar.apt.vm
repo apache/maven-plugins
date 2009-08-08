@@ -1,6 +1,7 @@
   ------
-  Include extra files in the RAR
+  Exclude the project jar in the RAR
   ------
+  Stephane Nicoll
   Allan Ramirez
   ------
   July 2006
@@ -26,50 +27,31 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Include extra files in the RAR
+Exclude the project jar in the RAR
 
-  Extra files may also be included in the generated archive(rar). By default,
-  all files placed inside the <<<src/main/rar>>> will be included.
-
-+---+
-project
-|--pom.xml
-|--src
-   `--main
-      |--rar
-      |  `-- <!-- put the extra files here -->
-      |--java
-         [...]
-+---+
-
-  Then execute the plugin by invoking the <<<rar:rar>>> goal.
+  By default, the generated JAR file is included in the RAR file. This behavior
+  is controlled by the <<includeJar>> property. For instance, to exclude the generated
+  JAR file from the RAR, set the <<includeJar>> property to <<false>>.
 
 +---+
-mvn rar:rar
-+---+
-
-  To be able to change the location of the directory, configure the
-  <<<rarSourceDirectory>>> property and set a path for it.
-
-+---+
-<project>
-  [...]
+[...]
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
-        <version>2.2</version>
+        <version>${project.version}</version>
         <configuration>
-           <rarSourceDirectory>some-path</rarSourceDirectory>
+           <includeJar>false</includeJar>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  [...]
-</project>
+[...]
 +----+
 
+  Then execute the plugin by invoking the <<<rar:rar>>> goal.
 
-
-
++----+
+mvn rar:rar
++----+
