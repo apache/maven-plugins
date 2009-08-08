@@ -46,7 +46,7 @@ Creating Skinny WARs
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-alpha-2</version>
+        <version>${project.version}</version>
         <configuration>
           <!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
           <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
@@ -78,7 +78,7 @@ Creating Skinny WARs
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <!-- Use this to include a selection of jars that will be included in the WAR -->
           <packagingIncludes>WEB-INF/lib/my-tag-library.jar,**/*.xml,**/*.properties,**/*.class,**/*.png,**/*.css,**/*.js,**/*.jsp</packagingIncludes>
