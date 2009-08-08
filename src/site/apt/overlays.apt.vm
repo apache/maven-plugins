@@ -179,7 +179,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <overlays>
             <overlay>
@@ -224,7 +224,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <overlays>
             <overlay>
@@ -257,7 +257,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <overlays>
             <overlay>
@@ -301,7 +301,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <dependentWarIncludes>**/IncludeME,**/images</dependentWarIncludes>
         </configuration>
@@ -319,7 +319,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <dependentWarExcludes>WEB-INF/web.xml,index.*</dependentWarExcludes>
         </configuration>
@@ -336,7 +336,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <!-- default value is target/war/work -->
           <workDirectory>/tmp/extract_here</workDirectory>
@@ -354,7 +354,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <useCache>false</useCache>
         </configuration>
@@ -374,7 +374,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
+        <version>${project.version}</version>
         <configuration>
           <overlays>
             <overlay>
