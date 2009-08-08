@@ -13,8 +13,8 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Usage
   ------
@@ -24,39 +24,35 @@
   ------
 
 Usage
- 
+
   Brief examples on how to use the toolchains plugin.
- 
+
 * Generic Plugin configuration information
 
   See the following links for information about including and configuring plugins in your project:
-  
+
   *{{{http://maven.apache.org/guides/mini/guide-configuring-plugins.html}Configuring Plugins}}
-  
+
   *{{{http://maven.apache.org/guides/plugin/guide-java-plugin-development.html}Plugin Development}}
 
   *{{{http://maven.apache.org/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
 
    []
-  
+
 * What is a toolchain?
 
   Toolchain is a preconfigured object that maven plugins can ask for tool location and other information.
 The toolchains-plugin can read the persisted toolchains on the user's computer
 and match it against the toolchain requirements of the project (as configured in pom.xml)
 If match is found, the toolchain instance is made available to other maven plugins.
-That way all plugins can use the same JDK instance for example without hardcoding absolute paths into the pom.xml 
+That way all plugins can use the same JDK instance for example without hardcoding absolute paths into the pom.xml
 and without configuring all plugins that require path to JDK tools.
-  
+
 
 * The <<<toolchains:toolchain>>> mojo
 
    This goal are meant to be bound to a lifecycle phase and configured in your
    <<<pom.xml>>>. In order to function properly it shall be the first phase in the lifecycle, eg. the "validate" phase.
-   
-   The available standard toolchains are described {{{toolchains/index.html}here}}. 
-   
-   
-   []
-   
-  
+
+   The available standard toolchains are described {{{./toolchains/index.html}here}}.
+
