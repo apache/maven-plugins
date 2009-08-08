@@ -33,37 +33,39 @@ Maven WAR Plugin
 
 * Goals Overview
 
- * {{{war-mojo.html}war:war}} is the default goal invoked during the <<<package>>> phase for projects with a packaging
+ * {{{./war-mojo.html}war:war}} is the default goal invoked during the <<<package>>> phase for projects with a packaging
    type of <<<war>>>. It builds a WAR file.
 
- * {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
+ * {{{./exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
    an exploded webapp in a specified directory.
 
- * {{{inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> where the webapp is instead generated in the
+ * {{{./inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> where the webapp is instead generated in the
    web source directory, which is <<<src/main/webapp>>> by default.
 
- * {{{manifest-mojo.html}war:manifest}} generates a manifest for this webapp. The manifest file is created in the
+ * {{{./manifest-mojo.html}war:manifest}} generates a manifest for this webapp. The manifest file is created in the
    <<<warSourceDirectory>>>.
+
+ []
 
 * Usage
 
-  General instructions on how to use the WAR Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the WAR Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. To share common resources across multiple web
-  applications, see the documentation about using {{{overlays.html}overlays}}. Last but not least, users occasionally
+  applications, see the documentation about using {{{./overlays.html}overlays}}. Last but not least, users occasionally
   contribute additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/WAR+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -71,17 +73,20 @@ Maven WAR Plugin
  To provide you with better understanding on some usages of the Maven WAR Plugin,
  you can take a look into the following examples:
 
- * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
+ * {{{./examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
 
- * {{{examples/war-manifest-guide.html}WAR Manifest Customization}}
+ * {{{./examples/war-manifest-guide.html}WAR Manifest Customization}}
 
- * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing the Jetty Plugin}}
+ * {{{./examples/rapid-testing-jetty6-plugin.html}Rapid Testing the Jetty Plugin}}
 
- * {{{examples/skinny-wars.html}Creating Skinny WARs}}
+ * {{{./examples/skinny-wars.html}Creating Skinny WARs}}
 
- * {{{examples/file-name-mapping.html}Using File Name Mapping}}
+ * {{{./examples/file-name-mapping.html}Using File Name Mapping}}
+
+ []
 
 * Related links
 
-  * {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
+  * {{{./http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
 
+  []
