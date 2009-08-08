@@ -41,7 +41,7 @@ mvn source:test-jar
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.1</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -78,7 +78,7 @@ mvn source:test-jar
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
-            <version>2.1</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
