@@ -25,7 +25,7 @@
 
 Maven 2 Reactor Plugin
 
- This plugin can build a subset of interdependent projects in a 
+ This plugin can build a subset of interdependent projects in a
  reactor.  It should be useful in large reactor builds that include
  irrelevant stuff you're not working on.
 
@@ -33,20 +33,20 @@ Maven 2 Reactor Plugin
 
   The Reactor plugin has several goals:
 
-  * {{{resume-mojo.html}reactor:resume}} resumes a reactor at a certain point (e.g. when it fails
+  * {{{./resume-mojo.html}reactor:resume}} resumes a reactor at a certain point (e.g. when it fails
     in the middle)
 
     Example: <<<mvn reactor:resume -Dfrom=bar>>>
-    
-  * {{{make-mojo.html}reactor:make}} builds a project X and all of the reactor projects on which X depends
+
+  * {{{./make-mojo.html}reactor:make}} builds a project X and all of the reactor projects on which X depends
 
     Example: <<<mvn reactor:make -Dmake.folders=foo,bar>>>
-    
-  * {{{make-dependents-mojo.html}reactor:make-dependents}}  builds a project X and all of the reactor projects that depend on X (the reverse of reactor:make)
+
+  * {{{./make-dependents-mojo.html}reactor:make-dependents}}  builds a project X and all of the reactor projects that depend on X (the reverse of reactor:make)
 
     Example: <<<mvn reactor:make-dependents -Dmake.folders=foo,bar>>>
-    
-  * {{{make-scm-changes-mojo.html}reactor:make-scm-changes}}  build all reactor projects that you personally
+
+  * {{{./make-scm-changes-mojo.html}reactor:make-scm-changes}}  build all reactor projects that you personally
      have changed (according to SCM) and all reactor projects that depend
      on your changes
 
@@ -55,21 +55,21 @@ Maven 2 Reactor Plugin
 * make vs. make-dependents
 
   The goals <<<reactor:make>>> and <<<reactor:make-dependents>>> are very similar.  They differ in the <direction> of dependency analysis.
-  
+
   For example, suppose project "fooUI" depends on project "barBusinessLogic", which depends on project "bazDataAccess".
-  
+
 +---+
 fooUI --> barBusinessLogic --> bazDataAccess
 +---+
-  
+
   Ordinarily, when building, you'll first build bazDataAccess, then barBusinessLogic, then fooUI.
-  
+
   * <<make>>: In order to "make" barBusinessLogic, you first have to build bazDataAccess.  So if you run reactor:make on barBusinessLogic, it will build bazDataAccess, and then build barBusinessLogic; it won't build fooUI.  (This should remind you of the traditional "make" tool.)
 
 +---+
 barBusinessLogic --> bazDataAccess
 +---+
-  
+
   * <<make-dependents>>: Because fooUI depends on barBusinessLogic, fooUI is a "dependent" project of barBusinessLogic.  Anything that depends on barBusinessLogic is one of barBusinessLogic's "dependents."  Hence, reactor:make-dependents will build barBusinessLogic, and then build fooUI.
 
 +---+
@@ -77,11 +77,11 @@ fooUI --> barBusinessLogic
 +---+
 
   []
-  
+
   <<In other words, reactor:make walks *down* the dependency tree, whereas reactor:make-dependents walks *up* the dependency tree.>>
 
 * Examples
 
   To provide you with better understanding on some usages of the Reactor
-  Plugin, you can take a look at the {{{examples.html}examples}} page.
+  Plugin, you can take a look at the {{{./examples.html}examples}} page.
 
