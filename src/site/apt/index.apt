@@ -43,32 +43,32 @@ Maven Resources Plugin
 
    The Resources Plugin has three goals:
 
-   * {{{resources-mojo.html}resources:resources}} copies the
+   * {{{./resources-mojo.html}resources:resources}} copies the
      resources for the main source code to the main output directory.
 
-   * {{{testResources-mojo.html}resources:testResources}} copies the
+   * {{{./testResources-mojo.html}resources:testResources}} copies the
      resources for the test source code to the test output directory.
-     
-   * {{{copy-resources-mojo.html}resources:copy-resources}} copies resources to an output directory.     
+
+   * {{{./copy-resources-mojo.html}resources:copy-resources}} copies resources to an output directory.
 
 * Usage
 
-  General instructions on how to use the Resources Plugin can be found on the {{{usage.html}usage page}}. Some more
+  General instructions on how to use the Resources Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Last but not least, users occasionally contribute
   additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Resources+Plugin}plugin's wiki page}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{faq.html}FAQ}} and feel
-  free to contact the {{{mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
+  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
+  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
   already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{mail-lists.html}mail archive}}.
+  the {{{./mail-lists.html}mail archive}}.
 
   If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
+  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
   concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{source-repository.html}source repository}} and will find supplementary information in the
+  {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
@@ -76,14 +76,16 @@ Maven Resources Plugin
    The following examples show how to use the Resources Plugin in more advanced
    usecases:
 
-   * {{{examples/encoding.html}Specifying a character encoding scheme}}
+   * {{{./examples/encoding.html}Specifying a character encoding scheme}}
 
-   * {{{examples/resource-directory.html}Specifying resource directories}}
+   * {{{./examples/resource-directory.html}Specifying resource directories}}
 
-   * {{{examples/filter.html}Filtering}}
+   * {{{./examples/filter.html}Filtering}}
 
-   * {{{examples/include-exclude.html}Including and excluding files and directories}}
-   
-   * {{{examples/escape-filtering.html}Escape filtering}}
-   
-   * {{{examples/copy-resources.html}Copy resources}}
+   * {{{./examples/include-exclude.html}Including and excluding files and directories}}
+
+   * {{{./examples/escape-filtering.html}Escape filtering}}
+
+   * {{{./examples/copy-resources.html}Copy resources}}
+
+   []
