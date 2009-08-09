@@ -46,6 +46,7 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * @requiresProject
  * @todo refactor the common code with javadoc plugin
  * @requiresDependencyResolution runtime
+ * @deprecated As of version 2.3, this goal is no longer supported in favor of the dedicated maven-jarsigner-plugin.
  */
 public class JarSignVerifyMojo
     extends AbstractMojo
