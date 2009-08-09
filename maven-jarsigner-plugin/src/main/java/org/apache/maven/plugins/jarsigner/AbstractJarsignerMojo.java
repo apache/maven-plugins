@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
@@ -35,6 +36,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -68,18 +70,43 @@ public abstract class AbstractJarsignerMojo
     private String maxMemory;
 
     /**
-     * Archive to process. If set, neither the project artifact nor any attachments are processed.
+     * Archive to process. If set, neither the project artifact nor any attachments or archive sets are processed.
      *
      * @parameter expression="${jarsigner.archive}"
-     * @optional
      */
     private File archive;
+
+    /**
+     * The base directory to scan for JAR files using Ant-like inclusion/exclusion patterns.
+     * 
+     * @parameter expression="${jarsigner.archiveDirectory}"
+     * @since 1.1
+     */
+    private File archiveDirectory;
+
+    /**
+     * The Ant-like inclusion patterns used to select JAR files to process. The patterns must be relative to the
+     * directory given by the parameter {@link #archiveDirectory}. By default, the pattern
+     * <code>&#42;&#42;/&#42;.?ar</code> is used.
+     * 
+     * @parameter
+     * @since 1.1
+     */
+    private String[] includes = { "**/*.?ar" };
+
+    /**
+     * The Ant-like exclusion patterns used to exclude JAR files from processing. The patterns must be relative to the
+     * directory given by the parameter {@link #archiveDirectory}.
+     * 
+     * @parameter
+     * @since 1.1
+     */
+    private String[] excludes = {};
 
     /**
      * List of additional arguments to append to the jarsigner command line.
      *
      * @parameter expression="${jarsigner.arguments}"
-     * @optional
      */
     private String[] arguments;
 
@@ -91,11 +118,29 @@ public abstract class AbstractJarsignerMojo
     private boolean skip;
 
     /**
-     * Controls processing of project attachments.
-     *
-     * @parameter expression="${jarsigner.attachments}" default-value="true"
+     * Controls processing of the main artifact produced by the project.
+     * 
+     * @parameter expression="${jarsigner.processMainArtifact}" default-value="true"
+     * @since 1.1
      */
-    private boolean attachments;
+    private boolean processMainArtifact;
+
+    /**
+     * Controls processing of project attachments. If enabled, attached artifacts that are no JARs will be automatically
+     * excluded from processing.
+     * 
+     * @parameter expression="${jarsigner.processAttachedArtifacts}" default-value="true"
+     * @since 1.1
+     */
+    private boolean processAttachedArtifacts;
+
+    /**
+     * Controls processing of project attachments.
+     * 
+     * @parameter expression="${jarsigner.attachments}"
+     * @deprecated As of version 1.1 in favor of the new parameter <code>processAttachedArtifacts</code>.
+     */
+    private Boolean attachments;
 
     /**
      * The Maven project.
@@ -127,9 +172,12 @@ public abstract class AbstractJarsignerMojo
             }
             else
             {
-                processed += processArtifact( this.project.getArtifact() ) ? 1 : 0;
+                if ( processMainArtifact )
+                {
+                    processed += processArtifact( this.project.getArtifact() ) ? 1 : 0;
+                }
 
-                if ( attachments )
+                if ( processAttachedArtifacts && !Boolean.FALSE.equals( attachments ) )
                 {
                     for ( Iterator it = this.project.getAttachedArtifacts().iterator(); it.hasNext(); )
                     {
@@ -147,6 +195,31 @@ public abstract class AbstractJarsignerMojo
                     else
                     {
                         getLog().debug( getMessage( "ignoringAttachments" ) );
+                    }
+                }
+
+                if ( archiveDirectory != null )
+                {
+                    String includeList = ( includes != null ) ? StringUtils.join( includes, "," ) : null;
+                    String excludeList = ( excludes != null ) ? StringUtils.join( excludes, "," ) : null;
+
+                    List jarFiles;
+                    try
+                    {
+                        jarFiles = FileUtils.getFiles( archiveDirectory, includeList, excludeList );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Failed to scan archive directory for JARs: "
+                            + e.getMessage(), e );
+                    }
+
+                    for ( Iterator it = jarFiles.iterator(); it.hasNext(); )
+                    {
+                        File jarFile = (File) it.next();
+
+                        processArchive( jarFile );
+                        processed++;
                     }
                 }
             }
@@ -262,15 +335,6 @@ public abstract class AbstractJarsignerMojo
 
         if ( isJarFile( artifact ) )
         {
-            if ( this.verbose )
-            {
-                getLog().info( getMessage( "processing", artifact ) );
-            }
-            else if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( getMessage( "processing", artifact ) );
-            }
-
             processArchive( artifact.getFile() );
 
             processed = true;
@@ -318,6 +382,15 @@ public abstract class AbstractJarsignerMojo
         }
 
         preProcessArchive( archive );
+
+        if ( this.verbose )
+        {
+            getLog().info( getMessage( "processing", archive ) );
+        }
+        else if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( getMessage( "processing", archive ) );
+        }
 
         Commandline commandLine = new Commandline();
 
