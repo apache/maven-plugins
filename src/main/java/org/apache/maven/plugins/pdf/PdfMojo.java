@@ -275,7 +275,13 @@ public class PdfMojo
         {
             if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
             {
-                final List pdfs = FileUtils.getFiles( workingDirectory, "**/*.pdf", null );
+                String outputName = getDocumentModel( getDefaultLocale() ).getOutputName();
+                if ( StringUtils.isNotEmpty( FileUtils.getExtension( outputName ) ) )
+                {
+                    outputName =
+                        outputName.substring( 0, outputName.indexOf( FileUtils.getExtension( outputName ) ) - 1 );
+                }
+                final List pdfs = FileUtils.getFiles( workingDirectory, "**/" + outputName + ".pdf", null );
 
                 for ( final Iterator it = pdfs.iterator(); it.hasNext(); )
                 {
