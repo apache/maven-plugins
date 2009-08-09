@@ -222,12 +222,7 @@ public class PdfMojo
     // Public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws MojoExecutionException if an exception ocurred during mojo execution.
-     * @throws MojoFailureException if the mojo could not be executed.
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -246,53 +241,15 @@ public class PdfMojo
 
         try
         {
-            final List localesList = siteTool.getAvailableLocales( locales );
+            generatedPdf();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error during document generation: " + e.getMessage(), e );
+        }
 
-            // Default is first in the list
-            this.defaultLocale = (Locale) localesList.get( 0 );
-            Locale.setDefault( defaultLocale );
-
-            for ( final Iterator iterator = localesList.iterator(); iterator.hasNext(); )
-            {
-                final Locale locale = (Locale) iterator.next();
-
-                final File workingDir = getWorkingDirectory( locale );
-
-                File siteDirectoryFile = siteDirectory;
-                if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
-                {
-                    siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
-                }
-
-                // Copy extra-resources
-                copyResources( locale );
-
-                DocumentRendererContext context = new DocumentRendererContext();
-                context.put( "project", project );
-                context.put( "settings", settings );
-                context.put( "PathTool", new PathTool() );
-                context.put( "FileUtils", new FileUtils() );
-                context.put( "StringUtils", new StringUtils() );
-                context.put( "i18n", i18n );
-
-                try
-                {
-                    // TODO use interface see DOXIASITETOOLS-30
-                    if ( aggregate )
-                    {
-                        ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, getDocumentModel( locale ), context );
-                    }
-                    else
-                    {
-                        ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, null, context );
-                    }
-                }
-                catch ( DocumentRendererException e )
-                {
-                    throw new MojoExecutionException( "Error during document generation", e );
-                }
-            }
-
+        try
+        {
             if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
             {
                 final List pdfs = FileUtils.getFiles( workingDirectory, "**/*.pdf", null );
@@ -308,13 +265,73 @@ public class PdfMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error during document generation", e );
+            throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
         }
     }
 
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
+
+    /**
+     * Generate the PDF.
+     *
+     * @throws MojoExecutionException if any
+     * @throws IOException if any
+     * @since 1.1
+     */
+    private void generatedPdf()
+        throws MojoExecutionException, IOException
+    {
+        final List localesList = siteTool.getAvailableLocales( locales );
+
+        // Default is first in the list
+        this.defaultLocale = (Locale) localesList.get( 0 );
+        Locale.setDefault( defaultLocale );
+
+        for ( final Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+        {
+            final Locale locale = (Locale) iterator.next();
+
+            final File workingDir = getWorkingDirectory( locale );
+
+            File siteDirectoryFile = siteDirectory;
+            if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+            {
+                siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
+            }
+
+            // Copy extra-resources
+            copyResources( locale );
+
+            DocumentRendererContext context = new DocumentRendererContext();
+            context.put( "project", project );
+            context.put( "settings", settings );
+            context.put( "PathTool", new PathTool() );
+            context.put( "FileUtils", new FileUtils() );
+            context.put( "StringUtils", new StringUtils() );
+            context.put( "i18n", i18n );
+
+            try
+            {
+                // TODO use interface see DOXIASITETOOLS-30
+                if ( aggregate )
+                {
+                    ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir,
+                                                                       getDocumentModel( locale ), context );
+                }
+                else
+                {
+                    ( (AbstractDocumentRenderer) docRenderer ).render( siteDirectoryFile, workingDir, null,
+                                                                       context );
+                }
+            }
+            catch ( DocumentRendererException e )
+            {
+                throw new MojoExecutionException( "Error during document generation", e );
+            }
+        }
+    }
 
     /**
      * Constructs a DocumentModel for the current project. The model is either read from
@@ -356,13 +373,14 @@ public class PdfMojo
      * @throws org.apache.maven.plugin.MojoExecutionException if the model could not be read.
      */
     private DocumentModel getDocumentModelFromDescriptor( Locale locale )
-            throws MojoExecutionException
+        throws MojoExecutionException
     {
         DocumentModel model = null;
 
         try
         {
-            model = new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
+            model =
+                new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
         }
         catch ( XmlPullParserException ex )
         {
@@ -428,8 +446,8 @@ public class PdfMojo
             final Locale locale = getDefaultLocale();
 
             final File basedir = project.getBasedir();
-            final String relativePath = siteTool.getRelativePath(
-                    siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
+            final String relativePath =
+                siteTool.getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
 
             final File descriptorFile = siteTool.getSiteDescriptorFromBasedir( relativePath, basedir, locale );
             DecorationModel decoration = null;
@@ -443,7 +461,8 @@ public class PdfMojo
                     String siteDescriptorContent = IOUtil.toString( reader );
 
                     siteDescriptorContent =
-                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), project, siteDescriptorContent,
+                        siteTool.getInterpolatedSiteDescriptorContent( new HashMap(), project,
+                                                                       siteDescriptorContent,
                                                                        reader.getEncoding(), reader.getEncoding() );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
