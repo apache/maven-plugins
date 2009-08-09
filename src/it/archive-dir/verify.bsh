@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.jar.*;
+
+File jarDir = new File( basedir, "target/classes/jars" );
+
+File includedJarFile = new File( jarDir, "included.jar" );
+System.out.println( "Checking for existence of " + includedJarFile );
+if ( !includedJarFile.isFile() )
+{
+    throw new Exception( "missing " + includedJarFile );
+}
+
+JarFile includedJar = new JarFile( includedJarFile );
+System.out.println( "Checking for existence of " + includedJarFile.getName() + "!/META-INF/TESTING.SF" );
+if ( includedJar.getEntry( "META-INF/TESTING.SF" ) == null )
+{
+    throw new Exception( "missing " + includedJarFile.getName() + "!/META-INF/TESTING.SF" );
+}
+System.out.println( "Checking for existence of " + includedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+if ( includedJar.getEntry( "META-INF/TESTING.DSA" ) == null )
+{
+    throw new Exception( "missing " + includedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+}
+includedJar.close();
+
+File excludedJarFile = new File( jarDir, "excluded.jar" );
+System.out.println( "Checking for existence of " + excludedJarFile );
+if ( !excludedJarFile.isFile() )
+{
+    throw new Exception( "missing " + excludedJarFile );
+}
+
+JarFile excludedJar = new JarFile( excludedJarFile );
+System.out.println( "Checking for absence of " + excludedJarFile.getName() + "!/META-INF/TESTING.SF" );
+if ( excludedJar.getEntry( "META-INF/TESTING.SF" ) != null )
+{
+    throw new Exception( "present " + excludedJarFile.getName() + "!/META-INF/TESTING.SF" );
+}
+System.out.println( "Checking for absence of " + excludedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+if ( excludedJar.getEntry( "META-INF/TESTING.DSA" ) != null )
+{
+    throw new Exception( "present " + excludedJarFile.getName() + "!/META-INF/TESTING.DSA" );
+}
+excludedJar.close();
+
+return true;
