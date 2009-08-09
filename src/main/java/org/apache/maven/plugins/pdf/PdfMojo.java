@@ -148,6 +148,15 @@ public class PdfMojo
     private File siteDirectory;
 
     /**
+     * Directory containing generating sources for apt, fml and xdoc docs.
+     *
+     * @parameter default-value="${project.build.directory}/generated-site"
+     * @required
+     * @since 1.1
+     */
+    private File generatedSiteDirectory;
+
+    /**
      * Output directory where PDF files should be created.
      *
      * @parameter default-value="${project.build.directory}/pdf"
@@ -208,19 +217,29 @@ public class PdfMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Document Renderer.
+     * Lazy instantiation for document Renderer.
      */
     private DocumentRenderer docRenderer;
 
     /**
-     * Default locale
+     * Lazy instantiation for default locale.
      */
     private Locale defaultLocale;
 
     /**
-     * Default decoration model
+     * Lazy instantiation for available locales list.
+     */
+    private List localesList;
+
+    /**
+     * Lazy instantiation for decoration model.
      */
     private DecorationModel defaultDecorationModel;
+
+    /**
+     * Lazy instantiation for tmpSite dir to have all site and generated-site files.
+     */
+    private File tmpSiteDirectory;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -271,6 +290,13 @@ public class PdfMojo
         {
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
         }
+
+        // safety release instance fields
+        docRenderer = null;
+        defaultLocale = null;
+        localesList = null;
+        defaultDecorationModel = null;
+        tmpSiteDirectory = null;
     }
 
     // ----------------------------------------------------------------------
@@ -287,20 +313,18 @@ public class PdfMojo
     private void generatedPdf()
         throws MojoExecutionException, IOException
     {
-        final List localesList = siteTool.getAvailableLocales( locales );
-
         Locale.setDefault( getDefaultLocale() );
 
-        for ( final Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+        for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
         {
             final Locale locale = (Locale) iterator.next();
 
             final File workingDir = getWorkingDirectory( locale );
 
-            File siteDirectoryFile = siteDirectory;
+            File siteDirectoryFile = getTmpSiteDirectory();
             if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
             {
-                siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
+                siteDirectoryFile = new File( getTmpSiteDirectory(), locale.getLanguage() );
             }
 
             // Copy extra-resources
@@ -331,6 +355,117 @@ public class PdfMojo
             catch ( DocumentRendererException e )
             {
                 throw new MojoExecutionException( "Error during document generation", e );
+            }
+        }
+    }
+
+    /**
+     * @return the default tmpSiteDirectory.
+     * @throws IOException if any
+     */
+    private File getTmpSiteDirectory()
+        throws IOException
+    {
+        if ( this.tmpSiteDirectory == null )
+        {
+            final File tmpSiteDir = new File( workingDirectory, "tmpsite" );
+            prepareTempSiteDirectory( tmpSiteDir );
+
+            this.tmpSiteDirectory = tmpSiteDir;
+        }
+
+        return this.tmpSiteDirectory;
+    }
+
+    /**
+     * Copy all site and generated-site files in the tmpSiteDirectory.
+     * <br/>
+     * <b>Note</b>: ignore copying of <code>generated-site</code> files if they already exist in the
+     * <code>site</code> dir.
+     *
+     * @param tmpSiteDir not null
+     * @throws IOException if any
+     */
+    private void prepareTempSiteDirectory( final File tmpSiteDir )
+        throws IOException
+    {
+        // safety
+        tmpSiteDir.mkdirs();
+
+        // copy site
+        FileUtils.copyDirectoryStructure( siteDirectory, tmpSiteDir );
+        // Remove SCM files
+        List files =
+            FileUtils.getFileAndDirectoryNames( tmpSiteDir, FileUtils.getDefaultExcludesAsString(), null, true,
+                                                true, true, true );
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            File file = new File( it.next().toString() );
+
+            if ( file.isDirectory() )
+            {
+                FileUtils.deleteDirectory( file );
+            }
+            else
+            {
+                file.delete();
+            }
+        }
+
+        // copy generated-site
+        if ( generatedSiteDirectory != null && generatedSiteDirectory.exists() )
+        {
+            for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
+            {
+                final Locale locale = (Locale) iterator.next();
+
+                List siteFiles =
+                    FileUtils.getFileNames( siteDirectory, "**/*", FileUtils.getDefaultExcludesAsString(), false );
+                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+                {
+                    siteFiles =
+                        FileUtils.getFileNames( new File( siteDirectory, locale.getLanguage() ), "**/*",
+                                                FileUtils.getDefaultExcludesAsString(), false );
+                }
+
+                List generatedSiteFiles =
+                    FileUtils.getFileNames( generatedSiteDirectory, "**/*",
+                                            FileUtils.getDefaultExcludesAsString(), false );
+                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+                {
+                    generatedSiteFiles =
+                        FileUtils.getFileNames( new File( generatedSiteDirectory, locale.getLanguage() ), "**/*",
+                                                FileUtils.getDefaultExcludesAsString(), false );
+                }
+
+                for ( final Iterator it = generatedSiteFiles.iterator(); it.hasNext(); )
+                {
+                    String generatedSiteFile = it.next().toString();
+
+                    if ( siteFiles.contains( generatedSiteFile ) )
+                    {
+                        getLog().warn(
+                                       "Generated-site already contains a file in site: " + generatedSiteFile
+                                           + ". Ignoring copying it!" );
+                        continue;
+                    }
+
+                    if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+                    {
+                        File in =
+                            new File( new File( generatedSiteDirectory, locale.getLanguage() ), generatedSiteFile );
+                        File out = new File( new File( tmpSiteDir, locale.getLanguage() ), generatedSiteFile );
+                        out.getParentFile().mkdirs();
+                        FileUtils.copyFile( in, out );
+                    }
+                    else
+                    {
+                        File in = new File( generatedSiteDirectory, generatedSiteFile );
+                        File out = new File( tmpSiteDir, generatedSiteFile );
+                        out.getParentFile().mkdirs();
+                        FileUtils.copyFile( in, out );
+                    }
+                }
             }
         }
     }
@@ -424,16 +559,30 @@ public class PdfMojo
 
     /**
      * @return the default locale from <code>siteTool</code>.
+     * @see #getAvailableLocales()
      */
     private Locale getDefaultLocale()
     {
         if ( this.defaultLocale == null )
         {
-            final List localesList = siteTool.getAvailableLocales( locales );
-            this.defaultLocale = (Locale) localesList.get( 0 );
+            this.defaultLocale = (Locale) getAvailableLocales().get( 0 );
         }
 
         return this.defaultLocale;
+    }
+
+    /**
+     * @return the available locales from <code>siteTool</code>.
+     * @see SiteTool#getAvailableLocales(String)
+     */
+    private List getAvailableLocales()
+    {
+        if ( this.localesList == null )
+        {
+            this.localesList = siteTool.getAvailableLocales( locales );
+        }
+
+        return this.localesList;
     }
 
     /**
