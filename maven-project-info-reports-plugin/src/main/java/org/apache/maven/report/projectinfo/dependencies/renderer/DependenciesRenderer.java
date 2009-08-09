@@ -289,9 +289,20 @@ public class DependenciesRenderer
     // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
     protected void startSection( String name )
     {
+        startSection( name, name );
+    }
+
+    /**
+     * Start section with a name and a specific anchor.
+     *
+     * @param anchor not null
+     * @param name not null
+     */
+    protected void startSection( String anchor, String name )
+    {
         section = section + 1;
 
-        super.sink.anchor( HtmlTools.encodeId( name ) );
+        super.sink.anchor( HtmlTools.encodeId( anchor ) );
         super.sink.anchor_();
 
         switch ( section )
@@ -428,27 +439,32 @@ public class DependenciesRenderer
         // collect dependencies by scope
         Map dependenciesByScope = dependencies.getDependenciesByScope( false );
 
-        renderDependenciesForAllScopes( dependenciesByScope );
+        renderDependenciesForAllScopes( dependenciesByScope, false );
 
         endSection();
     }
 
     /**
      * @param dependenciesByScope map with supported scopes as key and a list of <code>Artifact</code> as values.
+     * @param isTransitive <code>true</code> if it is transitive dependencies rendering.
      * @see Artifact#SCOPE_COMPILE
      * @see Artifact#SCOPE_PROVIDED
      * @see Artifact#SCOPE_RUNTIME
      * @see Artifact#SCOPE_SYSTEM
      * @see Artifact#SCOPE_TEST
      */
-    private void renderDependenciesForAllScopes( Map dependenciesByScope )
+    private void renderDependenciesForAllScopes( Map dependenciesByScope, boolean isTransitive )
     {
-        renderDependenciesForScope( Artifact.SCOPE_COMPILE, (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ) );
-        renderDependenciesForScope( Artifact.SCOPE_RUNTIME, (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ) );
-        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ) );
+        renderDependenciesForScope( Artifact.SCOPE_COMPILE,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ), isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_RUNTIME,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ), isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
+                                    isTransitive );
         renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
-                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ) );
-        renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ) );
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ), isTransitive );
+        renderDependenciesForScope( Artifact.SCOPE_SYSTEM,
+                                    (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ), isTransitive );
     }
 
     private void renderSectionProjectTransitiveDependencies()
@@ -465,7 +481,7 @@ public class DependenciesRenderer
         {
             paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
-            renderDependenciesForAllScopes( dependenciesByScope );
+            renderDependenciesForAllScopes( dependenciesByScope, true );
         }
 
         endSection();
@@ -759,7 +775,7 @@ public class DependenciesRenderer
         endSection();
     }
 
-    private void renderDependenciesForScope( String scope, List artifacts )
+    private void renderDependenciesForScope( String scope, List artifacts, boolean isTransitive )
     {
         if ( artifacts != null )
         {
@@ -770,7 +786,10 @@ public class DependenciesRenderer
             // can't use straight artifact comparison because we want optional last
             Collections.sort( artifacts, getArtifactComparator() );
 
-            startSection( scope );
+            String anchorByScope =
+                ( isTransitive ? getReportString( "report.transitivedependencies.title" ) + "_" + scope
+                                : getReportString( "report.dependencies.title" ) + "_" + scope );
+            startSection( anchorByScope, scope );
 
             paragraph( getReportString( "report.dependencies.intro." + scope ) );
 
