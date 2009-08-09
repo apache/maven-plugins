@@ -249,7 +249,7 @@ public class JarsignerSignMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Failed to unsign archive " + jarFile, e );
+            throw new MojoExecutionException( "Failed to unsign archive " + jarFile + ": " + e.getMessage(), e );
         }
         finally
         {
@@ -263,7 +263,7 @@ public class JarsignerSignMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Failed to unsign archive " + jarFile, e );
+            throw new MojoExecutionException( "Failed to unsign archive " + jarFile + ": " + e.getMessage(), e );
         }
     }
 
