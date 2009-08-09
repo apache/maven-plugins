@@ -30,5 +30,8 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    <menu name="Examples">
+      <item name="Sign and Verify Project" href="examples/sign-and-verify-project.html"/>
+    </menu>
   </body>
 </project>
