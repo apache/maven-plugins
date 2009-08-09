@@ -26,7 +26,7 @@ under the License.
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
    <faq id="about">
-     <question>What is Jarsigner ?</question>
+     <question>What is Jarsigner?</question>
      <answer>
        <p>
          You can read more about this tool in the offical guide:
@@ -34,8 +34,8 @@ under the License.
        </p>
      </answer>
    </faq>
-   <faq id="maven-jar-plugin">
-     <question>Is it possible to sign a single archive file ?</question>
+   <faq id="single-archive">
+     <question>Is it possible to sign a single archive file?</question>
      <answer>
        <p>
          Signing or verifying a Java archive which is neither a project artifact
@@ -43,6 +43,17 @@ under the License.
          of the <a href="sign-mojo.html"><code>sign</code></a> and <a href="verify-mojo.html"><code>verify</code></a> goals. If
          this parameter is set, the goals will process the specified archive and will not process any project
          artifacts.
+       </p>
+     </answer>
+   </faq>
+   <faq id="unsign">
+     <question>How can I unsign JARs before re-signing them with my key?</question>
+     <answer>
+       <p>
+         To remove any existing signatures from the JARs before signing with your own key, simply set the parameter
+         <a href="sign-mojo.html#removeExistingSignatures"><code>removeExistingSignatures</code></a> of the
+         <a href="sign-mojo.html"><code>sign</code></a> mojo to <code>true</code>. The resulting JAR will then appear
+         to be signed exactly once.
        </p>
      </answer>
    </faq>

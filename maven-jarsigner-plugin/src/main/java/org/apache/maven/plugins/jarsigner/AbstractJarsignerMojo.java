@@ -291,10 +291,21 @@ public abstract class AbstractJarsignerMojo
     }
 
     /**
+     * Pre-processes a given archive.
+     * 
+     * @param archive The archive to process, must not be <code>null</code>.
+     * @throws MojoExecutionException If pre-processing failed.
+     */
+    protected void preProcessArchive( final File archive )
+        throws MojoExecutionException
+    {
+        // default does nothing
+    }
+
+    /**
      * Processes a given archive.
-     *
+     * 
      * @param archive The archive to process.
-     *
      * @throws NullPointerException if {@code archive} is {@code null}.
      * @throws MojoExecutionException if processing {@code archive} fails.
      */
@@ -305,6 +316,8 @@ public abstract class AbstractJarsignerMojo
         {
             throw new NullPointerException( "archive" );
         }
+
+        preProcessArchive( archive );
 
         Commandline commandLine = new Commandline();
 
