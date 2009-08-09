@@ -118,36 +118,44 @@ public abstract class AbstractJarsignerMojo
         {
             this.executable = getExecutable();
 
+            int processed = 0;
+
             if ( this.archive != null )
             {
-                this.processArchive( this.archive );
+                processArchive( this.archive );
+                processed++;
             }
             else
             {
-                this.processArtifact( this.project.getArtifact() );
+                processed += processArtifact( this.project.getArtifact() ) ? 1 : 0;
 
-                for ( Iterator it = this.project.getAttachedArtifacts().iterator(); it.hasNext(); )
+                if ( attachments )
                 {
-                    final Artifact artifact = (Artifact) it.next();
-
-                    if ( this.attachments )
+                    for ( Iterator it = this.project.getAttachedArtifacts().iterator(); it.hasNext(); )
                     {
-                        this.processArtifact( artifact );
+                        final Artifact artifact = (Artifact) it.next();
+
+                        processed += processArtifact( artifact ) ? 1 : 0;
                     }
-                    else if ( this.isJarFile( artifact ) )
+                }
+                else
+                {
+                    if ( verbose )
                     {
-                        this.getLog().info( this.getMessage( "ignoringAttachment", new Object[]
-                            {
-                                artifact.toString()
-                            } ) );
-
+                        getLog().info( getMessage( "ignoringAttachments" ) );
+                    }
+                    else
+                    {
+                        getLog().debug( getMessage( "ignoringAttachments" ) );
                     }
                 }
             }
+
+            getLog().info( getMessage( "processed", new Integer( processed ) ) );
         }
         else
         {
-            this.getLog().info( this.getMessage( "disabled", null ) );
+            getLog().info( getMessage( "disabled", null ) );
         }
     }
 
@@ -237,11 +245,12 @@ public abstract class AbstractJarsignerMojo
      * Processes a given artifact.
      *
      * @param artifact The artifact to process.
+     * @return <code>true</code> if the artifact is a JAR and was processed, <code>false</code> otherwise.
      *
      * @throws NullPointerException if {@code artifact} is {@code null}.
      * @throws MojoExecutionException if processing {@code artifact} fails.
      */
-    private void processArtifact( final Artifact artifact )
+    private boolean processArtifact( final Artifact artifact )
         throws MojoExecutionException
     {
         if ( artifact == null )
@@ -249,46 +258,36 @@ public abstract class AbstractJarsignerMojo
             throw new NullPointerException( "artifact" );
         }
 
-        if ( this.isJarFile( artifact ) )
+        boolean processed = false;
+
+        if ( isJarFile( artifact ) )
         {
             if ( this.verbose )
             {
-                this.getLog().info( this.getMessage( "processing", new Object[]
-                    {
-                        artifact.toString()
-                    } ) );
-
+                getLog().info( getMessage( "processing", artifact ) );
             }
-            else if ( this.getLog().isDebugEnabled() )
+            else if ( getLog().isDebugEnabled() )
             {
-                this.getLog().debug( this.getMessage( "processing", new Object[]
-                    {
-                        artifact.toString()
-                    } ) );
-
+                getLog().debug( getMessage( "processing", artifact ) );
             }
 
-            this.processArchive( artifact.getFile() );
+            processArchive( artifact.getFile() );
+
+            processed = true;
         }
         else
         {
             if ( this.verbose )
             {
-                this.getLog().info( this.getMessage( "unsupported", new Object[]
-                    {
-                        artifact.toString()
-                    } ) );
-
+                getLog().info( getMessage( "unsupported", artifact ) );
             }
-            else if ( this.getLog().isDebugEnabled() )
+            else if ( getLog().isDebugEnabled() )
             {
-                this.getLog().debug( this.getMessage( "unsupported", new Object[]
-                    {
-                        artifact.toString()
-                    } ) );
-
+                getLog().debug( getMessage( "unsupported", artifact ) );
             }
         }
+
+        return processed;
     }
 
     /**
@@ -328,17 +327,13 @@ public abstract class AbstractJarsignerMojo
             commandLine.addArguments( this.arguments );
         }
 
-        commandLine = this.getCommandline( archive, commandLine );
+        commandLine = getCommandline( archive, commandLine );
 
         try
         {
-            if ( this.getLog().isDebugEnabled() )
+            if ( getLog().isDebugEnabled() )
             {
-                this.getLog().debug( this.getMessage( "command", new Object[]
-                    {
-                        this.getCommandlineInfo( commandLine )
-                    } ) );
-
+                getLog().debug( getMessage( "command", getCommandlineInfo( commandLine ) ) );
             }
 
             final int result = CommandLineUtils.executeCommandLine( commandLine,
@@ -377,20 +372,14 @@ public abstract class AbstractJarsignerMojo
 
             if ( result != 0 )
             {
-                throw new MojoExecutionException( this.getMessage( "failure", new Object[]
-                    {
-                        this.getCommandlineInfo( commandLine ), new Integer( result )
-                    } ) );
-
+                throw new MojoExecutionException( getMessage( "failure", getCommandlineInfo( commandLine ),
+                                                              new Integer( result ) ) );
             }
         }
         catch ( CommandLineException e )
         {
-            throw new MojoExecutionException( this.getMessage( "commandLineException", new Object[]
-                {
-                    this.getCommandlineInfo( commandLine )
-                } ), e );
-
+            throw new MojoExecutionException( getMessage( "commandLineException", getCommandlineInfo( commandLine ) ),
+                                              e );
         }
     }
 
@@ -487,6 +476,21 @@ public abstract class AbstractJarsignerMojo
         }
 
         return new MessageFormat( ResourceBundle.getBundle( "jarsigner" ).getString( key ) ).format( args );
+    }
+
+    private String getMessage( final String key )
+    {
+        return getMessage( key, null );
+    }
+
+    private String getMessage( final String key, final Object arg )
+    {
+        return getMessage( key, new Object[] { arg } );
+    }
+
+    private String getMessage( final String key, final Object arg1, final Object arg2 )
+    {
+        return getMessage( key, new Object[] { arg1, arg2 } );
     }
 
 }
