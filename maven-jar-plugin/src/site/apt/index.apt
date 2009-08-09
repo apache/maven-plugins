@@ -36,10 +36,6 @@ Maven JAR Plugin
 
   * {{{./test-jar-mojo.html}jar:test-jar}} create a jar file for your project test classes.
 
-  * {{{./sign-mojo.html}jar:sign}} sign a jar file.
-
-  * {{{./sign-verify-mojo.html}jar:sign-verify}} verify a signed jar file.
-
   []
 
 * Usage

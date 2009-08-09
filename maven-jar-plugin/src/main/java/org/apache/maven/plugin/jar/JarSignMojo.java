@@ -49,6 +49,7 @@ import java.util.StringTokenizer;
  * @requiresProject
  * @todo refactor the common code with javadoc plugin
  * @requiresDependencyResolution runtime
+ * @deprecated As of version 2.3, this goal is no longer supported in favor of the dedicated maven-jarsigner-plugin.
  */
 public class JarSignMojo
     extends AbstractMojo
