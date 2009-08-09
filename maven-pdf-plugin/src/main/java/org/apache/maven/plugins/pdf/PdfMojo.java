@@ -196,6 +196,18 @@ public class PdfMojo
     private boolean aggregate;
 
     /**
+     * The current version of this plugin.
+     *
+     * @parameter default-value="${plugin.version}"
+     * @readonly
+     */
+    private String pluginVersion;
+
+    // ----------------------------------------------------------------------
+    // Instance fields
+    // ----------------------------------------------------------------------
+
+    /**
      * Document Renderer.
      */
     private DocumentRenderer docRenderer;
@@ -209,14 +221,6 @@ public class PdfMojo
      * Default decoration model
      */
     private DecorationModel defaultDecorationModel;
-
-    /**
-     * The current version of this plugin.
-     *
-     * @parameter default-value="${plugin.version}"
-     * @readonly
-     */
-    private String pluginVersion;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -285,9 +289,7 @@ public class PdfMojo
     {
         final List localesList = siteTool.getAvailableLocales( locales );
 
-        // Default is first in the list
-        this.defaultLocale = (Locale) localesList.get( 0 );
-        Locale.setDefault( defaultLocale );
+        Locale.setDefault( getDefaultLocale() );
 
         for ( final Iterator iterator = localesList.iterator(); iterator.hasNext(); )
         {
@@ -296,7 +298,7 @@ public class PdfMojo
             final File workingDir = getWorkingDirectory( locale );
 
             File siteDirectoryFile = siteDirectory;
-            if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
             {
                 siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
             }
@@ -357,8 +359,8 @@ public class PdfMojo
 
         model.getMeta().setGenerator( getDefaultGenerator() );
         model.getMeta().setLanguage( locale.getLanguage() );
-        model.getCover().setCoverType( i18n.getString( "pdf-plugin", defaultLocale, "toc.type" ) );
-        model.getToc().setName( i18n.getString( "pdf-plugin", defaultLocale, "toc.title" ) );
+        model.getCover().setCoverType( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.type" ) );
+        model.getToc().setName( i18n.getString( "pdf-plugin", getDefaultLocale(), "toc.title" ) );
 
         debugLogGeneratedModel( model );
 
@@ -412,7 +414,7 @@ public class PdfMojo
      */
     private File getWorkingDirectory( Locale locale )
     {
-        if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+        if ( locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
         {
             return workingDirectory;
         }
