@@ -58,21 +58,21 @@ final class ApplicationXmlWriter
         if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
         {
             writer = initializeRootElementOneDotThree( w );
-            writeDisplayName( context.getDisplayName(), writer );
-            writeDescription( context.getDescription(), writer );
         }
         else if ( GenerateApplicationXmlMojo.VERSION_1_4.equals( version ) )
         {
             writer = initializeRootElementOneDotFour( w );
-            writeDescription( context.getDescription(), writer );
-            writeDisplayName( context.getDisplayName(), writer );
         }
         else if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
         {
             writer = initializeRootElementFive( w );
-            writeDescription( context.getDescription(), writer );
-            writeDisplayName( context.getDisplayName(), writer );
         }
+        else if ( GenerateApplicationXmlMojo.VERSION_6.equals( version ))
+        {
+            writer = initializeRootElementSix( w );
+        }
+        writeDisplayName( context.getDisplayName(), writer );
+        writeDescription( context.getDescription(), writer );
 
         final Iterator moduleIt = context.getEarModules().iterator();
         while ( moduleIt.hasNext() )
@@ -158,4 +158,17 @@ final class ApplicationXmlWriter
         writer.addAttribute( "version", "5" );
         return writer;
     }
+
+    private XMLWriter initializeRootElementSix( Writer w )
+    {
+        XMLWriter writer = initializeXmlWriter( w, null );
+        writer.startElement( APPLICATION_ELEMENT );
+        writer.addAttribute( "xmlns", "http://java.sun.com/xml/ns/javaee" );
+        writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+        writer.addAttribute( "xsi:schemaLocation",
+                             "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd" ); //TODO
+        writer.addAttribute( "version", "5" ); //TODO
+        return writer;
+    }
+
 }
