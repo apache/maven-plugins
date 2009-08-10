@@ -166,8 +166,9 @@ final class ApplicationXmlWriter
         writer.addAttribute( "xmlns", "http://java.sun.com/xml/ns/javaee" );
         writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
         writer.addAttribute( "xsi:schemaLocation",
-                             "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd" ); //TODO
-        writer.addAttribute( "version", "5" ); //TODO
+                             "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" );
+        writer.addAttribute( "version", "6" );
+        //mkleint: the schema document is not present at the site, but it should end up there eventually..
         return writer;
     }
 
