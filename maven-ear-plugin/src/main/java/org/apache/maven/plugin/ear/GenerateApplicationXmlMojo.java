@@ -91,7 +91,8 @@ public class GenerateApplicationXmlMojo
         else
         {
             // Check version
-            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) )
+            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && 
+                 !version.equals( VERSION_5 ) && !version.equals( VERSION_6 ) )
             {
                 throw new MojoExecutionException( "Invalid version[" + version + "]" );
             }
