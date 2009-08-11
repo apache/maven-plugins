@@ -23,6 +23,7 @@ import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * @version $Id$
@@ -48,6 +49,14 @@ public abstract class AbstractDeployMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
+
+    /**
+     * Flag whether Maven is currently in online/offline mode.
+     * 
+     * @parameter default-value="${settings.offline}"
+     * @readonly
+     */
+    private boolean offline;
 
     /**
      * Parameter used to update the metadata to make the artifact as release.
@@ -77,4 +86,14 @@ public abstract class AbstractDeployMojo
     {
         this.localRepository = localRepository;
     }
+
+    void failIfOffline()
+        throws MojoFailureException
+    {
+        if ( offline )
+        {
+            throw new MojoFailureException( "Cannot deploy artifacts when Maven is in offline mode" );
+        }
+    }
+
 }
