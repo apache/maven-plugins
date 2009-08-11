@@ -20,7 +20,6 @@ package org.apache.maven.plugins.pdf.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.List;
 
 import org.apache.maven.model.Developer;
@@ -28,6 +27,9 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * @author ltheussl
@@ -41,10 +43,12 @@ public class ModelBuilderMavenProjectStub
      */
     public ModelBuilderMavenProjectStub()
     {
+        XmlStreamReader reader = null;
         try
         {
-            Model model = new MavenXpp3Reader().read(
-                    new FileReader( new File( getBasedir() + "/pom_model_builder.xml" ) ) );
+            reader = ReaderFactory.newXmlReader( getFile() );
+
+            Model model = new MavenXpp3Reader().read( reader );
             setModel( model );
 
             setGroupId( model.getGroupId() );
@@ -59,53 +63,51 @@ public class ModelBuilderMavenProjectStub
         {
             throw new RuntimeException( e );
         }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 
-    /** {@inheritDoc}
-     * @return the test base dir: "/target/test-classes/unit/pdf/".
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
-        return new File( super.getBasedir() + "/target/test-classes/unit/pdf/" );
+        return new File( super.getBasedir(), "target/test-classes/unit/pdf/" );
     }
 
-    /** {@inheritDoc}
-     * @param developer
-     */
+    /** {@inheritDoc} */
     public void addDeveloper( Developer developer )
     {
         getModel().addDeveloper( developer );
     }
 
-    /** {@inheritDoc}
-     * @return
-     */
+    /** {@inheritDoc} */
     public List getDevelopers()
     {
         return getModel().getDevelopers();
     }
 
-    /** {@inheritDoc}
-     * @return
-     */
+    /** {@inheritDoc} */
     public Organization getOrganization()
     {
         return getModel().getOrganization();
     }
 
-    /** {@inheritDoc}
-     * @param list
-     */
+    /** {@inheritDoc} */
     public void setDevelopers( List list )
     {
         getModel().setDevelopers( list );
     }
 
-    /** {@inheritDoc}
-     * @param organization
-     */
+    /** {@inheritDoc} */
     public void setOrganization( Organization organization )
     {
         getModel().setOrganization( organization );
+    }
+
+    /** {@inheritDoc} */
+    public File getFile()
+    {
+        return new File( getBasedir(), "pom_model_builder.xml" );
     }
 }

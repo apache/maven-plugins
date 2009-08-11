@@ -20,6 +20,7 @@ package org.apache.maven.plugins.pdf;
  */
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -36,8 +37,10 @@ import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.model.Developer;
 import org.apache.maven.project.MavenProject;
-
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * Construct a DocumentModel from a MavenProject and related information.
@@ -313,11 +316,28 @@ public class DocumentModelBuilder
             return null;
         }
 
-        if ( StringUtils.isEmpty( project.getModel().getModelEncoding() ) )
+        String encoding = project.getModel().getModelEncoding();
+        // Workaround for MNG-4289
+        XmlStreamReader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( project.getFile() );
+            encoding = reader.getEncoding();
+        }
+        catch ( IOException e )
+        {
+            // nop
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        if ( StringUtils.isEmpty( encoding ) )
         {
             return "UTF-8";
         }
 
-        return project.getModel().getModelEncoding();
+        return encoding;
     }
 }

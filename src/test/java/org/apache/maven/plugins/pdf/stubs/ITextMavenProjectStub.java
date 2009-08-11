@@ -20,7 +20,7 @@ package org.apache.maven.plugins.pdf.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +30,8 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -41,21 +43,27 @@ public class ITextMavenProjectStub
     public ITextMavenProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
+        Reader reader = null;
         try
         {
-            Model model = pomReader.read( new FileReader( new File( getBasedir() + "/iText_pom.xml" ) ) );
+            reader = ReaderFactory.newXmlReader( getFile() );
+            Model model = pomReader.read( reader );
             setModel( model );
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
         }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 
     /** {@inheritDoc} */
     public File getBasedir()
     {
-        return new File( super.getBasedir() + "/target/test-classes/unit/pdf/" );
+        return new File( super.getBasedir(), "target/test-classes/unit/pdf/" );
     }
 
     /** {@inheritDoc} */
@@ -66,5 +74,11 @@ public class ITextMavenProjectStub
                                            new DefaultRepositoryLayout() );
 
         return Collections.singletonList( repository );
+    }
+
+    /** {@inheritDoc} */
+    public File getFile()
+    {
+        return new File( getBasedir(), "iText_pom.xml" );
     }
 }
