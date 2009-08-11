@@ -117,13 +117,14 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        
         if ( skip )
         {
             getLog().info( "Skipping artifact deployment" );
             return;
         }
-        
+
+        failIfOffline();
+
         ArtifactRepository repo = getDeploymentRepository();
 
         String protocol = repo.getProtocol();

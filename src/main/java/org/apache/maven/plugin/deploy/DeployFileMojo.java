@@ -195,6 +195,8 @@ public class DeployFileMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        failIfOffline();
+
         initProperties();
 
         validateArtifactInformation();
