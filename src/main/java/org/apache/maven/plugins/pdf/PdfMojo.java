@@ -1083,9 +1083,36 @@ public class PdfMojo
     private void generateMavenReport( MojoDescriptor mojoDescriptor, MavenReport report, Locale locale )
         throws IOException, MojoExecutionException
     {
-        if ( report == null || !report.canGenerateReport() || report.isExternalReport() )
+        if ( report == null )
         {
             return;
+        }
+
+        String localReportName = report.getName( locale );
+        if ( !report.canGenerateReport() )
+        {
+            getLog().info(
+                          "Skipped \"" + localReportName + "\" report, canGenerateReport() was false." );
+            return;
+        }
+        if ( report.isExternalReport() )
+        {
+            getLog().info(
+                          "Skipped external report, \"" + localReportName + "\" report." );
+            return;
+        }
+
+        for ( final Iterator it = getGeneratedMavenReports().iterator(); it.hasNext(); )
+        {
+            MavenReport generatedReport = (MavenReport) it.next();
+            if ( report.getName( locale ).equals( generatedReport.getName( locale ) ) )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( report.getName( locale ) + " was already generated." );
+                }
+                return;
+            }
         }
 
         File outDir = new File( getGeneratedSiteDirectoryTmp(), "xdoc" );
@@ -1116,7 +1143,6 @@ public class PdfMojo
             return;
         }
 
-        String localReportName = report.getName( locale );
         getLog().info( "Generating \"" + localReportName + "\" report." );
 
         StringWriter sw = new StringWriter();
@@ -1235,37 +1261,40 @@ public class PdfMojo
         // append all generated reports from generated-site
         try
         {
-            String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-            List generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes, true );
-            if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
+            if ( generatedSiteDirectory.exists() )
             {
-                generatedDirs =
-                    FileUtils.getFileNames( new File( generatedSiteDirectory, locale.getLanguage() ), "*",
-                                            excludes, true );
-            }
-
-            for ( final Iterator it = generatedDirs.iterator(); it.hasNext(); )
-            {
-                final String generatedDir = it.next().toString();
-
-                List generatedFiles = FileUtils.getFileNames( new File( generatedDir ), "**.*", excludes, false );
-
-                for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
+                String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
+                List generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes, true );
+                if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
-                    final String generatedFile = it2.next().toString();
-                    final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( "." ) );
+                    generatedDirs =
+                        FileUtils.getFileNames( new File( generatedSiteDirectory, locale.getLanguage() ), "*",
+                                                excludes, true );
+                }
 
-                    if ( !addedRef.contains( ref ) )
+                for ( final Iterator it = generatedDirs.iterator(); it.hasNext(); )
+                {
+                    final String generatedDir = it.next().toString();
+
+                    List generatedFiles = FileUtils.getFileNames( new File( generatedDir ), "**.*", excludes, false );
+
+                    for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
                     {
-                        final String title = getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
+                        final String generatedFile = it2.next().toString();
+                        final String ref = generatedFile.substring( 0, generatedFile.lastIndexOf( "." ) );
 
-                        if ( title != null )
+                        if ( !addedRef.contains( ref ) )
                         {
-                            final DocumentTOCItem reportItem = new DocumentTOCItem();
-                            reportItem.setName( title );
-                            reportItem.setRef( "/" + ref );
+                            final String title = getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
 
-                            items.add( reportItem );
+                            if ( title != null )
+                            {
+                                final DocumentTOCItem reportItem = new DocumentTOCItem();
+                                reportItem.setName( title );
+                                reportItem.setRef( "/" + ref );
+
+                                items.add( reportItem );
+                            }
                         }
                     }
                 }
