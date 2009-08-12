@@ -19,11 +19,11 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Developer;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
-import org.codehaus.doxia.sink.Sink;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,25 +55,19 @@ public class DeveloperActivityReport
 
     private HashMap files;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.dev-activity.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.dev-activity.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "dev-activity";
@@ -150,7 +144,7 @@ public class DeveloperActivityReport
         sink.section1_();
         sink.body_();
         sink.flush();
-        sink.table_();
+        sink.close();
     }
 
     /**

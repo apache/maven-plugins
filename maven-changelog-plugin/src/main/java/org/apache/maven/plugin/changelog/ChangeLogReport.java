@@ -44,6 +44,8 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -65,8 +67,6 @@ import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -240,7 +240,7 @@ public class ChangeLogReport
     /**
      * @component
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * @parameter expression="${settings.offline}"
@@ -302,9 +302,7 @@ public class ChangeLogReport
      */
     private Properties systemProperties;
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -440,7 +438,7 @@ public class ChangeLogReport
         changelogXml.append( "\n</changelog>" );
 
         outputXML.getParentFile().mkdirs();
-        
+
         //PrintWriter pw = new PrintWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ) );
         //pw.write( changelogXml.toString() );
         //pw.flush();
@@ -892,7 +890,7 @@ public class ChangeLogReport
      */
     private void doChangedSet( ChangeLogSet set, ResourceBundle bundle, Sink sink )
     {
-        sink.section1();
+        sink.section2();
 
         doChangeSetTitle( set, bundle, sink );
 
@@ -900,7 +898,7 @@ public class ChangeLogReport
 
         doChangedSetTable( set.getChangeSets(), bundle, sink );
 
-        sink.section1_();
+        sink.section2_();
     }
 
     /**
@@ -1381,17 +1379,13 @@ public class ChangeLogReport
         return absPath + newTarget;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
+    /** {@inheritDoc} */
     protected String getOutputDirectory()
     {
         if ( !outputDirectory.isAbsolute() )
@@ -1402,33 +1396,25 @@ public class ChangeLogReport
         return outputDirectory.getAbsolutePath();
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected SiteRenderer getSiteRenderer()
+    /** {@inheritDoc} */
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.changelog.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.changelog.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "changelog";

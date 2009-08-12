@@ -19,10 +19,10 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
-import org.codehaus.doxia.sink.Sink;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,25 +42,19 @@ import java.util.ResourceBundle;
 public class FileActivityReport
     extends ChangeLogReport
 {
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.file-activity.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.file-activity.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "file-activity";
@@ -128,7 +122,8 @@ public class FileActivityReport
         sink.section1_();
         sink.body_();
 
-        sink.table_();
+        sink.flush();
+        sink.close();
     }
 
     /**
