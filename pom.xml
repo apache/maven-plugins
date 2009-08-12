@@ -59,7 +59,7 @@ under the License.
   </developers>
 
   <prerequisites>
-    <maven>2.1.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <scm>
@@ -74,7 +74,7 @@ under the License.
 
   <properties>
     <doxiaVersion>1.1.2-SNAPSHOT</doxiaVersion>
-    <mavenVersion>2.1.0</mavenVersion>
+    <mavenVersion>2.0.9</mavenVersion>
   </properties>
 
   <dependencies>
@@ -240,6 +240,13 @@ under the License.
       <version>1.0-alpha-9</version>
     </dependency>
 
+    <!-- misc -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+
     <!-- test dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -295,37 +302,40 @@ under the License.
         </executions>
       </plugin>
 <!-- END SNIPPET: configuration -->
-      <!-- Backward compatibility with Maven 2.0.x, see MNG-3402
-           TODO to be removed. Leaving there only to try to be backward compatible with 2.0.x MPDF-26
+      <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
       <plugin>
-          <artifactId>maven-shade-plugin</artifactId>
-          <executions>
-              <execution>
-                  <phase>package</phase>
-                  <goals>
-                      <goal>shade</goal>
-                    </goals>
-                  <configuration>
-                      <finalName>${project.build.finalName}</finalName>
-                      <createDependencyReducedPom>
-                          false
-                        </createDependencyReducedPom>
-                      <keepDependenciesWithProvidedScope>
-                          true
-                        </keepDependenciesWithProvidedScope>
-                      <transformers>
-                          <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-                        </transformers>
-                      <artifactSet>
-                          <includes>
-                              <include>org.apache.maven.doxia:doxia-sink-api</include>
-                              <include>org.apache.maven.doxia:doxia-logging-api</include>
-                            </includes>
-                        </artifactSet>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin> -->
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.build.finalName}</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+              </transformers>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.maven.doxia:doxia-sink-api</include>
+                  <include>org.apache.maven.doxia:doxia-logging-api</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.apache.maven.doxia:doxia-sink-api</artifact>
+                  <excludes>
+                    <exclude>org/codehaus/doxia/sink/Sink.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
