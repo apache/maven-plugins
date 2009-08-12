@@ -129,16 +129,12 @@ under the License.
 
   <properties>
     <maven-scm.version>1.2</maven-scm.version>
-    <doxiaVersion>1.0-alpha-11</doxiaVersion>
+    <doxiaVersion>1.1.1</doxiaVersion>
     <mavenVersion>2.0.6</mavenVersion>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.5.6</version>
-    </dependency>
+    <!-- maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
@@ -159,18 +155,20 @@ under the License.
       <artifactId>maven-settings</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
-        
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0</version>
+      <version>2.0.4.2</version>
     </dependency>
+
+    <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
 
+    <!-- scm -->
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
@@ -195,7 +193,7 @@ under the License.
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-gitexe</artifactId>
       <version>${maven-scm.version}</version>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-hg</artifactId>
@@ -241,7 +239,14 @@ under the License.
       <artifactId>maven-scm-provider-vss</artifactId>
       <version>${maven-scm.version}</version>
     </dependency>
-    
+
+    <!-- Plexus -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
@@ -249,7 +254,6 @@ under the License.
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
-    
   </dependencies>
 
   <reporting>
