@@ -24,15 +24,18 @@ import java.util.Collections;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class MavenProjectWithNoJxrPluginStub
     extends MinMavenProjectStub
 {
+    /** {@inheritDoc} */
     public String getInceptionYear()
     {
         return "2005";
     }
 
+    /** {@inheritDoc} */
     public List getReportPlugins()
     {
         return Collections.EMPTY_LIST;

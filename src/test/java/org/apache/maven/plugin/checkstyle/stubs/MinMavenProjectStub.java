@@ -32,22 +32,19 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class MinMavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
 {
-    /**
-     * @see org.apache.maven.project.MavenProject#getCompileClasspathElements()
-     */
+    /** {@inheritDoc} */
     public List getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
         return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getTestClasspathElements()
-     */
+    /** {@inheritDoc} */
     public List getTestClasspathElements()
         throws DependencyResolutionRequiredException
     {
@@ -56,17 +53,13 @@ public class MinMavenProjectStub
         return list;
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getBasedir()
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir() );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getReportPlugins()
-     */
+    /** {@inheritDoc} */
     public List getReportPlugins()
     {
         ReportPlugin jxrPlugin = new ReportPlugin();
@@ -76,9 +69,7 @@ public class MinMavenProjectStub
         return Collections.singletonList( jxrPlugin );
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getOrganization()
-     */
+    /** {@inheritDoc} */
     public Organization getOrganization()
     {
         Organization organization = new Organization();
@@ -88,17 +79,13 @@ public class MinMavenProjectStub
         return organization;
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getInceptionYear()
-     */
+    /** {@inheritDoc} */
     public String getInceptionYear()
     {
         return "2006";
     }
 
-    /**
-     * @see org.apache.maven.project.MavenProject#getBuild()
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         Build build = new Build();
@@ -108,10 +95,11 @@ public class MinMavenProjectStub
         return build;
     }
 
+    /** {@inheritDoc} */
     public File getFile()
     {
         File file = new File( getBasedir(), "pom.xml" );
 
-        return file; 
+        return file;
     }
 }
