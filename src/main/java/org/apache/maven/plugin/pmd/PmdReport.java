@@ -49,8 +49,8 @@ import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
@@ -75,7 +75,7 @@ public class PmdReport
      * <p>
      * <b>Note:</b> support for <code>1.6</code> was added in version 2.3 of this plugin.
      * </p>
-     * 
+     *
      * @parameter expression="${targetJdk}"
      */
     private String targetJdk;
@@ -109,7 +109,7 @@ public class PmdReport
 
     /**
      * The file encoding to use when reading the Java sources.
-     * 
+     *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      */
     private String sourceEncoding;
@@ -120,8 +120,8 @@ public class PmdReport
      * @readonly
      */
     private ResourceManager locator;
-    
-    
+
+
     /** @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale) */
     public String getName( Locale locale )
     {
@@ -138,7 +138,7 @@ public class PmdReport
     {
         rulesets = rules;
     }
-    
+
     /** @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale) */
     public void executeReport( Locale locale )
         throws MavenReportException
@@ -170,18 +170,18 @@ public class PmdReport
             try
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-                
+
                 Sink sink = getSink();
-    
+
                 PMD pmd = getPMD();
                 RuleContext ruleContext = new RuleContext();
                 Report report = new Report();
                 PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
-    
+
                 report.addListener( reportSink );
                 ruleContext.setReport( report );
                 reportSink.beginDocument();
-    
+
                 RuleSetFactory ruleSetFactory = new RuleSetFactory();
                 ruleSetFactory.setMinimumPriority( this.minimumPriority );
                 RuleSet[] sets = new RuleSet[rulesets.length];
@@ -192,12 +192,12 @@ public class PmdReport
                         String set = rulesets[idx];
                         getLog().debug( "Preparing ruleset: " + set );
                         File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
-                        
+
                         if ( null == ruleset )
                         {
                             throw new MavenReportException( "Could not resolve " + set );
                         }
-    
+
                         InputStream rulesInput = new FileInputStream( ruleset );
                         try
                         {
@@ -221,7 +221,7 @@ public class PmdReport
                 {
                     throw new MavenReportException( e.getMessage(), e );
                 }
-    
+
                 Map files;
                 try
                 {
@@ -304,15 +304,15 @@ public class PmdReport
                     }
                     reportSink.endFile( file );
                 }
-    
+
                 reportSink.endDocument();
-    
+
                 if ( !isHtml() )
                 {
                     // Use the PMD renderers to render in any format aside from HTML.
                     Renderer r = createRenderer();
                     StringWriter stringwriter = new StringWriter();
-                    
+
                     try
                     {
                         r.setWriter( stringwriter );
@@ -320,11 +320,11 @@ public class PmdReport
                         r.renderFileReport( report );
                         r.end();
                         String buffer = stringwriter.toString();
-                        
+
                         Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
                         writer.write( buffer, 0, buffer.length() );
                         writer.close();
-    
+
                         File siteDir = getReportOutputDirectory();
                         siteDir.mkdirs();
                         writer = new FileWriter( new File( siteDir,

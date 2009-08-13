@@ -32,7 +32,7 @@ import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.stat.Metric;
 
-import org.codehaus.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -57,7 +57,7 @@ public class PmdReportListener
     private List violations = new ArrayList();
 
     private boolean aggregate;
-    
+
     // The number of erroneous files
     private int fileCount = 0;
 
@@ -82,7 +82,7 @@ public class PmdReportListener
             sink.section2();
             sink.sectionTitle2();
             String title = currentFilename;
-            if ( aggregate ) 
+            if ( aggregate )
             {
                 title = fileInfo.getProject().getName() + " - " + currentFilename;
             }
@@ -113,7 +113,7 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (IRuleViolation) o1 ).getBeginLine() 
+                return ( (IRuleViolation) o1 ).getBeginLine()
                     - ( (IRuleViolation) o2 ).getBeginLine();
             }
         } );
