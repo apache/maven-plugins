@@ -19,29 +19,45 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
+
+import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
+import org.apache.maven.scm.manager.ScmManager;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author Edwin Punzalan
  */
 public class FileActivityReportTest
-    extends AbstractMojoTestCase
+    extends AbstractChangeLogReportTest
 {
     private ScmManager scmManager;
+
+    /** {@inheritDoc} */
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        scmManager = new ScmManagerStub();
+    }
+
+    /** {@inheritDoc} */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+
+        scmManager = null;
+    }
 
     public void testNoSource()
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(),
-                                               "src/test/plugin-configs/file-activity/no-source-plugin-config.xml" );
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/plugin-configs/file-activity/no-source-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "file-activity", pluginXmlFile );
+        FileActivityReport mojo = (FileActivityReport) lookupMojo( "file-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -53,7 +69,11 @@ public class FileActivityReportTest
 
         File outputHtml = new File( outputDir, "file-activity.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
+        renderer( mojo, outputHtml );
+
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
+
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 
     public void testMinConfig()
@@ -72,7 +92,7 @@ public class FileActivityReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/file-activity/" + pluginXml );
 
-        Mojo mojo = lookupMojo( "file-activity", pluginXmlFile );
+        FileActivityReport mojo = (FileActivityReport) lookupMojo( "file-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -88,8 +108,8 @@ public class FileActivityReportTest
 
         String changelogXml = FileUtils.fileRead( outputXML );
 
-        assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" +
-                    encoding + "\"?>" ) );
+        assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding
+            + "\"?>" ) );
 
         assertTrue( "Test for xml footer", changelogXml.endsWith( "</changelog>" ) );
 
@@ -97,14 +117,10 @@ public class FileActivityReportTest
 
         File outputHtml = new File( outputDir, "file-activity.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
-    }
+        renderer( mojo, outputHtml );
 
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
 
-        scmManager = new ScmManagerStub();
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 }

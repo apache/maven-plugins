@@ -24,7 +24,6 @@ import org.apache.maven.plugin.changelog.stubs.FailedScmManagerStub;
 import org.apache.maven.plugin.changelog.stubs.ScmManagerWithHostStub;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -34,16 +33,34 @@ import java.io.File;
  * @author Edwin Punzalan
  */
 public class ChangeLogReportTest
-    extends AbstractMojoTestCase
+    extends AbstractChangeLogReportTest
 {
     private ScmManager scmManager;
+
+    /** {@inheritDoc} */
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        scmManager = new ScmManagerStub();
+    }
+
+    /** {@inheritDoc} */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+
+        scmManager = null;
+    }
 
     public void testNoSource()
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/no-source-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "changelog", pluginXmlFile );
+        ChangeLogReport mojo = (ChangeLogReport)lookupMojo( "changelog", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -55,7 +72,11 @@ public class ChangeLogReportTest
 
         File outputHtml = new File( outputDir, "changelog.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
+        renderer( mojo, outputHtml );
+
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
+
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 
     public void testMinConfig()
@@ -176,7 +197,7 @@ public class ChangeLogReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/" + pluginXml );
 
-        Mojo mojo = lookupMojo( "changelog", pluginXmlFile );
+        ChangeLogReport mojo = (ChangeLogReport)lookupMojo( "changelog", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -201,20 +222,10 @@ public class ChangeLogReportTest
 
         File outputHtml = new File( outputDir, "changelog.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
-    }
+        renderer( mojo, outputHtml );
 
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
 
-        scmManager = new ScmManagerStub();
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
-        super.tearDown();
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 }
