@@ -75,6 +75,7 @@ public class PmdReportListener
         return bundle.getString( "report.pmd.title" );
     }
 
+    /** {@inheritDoc} */
     public void ruleViolationAdded( IRuleViolation ruleViolation )
     {
         if ( !fileInitialized )
@@ -111,6 +112,7 @@ public class PmdReportListener
         fileCount++;
         Collections.sort( violations, new Comparator()
         {
+            /** {@inheritDoc} */
             public int compare( Object o1, Object o2 )
             {
                 return ( (IRuleViolation) o1 ).getBeginLine()
@@ -157,6 +159,7 @@ public class PmdReportListener
         }
     }
 
+    /** {@inheritDoc} */
     public void metricAdded( Metric metric )
     {
 //        if ( metric.getCount() != 0 )

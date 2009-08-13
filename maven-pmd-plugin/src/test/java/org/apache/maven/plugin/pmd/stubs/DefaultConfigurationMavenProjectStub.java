@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class DefaultConfigurationMavenProjectStub
     extends MavenProjectStub
@@ -80,7 +81,7 @@ public class DefaultConfigurationMavenProjectStub
         List compileSourceRoots = new ArrayList();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/default-configuration/def/configuration" );
         setCompileSourceRoots( compileSourceRoots );
-        
+
         File file = new File(getBasedir().getAbsolutePath() + "/pom.xml");
         setFile(file);
 
@@ -95,19 +96,21 @@ public class DefaultConfigurationMavenProjectStub
         this.reportPlugins = plugins;
     }
 
+    /** {@inheritDoc} */
     public List getReportPlugins()
     {
         return reportPlugins;
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
-
 }

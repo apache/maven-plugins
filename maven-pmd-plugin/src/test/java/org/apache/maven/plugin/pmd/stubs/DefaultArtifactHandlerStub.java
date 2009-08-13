@@ -23,12 +23,14 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class DefaultArtifactHandlerStub
     extends DefaultArtifactHandler
 {
     private String language;
 
+    /** {@inheritDoc} */
     public String getLanguage()
     {
         if ( language == null )

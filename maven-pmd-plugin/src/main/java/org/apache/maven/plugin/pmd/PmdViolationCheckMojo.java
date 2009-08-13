@@ -30,8 +30,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Fail the build if there were any PMD violations in the source code.
- * 
+ *
  * @since 2.0
+ * @version $Id$
  * @goal check
  * @phase verify
  * @execute goal="pmd"
@@ -44,7 +45,7 @@ public class PmdViolationCheckMojo
      * will stop the build. Anything below will be warnings and will be
      * displayed in the build output if verbose=true. Note: Minumum Priority = 5
      * Maximum Priority = 0
-     * 
+     *
      * @parameter expression="${pmd.failurePriority}" default-value="5"
      * @required
      */
@@ -57,10 +58,8 @@ public class PmdViolationCheckMojo
      * @parameter expression="${pmd.skip}" default-value="false"
      */
     private boolean skip;
-    
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -70,12 +69,7 @@ public class PmdViolationCheckMojo
         }
     }
 
-    /**
-     * Formats the failure details and prints them as an INFO message
-     * 
-     * @param item
-     *            parsed details about error
-     */
+    /** {@inheritDoc} */
     protected void printError( Map item, String severity )
     {
 
@@ -99,14 +93,7 @@ public class PmdViolationCheckMojo
         this.getLog().info( buff.toString() );
     }
 
-    /**
-     * Gets the attributes and text for the violation tag and puts them in a
-     * HashMap
-     * 
-     * @param xpp
-     * @throws XmlPullParserException
-     * @throws IOException
-     */
+    /** {@inheritDoc} */
     protected Map getErrorDetails( XmlPullParser xpp )
         throws XmlPullParserException, IOException
     {
@@ -130,5 +117,4 @@ public class PmdViolationCheckMojo
         }
         return msgs;
     }
-
 }
