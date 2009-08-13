@@ -26,6 +26,7 @@ import java.util.Date;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class ChangeLogScmResultStub
     extends org.apache.maven.scm.command.changelog.ChangeLogScmResult
@@ -40,6 +41,7 @@ public class ChangeLogScmResultStub
         super( "", "", "", true );
     }
 
+    /** {@inheritDoc} */
     public ChangeLogSet getChangeLog()
     {
         return new ChangeLogSet( Collections.EMPTY_LIST, new Date( 360 ), new Date( 720 ) );

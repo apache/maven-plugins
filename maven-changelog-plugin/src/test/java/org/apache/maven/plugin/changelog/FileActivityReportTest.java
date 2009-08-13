@@ -27,6 +27,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class FileActivityReportTest
     extends AbstractChangeLogReportTest

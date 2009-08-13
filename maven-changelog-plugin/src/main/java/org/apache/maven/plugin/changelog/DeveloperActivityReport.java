@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 /**
  * Generate a developer activity report.
  *
+ * @version $Id$
  * @goal dev-activity
  */
 public class DeveloperActivityReport
@@ -73,12 +74,7 @@ public class DeveloperActivityReport
         return "dev-activity";
     }
 
-    /**
-     * generates an empty report in case there are no sources to generate a report with
-     *
-     * @param bundle the resource bundle to retrieve report phrases from
-     * @param sink   the report formatting tool
-     */
+    /** {@inheritDoc} */
     protected void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
     {
         sink.head();
@@ -105,13 +101,7 @@ public class DeveloperActivityReport
         sink.close();
     }
 
-    /**
-     * method that generates the report for this mojo.
-     *
-     * @param changeLogSets changed sets to generate the report from
-     * @param bundle        the resource bundle to retrieve report phrases from
-     * @param sink          the report formatting tool
-     */
+    /** {@inheritDoc} */
     protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();

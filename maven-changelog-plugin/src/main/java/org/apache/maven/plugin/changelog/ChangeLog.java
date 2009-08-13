@@ -19,8 +19,6 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-// java imports
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -64,12 +62,12 @@ public class ChangeLog
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
         List changeLogSets = new ArrayList();
-        
+
         parser.parse( stream, new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
     }
-    
+
     public static List loadChangedSets( Reader reader )
         throws ParserConfigurationException, SAXException, IOException
     {
@@ -80,6 +78,6 @@ public class ChangeLog
         parser.parse( new InputSource( reader ), new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
-    }    
-    
+    }
+
 } // end of ChangeLog

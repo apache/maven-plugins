@@ -26,29 +26,35 @@ import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class FailedScmManagerStub
     extends ScmManagerStub
 {
+    /** {@inheritDoc} */
     public ScmProvider getProviderByRepository( ScmRepository scmRepository )
         throws NoSuchScmProviderException
     {
         return new ScmProviderStub()
         {
+            /** {@inheritDoc} */
             protected ChangeLogScmResult getChangeLogScmResult()
             {
                 return new ChangeLogScmResultStub()
                 {
+                    /** {@inheritDoc} */
                     public String getCommandOutput()
                     {
                         return "Provider Stub Commandline";
                     }
 
+                    /** {@inheritDoc} */
                     public String getProviderMessage()
                     {
                         return "Provider Stub Error Message";
                     }
 
+                    /** {@inheritDoc} */
                     public boolean isSuccess()
                     {
                         return false;

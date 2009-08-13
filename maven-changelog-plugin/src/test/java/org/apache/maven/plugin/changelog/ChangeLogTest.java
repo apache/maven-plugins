@@ -32,6 +32,7 @@ import java.util.Calendar;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class ChangeLogTest
     extends TestCase
