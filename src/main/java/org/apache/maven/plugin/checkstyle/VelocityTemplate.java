@@ -50,6 +50,7 @@ import java.io.Writer;
  * </pre>
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
+ * @version $Id$
  */
 public class VelocityTemplate
 {

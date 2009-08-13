@@ -38,6 +38,7 @@ import java.io.Reader;
  * violations found and displays it on the console.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
+ * @version $Id$
  * @goal check
  * @phase verify
  * @execute goal="checkstyle"
@@ -106,9 +107,7 @@ public class CheckstyleViolationCheckMojo
      */
     private boolean logViolationsToConsole;
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

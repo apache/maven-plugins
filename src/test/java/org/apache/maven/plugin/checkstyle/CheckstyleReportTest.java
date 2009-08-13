@@ -38,15 +38,14 @@ import java.util.ResourceBundle;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
     private Locale oldLocale;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -56,9 +55,7 @@ public class CheckstyleReportTest
         Locale.setDefault( Locale.ENGLISH );
     }
 
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
+    /** {@inheritDoc} */
     protected void tearDown()
         throws Exception
     {
