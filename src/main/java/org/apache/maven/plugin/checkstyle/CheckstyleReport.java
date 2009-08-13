@@ -34,6 +34,7 @@ import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -44,7 +45,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
@@ -500,7 +500,7 @@ public class CheckstyleReport
      * @required
      * @readonly
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * Velocity Component.
@@ -569,7 +569,7 @@ public class CheckstyleReport
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
