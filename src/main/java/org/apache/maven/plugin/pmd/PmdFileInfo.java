@@ -23,17 +23,20 @@ import java.io.File;
 
 import org.apache.maven.project.MavenProject;
 
-public class PmdFileInfo 
+/**
+ * @version $Id$
+ */
+public class PmdFileInfo
 {
-    
+
     private MavenProject project;
     private File sourceDir;
     private String xref;
-    
-    
+
+
     public PmdFileInfo( MavenProject project,
                        File dir,
-                       String x ) 
+                       String x )
     {
         this.project = project;
         if ( dir.isAbsolute() )
@@ -46,22 +49,22 @@ public class PmdFileInfo
         }
         this.xref = x;
     }
-    
-    
+
+
     public String getXrefLocation()
     {
         return xref;
     }
-    
-    public File getSourceDirectory() 
+
+    public File getSourceDirectory()
     {
         return sourceDir;
     }
-    
-    public MavenProject getProject() 
+
+    public MavenProject getProject()
     {
         return project;
     }
-    
+
 
 }

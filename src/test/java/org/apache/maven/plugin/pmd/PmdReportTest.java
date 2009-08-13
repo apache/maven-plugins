@@ -29,10 +29,12 @@ import java.net.URL;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class PmdReportTest
     extends AbstractPmdReportTest
 {
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {

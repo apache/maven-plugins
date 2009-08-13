@@ -121,14 +121,13 @@ public class PmdReport
      */
     private ResourceManager locator;
 
-
-    /** @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale) */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.name" );
     }
 
-    /** @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale) */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.description" );
@@ -139,7 +138,7 @@ public class PmdReport
         rulesets = rules;
     }
 
-    /** @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale) */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -392,7 +391,7 @@ public class PmdReport
         return pmd;
     }
 
-    /** @see org.apache.maven.reporting.MavenReport#getOutputName() */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "pmd";
@@ -467,61 +466,73 @@ public class PmdReport
             this.description = description;
         }
 
+        /** {@inheritDoc} */
         public String getFilename()
         {
             return this.filename;
         }
 
+        /** {@inheritDoc} */
         public int getBeginLine()
         {
             return 0;
         }
 
+        /** {@inheritDoc} */
         public int getBeginColumn()
         {
             return 0;
         }
 
+        /** {@inheritDoc} */
         public int getEndLine()
         {
             return 0;
         }
 
+        /** {@inheritDoc} */
         public int getEndColumn()
         {
             return 0;
         }
 
+        /** {@inheritDoc} */
         public Rule getRule()
         {
             return null;
         }
 
+        /** {@inheritDoc} */
         public String getDescription()
         {
             return this.description;
         }
 
+        /** {@inheritDoc} */
         public String getPackageName()
         {
             return null;
         }
 
+        /** {@inheritDoc} */
         public String getMethodName()
         {
             return null;
         }
 
+        /** {@inheritDoc} */
         public String getClassName()
         {
             return null;
         }
 
+        /** {@inheritDoc} */
         public boolean isSuppressed()
         {
             return false;
         }
 
+        /** {@inheritDoc} */
         public String getVariableName()
         {
             return null;
