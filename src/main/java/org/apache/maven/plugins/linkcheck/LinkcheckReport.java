@@ -374,7 +374,7 @@ public class LinkcheckReport
             // if the site was not already generated, invoke it
             if ( documents == null || ( documents != null && documents.size() == 0 ) )
             {
-                getLog().info( "Try to invoke the maven-site-plugin to be sure that all files are generated..." );
+                getLog().info( "Trying to invoke the maven-site-plugin to be sure that all files are generated..." );
 
                 try
                 {
