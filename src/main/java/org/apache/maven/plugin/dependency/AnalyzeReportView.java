@@ -49,8 +49,6 @@ public class AnalyzeReportView
         sink.sectionTitle1();
         sink.text( bundle.getString( "analyze.report.mainTitle" ) );
         sink.sectionTitle1_();
-        sink.section1_();
-        sink.lineBreak();
 
         // Generate Used Declared dependencies:
         sink.section2();
@@ -59,7 +57,9 @@ public class AnalyzeReportView
         sink.sectionTitle2_();
         if ( analysis.getUsedDeclaredArtifacts().isEmpty() )
         {
+            sink.paragraph();
             sink.text( bundle.getString( "analyze.report.noDependency" ) );
+            sink.paragraph_();
             sink.horizontalRule();
         }
         else
@@ -76,7 +76,9 @@ public class AnalyzeReportView
         sink.sectionTitle2_();
         if ( analysis.getUsedUndeclaredArtifacts().isEmpty() )
         {
+            sink.paragraph();
             sink.text( bundle.getString( "analyze.report.noDependency" ) );
+            sink.paragraph_();
             sink.horizontalRule();
         }
         else
@@ -93,7 +95,9 @@ public class AnalyzeReportView
         sink.sectionTitle2_();
         if ( analysis.getUnusedDeclaredArtifacts().isEmpty() )
         {
+            sink.paragraph();
             sink.text( bundle.getString( "analyze.report.noDependency" ) );
+            sink.paragraph_();
             sink.horizontalRule();
         }
         else
@@ -102,6 +106,8 @@ public class AnalyzeReportView
             generateDependenciesTable( sink, iter );
         }
         sink.section2_();
+
+        sink.section1_();
 
         // Closing the report
         sink.body_();
