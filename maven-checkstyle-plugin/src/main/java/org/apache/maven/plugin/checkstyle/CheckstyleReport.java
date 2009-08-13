@@ -53,11 +53,11 @@ import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringInputStream;
-import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -525,7 +525,7 @@ public class CheckstyleReport
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
-    private StringOutputStream stringOutputStream;
+    private ByteArrayOutputStream stringOutputStream;
 
     /**
      * @component
@@ -1100,7 +1100,7 @@ public class CheckstyleReport
             {
                 // Convert \ to \\, so that p.load will convert it back properly
                 propertyExpansion = StringUtils.replace( propertyExpansion, "\\", "\\\\" );
-                p.load( new StringInputStream( propertyExpansion ) );
+                p.load( new ByteArrayInputStream( propertyExpansion.getBytes() ) );
             }
 
             // Workaround for MCHECKSTYLE-48
@@ -1255,7 +1255,7 @@ public class CheckstyleReport
 
         if ( useFile == null )
         {
-            stringOutputStream = new StringOutputStream();
+            stringOutputStream = new ByteArrayOutputStream();
             consoleListener = new DefaultLogger( stringOutputStream, false );
         }
         else
