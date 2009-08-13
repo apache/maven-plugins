@@ -123,7 +123,11 @@ public class JiraReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
+        sink.paragraph();
+
         sink.text( bundle.getString( "report.jira.error" ) );
+
+        sink.paragraph_();
 
         sinkEndReport( sink );
     }
@@ -306,12 +310,15 @@ public class JiraReportGenerator
 
         sink.body();
 
-        sinkSectionTitle1( sink, bundle.getString( "report.jira.header" ) );
+        sink.section1();
 
+        sinkSectionTitle1( sink, bundle.getString( "report.jira.header" ) );
     }
 
     private void sinkEndReport( Sink sink )
     {
+        sink.section1_();
+
         sink.body_();
 
         sink.flush();
