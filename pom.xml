@@ -58,10 +58,12 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.0</mavenVersion>
+    <mavenVersion>2.0.6</mavenVersion>
+    <doxiaVersion>1.0</doxiaVersion>
   </properties>
 
   <dependencies>
+    <!-- maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
@@ -90,13 +92,39 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0</version>
+      <version>2.0.4.2</version>
     </dependency>
+
+    <!-- doxia -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>${doxiaVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-doxia-tools</artifactId>
-      <version>1.0</version>
+      <version>1.0.2</version>
     </dependency>
+
+    <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
@@ -115,19 +143,24 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
-      <version>1.1.2</version>
+      <version>1.1.7</version>
       <exclusions>
         <exclusion>
-          <!-- Use the version specified by checkstyle:checkstyle instead -->
-          <artifactId>commons-collections</artifactId>
-          <groupId>commons-collections</groupId>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>plexus-utils</artifactId>
-          <groupId>plexus</groupId>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>velocity</groupId>
+          <artifactId>velocity</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- checkstyle -->
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
@@ -137,6 +170,26 @@ under the License.
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle-optional</artifactId>
       <version>4.4</version>
+    </dependency>
+
+    <!-- misc -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
