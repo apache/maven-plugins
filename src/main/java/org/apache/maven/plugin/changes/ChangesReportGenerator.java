@@ -134,7 +134,7 @@ public class ChangesReportGenerator
 
     /**
      * Checks whether links to the issues can be generated.
-     * 
+     *
      * @return <code>true</code> if issue links can be generated, <code>false</code> otherwise.
      */
     public boolean canGenerateIssueLinks( String system )
@@ -452,19 +452,21 @@ public class ChangesReportGenerator
     private void sinkSectionTitle1Anchor( Sink sink, String text, String anchor )
     {
         sink.sectionTitle1();
-        sink.anchor( anchor );
-        sink.anchor_();
         sink.text( text );
         sink.sectionTitle1_();
+
+        sink.anchor( anchor );
+        sink.anchor_();
     }
 
     private void sinkSectionTitle2Anchor( Sink sink, String text, String anchor )
     {
         sink.sectionTitle2();
-        sink.anchor( anchor );
-        sink.anchor_();
         sink.text( text );
         sink.sectionTitle2_();
+
+        sink.anchor( anchor );
+        sink.anchor_();
     }
 
     private void sinkShowTypeIcon( Sink sink, String type )
