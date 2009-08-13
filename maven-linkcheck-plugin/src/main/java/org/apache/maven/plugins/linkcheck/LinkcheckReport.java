@@ -452,6 +452,9 @@ public class LinkcheckReport
         if ( result != null )
         {
             generateReport( locale, result );
+            // free memory
+            result = null;
+            linkCheck = null;
         }
     }
 
