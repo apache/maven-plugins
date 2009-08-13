@@ -140,6 +140,7 @@ public class CheckstyleReportGenerator
         doDetails( results );
         sink.body_();
         sink.flush();
+        sink.close();
     }
 
     private void doHeading()
@@ -728,10 +729,11 @@ public class CheckstyleReportGenerator
 
             sink.section2();
             sink.sectionTitle2();
-            sink.anchor( file.replace( '/', '.' ) );
-            sink.anchor_();
             sink.text( file );
             sink.sectionTitle2_();
+
+            sink.anchor( file.replace( '/', '.' ) );
+            sink.anchor_();
 
             sink.table();
             sink.tableRow();
