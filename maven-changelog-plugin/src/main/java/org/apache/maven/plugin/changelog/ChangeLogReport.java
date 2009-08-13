@@ -816,7 +816,7 @@ public class ChangeLogReport
         sink.sectionTitle1_();
 
         sink.paragraph();
-        sink.text( "No sources found to create a report." );
+        sink.text( bundle.getString( "report.changelog.nosources" ) );
         sink.paragraph_();
 
         sink.section1_();
