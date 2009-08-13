@@ -335,5 +335,21 @@ under the License.
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changelog-plugin</artifactId>
+            <!--
+              Use the current version to generate sample with the last features/fixes of the plugin.
+              It implies that the current version is already deployed to generate the site.
+            -->
+            <version>${pom.version}</version>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
   </profiles>
 </project>
