@@ -28,7 +28,7 @@ import org.apache.maven.doxia.sink.Sink;
 
 /**
  * Generates a Trac report.
- * 
+ *
  * @author Noriko Kinugasa
  * @version $Id$
  */
@@ -44,7 +44,11 @@ public class TracReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
+        sink.paragraph();
+
         sink.text( bundle.getString( "report.trac.error" ) );
+
+        sink.paragraph_();
 
         sinkEndReport( sink );
     }
@@ -154,12 +158,16 @@ public class TracReportGenerator
 
         sink.body();
 
+        sink.section1();
+
         sinkSectionTitle1( sink, bundle.getString( "report.trac.header" ) );
 
     }
 
     private void sinkEndReport( Sink sink )
     {
+        sink.section1_();
+
         sink.body_();
 
         sink.flush();
