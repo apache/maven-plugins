@@ -41,6 +41,8 @@ import java.util.ResourceBundle;
 
 /**
  * Generate a report based on CheckstyleResults.
+ *
+ * @version $Id$
  */
 public class CheckstyleReportGenerator
 {
