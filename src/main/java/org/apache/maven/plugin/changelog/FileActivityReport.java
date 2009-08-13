@@ -175,7 +175,14 @@ public class FileActivityReport
             }
             catch ( Exception e )
             {
-                e.printStackTrace();
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( e.getMessage(), e );
+                }
+                else
+                {
+                    getLog().error( e.getMessage() );
+                }
 
                 sink.text( file.getName() );
             }
