@@ -103,6 +103,11 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaVersion}</version>
       <exclusions>
@@ -279,6 +284,22 @@ under the License.
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <!--
+              Use the current version to generate sample with the last features/fixes of the plugin.
+              It implies that the current version is already deployed to generate the site.
+            -->
+            <version>${pom.version}</version>
+          </plugin>
+        </plugins>
+      </reporting>
     </profile>
   </profiles>
 </project>
