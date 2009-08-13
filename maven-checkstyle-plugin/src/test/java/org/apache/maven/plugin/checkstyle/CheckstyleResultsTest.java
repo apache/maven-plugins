@@ -25,6 +25,7 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -32,16 +33,25 @@ import java.util.ArrayList;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class CheckstyleResultsTest
     extends TestCase
 {
     private CheckstyleResults results;
 
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
         results = new CheckstyleResults();
+    }
+
+    /** {@inheritDoc} */
+    protected void tearDown()
+        throws Exception
+    {
+        results = null;
     }
 
     public void testEmptyResults()

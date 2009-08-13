@@ -28,6 +28,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class CheckstyleViolationCheckMojoTest
     extends AbstractMojoTestCase

@@ -29,6 +29,7 @@ import java.net.URL;
  * Generic Report Resource management.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
+ * @version $Id$
  */
 public class ReportResource
 {

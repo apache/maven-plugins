@@ -84,25 +84,19 @@ public class CheckstyleReportListener
         return severityLevel;
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#auditStarted(com.puppycrawl.tools.checkstyle.api.AuditEvent)
-     */
+    /** {@inheritDoc} */
     public void auditStarted( AuditEvent event )
     {
         setResults( new CheckstyleResults() );
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#auditFinished(com.puppycrawl.tools.checkstyle.api.AuditEvent)
-     */
+    /** {@inheritDoc} */
     public void auditFinished( AuditEvent event )
     {
         //do nothing
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#fileStarted(com.puppycrawl.tools.checkstyle.api.AuditEvent)
-     */
+    /** {@inheritDoc} */
     public void fileStarted( AuditEvent event )
     {
         for ( Iterator it = sourceDirectories.iterator(); it.hasNext(); )
@@ -121,18 +115,14 @@ public class CheckstyleReportListener
         }
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#fileFinished(com.puppycrawl.tools.checkstyle.api.AuditEvent)
-     */
+    /** {@inheritDoc} */
     public void fileFinished( AuditEvent event )
     {
         getResults().setFileViolations( currentFile, events );
         currentFile = null;
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#addError(com.puppycrawl.tools.checkstyle.api.AuditEvent)
-     */
+    /** {@inheritDoc} */
     public void addError( AuditEvent event )
     {
         if ( SeverityLevel.IGNORE.equals( event.getSeverityLevel() ) )
@@ -146,9 +136,7 @@ public class CheckstyleReportListener
         }
     }
 
-    /**
-     * @see com.puppycrawl.tools.checkstyle.api.AuditListener#addException(com.puppycrawl.tools.checkstyle.api.AuditEvent, java.lang.Throwable)
-     */
+    /** {@inheritDoc} */
     public void addException( AuditEvent event, Throwable throwable )
     {
         //Do Nothing
