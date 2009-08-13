@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.cpd.Match;
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -44,7 +44,7 @@ public class CpdReportGenerator
     private Map fileMap;
 
     private ResourceBundle bundle;
-    
+
     private boolean aggregate;
 
     public CpdReportGenerator( Sink sink, Map fileMap, ResourceBundle bundle, boolean aggregate )
@@ -113,20 +113,22 @@ public class CpdReportGenerator
 
         if ( !matches.hasNext() )
         {
+            sink.paragraph();
             sink.text( bundle.getString( "report.cpd.noProblems" ) );
+            sink.paragraph_();
         }
 
         while ( matches.hasNext() )
         {
             Match match = (Match) matches.next();
             String filename1 = match.getFirstMark().getTokenSrcID();
-            
+
             File file = new File( filename1 );
             PmdFileInfo fileInfo = (PmdFileInfo) fileMap.get( file );
             File sourceDirectory = fileInfo.getSourceDirectory();
             String xrefLocation = fileInfo.getXrefLocation();
             MavenProject projectFile1 = fileInfo.getProject();
-            
+
             filename1 = StringUtils.substring( filename1, sourceDirectory.getAbsolutePath().length() + 1 );
 
             String filename2 = match.getSecondMark().getTokenSrcID();
@@ -141,7 +143,6 @@ public class CpdReportGenerator
             int line1 = match.getFirstMark().getBeginLine();
             int line2 = match.getSecondMark().getBeginLine();
 
-            sink.paragraph();
             sink.table();
             sink.tableRow();
             sink.tableHeaderCell();
@@ -173,7 +174,7 @@ public class CpdReportGenerator
 
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) 
+                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' )
                            + "#" + line1 );
             }
             sink.text( String.valueOf( line1 ) );
@@ -197,12 +198,12 @@ public class CpdReportGenerator
                 sink.tableCell_();
             }
             sink.tableCell();
-            
-            
-            
+
+
+
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) 
+                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' )
                            + "#" + line2 );
             }
             sink.text( String.valueOf( line2 ) );
@@ -216,12 +217,12 @@ public class CpdReportGenerator
             // Source snippet
             sink.tableRow();
 
-            
+
             int colspan = 2;
-            if ( aggregate ) 
+            if ( aggregate )
             {
                 ++colspan;
-            }        
+            }
             // TODO Cleaner way to do this?
             sink.rawText( "<td colspan='" + colspan + "'>" );
             sink.verbatim( false );
@@ -229,8 +230,7 @@ public class CpdReportGenerator
             sink.verbatim_();
             sink.rawText( "</td>" );
             sink.tableRow_();
-            sink.table();
-            sink.paragraph_();
+            sink.table_();
         }
 
         sink.section1_();

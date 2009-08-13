@@ -61,7 +61,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.0</mavenVersion>
+    <mavenVersion>2.0.6</mavenVersion>
+    <doxiaVersion>1.0</doxiaVersion>
   </properties>
 
   <dependencies>
@@ -89,7 +90,24 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>${mavenVersion}</version>
+      <version>2.0.4.2</version>
+    </dependency>
+
+    <!-- doxia -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>${doxiaVersion}</version>
     </dependency>
 
     <!-- plexus -->
@@ -109,6 +127,13 @@ under the License.
       <groupId>pmd</groupId>
       <artifactId>pmd-jdk14</artifactId>
       <version>4.2.4</version>
+    </dependency>
+
+    <!-- misc -->
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xmlParserAPIs</artifactId>
+      <version>2.6.2</version>
     </dependency>
 
     <!-- test -->
