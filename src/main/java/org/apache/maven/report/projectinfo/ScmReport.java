@@ -250,23 +250,33 @@ public class ScmReport
 
             if ( isScmSystem( anonymousRepository, "clearcase" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.clearcase.intro" ) );
+                sink.paragraph_();
             }
             else if ( isScmSystem( anonymousRepository, "cvs" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.cvs.intro" ) );
+                sink.paragraph_();
             }
             else if ( isScmSystem( anonymousRepository, "perforce" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.perforce.intro" ) );
+                sink.paragraph_();
             }
             else if ( isScmSystem( anonymousRepository, "starteam" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.starteam.intro" ) );
+                sink.paragraph_();
             }
             else if ( isScmSystem( anonymousRepository, "svn" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.svn.intro" ) );
+                sink.paragraph_();
             }
             else
             {

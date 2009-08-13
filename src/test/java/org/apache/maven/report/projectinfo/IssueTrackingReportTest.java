@@ -78,6 +78,7 @@ public class IssueTrackingReportTest
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
         assertEquals( textBlocks[0].getText(), getString( "report.issuetracking.overview.title" ) );
-        assertEquals( textBlocks[1].getText(), getString( "report.issuetracking.name" ) );
+        assertEquals( textBlocks[1].getText(), "This project uses JIRA a J2EE-based, issue tracking and project management application." ); // due to link pattern
+        assertEquals( textBlocks[2].getText(), getString( "report.issuetracking.name" ) );
     }
 }

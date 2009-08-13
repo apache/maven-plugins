@@ -125,17 +125,23 @@ public class IssueTrackingReport
 
             if ( isIssueManagementSystem( system, "jira" ) )
             {
+                sink.paragraph();
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.jira.intro" ) );
+                sink.paragraph_();
             }
             else if ( isIssueManagementSystem( system, "bugzilla" ) )
             {
+                sink.paragraph();
                 linkPatternedText(
                     i18n.getString( "project-info-report", locale, "report.issuetracking.bugzilla.intro" ) );
+                sink.paragraph_();
             }
             else if ( isIssueManagementSystem( system, "scarab" ) )
             {
+                sink.paragraph();
                 linkPatternedText(
                     i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
+                sink.paragraph_();
             }
             else if ( system == null || "".equals( system.trim() ) )
             {
