@@ -41,11 +41,12 @@ import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class CpdReportTest
     extends AbstractPmdReportTest
 {
-
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -155,12 +156,6 @@ public class CpdReportTest
         {
             assertTrue( true );
         }
-
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
 
     }
 

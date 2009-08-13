@@ -74,31 +74,25 @@ public class CpdReport
 
     /**
      * The file encoding to use when reading the Java sources.
-     * 
+     *
      * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.3
      */
     private String sourceEncoding;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.cpd.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.cpd.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -119,12 +113,12 @@ public class CpdReport
         throws MavenReportException
     {
         if ( !skip && canGenerateReport() )
-        {         
+        {
             ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
             try
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-                
+
                 CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
                 Map files = null;
                 try
@@ -145,7 +139,7 @@ public class CpdReport
                                            + WriterFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
                     }
 
-                    for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
+                    for ( Iterator it = files.keySet().iterator(); it.hasNext(); )
                     {
                         cpd.add( (File) it.next() );
                     }
@@ -159,11 +153,11 @@ public class CpdReport
                     throw new MavenReportException( e.getMessage(), e );
                 }
                 cpd.go();
-    
+
                 CpdReportGenerator gen =
                     new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
                 gen.generate( cpd.getMatches() );
-    
+
                 if ( !isHtml() )
                 {
                     writeNonHtml( cpd );
@@ -214,9 +208,7 @@ public class CpdReport
         }
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "cpd";
