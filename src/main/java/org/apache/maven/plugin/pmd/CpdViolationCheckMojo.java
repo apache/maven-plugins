@@ -32,6 +32,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Fail the build if there were any CPD violations in the source code.
  *
  * @since 2.0
+ * @version $Id$
  * @goal cpd-check
  * @phase verify
  * @execute goal="cpd"
@@ -47,10 +48,8 @@ public class CpdViolationCheckMojo
      * @parameter expression="${cpd.skip}" default-value="false"
      */
     private boolean skip;
-    
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -59,42 +58,39 @@ public class CpdViolationCheckMojo
             executeCheck( "cpd.xml", "duplication", "CPD duplication", 10 );
         }
     }
-    
-    /**
-     * Formats the failure details and prints them as an INFO message
-     * 
-     * @param item
-     */
+
+    /** {@inheritDoc} */
     protected void printError( Map item, String severity )
     {
         String lines = (String) item.get( "lines" );
-        
-        
+
+
         StringBuffer buff = new StringBuffer( 100 );
         buff.append( "CPD " + severity + ": Found " );
         buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );
-        
+
         buff.setLength( 0 );
         buff.append( "    " );
         Map file = (Map) item.get( "file" );
         buff.append( file.get( "path" ) );
         buff.append( " line " ).append( file.get( "line" ) );
         this.getLog().info( buff.toString() );
-        
+
         buff.setLength( 0 );
         buff.append( "    " );
         file = (Map) item.get( "file1" );
         buff.append( file.get( "path" ) );
         buff.append( " line " ).append( file.get( "line" ) );
         this.getLog().info( buff.toString() );
-        
+
         Map codefrag = (Map) item.get( "codefragment" );
         String codefragstr = (String) codefrag.get( "text" );
         this.getLog().debug( "CPD " + severity + ": Code Fragment " );
         this.getLog().debug( codefragstr );
     }
 
+    /** {@inheritDoc} */
     protected Map getErrorDetails( XmlPullParser xpp )
         throws XmlPullParserException, IOException
     {
@@ -114,7 +110,7 @@ public class CpdViolationCheckMojo
         while ( tp != XmlPullParser.END_TAG )
         {
             // get the tag's text
-            switch ( tp ) 
+            switch ( tp )
             {
             case XmlPullParser.TEXT:
                 msgs.put( "text", xpp.getText().trim() );

@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class CustomConfigurationMavenProjectStub
     extends MavenProjectStub
@@ -88,11 +89,13 @@ public class CustomConfigurationMavenProjectStub
         setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
@@ -103,6 +106,7 @@ public class CustomConfigurationMavenProjectStub
         this.reportPlugins = plugins;
     }
 
+    /** {@inheritDoc} */
     public List getReportPlugins()
     {
         return reportPlugins;

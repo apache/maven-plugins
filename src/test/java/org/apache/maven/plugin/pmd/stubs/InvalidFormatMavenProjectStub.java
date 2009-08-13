@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class InvalidFormatMavenProjectStub
     extends MavenProjectStub
@@ -80,19 +81,20 @@ public class InvalidFormatMavenProjectStub
         Artifact artifact = new PmdPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
-        
+
         setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
 
     }
 
+    /** {@inheritDoc} */
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         return build;
     }
-
 }

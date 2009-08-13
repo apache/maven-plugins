@@ -26,11 +26,12 @@ import java.io.File;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @version $Id$
  */
 public class PmdViolationCheckMojoTest
     extends AbstractMojoTestCase
 {
-
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -112,11 +113,4 @@ public class PmdViolationCheckMojoTest
         }
 
     }
-
-    protected void tearDown()
-        throws Exception
-    {
-
-    }
-
 }

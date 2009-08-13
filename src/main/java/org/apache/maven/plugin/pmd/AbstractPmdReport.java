@@ -44,6 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Base class for the PMD reports.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
  */
 public abstract class AbstractPmdReport
     extends AbstractMavenReport
@@ -185,17 +186,13 @@ public abstract class AbstractPmdReport
      */
     protected List reactorProjects;
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
+    /** {@inheritDoc} */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -379,9 +376,7 @@ public abstract class AbstractPmdReport
         return "html".equals( format );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -415,9 +410,7 @@ public abstract class AbstractPmdReport
         return true;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
+    /** {@inheritDoc} */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
