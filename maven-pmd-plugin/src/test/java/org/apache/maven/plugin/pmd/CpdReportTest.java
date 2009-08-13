@@ -36,17 +36,18 @@ import net.sourceforge.pmd.cpd.Language;
 import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */
-public class CpdReportTest extends AbstractMojoTestCase
+public class CpdReportTest
+    extends AbstractPmdReportTest
 {
 
-    protected void setUp() throws Exception
+    protected void setUp()
+        throws Exception
     {
         super.setUp();
         FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
@@ -54,10 +55,11 @@ public class CpdReportTest extends AbstractMojoTestCase
 
     /**
      * Test CPDReport given the default configuration
-     * 
+     *
      * @throws Exception
      */
-    public void testDefaultConfiguration() throws Exception
+    public void testDefaultConfiguration()
+        throws Exception
     {
         File testPom =
             new File( getBasedir(),
@@ -70,10 +72,12 @@ public class CpdReportTest extends AbstractMojoTestCase
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" );
+        renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check the contents of cpd.html
-        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
+        String str =
+            readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "AppSample.java".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
@@ -89,10 +93,11 @@ public class CpdReportTest extends AbstractMojoTestCase
 
     /**
      * Test CPDReport using custom configuration
-     * 
+     *
      * @throws Exception
      */
-    public void testCustomConfiguration() throws Exception
+    public void testCustomConfiguration()
+        throws Exception
     {
         File testPom =
             new File( getBasedir(),
@@ -105,10 +110,12 @@ public class CpdReportTest extends AbstractMojoTestCase
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" );
+        renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // Contents that should NOT be in the report
-        String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
+        String str =
+            readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "/Sample.java".toLowerCase() ) == -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
@@ -128,15 +135,17 @@ public class CpdReportTest extends AbstractMojoTestCase
 
     /**
      * Test CPDReport with invalid format
-     * 
+     *
      * @throws Exception
      */
-    public void testInvalidFormat() throws Exception
+    public void testInvalidFormat()
+        throws Exception
     {
         try
         {
             File testPom =
-                new File( getBasedir(), "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml" );
+                new File( getBasedir(),
+                          "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml" );
             CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
             mojo.execute();
 
@@ -149,20 +158,22 @@ public class CpdReportTest extends AbstractMojoTestCase
 
     }
 
-    protected void tearDown() throws Exception
+    protected void tearDown()
+        throws Exception
     {
 
     }
 
     /**
      * Read the contents of the specified file object into a string
-     * 
+     *
      * @param file
      *            the file to be read
      * @return a String object that contains the contents of the file
      * @throws java.io.IOException
      */
-    private String readFile( File file ) throws IOException
+    private String readFile( File file )
+        throws IOException
     {
         String str = "", strTmp = "";
         BufferedReader in = new BufferedReader( new FileReader( file ) );
@@ -176,7 +187,8 @@ public class CpdReportTest extends AbstractMojoTestCase
         return str;
     }
 
-    public void testWriteNonHtml() throws Exception
+    public void testWriteNonHtml()
+        throws Exception
     {
         File testPom =
             new File( getBasedir(),
@@ -188,7 +200,7 @@ public class CpdReportTest extends AbstractMojoTestCase
         TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 55 );
         List tList = new ArrayList();
         Match tMatch = new Match( 2, tFirstEntry, tSecondEntry );
-        tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec éléments -----");
+        tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec ï¿½lï¿½ments -----" );
         tList.add( tMatch );
 
         CPD tCpd = new MockCpd( 100, new JavaLanguage(), tList.iterator() );
@@ -204,7 +216,8 @@ public class CpdReportTest extends AbstractMojoTestCase
         assertNotNull( pmdCpdDocument );
     }
 
-    public static class MockCpd extends CPD
+    public static class MockCpd
+        extends CPD
     {
 
         private Iterator matches;
