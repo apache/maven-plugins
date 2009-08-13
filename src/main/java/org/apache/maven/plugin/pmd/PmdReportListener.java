@@ -192,9 +192,10 @@ public class PmdReportListener
         sink.text( " " + PMD.VERSION + "." );
         sink.paragraph_();
 
+        sink.section1_();
+
         // TODO overall summary
 
-        sink.section1_();
         sink.section1();
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.pmd.files" ) );
@@ -284,7 +285,9 @@ public class PmdReportListener
     {
         if ( fileCount == 0 )
         {
+            sink.paragraph();
             sink.text( bundle.getString( "report.pmd.noProblems" ) );
+            sink.paragraph_();
         }
 
         sink.section1_();
