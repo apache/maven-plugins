@@ -91,9 +91,10 @@ public class CpdReportGenerator
         sink.text( " " + PMD.VERSION + "." );
         sink.paragraph_();
 
+        sink.section1_();
+
         // TODO overall summary
 
-        sink.section1_();
         sink.section1();
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.cpd.dupes" ) );
@@ -198,8 +199,6 @@ public class CpdReportGenerator
                 sink.tableCell_();
             }
             sink.tableCell();
-
-
 
             if ( xrefLocation != null )
             {
