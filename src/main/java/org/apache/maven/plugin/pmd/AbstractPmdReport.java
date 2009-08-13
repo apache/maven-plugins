@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
@@ -60,7 +60,7 @@ public abstract class AbstractPmdReport
      * The output directory for the final HTML report. Note that this parameter is only evaluated if the goal is run
      * directly from the command line or during the default lifecycle. If the goal is run indirectly as part of a site
      * generation, the output directory configured in the Maven Site Plugin is used instead.
-     * 
+     *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
@@ -71,7 +71,7 @@ public abstract class AbstractPmdReport
      *
      * @component
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * The project to analyse.
@@ -106,7 +106,7 @@ public abstract class AbstractPmdReport
      * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
     private File xrefLocation;
-    
+
     /**
      * Location of the Test Xrefs to link to.
      *
@@ -119,21 +119,21 @@ public abstract class AbstractPmdReport
      * exclusion patterns only operate on the path of a source file relative to its source root directory. In other
      * words, files are excluded based on their package and/or class name. If you want to exclude entire source root
      * directories, use the parameter <code>excludeRoots</code> instead.
-     * 
+     *
      * @parameter
      * @since 2.2
      */
     private String[] excludes;
 
     /**
-     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.  
+     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.
      * Defaults to **\/*.java.
      *
      * @parameter
      * @since 2.2
      */
     private String[] includes;
-    
+
     /**
      * The directories containing the sources to be compiled.
      *
@@ -142,7 +142,7 @@ public abstract class AbstractPmdReport
      * @readonly
      */
     private List compileSourceRoots;
-    
+
     /**
      * The directories containing the test-sources to be compiled.
      *
@@ -151,7 +151,7 @@ public abstract class AbstractPmdReport
      * @readonly
      */
     private List testSourceRoots;
-    
+
     /**
      * The project source directories that should be excluded.
      *
@@ -159,7 +159,7 @@ public abstract class AbstractPmdReport
      * @since 2.2
      */
     private File[] excludeRoots;
-    
+
     /**
      * Run PMD on the tests.
      *
@@ -167,7 +167,7 @@ public abstract class AbstractPmdReport
      * @since 2.2
      */
     protected boolean includeTests;
-    
+
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
      *
@@ -175,8 +175,8 @@ public abstract class AbstractPmdReport
      * @since 2.2
      */
     protected boolean aggregate;
-        
-    
+
+
     /**
      * The projects in the reactor for aggregation report.
      *
@@ -196,7 +196,7 @@ public abstract class AbstractPmdReport
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
@@ -207,7 +207,7 @@ public abstract class AbstractPmdReport
         if ( linkXRef )
         {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
-            
+
             String relativePath = PathTool.getRelativePath( outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath() );
             if ( StringUtils.isEmpty( relativePath ) )
             {
@@ -253,7 +253,7 @@ public abstract class AbstractPmdReport
     {
         String sourceXref = constructXRefLocation( false );
         String testXref = includeTests ? constructXRefLocation( true ) : "";
-        
+
         if ( aggregate && !project.isExecutionRoot() )
         {
             return Collections.EMPTY_MAP;
@@ -264,8 +264,8 @@ public abstract class AbstractPmdReport
             excludeRoots = new File[0];
         }
         Collection excludeRootFiles = new HashSet( excludeRoots.length );
-        
-        for ( int i = 0; i < excludeRoots.length; i++ ) 
+
+        for ( int i = 0; i < excludeRoots.length; i++ )
         {
             File file = excludeRoots[i];
             if ( file.isDirectory() )
@@ -273,16 +273,16 @@ public abstract class AbstractPmdReport
                 excludeRootFiles.add( file );
             }
         }
-        
+
         List directories = new ArrayList();
-        
+
         for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
         {
             String root = (String) i.next();
             File sroot = new File( root );
             directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
         }
-        
+
         if ( includeTests )
         {
             for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
@@ -313,9 +313,9 @@ public abstract class AbstractPmdReport
                     }
                 }
             }
-  
+
         }
-        
+
         String excluding = getExcludes();
         getLog().debug( "Exclusions: " + excluding );
         String including = getIncludes();
@@ -335,14 +335,14 @@ public abstract class AbstractPmdReport
                     files.put( it2.next(), finfo );
                 }
             }
-        }        
-                
+        }
+
         return files;
     }
 
     /**
      * Gets the comma separated list of effective include patterns.
-     * 
+     *
      * @return The comma separated list of effective include patterns, never <code>null</code>.
      */
     private String getIncludes()
@@ -361,7 +361,7 @@ public abstract class AbstractPmdReport
 
     /**
      * Gets the comma separated list of effective exclude patterns.
-     * 
+     *
      * @return The comma separated list of effective exclude patterns, never <code>null</code>.
      */
     private String getExcludes()
@@ -400,7 +400,7 @@ public abstract class AbstractPmdReport
         {
             return true;
         }
-        try 
+        try
         {
             Map filesToProcess = getFilesToProcess( );
             if ( filesToProcess.isEmpty() )
