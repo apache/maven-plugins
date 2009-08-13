@@ -226,13 +226,13 @@ public class TeamListReport
                 endTable();
             }
 
-            endSection();
-
-            endSection();
-
             // To handle JS
             javascript.append( "}\n" ).append( "\n" ).append( "window.onLoad = init();\n" );
             javaScript( javascript.toString() );
+
+            endSection();
+
+            endSection();
         }
 
         private void renderDeveloper( Developer developer, int developerRow, Map headersMap, StringBuffer javascript )
