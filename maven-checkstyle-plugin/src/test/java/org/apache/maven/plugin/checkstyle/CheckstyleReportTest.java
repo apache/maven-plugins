@@ -20,16 +20,20 @@ package org.apache.maven.plugin.checkstyle;
  */
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.plugin.Mojo;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Writer;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
@@ -38,6 +42,8 @@ import java.util.ResourceBundle;
 public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
+    private Locale oldLocale;
+
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -45,6 +51,9 @@ public class CheckstyleReportTest
         throws Exception
     {
         super.setUp();
+
+        oldLocale = Locale.getDefault();
+        Locale.setDefault( Locale.ENGLISH );
     }
 
     /**
@@ -54,6 +63,9 @@ public class CheckstyleReportTest
         throws Exception
     {
         super.tearDown();
+
+        Locale.setDefault( oldLocale );
+        oldLocale = null;
     }
 
     public void testNoSource()
@@ -61,16 +73,17 @@ public class CheckstyleReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/no-source-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
+        CheckstyleReport mojo = (CheckstyleReport) lookupMojo( "checkstyle", pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
         mojo.execute();
 
         File outputFile = (File) getVariableValueFromObject( mojo, "outputFile" );
 
-        assertNotNull( "Test output file", outputFile );
-        //if multiples executions without clean, this fail, because the 
-        // output file is not erased.
-        //assertFalse( "Test output file exists", outputFile.exists() );
+        renderer( mojo, outputFile );
+
+        assertTrue( outputFile.getAbsolutePath() + " not generated!", outputFile.exists() );
+
+        assertTrue( outputFile.getAbsolutePath() + " is empty!", outputFile.length() > 0 );
     }
 
     public void testMinConfiguration()
@@ -150,9 +163,10 @@ public class CheckstyleReportTest
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/" + pluginXml );
-        ResourceBundle bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.ENGLISH, this.getClassLoader() );
+        ResourceBundle bundle =
+            ResourceBundle.getBundle( "checkstyle-report", Locale.getDefault(), this.getClassLoader() );
 
-        Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
+        CheckstyleReport mojo = (CheckstyleReport) lookupMojo( "checkstyle", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -186,11 +200,17 @@ public class CheckstyleReportTest
 
         String filename = reportMojo.getOutputName() + ".html";
         File outputHtml = new File( outputDir, filename );
-        assertTrue( "Test output html file exists", outputHtml.exists() );
+
+        renderer( mojo, outputHtml );
+
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
+
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
+
         String htmlString = FileUtils.fileRead( outputHtml );
 
-        boolean searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.rules" )
-            + "</h2>" ) > 0 );
+        boolean searchHeaderFound =
+            ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.rules" ) + "</h2>" ) > 0 );
         Boolean rules = (Boolean) getVariableValueFromObject( mojo, "enableRulesSummary" );
         if ( rules.booleanValue() )
         {
@@ -201,7 +221,8 @@ public class CheckstyleReportTest
             assertFalse( "Test for Rules Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" ) + "</h2>" ) > 0 );
+        searchHeaderFound =
+            ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" ) + "</h2>" ) > 0 );
         Boolean severity = (Boolean) getVariableValueFromObject( mojo, "enableSeveritySummary" );
         if ( severity.booleanValue() )
         {
@@ -212,7 +233,8 @@ public class CheckstyleReportTest
             assertFalse( "Test for Severity Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) + "</h2>" ) > 0 );
+        searchHeaderFound =
+            ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) + "</h2>" ) > 0 );
         Boolean files = (Boolean) getVariableValueFromObject( mojo, "enableFilesSummary" );
         if ( files.booleanValue() )
         {
@@ -224,5 +246,35 @@ public class CheckstyleReportTest
         }
 
         return outputHtml;
+    }
+
+    /**
+     * Renderer the sink from the report mojo.
+     *
+     * @param mojo not null
+     * @param outputHtml not null
+     * @throws RendererException if any
+     * @throws IOException if any
+     */
+    private void renderer( CheckstyleReport mojo, File outputHtml )
+        throws RendererException, IOException
+    {
+        Writer writer = null;
+        SiteRenderingContext context = new SiteRenderingContext();
+        context.setDecoration( new DecorationModel() );
+        context.setTemplateName( "org/apache/maven/doxia/siterenderer/resources/default-site.vm" );
+        context.setLocale( Locale.ENGLISH );
+
+        try
+        {
+            outputHtml.getParentFile().mkdirs();
+            writer = WriterFactory.newXmlWriter( outputHtml );
+
+            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
     }
 }
