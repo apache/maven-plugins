@@ -19,8 +19,6 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
@@ -31,9 +29,27 @@ import java.io.File;
  * @author Edwin Punzalan
  */
 public class DeveloperActivityReportTest
-    extends AbstractMojoTestCase
+    extends AbstractChangeLogReportTest
 {
     private ScmManager scmManager;
+
+    /** {@inheritDoc} */
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        scmManager = new ScmManagerStub();
+    }
+
+    /** {@inheritDoc} */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+
+        scmManager = null;
+    }
 
     public void testNoSource()
         throws Exception
@@ -41,7 +57,7 @@ public class DeveloperActivityReportTest
         File pluginXmlFile = new File( getBasedir(),
                                        "src/test/plugin-configs/dev-activity/no-source-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "dev-activity", pluginXmlFile );
+        DeveloperActivityReport mojo = (DeveloperActivityReport) lookupMojo( "dev-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -53,7 +69,11 @@ public class DeveloperActivityReportTest
 
         File outputHtml = new File( outputDir, "dev-activity.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
+        renderer( mojo, outputHtml );
+
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
+
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 
     public void testMinConfig()
@@ -72,7 +92,7 @@ public class DeveloperActivityReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/dev-activity/" + pluginXml );
 
-        Mojo mojo = lookupMojo( "dev-activity", pluginXmlFile );
+        DeveloperActivityReport mojo = (DeveloperActivityReport)lookupMojo( "dev-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -97,14 +117,10 @@ public class DeveloperActivityReportTest
 
         File outputHtml = new File( outputDir, "dev-activity.html" );
 
-        assertTrue( "Test html generated", outputHtml.exists() );
-    }
+        renderer( mojo, outputHtml );
 
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
+        assertTrue( outputHtml.getAbsolutePath() + " not generated!", outputHtml.exists() );
 
-        scmManager = new ScmManagerStub();
+        assertTrue( outputHtml.getAbsolutePath() + " is empty!", outputHtml.length() > 0 );
     }
 }
