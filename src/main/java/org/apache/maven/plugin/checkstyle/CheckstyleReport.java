@@ -84,6 +84,7 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
+ * @version $Id$
  * @goal checkstyle
  * @requiresDependencyResolution compile
  */
@@ -513,11 +514,7 @@ public class CheckstyleReport
      */
     private ServiceLocator serviceLocator;
 
-    /**
-     * ${inheritDoc}
-     *
-     * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable#service(org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator)
-     */
+    /** {@inheritDoc} */
     public void service( ServiceLocator locator )
     {
         this.serviceLocator = locator;
@@ -534,49 +531,37 @@ public class CheckstyleReport
      */
     private ResourceManager locator;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.checkstyle.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.checkstyle.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
+    /** {@inheritDoc} */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
+    /** {@inheritDoc} */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** {@inheritDoc} */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -991,9 +976,7 @@ public class CheckstyleReport
         return sinkListener.getResults();
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "checkstyle";
@@ -1273,18 +1256,14 @@ public class CheckstyleReport
         return ResourceBundle.getBundle( "checkstyle-report", locale, CheckstyleReport.class.getClassLoader() );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
         return sourceDirectory.exists();
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
-     */
+    /** {@inheritDoc} */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         super.setReportOutputDirectory( reportOutputDirectory );

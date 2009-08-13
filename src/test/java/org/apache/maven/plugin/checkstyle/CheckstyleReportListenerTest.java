@@ -31,12 +31,14 @@ import java.util.Map;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class CheckstyleReportListenerTest
     extends TestCase
 {
     private Map listenerMap;
 
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {

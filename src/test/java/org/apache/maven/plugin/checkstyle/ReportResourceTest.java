@@ -26,6 +26,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class ReportResourceTest
     extends TestCase
