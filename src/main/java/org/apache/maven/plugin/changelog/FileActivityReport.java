@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 /**
  * Generate a file activity report.
  *
+ * @version $Id$
  * @goal file-activity
  */
 public class FileActivityReport
@@ -60,12 +61,7 @@ public class FileActivityReport
         return "file-activity";
     }
 
-    /**
-     * generates an empty report in case there are no sources to generate a report with
-     *
-     * @param bundle the resource bundle to retrieve report phrases from
-     * @param sink   the report formatting tool
-     */
+    /** {@inheritDoc} */
     protected void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
     {
         sink.head();
@@ -92,13 +88,7 @@ public class FileActivityReport
         sink.close();
     }
 
-    /**
-     * method that generates the report for this mojo.
-     *
-     * @param changeLogSets changed sets to generate the report from
-     * @param bundle        the resource bundle to retrieve report phrases from
-     * @param sink          the report formatting tool
-     */
+    /** {@inheritDoc} */
     protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();

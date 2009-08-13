@@ -24,29 +24,35 @@ import org.apache.maven.settings.Server;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class SettingsStub
     extends Settings
 {
+    /** {@inheritDoc} */
     public Server getServer( String serverId )
     {
         return new Server()
         {
+            /** {@inheritDoc} */
             public String getUsername()
             {
                 return "anonymous";
             }
 
+            /** {@inheritDoc} */
             public String getPassword()
             {
                 return "password";
             }
 
+            /** {@inheritDoc} */
             public String getPassphrase()
             {
                 return "passphrase";
             }
 
+            /** {@inheritDoc} */
             public String getPrivateKey()
             {
                 return "private-key";

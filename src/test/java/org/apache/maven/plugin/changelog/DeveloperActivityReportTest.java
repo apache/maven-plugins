@@ -27,6 +27,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class DeveloperActivityReportTest
     extends AbstractChangeLogReportTest

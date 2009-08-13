@@ -37,6 +37,8 @@ import java.util.TimeZone;
 /**
  * Change log generated xml parser.  SAXParser listener for processing a previously generated xml into several
  * change log sets.
+ *
+ * @version $Id$
  */
 public class ChangeLogHandler
     extends DefaultHandler
@@ -65,18 +67,14 @@ public class ChangeLogHandler
         this.changeSets = changeSets;
     }
 
-    /**
-     * @see org.xml.sax.helpers.DefaultHandler#characters(char[],int,int)
-     */
+    /** {@inheritDoc} */
     public void characters( char[] ch, int start, int length )
         throws SAXException
     {
         bufData += new String( ch, start, length );
     }
 
-    /**
-     * @see org.xml.sax.helpers.DefaultHandler#endElement(String,String,String)
-     */
+    /** {@inheritDoc} */
     public void endElement( String uri, String localName, String qName )
         throws SAXException
     {
@@ -146,9 +144,7 @@ public class ChangeLogHandler
         }
     }
 
-    /**
-     * @see org.xml.sax.helpers.DefaultHandler#startElement(String,String,String,Attributes)
-     */
+    /** {@inheritDoc} */
     public void startElement( String uri, String localName, String qName, Attributes attributes )
         throws SAXException
     {

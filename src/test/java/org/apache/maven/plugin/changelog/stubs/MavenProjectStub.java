@@ -26,6 +26,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class MavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
@@ -39,6 +40,7 @@ public class MavenProjectStub
         testCounter++;
     }
 
+    /** {@inheritDoc} */
     public Scm getScm()
     {
         Scm scm = new Scm();
@@ -48,6 +50,7 @@ public class MavenProjectStub
         return scm;
     }
 
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir(), "target/test-harness/" + testCounter );
