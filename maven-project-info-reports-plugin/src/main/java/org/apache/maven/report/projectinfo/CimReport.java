@@ -127,6 +127,7 @@ public class CimReport
             // Overview
             startSection( i18n.getString( "project-info-report", locale, "report.cim.overview.title" ) );
 
+            sink.paragraph();
             if ( isCimSystem( system, "anthill" ) )
             {
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.anthill.intro" ) );
@@ -155,6 +156,7 @@ public class CimReport
             {
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.general.intro" ) );
             }
+            sink.paragraph_();
 
             endSection();
 
