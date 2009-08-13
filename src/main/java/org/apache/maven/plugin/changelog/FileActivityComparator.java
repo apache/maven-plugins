@@ -27,14 +27,14 @@ import java.util.List;
 
 
 /**
- * Object used to sort the file-activity report into descending order
+ * Object used to sort the file-activity report into descending order.
+ *
+ * @version $Id$
  */
 public class FileActivityComparator
     implements Comparator
 {
-    /**
-     * @see java.util.Comparator#compare(Object,Object)
-     */
+    /** {@inheritDoc} */
     public int compare( Object o1, Object o2 )
         throws ClassCastException
     {

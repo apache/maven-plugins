@@ -74,6 +74,7 @@ import org.codehaus.plexus.util.WriterFactory;
 /**
  * Generate a changelog report.
  *
+ * @version $Id$
  * @goal changelog
  */
 public class ChangeLogReport
@@ -1421,13 +1422,15 @@ public class ChangeLogReport
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
+     * @param locale
+     * @return the current bundle
      */
     protected ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "scm-activity", locale, this.getClass().getClassLoader() );
     }
 
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         if ( offline && !outputXML.exists() )

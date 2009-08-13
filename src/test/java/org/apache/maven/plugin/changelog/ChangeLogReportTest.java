@@ -22,7 +22,6 @@ package org.apache.maven.plugin.changelog;
 import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
 import org.apache.maven.plugin.changelog.stubs.FailedScmManagerStub;
 import org.apache.maven.plugin.changelog.stubs.ScmManagerWithHostStub;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
@@ -31,6 +30,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class ChangeLogReportTest
     extends AbstractChangeLogReportTest

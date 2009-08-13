@@ -27,12 +27,14 @@ import java.util.List;
 
 /**
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class FileActivityComparatorTest
     extends TestCase
 {
     private FileActivityComparator comparator;
 
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
