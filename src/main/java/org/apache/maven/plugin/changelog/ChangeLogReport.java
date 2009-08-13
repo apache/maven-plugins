@@ -1437,9 +1437,7 @@ public class ChangeLogReport
         {
             return false;
         }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
 }

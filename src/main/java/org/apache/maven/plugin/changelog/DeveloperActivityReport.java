@@ -201,12 +201,10 @@ public class DeveloperActivityReport
                 {
                     continue;
                 }
-                else
-                {
-                    devCommits = (LinkedList) commits.get( id );
 
-                    devFiles = (HashMap) files.get( id );
-                }
+                devCommits = (LinkedList) commits.get( id );
+
+                devFiles = (HashMap) files.get( id );
             }
             else
             {
