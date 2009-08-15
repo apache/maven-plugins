@@ -369,7 +369,6 @@ public class PdfMojo
      */
     private List generatedMavenReports;
 
-
     /**
      * The current Plexus container.
      * <b>Note</b>: its realm id should be <code>maven-pdf-plugin</code>
@@ -406,6 +405,8 @@ public class PdfMojo
         }
         catch ( IOException e )
         {
+            debugLogGeneratedModel( getDocumentModel( Locale.ENGLISH ) );
+
             throw new MojoExecutionException( "Error during document generation: " + e.getMessage(), e );
         }
 
@@ -457,6 +458,22 @@ public class PdfMojo
     private void generatedPdf()
         throws MojoExecutionException, IOException
     {
+        try
+        {
+            FileUtils.deleteDirectory( workingDirectory );
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "IOException: " + e.getMessage(), e );
+            }
+            else
+            {
+                getLog().error( "IOException: " + e.getMessage() );
+            }
+        }
+
         Locale.setDefault( getDefaultLocale() );
 
         for ( final Iterator iterator = getAvailableLocales().iterator(); iterator.hasNext(); )
@@ -918,11 +935,22 @@ public class PdfMojo
             {
                 w = WriterFactory.newXmlWriter( doc );
                 xpp3.write( w, docModel );
-                getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
+                }
             }
-            catch ( IOException io )
+            catch ( IOException e )
             {
-                getLog().debug( "Failed to write document model: " + doc.getAbsolutePath(), io );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( "Failed to write document model: " + e.getMessage(), e );
+                }
+                else
+                {
+                    getLog().error( "Failed to write document model: " + e.getMessage() );
+                }
             }
             finally
             {
@@ -945,13 +973,20 @@ public class PdfMojo
     {
         if ( !includeReports )
         {
-            getLog().info( "Skipped report generation." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Skipped report generation." );
+            }
+
             return;
         }
 
         if ( project.getReporting() == null )
         {
-            getLog().info( "No report was specified." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "No report was specified." );
+            }
             return;
         }
 
@@ -1116,7 +1151,7 @@ public class PdfMojo
      * @since 1.1
      * @see #MAVEN_MINOR_VERSION
      */
-    private ClassRealm getClassRealm( PluginDescriptor pluginDescriptor)
+    private ClassRealm getClassRealm( PluginDescriptor pluginDescriptor )
     {
         if ( MAVEN_MINOR_VERSION == 0 )
         {
@@ -1171,14 +1206,29 @@ public class PdfMojo
         String localReportName = report.getName( locale );
         if ( !report.canGenerateReport() )
         {
-            getLog().info(
-                          "Skipped \"" + localReportName + "\" report, canGenerateReport() was false." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Skipped \"" + localReportName + "\" report." );
+            }
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "canGenerateReport() was false." );
+            }
+
             return;
         }
+
         if ( report.isExternalReport() )
         {
-            getLog().info(
-                          "Skipped external report, \"" + localReportName + "\" report." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Skipped external report, \"" + localReportName + "\" report." );
+            }
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "isExternalReport() was false." );
+            }
+
             return;
         }
 
@@ -1217,13 +1267,21 @@ public class PdfMojo
         {
             String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-            getLog().info(
-                           "Skipped \"" + report.getName( locale ) + "\" report, file \"" + report.getOutputName()
-                               + "\" already exists for the " + displayLanguage + " version." );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info(
+                               "Skipped \"" + report.getName( locale ) + "\" report, file \""
+                                   + report.getOutputName() + "\" already exists for the " + displayLanguage
+                                   + " version." );
+            }
+
             return;
         }
 
-        getLog().info( "Generating \"" + localReportName + "\" report." );
+        if ( getLog().isInfoEnabled() )
+        {
+            getLog().info( "Generating \"" + localReportName + "\" report." );
+        }
 
         StringWriter sw = new StringWriter();
 
@@ -1240,12 +1298,10 @@ public class PdfMojo
         {
             if ( getLog().isErrorEnabled() )
             {
-                getLog().error(
-                                report.getClass().getName() + "#generate(...) caused a linkage error ("
-                                    + e.getClass().getName() + ") and may be out-of-date. Check the realms:" );
-
                 ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
                 StringBuilder sb = new StringBuilder();
+                sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
+                sb.append( e.getClass().getName() ).append( ") and may be out-of-date. Check the realms:\n" );
                 sb.append( "Maven Report Plugin realm = " + reportPluginRealm.getId() ).append( '\n' );
                 for ( int i = 0; i < reportPluginRealm.getConstituents().length; i++ )
                 {
@@ -1255,6 +1311,7 @@ public class PdfMojo
                         sb.append( '\n' );
                     }
                 }
+
                 getLog().error( sb.toString() );
             }
 
@@ -1356,7 +1413,8 @@ public class PdfMojo
                 {
                     final String generatedDir = it.next().toString();
 
-                    List generatedFiles = FileUtils.getFileNames( new File( generatedDir ), "**.*", excludes, false );
+                    List generatedFiles =
+                        FileUtils.getFileNames( new File( generatedDir ), "**.*", excludes, false );
 
                     for ( final Iterator it2 = generatedFiles.iterator(); it2.hasNext(); )
                     {
@@ -1365,7 +1423,8 @@ public class PdfMojo
 
                         if ( !addedRef.contains( ref ) )
                         {
-                            final String title = getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
+                            final String title =
+                                getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
 
                             if ( title != null )
                             {
@@ -1601,7 +1660,14 @@ public class PdfMojo
         }
         catch ( ProjectBuildingException e )
         {
-            getLog().debug( e.getMessage(), e );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "ProjectBuildingException: " + e.getMessage(), e );
+            }
+            else
+            {
+                getLog().error( "ProjectBuildingException: " + e.getMessage() );
+            }
         }
 
         return null;
@@ -1665,7 +1731,7 @@ public class PdfMojo
         return excludesLocales;
     }
 
-     /**
+    /**
     * @return the current Maven version from <code>META-INF/maven/org.apache.maven/maven-core/pom.properties</code>
     * or <code>null</code> if not found.
     */
