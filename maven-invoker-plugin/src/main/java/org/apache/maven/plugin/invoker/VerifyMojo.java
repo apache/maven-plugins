@@ -23,15 +23,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Reader;
-import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * Checks the results of maven-invoker-plugin based integration tests and fails the build if any tests failed.
@@ -43,6 +39,7 @@ import java.util.Iterator;
  */
 public class VerifyMojo extends AbstractMojo
 {
+
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      *
@@ -52,7 +49,7 @@ public class VerifyMojo extends AbstractMojo
     private boolean skipInvocation;
 
     /**
-     * Base directory where all build reports are written to.
+     * Base directory where all build reports are read from.
      *
      * @parameter expression="${invoker.reportsDirectory}" default-value="${project.build.directory}/invoker-reports"
      * @since 1.4
@@ -92,21 +89,22 @@ public class VerifyMojo extends AbstractMojo
                 + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
             return;
         }
-        File[] reportFiles = getReportFiles();
+
+        File[] reportFiles = ReportUtils.getReportFiles( reportsDirectory );
         if ( reportFiles.length <= 0 )
         {
             getLog().info( "No invoker report files found, nothing to check." );
             return;
         }
 
-        List buildJobs = new ArrayList( reportFiles.length );
+        InvokerSession invokerSession = new InvokerSession();
         for ( int i = 0, size = reportFiles.length; i < size; i++ )
         {
             File reportFile = reportFiles[i];
             try
             {
                 BuildJobXpp3Reader reader = new BuildJobXpp3Reader();
-                buildJobs.add( reader.read( ReaderFactory.newXmlReader( reportFile ) ) );
+                invokerSession.addJob( reader.read( ReaderFactory.newXmlReader( reportFile ) ) );
             }
             catch ( XmlPullParserException e )
             {
@@ -118,89 +116,12 @@ public class VerifyMojo extends AbstractMojo
             }
         }
 
-        List failures = new ArrayList();
-        List successes = new ArrayList();
-
-        for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext();)
-        {
-            BuildJob buildJob = (BuildJob) iterator.next();
-            if ( BuildJob.Result.SUCCESS.equals( buildJob.getResult() ) )
-            {
-                successes.add( buildJob );
-            }
-            else if ( !BuildJob.Result.SKIPPED.equals( buildJob.getResult() ) )
-            {
-                failures.add( buildJob );
-            }
-        }
-
         if ( !suppressSummaries )
         {
-            getLog().info( "---------------------------------------" );
-            getLog().info( "Execution Summary:" );
-            getLog().info( "  Builds Passing: " + ( buildJobs.size() - failures.size() ) );
-            getLog().info( "  Builds Failing: " + failures.size() );
-            getLog().info( "---------------------------------------" );
-
-            if ( !failures.isEmpty() )
-            {
-                String heading = "The following builds failed:";
-                if ( ignoreFailures )
-                {
-                    getLog().warn( heading );
-                }
-                else
-                {
-                    getLog().error( heading );
-                }
-
-                for ( final Iterator it = failures.iterator(); it.hasNext(); )
-                {
-                    BuildJob buildJob = (BuildJob) it.next();
-                    String item = "*  " + buildJob.getProject();
-                    if ( ignoreFailures )
-                    {
-                        getLog().warn( item );
-                    }
-                    else
-                    {
-                        getLog().error( item );
-                    }
-                }
-
-                getLog().info( "---------------------------------------" );
-            }
+            invokerSession.logSummary( getLog(), ignoreFailures );
         }
 
-        if ( !failures.isEmpty() )
-        {
-            String message = failures.size() + " build" + ( failures.size() == 1 ? "" : "s" ) + " failed.";
-
-            if ( ignoreFailures )
-            {
-                getLog().warn( "Ignoring that " + message );
-            }
-            else
-            {
-                throw new MojoFailureException( this, message, message );
-            }
-        }
-
-    }
-
-    /**
-     * Gets the paths to the available invoker reports to generate the site output from.
-     *
-     * @return The paths to the invoker reports, can be empty but never <code>null</code>.
-     */
-    private File[] getReportFiles()
-    {
-        File[] reportFiles = ( reportsDirectory != null ) ? reportsDirectory.listFiles() : null;
-        if ( reportFiles == null )
-        {
-            reportFiles = new File[0];
-        }
-        return reportFiles;
+        invokerSession.handleFailures( getLog(), ignoreFailures );
     }
 
 }

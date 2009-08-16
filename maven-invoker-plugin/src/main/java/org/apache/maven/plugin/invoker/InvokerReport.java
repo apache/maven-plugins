@@ -135,7 +135,7 @@ public class InvokerReport
         // ----------------------------------
         //  build buildJob beans
         // ----------------------------------
-        File[] reportFiles = getReportFiles();
+        File[] reportFiles = ReportUtils.getReportFiles( reportsDirectory );
         if ( reportFiles.length <= 0 )
         {
             getLog().info( "no invoker report files found, skip report generation" );
@@ -335,22 +335,7 @@ public class InvokerReport
 
     public boolean canGenerateReport()
     {
-        return getReportFiles().length > 0;
-    }
-
-    /**
-     * Gets the paths to the available invoker reports to generate the site output from.
-     * 
-     * @return The paths to the invoker reports, can be empty but never <code>null</code>.
-     */
-    private File[] getReportFiles()
-    {
-        File[] reportFiles = ( reportsDirectory != null ) ? reportsDirectory.listFiles() : null;
-        if ( reportFiles == null )
-        {
-            reportFiles = new File[0];
-        }
-        return reportFiles;
+        return ReportUtils.getReportFiles( reportsDirectory ).length > 0;
     }
 
     private String getText( Locale locale, String key )

@@ -104,10 +104,10 @@ public class InvokerMojoTest
     public void testAlreadyCloned()
         throws Exception
     {
-        assertFalse( InvokerMojo.alreadyCloned( "dir", Collections.EMPTY_LIST ) );
-        assertTrue( InvokerMojo.alreadyCloned( "dir", Collections.singletonList( "dir" ) ) );
-        assertTrue( InvokerMojo.alreadyCloned( "dir" + File.separator + "sub", Collections.singletonList( "dir" ) ) );
-        assertFalse( InvokerMojo.alreadyCloned( "dirs", Collections.singletonList( "dir" ) ) );
+        assertFalse( AbstractInvokerMojo.alreadyCloned( "dir", Collections.EMPTY_LIST ) );
+        assertTrue( AbstractInvokerMojo.alreadyCloned( "dir", Collections.singletonList( "dir" ) ) );
+        assertTrue( AbstractInvokerMojo.alreadyCloned( "dir" + File.separator + "sub", Collections.singletonList( "dir" ) ) );
+        assertFalse( AbstractInvokerMojo.alreadyCloned( "dirs", Collections.singletonList( "dir" ) ) );
     }    
 
 }

@@ -580,21 +580,20 @@ public abstract class AbstractInvokerMojo
             getLog().warn( "Filtering of parent/child POMs is not supported without cloning the projects" );
         }
 
-        List failures = runBuilds( projectsDir, buildJobs );
+        runBuilds( projectsDir, buildJobs );
 
-        processResults( buildJobs, failures );
+        processResults( new InvokerSession( buildJobs ) );
     }
 
     /**
      * Processes the results of invoking the build jobs.
-     * @param buildJobs The set of build jobs which were invoked
-     * @param failures The failed build jobs.
-     * @throws MojoExecutionException If the mojo had an execution exception as a result of invoking the build jobs.
+     * 
+     * @param invokerSession The session with the build jobs, must not be <code>null</code>.
      * @throws MojoFailureException If the mojo had failed as a result of invoking the build jobs.
      * @since 1.4
      */
-    protected abstract void processResults( BuildJob[] buildJobs, List failures )
-        throws MojoExecutionException, MojoFailureException;
+    abstract void processResults( InvokerSession invokerSession )
+        throws MojoFailureException;
 
     /**
      * Creates a new reader for the specified file, using the plugin's {@link #encoding} parameter.
@@ -881,14 +880,11 @@ public abstract class AbstractInvokerMojo
      *
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
      * @param buildJobs The build jobs to run must not be <code>null</code> nor contain <code>null</code> elements.
-     * @return The list of build jobs that failed, can be empty but never <code>null</code>.
      * @throws org.apache.maven.plugin.MojoExecutionException If any build could not be launched.
      */
-    protected List runBuilds( File projectsDir, BuildJob[] buildJobs )
+    private void runBuilds( File projectsDir, BuildJob[] buildJobs )
         throws MojoExecutionException
     {
-        List failures = new ArrayList();
-
         if ( !localRepositoryPath.exists() )
         {
             localRepositoryPath.mkdirs();
@@ -914,14 +910,7 @@ public abstract class AbstractInvokerMojo
             for ( int i = 0; i < buildJobs.length; i++ )
             {
                 BuildJob project = buildJobs[i];
-                try
-                {
-                    runBuild( projectsDir, project, interpolatedSettingsFile );
-                }
-                catch ( BuildFailureException e )
-                {
-                    failures.add( project );
-                }
+                runBuild( projectsDir, project, interpolatedSettingsFile );
             }
         }
         finally
@@ -931,8 +920,6 @@ public abstract class AbstractInvokerMojo
                 interpolatedSettingsFile.delete();
             }
         }
-
-        return failures;
     }
 
     /**
@@ -943,10 +930,9 @@ public abstract class AbstractInvokerMojo
      * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
      *            the current user settings.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
-     * @throws org.apache.maven.plugin.invoker.BuildFailureException If either a hook script or the build itself failed.
      */
     private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile )
-        throws MojoExecutionException, BuildFailureException
+        throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, buildJob.getProject() );
         File basedir;
@@ -1020,7 +1006,6 @@ public abstract class AbstractInvokerMojo
                 getLog().info( "..FAILED " + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
-            throw e;
         }
         finally
         {
