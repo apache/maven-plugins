@@ -41,7 +41,12 @@ Maven Invoker Plugin
   * {{{./install-mojo.html}invoker:install}} copies the project artifacts of the main build into the local repository to
     prepare the execution of the selected sub projects.
 
-  * {{{./run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result.
+  * {{{./run-mojo.html}invoker:run}} runs a set of Maven projects in a directory and verifies the result (this is
+    equivalent to running both <<<invoker:integration-test>>> and <<<invoker:verify>>>).
+
+  * {{{./integration-test-mojo.html}invoker:integration-test}} runs a set of Maven projects in a directory.
+
+  * {{{./verify-mojo.html}invoker:verify}} verifies the result of <<<invoker:integration-test>>>.
 
   []
 
@@ -84,6 +89,9 @@ Maven Invoker Plugin
   * {{{./examples/invoker-properties.html}Use Invoker Properties}} to configure goals, profiles etc. for individual projects.
 
   * {{{./examples/prepare-build-env.html}Prepare the Build Environment}} by building some setup projects before other projects.
+
+  * {{{./examples/integration-test-verify.html}Using with other integration test frameworks}} by decoupling checking 
+    the results of the integration tests from executing the integration tests.
 
   []
 
