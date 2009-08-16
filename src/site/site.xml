@@ -41,6 +41,7 @@ under the License.
       <item name="Using a Post Build Script" href="examples/post-build-script.html"/>
       <item name="Preparing the Build Environment" href="examples/prepare-build-env.html"/>
       <item name="Skipping Invocations" href="examples/skipping.html"/>
+      <item name="Using with other integration test frameworks" href="examples/integration-test-verify.html"/>
     </menu>
 
   </body>
