@@ -174,23 +174,23 @@ public class InvokerReport
         sink.section2();
         sink.sectionTitle2();
 
-        sink.text( getText( locale, "report.invoker.detail.title" ));
+        sink.text( getText( locale, "report.invoker.detail.title" ) );
 
         sink.sectionTitle2_();
-        
+
         sink.section2_();
 
-        // detail tests table header 
+        // detail tests table header
         sink.table();
-        
+
         sink.tableRow();
         // -------------------------------------------
-        //  name | Result | time | message
+        // name | Result | time | message
         // -------------------------------------------
-        sinkTableHeader( sink, getText( locale, "report.invoker.detail.name") );
-        sinkTableHeader( sink, getText( locale, "report.invoker.detail.result") );
-        sinkTableHeader( sink, getText( locale, "report.invoker.detail.time") );
-        sinkTableHeader( sink, getText( locale, "report.invoker.detail.message") );
+        sinkTableHeader( sink, getText( locale, "report.invoker.detail.name" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.detail.result" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.detail.time" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.detail.message" ) );
 
         sink.tableRow_();
 
@@ -199,48 +199,48 @@ public class InvokerReport
             BuildJob buildJob = (BuildJob) iterator.next();
             renderBuildJob( buildJob, locale );
         }
-        
+
         sink.table_();
 
         sink.body_();
 
         sink.flush();
-        sink.close();        
+        sink.close();
     }
-    
-    private void constructSummarySection( List /* BuildJob */ buildJobs, Locale locale )
+
+    private void constructSummarySection( List /* BuildJob */buildJobs, Locale locale )
     {
         Sink sink = getSink();
-        
+
         sink.section2();
         sink.sectionTitle2();
 
-        sink.text( getText( locale, "report.invoker.summary.title" ));
+        sink.text( getText( locale, "report.invoker.summary.title" ) );
 
         sink.sectionTitle2_();
         sink.section2_();
-        
+
         // ------------------------------------------------------------------------
-        //  Building a table with 
+        // Building a table with
         // it number | succes nb | failed nb | Success rate | total time | avg time
         // ------------------------------------------------------------------------
-        
+
         sink.table();
         sink.tableRow();
 
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.number" ));
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.success" ));
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.failed" ));
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.success.rate" ));
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.time.total" ));
-        sinkTableHeader(sink, getText( locale, "report.invoker.summary.time.avg" ));
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.number" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.success" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.failed" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.success.rate" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.time.total" ) );
+        sinkTableHeader( sink, getText( locale, "report.invoker.summary.time.avg" ) );
 
         int number = buildJobs.size();
         int success = 0;
         int failed = 0;
         double totalTime = 0;
 
-        for (Iterator iterator = buildJobs.iterator(); iterator.hasNext();)
+        for ( Iterator iterator = buildJobs.iterator(); iterator.hasNext(); )
         {
             BuildJob buildJob = (BuildJob) iterator.next();
             if ( BuildJob.Result.SUCCESS.equals( buildJob.getResult() ) )
@@ -273,10 +273,10 @@ public class InvokerReport
         sinkCell( sink, secondsFormat.format( totalTime ) );
 
         sinkCell( sink, secondsFormat.format( totalTime / number ) );
-        
+
         sink.tableRow_();
         sink.table_();
-        
+
     }
 
     private void renderBuildJob( BuildJob buildJob, Locale locale )
@@ -300,7 +300,6 @@ public class InvokerReport
         sinkCell( sink, secondsFormat.format( buildJob.getTime() ) );
         sinkCell( sink, buildJob.getFailureMessage() );
         sink.tableRow_();
-
     }
 
     protected String getOutputDirectory()
@@ -356,4 +355,5 @@ public class InvokerReport
         sink.text( text );
         sink.tableCell_();
     }
+
 }
