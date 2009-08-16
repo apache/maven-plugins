@@ -19,12 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.invoker.model.BuildJob;
 
 /**
  * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, and
@@ -52,70 +47,15 @@ public class InvokerMojo
      */
     private boolean ignoreFailures;
 
-    /**
-     * Processes the results of invoking the build jobs.
-     * 
-     * @param buildJobs The set of build jobs which were invoked
-     * @param failures The failed build jobs.
-     * @throws MojoExecutionException If the mojo had an execution exception as a result of invoking the build jobs.
-     * @throws MojoFailureException If the mojo had failed as a result of invoking the build jobs.
-     * @since 1.4
-     */
-    protected void processResults( BuildJob[] buildJobs, List failures )
-        throws MojoExecutionException, MojoFailureException
+    void processResults( InvokerSession invokerSession )
+        throws MojoFailureException
     {
-
         if ( !suppressSummaries )
         {
-            getLog().info( "---------------------------------------" );
-            getLog().info( "Execution Summary:" );
-            getLog().info( "  Builds Passing: " + ( buildJobs.length - failures.size() ) );
-            getLog().info( "  Builds Failing: " + failures.size() );
-            getLog().info( "---------------------------------------" );
-
-            if ( !failures.isEmpty() )
-            {
-                String heading = "The following builds failed:";
-                if ( ignoreFailures )
-                {
-                    getLog().warn( heading );
-                }
-                else
-                {
-                    getLog().error( heading );
-                }
-
-                for ( final Iterator it = failures.iterator(); it.hasNext(); )
-                {
-                    BuildJob buildJob = (BuildJob) it.next();
-                    String item = "*  " + buildJob.getProject();
-                    if ( ignoreFailures )
-                    {
-                        getLog().warn( item );
-                    }
-                    else
-                    {
-                        getLog().error( item );
-                    }
-                }
-
-                getLog().info( "---------------------------------------" );
-            }
+            invokerSession.logSummary( getLog(), ignoreFailures );
         }
 
-        if ( !failures.isEmpty() )
-        {
-            String message = failures.size() + " build" + ( failures.size() == 1 ? "" : "s" ) + " failed.";
-
-            if ( ignoreFailures )
-            {
-                getLog().warn( "Ignoring that " + message );
-            }
-            else
-            {
-                throw new MojoFailureException( this, message, message );
-            }
-        }
+        invokerSession.handleFailures( getLog(), ignoreFailures );
     }
 
 }

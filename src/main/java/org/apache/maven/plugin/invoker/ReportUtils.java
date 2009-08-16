@@ -19,28 +19,32 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoFailureException;
+import java.io.File;
 
 /**
- * Searches for integration test Maven projects, and executes each, collecting a log in the project directory, will
- * never fail the build, designed to be used in conjunction with the verify mojo.
- *
- * @goal integration-test
- * @phase integration-test
- * @requiresDependencyResolution test
- * @since 1.4
- *
- * @author <a href="mailto:stephenconnolly at codehaus">Stephen Connolly</a>
- * @version $Id$
+ * Provides utility methods for invoker report processing.
+ * 
+ * @author Benjamin Bentmann
  */
-public class IntegrationTestMojo
-    extends AbstractInvokerMojo
+class ReportUtils
 {
 
-    void processResults( InvokerSession invokerSession )
-        throws MojoFailureException
+    /**
+     * Gets the paths to the invoker reports available in the specified directory.
+     * 
+     *@param reportsDirectory The base directory where the invoker reports are located in, may be <code>null</code>.
+     * @return The paths to the invoker reports, can be empty but never <code>null</code>.
+     */
+    public static File[] getReportFiles( File reportsDirectory )
     {
-        // do nothing
+        File[] reportFiles = ( reportsDirectory != null ) ? reportsDirectory.listFiles() : null;
+
+        if ( reportFiles == null )
+        {
+            reportFiles = new File[0];
+        }
+
+        return reportFiles;
     }
 
 }
