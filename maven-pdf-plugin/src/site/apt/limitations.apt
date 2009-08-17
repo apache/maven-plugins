@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 14 September 2007
+ 2008-08-14
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -30,22 +30,20 @@ Known Bugs and Limitations
 
   Just a brief selection...
 
-* Current limitations
+* Current Limitations
 
-  * Current prerequisite is Maven \>\= 2.0.6. It's using Doxia-1.1 via the shade-plugin
+  * Current prerequisite is Maven \>\= 2.0.6. It's using Doxia-1.1.x via the shade-plugin
     (see {{{http://jira.codehaus.org/browse/MNG-3402}MNG-3402}}).
 
-  * Maven generated pages (reports) are ignored.
+  []
 
-* Missing features
+* Missing Features
 
   * Menu sub-items are not supported in TOC (every source document starts a new chapter).
 
-* Known bugs
+  []
 
-  None.
-
-* Implementation specific issues
+* Implementation Specific Issues
 
   These are not limitations of the plugin itself, but are listed here for completeness.
 
@@ -55,4 +53,8 @@ Known Bugs and Limitations
 
     * Identical id attributes (eg anchors) within one document will lead to a build failure.
 
+    []
+
   * iText issues
+
+  []

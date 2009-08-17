@@ -279,6 +279,11 @@ under the License.
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-4</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pdf-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -287,7 +292,6 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pdf-plugin</artifactId>
-        <version>1.0</version>
         <executions>
           <execution>
             <id>pdf</id>
@@ -445,5 +449,68 @@ under the License.
         </plugins>
       </build>
     </profile>
+<!-- START SNIPPET: profile_pdf -->
+    <profile>
+      <id>pdf</id>
+      <activation>
+        <property>
+          <name>pdf.skip</name>
+        </property>
+      </activation>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>2.5.1-SNAPSHOT</version>
+          </plugin>
+          <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.1.2</version>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>cim</report>
+                  <!-- too long
+                  <report>dependencies</report> too long -->
+                  <report>dependency-convergence</report>
+                  <report>dependency-management</report>
+                  <!-- not needed
+                  <report>index</report> not needed -->
+                  <report>issue-tracking</report>
+                  <report>license</report>
+                  <report>mailing-list</report>
+                  <report>plugin-management</report>
+                  <report>plugins</report>
+                  <report>project-team</report>
+                  <report>scm</report>
+                  <report>summary</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+        </plugins>
+      </reporting>
+
+      <build>
+        <defaultGoal>pdf:pdf</defaultGoal>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-pdf-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pdf-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+<!-- END SNIPPET: profile_pdf -->
   </profiles>
 </project>
