@@ -9,13 +9,13 @@ try
     File buildLog = new File( basedir, "build.log" );
     String log = FileUtils.fileRead( buildLog );
 
-    if ( log.indexOf( "[ANTRUN-OUTPUT-MARKER:IF]" ) < 0 )
+    if ( log.indexOf( "[echo] [ANTRUN-OUTPUT-MARKER:IF]" ) < 0 )
     {
         System.err.println( "Generated console output does not contain expected marker output" );
         return false;
     }
 
-    if ( log.indexOf( "[ANTRUN-OUTPUT-MARKER:UNLESS]" ) >= 0 )
+    if ( log.indexOf( "[echo] [ANTRUN-OUTPUT-MARKER:UNLESS]" ) >= 0 )
     {
         System.err.println( "Generated console output contains unexpected marker output" );
         return false;
