@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 2009-05-31
+ 2009-08-16
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -58,7 +58,7 @@ Overview
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
-* Example
+* Examples
 
   Have a look at the {{{./maven-pdf-plugin.pdf}PDF version of this web site}}.
 
@@ -67,5 +67,7 @@ Overview
     * {{{./examples/filtering.html}Filtering Document Descriptor}}
 
     * {{{./usage.html#As_Part_Of_Your_Build_Process}Site Phase Integration}}
+
+    * {{{./examples/configuring-reports.html}Configuring reports}}
 
     []

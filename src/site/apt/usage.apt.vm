@@ -3,7 +3,7 @@
  ------
  Lukas Theussl
  ------
- 2009-06-22
+ 2009-08-16
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -45,12 +45,16 @@ Using The PDF Plugin
 
   By default, the pdf will be generated in <<<target/pdf/>>> directory.
 
-  <<Note 1>>: By default, the PDF plugin generates a PDF document which aggregates all your site documents.
-  If you want to generate each site document individually, you need to add <<<-Daggregate=false>>> in the comand line.
+  <<Notes>>:
 
-  <<Note 2>>: By default, the PDF plugin uses the {{{http://xmlgraphics.apache.org/fop/}FOP}} implementation.
+  [[1]] By default, the PDF plugin generates a PDF document which aggregates all your site documents.
+  If you want to generate each site document individually, you need to add <<<-Daggregate=false>>> in the command line.
+
+  [[2]] By default, the PDF plugin uses the {{{http://xmlgraphics.apache.org/fop/}FOP}} implementation.
   The plugin also supports the {{{http://www.lowagie.com/iText/}iText}} implementation, you just need to add
-  <<<-Dimplementation=itext>>> in the comand line.
+  <<<-Dimplementation=itext>>> in the command line.
+
+  []
 
 * {As Part Of Your Build Process}
 
@@ -80,10 +84,14 @@ Using The PDF Plugin
   For a complete description of the file format, see the
   {{{http://maven.apache.org/doxia/doxia/doxia-core/document.html}Document Model Reference}}.
 
-  <<Note 1>>: Only a few of document metadatas are used by the Fo/iText sinks like author, confidential, date and title.
+  <<Notes>>:
 
-  <<Note 2>>: The document descriptor supports filtering as described in the
+  [[1]] Only a few of document metadatas are used by the Fo/iText sinks like author, confidential, date and title.
+
+  [[2]] The document descriptor supports filtering as described in the
   {{{./examples/filtering.html}filtering example}}.
+
+  []
 
 * Internationalization
 
