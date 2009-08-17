@@ -29,7 +29,6 @@ try
             "test/mod2-parent/maven-metadata-local.xml",
             "test/mod2-parent/1.0-SNAPSHOT/maven-metadata-local.xml",
             "test/mod2-parent/1.0-SNAPSHOT/mod2-parent-1.0-SNAPSHOT.pom",
-            "test/mod2-parent/1.0-SNAPSHOT/mod2-parent-1.0-SNAPSHOT-site.xml",
       };
     for ( String file : files )
     {
