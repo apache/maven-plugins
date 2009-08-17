@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+  <properties>
+    <title>Configuring Reports</title>
+    <author email="vsiveton_AT_apache_DOT_org">Vincent Siveton</author>
+  </properties>
+
+  <body>
+    <section name="Configuring Reports">
+      <p>
+        Since version 1.1, all Maven reports will be included by default in the generated PDF.
+        You should configure the &lt;reporting/&gt; section of your POM similar than the
+        <a href="http://maven.apache.org/plugins/maven-site-plugin/examples/configuring-reports.html">site plugin</a>
+      </p>
+
+      <p>
+        For instance, you could have the following:
+      </p>
+      <source><![CDATA[
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1.2</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>project-team</report>
+              ...
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      ...
+    </plugins>
+  </reporting>
+  ...
+  <project>]]></source>
+
+      <b>Notes:</b>
+      <ol>
+        <li>to exclude the reporting generation inside the PDF, you should add <code>-DincludeReports=false</code> in
+          the command line.</li>
+        <li>only internal reporting plugins will be added in the PDF, external reporting plugins like Javadoc will
+          be skipped.</li>
+      </ol>
+
+      <subsection name="Enhancements">
+        <p>
+          Having many reports increases <b>hugely</b> the build time, so it is recommended to select only the wanted
+          reports to be included in the PDF. It is recommended to define a <code>reporting</code> profile in your
+          pom, similar to the following:
+        </p>
+
+        <macro name="snippet">
+          <param name="id" value="profile_pdf"/>
+          <param name="file" value="/pom.xml"/>
+        </macro>
+      </subsection>
+
+      <subsection name="Maven Reporting Plugins Issues">
+        <p>
+          The Maven Project supports several <a href="http://maven.apache.org/plugins/">reporting plugins</a>.
+          Unfortunately, some releases reporting plugins have known issues with the PDF plugin, mainly due to
+          a wrong use of the
+          <a href="http://maven.apache.org/doxia/doxia/doxia-sink-api/apidocs/org/apache/maven/doxia/sink/Sink.html">Sink object</a>
+          in their implementation.
+        </p>
+        <p>
+          The following tables show reporting plugins which have been tested with the PDF plugin. The failed plugins
+          have been fixed and deployed on
+          <a href="https://repository.apache.org/content/repositories/snapshots">https://repository.apache.org/content/repositories/snapshots</a>,
+          so you will be able to use them.
+        </p>
+
+        <p>
+          <b>Note</b>: fixing these reporting plugins is a work in progress. If you used a SNAPSHOT plugin which
+          fails with the PDF plugin, you should fill a bug report in our <a href="../issue-tracking.html">issue tracker</a>.
+        </p>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-changelog-plugin">maven-changelog-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.1)</th>
+            <th>Snapshot (2.2-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>changelog:changelog</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>changelog:dev-activity</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>changelog:file-activity</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-changes-plugin">maven-changes-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.1)</th>
+            <th>Snapshot (2.2-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>changes:changes-report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>changes:jira-report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>changes:trac-report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-checkstyle-plugin">maven-checkstyle-plugin</a></h5>
+        <p>
+          <b>Note</b>: could take a lot of time.
+        </p>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.3)</th>
+            <th>Snapshot (2.4-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>checkstyle:checkstyle</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-dependency-plugin">maven-dependency-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.1)</th>
+            <th>Snapshot (2.2-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>dependency:analyze-report</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-plugin-plugin">maven-plugin-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.5)</th>
+            <th>Snapshot (2.5.1-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>plugin:report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-pmd-plugin">maven-pmd-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.4)</th>
+            <th>Snapshot (2.5-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>pmd:cpd</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>pmd:pmd</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/">maven-project-info-reports-plugin</a></h5>
+        <p>
+          <b>Note</b>: dependencies report could take a lot of time.
+        </p>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.1.2)</th>
+            <th>Snapshot (2.2-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:cim</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:dependencies</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:dependency-convergence</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:dependency-management</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:index</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:issue-tracking</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:license</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:mailing-list</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:plugin-management</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:plugins</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:project-team</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:scm</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+
+          <tr>
+            <td>project-info-reports:summary</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://maven.apache.org/plugins/maven-surefire-report-plugin">maven-surefire-report-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.4.3)</th>
+            <th>Snapshot (2.5-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>surefire-report:report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+      </subsection>
+
+      <subsection name="Mojo Reporting Plugins Issues">
+        <p>
+          The Mojo Project proposes several <a href="http://mojo.codehaus.org/plugins.html">reporting plugins</a>.
+          Like the Maven project, some releases have known issues with the PDF plugin due to the Sink object uses.
+        </p>
+        <p>
+          The following tables show reporting plugins which have been tested with the PDF plugin. Some of them have
+          been fixed and deployed on
+          <a href="http://snapshots.repository.codehaus.org">http://snapshots.repository.codehaus.org</a>.
+        </p>
+
+        <p>
+          <b>Note</b>: these test tables are only for your information. If you find issues, please contact directly
+          the <a href="http://mojo.codehaus.org/mail-lists.html">mojo team</a>
+        </p>
+
+        <h5><a href="http://mojo.codehaus.org/clirr-maven-plugin/">clirr-maven-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.2.2)</th>
+            <th>Snapshot (2.2.3-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>clirr:clirr</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://mojo.codehaus.org/cobertura-maven-plugin/">cobertura-maven-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.3)</th>
+            <th>Snapshot (2.4-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>cobertura:cobertura</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://mojo.codehaus.org/l10n-maven-plugin/">l10n-maven-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (1.0-alpha-2)</th>
+            <th>Snapshot (1.0-alpha-3-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>l10n:report</td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+        <h5><a href="http://mojo.codehaus.org/javancss-maven-plugin">javancss-maven-plugin</a></h5>
+        <table border="0">
+          <tr>
+            <th>Reports</th>
+            <th>Release (2.0)</th>
+            <th>Snapshot (2.1-SNAPSHOT)</th>
+          </tr>
+
+          <tr>
+            <td>javancss:report</td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
+            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+          </tr>
+        </table>
+
+      </subsection>
+    </section>
+  </body>
+</document>

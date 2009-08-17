@@ -32,10 +32,12 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="Limitations" href="limitations.html"/>
       <item name="FAQ" href="faq.html"/>
+      <item name="PDF" href="maven-pdf-plugin.pdf"/>
     </menu>
 
     <menu name="Examples">
       <item name="Filtering Document Descriptor" href="/examples/filtering.html"/>
+      <item name="Configuring Reports" href="/examples/configuring-reports.html"/>
     </menu>
   </body>
 </project>
