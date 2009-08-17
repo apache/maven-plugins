@@ -30,9 +30,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.maven.Maven;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
+import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.classrealm.ClassRealmManager;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
@@ -53,7 +54,6 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.PluginConfigurationException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
@@ -282,6 +282,10 @@ public abstract class AbstractSiteRenderingMojo
     private Map<MavenReport, ClassRealm> buildMavenReports()
         throws MojoExecutionException
     {
+        RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
+        repositoryRequest.setLocalRepository( localRepository );
+        repositoryRequest.setRemoteRepositories( mavenSession.getRequest().getRemoteRepositories() );
+        
         try
         {
 
@@ -302,7 +306,7 @@ public abstract class AbstractSiteRenderingMojo
                 // no report set we will execute all from the report plugin
                 boolean emptyReports = goals.isEmpty();
 
-                PluginDescriptor pluginDescriptor = pluginManager.loadPlugin( plugin, localRepository, repositories );
+                PluginDescriptor pluginDescriptor = pluginManager.loadPlugin( plugin, repositoryRequest );
                 
                 if (emptyReports)
                 {
@@ -316,8 +320,7 @@ public abstract class AbstractSiteRenderingMojo
                 for ( String goal : goals )
                 {
                     MojoDescriptor mojoDescriptor =
-                        pluginManager.getMojoDescriptor( plugin, goal, localRepository,
-                                                         mavenSession.getRequest().getRemoteRepositories() );
+                        pluginManager.getMojoDescriptor( plugin, goal, repositoryRequest );
 
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report" + goal );
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
