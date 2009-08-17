@@ -1222,7 +1222,7 @@ public class PdfMojo
         {
             if ( getLog().isInfoEnabled() )
             {
-                getLog().info( "Skipped external report, \"" + localReportName + "\" report." );
+                getLog().info( "Skipped external \"" + localReportName + "\" report." );
             }
             if ( getLog().isDebugEnabled() )
             {
