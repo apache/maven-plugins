@@ -57,6 +57,7 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkAdapter;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
@@ -1876,13 +1877,13 @@ public class PdfMojo
 
             sink.tableRow();
 
-            sink.tableHeaderCell();
+            sink.tableHeaderCell( SinkEventAttributeSet.CENTER );
 
             sink.text( name );
 
             sink.tableHeaderCell_();
 
-            sink.tableHeaderCell();
+            sink.tableHeaderCell( SinkEventAttributeSet.CENTER );
 
             sink.text( description );
 
