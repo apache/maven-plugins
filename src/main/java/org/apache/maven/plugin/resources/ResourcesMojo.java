@@ -20,6 +20,7 @@ package org.apache.maven.plugin.resources;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -84,12 +85,31 @@ public class ResourcesMojo
     protected MavenProject project;
 
     /**
-     * The list of additional key-value pairs aside from that of the System,
-     * and that of the project, which would be used for the filtering.
+     * The list of additional filter properties files to be used along with System and project
+     * properties, which would be used for the filtering.
+     * <br/>
+     * See also: {@link ResourcesMojo#extraFilters}.
      *
      * @parameter expression="${project.build.filters}"
      */
     protected List filters;
+    
+    /**
+     * The list of extra filter properties files to be used along with System properties,
+     * project properties, and filter properties files specified in the POM build/filters section,
+     * which should be used for the filtering during the current mojo execution.
+     * <br/>
+     * Normally, these will be configured from a plugin's execution section, to provide a different
+     * set of filters for a particular execution. For instance, starting in Maven 2.2.0, you have the
+     * option of configuring executions with the id's <code>default-resources</code> and 
+     * <code>default-testResources</code> to supply different configurations for the two 
+     * different types of resources. By supplying <code>extraFilters</code> configurations, you
+     * can separate which filters are used for which type of resource.
+     *
+     * @parameter
+     * @since 2.4
+     */
+    protected List extraFilters;
     
     /**
      * 
@@ -136,7 +156,7 @@ public class ResourcesMojo
     
     /**
      * Whether to escape backslashes and colons in windows-style paths.
-     * @parameter expression="${maven.resources.escapeWindowsPaths} default-value="false"
+     * @parameter expression="${maven.resources.escapeWindowsPaths} default-value="true"
      * @since 2.4
      */
     protected boolean escapeWindowsPaths;
@@ -159,6 +179,7 @@ public class ResourcesMojo
                                    + ", i.e. build is platform dependent!" );
             }
             
+            List filters = getFilters();
 
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution( getResources(), 
                                                                                            getOutputDirectory(),
@@ -187,6 +208,25 @@ public class ResourcesMojo
         }
     }
     
+    protected List getFilters()
+    {
+        if ( extraFilters == null || extraFilters.isEmpty() )
+        {
+            return filters;
+        }
+        else
+        {
+            List result = new ArrayList( extraFilters );
+            
+            if ( filters != null && !filters.isEmpty() )
+            {
+                result.addAll( filters );
+            }
+            
+            return result;
+        }
+    }
+
     /**
      * Determines whether filtering has been enabled for any resource.
      * 
