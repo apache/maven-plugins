@@ -1804,6 +1804,26 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
 
         executeJavadocCommandLine( cmd, javadocOutputDirectory );
+
+        // delete javadoc files only if no error and no debug mode
+        if ( !debug )
+        {
+            for ( int i = 0; i < cmd.getArguments().length; i++)
+            {
+                String arg = cmd.getArguments()[i].trim();
+
+                if ( !arg.startsWith( "@" ))
+                {
+                    continue;
+                }
+
+                File argFile = new File( javadocOutputDirectory, arg.substring( 1 ) );
+                if ( argFile.exists() )
+                {
+                    argFile.deleteOnExit();
+                }
+            }
+        }
     }
 
     /**
@@ -3525,11 +3545,6 @@ public abstract class AbstractJavadocMojo
         }
 
         cmd.createArg().setValue( "@" + OPTIONS_FILE_NAME );
-
-        if ( !debug )
-        {
-            optionsFile.deleteOnExit();
-        }
     }
 
     /**
@@ -3583,11 +3598,6 @@ public abstract class AbstractJavadocMojo
         {
             cmd.createArg().setValue( "@" + FILES_FILE_NAME );
         }
-
-        if ( !debug )
-        {
-            argfileFile.deleteOnExit();
-        }
     }
 
     /**
@@ -3621,11 +3631,6 @@ public abstract class AbstractJavadocMojo
         }
 
         cmd.createArg().setValue( "@" + PACKAGES_FILE_NAME );
-
-        if ( !debug )
-        {
-            packagesFile.deleteOnExit();
-        }
     }
 
     /**
@@ -4191,28 +4196,13 @@ public abstract class AbstractJavadocMojo
             getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
         }
 
+        String cmdLine = null;
         if ( debug )
         {
-            File commandLineFile =
-                new File( javadocOutputDirectory, DEBUG_JAVADOC_SCRIPT_NAME );
+            cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
+            cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
 
-            try
-            {
-                FileUtils.fileWrite( commandLineFile.getAbsolutePath(),
-                                     CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
-
-                if ( !SystemUtils.IS_OS_WINDOWS )
-                {
-                    Runtime.getRuntime().exec( new String[] { "chmod", "a+x", commandLineFile.getAbsolutePath() } );
-                }
-            }
-            catch ( IOException e )
-            {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
-                }
-            }
+            writeDebugJavadocScript( cmdLine, javadocOutputDirectory );
         }
 
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
@@ -4222,12 +4212,18 @@ public abstract class AbstractJavadocMojo
 
             if ( exitCode != 0 )
             {
-                String cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
-                cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
+                if ( cmdLine == null )
+                {
+                    cmdLine = CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" );
+                    cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
+                }
+                writeDebugJavadocScript( cmdLine, javadocOutputDirectory );
 
                 StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
                 msg.append( '\n' );
-                msg.append( "Command line was:" + cmdLine );
+                msg.append( "Command line was: " + cmdLine ).append( '\n' ).append( '\n' );
+                msg.append( "Refer to the generated Javadoc files in '" + javadocOutputDirectory ).append( "' dir.\n" );
+
                 throw new MavenReportException( msg.toString() );
             }
         }
@@ -4696,6 +4692,45 @@ public abstract class AbstractJavadocMojo
             return false;
         }
     }
+
+    /**
+     * Write a debug javadoc script in case of command line error or in debug mode.
+     *
+     * @param cmdLine the current command line as string, not null.
+     * @param javadocOutputDirectory the output dir, not null.
+     * @see #executeJavadocCommandLine(Commandline, File)
+     * @since 2.6
+     */
+    private void writeDebugJavadocScript( String cmdLine, File javadocOutputDirectory )
+    {
+        File commandLineFile = new File( javadocOutputDirectory, DEBUG_JAVADOC_SCRIPT_NAME );
+        commandLineFile.getParentFile().mkdirs();
+
+        try
+        {
+            FileUtils.fileWrite( commandLineFile.getAbsolutePath(), cmdLine );
+
+            if ( !SystemUtils.IS_OS_WINDOWS )
+            {
+                Runtime.getRuntime().exec( new String[] { "chmod", "a+x", commandLineFile.getAbsolutePath() } );
+            }
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "Unable to write '" + commandLineFile.getName() + "' debug script file", e );
+            }
+            else
+            {
+                getLog().error( "Unable to write '" + commandLineFile.getName() + "' debug script file" );
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Static methods
+    // ----------------------------------------------------------------------
 
     /**
      * @param p not null
