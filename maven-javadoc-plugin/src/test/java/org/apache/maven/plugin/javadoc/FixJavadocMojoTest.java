@@ -619,8 +619,9 @@ public class FixJavadocMojoTest
         List goals = new ArrayList();
         goals.add( "clean" );
         goals.add( "compile" );
-
-        File invokerLogFile = new File( getBasedir(), "target/invoker-FixJavadocMojoTest.txt" );
+        File invokerDir = new File( getBasedir(), "target/invoker" );
+        invokerDir.mkdirs();
+        File invokerLogFile = FileUtils.createTempFile( "FixJavadocMojoTest", ".txt", invokerDir );
         JavadocUtil.invokeMaven( log, new File( getBasedir(), "target/local-repo" ), testPom, goals, null,
                                  invokerLogFile );
     }

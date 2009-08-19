@@ -4459,7 +4459,6 @@ public abstract class AbstractJavadocMojo
 
         List modulesLinks = new ArrayList();
         String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
-        int i = 0;
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject p = (MavenProject) it.next();
@@ -4485,8 +4484,9 @@ public abstract class AbstractJavadocMojo
                                        + "' has not be previously called for the project: '" + p.getId()
                                        + "'. Trying to invoke it..." );
 
-                    File invokerLogFile =
-                        new File( project.getBuild().getDirectory(), "invoker-maven-javadoc-plugin-" + i + ".txt" );
+                    File invokerDir = new File( project.getBuild().getDirectory(), "invoker" );
+                    invokerDir.mkdirs();
+                    File invokerLogFile = FileUtils.createTempFile( "maven-javadoc-plugin", ".txt", invokerDir );
                     JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), p.getFile(),
                                              Collections.singletonList( javadocGoal ), null, invokerLogFile );
                 }
@@ -4504,8 +4504,6 @@ public abstract class AbstractJavadocMojo
                     modulesLinks.add( ol );
                 }
             }
-
-            i++;
         }
 
         return modulesLinks;
@@ -4783,6 +4781,7 @@ public abstract class AbstractJavadocMojo
      */
     private static String getPluginParameter( MavenProject p, String pluginId, String param )
     {
+//        p.getGoalConfiguration( pluginGroupId, pluginArtifactId, executionId, goalId );
         Plugin plugin = getPlugin( p, pluginId );
         if ( plugin != null )
         {

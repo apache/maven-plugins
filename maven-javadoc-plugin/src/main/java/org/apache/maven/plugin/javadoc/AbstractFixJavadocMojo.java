@@ -595,13 +595,17 @@ public abstract class AbstractFixJavadocMojo
         String clirrGoal = getFullClirrGoal();
 
         // http://mojo.codehaus.org/clirr-maven-plugin/check-mojo.html
-        File clirrTextOutputFile = new File( project.getBuild().getDirectory(), "clirr.txt" );
+        File clirrTextOutputFile =
+            FileUtils.createTempFile( "clirr", ".txt", new File( project.getBuild().getDirectory() ) );
         Properties properties = new Properties();
         properties.put( "textOutputFile", clirrTextOutputFile.getAbsolutePath() );
         properties.put( "comparisonVersion", comparisonVersion );
         properties.put( "failOnError", "false" );
 
-        File invokerLogFile = new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
+        File invokerDir = new File( project.getBuild().getDirectory(), "invoker" );
+        invokerDir.mkdirs();
+        File invokerLogFile = FileUtils.createTempFile( "clirr-maven-plugin", ".txt", invokerDir );
+        new File( project.getBuild().getDirectory(), "invoker-clirr-maven-plugin.txt" );
         JavadocUtil.invokeMaven( getLog(), new File( localRepository.getBasedir() ), project.getFile(),
                                  Collections.singletonList( clirrGoal ), properties, invokerLogFile );
 
