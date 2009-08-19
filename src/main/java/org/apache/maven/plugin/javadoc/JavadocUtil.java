@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -771,7 +772,7 @@ public class JavadocUtil
                 try
                 {
                     int status = httpClient.executeMethod( getMethod );
-                    if ( status != 200 )
+                    if ( status != HttpStatus.SC_OK )
                     {
                         throw new FileNotFoundException( url.toString() );
                     }
