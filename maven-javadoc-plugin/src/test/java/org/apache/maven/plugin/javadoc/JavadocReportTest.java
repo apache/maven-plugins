@@ -330,6 +330,10 @@ public class JavadocReportTest
         generatedFile = new File( getBasedir(),
                                   "target/test/unit/docfiles-test/target/site/apidocs/doc-files/excluded-dir2" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        testPom = new File( getBasedir(), "src/test/resources/unit/docfiles-with-java-test/docfiles-with-java-test-plugin-config.xml" );
+        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
     }
 
     /**
