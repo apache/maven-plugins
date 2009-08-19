@@ -29,15 +29,19 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
 public class ResourcesMojoTest
     extends AbstractMojoTestCase
 {
     protected final static String defaultPomFilePath = "/target/test-classes/unit/resources-test/plugin-config.xml";
+    
+    private MavenFileFilter mff;
 
     /**
      * test mojo lookup, test harness should be working fine
@@ -51,6 +55,22 @@ public class ResourcesMojoTest
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
 
         assertNotNull( mojo );
+    }
+    
+    public void tearDown()
+        throws Exception
+    {
+        if ( mff != null )
+        {
+            try
+            {
+                release( mff );
+            }
+            catch ( Exception e )
+            {}
+        }
+        
+        super.tearDown();
     }
 
     /**
@@ -390,6 +410,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -429,6 +450,80 @@ public class ResourcesMojoTest
         String checkString = "current working directory=testdir";
 
         assertContent( resourcesDir + "/file4.properties", checkString );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testPropertyFiles_Extra()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), defaultPomFilePath );
+        ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_Extra" );
+        List resources = project.getBuild().getResources();
+        LinkedList filterList = new LinkedList();
+
+        assertNotNull( mojo );
+
+        project.addFile( "extra.properties", "current working directory=${dir}" );
+        project.addFile( "filter.properties", "dir:testdir" );
+        project.setResourceFiltering( 0, true );
+        project.setupBuildEnvironment();
+        filterList.add( project.getResourcesDirectory() + "filter.properties" );
+
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "resources", resources );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "extraFilters", filterList );
+        mojo.execute();
+
+        String resourcesDir = project.getOutputDirectory();
+        String checkString = "current working directory=testdir";
+
+        assertContent( resourcesDir + "/extra.properties", checkString );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testPropertyFiles_MainAndExtra()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), defaultPomFilePath );
+        ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_MainAndExtra" );
+        List resources = project.getBuild().getResources();
+        LinkedList filterList = new LinkedList();
+        LinkedList extraFilterList = new LinkedList();
+
+        assertNotNull( mojo );
+
+        project.addFile( "main-extra.properties", "current working directory=${dir}; old working directory=${dir2}" );
+        project.addFile( "filter.properties", "dir:testdir" );
+        project.addFile( "extra-filter.properties", "dir2:testdir2" );
+        project.setResourceFiltering( 0, true );
+        
+        project.cleanBuildEnvironment();
+        project.setupBuildEnvironment();
+        
+        filterList.add( project.getResourcesDirectory() + "filter.properties" );
+        extraFilterList.add( project.getResourcesDirectory() + "extra-filter.properties" );
+
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "resources", resources );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "filters", filterList );
+        setVariableValueToObject( mojo, "extraFilters", extraFilterList );
+        mojo.execute();
+
+        String resourcesDir = project.getOutputDirectory();
+        String checkString = "current working directory=testdir; old working directory=testdir2";
+
+        File file = new File( resourcesDir, "main-extra.properties" );
+        assertContent( file.getAbsolutePath(), checkString );
     }
 
     /**
@@ -549,29 +644,9 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
 
-        MavenFileFilter mff = null;
-        try
-        {
-            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
-            setVariableValueToObject( mojo, "mavenFileFilter", mff );
+        setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
 
-            setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
-
-            mojo.execute();
-        }
-        finally
-        {
-            if ( mff != null )
-            {
-                try
-                {
-                    release( mff );
-                }
-                catch ( Exception e )
-                {
-                }
-            }
-        }
+        mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
 
@@ -594,5 +669,50 @@ public class ResourcesMojoTest
         assertTrue( FileUtils.fileExists( fileName ) );
 
         assertEquals( data, new BufferedReader( new FileReader( fileName ) ).readLine() );
+    }
+
+    protected Mojo lookupEmptyMojo( String goal, File pom )
+        throws Exception
+    {
+        return setupComponents( super.lookupEmptyMojo( goal, pom ) );
+    }
+
+    protected Mojo lookupEmptyMojo( String goal, String pluginPom )
+        throws Exception
+    {
+        return setupComponents( super.lookupEmptyMojo( goal, pluginPom ) );
+    }
+
+    protected Mojo lookupMojo( String goal, File pom )
+        throws Exception
+    {
+        return setupComponents( super.lookupMojo( goal, pom ) );
+    }
+
+    protected Mojo lookupMojo( String groupId, String artifactId, String version, String goal,
+                               PlexusConfiguration pluginConfiguration )
+        throws Exception
+    {
+        return setupComponents( super.lookupMojo( groupId, artifactId, version, goal, pluginConfiguration ) );
+    }
+
+    protected Mojo lookupMojo( String goal, String pluginPom )
+        throws Exception
+    {
+        return setupComponents( super.lookupMojo( goal, pluginPom ) );
+    }
+    
+
+    private synchronized Mojo setupComponents( Mojo mojo )
+        throws Exception
+    {
+        if ( mff == null )
+        {
+            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
+        }
+        
+        setVariableValueToObject( mojo, "mavenFileFilter", mff );
+        
+        return mojo;
     }
 }
