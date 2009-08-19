@@ -30,6 +30,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
@@ -132,6 +133,18 @@ public class ResourcesMojo
      * @since 2.3
      */
     protected List nonFilteredFileExtensions;
+    
+    /**
+     * Whether to escape backslashes and colons in windows-style paths.
+     * @parameter expression="${maven.resources.escapeWindowsPaths} default-value="false"
+     * @since 2.4
+     */
+    protected boolean escapeWindowsPaths;
+    
+    /**
+     * @component role-hint="default"
+     */
+    private MavenFileFilter mavenFileFilter;
 
     public void execute()
         throws MojoExecutionException
@@ -152,6 +165,13 @@ public class ResourcesMojo
                                                                                            project, encoding, filters,
                                                                                            Collections.EMPTY_LIST,
                                                                                            session );
+            
+            List filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeWindowsPaths,
+                                                                            session, mavenResourcesExecution, null );
+            
+            mavenResourcesExecution.setFilterWrappers( filterWrappers );
+            mavenResourcesExecution.setUseDefaultFilterWrappers( false );
+            
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );

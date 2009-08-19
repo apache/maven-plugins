@@ -161,6 +161,30 @@ public class MavenProjectBuildStub
         build.setOutputDirectory( outputDirectory );
         build.setTestOutputDirectory( testOutputDirectory );
     }
+    
+    public void cleanBuildEnvironment()
+        throws Exception
+    {
+        if ( FileUtils.fileExists( resourcesDirectory ) )
+        {
+            FileUtils.deleteDirectory( resourcesDirectory );
+        }
+        
+        if ( FileUtils.fileExists( testResourcesDirectory ) )
+        {
+            FileUtils.deleteDirectory( testResourcesDirectory );
+        }
+        
+        if ( FileUtils.fileExists( outputDirectory ) )
+        {
+            FileUtils.deleteDirectory( outputDirectory );
+        }
+        
+        if ( FileUtils.fileExists( testOutputDirectory ) )
+        {
+            FileUtils.deleteDirectory( testOutputDirectory );
+        }
+    }
 
     public void setupBuildEnvironment()
         throws Exception
