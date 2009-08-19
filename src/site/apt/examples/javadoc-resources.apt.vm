@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-08-04
+ 2009-08-19
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -162,5 +162,5 @@ public class App
 }
 +-----+
 
- <<Note>>: You need to run the Javadoc Plugin with the <<<docfilessubdirs>>> parameter to allow the copy of
- unprocessed files.
+ <<IMPORTANT NOTE>>: To allow the copy of unprocessed files, you need to run the Javadoc Plugin with the
+ <<<{{{../javadoc-mojo.html#docfilessubdirs}\<docfilessubdirs/\>}}>>> parameter.
