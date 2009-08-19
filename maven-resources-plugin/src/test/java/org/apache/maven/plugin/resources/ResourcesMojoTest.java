@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.util.FileUtils;
 
 public class ResourcesMojoTest
@@ -40,7 +41,7 @@ public class ResourcesMojoTest
 
     /**
      * test mojo lookup, test harness should be working fine
-     *
+     * 
      * @throws Exception
      */
     public void testHarnessEnvironment()
@@ -310,12 +311,13 @@ public class ResourcesMojoTest
         project.setResourceFiltering( 0, true );
         project.setupBuildEnvironment();
 
-        //setVariableValueToObject(mojo,"encoding","UTF-8");
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", new LinkedList() );
-        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(),
+                                                      null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
@@ -323,7 +325,7 @@ public class ResourcesMojoTest
 
         File userDir = new File( System.getProperty( "user.dir" ) );
         assertTrue( userDir.exists() );
-        
+
         Properties props = new Properties();
         props.load( new FileInputStream( new File( resourcesDir + "/file4.txt" ) ) );
         File fileFromFiltering = new File( props.getProperty( "current-working-directory" ) );
@@ -349,7 +351,7 @@ public class ResourcesMojoTest
         project.addProperty( "user.dir", "FPJ kami!!!" );
         project.setupBuildEnvironment();
 
-        //setVariableValueToObject(mojo,"encoding","UTF-8");
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
@@ -370,8 +372,8 @@ public class ResourcesMojoTest
     {
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
-        MavenProjectResourcesStub project =
-            new MavenProjectResourcesStub( "resourcePojectProperty_Filtering_PropertyDestination" );
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub(
+                                                                           "resourcePojectProperty_Filtering_PropertyDestination" );
         List resources = project.getBuild().getResources();
 
         assertNotNull( mojo );
@@ -383,7 +385,7 @@ public class ResourcesMojoTest
         // setup dummy property
         project.setDescription( "c:\\\\org\\apache\\test" );
 
-        //setVariableValueToObject(mojo,"encoding","UTF-8");
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
@@ -416,7 +418,7 @@ public class ResourcesMojoTest
         project.setupBuildEnvironment();
         filterList.add( project.getResourcesDirectory() + "filter.properties" );
 
-        //setVariableValueToObject(mojo,"encoding","UTF-8");
+        // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
@@ -430,41 +432,157 @@ public class ResourcesMojoTest
     }
 
     /**
-     * Validates that a Filter token containing a project property will be
-     * resolved before the Filter is applied to the resources.
-     *
+     * Validates that a Filter token containing a project property will be resolved before the Filter is applied to the
+     * resources.
+     * 
      * @throws Exception
      */
     public void testPropertyFiles_Filtering_TokensInFilters()
         throws Exception
     {
-        final File testPom = new File(getBasedir(), defaultPomFilePath);
-        final ResourcesMojo mojo = (ResourcesMojo) lookupMojo("resources", testPom);
+        final File testPom = new File( getBasedir(), defaultPomFilePath );
+        final ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         final MavenProjectResourcesStub project = new MavenProjectResourcesStub(
-                "resourcePropertyFiles_Filtering_TokensInFilters");
+                                                                                 "resourcePropertyFiles_Filtering_TokensInFilters" );
         final List resources = project.getBuild().getResources();
         final LinkedList filterList = new LinkedList();
 
-        assertNotNull(mojo);
+        assertNotNull( mojo );
 
-        project.addFile("file4.properties", "current working directory=${filter.token}");
-        project.addFile("filter.properties", "filter.token=${pom-property}");
-        project.setResourceFiltering(0, true);
-        project.addProperty("pom-property", "foobar");
+        project.addFile( "file4.properties", "current working directory=${filter.token}" );
+        project.addFile( "filter.properties", "filter.token=${pom-property}" );
+        project.setResourceFiltering( 0, true );
+        project.addProperty( "pom-property", "foobar" );
         project.setupBuildEnvironment();
-        filterList.add(project.getResourcesDirectory() + "filter.properties");
+        filterList.add( project.getResourcesDirectory() + "filter.properties" );
 
         // setVariableValueToObject(mojo,"encoding","UTF-8");
-        setVariableValueToObject(mojo, "project", project);
-        setVariableValueToObject(mojo, "resources", resources);
-        setVariableValueToObject(mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject(mojo, "filters", filterList);
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "resources", resources );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "filters", filterList );
         mojo.execute();
         final String resourcesDir = project.getOutputDirectory();
-        
+
         final String checkString = "current working directory=foobar";
 
-        assertContent(resourcesDir + "/file4.properties", checkString);
+        assertContent( resourcesDir + "/file4.properties", checkString );
+    }
+
+    public void testWindowsPathEscapingDisabled()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), defaultPomFilePath );
+        ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
+        List resources = project.getBuild().getResources();
+
+        assertNotNull( mojo );
+
+        project.getProperties().setProperty( "basePath", "C:\\Users\\Administrator" );
+        project.getProperties().setProperty( "docsPath", "${basePath}\\Documents" );
+
+        project.addFile( "path-listing.txt", "base path is ${basePath}\ndocuments path is ${docsPath}" );
+        project.setResourceFiltering( 0, true );
+
+        project.cleanBuildEnvironment();
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "resources", resources );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "filters", new LinkedList() );
+
+        MavenFileFilter mff = null;
+        try
+        {
+            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
+            setVariableValueToObject( mojo, "mavenFileFilter", mff );
+
+            setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.FALSE );
+
+            mojo.execute();
+        }
+        finally
+        {
+            if ( mff != null )
+            {
+                try
+                {
+                    release( mff );
+                }
+                catch ( Exception e )
+                {
+                }
+            }
+        }
+
+        String resourcesDir = project.getOutputDirectory();
+
+        assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
+
+        assertEquals( "base path is C:\\Users\\Administrator\ndocuments path is C:\\Users\\Administrator\\Documents",
+                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
+    }
+
+    public void testWindowsPathEscapingEnabled()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), defaultPomFilePath );
+        ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
+        List resources = project.getBuild().getResources();
+
+        assertNotNull( mojo );
+
+        project.getProperties().setProperty( "basePath", "C:\\Users\\Administrator" );
+        project.getProperties().setProperty( "docsPath", "${basePath}\\Documents" );
+
+        project.addFile( "path-listing.txt", "base path is ${basePath}\ndocuments path is ${docsPath}" );
+        project.setResourceFiltering( 0, true );
+
+        project.cleanBuildEnvironment();
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "resources", resources );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "filters", new LinkedList() );
+
+        MavenFileFilter mff = null;
+        try
+        {
+            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
+            setVariableValueToObject( mojo, "mavenFileFilter", mff );
+
+            setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
+
+            mojo.execute();
+        }
+        finally
+        {
+            if ( mff != null )
+            {
+                try
+                {
+                    release( mff );
+                }
+                catch ( Exception e )
+                {
+                }
+            }
+        }
+
+        String resourcesDir = project.getOutputDirectory();
+
+        assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
+
+        // FIXME See http://jira.codehaus.org/browse/MSHARED-121
+//        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
+//                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
+        
+        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\Documents",
+                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
     }
 
     /**
