@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- 2009-08-04
+ 2009-08-19
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,6 +33,8 @@ Generating Test Javadocs
    * using the javadoc:test-javadoc goal
 
    * using the \<reportSets/\> configuration parameter
+
+  []
 
  Here is a typical project used by the Maven Javadoc plugin:
 
@@ -102,11 +104,18 @@ yourproject
  You could call <mvn javadoc:test-javadoc> or <mvn site>. See
  {{{../test-javadoc-mojo.html}javadoc:test-javadoc parameters}} for more informations.
 
- <<Note>>: If you don't set \<testDoctitle/\> or \<testWindowtitle/\> parameters, the Test Javadoc report use the same
+  <<Notes>>:
+
+  [[1]] If you don't set \<testDoctitle/\> or \<testWindowtitle/\> parameters, the Test Javadoc report use the same
  configuration (i.e. \<doctitle/\> or \<windowtitle/\> parameters) that Javadoc report (backward compatible reasons).
 
- <<Note>>: To run the reports selectively, you need to include only the reports that you prefer.
+  [[2]] To run the reports selectively, you need to include only the reports that you prefer.
   Read the {{{./selective-javadocs-report.html}Selective Javadocs Reports}} part for more information.
+
+  [[3]] To allow the copy of resources, you need to add the \<docfilessubdirs/\> parameter. Read the
+  {{{./javadoc-resources.html}Using Javadoc Resources}} page for more information.
+
+  []
 
 * Using the \<reportSets/\> configuration parameter
 
