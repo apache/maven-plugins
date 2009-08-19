@@ -1805,7 +1805,7 @@ public abstract class AbstractJavadocMojo
 
         executeJavadocCommandLine( cmd, javadocOutputDirectory );
 
-        // delete javadoc files only if no error and no debug mode
+        // delete generated javadoc files only if no error and no debug mode
         if ( !debug )
         {
             for ( int i = 0; i < cmd.getArguments().length; i++)
@@ -1817,11 +1817,17 @@ public abstract class AbstractJavadocMojo
                     continue;
                 }
 
-                File argFile = new File( javadocOutputDirectory, arg.substring( 1 ) );
+                File argFile = new File( getJavadocDirectory(), arg.substring( 1 ) );
                 if ( argFile.exists() )
                 {
                     argFile.deleteOnExit();
                 }
+            }
+
+            File scriptFile = new File( getJavadocDirectory(), DEBUG_JAVADOC_SCRIPT_NAME );
+            if ( scriptFile.exists() )
+            {
+                scriptFile.deleteOnExit();
             }
         }
     }
