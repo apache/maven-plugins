@@ -3498,6 +3498,16 @@ public abstract class AbstractJavadocMojo
                 if ( currentFile.indexOf( currentSourcePath ) != -1 )
                 {
                     String packagename = currentFile.substring( currentSourcePath.length() + 1 );
+
+                    /*
+                     * Remove the miscellaneous files
+                     * http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
+                     */
+                    if ( packagename.indexOf( "doc-files" ) != -1 )
+                    {
+                        continue;
+                    }
+
                     if ( onlyPackageName && packagename.lastIndexOf( "/" ) != -1 )
                     {
                         packagename = packagename.substring( 0, packagename.lastIndexOf( "/" ) );
