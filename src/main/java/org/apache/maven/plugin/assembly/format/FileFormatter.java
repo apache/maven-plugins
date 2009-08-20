@@ -21,26 +21,16 @@ package org.apache.maven.plugin.assembly.format;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
-import org.apache.maven.plugin.assembly.utils.PropertyUtils;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.Collections;
 
 /**
  * @version $Id$
@@ -52,18 +42,8 @@ public class FileFormatter
 
     private final AssemblerConfigurationSource configSource;
 
-    private Properties filterProperties;
-
     public FileFormatter( AssemblerConfigurationSource configSource, Logger logger )
     {
-        this.configSource = configSource;
-        this.logger = logger;
-    }
-
-    // used for unit testing currently.
-    protected FileFormatter( Properties filterProperties, AssemblerConfigurationSource configSource, Logger logger )
-    {
-        this.filterProperties = filterProperties;
         this.configSource = configSource;
         this.logger = logger;
     }
@@ -77,42 +57,55 @@ public class FileFormatter
     public File format( File source, boolean filter, String lineEnding, File tempRoot )
         throws AssemblyFormattingException
     {
-        if ( !filter && ( AssemblyFileUtils.getLineEndingCharacters( lineEnding ) == null ) )
-        {
-            return source;
-        }
+        AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
 
         File result = source;
 
-        AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
+        if ( filter )
+            result = doFileFilter( source, tempRoot );
 
-        String sourceName = source.getName();
+        String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
+        if ( lineEndingChars != null )
+        {
+            result = formatLineEndings( lineEndingChars, result, tempRoot );
+        }
 
+        return result;
+    }
+
+    private File doFileFilter( File source, File tempRoot )
+        throws AssemblyFormattingException
+    {
         try
         {
-            boolean contentIsChanged = false;
+            File target = FileUtils.createTempFile( source.getName() + ".", ".filtered", tempRoot );
 
-            String rawContents = readFile( source );
+            //@todo this test can be improved
+            boolean isPropertiesFile = source.getName().toLowerCase().contains( ".properties" );
 
-            String contents = rawContents;
+            configSource.getMavenFileFilter().copyFile( source, target, true, configSource.getProject(),
+                    Collections.EMPTY_LIST, isPropertiesFile, null, configSource.getMavenSession() );
 
-            if ( filter )
-            {
-                contents = filter( contents, source );
-            }
+            return target;
+        }
+        catch (MavenFilteringException e)
+        {
+            throw new AssemblyFormattingException( "Error filtering file '" + source + "': " + e.getMessage(), e );
+        }
+    }
 
-            contentIsChanged = !contents.equals( rawContents );
+    private File formatLineEndings( String lineEndingChars, File source, File tempRoot )
+        throws AssemblyFormattingException
+    {
+        try
+        {
+            Reader contentReader = new FileReader( source );
 
-            BufferedReader contentReader = new BufferedReader( new StringReader( contents ) );
+            File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
-            File tempFilterFile = FileUtils.createTempFile( sourceName + ".", ".filtered", tempRoot );
+            AssemblyFileUtils.convertLineEndings( contentReader, target, lineEndingChars );
 
-            boolean fileWritten = formatLineEndings( contentReader, tempFilterFile, lineEnding, contentIsChanged );
-
-            if ( fileWritten )
-            {
-                result = tempFilterFile;
-            }
+            return target;
         }
         catch ( FileNotFoundException e )
         {
@@ -120,139 +113,7 @@ public class FileFormatter
         }
         catch ( IOException e )
         {
-            throw new AssemblyFormattingException( "Error filtering file '" + source + "': " + e.getMessage(), e );
-        }
-
-        return result;
-    }
-
-    /**
-     * Read file content, using platform encoding.
-     * @param source the file to read
-     * @return the file content, read with platform encoding
-     */
-    private String readFile( File source )
-        throws IOException
-    {
-        FileReader fileReader = null;
-
-        StringWriter contentWriter = new StringWriter();
-
-        try
-        {
-            fileReader = new FileReader( source ); // platform encoding
-
-            IOUtil.copy( fileReader, contentWriter );
-        }
-        finally
-        {
-            IOUtil.close( fileReader );
-        }
-
-        return contentWriter.toString();
-    }
-
-    private boolean formatLineEndings( BufferedReader contentReader, File tempFilterFile, String lineEnding,
-                                    boolean contentIsChanged )
-        throws IOException, AssemblyFormattingException
-    {
-        boolean fileWritten = false;
-
-        String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
-
-        if ( lineEndingChars != null )
-        {
-            AssemblyFileUtils.convertLineEndings( contentReader, tempFilterFile, lineEndingChars );
-
-            fileWritten = true;
-        }
-        else if ( contentIsChanged )
-        {
-            FileWriter fileWriter = null;
-
-            try
-            {
-                fileWriter = new FileWriter( tempFilterFile ); // platform encoding
-
-                IOUtil.copy( contentReader, fileWriter );
-
-                fileWritten = true;
-            }
-            finally
-            {
-                IOUtil.close( fileWriter );
-            }
-        }
-
-        return fileWritten;
-    }
-
-    private String filter( String rawContents, File source )
-        throws IOException, AssemblyFormattingException
-    {
-        initializeFiltering();
-
-        Reader reader  = new BufferedReader(new StringReader(rawContents));
-
-        // support ${token}
-        reader = new InterpolationFilterReader( reader, filterProperties, "${", "}" );
-
-        // support @token@
-        reader = new InterpolationFilterReader( reader, filterProperties, "@", "@" );
-
-        boolean isPropertiesFile = false;
-
-        if ( source.isFile() && source.getName().endsWith( ".properties" ) )
-        {
-            isPropertiesFile = true;
-        }
-
-        reader = new InterpolationFilterReader( reader, new ReflectionProperties( configSource.getProject(), isPropertiesFile ), "${", "}" );
-
-        StringWriter sw = new StringWriter();
-        IOUtil.copy( reader, new BufferedWriter(sw));
-
-        return sw.getBuffer().toString();
-
-
-    }
-
-    private void initializeFiltering()
-        throws AssemblyFormattingException
-    {
-        logger.debug( "Initializing assembly filters..." );
-
-        if ( filterProperties == null )
-        {
-            // System properties
-            filterProperties = new Properties( System.getProperties() );
-
-            // Project properties
-            MavenProject project = configSource.getProject();
-            filterProperties.putAll( project.getProperties() );
-
-            List filters = configSource.getFilters();
-
-            if ( ( filters != null ) && !filters.isEmpty() )
-            {
-                for ( Iterator i = filters.iterator(); i.hasNext(); )
-                {
-                    String filtersfile = (String) i.next();
-
-                    try
-                    {
-                        Properties properties = PropertyUtils
-                            .getInterpolatedPropertiesFromFile( new File( filtersfile ), true, true );
-
-                        filterProperties.putAll( properties );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new AssemblyFormattingException( "Error loading property file '" + filtersfile + "'", e );
-                    }
-                }
-            }
+            throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(), e );
         }
     }
-
 }
