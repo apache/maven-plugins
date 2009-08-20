@@ -26,6 +26,8 @@ import java.util.Properties;
 /**
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
+ *
+ * @depcrecated 
  */
 public class ReflectionProperties
     extends Properties

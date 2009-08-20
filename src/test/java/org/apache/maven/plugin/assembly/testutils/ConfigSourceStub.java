@@ -8,6 +8,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 
 public class ConfigSourceStub
     implements AssemblerConfigurationSource
@@ -154,6 +155,10 @@ public class ConfigSourceStub
     public String getArchiverConfig()
     {
         return archiverConfig;
+    }
+
+    public MavenFileFilter getMavenFileFilter() {
+        return null;
     }
 
     public void setProject( MavenProject mavenProject )
