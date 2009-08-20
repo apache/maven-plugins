@@ -59,10 +59,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Displays a list of the attributes for a Maven Plugin and/or goals (aka Mojo - Maven plain Old Java Object).
@@ -655,9 +652,9 @@ public class DescribeMojo
         appendAsParagraph( buffer, "Description", toDescription( md.getDescription() ), 1 );
 
         String deprecation = md.getDeprecated();
-        if ( StringUtils.isEmpty( deprecation ) )
+        if ( deprecation != null && deprecation.length() <= 0 )
         {
-            deprecation = getValue( md, "deprecated", NO_REASON );
+            deprecation = NO_REASON;
         }
 
         if ( StringUtils.isNotEmpty( deprecation ) )
@@ -760,15 +757,8 @@ public class DescribeMojo
             if ( defaultVal == null )
             {
                 // defaultVal is ALWAYS null, this is a bug in PluginDescriptorBuilder
-                try
-                {
-                    defaultVal =
-                        md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value" );
-                }
-                catch ( PlexusConfigurationException e )
-                {
-                    // oh well, we tried our best.
-                }
+                defaultVal =
+                    md.getMojoConfiguration().getChild( parameter.getName() ).getAttribute( "default-value", null );
             }
 
             if ( StringUtils.isNotEmpty( defaultVal ) )
@@ -790,9 +780,9 @@ public class DescribeMojo
             append( buffer, toDescription( parameter.getDescription() ), 3 );
 
             String deprecation = parameter.getDeprecated();
-            if ( StringUtils.isEmpty( deprecation ) )
+            if ( deprecation != null && deprecation.length() <= 0 )
             {
-                deprecation = getValue( md, parameter.getName(), "deprecated", NO_REASON );
+                deprecation = NO_REASON;
             }
 
             if ( StringUtils.isNotEmpty( deprecation ) )
@@ -1097,104 +1087,6 @@ public class DescribeMojo
         }
 
         return "(no description available)";
-    }
-
-    /**
-     * @param md not null
-     * @param name not null
-     * @param defaultValue the default value if not found, could be null.
-     * @return the value of <code>name</code> from the Mojo descriptor or <code>defaultValue</code> if not found.
-     */
-    private static String getValue( MojoDescriptor md, String name, String defaultValue  )
-    {
-        if ( md == null )
-        {
-            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
-        }
-
-        if ( StringUtils.isEmpty( name ) )
-        {
-            throw new IllegalArgumentException( "Name parameter is required." );
-        }
-
-        try
-        {
-            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
-            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
-                && ( mojoConf.getXpp3Dom().getParent().getChild( name ) != null ) )
-            {
-                String value = mojoConf.getXpp3Dom().getParent().getChild( name ).getValue();
-                if ( StringUtils.isEmpty( value ) )
-                {
-                    value = defaultValue;
-                }
-
-                return value;
-            }
-        }
-        catch ( RuntimeException e )
-        {
-            return defaultValue;
-        }
-
-        return defaultValue;
-    }
-
-    /**
-     * @param md not null
-     * @param parameterName not null
-     * @param name not null
-     * @param defaultValue the default value if not found, could be null.
-     * @return the value of <code>name</code> for the <code>parameterName</code> from the Mojo descriptor or
-     * <code>defaultValue</code> if not found.
-     */
-    private static String getValue( MojoDescriptor md, String parameterName, String name, String defaultValue )
-    {
-        if ( md == null )
-        {
-            throw new IllegalArgumentException( "MojoDescriptor parameter is required." );
-        }
-
-        if ( StringUtils.isEmpty( name ) )
-        {
-            throw new IllegalArgumentException( "Name parameter is required." );
-        }
-
-        try
-        {
-            XmlPlexusConfiguration mojoConf = (XmlPlexusConfiguration) md.getMojoConfiguration();
-            if ( ( mojoConf != null && mojoConf.getXpp3Dom() != null ) && ( mojoConf.getXpp3Dom().getParent() != null )
-                && ( mojoConf.getXpp3Dom().getParent().getChild( "parameters" ) != null ) )
-            {
-                Xpp3Dom[] parameters = mojoConf.getXpp3Dom().getParent().getChild( "parameters" ).getChildren();
-                for ( int i = 0; i < parameters.length; i++ )
-                {
-                    Xpp3Dom parameter = parameters[i];
-                    if ( parameter == null || parameter.getChild( "name" ) == null
-                        || !parameter.getChild( "name" ).getValue().equals( parameterName ) )
-                    {
-                        continue;
-                    }
-
-                    if ( parameter.getChild( name ) != null )
-                    {
-                        String value = parameter.getChild( name ).getValue();
-                        if ( StringUtils.isEmpty( value ) )
-                        {
-                            value = defaultValue;
-                        }
-
-                        return value;
-                    }
-                }
-            }
-        }
-        catch ( RuntimeException e )
-        {
-            return defaultValue;
-        }
-
-        return defaultValue;
     }
 
     /**
