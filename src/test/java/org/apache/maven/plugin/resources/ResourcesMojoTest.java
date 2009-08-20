@@ -322,6 +322,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
+        setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
         MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(),
                                                       null );
         setVariableValueToObject( mojo, "session", mavenSession );
