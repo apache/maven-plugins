@@ -347,9 +347,10 @@ public class ResourcesMojoTest
         assertTrue( userDir.exists() );
 
         Properties props = new Properties();
-        props.load( new FileInputStream( new File( resourcesDir + "/file4.txt" ) ) );
+        props.load( new FileInputStream( new File( resourcesDir, "file4.txt" ) ) );
         File fileFromFiltering = new File( props.getProperty( "current-working-directory" ) );
-        assertTrue( fileFromFiltering.exists() );
+        
+        assertTrue( fileFromFiltering.getAbsolutePath() + " does not exist.", fileFromFiltering.exists() );
         assertEquals( userDir.getAbsolutePath(), fileFromFiltering.getAbsolutePath() );
     }
 
