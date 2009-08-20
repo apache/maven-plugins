@@ -63,7 +63,7 @@ public class ResourcesMojo
     /**
      * The output directory into which to copy the resources.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      */
     private File outputDirectory;
@@ -71,14 +71,14 @@ public class ResourcesMojo
     /**
      * The list of resources we want to transfer.
      *
-     * @parameter expression="${project.resources}"
+     * @parameter default-value="${project.resources}"
      * @required
      * @readonly
      */
     private List resources;
 
     /**
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -88,11 +88,13 @@ public class ResourcesMojo
      * The list of additional filter properties files to be used along with System and project
      * properties, which would be used for the filtering.
      * <br/>
-     * See also: {@link ResourcesMojo#extraFilters}.
+     * See also: {@link ResourcesMojo#filters}.
      *
-     * @parameter expression="${project.build.filters}"
+     * @parameter default-value="${project.build.filters}"
+     * @readonly
+     * @since 2.4
      */
-    protected List filters;
+    protected List buildFilters;
     
     /**
      * The list of extra filter properties files to be used along with System properties,
@@ -107,9 +109,18 @@ public class ResourcesMojo
      * can separate which filters are used for which type of resource.
      *
      * @parameter
+     */
+    protected List filters;
+    
+    /**
+     * If false, don't use the filters specified in the build/filters section of the POM when
+     * processing resources in this mojo execution.
+     * <br/>
+     * See also: {@link ResourcesMojo#buildFilters} and {@link ResourcesMojo#filters}
+     * @parameter default-value="true"
      * @since 2.4
      */
-    protected List extraFilters;
+    protected boolean useBuildFilters;
     
     /**
      * 
@@ -119,7 +130,7 @@ public class ResourcesMojo
     protected MavenResourcesFiltering mavenResourcesFiltering;    
     
     /**
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @readonly
      * @required
      */
@@ -128,7 +139,7 @@ public class ResourcesMojo
     /**
      * Expression preceded with the String won't be interpolated 
      * \${foo} will be replaced with ${foo}
-     * @parameter expression="${maven.resources.escapeString}"
+     * @parameter default-value="${maven.resources.escapeString}"
      * @since 2.3
      */    
     protected String escapeString;
@@ -161,11 +172,6 @@ public class ResourcesMojo
      */
     protected boolean escapeWindowsPaths;
     
-    /**
-     * @component role-hint="default"
-     */
-    private MavenFileFilter mavenFileFilter;
-
     public void execute()
         throws MojoExecutionException
     {
@@ -179,7 +185,7 @@ public class ResourcesMojo
                                    + ", i.e. build is platform dependent!" );
             }
             
-            List filters = getFilters();
+            List filters = getCombinedFiltersList();
 
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution( getResources(), 
                                                                                            getOutputDirectory(),
@@ -187,11 +193,11 @@ public class ResourcesMojo
                                                                                            Collections.EMPTY_LIST,
                                                                                            session );
             
-            List filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeWindowsPaths,
-                                                                            session, mavenResourcesExecution, null );
+            mavenResourcesExecution.setEscapeWindowsPaths( escapeWindowsPaths );
             
-            mavenResourcesExecution.setFilterWrappers( filterWrappers );
-            mavenResourcesExecution.setUseDefaultFilterWrappers( false );
+            // never include project build filters in this call, since we've already accounted for the POM build filters
+            // above, in getCombinedFiltersList().
+            mavenResourcesExecution.setInjectProjectBuildFilters( false );
             
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
@@ -208,20 +214,22 @@ public class ResourcesMojo
         }
     }
     
-    protected List getFilters()
+    protected List getCombinedFiltersList()
     {
-        if ( extraFilters == null || extraFilters.isEmpty() )
+        if ( filters == null || filters.isEmpty() )
         {
-            return filters;
+            return useBuildFilters ? buildFilters : null;
         }
         else
         {
-            List result = new ArrayList( extraFilters );
+            List result = new ArrayList();
             
-            if ( filters != null && !filters.isEmpty() )
+            if ( useBuildFilters && buildFilters != null && !buildFilters.isEmpty() )
             {
-                result.addAll( filters );
+                result.addAll( buildFilters );
             }
+            
+            result.addAll( filters );
             
             return result;
         }
@@ -288,6 +296,15 @@ public class ResourcesMojo
     {
         this.includeEmptyDirs = includeEmptyDirs;
     }
-    
-    
+
+    public List getFilters()
+    {
+        return filters;
+    }
+
+    public void setFilters( List filters )
+    {
+        this.filters = filters;
+    }
+
 }
