@@ -36,30 +36,19 @@
     <filters>
       <filter>src/main/filters/my.filter</filter>
       <filter>src/main/filters/filter2.properties</filter>
-      <filter>src/main/filters/filter3.properties</filter>
     </filters>
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>@pom.version@</version>
+        <!-- <version>@pom.version@</version> -->
+        <version>2.4-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>custom-resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
+            <id>default-resources</id>
             <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/resources</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-              <filters>
-                <filter>${basedir}/src/main/filters/custom-filters.properties</filter>
-              </filters>
+              <delimiters>
+                <delimiter><![CDATA[>*<]]></delimiter>
+              </delimiters>
             </configuration>
           </execution>
         </executions>

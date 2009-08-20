@@ -19,14 +19,6 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -37,6 +29,14 @@ import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Copy resources for the main source code to the main output directory.
@@ -188,9 +188,16 @@ public class ResourcesMojo
      * <p>
      * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
      * </p>
+     * @parameter
      * @since 2.4
      */
-    protected Set delimiters;
+    protected List delimiters;
+    
+    /**
+     * @parameter default-value="true"
+     * @since 2.4
+     */
+    protected boolean useDefaultDelimiters;
     
     public void execute()
         throws MojoExecutionException
@@ -226,7 +233,14 @@ public class ResourcesMojo
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             if ( delimiters != null && !delimiters.isEmpty() )
             {
-                mavenResourcesExecution.setDelimiters( delimiters );
+                LinkedHashSet delims = new LinkedHashSet();
+                if ( useDefaultDelimiters )
+                {
+                    delims.addAll( mavenResourcesExecution.getDelimiters() );
+                }
+                delims.addAll( delimiters );
+                
+                mavenResourcesExecution.setDelimiters( delims );
             }
             
             if ( nonFilteredFileExtensions != null )
@@ -334,14 +348,24 @@ public class ResourcesMojo
         this.filters = filters;
     }
 
-    public Set getDelimiters()
+    public List getDelimiters()
     {
         return delimiters;
     }
 
-    public void setDelimiters( Set delimiters )
+    public void setDelimiters( List delimiters )
     {
         this.delimiters = delimiters;
+    }
+
+    public boolean isUseDefaultDelimiters()
+    {
+        return useDefaultDelimiters;
+    }
+
+    public void setUseDefaultDelimiters( boolean useDefaultDelimiters )
+    {
+        this.useDefaultDelimiters = useDefaultDelimiters;
     }
 
 }
