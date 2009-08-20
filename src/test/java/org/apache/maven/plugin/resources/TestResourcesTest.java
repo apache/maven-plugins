@@ -80,7 +80,8 @@ public class TestResourcesTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getTestOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resorucesDir = project.getTestOutputDirectory();
