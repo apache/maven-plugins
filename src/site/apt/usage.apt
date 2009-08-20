@@ -32,11 +32,11 @@
 Usage
 
  You can put additional content (e.g. documentation, resources, etc.) in your
- site. See {{{examples/creating-content.html}Creating Content}} for more
+ site. See {{{./examples/creating-content.html}Creating Content}} for more
  information on this. If you want to change the menus, breadcrumbs, links or
  logos on your pages you need to add and configure a
- {{{examples/sitedescriptor.html}site descriptor}}. If you like, you also can
- let Maven generate some {{{examples/configuring-reports.html}reports}} for you,
+ {{{./examples/sitedescriptor.html}site descriptor}}. If you like, you also can
+ let Maven generate some {{{./examples/configuring-reports.html}reports}} for you,
  based on the contents of your POM.
 
 * Generating a Site
@@ -54,6 +54,14 @@ mvn site
   '<<<mvn site:site>>>'. If you want to use those links, you should use
   '<<<mvn site:stage>>>' instead. You can read more about that goal further down on
   this page in the section called '<Staging a Site>'.
+
+  <<Note:>> For performance reasons, Maven compares the timestamps of generated
+  files and corresponding source documents, and only regenerates documents
+  that have changed since the last build.
+  However, this only applies to documentation source documents (apt, xdoc,...).
+  If you change anything in your <<<site.xml>>>, any relevant sections in your
+  pom, or any relevant properties or resource files, you should generate the
+  site from scratch to make sure all references and links are correct.
 
 * Deploying a Site
 
@@ -85,7 +93,7 @@ mvn site
   subprojects inherit the site URL from a parent POM, they will automatically
   append their <<<\<artifactId\>>>> to form their effective deployment location.
 
-  Now you can execute the <<<{{{deploy-mojo.html}site:deploy}}>>> goal from
+  Now you can execute the <<<{{{./deploy-mojo.html}site:deploy}}>>> goal from
   your project directory.
 
   <<Note:>> A site must be generated first before executing <<<site:deploy>>>.
@@ -109,7 +117,7 @@ mvn site-deploy
   a specific directory. It will use the <<<\<distributionManagement\>>>> element or the project hierarchy to link the
   project and its modules.
 
-  Just execute the <<<{{{stage-mojo.html}site:stage}}>>> goal from your project
+  Just execute the <<<{{{./stage-mojo.html}site:stage}}>>> goal from your project
   with the <<<stagingDirectory>>> parameter as shown below:
 
 +-----+
@@ -118,7 +126,7 @@ mvn site:stage -DstagingDirectory=C:\fullsite
 
   <<Note:>> <<<stagingDirectory>>> cannot be dynamic, i.e. <<<stagingDirectory=$\{basedir\}\fullsite>>>
 
-  To stage a site and to deploy it, just execute the <<<{{{stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
+  To stage a site and to deploy it, just execute the <<<{{{./stage-deploy-mojo.html}site:stage-deploy}}>>> goal from your project
   with the required parameters. The <<<site:stage-deploy>>> goal will use the
   id <<<stagingSite>>> for deployment. So if you need to add your username or
   password in <<<settings.xml>>>, you should use <<<\<id\>stagingSite\</id\>>>>

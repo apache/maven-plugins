@@ -75,11 +75,38 @@ public class SiteStageDeployMojo
      * The identifier of the repository where the staging site will be deployed. This id will be used to lookup a
      * corresponding <code>&lt;server&gt;</code> entry from the <code>settings.xml</code>. If a matching
      * <code>&lt;server&gt;</code> entry is found, its configured credentials will be used for authentication.
-     * 
+     *
      * @parameter expression="${stagingRepositoryId}" default-value="stagingSite"
      * @since 2.0.1
      */
     private String stagingRepositoryId;
+
+    /**
+     * Whether to run the "chmod" command on the remote site after the deploy.
+     * Defaults to "true".
+     *
+     * @parameter expression="${maven.site.chmod}" default-value="true"
+     * @since 2.1
+     */
+    private boolean chmod;
+
+    /**
+     * The mode used by the "chmod" command. Only used if chmod = true.
+     * Defaults to "g+w,a+rX".
+     *
+     * @parameter expression="${maven.site.chmod.mode}" default-value="g+w,a+rX"
+     * @since 2.1
+     */
+    private String chmodMode;
+
+    /**
+     * The options used by the "chmod" command. Only used if chmod = true.
+     * Defaults to "-Rf".
+     *
+     * @parameter expression="${maven.site.chmod.options}" default-value="-Rf"
+     * @since 2.1
+     */
+    private String chmodOptions;
 
     /**
      * @component
@@ -98,7 +125,7 @@ public class SiteStageDeployMojo
     private PlexusContainer container;
 
     /**
-     * @see org.apache.maven.plugin.Mojo#execute()
+     * {@inheritDoc}
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -167,12 +194,10 @@ public class SiteStageDeployMojo
             */
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
 
-            // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
-            //  Force group writeable
-            if ( wagon instanceof CommandExecutor )
+            if ( chmod && wagon instanceof CommandExecutor )
             {
                 CommandExecutor exec = (CommandExecutor) wagon;
-                exec.executeCommand( "chmod -Rf g+w,a+rX " + repository.getBasedir() );
+                exec.executeCommand( "chmod " + chmodOptions + " " + chmodMode + " " + repository.getBasedir() );
             }
         }
         catch ( ResourceDoesNotExistException e )

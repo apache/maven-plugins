@@ -36,7 +36,7 @@ import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.classrealm.ClassRealmManager;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
@@ -50,7 +50,7 @@ import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.ReportSet;
-import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -58,6 +58,7 @@ import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.internal.DefaultPluginManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.PlexusConstants;
@@ -69,7 +70,6 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -204,7 +204,7 @@ public abstract class AbstractSiteRenderingMojo
      * @component
      */
     @Requirement
-    protected PluginManager pluginManager;
+    protected MavenPluginManager mavenPluginManager;
     
     /**
      * @parameter expression="${session}"
@@ -230,7 +230,7 @@ public abstract class AbstractSiteRenderingMojo
         {
             classRealmManager = plexusContainer.lookup( ClassRealmManager.class );
             lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
-            pluginManager = (PluginManager) plexusContainer.lookup( PluginManager.class );
+            mavenPluginManager = (MavenPluginManager) plexusContainer.lookup( MavenPluginManager.class );
         }
         catch ( ComponentLookupException e )
         {
@@ -240,7 +240,7 @@ public abstract class AbstractSiteRenderingMojo
         
     }
 
-    protected Map<MavenReport, ClassRealm> getReports()  throws MojoExecutionException
+    protected Map<MavenReport, ClassLoader> getReports()  throws MojoExecutionException
     {
         if ( this.project.getReporting() == null || this.project.getReporting().getPlugins().isEmpty() )
         {
@@ -279,9 +279,23 @@ public abstract class AbstractSiteRenderingMojo
         return dom;
     }    
     
-    private Map<MavenReport, ClassRealm> buildMavenReports()
+    private Map<MavenReport, ClassLoader> buildMavenReports()
         throws MojoExecutionException
     {
+        List<String> imports = new ArrayList<String>();
+        
+        imports.add( "org.apache.maven.reporting.MavenReport" );
+        imports.add( "org.apache.maven.reporting.AbstractMavenReport" );
+        imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
+        imports.add( "org.codehaus.doxia.sink.Sink" );
+        imports.add( "org.apache.maven.doxia.sink.Sink" );
+        imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        imports.add( "org.codehaus.plexus.util.xml.Xpp3Dom" );
+        imports.add( "org.codehaus.plexus.util.xml.pull.XmlPullParser" );
+        imports.add( "org.codehaus.plexus.util.xml.pull.XmlPullParserException" );
+        imports.add( "org.codehaus.plexus.util.xml.pull.XmlSerializer" );
+        
+        
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( localRepository );
         repositoryRequest.setRemoteRepositories( mavenSession.getRequest().getRemoteRepositories() );
@@ -289,7 +303,7 @@ public abstract class AbstractSiteRenderingMojo
         try
         {
 
-            Map<MavenReport, ClassRealm> reports = new HashMap<MavenReport, ClassRealm>();
+            Map<MavenReport, ClassLoader> reports = new HashMap<MavenReport, ClassLoader>();
 
             for ( ReportPlugin reportPlugin : this.project.getReporting().getPlugins() )
             {
@@ -306,7 +320,7 @@ public abstract class AbstractSiteRenderingMojo
                 // no report set we will execute all from the report plugin
                 boolean emptyReports = goals.isEmpty();
 
-                PluginDescriptor pluginDescriptor = pluginManager.loadPlugin( plugin, repositoryRequest );
+                PluginDescriptor pluginDescriptor = mavenPluginManager.getPluginDescriptor( plugin, repositoryRequest );
                 
                 if (emptyReports)
                 {
@@ -320,19 +334,19 @@ public abstract class AbstractSiteRenderingMojo
                 for ( String goal : goals )
                 {
                     MojoDescriptor mojoDescriptor =
-                        pluginManager.getMojoDescriptor( plugin, goal, repositoryRequest );
-
+                        mavenPluginManager.getMojoDescriptor( plugin, goal, repositoryRequest );
+                    
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report" + goal );
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
+                    mavenPluginManager.setupPluginRealm( pluginDescriptor, mavenSession, Thread.currentThread().getContextClassLoader(), imports );
+                    //ClassRealm pluginRealm = getMojoReportRealm( mojoDescriptor.getPluginDescriptor() );
+                    //pluginDescriptor.setClassRealm( pluginRealm );
 
-                    ClassRealm pluginRealm = getMojoReportRealm( mojoDescriptor.getPluginDescriptor() );
-                    pluginDescriptor.setClassRealm( pluginRealm );
-
-                    MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginRealm );
+                    MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginDescriptor.getClassRealm() );
                     if (mavenReport != null)
                     {
-                        reports.put( mavenReport, pluginRealm );
+                        reports.put( mavenReport, pluginDescriptor.getClassRealm() );
                     }
                 }
             }
@@ -353,8 +367,11 @@ public abstract class AbstractSiteRenderingMojo
         }
         try
         {
-            lifecycleExecutor.extractMojoConfiguration( mojoExecution );
+            //lifecycleExecutor.extractMojoConfiguration( mojoExecution );
 
+            MavenReport mavenReport = mavenPluginManager.getConfiguredMojo( MavenReport.class, this.mavenSession, mojoExecution );
+            return mavenReport;
+            /*
             Mojo mojo =
                 (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
 
@@ -366,6 +383,7 @@ public abstract class AbstractSiteRenderingMojo
             }
             getLog().info( "mojo " + mojo.getClass() + " cannot be a MavenReport so nothing will be executed " );
             return null;
+            */
         }
         catch ( Throwable e )
         {
@@ -376,17 +394,24 @@ public abstract class AbstractSiteRenderingMojo
 
     private boolean isMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
     {
+        String className = null;
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
             Thread.currentThread().setContextClassLoader( pluginRealm );
-            Class clazz = mojoExecution.getMojoDescriptor().getImplementationClass();
+            className = mojoExecution.getMojoDescriptor().getImplementation();
+            Class<?> clazz = Class.forName( className );
             boolean isMavenReport = MavenReport.class.isAssignableFrom( clazz );
             if (!isMavenReport)
             {
                 getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
             }
             return isMavenReport;
+        }
+        catch ( ClassNotFoundException e )
+        {
+            getLog().warn( "skip ClassNotFoundException "  + className  );
+            return false;
         }
         finally
         {
@@ -400,7 +425,8 @@ public abstract class AbstractSiteRenderingMojo
      * @return
      * @throws PluginManagerException
      */
-    private ClassRealm getMojoReportRealm( PluginDescriptor pluginDescriptor )
+    /*
+    private ClassRealm getMojoReportRealms( PluginDescriptor pluginDescriptor )
         throws PluginManagerException
     {
         ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
@@ -417,10 +443,11 @@ public abstract class AbstractSiteRenderingMojo
         
         return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, imported );
     }
+    */
 
-    protected Map<MavenReport, ClassRealm> filterReports( Map<MavenReport, ClassRealm> reports )
+    protected Map<MavenReport, ClassLoader> filterReports( Map<MavenReport, ClassLoader> reports )
     {
-    	Map<MavenReport, ClassRealm> filteredReports = new HashMap<MavenReport, ClassRealm>();
+    	Map<MavenReport, ClassLoader> filteredReports = new HashMap<MavenReport, ClassLoader>();
         for ( MavenReport report : reports.keySet() )
         {
             //noinspection ErrorNotRethrown,UnusedCatchParameter
@@ -556,7 +583,7 @@ public abstract class AbstractSiteRenderingMojo
      * @return A map with all reports keyed by filename having the report itself as value. The map will be used to
      * populate a menu.
      */
-    protected Map locateReports( Map<MavenReport, ClassRealm> reports, Map documents, Locale locale )
+    protected Map locateReports( Map<MavenReport, ClassLoader> reports, Map documents, Locale locale )
     {
         Map reportsByOutputName = new HashMap();
         for ( Iterator i = reports.keySet().iterator(); i.hasNext(); )
@@ -610,19 +637,10 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
-    protected Map locateDocuments( SiteRenderingContext context, Map<MavenReport, ClassRealm> reports, Locale locale )
+    protected Map locateDocuments( SiteRenderingContext context, Map<MavenReport, ClassLoader> reports, Locale locale )
         throws IOException, RendererException
     {
         Map documents = siteRenderer.locateDocumentFiles( context );
-
-        // TODO: temporary solution for MSITE-289. We need to upgrade doxia site tools
-        Map tmp = new HashMap();
-        for ( Iterator it = documents.keySet().iterator(); it.hasNext(); )
-        {
-            String key = (String) it.next();
-            tmp.put( StringUtils.replace( key, "\\", "/" ), documents.get( key ) );
-        }
-        documents = tmp;
 
         Map reportsByOutputName = locateReports( reports, documents, locale );
 
@@ -641,7 +659,7 @@ public abstract class AbstractSiteRenderingMojo
             String desc1 = i18n.getString( "site-plugin", locale, "report.information.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.information.description2" );
             DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+                                                                             i18n, categoryReports, getLog() );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {
@@ -661,7 +679,7 @@ public abstract class AbstractSiteRenderingMojo
             String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
             String desc2 = i18n.getString( "site-plugin", locale, "report.project.description2" );
             DocumentRenderer renderer = new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2,
-                                                                             i18n, categoryReports );
+                                                                             i18n, categoryReports, getLog() );
 
             if ( !documents.containsKey( renderer.getOutputName() ) )
             {

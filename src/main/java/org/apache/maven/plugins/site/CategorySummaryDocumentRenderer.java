@@ -19,12 +19,15 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.tools.MojoLogWrapper;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 
@@ -55,8 +58,16 @@ public class CategorySummaryDocumentRenderer
 
     private List categoryReports;
 
+    private final Log log;
+
     public CategorySummaryDocumentRenderer( RenderingContext renderingContext, String title, String desc1, String desc2,
                                             I18N i18n, List categoryReports )
+    {
+        this( renderingContext, title, desc1, desc2, i18n, categoryReports, null );
+    }
+
+    public CategorySummaryDocumentRenderer( RenderingContext renderingContext, String title, String desc1, String desc2,
+                                            I18N i18n, List categoryReports, Log log )
     {
         this.renderingContext = renderingContext;
         this.title = title;
@@ -64,12 +75,18 @@ public class CategorySummaryDocumentRenderer
         this.desc2 = desc2;
         this.i18n = i18n;
         this.categoryReports = Collections.unmodifiableList( categoryReports );
+        this.log = log;
     }
 
     public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
+
+        if ( log != null )
+        {
+            sink.enableLogging( new MojoLogWrapper( log ) );
+        }
 
         sink.head();
 
@@ -103,6 +120,8 @@ public class CategorySummaryDocumentRenderer
         sink.sectionTitle2_();
 
         sink.table();
+
+        sink.tableRows( new int[] {Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT}, false );
 
         String name = i18n.getString( "site-plugin", locale, "report.category.column.document" );
         String description = i18n.getString( "site-plugin", locale, "report.category.column.description" );
@@ -141,6 +160,8 @@ public class CategorySummaryDocumentRenderer
                 sink.tableRow_();
             }
         }
+
+        sink.tableRows_();
 
         sink.table_();
 

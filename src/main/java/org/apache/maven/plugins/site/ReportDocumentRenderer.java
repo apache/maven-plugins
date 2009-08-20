@@ -19,29 +19,31 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenMultiPageReport;
+import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Writer;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * Renders a Maven report.
@@ -57,9 +59,9 @@ public class ReportDocumentRenderer
 
     private Log log;
     
-    private ClassRealm classRealm;
+    private ClassLoader classLoader;
 
-    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log, ClassRealm classRealm )
+    public ReportDocumentRenderer( MavenReport report, RenderingContext renderingContext, Log log, ClassLoader classLoader )
     {
         this.report = report;
 
@@ -67,10 +69,11 @@ public class ReportDocumentRenderer
 
         this.log = log;
         
-        this.classRealm = classRealm;
+        this.classLoader = classLoader;
     }
 
-    private static class MySink extends SiteRendererSink
+    private static class MySink
+        extends SiteRendererSink
     {
         private File outputDir;
 
@@ -95,7 +98,8 @@ public class ReportDocumentRenderer
 
     }
 
-    private static class MySinkFactory implements SinkFactory
+    private static class MySinkFactory
+        implements SinkFactory
     {
         private RenderingContext context;
 
@@ -113,12 +117,32 @@ public class ReportDocumentRenderer
             return sink;
         }
 
+        public Sink createSink( File arg0, String arg1, String arg2 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
+        public Sink createSink( OutputStream arg0, String arg1 )
+            throws IOException
+        {
+            // Not used
+            return null;
+        }
+
         public List sinks()
         {
             return sinks;
         }
     }
-
 
     public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException
@@ -131,7 +155,7 @@ public class ReportDocumentRenderer
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( this.classRealm );
+        Thread.currentThread().setContextClassLoader( this.classLoader );
         try
         {
             if ( report instanceof MavenMultiPageReport )
@@ -158,6 +182,7 @@ public class ReportDocumentRenderer
         finally 
         {
             Thread.currentThread().setContextClassLoader( originalClassLoader );
+            sink.close();
         }
 
         if ( !report.isExternalReport() )
@@ -171,12 +196,20 @@ public class ReportDocumentRenderer
                 for ( Iterator it = sinks.iterator(); it.hasNext(); )
                 {
                     MySink mySink = (MySink) it.next();
+                    mySink.enableLogging( new MojoLogWrapper( log ) );
 
-                    log.debug( "  Rendering " +  mySink.getOutputName() );
+                    log.debug( "  Rendering " + mySink.getOutputName() );
 
                     Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
 
-                    renderer.generateDocument( out, mySink, siteRenderingContext );
+                    try
+                    {
+                        renderer.generateDocument( out, mySink, siteRenderingContext );
+                    }
+                    finally
+                    {
+                        mySink.close();
+                    }
                 }
             }
             catch ( IOException e )

@@ -208,7 +208,7 @@ Configuring the Site Descriptor
 * Skinning
 
   Skins can be created to customize the look and feel of a site in a consistent way. For more information on creating a
-  skin, see {{{creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<skin>>>
+  skin, see {{{./creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<skin>>>
   element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the
   {{{http://maven.apache.org/skins/maven-classic-skin/}Maven Classic Skin}}, you would include:
 

@@ -77,7 +77,7 @@ Configuring Reports
 -------------------
 
   If you have included the appropriate <<<\<menu ref="reports"/\>>>> tag in your
-  {{{sitedescriptor.html}site descriptor}}, then when you regenerate the site
+  {{{./sitedescriptor.html}site descriptor}}, then when you regenerate the site
   those items will appear in a menu called "Project Reports".
 
   <<Note:>> Many report plugins provide a parameter called <<<outputDirectory>>>

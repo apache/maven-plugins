@@ -83,6 +83,33 @@ public class SiteDeployMojo
     private File inputDirectory;
 
     /**
+     * Whether to run the "chmod" command on the remote site after the deploy.
+     * Defaults to "true".
+     *
+     * @parameter expression="${maven.site.chmod}" default-value="true"
+     * @since 2.1
+     */
+    private boolean chmod;
+
+    /**
+     * The mode used by the "chmod" command. Only used if chmod = true.
+     * Defaults to "g+w,a+rX".
+     *
+     * @parameter expression="${maven.site.chmod.mode}" default-value="g+w,a+rX"
+     * @since 2.1
+     */
+    private String chmodMode;
+
+    /**
+     * The options used by the "chmod" command. Only used if chmod = true.
+     * Defaults to "-Rf".
+     *
+     * @parameter expression="${maven.site.chmod.options}" default-value="-Rf"
+     * @since 2.1
+     */
+    private String chmodOptions;
+
+    /**
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -105,6 +132,7 @@ public class SiteDeployMojo
 
     private PlexusContainer container;
 
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -187,12 +215,10 @@ public class SiteDeployMojo
             */
             wagon.putDirectory( inputDirectory, "." );
             
-            // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
-            //  Force group writeable
-            if ( wagon instanceof CommandExecutor )
+            if ( chmod && wagon instanceof CommandExecutor )
             {
                 CommandExecutor exec = (CommandExecutor) wagon;
-                exec.executeCommand( "chmod -Rf g+w,a+rX " + repository.getBasedir() );
+                exec.executeCommand( "chmod " + chmodOptions + " " + chmodMode + " " + repository.getBasedir() );
             }
         }
         catch ( ResourceDoesNotExistException e )
