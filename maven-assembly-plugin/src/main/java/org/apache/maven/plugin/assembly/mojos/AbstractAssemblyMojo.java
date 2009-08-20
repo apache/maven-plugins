@@ -37,6 +37,7 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 import java.io.File;
@@ -211,6 +212,13 @@ public abstract class AbstractAssemblyMojo
      */
     private MavenProjectHelper projectHelper;
     
+    /**
+     * Maven shared filtering utility.
+     *
+     * @component
+     */
+    private MavenFileFilter mavenFileFilter;
+
     /**
      * The Maven Session Object
      *
@@ -723,4 +731,8 @@ public abstract class AbstractAssemblyMojo
         return archiverConfig == null ? null : archiverConfig.toString();
     }
 
+    public MavenFileFilter getMavenFileFilter()
+    {
+        return mavenFileFilter;
+    }
 }

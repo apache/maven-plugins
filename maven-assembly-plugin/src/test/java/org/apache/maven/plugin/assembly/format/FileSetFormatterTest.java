@@ -30,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.PlexusTestCase;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileSetFormatterTest
-    extends TestCase
+    extends PlexusTestCase
 {
 
     private MockManager mockManager;
@@ -52,7 +53,10 @@ public class FileSetFormatterTest
     private MockControl configSourceControl;
 
     public void setUp()
+        throws Exception
     {
+        super.setUp();
+
         mockManager = new MockManager();
 
         fileManager = new TestFileManager( "fileSetFormatter-test.", "" );
@@ -253,7 +257,7 @@ public class FileSetFormatterTest
     }
 
     public void testShouldFilterSeveralFiles()
-        throws IOException, AssemblyFormattingException
+        throws Exception
     {
         File basedir = fileManager.createTempDir();
 
@@ -294,6 +298,7 @@ public class FileSetFormatterTest
     }
 
     private void enableBasicFilteringConfiguration( File basedir, List filterFilenames )
+        throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
@@ -304,13 +309,16 @@ public class FileSetFormatterTest
         model.setVersion( "version" );
 
         MavenProject project = new MavenProject( model );
+        project.getBuild().setFilters( filterFilenames );
 
         configSource.getProject();
         configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
 
-        // list of filenames that contain filter definitions.
-        configSource.getFilters();
-        configSourceControl.setReturnValue( filterFilenames );
+        configSource.getMavenFileFilter();
+        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ), MockControl.ONE_OR_MORE );
+
+        configSource.getMavenSession();
+        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
     }
 
 }
