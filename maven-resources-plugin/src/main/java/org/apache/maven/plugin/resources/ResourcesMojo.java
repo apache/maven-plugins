@@ -25,13 +25,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
@@ -172,6 +172,26 @@ public class ResourcesMojo
      */
     protected boolean escapeWindowsPaths;
     
+    /**
+     * <p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the
+     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p><p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     * @since 2.4
+     */
+    protected Set delimiters;
+    
     public void execute()
         throws MojoExecutionException
     {
@@ -202,6 +222,13 @@ public class ResourcesMojo
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
+            
+            // if these are NOT set, just use the defaults, which are '${*}' and '@'.
+            if ( delimiters != null && !delimiters.isEmpty() )
+            {
+                mavenResourcesExecution.setDelimiters( delimiters );
+            }
+            
             if ( nonFilteredFileExtensions != null )
             {
                 mavenResourcesExecution.setNonFilteredFileExtensions( nonFilteredFileExtensions );
@@ -305,6 +332,16 @@ public class ResourcesMojo
     public void setFilters( List filters )
     {
         this.filters = filters;
+    }
+
+    public Set getDelimiters()
+    {
+        return delimiters;
+    }
+
+    public void setDelimiters( Set delimiters )
+    {
+        this.delimiters = delimiters;
     }
 
 }
