@@ -1696,6 +1696,7 @@ public class PdfMojo
             return;
         }
 
+        // see PdfSink#table()
         content = StringUtils.replace( content, "<table><table", "<table" );
         Writer writer = null;
         try
@@ -1813,7 +1814,9 @@ public class PdfMojo
         /** {@inheritDoc} */
         public void table()
         {
-            // workaround to fix reporting-impl issue
+            super.table();
+
+            // workaround to fix reporting-impl issue, no call of tableRows( justification, grid )
             writeStartTag( HtmlMarkup.TABLE );
         }
     }
