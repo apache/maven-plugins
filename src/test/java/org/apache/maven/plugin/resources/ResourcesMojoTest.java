@@ -404,7 +404,7 @@ public class ResourcesMojoTest
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
-        String checkString = "current working directory=c:\\\\\\\\org\\\\apache\\\\test";
+        String checkString = "current working directory=c:\\\\org\\\\apache\\\\test";
 
         assertContent( resourcesDir + "/file4.properties", checkString );
     }
@@ -627,11 +627,7 @@ public class ResourcesMojoTest
 
         assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
 
-        // FIXME See http://jira.codehaus.org/browse/MSHARED-121
-//        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
-//                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
-        
-        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\Documents",
+        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
                       FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
     }
 
