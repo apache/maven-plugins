@@ -19,6 +19,11 @@ package org.apache.maven.plugin.resources;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,21 +33,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.shared.filtering.MavenFileFilter;
-import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.util.FileUtils;
-
 public class ResourcesMojoTest
     extends AbstractMojoTestCase
 {
     protected final static String defaultPomFilePath = "/target/test-classes/unit/resources-test/plugin-config.xml";
     
-    private MavenFileFilter mff;
-
     /**
      * test mojo lookup, test harness should be working fine
      * 
@@ -57,22 +52,6 @@ public class ResourcesMojoTest
         assertNotNull( mojo );
     }
     
-    public void tearDown()
-        throws Exception
-    {
-        if ( mff != null )
-        {
-            try
-            {
-                release( mff );
-            }
-            catch ( Exception e )
-            {}
-        }
-        
-        super.tearDown();
-    }
-
     /**
      * @throws Exception
      */
@@ -96,7 +75,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -132,7 +112,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -165,7 +146,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -212,7 +194,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -265,7 +248,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -302,7 +286,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -335,7 +320,9 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
+        setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
         MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(),
                                                       null );
         setVariableValueToObject( mojo, "session", mavenSession );
@@ -376,7 +363,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -410,12 +398,13 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
-        String checkString = "current working directory=c:\\\\\\\\org\\\\apache\\\\test";
+        String checkString = "current working directory=c:\\\\org\\\\apache\\\\test";
 
         assertContent( resourcesDir + "/file4.properties", checkString );
     }
@@ -444,7 +433,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", filterList );
+        setVariableValueToObject( mojo, "buildFilters", filterList );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -477,7 +467,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "extraFilters", filterList );
+        setVariableValueToObject( mojo, "filters", filterList );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -516,8 +507,9 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", filterList );
-        setVariableValueToObject( mojo, "extraFilters", extraFilterList );
+        setVariableValueToObject( mojo, "buildFilters", filterList );
+        setVariableValueToObject( mojo, "filters", extraFilterList );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
@@ -556,7 +548,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", filterList );
+        setVariableValueToObject( mojo, "buildFilters", filterList );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
         final String resourcesDir = project.getOutputDirectory();
 
@@ -587,31 +580,11 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
+        setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.FALSE );
 
-        MavenFileFilter mff = null;
-        try
-        {
-            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
-            setVariableValueToObject( mojo, "mavenFileFilter", mff );
-
-            setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.FALSE );
-
-            mojo.execute();
-        }
-        finally
-        {
-            if ( mff != null )
-            {
-                try
-                {
-                    release( mff );
-                }
-                catch ( Exception e )
-                {
-                }
-            }
-        }
+        mojo.execute();
 
         String resourcesDir = project.getOutputDirectory();
 
@@ -643,7 +616,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "filters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
 
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
 
@@ -653,11 +627,7 @@ public class ResourcesMojoTest
 
         assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
 
-        // FIXME See http://jira.codehaus.org/browse/MSHARED-121
-//        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
-//                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
-        
-        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\Documents",
+        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
                       FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
     }
 
@@ -672,48 +642,4 @@ public class ResourcesMojoTest
         assertEquals( data, new BufferedReader( new FileReader( fileName ) ).readLine() );
     }
 
-    protected Mojo lookupEmptyMojo( String goal, File pom )
-        throws Exception
-    {
-        return setupComponents( super.lookupEmptyMojo( goal, pom ) );
-    }
-
-    protected Mojo lookupEmptyMojo( String goal, String pluginPom )
-        throws Exception
-    {
-        return setupComponents( super.lookupEmptyMojo( goal, pluginPom ) );
-    }
-
-    protected Mojo lookupMojo( String goal, File pom )
-        throws Exception
-    {
-        return setupComponents( super.lookupMojo( goal, pom ) );
-    }
-
-    protected Mojo lookupMojo( String groupId, String artifactId, String version, String goal,
-                               PlexusConfiguration pluginConfiguration )
-        throws Exception
-    {
-        return setupComponents( super.lookupMojo( groupId, artifactId, version, goal, pluginConfiguration ) );
-    }
-
-    protected Mojo lookupMojo( String goal, String pluginPom )
-        throws Exception
-    {
-        return setupComponents( super.lookupMojo( goal, pluginPom ) );
-    }
-    
-
-    private synchronized Mojo setupComponents( Mojo mojo )
-        throws Exception
-    {
-        if ( mff == null )
-        {
-            mff = (MavenFileFilter) lookup( MavenFileFilter.class.getName(), "default" );
-        }
-        
-        setVariableValueToObject( mojo, "mavenFileFilter", mff );
-        
-        return mojo;
-    }
 }
