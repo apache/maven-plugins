@@ -40,18 +40,12 @@
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <!-- <version>@pom.version@</version> -->
-        <version>2.4-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <id>default-resources</id>
-            <configuration>
-              <delimiters>
-                <delimiter><![CDATA[>*<]]></delimiter>
-              </delimiters>
-            </configuration>
-          </execution>
-        </executions>
+        <version>@project.version@</version>
+        <configuration>
+          <delimiters>
+            <delimiter><![CDATA[>*<]]></delimiter>
+          </delimiters>
+        </configuration>
       </plugin>
     </plugins>
   </build>
