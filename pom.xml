@@ -339,7 +339,7 @@ under the License.
           <version>${project.version}</version>
         </plugin>
       </plugins>
-    </pluginManagement>  
+    </pluginManagement>
   </build>
 
   <reporting>
@@ -434,6 +434,11 @@ under the License.
             <artifactId>maven-project-info-reports-plugin</artifactId>
             <version>2.2-SNAPSHOT</version>          
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.6.1-SNAPSHOT</version>          
+          </plugin>          
         </plugins>
       </reporting>
     </profile>
@@ -458,7 +463,6 @@ under the License.
               <mappingId>customizable</mappingId>
               <configurators>
                 <configurator id='org.maven.ide.eclipse.jdt.javaConfigurator' />
-                <configurator id='org.maven.ide.eclipse.modello.modelloConfigurator' />
                 <configurator id='org.maven.ide.eclipse.plexus.annotations.plexusConfigurator' />
               </configurators>
               <mojoExecutions>

@@ -283,18 +283,22 @@ public abstract class AbstractSiteRenderingMojo
         throws MojoExecutionException
     {
         List<String> imports = new ArrayList<String>();
+     
         
         imports.add( "org.apache.maven.reporting.MavenReport" );
-        imports.add( "org.apache.maven.reporting.AbstractMavenReport" );
+        //imports.add( "org.apache.maven.reporting.AbstractMavenReport" );
+        imports.add( "org.apache.maven.doxia.siterenderer.Renderer" );
         imports.add( "org.apache.maven.doxia.sink.SinkFactory" );
         imports.add( "org.codehaus.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.Sink" );
         imports.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
+        
+        /*
         imports.add( "org.codehaus.plexus.util.xml.Xpp3Dom" );
         imports.add( "org.codehaus.plexus.util.xml.pull.XmlPullParser" );
         imports.add( "org.codehaus.plexus.util.xml.pull.XmlPullParserException" );
         imports.add( "org.codehaus.plexus.util.xml.pull.XmlSerializer" );
-        
+        */
         
         RepositoryRequest repositoryRequest = new DefaultRepositoryRequest();
         repositoryRequest.setLocalRepository( localRepository );
@@ -336,14 +340,12 @@ public abstract class AbstractSiteRenderingMojo
                     MojoDescriptor mojoDescriptor =
                         mavenPluginManager.getMojoDescriptor( plugin, goal, repositoryRequest );
                     
-                    MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report" + goal );
+                    MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report:" + goal );
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
                     mavenPluginManager.setupPluginRealm( pluginDescriptor, mavenSession, Thread.currentThread().getContextClassLoader(), imports );
-                    //ClassRealm pluginRealm = getMojoReportRealm( mojoDescriptor.getPluginDescriptor() );
-                    //pluginDescriptor.setClassRealm( pluginRealm );
 
-                    MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginDescriptor.getClassRealm() );
+                    MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginDescriptor );
                     if (mavenReport != null)
                     {
                         reports.put( mavenReport, pluginDescriptor.getClassRealm() );
@@ -358,59 +360,48 @@ public abstract class AbstractSiteRenderingMojo
         }
     }
     
-    private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
+    private MavenReport getConfiguredMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor )
         throws Throwable
     {
-        if ( !isMavenReport( mojoExecution, pluginRealm ) )
+        if ( !isMavenReport( mojoExecution, pluginDescriptor ) )
         {
             return null;
         }
         try
         {
-            //lifecycleExecutor.extractMojoConfiguration( mojoExecution );
-
             MavenReport mavenReport = mavenPluginManager.getConfiguredMojo( MavenReport.class, this.mavenSession, mojoExecution );
             return mavenReport;
-            /*
-            Mojo mojo =
-                (Mojo) pluginManager.getConfiguredMojo( Mojo.class, mavenSession, project, mojoExecution, pluginRealm );
 
-            lifecycleExecutor.populateMojoExecutionConfiguration( project, mojoExecution, false );
-
-            if ( mojo instanceof MavenReport )
-            {
-                return (MavenReport) mojo;
-            }
-            getLog().info( "mojo " + mojo.getClass() + " cannot be a MavenReport so nothing will be executed " );
+        } catch (ClassCastException e)
+        {
+            getLog().warn( "skip ClassCastException " + e.getMessage() );
             return null;
-            */
         }
         catch ( Throwable e )
         {
-            getLog().error( "error configuring mojo " + mojoExecution.toString() );
+            getLog().error( "error configuring mojo " + mojoExecution.toString() + " : " + e.getMessage() , e);
             throw e;
         }
     }
 
-    private boolean isMavenReport( MojoExecution mojoExecution, ClassRealm pluginRealm )
+    private boolean isMavenReport( MojoExecution mojoExecution, PluginDescriptor pluginDescriptor )
     {
-        String className = null;
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread().setContextClassLoader( pluginRealm );
-            className = mojoExecution.getMojoDescriptor().getImplementation();
-            Class<?> clazz = Class.forName( className );
-            boolean isMavenReport = MavenReport.class.isAssignableFrom( clazz );
+            MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( mojoExecution.getGoal() );
+            Thread.currentThread().setContextClassLoader( mojoDescriptor.getRealm() );
+            boolean isMavenReport = MavenReport.class.isAssignableFrom( mojoDescriptor.getImplementationClass() );
             if (!isMavenReport)
             {
                 getLog().info( " skip non MavenReport " + mojoExecution.getMojoDescriptor().getId() );
             }
             return isMavenReport;
         }
-        catch ( ClassNotFoundException e )
+        catch ( LinkageError e )
         {
-            getLog().warn( "skip ClassNotFoundException "  + className  );
+            getLog().warn( "skip LinkageError  mojoExecution.goal"  +  mojoExecution.getGoal() + " : " + e.getMessage(), e  );
+            //pluginRealm.display();
             return false;
         }
         finally
@@ -420,31 +411,6 @@ public abstract class AbstractSiteRenderingMojo
 
     }
     
-    /**
-     * @param pluginDescriptor
-     * @return
-     * @throws PluginManagerException
-     */
-    /*
-    private ClassRealm getMojoReportRealms( PluginDescriptor pluginDescriptor )
-        throws PluginManagerException
-    {
-        ClassRealm sitePluginRealm = (ClassRealm) Thread.currentThread().getContextClassLoader();
-        List<String> imported = new ArrayList<String>();
-
-        imported.add( "org.apache.maven.reporting.MavenReport" );
-        imported.add( "org.codehaus.doxia.sink.Sink" );
-        imported.add( "org.apache.maven.doxia.sink.Sink" );
-        imported.add( "org.apache.maven.doxia.sink.SinkEventAttributes" );
-        imported.add( "org.codehaus.plexus.util.xml.Xpp3Dom" );
-        imported.add( "org.codehaus.plexus.util.xml.pull.XmlPullParser" );
-        imported.add( "org.codehaus.plexus.util.xml.pull.XmlPullParserException" );
-        imported.add( "org.codehaus.plexus.util.xml.pull.XmlSerializer" );        
-        
-        return pluginManager.getPluginRealm( mavenSession, pluginDescriptor, sitePluginRealm, imported );
-    }
-    */
-
     protected Map<MavenReport, ClassLoader> filterReports( Map<MavenReport, ClassLoader> reports )
     {
     	Map<MavenReport, ClassLoader> filteredReports = new HashMap<MavenReport, ClassLoader>();
