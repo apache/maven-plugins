@@ -28,7 +28,7 @@ under the License.
     <site>
       <id>msite-304</id>
       <name>Example company web server</name>
-      <url>file://${java.io.tmpdir}/www.example.com/parent</url>
+      <url>file://${project.build.directory}/www.example.com/parent</url>
     </site>
   </distributionManagement>
   <modules>
@@ -51,7 +51,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.0.1</version>
+        <version>2.1.2</version>
         <reportSets>
           <reportSet>
             <reports>
