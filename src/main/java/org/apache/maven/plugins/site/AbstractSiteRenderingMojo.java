@@ -35,7 +35,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
 import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.classrealm.ClassRealmManager;
 import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
@@ -195,16 +194,6 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenProject project;
     
     /**
-     * The component that is used to resolve/execure plugins.
-     * 
-     * @required
-     * @readonly
-     * @component
-     */
-    @Requirement
-    protected MavenPluginManager mavenPluginManager;
-    
-    /**
      * @parameter expression="${session}"
      * @required
      * @readonly
@@ -214,11 +203,16 @@ public abstract class AbstractSiteRenderingMojo
     Context context;
     
     PlexusContainer plexusContainer;
+   
+    // FIXME not injected ?
+    //Requirement
+    protected DefaultLifecycleExecutor lifecycleExecutor;
+
+    // FIXME not injected ? 
+    //Requirement
+    protected MavenPluginManager mavenPluginManager;
     
-    ClassRealmManager classRealmManager;
-    
-    LifecycleExecutor lifecycleExecutor;
-    
+    // FIXME remove to use direct injection 
     public void contextualize( Context context )
         throws ContextException
     {
@@ -226,7 +220,6 @@ public abstract class AbstractSiteRenderingMojo
         plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
         try
         {
-            classRealmManager = plexusContainer.lookup( ClassRealmManager.class );
             lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
             mavenPluginManager = plexusContainer.lookup( MavenPluginManager.class );
         }
@@ -247,7 +240,7 @@ public abstract class AbstractSiteRenderingMojo
         return buildMavenReports();
     }
     
-    Xpp3Dom convert( MojoDescriptor mojoDescriptor  )
+    private Xpp3Dom convert( MojoDescriptor mojoDescriptor  )
     {
         Xpp3Dom dom = new Xpp3Dom( "configuration" );
 
@@ -345,7 +338,6 @@ public abstract class AbstractSiteRenderingMojo
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
                     mavenPluginManager.setupPluginRealm( pluginDescriptor, mavenSession, Thread.currentThread().getContextClassLoader(), imports );
-
                     MavenReport mavenReport = getConfiguredMavenReport( mojoExecution, pluginDescriptor );
                     if (mavenReport != null)
                     {
@@ -370,6 +362,7 @@ public abstract class AbstractSiteRenderingMojo
         }
         try
         {
+            // FIXME here we need something to prevent MJAVADOC-251 config injection order can be different from mvn < 3.x
             MavenReport mavenReport =
                 (MavenReport) mavenPluginManager.getConfiguredMojo( Mojo.class, this.mavenSession, mojoExecution );
             return mavenReport;
