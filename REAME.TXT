@@ -1,3 +1,0 @@
-to work with this branch you have to use trunk branch MNG-4162
-https://svn.apache.org/repos/asf/maven/components/branches/MNG-4162/
-
