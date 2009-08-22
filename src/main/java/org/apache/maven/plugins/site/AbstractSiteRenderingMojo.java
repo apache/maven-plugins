@@ -55,6 +55,7 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.MojoNotFoundException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
@@ -334,9 +335,12 @@ public abstract class AbstractSiteRenderingMojo
                 
                 for ( String goal : goals )
                 {
-                    MojoDescriptor mojoDescriptor =
-                        mavenPluginManager.getMojoDescriptor( plugin, goal, repositoryRequest );
-                    
+                    MojoDescriptor mojoDescriptor = pluginDescriptor.getMojo( goal );
+                    if ( mojoDescriptor == null )
+                    {
+                        throw new MojoNotFoundException( goal, pluginDescriptor );
+                    }
+
                     MojoExecution mojoExecution = new MojoExecution( plugin, goal, "report:" + goal );
                     mojoExecution.setConfiguration( convert( mojoDescriptor ) );
                     mojoExecution.setMojoDescriptor( mojoDescriptor );
