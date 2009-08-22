@@ -1300,7 +1300,7 @@ public class PdfMojo
             if ( getLog().isErrorEnabled() )
             {
                 ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
-                StringBuilder sb = new StringBuilder();
+                StringBuffer sb = new StringBuffer();
                 sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
                 sb.append( e.getClass().getName() ).append( ") and may be out-of-date. Check the realms:\n" );
                 sb.append( "Maven Report Plugin realm = " + reportPluginRealm.getId() ).append( '\n' );
