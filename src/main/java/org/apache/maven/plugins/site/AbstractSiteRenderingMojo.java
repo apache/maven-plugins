@@ -54,16 +54,12 @@ import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.PluginManager;
-import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugin.internal.DefaultPluginManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -230,7 +226,7 @@ public abstract class AbstractSiteRenderingMojo
         {
             classRealmManager = plexusContainer.lookup( ClassRealmManager.class );
             lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
-            mavenPluginManager = (MavenPluginManager) plexusContainer.lookup( MavenPluginManager.class );
+            mavenPluginManager = plexusContainer.lookup( MavenPluginManager.class );
         }
         catch ( ComponentLookupException e )
         {
