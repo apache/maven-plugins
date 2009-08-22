@@ -51,6 +51,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.ReportSet;
 import org.apache.maven.plugin.MavenPluginManager;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -365,7 +366,8 @@ public abstract class AbstractSiteRenderingMojo
         }
         try
         {
-            MavenReport mavenReport = mavenPluginManager.getConfiguredMojo( MavenReport.class, this.mavenSession, mojoExecution );
+            MavenReport mavenReport =
+                (MavenReport) mavenPluginManager.getConfiguredMojo( Mojo.class, this.mavenSession, mojoExecution );
             return mavenReport;
 
         } catch (ClassCastException e)
