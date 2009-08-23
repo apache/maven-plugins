@@ -122,8 +122,6 @@ public class SiteStageDeployMojo
      */
     private Settings settings;
 
-    private PlexusContainer container;
-
     /**
      * {@inheritDoc}
      */
@@ -155,7 +153,7 @@ public class SiteStageDeployMojo
         try
         {
             wagon = wagonManager.getWagon( repository );
-            SiteDeployMojo.configureWagon( wagon, stagingRepositoryId, settings, container, getLog() );
+            SiteDeployMojo.configureWagon( wagon, stagingRepositoryId, settings, plexusContainer, getLog() );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -235,12 +233,6 @@ public class SiteStageDeployMojo
                 getLog().error( "Error disconnecting wagon - ignored", e );
             }
         }
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**

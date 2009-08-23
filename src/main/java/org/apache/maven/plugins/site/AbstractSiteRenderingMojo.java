@@ -206,7 +206,7 @@ public abstract class AbstractSiteRenderingMojo
    
     // FIXME not injected ?
     //Requirement
-    protected DefaultLifecycleExecutor lifecycleExecutor;
+    //protected DefaultLifecycleExecutor lifecycleExecutor;
 
     // FIXME not injected ? 
     //Requirement
@@ -220,7 +220,7 @@ public abstract class AbstractSiteRenderingMojo
         plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
         try
         {
-            lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
+            //lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
             mavenPluginManager = plexusContainer.lookup( MavenPluginManager.class );
         }
         catch ( ComponentLookupException e )
