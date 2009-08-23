@@ -35,13 +35,11 @@ import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
+import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
@@ -154,6 +152,7 @@ public class SiteStageDeployMojo
         {
             wagon = wagonManager.getWagon( repository );
             SiteDeployMojo.configureWagon( wagon, stagingRepositoryId, settings, plexusContainer, getLog() );
+            wagon.connect( repository );
         }
         catch ( UnsupportedProtocolException e )
         {
@@ -162,6 +161,13 @@ public class SiteStageDeployMojo
         catch ( WagonConfigurationException e )
         {
             throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
+        } catch (AuthenticationException e)
+        {
+            throw new MojoExecutionException( "AuthenticationException : Unable to connect Wagon to repository : '" + repository.getProtocol() + "'", e );
+        }
+        catch ( ConnectionException e )
+        {
+            throw new MojoExecutionException( "Unable to connect Wagon to repository : '" + repository.getProtocol() + "'", e );
         }
 
         if ( !wagon.supportsDirectoryCopy() )
@@ -170,9 +176,26 @@ public class SiteStageDeployMojo
                 "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
 
+        getLog().debug( "wagon == null " + ( wagon == null ) );
+        getLog().debug( "wagon class " + wagon.getClass() );
+        
         try
         {
-            Debug debug = new Debug();
+            Debug debug = new Debug(){
+                public void sessionDisconnecting( final SessionEvent sessionEvent )
+                {
+                    getLog().debug( "sessionDisconnecting" );
+                    getLog().debug( " sessionEvent.getWagon() == null " + (sessionEvent.getWagon() == null) );
+                    getLog().debug( " sessionEvent.getWagon().getRepository() == null " + (sessionEvent.getWagon().getRepository() == null) );
+                    //getLog().info( sessionEvent.getWagon().getRepository().getUrl() + " - Session: Disconnecting  " );
+
+                }    
+                public void sessionDisconnected( final SessionEvent sessionEvent )
+                {
+                    getLog().debug( "sessionDisconnected" );
+                }                
+            };
+            
 
             wagon.addSessionListener( debug );
 
@@ -192,6 +215,7 @@ public class SiteStageDeployMojo
             */
             wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
 
+            getLog().debug( "putDirectory end ok " );
             if ( chmod && wagon instanceof CommandExecutor )
             {
                 CommandExecutor exec = (CommandExecutor) wagon;

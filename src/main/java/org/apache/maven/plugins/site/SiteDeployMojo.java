@@ -341,6 +341,7 @@ public class SiteDeployMojo
                                 Log log )
         throws WagonConfigurationException
     {
+        log.debug( " configureWagon " );
         // MSITE-25: Make sure that the server settings are inserted
         for ( int i = 0; i < settings.getServers().size(); i++ )
         {
@@ -356,6 +357,7 @@ public class SiteDeployMojo
                     ComponentConfigurator componentConfigurator = null;
                     try
                     {
+                        // FIXME role-hint basic ?
                         componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
                         componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
