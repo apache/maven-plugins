@@ -32,12 +32,18 @@ try
         return false;
     }
 
-    File siteDescriptor = new File ( target, "snapshot-repo/test/site-attach-descriptor/1.0-SNAPSHOT/site-attach-descriptor-1.0-SNAPSHOT-site.xml" );
-    if ( !siteDescriptor.exists() || siteDescriptor.isDirectory() )
+    File artifactsDirectory = new File ( target, "snapshot-repo/test/site-attach-descriptor/1.0-SNAPSHOT");
+    File[] files = artifactsDirectory.listFiles();
+    for (int i = 0; i < files.length; i++)
     {
-        System.err.println( "siteDescriptor file is missing or not a directory." );
-        return false;
-    }    
+        //site-attach-descriptor-1.0-20090823.204852-1-site.xml
+        if (files[i].getName().startsWith( "site-attach-descriptor-1.0" ) && files[i].getName().endsWith( "-site.xml" ) )
+        {
+            return true;
+        }
+    }
+    System.err.println( "site descriptor not deployed." );
+    return false;    
     
     
 }
