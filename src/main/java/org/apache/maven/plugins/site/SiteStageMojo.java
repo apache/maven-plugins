@@ -171,10 +171,12 @@ public class SiteStageMojo
                 MavenProject reactorProject = (MavenProject) iterator.next();
                 if ( reactorProject.isExecutionRoot() )
                 {
+                    getLog().debug( "isExecutionRoot " + reactorProject.getName() );
                     topLevelProject = reactorProject;
                 }
             }
         }
+        getLog().debug( "topLevelProject is null" );
         return topLevelProject;
     }
 
