@@ -1597,7 +1597,7 @@ public class PdfMojo
                 }
             }
 
-            sb.append( "\nIgnoring the \"" + localReportName + "\" report.\n" );
+            sb.append( "\nIgnoring the \"" + localReportName + "\" report in the PDF.\n" );
 
             if ( getLog().isDebugEnabled() )
             {
