@@ -44,8 +44,6 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
-import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.ReportSet;
@@ -59,15 +57,8 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -77,7 +68,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @version $Id$
  */
 public abstract class AbstractSiteRenderingMojo
-    extends AbstractSiteMojo implements Contextualizable
+    extends AbstractSiteMojo
 {
     /**
      * Module type exclusion mappings
@@ -200,38 +191,21 @@ public abstract class AbstractSiteRenderingMojo
      * @readonly
      */
     protected MavenSession mavenSession;
-    
-    Context context;
-    
-    PlexusContainer plexusContainer;
    
-    // FIXME not injected ?
-    //Requirement
-    //protected DefaultLifecycleExecutor lifecycleExecutor;
+    /**
+    *
+    * @component
+    * @readonly
+    */    
+    protected PlexusContainer plexusContainer;
 
-    // FIXME not injected ? 
-    //Requirement
+    /**
+     *
+     * @component
+     * @readonly
+     */
     protected MavenPluginManager mavenPluginManager;
-    
-    // FIXME remove to use direct injection 
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        this.context = context;
-        plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-        try
-        {
-            //lifecycleExecutor = (DefaultLifecycleExecutor) plexusContainer.lookup( LifecycleExecutor.class );
-            mavenPluginManager = plexusContainer.lookup( MavenPluginManager.class );
-        }
-        catch ( ComponentLookupException e )
-        {
-           throw new ContextException( e.getMessage(), e );
-        }
-        
-        
-    }
-
+   
     protected Map<MavenReport, ClassLoader> getReports()  throws MojoExecutionException
     {
         if ( this.project.getReporting() == null || this.project.getReporting().getPlugins().isEmpty() )

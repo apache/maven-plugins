@@ -37,10 +37,8 @@ import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
-import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.repository.Repository;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Deploys the generated site to a staging or mock directory to the site URL
@@ -54,7 +52,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @requiresDependencyResolution test
  */
 public class SiteStageDeployMojo
-    extends SiteStageMojo implements Contextualizable
+    extends SiteStageMojo
 {
     /**
      * The staged site will be deployed to this URL.
@@ -175,26 +173,10 @@ public class SiteStageDeployMojo
             throw new MojoExecutionException(
                 "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
-
-        getLog().debug( "wagon == null " + ( wagon == null ) );
-        getLog().debug( "wagon class " + wagon.getClass() );
-        
+       
         try
         {
-            Debug debug = new Debug(){
-                public void sessionDisconnecting( final SessionEvent sessionEvent )
-                {
-                    getLog().debug( "sessionDisconnecting" );
-                    getLog().debug( " sessionEvent.getWagon() == null " + (sessionEvent.getWagon() == null) );
-                    getLog().debug( " sessionEvent.getWagon().getRepository() == null " + (sessionEvent.getWagon().getRepository() == null) );
-                    //getLog().info( sessionEvent.getWagon().getRepository().getUrl() + " - Session: Disconnecting  " );
-
-                }    
-                public void sessionDisconnected( final SessionEvent sessionEvent )
-                {
-                    getLog().debug( "sessionDisconnected" );
-                }                
-            };
+            Debug debug = new Debug();
             
 
             wagon.addSessionListener( debug );

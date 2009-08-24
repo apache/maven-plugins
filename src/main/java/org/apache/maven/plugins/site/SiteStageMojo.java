@@ -19,6 +19,10 @@ package org.apache.maven.plugins.site;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,10 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Generates a site in a local staging or mock directory based on the site URL

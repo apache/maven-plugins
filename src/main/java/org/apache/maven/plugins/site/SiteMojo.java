@@ -31,9 +31,7 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
 
 /**
  * Generates the site for a single project.
