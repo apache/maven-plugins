@@ -481,7 +481,14 @@ public abstract class AbstractInvokerMojo
      * @since 1.2
      */
     private String invokerPropertiesFile;
-
+    
+    /**
+     * flag to enable show mvn version used for running its (cli option : -V,--show-version )
+     * @parameter expression="${invoker.showVersion}" default-value="false"
+     * @since 1.4
+     */
+    private boolean showVersion;
+    
     /**
      * The scripter runner that is responsible to execute hook scripts.
      */
@@ -1124,6 +1131,8 @@ public abstract class AbstractInvokerMojo
             request.setShowErrors( showErrors );
 
             request.setDebug( debug );
+            
+            request.setShowVersion( showVersion );
 
             if ( logger != null )
             {
