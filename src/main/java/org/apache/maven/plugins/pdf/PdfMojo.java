@@ -121,6 +121,9 @@ public class PdfMojo
     /** The Maven minor version, i.e. 0 if 2.0.10, 1 if 2.1.0 etc. */
     private static final int MAVEN_MINOR_VERSION = getMavenMinorVersion();
 
+    /** The vm line separator */
+    private static final String EOL = System.getProperty( "line.separator" );
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -242,7 +245,7 @@ public class PdfMojo
     private File siteDirectory;
 
     /**
-     * Directory containing generating sources for apt, fml and xdoc docs.
+     * Directory containing generated sources for apt, fml and xdoc docs.
      *
      * @parameter default-value="${project.build.directory}/generated-site"
      * @required
@@ -302,7 +305,7 @@ public class PdfMojo
      * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
      * source document.
      *
-     * @parameter default-value="true"
+     * @parameter expression="aggregate" default-value="true"
      */
     private boolean aggregate;
 
@@ -319,7 +322,7 @@ public class PdfMojo
      * them as a new entry in the Table Of Contents.
      * <b>Note</b>: Including the report generation could fail the PDF generation.
      *
-     * @parameter default-value="true"
+     * @parameter expression="includeReports" default-value="true"
      * @since 1.1
      */
     private boolean includeReports;
@@ -413,28 +416,41 @@ public class PdfMojo
 
         try
         {
-            if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
-            {
-                String outputName = getDocumentModel( getDefaultLocale() ).getOutputName();
-                final String extension = FileUtils.getExtension( outputName );
-                if ( StringUtils.isNotEmpty( extension ) )
-                {
-                    outputName = outputName.substring( 0, outputName.indexOf( extension ) - 1 );
-                }
-                final List pdfs = FileUtils.getFiles( workingDirectory, "**/" + outputName + ".pdf", null );
-
-                for ( final Iterator it = pdfs.iterator(); it.hasNext(); )
-                {
-                    final File pdf = (File) it.next();
-
-                    FileUtils.copyFile( pdf, new File( outputDirectory, pdf.getName() ) );
-                    pdf.delete();
-                }
-            }
+            copyGeneratedPdf();
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Copy the generated PDF to outputDirectory.
+     *
+     * @throws MojoExecutionException if any
+     * @throws IOException if any
+     * @since 1.1
+     */
+    private void copyGeneratedPdf()
+            throws MojoExecutionException, IOException
+    {
+        if ( !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
+        {
+            String outputName = getDocumentModel( getDefaultLocale() ).getOutputName();
+            final String extension = FileUtils.getExtension( outputName );
+            if ( StringUtils.isNotEmpty( extension ) )
+            {
+                outputName = outputName.substring( 0, outputName.indexOf( extension ) - 1 );
+            }
+            final List pdfs = FileUtils.getFiles( workingDirectory, "**/" + outputName + ".pdf", null );
+
+            for ( final Iterator it = pdfs.iterator(); it.hasNext(); )
+            {
+                final File pdf = (File) it.next();
+
+                FileUtils.copyFile( pdf, new File( outputDirectory, pdf.getName() ) );
+                pdf.delete();
+            }
         }
     }
 
@@ -961,8 +977,8 @@ public class PdfMojo
     }
 
     /**
-     * Generate all Maven reports defined in <code>${project.reporting}</code> part only if <code>generateReports</code> is
-     * enabled.
+     * Generate all Maven reports defined in <code>${project.reporting}</code> part
+     * only if <code>generateReports</code> is enabled.
      *
      * @param locale not null
      * @throws MojoExecutionException if any
@@ -1162,10 +1178,10 @@ public class PdfMojo
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug(
-                                "To be backward compatible with mvn 2.0.x, added Doxia 1.1.x interfaces from the PDF realm ("
-                                    + container.getContainerRealm().getId() + ") to the report plugin realm ("
-                                    + pluginDescriptor.getClassRealm().getId() + "): "
-                                    + StringUtils.join( doxiaInterfaces, ", " ) );
+                        "To be backward compatible with mvn 2.0.x, added Doxia 1.1.x interfaces from the PDF realm ("
+                        + container.getContainerRealm().getId() + ") to the report plugin realm ("
+                        + pluginDescriptor.getClassRealm().getId() + "): "
+                        + StringUtils.join( doxiaInterfaces, ", " ) );
             }
 
             try
@@ -1302,14 +1318,15 @@ public class PdfMojo
                 ClassRealm reportPluginRealm = mojoDescriptor.getPluginDescriptor().getClassRealm();
                 StringBuffer sb = new StringBuffer();
                 sb.append( report.getClass().getName() ).append( "#generate(...) caused a linkage error (" );
-                sb.append( e.getClass().getName() ).append( ") and may be out-of-date. Check the realms:\n" );
-                sb.append( "Maven Report Plugin realm = " + reportPluginRealm.getId() ).append( '\n' );
+                sb.append( e.getClass().getName() )
+                        .append( ") and may be out-of-date. Check the realms:" ).append( EOL );
+                sb.append( "Maven Report Plugin realm = " + reportPluginRealm.getId() ).append( EOL );
                 for ( int i = 0; i < reportPluginRealm.getConstituents().length; i++ )
                 {
                     sb.append( "urls[" + i + "] = " + reportPluginRealm.getConstituents()[i] );
                     if ( i != ( reportPluginRealm.getConstituents().length - 1 ) )
                     {
-                        sb.append( '\n' );
+                        sb.append( EOL );
                     }
                 }
 
@@ -1534,14 +1551,14 @@ public class PdfMojo
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append( "\n" ).append( "\n" );
+            sb.append( EOL ).append( EOL );
             sb.append( "Error when parsing the generated report: " ).append( generatedReport.getAbsolutePath() );
-            sb.append( "\n" );
+            sb.append( EOL );
             sb.append( e.getMessage() );
-            sb.append( "\n" ).append( "\n" );
+            sb.append( EOL ).append( EOL );
 
-            sb.append( "You could:\n" );
-            sb.append( "  * exlcude all reports using -DincludeReports=false\n" );
+            sb.append( "You could:" ).append( EOL );
+            sb.append( "  * exclude all reports using -DincludeReports=false" ).append( EOL );
             sb.append( "  * remove the " );
             sb.append( mojoDescriptor.getPluginDescriptor().getGroupId() );
             sb.append( ":" );
@@ -1549,18 +1566,18 @@ public class PdfMojo
             sb.append( ":" );
             sb.append( mojoDescriptor.getPluginDescriptor().getVersion() );
             sb.append( " from the <reporting/> part. To not affect the site generation, " );
-            sb.append( "you could create a PDF profile.\n" );
-            sb.append( "\n" );
+            sb.append( "you could create a PDF profile." ).append( EOL );
+            sb.append( EOL );
 
             MavenProject pluginProject = getReportPluginProject( mojoDescriptor.getPluginDescriptor() );
 
             if ( pluginProject == null )
             {
-                sb.append( "You could also have to contact the Plugin team.\n" );
+                sb.append( "You could also contact the Plugin team." ).append( EOL );
             }
             else
             {
-                sb.append( "You could also have to contact the Plugin team:\n" );
+                sb.append( "You could also contact the Plugin team:" ).append( EOL );
                 if ( pluginProject.getMailingLists() != null && pluginProject.getMailingLists().size() != 0 )
                 {
                     boolean appended = false;
@@ -1573,31 +1590,31 @@ public class PdfMojo
                         {
                             if ( !appended )
                             {
-                                sb.append( "  Mailing Lists:\n" );
+                                sb.append( "  Mailing Lists:" ).append( EOL );
                                 appended = true;
                             }
                             sb.append( "    " ).append( mailingList.getName() );
                             sb.append( ": " ).append( mailingList.getPost() );
-                            sb.append( "\n" );
+                            sb.append( EOL );
                         }
                     }
                 }
                 if ( StringUtils.isNotEmpty( pluginProject.getUrl() ) )
                 {
-                    sb.append( "  Web Site:\n" );
+                    sb.append( "  Web Site:" ).append( EOL );
                     sb.append( "    " ).append( pluginProject.getUrl() );
-                    sb.append( "\n" );
+                    sb.append( EOL );
                 }
                 if ( pluginProject.getIssueManagement() != null
                     && StringUtils.isNotEmpty( pluginProject.getIssueManagement().getUrl() ) )
                 {
-                    sb.append( "  Issue Tracking:\n" );
+                    sb.append( "  Issue Tracking:" ).append( EOL );
                     sb.append( "    " ).append( pluginProject.getIssueManagement().getUrl() );
-                    sb.append( "\n" );
+                    sb.append( EOL );
                 }
             }
 
-            sb.append( "\nIgnoring the \"" + localReportName + "\" report in the PDF.\n" );
+            sb.append( EOL ).append( "Ignoring the \"" + localReportName + "\" report in the PDF." ).append( EOL );
 
             if ( getLog().isDebugEnabled() )
             {
