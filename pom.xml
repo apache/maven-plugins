@@ -341,7 +341,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>${project.version}</version>
+          <version>2.0.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -403,7 +403,32 @@ under the License.
       </build>
     </profile>
     <profile>
+      <id>dev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin> 
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
       <id>reporting</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin> 
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
       <reporting>
         <plugins>
           <plugin>
