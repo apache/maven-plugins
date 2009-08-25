@@ -38,6 +38,7 @@ import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
@@ -132,6 +133,7 @@ public class SiteDeployMojo
 
     private PlexusContainer container;
 
+    // FIXME too much duplicate code with SiteStageDeployMojo
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
@@ -213,6 +215,9 @@ public class SiteDeployMojo
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
             }
             */
+            
+            wagon.connect( repository );
+            
             wagon.putDirectory( inputDirectory, "." );
             
             if ( chmod && wagon instanceof CommandExecutor )
@@ -233,14 +238,14 @@ public class SiteDeployMojo
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
-        /*catch ( ConnectionException e )
+        catch ( ConnectionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
         catch ( AuthenticationException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
-        }*/
+        }
         catch ( CommandExecutionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
