@@ -78,10 +78,48 @@ under the License.
           pom, similar to the following:
         </p>
 
-        <macro name="snippet">
-          <param name="id" value="profile_pdf"/>
-          <param name="file" value="/pom.xml"/>
-        </macro>
+        <source><![CDATA[
+<project>
+  ...
+  <profile>
+      <id>pdf</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.1.2</version>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>cim</report>
+                  <report>issue-tracking</report>
+                  <report>license</report>
+                  <report>mailing-list</report>
+                  <report>plugins</report>
+                  <report>project-team</report>
+                  <report>scm</report>
+                  <report>summary</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+        </plugins>
+      </reporting>
+
+      <build>
+        <defaultGoal>pdf:pdf</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pdf-plugin</artifactId>
+            <version>1.0</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  ...
+  <project>]]></source>
+
       </subsection>
 
       <subsection name="Maven Reporting Plugins Issues">
