@@ -1310,8 +1310,6 @@ public class LinkcheckReport
             }
         }
 
-        getSink().tableRow();
-
         getSink().table_();
 
         getSink().section1_();
@@ -1334,10 +1332,9 @@ public class LinkcheckReport
                                                           "report.linkcheck.table.summary.documents" ) );
         getSink().tableHeaderCell_();
         // TODO it is due to DOXIA-78
-        getSink().rawText( "<th colspan=\"4\" center>" );
+        getSink().rawText( "<th colspan=\"4\" align=\"center\">" );
         getSink().text( i18n.getString( "linkcheck-report", locale, "report.linkcheck.table.links" ) );
         getSink().tableHeaderCell_();
-        getSink().rawText( "</th>" );
         getSink().tableRow_();
 
         getSink().tableRow();
