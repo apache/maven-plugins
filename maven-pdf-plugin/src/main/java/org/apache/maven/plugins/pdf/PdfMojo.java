@@ -305,7 +305,7 @@ public class PdfMojo
      * If <code>true</false>, aggregate all source documents in one pdf, otherwise generate one pdf for each
      * source document.
      *
-     * @parameter expression="aggregate" default-value="true"
+     * @parameter expression="${aggregate}" default-value="true"
      */
     private boolean aggregate;
 
@@ -322,7 +322,7 @@ public class PdfMojo
      * them as a new entry in the Table Of Contents.
      * <b>Note</b>: Including the report generation could fail the PDF generation.
      *
-     * @parameter expression="includeReports" default-value="true"
+     * @parameter expression="${includeReports}" default-value="true"
      * @since 1.1
      */
     private boolean includeReports;
