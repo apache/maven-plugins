@@ -19,6 +19,51 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
+import org.apache.maven.ProjectDependenciesResolver;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.InvalidRepositoryException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
+import org.apache.maven.model.Resource;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
+import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
+import org.apache.maven.project.InvalidProjectModelException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectUtils;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
+import org.apache.maven.shared.downloader.DownloadException;
+import org.apache.maven.shared.downloader.DownloadNotFoundException;
+import org.apache.maven.shared.downloader.Downloader;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.velocity.VelocityComponent;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,51 +87,11 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.InvalidRepositoryException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Organization;
-import org.apache.maven.model.Resource;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
-import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
-import org.apache.maven.project.InvalidProjectModelException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectUtils;
-import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
-import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
-import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
-import org.apache.maven.shared.downloader.DownloadException;
-import org.apache.maven.shared.downloader.DownloadNotFoundException;
-import org.apache.maven.shared.downloader.Downloader;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
  * <p>
@@ -111,6 +116,16 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
+    
+    /**
+     * If true, only generate resources in the directory of the root project in a multimodule build.
+     * Dependencies from all modules will be aggregated before resource-generation takes place.
+     * 
+     * @parameter default-value="false"
+     * @since 1.1
+     */
+    private boolean runOnlyAtExecutionRoot;
+    
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
@@ -366,6 +381,11 @@ public class ProcessRemoteResourcesMojo
      * @parameter expression="${excludeTransitive}" default-value="false"
      */
     protected boolean excludeTransitive;
+    
+    /**
+     * @component role-hint="default"
+     */
+    protected ProjectDependenciesResolver dependencyResolver;
 
     public void execute()
         throws MojoExecutionException
@@ -462,14 +482,25 @@ public class ProcessRemoteResourcesMojo
 
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
+        
+        Set depArtifacts;
+        Set artifacts;
+        if ( runOnlyAtExecutionRoot )
+        {
+            depArtifacts = aggregateProjectDependencyArtifacts();
+            artifacts = resolveProjectArtifacts();
+        }
+        else
+        {
+            depArtifacts = project.getDependencyArtifacts();
+            artifacts = project.getArtifacts();
+        }
 
-        filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new TransitivityFilter( depArtifacts, this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
         filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
 
-        // start with all artifacts.
-        Set artifacts = project.getArtifacts();
         // perform filtering
         try
         {
@@ -550,6 +581,59 @@ public class ProcessRemoteResourcesMojo
         }
         Collections.sort( projects, new ProjectComparator() );
         return projects;
+    }
+
+    private Set resolveProjectArtifacts()
+        throws MojoExecutionException
+    {
+        List projects = mavenSession.getSortedProjects();
+
+        try
+        {
+            return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ), mavenSession );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                + e.getMessage(), e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MojoExecutionException( "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                + e.getMessage(), e );
+        }
+    }
+
+    private Set aggregateProjectDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        Set artifacts = new LinkedHashSet();
+        
+        List projects = mavenSession.getSortedProjects();
+        for ( Iterator it = projects.iterator(); it.hasNext(); )
+        {
+            MavenProject p = (MavenProject) it.next();
+            if ( p.getDependencyArtifacts() == null )
+            {
+                try
+                {
+                    Set depArtifacts = p.createArtifacts( artifactFactory, null, null );
+                    p.setDependencyArtifacts( depArtifacts );
+                    
+                    if ( depArtifacts != null && !depArtifacts.isEmpty() )
+                    {
+                        artifacts.addAll( depArtifacts );
+                    }
+                }
+                catch ( InvalidDependencyVersionException e )
+                {
+                    throw new MojoExecutionException( "Failed to create dependency artifacts for: " + p.getId() + ". Reason: "
+                        + e.getMessage(), e );
+                }
+            }
+        }
+        
+        return artifacts;
     }
 
     protected Map getProjectsSortedByOrganization( List projects )
