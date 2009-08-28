@@ -86,7 +86,7 @@ public class BundlePackMojo
     /**
      * Local maven repository.
      * 
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      * @required
      * @readonly
      */
@@ -100,7 +100,8 @@ public class BundlePackMojo
     /**
      * Directory where the upload-bundle will be created.
      *
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
+     * @readonly
      */
     protected String basedir;
 
@@ -127,6 +128,7 @@ public class BundlePackMojo
     
     /**
      * @parameter default-value="${settings}"
+     * @readonly
      */
     protected Settings settings;
 
