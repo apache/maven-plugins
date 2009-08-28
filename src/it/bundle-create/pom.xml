@@ -27,7 +27,7 @@ under the License.
   <version>1.0</version>
   <packaging>jar</packaging>
 
-	<name>Test</name>
+  <name>Test</name>
   <description>
     Tests the creation of a simple bundle.
   </description>
