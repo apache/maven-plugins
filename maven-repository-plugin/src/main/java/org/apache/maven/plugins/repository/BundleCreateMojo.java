@@ -47,14 +47,16 @@ public class BundleCreateMojo
     /**
      * Base directory.
      *
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
+     * @readonly
      */
     private String basedir;
 
     /**
      * The current Maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
+     * @readonly
      */
     private MavenProject project;
 
@@ -77,6 +79,7 @@ public class BundleCreateMojo
     
     /**
      * @parameter default-value="${settings}"
+     * @readonly
      */
     protected Settings settings;
 
