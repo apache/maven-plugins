@@ -901,7 +901,11 @@ public class ProcessRemoteResourcesMojo
 
         if ( StringUtils.isEmpty( inceptionYear ) )
         {
-            getLog().info( "inceptionYear not specified, defaulting to " + year );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "inceptionYear not specified, defaulting to " + year );
+            }
+            
             inceptionYear = year;
         }
         context.put( "project", project );
