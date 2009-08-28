@@ -53,13 +53,21 @@ import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
 import org.apache.maven.shared.downloader.Downloader;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenFileFilterRequest;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
@@ -75,7 +83,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -117,6 +127,38 @@ public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
     
+    private static final String TEMPLATE_SUFFIX = ".vm";
+    
+    /**
+     * <p>
+     * In cases where a local resource overrides one from a remote resource bundle, that resource
+     * should be filtered if the resource set specifies it. In those cases, this parameter defines
+     * the list of delimiters for filterable expressions. These delimiters are specified in the
+     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p>
+     * <p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     * @parameter
+     * @since 1.1
+     */
+    protected List filterDelimiters;
+
+    /**
+     * @parameter default-value="true"
+     * @since 1.1
+     */
+    protected boolean filterUsesDefaultDelimiters;
+    
     /**
      * If true, only generate resources in the directory of the root project in a multimodule build.
      * Dependencies from all modules will be aggregated before resource-generation takes place.
@@ -124,8 +166,15 @@ public class ProcessRemoteResourcesMojo
      * @parameter default-value="false"
      * @since 1.1
      */
-    private boolean runOnlyAtExecutionRoot;
+    protected boolean runOnlyAtExecutionRoot;
     
+    /**
+     * The character encoding scheme to be applied when filtering resources.
+     *
+     * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+     */
+    protected String encoding;
+
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
@@ -269,6 +318,13 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private VelocityComponent velocity;
+    
+    /**
+     * Filtering support, for local resources that override those in the remote bundle.
+     * 
+     * @component
+     */
+    private MavenFileFilter fileFilter;
 
     // These two things make this horrible. Maven artifact is way too complicated and the relationship between
     // the model usage and maven-artifact needs to be reworked as well as all our tools that deal with it. The
@@ -571,8 +627,7 @@ public class ProcessRemoteResourcesMojo
             }
             catch ( ProjectBuildingException e )
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new MojoExecutionException( e.getMessage(), e );
             }
             catch ( InvalidRepositoryException e )
             {
@@ -672,8 +727,8 @@ public class ProcessRemoteResourcesMojo
         return organizations;
     }
 
-    protected boolean copyResourceIfExists( File file, String relFileName )
-        throws IOException
+    protected boolean copyResourceIfExists( File file, String relFileName, VelocityContext context )
+        throws IOException, MojoExecutionException
     {
         for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
@@ -684,13 +739,74 @@ public class ProcessRemoteResourcesMojo
             {
                 continue;
             }
+            
             //TODO - really should use the resource includes/excludes and name mapping
             File source = new File( resourceDirectory, relFileName );
+            File templateSource = new File( resourceDirectory, relFileName + TEMPLATE_SUFFIX );
+            
+            if ( !source.exists() && templateSource.exists() )
+            {
+                source = templateSource;
+            }
 
             if ( source.exists() && !source.equals( file ) )
             {
-                //TODO - should use filters here
-                FileUtils.copyFile( source, file );
+                if ( source == templateSource )
+                {
+                    Reader reader = null;
+                    Writer writer = null;
+                    try
+                    {
+                        if ( encoding != null )
+                        {
+                            reader = new InputStreamReader( new FileInputStream( source ), encoding );
+                            writer = new OutputStreamWriter( new FileOutputStream( file ), encoding );
+                        }
+                        else
+                        {
+                            reader = ReaderFactory.newPlatformReader( source );
+                            writer = WriterFactory.newPlatformWriter( file );
+                        }
+                        
+                        velocity.getEngine().evaluate( context, writer, "", reader );
+                        velocity.getEngine().evaluate( context, writer, "", reader );
+                    }
+                    catch ( ParseErrorException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    catch ( MethodInvocationException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    catch ( ResourceNotFoundException e )
+                    {
+                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                    }
+                    finally
+                    {
+                        IOUtil.close( writer );
+                        IOUtil.close( reader );
+                    }
+                }
+                else if ( resource.isFiltering() )
+                {
+                    
+                    MavenFileFilterRequest req = setupRequest( resource, source, file );
+                    
+                    try
+                    {
+                        fileFilter.copyFile( req );
+                    }
+                    catch ( MavenFilteringException e )
+                    {
+                        throw new MojoExecutionException( "Error filtering resource: " + source, e );
+                    }
+                }
+                else
+                {
+                    FileUtils.copyFile( source, file );
+                }
 
                 //exclude the original (so eclipse doesn't complain about duplicate resources)
                 resource.addExclude( relFileName );
@@ -700,6 +816,37 @@ public class ProcessRemoteResourcesMojo
 
         }
         return false;
+    }
+
+    private MavenFileFilterRequest setupRequest( Resource resource, File source, File file )
+    {
+        MavenFileFilterRequest req = new MavenFileFilterRequest();
+        req.setFrom( source );
+        req.setTo( file );
+        req.setFiltering( resource.isFiltering() );
+        
+        req.setMavenProject( project );
+        req.setMavenSession( mavenSession );
+        req.setInjectProjectBuildFilters( true );
+        
+        if ( encoding != null )
+        {
+            req.setEncoding( encoding );
+        }
+        
+        if ( filterDelimiters != null && !filterDelimiters.isEmpty() )
+        {
+            LinkedHashSet delims = new LinkedHashSet();
+            if ( filterUsesDefaultDelimiters )
+            {
+                delims.addAll( req.getDelimiters() );
+            }
+            delims.addAll( filterDelimiters );
+            
+            req.setDelimiters( delims );
+        }
+        
+        return req;
     }
 
     protected void validate()
@@ -860,7 +1007,7 @@ public class ProcessRemoteResourcesMojo
                         String projectResource = bundleResource;
 
                         boolean doVelocity = false;
-                        if ( projectResource.endsWith( ".vm" ) )
+                        if ( projectResource.endsWith( TEMPLATE_SUFFIX ) )
                         {
                             projectResource = projectResource.substring( 0, projectResource.length() - 3 );
                             doVelocity = true;
@@ -872,7 +1019,7 @@ public class ProcessRemoteResourcesMojo
 
                         FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
 
-                        if ( !copyResourceIfExists( f, projectResource ) )
+                        if ( !copyResourceIfExists( f, projectResource, context ) )
                         {
                             if ( doVelocity )
                             {
